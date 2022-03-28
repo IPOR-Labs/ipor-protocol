@@ -1,0 +1,1021 @@
+import hre from "hardhat";
+import chai from "chai";
+import { Signer, BigNumber } from "ethers";
+import {
+    USD_28_000_18DEC,
+    PERCENTAGE_3_18DEC,
+    N1__0_18DEC,
+    USD_14_000_18DEC,
+    PERCENTAGE_5_18DEC,
+    LEVERAGE_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
+    N0__1_18DEC,
+    PERIOD_25_DAYS_IN_SECONDS,
+    PERIOD_6_HOURS_IN_SECONDS,
+    PERCENTAGE_95_18DEC,
+    USD_28_000_6DEC,
+    USD_10_000_6DEC,
+    N1__0_6DEC,
+    ZERO,
+} from "../utils/Constants";
+import { assertError } from "../utils/AssertUtils";
+import {
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    MiltonUsdcCase,
+    MiltonUsdtCase,
+    MiltonDaiCase,
+    prepareMockMiltonSpreadModel,
+} from "../utils/MiltonUtils";
+import {
+    prepareTestData,
+    prepareApproveForUsers,
+    setupTokenDaiInitialValuesForUsers,
+    getPayFixedDerivativeParamsDAICase1,
+    setupTokenUsdtInitialValuesForUsers,
+} from "../utils/DataUtils";
+import { MockStanleyCase } from "../utils/StanleyUtils";
+import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
+import {
+    preprareSwapPayFixedStruct18DecSimpleCase1,
+    openSwapPayFixed,
+    testCasePaginationPayFixed,
+    testCasePaginationReceiveFixed,
+    testCaseIdsPaginationPayFixed,
+    testCaseIdsPaginationReceiveFixed,
+    testCaseIdsPagination,
+} from "../utils/MiltonStorageUtils";
+import { zeroPad } from "ethers/lib/utils";
+
+const { expect } = chai;
+
+describe("MiltonStorage", () => {
+    let miltonSpreadModel: MockMiltonSpreadModel;
+    let admin: Signer,
+        userOne: Signer,
+        userTwo: Signer,
+        userThree: Signer,
+        liquidityProvider: Signer,
+        miltonStorageAddress: Signer;
+
+    before(async () => {
+        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
+            await hre.ethers.getSigners();
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+    });
+
+    it("should transfer ownership - simple case 1", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        await miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
+
+        //then
+        const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
+        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+    });
+
+    it("should NOT transfer ownership - sender not current owner", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        //when
+        await assertError(
+            miltonStorageDai
+                .connect(userThree)
+                .transferOwnership(await expectedNewOwner.getAddress()),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        await assertError(
+            miltonStorageDai.connect(userThree).confirmTransferOwnership(),
+            //then
+            "IPOR_007"
+        );
+    });
+
+    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        await miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
+
+        await assertError(
+            miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_007"
+        );
+    });
+
+    it("should NOT transfer ownership - sender already lost ownership", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        await miltonStorageDai.connect(expectedNewOwner).confirmTransferOwnership();
+
+        //when
+        await assertError(
+            miltonStorageDai.connect(admin).transferOwnership(await expectedNewOwner.getAddress()),
+            //then
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should have rights to transfer ownership - sender still have rights", async () => {
+        //given
+        const { miltonStorageDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const expectedNewOwner = userTwo;
+
+        if (miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        //when
+        await miltonStorageDai
+            .connect(admin)
+            .transferOwnership(await expectedNewOwner.getAddress());
+
+        //then
+        const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
+        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+    });
+
+    it("should update Milton Storage when open position, caller has rights to update", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        const { miltonStorageDai, miltonDai } = testData;
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenDaiInitialValuesForUsers([admin, userOne, liquidityProvider], testData);
+
+        await miltonStorageDai.setMilton(await miltonStorageAddress.getAddress());
+
+        //when
+        await miltonStorageDai
+            .connect(miltonStorageAddress)
+            .updateStorageWhenOpenSwapPayFixed(
+                await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo),
+                await miltonDai.getIporPublicationFeeAmount()
+            );
+        //then
+    });
+
+    it("should NOT update Milton Storage when open position, caller dont have rights to update", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo);
+        await assertError(
+            //when
+            miltonStorageDai
+                .connect(userThree)
+                .updateStorageWhenOpenSwapPayFixed(
+                    derivativeStruct,
+                    await miltonDai.getIporPublicationFeeAmount()
+                ),
+            //then
+            "IPOR_008"
+        );
+    });
+
+    it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+
+        const { miltonStorageDai, miltonDai, tokenDai, warren, josephDai } = testData;
+        if (
+            miltonStorageDai === undefined ||
+            miltonDai === undefined ||
+            tokenDai === undefined ||
+            warren === undefined ||
+            josephDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const derivativeParams = {
+            asset: tokenDai,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+            direction: 0,
+        };
+
+        await warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset.address,
+                PERCENTAGE_5_18DEC,
+                derivativeParams.openTimestamp
+            );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonStorageDai.setMilton(await miltonStorageAddress.getAddress());
+
+        //when
+        await miltonStorageDai
+            .connect(miltonStorageAddress)
+            .updateStorageWhenCloseSwapPayFixed(
+                await userTwo.getAddress(),
+                derivativeItem,
+                BigNumber.from("10").mul(N1__0_18DEC),
+                closeSwapTimestamp,
+                await miltonDai.getIncomeFeePercentage(),
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
+            );
+
+        await miltonStorageDai.setMilton(miltonDai.address);
+
+        //then
+        // assert(true); //no exception this line is achieved
+    });
+
+    it("should update Milton Storage when close position, caller has rights to update, USDT 6 decimals", async () => {
+        //given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["USDT"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            testData
+        );
+
+        const { tokenUsdt, warren, josephUsdt, miltonStorageUsdt, miltonUsdt } = testData;
+        if (
+            tokenUsdt === undefined ||
+            josephUsdt === undefined ||
+            miltonStorageUsdt === undefined ||
+            miltonUsdt === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            tokenUsdt
+        );
+
+        const derivativeParams = {
+            asset: tokenUsdt,
+            totalAmount: USD_10_000_6DEC,
+            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+            direction: 0,
+        };
+
+        await warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset.address,
+                PERCENTAGE_5_18DEC,
+                derivativeParams.openTimestamp
+            );
+
+        await josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_6DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await miltonStorageUsdt.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonStorageUsdt.setMilton(await miltonStorageAddress.getAddress());
+
+        //when
+        await miltonStorageUsdt
+            .connect(miltonStorageAddress)
+            .updateStorageWhenCloseSwapPayFixed(
+                await userTwo.getAddress(),
+                derivativeItem,
+                BigNumber.from("10").mul(N1__0_6DEC),
+                closeSwapTimestamp,
+                await miltonUsdt.getIncomeFeePercentage(),
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
+            );
+        //then
+        //assert(true); //no exception this line is achieved
+    });
+
+    it("should NOT update Milton Storage when close position, caller don't have rights to update", async () => {
+        // given
+        let testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        const { tokenDai, warren, josephDai, miltonStorageDai, miltonDai } = testData;
+        if (
+            miltonStorageDai === undefined ||
+            miltonDai === undefined ||
+            tokenDai === undefined ||
+            warren === undefined ||
+            josephDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+        const derivativeParams = {
+            asset: tokenDai,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+            direction: 0,
+        };
+
+        await warren
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset.address,
+                PERCENTAGE_5_18DEC,
+                derivativeParams.openTimestamp
+            );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        //when
+        await assertError(
+            miltonStorageDai
+                .connect(userThree)
+                .updateStorageWhenCloseSwapPayFixed(
+                    await userTwo.getAddress(),
+                    derivativeItem,
+                    BigNumber.from("10").mul(N1__0_18DEC),
+                    closeSwapTimestamp,
+                    await miltonDai.getIncomeFeePercentage(),
+                    PERCENTAGE_95_18DEC,
+                    PERIOD_6_HOURS_IN_SECONDS
+                ),
+            //then
+            "IPOR_008"
+        );
+    });
+
+    it("get swaps - pay fixed, should fail when page size is equal 0", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            "IPOR_009",
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should return empty list of swaps", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should receive limited swap array", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("11"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should receive limited swap array with offset", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("10"),
+
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should receive rest of swaps only", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            BigNumber.from("2"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - pay fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCasePaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("20"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should fail when page size is equal 0", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            "IPOR_009",
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should return empty list of swaps", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should receive limited swap array", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("11"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should receive limited swap array with offset", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should receive rest of swaps only", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            BigNumber.from("2"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swaps - receive fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCasePaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("20"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should fail when page size is equal 0", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            "IPOR_009",
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should return empty list of swaps", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should receive limited swap array", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("11"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should receive limited swap array with offset", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should receive rest of swaps only", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            BigNumber.from("2"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - pay fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCaseIdsPaginationPayFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("20"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should fail when page size is equal 0", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            "IPOR_009",
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should return empty list of swaps", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should receive empty list of swaps when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should receive limited swap array", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("11"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should receive limited swap array with offset", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should receive rest of swaps only", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("22"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            BigNumber.from("2"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - receive fixed, should receive empty list of swaps when offset is equal to number of swaps", async () => {
+        await testCaseIdsPaginationReceiveFixed(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("20"),
+            BigNumber.from("20"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should fail when page size is equal 0", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            ZERO,
+            "IPOR_009",
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should receive empty list of swap ids", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should receive empty list of swap ids when user passes non zero offset and doesn't have any swap", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should return pay fixed swaps if user doesn't have receive fixed swaps", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("5"),
+            ZERO,
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("5"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should return receive fixed swaps if user doesn't have pay fixed swaps", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ZERO,
+            BigNumber.from("5"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("5"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should return all swaps", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("3"),
+            BigNumber.from("3"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("6"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should return limited swap id array if user has more swaps than page size", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("9"),
+            BigNumber.from("12"),
+            ZERO,
+            BigNumber.from("10"),
+            BigNumber.from("10"),
+            null,
+            miltonSpreadModel
+        );
+    });
+
+    it("get swap ids - all, should return empty array when offset is higher than total number of user swaps", async () => {
+        await testCaseIdsPagination(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            BigNumber.from("9"),
+            BigNumber.from("12"),
+            BigNumber.from("80"),
+            BigNumber.from("10"),
+            ZERO,
+            null,
+            miltonSpreadModel
+        );
+    });
+});
