@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import { Signer } from "ethers";
+import { Signer, BigNumber } from "ethers";
 import {
     MiltonUsdcMockCase,
     MiltonUsdtMockCase,
@@ -34,9 +34,16 @@ import {
     MiltonStorage,
 } from "../../types";
 import {
+    USD_10_000_6DEC,
     TOTAL_SUPPLY_6_DECIMALS,
+    USER_SUPPLY_6_DECIMALS,
+    N0__1_18DEC,
     TOTAL_SUPPLY_18_DECIMALS,
+    USD_10_000_18DEC,
     USER_SUPPLY_10MLN_18DEC,
+    LEVERAGE_18DEC,
+    ZERO,
+    N0__01_18DEC,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -47,7 +54,7 @@ const { ethers } = hre;
 
 type AssetsType = "DAI" | "USDC" | "USDT";
 
-type TestData = {
+export type TestData = {
     tokenDai?: DaiMockedToken;
     tokenUsdt?: UsdtMockedToken;
     tokenUsdc?: UsdcMockedToken;
@@ -301,4 +308,146 @@ export const setupTokenDaiInitialValuesForUsers = async (users: Signer[], testDa
             USER_SUPPLY_10MLN_18DEC
         );
     }
+};
+
+export const prepareTestDataDaiCase000 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE0,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+};
+
+export const prepareTestDataDaiCase001 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE0,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE1,
+        JosephUsdtMockCases.CASE1,
+        JosephDaiMockCases.CASE1
+    );
+};
+
+export const prepareTestDataUsdtCase000 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    return await prepareTestData(
+        accounts,
+        ["USDT"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE0,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+};
+
+export const prepareComplexTestDataDaiCase000 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataDaiCase000(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const prepareComplexTestDataDaiCase400 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE4,
+        MiltonUsdtCase.CASE4,
+        MiltonDaiCase.CASE4,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const setupIpTokenInitialValues = async (
+    asset: IpToken,
+    liquidityProvider: Signer,
+    initialAmount: BigNumber
+) => {
+    if (initialAmount.gt(ZERO)) {
+        await asset
+            .connect(liquidityProvider)
+            .mint(await liquidityProvider.getAddress(), initialAmount);
+    }
+};
+
+export const getStandardDerivativeParamsDAI = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getStandardDerivativeParamsUSDT = (user: Signer, tokenUsdt: UsdtMockedToken) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: Math.floor(Date.now() / 1000),
+        from: user,
+    };
+};
+
+export const setupTokenUsdtInitialValuesForUsers = async (
+    users: Signer[],
+    tokenUsdt: UsdtMockedToken
+) => {
+    for (let i = 0; i < users.length; i++) {
+        await tokenUsdt.setupInitialAmount(await users[i].getAddress(), USER_SUPPLY_6_DECIMALS);
+    }
+};
+
+export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
 };

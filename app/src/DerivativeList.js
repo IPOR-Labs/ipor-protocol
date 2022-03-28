@@ -2,8 +2,8 @@ import React from "react";
 import { toDate } from "./utils";
 // import { Link } from "react-router-dom";
 
-export default (derivatives) =>
-    derivatives && derivatives.length > 0 ? (
+export default (response) =>
+    response && response.swaps && response.swaps.length > 0 ? (
         <table className="table">
             <thead>
                 <tr>
@@ -19,7 +19,7 @@ export default (derivatives) =>
                 </tr>
             </thead>
             <tbody>
-                {derivatives.map((derivative) => {
+                {response.swaps.map((derivative) => {
                     if (derivative.state == 1) {
                         return (
                             <tr key={derivative.id}>
