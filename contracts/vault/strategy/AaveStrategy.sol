@@ -183,7 +183,8 @@ contract AaveStrategy is
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        address treasury = _treasury;
+        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
@@ -198,16 +199,17 @@ contract AaveStrategy is
                 IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
-            IERC20Upgradeable(aave).safeTransfer(_treasury, balance);
+            IERC20Upgradeable(aave).safeTransfer(treasury, balance);
             address[] memory assets = new address[](1);
             assets[0] = _shareToken;
-            emit DoClaim(address(this), assets, _treasury, balance);
+            emit DoClaim(address(this), assets, treasury, balance);
         }
     }
 
     function setStanley(address stanley) external override whenNotPaused onlyOwner {
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         _stanley = stanley;
+        //TODO: old new stanley
         emit StanleyChanged(msg.sender, stanley, address(this));
     }
 

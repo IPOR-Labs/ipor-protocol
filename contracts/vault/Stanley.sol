@@ -114,12 +114,6 @@ abstract contract Stanley is
         return assetBalanceAave + assetBalanceCompound + amount;
     }
 
-    /**
-     * @dev to withdraw asset from current strategy.
-     * @notice only owner can withdraw.
-     * @param amount underlying token amount represented in 18 decimals
-            Shares means aTokens, cTokens
-    */
     function withdraw(uint256 amount)
         external
         override
@@ -292,7 +286,7 @@ abstract contract Stanley is
     }
 
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
-    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
+    function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
         (
             IStrategy strategyMaxApy,
             IStrategy strategyAave,
@@ -318,7 +312,7 @@ abstract contract Stanley is
         uint256 wadAmount = IporMath.convertToWad(amount, decimals);
         _depositToStrategy(strategyMaxApy, wadAmount);
 
-        emit MigrateAsset(from, address(strategyMaxApy), wadAmount);
+        emit AssetMigrated(from, address(strategyMaxApy), wadAmount);
     }
 
     function setAaveStrategy(address strategyAddress) external override whenNotPaused onlyOwner {
@@ -399,7 +393,7 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit SetStrategy(newStrategy, _compoundShareToken);
+        emit StrategyChanged(newStrategy, _compoundShareToken);
     }
 
     function _setAaveStrategy(address newStrategy) internal nonReentrant {
@@ -427,7 +421,7 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit SetStrategy(newStrategy, _aaveShareToken);
+        emit StrategyChanged(newStrategy, _aaveShareToken);
     }
 
     /**

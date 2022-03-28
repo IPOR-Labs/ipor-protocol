@@ -240,7 +240,7 @@ describe("Stanley -> constructor", () => {
         await assertError(stanley.deposit(one), "Pausable: paused");
         await assertError(stanley.withdraw(one), "Pausable: paused");
         await assertError(stanley.withdrawAll(), "Pausable: paused");
-        await assertError(stanley.migrateAssetToStrategyWithMaxApy(), "Pausable: paused");
+        await assertError(stanley.migrateAssetToStrategyWithMaxApr(), "Pausable: paused");
         await assertError(stanley.setAaveStrategy(aaveStrategy.address), "Pausable: paused");
         await assertError(stanley.setAaveStrategy(compoundStrategy.address), "Pausable: paused");
         await assertError(stanley.setMilton(await userOne.getAddress()), "Pausable: paused");

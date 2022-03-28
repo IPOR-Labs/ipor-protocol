@@ -145,15 +145,15 @@ interface IMiltonStorage {
         view
         returns (int256 soapReceiveFixed);
 
-    /// @notice add liquidity to Liquidity Pool balance in storage.
+    /// @notice add liquidity to Liquidity Pool balance in storage. Function available only for Joseph.
     /// @param assetAmount amount of asset which is added to Liquidity Pool balance, represented in 18 decimals
     function addLiquidity(uint256 assetAmount) external;
 
-    /// @notice substract liquyidity from Liquidity Pool balance in storage.
+    /// @notice substract liquyidity from Liquidity Pool balance in storage. Function available only for Joseph.
     /// @param assetAmount amount of asset which is substracted from Liquidity Pool balance, represented in 18 decimals
     function subtractLiquidity(uint256 assetAmount) external;
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new pay fixed swap is opened.
+    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new pay fixed swap is opened. Function available only for Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFeeAmount publication fee amount taken from Milton configuration, represented in 18 decimals.
     /// @return new swap Id
@@ -162,7 +162,7 @@ interface IMiltonStorage {
         uint256 cfgIporPublicationFeeAmount
     ) external returns (uint256);
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new receive fixed swap is opened.
+    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new receive fixed swap is opened. Function available only for Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFeeAmount publication fee amount taken from Milton configuration, represented in 18 decimals.
     /// @return new swap Id
@@ -171,7 +171,7 @@ interface IMiltonStorage {
         uint256 cfgIporPublicationFeeAmount
     ) external returns (uint256);
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close pay fixed swap.
+    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close pay fixed swap. Function available only for Milton.
     /// @param liquidator account address who closes swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
@@ -191,7 +191,7 @@ interface IMiltonStorage {
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close receive fixed swap.
+    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close receive fixed swap. Function available only for Milton.
     /// @param liquidator account address who closes swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
@@ -211,23 +211,23 @@ interface IMiltonStorage {
         uint256 secondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    /// @notice Updates balance when Joseph withdraws Milton's cash from Stanley.
+    /// @notice Updates balance when Joseph withdraws Milton's cash from Stanley. Function available only for Milton.
     /// @param withdrawnAmount asset amount which was withdrawn from Stanley to Milton by Joseph, represented in 18 decimals.
     /// @param vaultBalance actual Asset Management Vault balance, represented in 18 decimals
     function updateStorageWhenWithdrawFromStanley(uint256 withdrawnAmount, uint256 vaultBalance)
         external;
 
-    /// @notice Updates balance when Joseph deposits Milton's cash to Stanley.
+    /// @notice Updates balance when Joseph deposits Milton's cash to Stanley. Function available only for Milton.
     /// @param depositAmount asset amount which was deposited from Milton to Stanley by Joseph, represented in 18 decimals.
     /// @param vaultBalance actual Asset Management Vault balance (Stanley's balance), represented in 18 decimals
     function updateStorageWhenDepositToStanley(uint256 depositAmount, uint256 vaultBalance)
         external;
 
-    /// @notice Updates balance when Joseph transfers Milton's cash to Charlie Treasury's multisig wallet.
+    /// @notice Updates balance when Joseph transfers Milton's cash to Charlie Treasury's multisig wallet. Function available only for Joseph.
     /// @param transferredAmount asset amount which is transferred to Charlie Treasury multisig wallet.
     function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount) external;
 
-    /// @notice Updates balance when Joseph transfers Milton's cash to Treasury's multisig wallet.
+    /// @notice Updates balance when Joseph transfers Milton's cash to Treasury's multisig wallet. Function available only for Joseph.
     /// @param transferredAmount asset amount which is transferred to Treasury multisig wallet.
     function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
 

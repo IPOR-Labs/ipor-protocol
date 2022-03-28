@@ -9,7 +9,7 @@ import { MockStrategy, StanleyDai, TestERC20 } from "../../../../types";
 chai.use(solidity);
 const { expect } = chai;
 
-describe("Stanley -> SetStrategy", () => {
+describe("Stanley -> StrategyChanged", () => {
     let admin: Signer;
     let stanley: StanleyDai;
     let DAI: TestERC20;
@@ -57,7 +57,7 @@ describe("Stanley -> SetStrategy", () => {
             //when
             await expect(stanley.setAaveStrategy(newAaveStrategy.address))
                 //then
-                .to.emit(stanley, "SetStrategy")
+                .to.emit(stanley, "StrategyChanged")
                 .withArgs(newAaveStrategy.address, DAI.address);
         });
 
@@ -95,7 +95,7 @@ describe("Stanley -> SetStrategy", () => {
             //when
             await expect(stanley.setCompoundStrategy(newCompoundStrategy.address))
                 //then
-                .to.emit(stanley, "SetStrategy")
+                .to.emit(stanley, "StrategyChanged")
                 .withArgs(newCompoundStrategy.address, DAI.address);
             //then
         });
