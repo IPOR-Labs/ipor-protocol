@@ -264,3 +264,10 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
         from: user,
     };
 };
+
+export const prepareMiltonSpreadBase = async () => {
+    const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
+    const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
