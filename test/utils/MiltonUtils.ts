@@ -159,7 +159,6 @@ export const getMockMiltonUsdcCase = async (
 export const getMockMiltonDaiCase = async (
     miltonCase: MiltonDaiCase
 ): Promise<MiltonDaiMockCase> => {
-    console.log(miltonCase);
     const MockCaseMilton = await ethers.getContractFactory(miltonCase);
     return (await MockCaseMilton.deploy()) as MiltonDaiMockCase;
 };
@@ -205,6 +204,15 @@ export const prepareMiltonSpreadCase6 = async () => {
         "MockCase6MiltonSpreadModel"
     );
     const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase7 = async () => {
+    const MockCase7MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase7MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase7MiltonSpreadModel.deploy();
     await miltonSpread.initialize();
     return miltonSpread;
 };
