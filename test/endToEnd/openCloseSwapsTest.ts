@@ -3,8 +3,8 @@ const { expect } = require("chai");
 import {
     ERC20,
     MiltonFaucet,
-    AaveStrategy,
-    CompoundStrategy,
+    StrategyAave,
+    StrategyCompound,
     StanleyUsdt,
     MiltonUsdc,
     MiltonUsdt,
@@ -41,10 +41,10 @@ describe("Open/Close Swap", function () {
 
     let stanleyUsdt: StanleyUsdt;
 
-    let strategyAaveDai: AaveStrategy;
-    let strategyAaveUsdc: AaveStrategy;
+    let strategyAaveDai: StrategyAave;
+    let strategyAaveUsdc: StrategyAave;
 
-    let strategyCompoundUsdt: CompoundStrategy;
+    let strategyCompoundUsdt: StrategyCompound;
 
     let dai: ERC20;
     let usdc: ERC20;
@@ -117,14 +117,14 @@ describe("Open/Close Swap", function () {
 
         it("Should rebalanse and deposit(dai) into vault (aave)", async () => {
             //given
-            const aaveStrategyBalance = await strategyAaveDai.balanceOf();
+            const strategyAaveBalance = await strategyAaveDai.balanceOf();
             //when
             await josephDai.rebalance();
             //then
-            const aaveStrategyAfter = await strategyAaveDai.balanceOf();
+            const strategyAaveAfter = await strategyAaveDai.balanceOf();
             expect(
-                aaveStrategyBalance.lt(aaveStrategyAfter),
-                "aaveStrategyBalance < aaveStrategyAfter"
+                strategyAaveBalance.lt(strategyAaveAfter),
+                "strategyAaveBalance < strategyAaveAfter"
             ).to.be.true;
         });
 
@@ -227,14 +227,14 @@ describe("Open/Close Swap", function () {
 
         it("Should rebalanse and deposit(usdc) into vault (aave)", async () => {
             //given
-            const aaveStrategyBalance = await strategyAaveUsdc.balanceOf();
+            const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
             //when
             await josephUsdc.rebalance();
             //then
-            const aaveStrategyAfter = await strategyAaveUsdc.balanceOf();
+            const strategyAaveAfter = await strategyAaveUsdc.balanceOf();
             expect(
-                aaveStrategyBalance.lt(aaveStrategyAfter),
-                "aaveStrategyBalance < aaveStrategyAfter"
+                strategyAaveBalance.lt(strategyAaveAfter),
+                "strategyAaveBalance < strategyAaveAfter"
             ).to.be.true;
         });
 
@@ -333,14 +333,14 @@ describe("Open/Close Swap", function () {
 
         it("Should rebalanse and deposit(usdt) into vault (compound)", async () => {
             //given
-            const compoundStrategyBefore = await strategyCompoundUsdt.balanceOf();
+            const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
             //when
             await josephUsdt.rebalance();
             //then
-            const compoundStrategyAfter = await strategyCompoundUsdt.balanceOf();
+            const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
             expect(
-                compoundStrategyBefore.lt(compoundStrategyAfter),
-                "compoundStrategyBefore < compoundStrategyAfter"
+                strategyCompoundBefore.lt(strategyCompoundAfter),
+                "strategyCompoundBefore < strategyCompoundAfter"
             ).to.be.true;
         });
 

@@ -6,6 +6,10 @@ import "./types/CockpitTypes.sol";
 
 /// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
 interface ICockpitDataProvider {
+	/// @notice Returns current version of Cockpit Data Provider
+    /// @return current Cockpit Data Provider version
+	function getVersion() external pure returns (uint256);
+
     /// @notice gets list all IPOR Indexes for all supported assets
     /// @return List of all IPOR Indexes for all supported assets in IPOR Protocol
     function getIndexes() external view returns (CockpitTypes.IporFront[] memory);

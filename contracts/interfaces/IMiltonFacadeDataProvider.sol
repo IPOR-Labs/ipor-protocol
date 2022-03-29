@@ -5,6 +5,10 @@ import "../interfaces/types/MiltonFacadeTypes.sol";
 
 /// @title Interface for reading on-chain data related with Milton Automated Market Maker.
 interface IMiltonFacadeDataProvider {
+    /// @notice Returns current version of Milton Facade Data Provider
+    /// @return current Milton Facade Data Provider version
+    function getVersion() external pure returns (uint256);
+
     /// @notice Gets required configuration for frontend, to open, close position, provide and redeem liquidity.
     /// @return configuration structure
     function getConfiguration() external returns (MiltonFacadeTypes.AssetConfiguration[] memory);

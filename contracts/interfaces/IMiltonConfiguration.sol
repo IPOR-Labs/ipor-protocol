@@ -3,6 +3,10 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interaction with Milton's configuration.
 interface IMiltonConfiguration {
+    /// @notice Returns current version of Milton's.
+    /// @return Current Milton version.
+    function getVersion() external pure returns (uint256);
+
     /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Joseph instance
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
@@ -60,25 +64,11 @@ interface IMiltonConfiguration {
     /// @return min leverage value represented in 18 decimals
     function getMinLeverageValue() external pure returns (uint256);
 
-    /// @notice Gets Milton Spread Model smart contract address responsible for Spread calculation.
-    /// @return Milton Spread Model smart contract address
-    function getMiltonSpreadModel() external view returns (address);
-
     /// @notice Gets Joseph address.
     /// @return Joseph address.
     function getJoseph() external view returns (address);
 
-    /// @notice Sets Joseph address. Function available only for Owner.
-    /// @param newJoseph new Joseph address
-    function setJoseph(address newJoseph) external;
-
-    /// @notice Emmited when Joseph address is changed by its owner.
-    /// @param changedBy account address that changed Joseph's address
-    /// @param oldJoseph old address of Joseph
-    /// @param newJoseph new address of Joseph
-    event JosephChanged(
-        address indexed changedBy,
-        address indexed oldJoseph,
-        address indexed newJoseph
-    );
+    /// @notice Gets Milton Spread Model smart contract address responsible for Spread calculation.
+    /// @return Milton Spread Model smart contract address
+    function getMiltonSpreadModel() external view returns (address);
 }

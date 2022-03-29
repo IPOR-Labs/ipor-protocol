@@ -35,10 +35,10 @@ library AmmTypes {
         uint256 ibtQuantity;
         /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a percentage of the swap's collateral.
         /// @dev value represented in 18 decimals
-        uint256 openingFeeLPValue;
+        uint256 openingFeeLPAmount;
         /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a percentage of the swap's collateral.
         /// @dev value represented in 18 decimals
-        uint256 openingFeeTreasuryValue;
+        uint256 openingFeeTreasuryAmount;
     }
 
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
@@ -51,10 +51,10 @@ library AmmTypes {
         /// @notice Swap's notional
         uint256 notionalAmount;
         /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool
-        uint256 openingFeeLPValue;
+        uint256 openingFeeLPAmount;
         /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
 		/// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
-        uint256 openingFeeTreasuryValue;
+        uint256 openingFeeTreasuryAmount;
         /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 iporPublicationAmount;
         /// @notice Liquidation deposit is retained when the swap is opened.

@@ -210,9 +210,9 @@ export const miltonFacadeDataProviderFactory = async (
     miltonStorageDai: MiltonStorageDai,
     miltonStorageUsdc: MiltonStorageUsdc,
     miltonStorageUsdt: MiltonStorageUsdt,
-	josephUsdt: JosephUsdt,
-	josephUsdc: JosephUsdc,
-	josephDai: JosephDai,
+    josephUsdt: JosephUsdt,
+    josephUsdc: JosephUsdc,
+    josephDai: JosephDai,
     warren: Warren
 ): Promise<MiltonFacadeDataProvider> => {
     const [admin] = await hre.ethers.getSigners();
@@ -227,7 +227,7 @@ export const miltonFacadeDataProviderFactory = async (
             [usdt.address, usdc.address, dai.address],
             [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
             [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-			[josephUsdt.address, josephUsdc.address, josephDai.address],
+            [josephUsdt.address, josephUsdc.address, josephDai.address],
         ],
         {
             kind: "uups",
@@ -241,8 +241,8 @@ export const miltonSetup = async (
     stanley: Stanley | StanleyDai | StanleyUsdc | StanleyUsdt
 ) => {
     await milton.setJoseph(joseph.address);
-    await milton.setupMaxAllowance(joseph.address);
-    await milton.setupMaxAllowance(stanley.address);
+    await milton.setupMaxAllowanceForAsset(joseph.address);
+    await milton.setupMaxAllowanceForAsset(stanley.address);
 };
 export const miltonStorageSetup = async (
     miltonStorage: MiltonStorage | MiltonStorageDai | MiltonStorageUsdc | MiltonStorageUsdt,

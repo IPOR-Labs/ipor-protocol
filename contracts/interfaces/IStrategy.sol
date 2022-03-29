@@ -3,6 +3,10 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interaction with specific Stanley's strategy which represent external DeFi protocol.
 interface IStrategy {
+    /// @notice Returns current version of Strategy's
+    /// @return current Strategy version
+    function getVersion() external pure returns (uint256);
+
     /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Strategy instance
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
@@ -28,9 +32,6 @@ interface IStrategy {
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
     function withdraw(uint256 amount) external;
-
-    /// @notice Extra steps executed before claim rewards. Function can be executed by anyone.
-    function beforeClaim() external;
 
     /// @notice Claim rewards. Function can be executed by anyone.
     function doClaim() external;
@@ -77,11 +78,6 @@ interface IStrategy {
         uint256 amount
     );
 
-    /// @notice Emmited when beforeClaim function was executed.
-    /// @param executedBy account who execute before claim action
-    /// @param shareTokens list of share tokens related with this strategy
-    event DoBeforeClaim(address indexed executedBy, address[] shareTokens);
-
     /// @notice Emmited when Treasury address changed
     /// @param changedBy account address who changed Treasury address
     /// @param oldTreasury old Treasury address
@@ -96,21 +92,5 @@ interface IStrategy {
         address changedBy,
         address oldTreasuryManager,
         address newTreasuryManager
-    );
-
-    /// @notice Emmited when Stk AAVE address changed
-    /// @param changedBy account address who changed Stk AAVE address
-    /// @param oldStkAave old Stk Aave address
-    /// @param newStkAave new Stk Aave address
-    event StkAaveChanged(address changedBy, address oldStkAave, address newStkAave);
-
-    /// @notice Emmited when blocks per year changed by Owner.
-    /// @param changedBy account address who changed blocks per year
-    /// @param oldBlocksPerYear old value blocks per year
-    /// @param newBlocksPerYear new value blocks per year
-    event BlocksPerYearChanged(
-        address changedBy,
-        uint256 oldBlocksPerYear,
-        uint256 newBlocksPerYear
     );
 }

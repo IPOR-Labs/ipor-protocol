@@ -55,6 +55,10 @@ contract MiltonFacadeDataProvider is
         _assets = assets;
     }
 
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
+
     function getConfiguration()
         external
         view

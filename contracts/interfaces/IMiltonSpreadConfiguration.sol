@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interacting with Milton Spread's configuration.
 interface IMiltonSpreadConfiguration {
+	
     /// @notice Gets Spread Premiums Max Value param which is used in spread equations.
     /// @return Spread Premiums Max Value param represented in 18 decimals.
     function getSpreadPremiumsMaxValue() external pure returns (uint256);

@@ -10,12 +10,12 @@ interface IStanleyAdministration {
     /// @notice Sets AAVE stratedy address. Function available only for Owner.
     /// @dev Emits {StrategyChanged} event
     /// @param newStrategy new AAVE strategy address.
-    function setAaveStrategy(address newStrategy) external;
+    function setStrategyAave(address newStrategy) external;
 
     /// @notice Sets Compound stratedy address. Function available only for Owner.
     /// @dev Emits {StrategyChanged} event
     /// @param newStrategy new Compound strategy address.
-    function setCompoundStrategy(address newStrategy) external;
+    function setStrategyCompound(address newStrategy) external;
 
     /// @notice Sets Milton address. Function available only for Owner.
     /// @dev Emits {MiltonChanged} event

@@ -210,8 +210,10 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
         uint128[] storage payFixedIdsRef = _swapsPayFixed.ids[account];
         uint256 payFixedLength = payFixedIdsRef.length;
+
         uint128[] storage receiveFixedIdsRef = _swapsReceiveFixed.ids[account];
         uint256 receiveFixedLength = receiveFixedIdsRef.length;
+
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
             payFixedLength + receiveFixedLength,
             offset,
@@ -239,8 +241,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         view
         override
         returns (
-            int256 soapPf,
-            int256 soapRf,
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
             int256 soap
         )
     {
@@ -250,8 +252,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         );
 
         return (
-            soapPf = IporMath.divisionInt(qSoapPf, Constants.WAD_P2_YEAR_IN_SECONDS_INT),
-            soapRf = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT),
+            soapPayFixed = IporMath.divisionInt(qSoapPf, Constants.WAD_P2_YEAR_IN_SECONDS_INT),
+            soapReceiveFixed = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT),
             soap = IporMath.divisionInt(qSoap, Constants.WAD_P2_YEAR_IN_SECONDS_INT)
         );
     }
@@ -260,31 +262,31 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         external
         view
         override
-        returns (int256 soapPf)
+        returns (int256 soapPayFixed)
     {
         int256 qSoapPf = _calculateQuasiSoapPayFixed(ibtPrice, calculateTimestamp);
 
-        soapPf = IporMath.divisionInt(qSoapPf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
+        soapPayFixed = IporMath.divisionInt(qSoapPf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
     }
 
     function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
         override
-        returns (int256 soapRf)
+        returns (int256 soapReceiveFixed)
     {
         int256 qSoapRf = _calculateQuasiSoapReceiveFixed(ibtPrice, calculateTimestamp);
 
-        soapRf = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
+        soapReceiveFixed = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
     }
 
-    function addLiquidity(uint256 liquidityAmount) external override onlyJoseph {
-        require(liquidityAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool = _balances.liquidityPool + liquidityAmount.toUint128();
+    function addLiquidity(uint256 assetAmount) external override onlyJoseph {
+        require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_TOO_LOW);
+        _balances.liquidityPool = _balances.liquidityPool + assetAmount.toUint128();
     }
 
-    function subtractLiquidity(uint256 liquidityAmount) external override onlyJoseph {
-        _balances.liquidityPool = _balances.liquidityPool - liquidityAmount.toUint128();
+    function subtractLiquidity(uint256 assetAmount) external override onlyJoseph {
+        _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
     }
 
     function updateStorageWhenOpenSwapPayFixed(
@@ -294,8 +296,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
-            newSwap.openingFeeLPValue,
-            newSwap.openingFeeTreasuryValue,
+            newSwap.openingFeeLPAmount,
+            newSwap.openingFeeTreasuryAmount,
             cfgIporPublicationFeeAmount
         );
 
@@ -315,8 +317,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
-            newSwap.openingFeeLPValue,
-            newSwap.openingFeeTreasuryValue,
+            newSwap.openingFeeLPAmount,
+            newSwap.openingFeeTreasuryAmount,
             cfgIporPublicationFeeAmount
         );
         _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
@@ -372,7 +374,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
     }
 
-    function updateStorageWhenWithdrawFromStanley(uint256 withdrawnValue, uint256 vaultBalance)
+    function updateStorageWhenWithdrawFromStanley(uint256 withdrawnAmount, uint256 vaultBalance)
         external
         override
         onlyMilton
@@ -380,65 +382,65 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
-            vaultBalance + withdrawnValue >= currentVaultBalance,
+            vaultBalance + withdrawnAmount >= currentVaultBalance,
             MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
         );
-        uint256 interest = vaultBalance + withdrawnValue - currentVaultBalance;
+        uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
 
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
     }
 
-    function updateStorageWhenDepositToStanley(uint256 depositValue, uint256 vaultBalance)
+    function updateStorageWhenDepositToStanley(uint256 depositAmount, uint256 vaultBalance)
         external
         override
         onlyMilton
     {
-        require(vaultBalance >= depositValue, MiltonErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
+        require(vaultBalance >= depositAmount, MiltonErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
 
         require(
-            currentVaultBalance <= (vaultBalance - depositValue),
+            currentVaultBalance <= (vaultBalance - depositAmount),
             MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = currentVaultBalance != 0
-            ? (vaultBalance - currentVaultBalance - depositValue)
+            ? (vaultBalance - currentVaultBalance - depositAmount)
             : 0;
         _balances.vault = vaultBalance.toUint128();
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
     }
 
-    function updateStorageWhenTransferToCharlieTreasury(uint256 transferredValue)
+    function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount)
         external
         override
         onlyJoseph
     {
-        require(transferredValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(transferredAmount != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferredValue <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
 
-        balance = balance - transferredValue;
+        balance = balance - transferredAmount;
 
         _balances.iporPublicationFee = balance.toUint128();
     }
 
-    function updateStorageWhenTransferToTreasury(uint256 transferredValue)
+    function updateStorageWhenTransferToTreasury(uint256 transferredAmount)
         external
         override
         onlyJoseph
     {
-        require(transferredValue != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        require(transferredAmount != 0, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
 
         uint256 balance = _balances.treasury;
 
-        require(transferredValue <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
 
-        balance = balance - transferredValue;
+        balance = balance - transferredAmount;
 
         _balances.treasury = balance.toUint128();
     }
@@ -452,7 +454,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
 
     function setJoseph(address newJoseph) external override onlyOwner {
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-		address oldJoseph = _joseph;
+        address oldJoseph = _joseph;
         _joseph = newJoseph;
         emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
@@ -499,8 +501,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         internal
         view
         returns (
-            int256 soapPf,
-            int256 soapRf,
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
             int256 soap
         )
     {
@@ -512,7 +514,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsPayFixed.totalIbtQuantity,
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
-        int256 _soapPf = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
+        int256 _soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
 
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
@@ -522,14 +524,18 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
-        int256 _soapRf = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
-        return (soapPf = _soapPf, soapRf = _soapRf, soap = _soapPf + _soapRf);
+        int256 _soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
+        return (
+            soapPayFixed = _soapPayFixed,
+            soapReceiveFixed = _soapReceiveFixed,
+            soap = _soapPayFixed + _soapReceiveFixed
+        );
     }
 
     function _calculateQuasiSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
         internal
         view
-        returns (int256 soapPf)
+        returns (int256 soapPayFixed)
     {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
@@ -539,13 +545,13 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsPayFixed.totalIbtQuantity,
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
-        soapPf = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
+        soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
     }
 
     function _calculateQuasiSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
         internal
         view
-        returns (int256 soapRf)
+        returns (int256 soapReceiveFixed)
     {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
@@ -555,13 +561,13 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
-        soapRf = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
+        soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
     }
 
     function _updateBalancesWhenOpenSwapPayFixed(
         uint256 collateral,
-        uint256 openingFeeLPValue,
-        uint256 openingFeeTreasuryValue,
+        uint256 openingFeeLPAmount,
+        uint256 openingFeeTreasuryAmount,
         uint256 cfgIporPublicationFeeAmount
     ) internal {
         _balances.payFixedTotalCollateral =
@@ -572,14 +578,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             _balances.iporPublicationFee +
             cfgIporPublicationFeeAmount.toUint128();
 
-        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPValue.toUint128();
-        _balances.treasury = _balances.treasury + openingFeeTreasuryValue.toUint128();
+        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
+        _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenOpenSwapReceiveFixed(
         uint256 collateral,
-        uint256 openingFeeLPValue,
-        uint256 openingFeeTreasuryValue,
+        uint256 openingFeeLPAmount,
+        uint256 openingFeeTreasuryAmount,
         uint256 cfgIporPublicationFeeAmount
     ) internal {
         _balances.receiveFixedTotalCollateral =
@@ -589,8 +595,8 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
             _balances.iporPublicationFee +
             cfgIporPublicationFeeAmount.toUint128();
 
-        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPValue.toUint128();
-        _balances.treasury = _balances.treasury + openingFeeTreasuryValue.toUint128();
+        _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
+        _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(

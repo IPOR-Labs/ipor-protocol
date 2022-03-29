@@ -5,6 +5,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../interfaces/IIpToken.sol";
 import "../../interfaces/IJosephConfiguration.sol";
+import "../../interfaces/IJosephAdministration.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IStanley.sol";
@@ -13,7 +14,8 @@ import "../../security/IporOwnableUpgradeable.sol";
 abstract contract JosephConfiguration is
     PausableUpgradeable,
     IporOwnableUpgradeable,
-    IJosephConfiguration
+    IJosephConfiguration,
+    IJosephAdministration
 {
     uint256 internal constant _REDEEM_FEE_PERCENTAGE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
@@ -29,6 +31,14 @@ abstract contract JosephConfiguration is
     address internal _treasuryManager;
     address internal _charlieTreasury;
     address internal _charlieTreasuryManager;
+
+    function getVersion() external pure virtual override returns (uint256) {
+        return 1;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
 
     function getCharlieTreasury() external view override returns (address) {
         return _charlieTreasury;
@@ -101,8 +111,8 @@ abstract contract JosephConfiguration is
         return _getRedeemLpMaxUtilizationPercentage();
     }
 
-    function getMiltonStanleyBalancePercentage() external pure override returns (uint256) {
-        return _getMiltonStanleyBalancePercentage();
+    function getMiltonStanleyBalanceRatioPercentage() external pure override returns (uint256) {
+        return _getMiltonStanleyBalanceRatioPercentage();
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
@@ -115,7 +125,7 @@ abstract contract JosephConfiguration is
         return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
     }
 
-    function _getMiltonStanleyBalancePercentage() internal pure virtual returns (uint256) {
+    function _getMiltonStanleyBalanceRatioPercentage() internal pure virtual returns (uint256) {
         return _MILTON_STANLEY_BALANCE_PERCENTAGE;
     }
 }

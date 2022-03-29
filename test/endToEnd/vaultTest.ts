@@ -3,8 +3,8 @@ const { expect } = require("chai");
 import {
     ERC20,
     MiltonFaucet,
-    AaveStrategy,
-    CompoundStrategy,
+    StrategyAave,
+    StrategyCompound,
     StanleyDai,
     StanleyUsdc,
     StanleyUsdt,
@@ -33,13 +33,13 @@ describe("End to End tests on mainnet fork", function () {
 
     let miltonFaucet: MiltonFaucet;
 
-    let strategyAaveDai: AaveStrategy;
-    let strategyAaveUsdc: AaveStrategy;
-    let strategyAaveUsdt: AaveStrategy;
+    let strategyAaveDai: StrategyAave;
+    let strategyAaveUsdc: StrategyAave;
+    let strategyAaveUsdt: StrategyAave;
 
-    let strategyCompoundDai: CompoundStrategy;
-    let strategyCompoundUsdc: CompoundStrategy;
-    let strategyCompoundUsdt: CompoundStrategy;
+    let strategyCompoundDai: StrategyCompound;
+    let strategyCompoundUsdc: StrategyCompound;
+    let strategyCompoundUsdt: StrategyCompound;
 
     let stanleyDai: StanleyDai;
     let stanleyUsdc: StanleyUsdc;

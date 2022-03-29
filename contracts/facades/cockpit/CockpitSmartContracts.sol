@@ -8,8 +8,8 @@ import "../../amm/Milton.sol";
 import "../../amm/MiltonStorage.sol";
 import "../../amm/pool/Joseph.sol";
 import "../../vault/Stanley.sol";
-import "../../vault/strategy/AaveStrategy.sol";
-import "../../vault/strategy/CompoundStartegy.sol";
+import "../../vault/strategy/StrategyAave.sol";
+import "../../vault/strategy/StartegyCompound.sol";
 import "../../itf/ItfMilton.sol";
 import "../../itf/ItfJoseph.sol";
 import "../../mocks/stanley/compound/MockCToken.sol";
@@ -69,17 +69,17 @@ contract MiltonStorageUsdc is MiltonStorage {}
 
 contract MiltonStorageDai is MiltonStorage {}
 
-contract StrategyAaveUsdt is AaveStrategy {}
+contract StrategyAaveUsdt is StrategyAave {}
 
-contract StrategyAaveUsdc is AaveStrategy {}
+contract StrategyAaveUsdc is StrategyAave {}
 
-contract StrategyAaveDai is AaveStrategy {}
+contract StrategyAaveDai is StrategyAave {}
 
-contract StrategyCompoundUsdt is CompoundStrategy {}
+contract StrategyCompoundUsdt is StrategyCompound {}
 
-contract StrategyCompoundUsdc is CompoundStrategy {}
+contract StrategyCompoundUsdc is StrategyCompound {}
 
-contract StrategyCompoundDai is CompoundStrategy {}
+contract StrategyCompoundDai is StrategyCompound {}
 
 contract MockCDai is MockCToken {
     constructor(address asset, address interestRateModel)

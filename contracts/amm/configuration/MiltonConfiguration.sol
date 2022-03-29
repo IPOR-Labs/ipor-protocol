@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
+import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/IIpToken.sol";
 import "../../interfaces/IWarren.sol";
 import "../../interfaces/IMiltonConfiguration.sol";
@@ -51,6 +52,19 @@ abstract contract MiltonConfiguration is
     IMiltonSpreadModel internal _miltonSpreadModel;
     IStanley internal _stanley;
 
+    modifier onlyJoseph() {
+        require(msg.sender == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+        _;
+    }
+
+    function getVersion() external pure virtual override returns (uint256) {
+        return 1;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
+
     function getMiltonSpreadModel() external view override returns (address) {
         return address(_miltonSpreadModel);
     }
@@ -97,13 +111,6 @@ abstract contract MiltonConfiguration is
 
     function getJoseph() external view override returns (address) {
         return _joseph;
-    }
-
-    function setJoseph(address newJoseph) external override onlyOwner whenNotPaused {
-        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-        address oldJoseph = _joseph;
-        _joseph = newJoseph;
-        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
