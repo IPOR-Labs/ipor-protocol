@@ -303,6 +303,8 @@ export const prepareApproveForUsers = async (
 
 export const setupTokenDaiInitialValuesForUsers = async (users: Signer[], testData: TestData) => {
     for (let i = 0; i < users.length; i++) {
+        console.log("XXXXXXXX");
+        console.log(testData?.tokenDai?.address);
         await testData?.tokenDai?.setupInitialAmount(
             await users[i].getAddress(),
             USER_SUPPLY_10MLN_18DEC

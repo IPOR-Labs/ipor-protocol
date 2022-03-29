@@ -3,9 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     USD_28_000_18DEC,
-    PERCENTAGE_3_18DEC,
     N1__0_18DEC,
-    USD_14_000_18DEC,
     PERCENTAGE_5_18DEC,
     LEVERAGE_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -31,7 +29,6 @@ import {
     prepareTestData,
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
-    getPayFixedDerivativeParamsDAICase1,
     setupTokenUsdtInitialValuesForUsers,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
@@ -45,7 +42,6 @@ import {
     testCaseIdsPaginationReceiveFixed,
     testCaseIdsPagination,
 } from "../utils/MiltonStorageUtils";
-import { zeroPad } from "ethers/lib/utils";
 
 const { expect } = chai;
 

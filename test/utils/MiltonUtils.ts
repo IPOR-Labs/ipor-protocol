@@ -1,3 +1,4 @@
+import { Signer, BigNumber } from "ethers";
 import hre from "hardhat";
 
 import {
@@ -34,7 +35,10 @@ import {
     MockCase4MiltonDai,
     MockCase5MiltonDai,
     MockCase6MiltonDai,
+    UsdtMockedToken,
 } from "../../types";
+
+import { USD_10_000_6DEC, LEVERAGE_18DEC, N0__01_18DEC } from "./Constants";
 
 const { ethers } = hre;
 
@@ -155,6 +159,64 @@ export const getMockMiltonUsdcCase = async (
 export const getMockMiltonDaiCase = async (
     miltonCase: MiltonDaiCase
 ): Promise<MiltonDaiMockCase> => {
+    console.log(miltonCase);
     const MockCaseMilton = await ethers.getContractFactory(miltonCase);
     return (await MockCaseMilton.deploy()) as MiltonDaiMockCase;
+};
+
+export const prepareMiltonSpreadCase6 = async () => {
+    const MockCase6MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase6MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase8 = async () => {
+    const MockCase8MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase8MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase8MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase9 = async () => {
+    const MockCase9MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase9MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase9MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase10 = async () => {
+    const MockCase10MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase10MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase10MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase11 = async () => {
+    const MockCase11MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase11MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase11MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: UsdtMockedToken) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
 };
