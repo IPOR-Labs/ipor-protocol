@@ -50,10 +50,11 @@ library AmmTypes {
         uint256 collateral;
         /// @notice Swap's notional
         uint256 notionalAmount;
-        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool 
+        /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool
         uint256 openingFeeLPValue;
+        /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
 		/// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
-        uint256 openingFeeTreasuryValue;        
+        uint256 openingFeeTreasuryValue;
         /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 iporPublicationAmount;
         /// @notice Liquidation deposit is retained when the swap is opened.

@@ -77,11 +77,16 @@ describe("AAVE strategy", () => {
 
     it("Should be able to setup Stanley", async () => {
         //given
-        const stanleyAddress = await userTwo.getAddress(); // random address
+        const newStanleyAddress = await userTwo.getAddress(); // random address
+        const oldStanleyAddress = await aaveStrategyInstance.getStanley();
         //when
-        await expect(aaveStrategyInstance.setStanley(stanleyAddress))
+        await expect(aaveStrategyInstance.setStanley(newStanleyAddress))
             .to.emit(aaveStrategyInstance, "StanleyChanged")
-            .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstance.address);
+            .withArgs(
+                await admin.getAddress,
+                oldStanleyAddress,
+                newStanleyAddress
+            );
     });
 
     it("Should not be able to setup Stanley when non owner want to setup new address", async () => {

@@ -72,6 +72,10 @@ abstract contract Milton is
         return 1;
     }
 
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
+
     function getAccruedBalance()
         external
         view
