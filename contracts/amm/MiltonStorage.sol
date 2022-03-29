@@ -42,7 +42,7 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         __Ownable_init();
     }
 
-    function getVersion() external pure override virtual returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 1;
     }
 
@@ -443,16 +443,18 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         _balances.treasury = balance.toUint128();
     }
 
-    function setMilton(address milton) external override onlyOwner {
-        require(milton != address(0), IporErrors.WRONG_ADDRESS);
-        _milton = milton;
-        emit MiltonChanged(msg.sender, milton);
+    function setMilton(address newMilton) external override onlyOwner {
+        require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
+        address oldMilton = _milton;
+        _milton = newMilton;
+        emit MiltonChanged(msg.sender, oldMilton, newMilton);
     }
 
-    function setJoseph(address joseph) external override onlyOwner {
-        require(joseph != address(0), IporErrors.WRONG_ADDRESS);
-        _joseph = joseph;
-        emit JosephChanged(msg.sender, joseph);
+    function setJoseph(address newJoseph) external override onlyOwner {
+        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
+		address oldJoseph = _joseph;
+        _joseph = newJoseph;
+        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
 
     function _getPositions(

@@ -99,10 +99,11 @@ abstract contract MiltonConfiguration is
         return _joseph;
     }
 
-    function setJoseph(address joseph) external override onlyOwner whenNotPaused {
-        require(joseph != address(0), IporErrors.WRONG_ADDRESS);
-        _joseph = joseph;
-        emit JosephChanged(joseph);
+    function setJoseph(address newJoseph) external override onlyOwner whenNotPaused {
+        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
+        address oldJoseph = _joseph;
+        _joseph = newJoseph;
+        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
 
     function _getDecimals() internal pure virtual returns (uint256);

@@ -12,7 +12,7 @@ interface IStanley {
     function getAsset() external view returns (address);
 
     /// @notice Gets total balance of account `who`,  transferred to Stanley and earned by Stanley using external DeFi protocols.
-    /// @who Account for which total balance is returned.
+    /// @param who Account for which total balance is returned.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
     function totalBalance(address who) external view returns (uint256);
 

@@ -63,31 +63,32 @@ interface IStrategy {
 
     // TODO: ADD test for events into fork test
     /// @notice Emmited when doClaim function was executed.
-    /// @param strategy strategy address where claim was executed.
-    /// @param shareTokens
+    /// @param claimedBy account who execute claim action
+    /// @param shareToken share token assocciated with one strategy
+    /// @param treasury Treasury address where claimed tokens are transferred.
+    /// @param amount S
     event DoClaim(
-        address indexed strategy,
-        address[] shareTokens,
-        address claimAddress,
+        address indexed claimedBy,
+        address indexed shareToken,
+        address indexed treasury,
         uint256 amount
     );
 
     /// @notice Emmited when beforeClaim function was executed.
-    //TODO: check emition
-    event DoBeforeClaim(address strategy, address[] assets);
+    /// @param executedBy account who execute before claim action
+    /// @param shareTokens list of share tokens related with this strategy
+    event DoBeforeClaim(address indexed executedBy, address[] shareTokens);
 
     /// @notice Emmited when Treasury address changed
     /// @param changedBy account address who changed Treasury address
     /// @param oldTreasury old Treasury address
     /// @param newTreasury new Treasury address
-    //TODO: check emition
     event TreasuryChanged(address changedBy, address oldTreasury, address newTreasury);
 
     /// @notice Emmited when Treasury Manager address changed
     /// @param changedBy account address who changed Treasury Manager address
     /// @param oldTreasuryManager old Treasury Manager address
     /// @param newTreasuryManager new Treasury Manager address
-    //TODO: check emition
     event TreasuryManagerChanged(
         address changedBy,
         address oldTreasuryManager,
@@ -98,6 +99,15 @@ interface IStrategy {
     /// @param changedBy account address who changed Stk AAVE address
     /// @param oldStkAave old Stk Aave address
     /// @param newStkAave new Stk Aave address
-    //TODO: check emition
     event StkAaveChanged(address changedBy, address oldStkAave, address newStkAave);
+
+    /// @notice Emmited when blocks per year changed by Owner.
+    /// @param changedBy account address who changed blocks per year
+    /// @param oldBlocksPerYear old value blocks per year
+    /// @param newBlocksPerYear new value blocks per year
+    event BlocksPerYearChanged(
+        address changedBy,
+        uint256 oldBlocksPerYear,
+        uint256 newBlocksPerYear
+    );
 }

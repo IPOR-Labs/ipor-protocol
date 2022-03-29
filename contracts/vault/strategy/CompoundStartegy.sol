@@ -170,40 +170,48 @@ contract CompoundStrategy is
      * @notice claim can only done by owner.
      */
     function doClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
+        address treasury = _treasury;
+
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+
         address[] memory assets = new address[](1);
         assets[0] = address(_shareToken);
+
         _comptroller.claimComp(address(this), assets);
-        uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(_treasury, compBal);
-        emit DoClaim(address(this), assets, _treasury, compBal);
+
+        uint256 balance = _compToken.balanceOf(address(this));
+
+        _compToken.safeTransfer(treasury, balance);
+
+        emit DoClaim(msg.sender, address(_shareToken), treasury, balance);
     }
 
-    function setStanley(address stanley) external whenNotPaused onlyOwner {
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        _stanley = stanley;
-        emit StanleyChanged(msg.sender, stanley, address(this));
+    function setStanley(address newStanley) external whenNotPaused onlyOwner {
+        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
+        address oldStanley = _stanley;
+        _stanley = newStanley;
+        emit StanleyChanged(msg.sender, oldStanley, newStanley);
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
+        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = manager;
-        emit TreasuryManagerChanged(address(this), manager);
+        emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, manager);
     }
 
-    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
-        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
-        _treasury = treasury;
-        emit TreasuryChanged(address(this), treasury);
+    function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
+        require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
+        address oldTreasury = _treasury;
+        _treasury = newTreasury;
+        emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
     }
-
-    /**
-     * @dev set blocks per year.
-     * @param blocksPerYear amount to deposit in aave lending.
-     */
-    function setBlocksPerYear(uint256 blocksPerYear) external whenNotPaused onlyOwner {
-        require(blocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        _blocksPerYear = blocksPerYear;
+    
+    function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
+        require(newBlocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        uint256 oldBlocksPerYear = _blocksPerYear;
+        _blocksPerYear = newBlocksPerYear;
+        emit BlocksPerYearChanged(msg.sender, oldBlocksPerYear, newBlocksPerYear);
     }
 
     //solhint-disable no-empty-blocks

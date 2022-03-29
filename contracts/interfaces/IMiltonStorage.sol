@@ -105,7 +105,7 @@ interface IMiltonStorage {
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Pay Fixed and Receive Fixed Ids with theirs direction.
-    /// @return swaps array where one element is {MiltonStorageTypes.IporSwapId}
+    /// @return ids array where one element is {MiltonStorageTypes.IporSwapId}
     function getSwapIds(
         address account,
         uint256 offset,
@@ -191,7 +191,8 @@ interface IMiltonStorage {
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close receive fixed swap. Function available only for Milton.
+    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close receive fixed swap.
+    /// Function available only for Milton.
     /// @param liquidator account address who closes swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
@@ -208,7 +209,7 @@ interface IMiltonStorage {
         uint256 closingTimestamp,
         uint256 cfgIncomeFeePercentage,
         uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
-        uint256 secondsToMaturityWhenPositionCanBeClosed
+        uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
     /// @notice Updates balance when Joseph withdraws Milton's cash from Stanley. Function available only for Milton.

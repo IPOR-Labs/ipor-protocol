@@ -31,7 +31,7 @@ interface IWarren {
     /// @notice Gets accrued IPOR Index indicators for a given timestamp and asset .
     /// @param calculateTimestamp time of accrued IPOR Index calculation
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
-    /// @return structure {IporTypes.AccruedIpor}
+    /// @return accruedIpor structure {IporTypes.AccruedIpor}
     function getAccruedIndex(uint256 calculateTimestamp, address asset)
         external
         view

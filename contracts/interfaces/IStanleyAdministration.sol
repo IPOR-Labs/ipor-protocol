@@ -19,7 +19,7 @@ interface IStanleyAdministration {
 
     /// @notice Sets Milton address. Function available only for Owner.
     /// @dev Emits {MiltonChanged} event
-    /// @newMilton new Milton address.
+    /// @param newMilton new Milton address.
     function setMilton(address newMilton) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner.
@@ -34,7 +34,7 @@ interface IStanleyAdministration {
     /// @param changedBy account address who executes migrations
     /// @param oldStrategy old strategy address where assets was before migration
     /// @param newStrategy new strategy address where assets was migrated
-    /// @param amount final amount of assets which was migrated between strategies
+    /// @param amount final amount of assets which was migrated between strategies, represented in 18 decimals
     event AssetMigrated(
         address changedBy,
         address oldStrategy,
@@ -46,12 +46,12 @@ interface IStanleyAdministration {
     /// @param changedBy account address who changed strategy address
     /// @param oldStrategy old strategy address
     /// @param newStrategy new strategy address
-    /// @param shareToken strategy share token address
+    /// @param newShareToken strategy share token address
     event StrategyChanged(
         address changedBy,
         address oldStrategy,
         address newStrategy,
-        address shareToken
+        address newShareToken
     );
 
     /// @notice Emmited when Milton address changed by smart contract Owner.

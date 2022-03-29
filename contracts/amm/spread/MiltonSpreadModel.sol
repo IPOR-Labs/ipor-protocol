@@ -22,8 +22,9 @@ contract MiltonSpreadModel is
         __Ownable_init();
     }
 
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
 
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
@@ -357,4 +358,7 @@ contract MiltonSpreadModel is
             return exponentialMovingAverage;
         }
     }
+
+    //solhint-disable no-empty-blocks
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 }
