@@ -164,6 +164,42 @@ export const getMockMiltonDaiCase = async (
     return (await MockCaseMilton.deploy()) as MiltonDaiMockCase;
 };
 
+export const prepareMiltonSpreadCase2 = async () => {
+    const MockCase2MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase2MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase2MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase3 = async () => {
+    const MockCase3MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase3MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase3MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase4 = async () => {
+    const MockCase4MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase4MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase4MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadCase5 = async () => {
+    const MockCase5MiltonSpreadModel = await ethers.getContractFactory(
+        "MockCase5MiltonSpreadModel"
+    );
+    const miltonSpread = await MockCase5MiltonSpreadModel.deploy();
+    await miltonSpread.initialize();
+    return miltonSpread;
+};
+
 export const prepareMiltonSpreadCase6 = async () => {
     const MockCase6MiltonSpreadModel = await ethers.getContractFactory(
         "MockCase6MiltonSpreadModel"

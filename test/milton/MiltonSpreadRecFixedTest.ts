@@ -2,20 +2,10 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    USD_28_000_18DEC,
     N1__0_18DEC,
     N0__001_18DEC,
-    PERCENTAGE_5_18DEC,
     PERCENTAGE_3_18DEC,
-    LEVERAGE_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
-    N0__1_18DEC,
-    PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_6_HOURS_IN_SECONDS,
-    PERCENTAGE_95_18DEC,
-    USD_28_000_6DEC,
-    USD_10_000_6DEC,
-    N1__0_6DEC,
     USD_100_18DEC,
     USD_500_18DEC,
     USD_15_000_18DEC,
@@ -48,15 +38,6 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
-import {
-    preprareSwapPayFixedStruct18DecSimpleCase1,
-    openSwapPayFixed,
-    testCasePaginationPayFixed,
-    testCasePaginationReceiveFixed,
-    testCaseIdsPaginationPayFixed,
-    testCaseIdsPaginationReceiveFixed,
-    testCaseIdsPagination,
-} from "../utils/MiltonStorageUtils";
 
 const { expect } = chai;
 
@@ -66,13 +47,11 @@ describe("MiltonSpreadRecFixed", () => {
         userOne: Signer,
         userTwo: Signer,
         userThree: Signer,
-        liquidityProvider: Signer,
-        miltonStorageAddress: Signer;
+        liquidityProvider: Signer;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
-            await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premium < Spread Premium Max Value, refLeg < spreadPremiums", async () => {
@@ -770,8 +749,7 @@ describe("MiltonSpreadRecFixed", () => {
             "IPOR_322"
         );
     });
-    // TODO FIXIT
-    it.skip("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
+    it("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
