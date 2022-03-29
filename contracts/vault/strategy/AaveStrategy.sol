@@ -211,6 +211,10 @@ contract AaveStrategy is
         }
     }
 
+    function getStanley() external view override returns (address) {
+        return _stanley;
+    }
+
     function setStanley(address newStanley) external override whenNotPaused onlyOwner {
         require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
         address oldStanley = _stanley;

@@ -70,6 +70,10 @@ contract MockStrategy is IStrategy {
 
     function beforeClaim() external {}
 
+    function getStanley() external view override returns (address) {
+        return _stanley;
+    }
+
     function setStanley(address stanley) external {
         _stanley = stanley;
     }

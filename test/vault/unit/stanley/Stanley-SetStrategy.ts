@@ -54,11 +54,17 @@ describe("Stanley -> StrategyChanged", () => {
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
             await newAaveStrategy.setAsset(DAI.address);
+            const oldStrategyAddress = aaveStrategy.address;
             //when
             await expect(stanley.setAaveStrategy(newAaveStrategy.address))
                 //then
                 .to.emit(stanley, "StrategyChanged")
-                .withArgs(newAaveStrategy.address, DAI.address);
+                .withArgs(
+                    await admin.getAddress,
+                    oldStrategyAddress,
+                    newAaveStrategy.address,
+                    DAI.address
+                );
         });
 
         it("Should not setup new strategy when underlying Token don't match", async () => {
@@ -92,11 +98,17 @@ describe("Stanley -> StrategyChanged", () => {
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
             await newCompoundStrategy.setAsset(DAI.address);
+            const oldStrategyAddress = compoundStrategy.address;
             //when
             await expect(stanley.setCompoundStrategy(newCompoundStrategy.address))
                 //then
                 .to.emit(stanley, "StrategyChanged")
-                .withArgs(newCompoundStrategy.address, DAI.address);
+                .withArgs(
+                    await admin.getAddress,
+                    oldStrategyAddress,
+                    newCompoundStrategy.address,
+                    DAI.address
+                );
             //then
         });
 

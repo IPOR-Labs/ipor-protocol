@@ -186,6 +186,10 @@ contract CompoundStrategy is
         emit DoClaim(msg.sender, address(_shareToken), treasury, balance);
     }
 
+    function getStanley() external view override returns (address) {
+        return _stanley;
+    }
+
     function setStanley(address newStanley) external whenNotPaused onlyOwner {
         require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
         address oldStanley = _stanley;
@@ -206,7 +210,7 @@ contract CompoundStrategy is
         _treasury = newTreasury;
         emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
     }
-    
+
     function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
         require(newBlocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         uint256 oldBlocksPerYear = _blocksPerYear;

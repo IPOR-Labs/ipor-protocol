@@ -35,6 +35,9 @@ interface IStrategy {
     /// @notice Claim rewards. Function can be executed by anyone.
     function doClaim() external;
 
+    /// @notice Gets Stanley address.
+    function getStanley() external view returns (address);
+
     /// @notice Sets new Stanley address. Function can be executed only by smart contract Owner.
     /// @param newStanley new Stanley address
     function setStanley(address newStanley) external;
