@@ -1,6 +1,17 @@
-import { DaiMockedToken } from "../../types";
+import chai from "chai";
+import {
+    DaiMockedToken,
+    UsdtMockedToken,
+    UsdcMockedToken,
+    MiltonUsdt,
+    MiltonUsdc,
+    MiltonDai,
+} from "../../types";
 import { BigNumber, Signer } from "ethers";
-import { N1__0_18DEC, TC_50_000_18DEC } from "../utils/Constants";
+import { N1__0_18DEC, TC_50_000_18DEC, ZERO } from "../utils/Constants";
+import { TestData } from "./DataUtils";
+
+const { expect } = chai;
 
 export enum SwapState {
     "INACTIVE",
@@ -20,6 +31,21 @@ export type SWAP = {
     notionalAmount: BigNumber;
     ibtQuantity: BigNumber;
     fixedInterestRate: BigNumber;
+};
+
+export type Params = {
+    asset?: UsdcMockedToken | UsdtMockedToken | DaiMockedToken;
+    miltonUsdt?: MiltonUsdt;
+    miltonUsdc?: MiltonUsdc;
+    miltonDai?: MiltonDai;
+    expectedSoap?: BigNumber;
+    totalAmount?: BigNumber;
+    toleratedQuoteValue?: BigNumber;
+    leverage?: BigNumber;
+    direction?: number;
+    openTimestamp?: BigNumber;
+    from: Signer;
+    calculateTimestamp?: BigNumber;
 };
 
 export const prepareSwapPayFixedCase1 = async (
@@ -48,4 +74,150 @@ export const prepareSwapPayFixedCase1 = async (
         fixedInterestRate: fixedInterestRate,
     };
     return swap;
+};
+
+export const openSwapReceiveFixed = async (testData: TestData, params: Params) => {
+    if (
+        testData.miltonUsdt &&
+        testData.tokenUsdt &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdt.address
+    ) {
+        await testData.miltonUsdt
+            .connect(params.from)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+
+    if (
+        testData.miltonUsdc &&
+        testData.tokenUsdc &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdc.address
+    ) {
+        await testData.miltonUsdc
+            .connect(params.from)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+
+    if (
+        testData.miltonDai &&
+        testData.tokenDai &&
+        params.asset &&
+        params.asset.address === testData.tokenDai.address
+    ) {
+        await testData.miltonDai
+            .connect(params.from)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+};
+
+export const openSwapPayFixed = async (testData: TestData, params: Params) => {
+    if (
+        testData.miltonUsdt &&
+        testData.tokenUsdt &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdt.address
+    ) {
+        await testData.miltonUsdt
+            .connect(params.from)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+
+    if (
+        testData.miltonUsdc &&
+        testData.tokenUsdc &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdc.address
+    ) {
+        await testData.miltonUsdc
+            .connect(params.from)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+
+    if (
+        testData.miltonDai &&
+        testData.tokenDai &&
+        params.asset &&
+        params.asset.address === testData.tokenDai.address
+    ) {
+        await testData.miltonDai
+            .connect(params.from)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp || ZERO,
+                params.totalAmount || ZERO,
+                params.toleratedQuoteValue || ZERO,
+                params.leverage || ZERO
+            );
+    }
+};
+
+export const assertSoap = async (testData: TestData, params: Params) => {
+    const actualSoapStruct = await calculateSoap(testData, params);
+    const actualSoap = actualSoapStruct?.soap;
+
+    //then
+    expect(
+        params.expectedSoap,
+        `Incorrect SOAP for asset ${params.asset} actual: ${actualSoap}, expected: ${params.expectedSoap}`
+    ).to.be.eq(actualSoap);
+};
+
+export const calculateSoap = async (testData: TestData, params: Params) => {
+    if (
+        testData.miltonUsdt &&
+        testData.tokenUsdt &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdt.address
+    ) {
+        return await testData.miltonUsdt
+            .connect(params.from)
+            .itfCalculateSoap(params.calculateTimestamp || ZERO);
+    }
+
+    if (
+        testData.miltonUsdc &&
+        testData.tokenUsdc &&
+        params.asset &&
+        params.asset.address === testData.tokenUsdc.address
+    ) {
+        return await testData.miltonUsdc
+            .connect(params.from)
+            .itfCalculateSoap(params.calculateTimestamp || ZERO);
+    }
+
+    if (
+        testData.miltonDai &&
+        testData.tokenDai &&
+        params.asset &&
+        params.asset.address === testData.tokenDai.address
+    ) {
+        return await testData.miltonDai
+            .connect(params.from)
+            .itfCalculateSoap(params.calculateTimestamp || ZERO);
+    }
 };

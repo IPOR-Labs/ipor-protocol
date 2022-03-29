@@ -35,9 +35,11 @@ export const USD_10_000_000_18DEC = BigNumber.from("10000000").mul(N1__0_18DEC);
 export const PERCENTAGE_2_5_18DEC = BigNumber.from("25").mul(N0__001_18DEC);
 export const PERCENTAGE_3_18DEC = BigNumber.from("3").mul(N0__01_18DEC);
 export const PERCENTAGE_5_18DEC = BigNumber.from("5").mul(N0__01_18DEC);
+export const PERCENTAGE_6_18DEC = BigNumber.from("6").mul(N0__01_18DEC);
 export const PERCENTAGE_8_18DEC = BigNumber.from("8").mul(N0__01_18DEC);
 export const PERCENTAGE_50_18DEC = BigNumber.from("50").mul(N0__01_18DEC);
 export const PERCENTAGE_95_18DEC = BigNumber.from("95").mul(N0__01_18DEC);
+export const PERCENTAGE_120_18DEC = BigNumber.from("120").mul(N0__01_18DEC);
 
 export const TC_50_000_18DEC = BigNumber.from("50000").mul(N1__0_18DEC);
 export const TC_TOTAL_AMOUNT_10_000_18DEC = BigNumber.from("10000").mul(N1__0_18DEC);
@@ -63,6 +65,8 @@ export const USD_14_000_6DEC = BigNumber.from("14000").mul(N1__0_6DEC);
 export const USD_28_000_6DEC = BigNumber.from("28000").mul(N1__0_6DEC);
 export const USD_50_000_6DEC = BigNumber.from("50000").mul(N1__0_6DEC);
 
+export const PERCENTAGE_6_6DEC = BigNumber.from("6").mul(N1__0_6DEC);
+
 export const TOTAL_SUPPLY_6_DECIMALS = BigNumber.from("100000000000000").mul(N1__0_6DEC);
 export const TC_TOTAL_AMOUNT_100_6DEC = BigNumber.from("100").mul(N1__0_6DEC);
 
@@ -75,3 +79,6 @@ export const YEAR_IN_SECONDS = BigNumber.from("31536000");
 export const PERIOD_25_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 25);
 export const PERIOD_6_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 6);
 export const SWAP_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
+export const PERIOD_50_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 50);
+export const PERIOD_28_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 28);
+export const PERIOD_1_DAY_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 1);
