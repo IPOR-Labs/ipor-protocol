@@ -9,7 +9,7 @@ import { MockStrategy, StanleyDai, TestERC20 } from "../../../../types";
 chai.use(solidity);
 const { expect } = chai;
 
-describe("Stanley -> SetStrategy", () => {
+describe("Stanley -> StrategyChanged", () => {
     let admin: Signer;
     let stanley: StanleyDai;
     let DAI: TestERC20;
@@ -54,11 +54,17 @@ describe("Stanley -> SetStrategy", () => {
             const newAaveStrategy = await NewAaveStrategy.deploy();
             await newAaveStrategy.setShareToken(DAI.address);
             await newAaveStrategy.setAsset(DAI.address);
+            const oldStrategyAddress = aaveStrategy.address;
             //when
             await expect(stanley.setAaveStrategy(newAaveStrategy.address))
                 //then
-                .to.emit(stanley, "SetStrategy")
-                .withArgs(newAaveStrategy.address, DAI.address);
+                .to.emit(stanley, "StrategyChanged")
+                .withArgs(
+                    await admin.getAddress,
+                    oldStrategyAddress,
+                    newAaveStrategy.address,
+                    DAI.address
+                );
         });
 
         it("Should not setup new strategy when underlying Token don't match", async () => {
@@ -92,11 +98,17 @@ describe("Stanley -> SetStrategy", () => {
             const newCompoundStrategy = await NewCompoundStrategy.deploy();
             await newCompoundStrategy.setShareToken(DAI.address);
             await newCompoundStrategy.setAsset(DAI.address);
+            const oldStrategyAddress = compoundStrategy.address;
             //when
             await expect(stanley.setCompoundStrategy(newCompoundStrategy.address))
                 //then
-                .to.emit(stanley, "SetStrategy")
-                .withArgs(newCompoundStrategy.address, DAI.address);
+                .to.emit(stanley, "StrategyChanged")
+                .withArgs(
+                    await admin.getAddress,
+                    oldStrategyAddress,
+                    newCompoundStrategy.address,
+                    DAI.address
+                );
             //then
         });
 

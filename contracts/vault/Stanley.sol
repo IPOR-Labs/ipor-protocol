@@ -17,6 +17,7 @@ import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "hardhat/console.sol";
 
+/// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
     UUPSUpgradeable,
     PausableUpgradeable,
@@ -70,6 +71,14 @@ abstract contract Stanley is
 
     function _getDecimals() internal pure virtual returns (uint256);
 
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
+
     function totalBalance(address who) external view override returns (uint256) {
         return _totalBalance(who);
     }
@@ -113,12 +122,6 @@ abstract contract Stanley is
         return assetBalanceAave + assetBalanceCompound + amount;
     }
 
-    /**
-     * @dev to withdraw asset from current strategy.
-     * @notice only owner can withdraw.
-     * @param amount underlying token amount represented in 18 decimals
-            Shares means aTokens, cTokens
-    */
     function withdraw(uint256 amount)
         external
         override
@@ -291,7 +294,7 @@ abstract contract Stanley is
     }
 
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
-    function migrateAssetToStrategyWithMaxApy() external whenNotPaused onlyOwner {
+    function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
         (
             IStrategy strategyMaxApy,
             IStrategy strategyAave,
@@ -317,7 +320,7 @@ abstract contract Stanley is
         uint256 wadAmount = IporMath.convertToWad(amount, decimals);
         _depositToStrategy(strategyMaxApy, wadAmount);
 
-        emit MigrateAsset(from, address(strategyMaxApy), wadAmount);
+        emit AssetMigrated(msg.sender, from, address(strategyMaxApy), wadAmount);
     }
 
     function setAaveStrategy(address strategyAddress) external override whenNotPaused onlyOwner {
@@ -328,10 +331,11 @@ abstract contract Stanley is
         _setCompoundStrategy(strategy);
     }
 
-    function setMilton(address milton) external override whenNotPaused onlyOwner {
-        require(milton != address(0), IporErrors.WRONG_ADDRESS);
-        _milton = milton;
-        emit MiltonChanged(msg.sender, milton);
+    function setMilton(address newMilton) external override whenNotPaused onlyOwner {
+        require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
+        address oldMilton = _milton;
+        _milton = newMilton;
+        emit MiltonChanged(msg.sender, oldMilton, newMilton);
     }
 
     function pause() external override onlyOwner {
@@ -375,22 +379,24 @@ abstract contract Stanley is
     function _setCompoundStrategy(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
+        address oldStrategy = _compoundStrategy;
+        address oldShareToken = _compoundShareToken;
+
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
         IStrategy strategy = IStrategy(newStrategy);
-        IERC20Upgradeable shareToken = IERC20Upgradeable(_compoundShareToken);
+        IERC20Upgradeable shareToken = IERC20Upgradeable(oldShareToken);
 
         require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
-        if (_compoundStrategy != address(0)) {
-            asset.safeApprove(_compoundStrategy, 0);
-            shareToken.safeApprove(_compoundStrategy, 0);
+        if (oldStrategy != address(0)) {
+            asset.safeApprove(oldStrategy, 0);
+            shareToken.safeApprove(oldStrategy, 0);
         }
 
+        IERC20Upgradeable newShareToken = IERC20Upgradeable(IStrategy(newStrategy).getShareToken());
         _compoundStrategy = newStrategy;
-        _compoundShareToken = IStrategy(newStrategy).getShareToken();
-
-        IERC20Upgradeable newShareToken = IERC20Upgradeable(_compoundShareToken);
+        _compoundShareToken = address(newShareToken);
 
         asset.safeApprove(newStrategy, 0);
         asset.safeApprove(newStrategy, type(uint256).max);
@@ -398,11 +404,14 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit SetStrategy(newStrategy, _compoundShareToken);
+        emit StrategyChanged(msg.sender, oldStrategy, newStrategy, address(newShareToken));
     }
 
     function _setAaveStrategy(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
+
+        address oldStrategy = _aaveStrategy;
+        address oldShareToken = _aaveShareToken;
 
         IERC20Upgradeable asset = ERC20Upgradeable(_asset);
 
@@ -410,15 +419,14 @@ abstract contract Stanley is
 
         require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
-        if (_aaveStrategy != address(0)) {
-            asset.safeApprove(_aaveStrategy, 0);
-            IERC20Upgradeable(_aaveShareToken).safeApprove(_aaveStrategy, 0);
+        if (oldStrategy != address(0)) {
+            asset.safeApprove(oldStrategy, 0);
+            IERC20Upgradeable(oldShareToken).safeApprove(oldStrategy, 0);
         }
 
-        _aaveShareToken = strategy.getShareToken();
+        IERC20Upgradeable newShareToken = IERC20Upgradeable(strategy.getShareToken());
+        _aaveShareToken = address(newShareToken);
         _aaveStrategy = newStrategy;
-
-        IERC20Upgradeable newShareToken = IERC20Upgradeable(_aaveShareToken);
 
         asset.safeApprove(newStrategy, 0);
         asset.safeApprove(newStrategy, type(uint256).max);
@@ -426,7 +434,7 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit SetStrategy(newStrategy, _aaveShareToken);
+        emit StrategyChanged(msg.sender, oldStrategy, newStrategy, address(newShareToken));
     }
 
     /**

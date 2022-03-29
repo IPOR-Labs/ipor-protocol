@@ -43,9 +43,9 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
 
     function setJoseph(address newJoseph) external override onlyOwner {
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
+        address oldJoseph = _joseph;
         _joseph = newJoseph;
-        // TODO: Pete use this for set*
-        emit JosephChanged(msg.sender, newJoseph);
+        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
 
     function mint(address account, uint256 amount) external override onlyJoseph {

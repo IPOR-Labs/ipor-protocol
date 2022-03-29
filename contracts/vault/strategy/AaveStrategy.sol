@@ -168,11 +168,11 @@ contract AaveStrategy is
      */
     function beforeClaim() external override whenNotPaused nonReentrant {
         require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        address[] memory assets = new address[](1);
-        assets[0] = _shareToken;
-        _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
+        address[] memory shareTokens = new address[](1);
+        shareTokens[0] = _shareToken;
+        _aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
-        emit DoBeforeClaim(address(this), assets);
+        emit DoBeforeClaim(msg.sender, shareTokens);
     }
 
     /**
@@ -183,55 +183,69 @@ contract AaveStrategy is
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        address treasury = _treasury;
+
+        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
+
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
             address aave = _aave;
+
             // claim AAVE governace token second after claim stakedAave token
             _stakedAaveInterface.redeem(
                 address(this),
                 IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
+
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
-            IERC20Upgradeable(aave).safeTransfer(_treasury, balance);
-            address[] memory assets = new address[](1);
-            assets[0] = _shareToken;
-            emit DoClaim(address(this), assets, _treasury, balance);
+
+            IERC20Upgradeable(aave).safeTransfer(treasury, balance);
+
+            emit DoClaim(msg.sender, _shareToken, treasury, balance);
         }
     }
 
-    function setStanley(address stanley) external override whenNotPaused onlyOwner {
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        _stanley = stanley;
-        emit StanleyChanged(msg.sender, stanley, address(this));
+    function getStanley() external view override returns (address) {
+        return _stanley;
     }
 
-    function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
-        require(manager != address(0), IporErrors.WRONG_ADDRESS);
-        _treasuryManager = manager;
-        emit TreasuryManagerChanged(address(this), manager);
+    function setStanley(address newStanley) external override whenNotPaused onlyOwner {
+        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
+        address oldStanley = _stanley;
+        _stanley = newStanley;
+        emit StanleyChanged(msg.sender, oldStanley, newStanley);
     }
 
-    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
-        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        _treasury = treasury;
-        emit TreasuryChanged(address(this), treasury);
+    function setTreasuryManager(address newTreasuryManager) external whenNotPaused onlyOwner {
+        require(newTreasuryManager != address(0), IporErrors.WRONG_ADDRESS);
+        address oldTreasuryManager = _treasuryManager;
+        _treasuryManager = newTreasuryManager;
+        emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, newTreasuryManager);
+    }
+
+    function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
+        require(newTreasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        address oldTreasury = _treasury;
+        _treasury = newTreasury;
+        emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
     }
 
     /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
-     * @param stkAave stakedAAVE token
+     * @param newStkAave stakedAAVE token
      */
-    function setStkAave(address stkAave) external whenNotPaused onlyOwner {
-        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
-        _stkAave = stkAave;
-        emit StkAaveChanged(msg.sender, stkAave);
+    function setStkAave(address newStkAave) external whenNotPaused onlyOwner {
+        require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
+        address oldStkAave = _stkAave;
+        _stkAave = newStkAave;
+        emit StkAaveChanged(msg.sender, oldStkAave, newStkAave);
     }
 
     //solhint-disable no-empty-blocks

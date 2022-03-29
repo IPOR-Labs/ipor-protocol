@@ -27,7 +27,7 @@ contract CompoundStrategy is
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address private _asset;
-    CErc20 private _cToken;
+    CErc20 private _shareToken;
     uint256 private _blocksPerYear;
     address private _treasury;
     address private _treasuryManager;
@@ -41,28 +41,28 @@ contract CompoundStrategy is
      * @dev Deploy CompoundStrategy.
      * @notice Deploy CompoundStrategy.
      * @param asset underlying token like DAI, USDT etc.
-     * @param cErc20Contract share token like cDAI
+     * @param shareToken share token like cDAI
      * @param comptroller _comptroller to claim comp
      * @param compToken comp token.
      */
     function initialize(
         address asset,
-        address cErc20Contract,
+        address shareToken,
         address comptroller,
         address compToken
     ) public initializer nonReentrant {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(cErc20Contract != address(0), IporErrors.WRONG_ADDRESS);
+        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
         require(comptroller != address(0), IporErrors.WRONG_ADDRESS);
         require(compToken != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
-        _cToken = CErc20(cErc20Contract);
+        _shareToken = CErc20(shareToken);
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
-        IERC20Upgradeable(_asset).safeApprove(cErc20Contract, type(uint256).max);
+        IERC20Upgradeable(_asset).safeApprove(shareToken, type(uint256).max);
         _blocksPerYear = 2102400;
         _treasuryManager = msg.sender;
     }
@@ -96,14 +96,14 @@ contract CompoundStrategy is
      * @dev Share token to track _asset (DAI -> cDAI)
      */
     function getShareToken() external view override returns (address) {
-        return address(_cToken);
+        return address(_shareToken);
     }
 
     /**
      * @dev get current APY.
      */
     function getApr() external view override returns (uint256 apr) {
-        uint256 cRate = _cToken.supplyRatePerBlock(); // interest % per block
+        uint256 cRate = _shareToken.supplyRatePerBlock(); // interest % per block
         apr = cRate * _blocksPerYear;
     }
 
@@ -114,7 +114,7 @@ contract CompoundStrategy is
     function balanceOf() external view override returns (uint256) {
         return (
             IporMath.division(
-                (_cToken.exchangeRateStored() * _cToken.balanceOf(address(this))),
+                (_shareToken.exchangeRateStored() * _shareToken.balanceOf(address(this))),
                 (10**IERC20Metadata(_asset).decimals())
             )
         );
@@ -132,7 +132,7 @@ contract CompoundStrategy is
             IERC20Metadata(asset).decimals()
         );
         IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
-        _cToken.mint(amount);
+        _shareToken.mint(amount);
     }
 
     /**
@@ -147,8 +147,8 @@ contract CompoundStrategy is
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        _cToken.redeem(
-            IporMath.divisionWithoutRound(amount * Constants.D18, _cToken.exchangeRateStored())
+        _shareToken.redeem(
+            IporMath.divisionWithoutRound(amount * Constants.D18, _shareToken.exchangeRateStored())
         );
 
         IERC20Upgradeable(address(asset)).safeTransfer(
@@ -170,40 +170,52 @@ contract CompoundStrategy is
      * @notice claim can only done by owner.
      */
     function doClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), IporErrors.WRONG_ADDRESS);
+        address treasury = _treasury;
+
+        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
+
         address[] memory assets = new address[](1);
-        assets[0] = address(_cToken);
+        assets[0] = address(_shareToken);
+
         _comptroller.claimComp(address(this), assets);
-        uint256 compBal = _compToken.balanceOf(address(this));
-        _compToken.safeTransfer(_treasury, compBal);
-        emit DoClaim(address(this), assets, _treasury, compBal);
+
+        uint256 balance = _compToken.balanceOf(address(this));
+
+        _compToken.safeTransfer(treasury, balance);
+
+        emit DoClaim(msg.sender, address(_shareToken), treasury, balance);
     }
 
-    function setStanley(address stanley) external whenNotPaused onlyOwner {
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        _stanley = stanley;
-        emit StanleyChanged(msg.sender, stanley, address(this));
+    function getStanley() external view override returns (address) {
+        return _stanley;
+    }
+
+    function setStanley(address newStanley) external whenNotPaused onlyOwner {
+        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
+        address oldStanley = _stanley;
+        _stanley = newStanley;
+        emit StanleyChanged(msg.sender, oldStanley, newStanley);
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
+        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = manager;
-        emit TreasuryManagerChanged(address(this), manager);
+        emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, manager);
     }
 
-    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
-        require(treasury != address(0), IporErrors.WRONG_ADDRESS);
-        _treasury = treasury;
-        emit TreasuryChanged(address(this), treasury);
+    function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
+        require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
+        address oldTreasury = _treasury;
+        _treasury = newTreasury;
+        emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
     }
 
-    /**
-     * @dev set blocks per year.
-     * @param blocksPerYear amount to deposit in aave lending.
-     */
-    function setBlocksPerYear(uint256 blocksPerYear) external whenNotPaused onlyOwner {
-        require(blocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        _blocksPerYear = blocksPerYear;
+    function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
+        require(newBlocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        uint256 oldBlocksPerYear = _blocksPerYear;
+        _blocksPerYear = newBlocksPerYear;
+        emit BlocksPerYearChanged(msg.sender, oldBlocksPerYear, newBlocksPerYear);
     }
 
     //solhint-disable no-empty-blocks

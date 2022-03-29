@@ -7,7 +7,7 @@ import { task } from "hardhat/config";
 import "hardhat-tracer";
 import "solidity-coverage";
 import "@typechain/hardhat";
-
+import "hardhat-abi-exporter";
 import networks from "./hardhat.network";
 import "dotenv";
 
@@ -55,4 +55,14 @@ export default {
         alwaysGenerateOverloads: true, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
         externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
     },
+    abiExporter: [
+        {
+            path: "./abi/pretty",
+            pretty: true,
+        },
+        {
+            path: "./abi/ugly",
+            pretty: false,
+        },
+    ],
 };

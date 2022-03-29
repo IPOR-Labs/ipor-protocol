@@ -8,10 +8,6 @@ abstract contract MockCase0Milton is ItfMilton {
         return 1e23;
     }
 
-    function _getMaxSlippagePercentage() internal pure virtual override returns (uint256) {
-        return 1e18;
-    }
-
     function _getMaxLpUtilizationPercentage() internal pure virtual override returns (uint256) {
         return 8 * 1e17;
     }

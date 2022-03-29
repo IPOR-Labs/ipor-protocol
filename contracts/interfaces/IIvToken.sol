@@ -10,18 +10,18 @@ interface IIvToken is IERC20 {
     function getAsset() external view returns (address);
 
     /// @notice Sets Stanley address by Owner
-    /// @dev only Stanley can mind or burn IV Tokens. Emits `StanleyChanged` event.
+    /// @dev only Stanley can mind or burn IV Tokens. Emits {StanleyChanged} event.
     /// @param newStanley Stanley address
     function setStanley(address newStanley) external;
 
     /// @notice Creates `amount` IV Tokens and assign them to `account`
-    /// @dev Emits {Transfer} and {Mint} events
+    /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ivToken
     /// @param account to which the created IV Tokens were assigned
     /// @param amount volume of IV Tokens which will be created
     function mint(address account, uint256 amount) external;
 
     /// @notice Destroys `amount` IV Tokens from `account`, reducing the total supply
-    /// @dev Emits {Transfer} and {Burn} events
+    /// @dev Emits {Transfer} event from ERC20 asset and {Burn} event from ivToken
     /// @param account from which the destroyed IV Tokens will be taken
     /// @param amount volume of IV Tokens which will be destroyed
     function burn(address account, uint256 amount) external;
@@ -38,6 +38,11 @@ interface IIvToken is IERC20 {
 
     /// @notice Emmited when Stanley address is changed by Owner.
     /// @param changedBy account address who changed Stanley address
-    /// @param newStanleyAddress new Stanley address
-    event StanleyChanged(address changedBy, address newStanleyAddress);
+    /// @param oldStanley old Stanley address
+    /// @param newStanley new Stanley address
+    event StanleyChanged(
+        address indexed changedBy,
+        address indexed oldStanley,
+        address indexed newStanley
+    );
 }

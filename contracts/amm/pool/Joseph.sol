@@ -73,6 +73,10 @@ abstract contract Joseph is
     function getVersion() external pure override virtual returns (uint256) {
         return 1;
     }
+	
+	function getAsset() external view override returns (address) {
+        return _asset;
+    }
 
     function calculateExchangeRate() external view override returns (uint256) {
         return _calculateExchangeRate(block.timestamp);
