@@ -84,7 +84,7 @@ describe("Joseph Maintenance", () => {
         await josephDai.connect(admin).pause();
 
         //then
-        await assertError(josephDai.connect(userOne).rebalance(), "Pausable: paused");
+        await assertError(josephDai.connect(admin).rebalance(), "Pausable: paused");
 
         await assertError(josephDai.connect(admin).depositToStanley(123), "Pausable: paused");
 

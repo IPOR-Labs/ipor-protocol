@@ -125,7 +125,6 @@ describe("COMPOUND strategy pauseable", () => {
         await assertError(strategy.deposit(TC_1000_USD_18DEC), "Pausable: paused");
         await assertError(strategy.withdraw(TC_1000_USD_18DEC), "Pausable: paused");
         await assertError(strategy.setBlocksPerYear(BigNumber.from("2102400")), "Pausable: paused");
-        await assertError(strategy.beforeClaim(), "Pausable: paused");
         await assertError(strategy.doClaim(), "Pausable: paused");
         await assertError(strategy.setStanley(mockAddress), "Pausable: paused");
         await assertError(strategy.setTreasury(mockAddress), "Pausable: paused");
