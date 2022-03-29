@@ -19,6 +19,7 @@ export const USD_3_18DEC = BigNumber.from("3").mul(N1__0_18DEC);
 export const USD_10_18DEC = BigNumber.from("10").mul(N1__0_18DEC);
 export const USD_20_18DEC = BigNumber.from("20").mul(N1__0_18DEC);
 export const USD_100_18DEC = BigNumber.from("100").mul(N1__0_18DEC);
+
 export const USD_500_18DEC = BigNumber.from("500").mul(N1__0_18DEC);
 export const USD_1_000_18DEC = BigNumber.from("1000").mul(N1__0_18DEC);
 export const USD_2_000_18DEC = BigNumber.from("2000").mul(N1__0_18DEC);
@@ -42,6 +43,7 @@ export const PERCENTAGE_50_18DEC = BigNumber.from("50").mul(N0__01_18DEC);
 export const PERCENTAGE_95_18DEC = BigNumber.from("95").mul(N0__01_18DEC);
 export const PERCENTAGE_120_18DEC = BigNumber.from("120").mul(N0__01_18DEC);
 
+export const TC_TOTAL_AMOUNT_100_18DEC = BigNumber.from("100").mul(N1__0_18DEC);
 export const TC_50_000_18DEC = BigNumber.from("50000").mul(N1__0_18DEC);
 export const TC_TOTAL_AMOUNT_10_000_18DEC = BigNumber.from("10000").mul(N1__0_18DEC);
 

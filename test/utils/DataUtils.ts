@@ -440,6 +440,15 @@ export const setupTokenUsdtInitialValuesForUsers = async (
     }
 };
 
+export const setupTokenUsdcInitialValuesForUsers = async (
+    users: Signer[],
+    tokenUsdc: UsdcMockedToken
+) => {
+    for (let i = 0; i < users.length; i++) {
+        await tokenUsdc.setupInitialAmount(await users[i].getAddress(), USER_SUPPLY_6_DECIMALS);
+    }
+};
+
 export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
     return {
         asset: tokenDai.address,
