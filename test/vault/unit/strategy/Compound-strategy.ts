@@ -156,6 +156,7 @@ describe("Compound strategy", () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
         const oldStanleyAddress = await strategyCompoundInstanceDAI.getStanley();
+
         await expect(strategyCompoundInstanceDAI.setStanley(newStanleyAddress))
             .to.emit(strategyCompoundInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);

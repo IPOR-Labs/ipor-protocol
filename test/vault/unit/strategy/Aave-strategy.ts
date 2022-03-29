@@ -82,7 +82,10 @@ describe("AAVE strategy", () => {
         //when
         await expect(strategyAaveInstance.setStanley(newStanleyAddress))
             .to.emit(strategyAaveInstance, "StanleyChanged")
-            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
+            .withArgs(
+                await admin.getAddress,
+                oldStanleyAddress, newStanleyAddress
+            );
     });
 
     it("Should not be able to setup Stanley when non owner want to setup new address", async () => {

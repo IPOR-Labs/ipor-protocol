@@ -174,6 +174,7 @@ describe("AAVE strategy", () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
         const oldStanleyAddress = await strategyAaveInstanceUSDC.getStanley();
+
         await expect(strategyAaveInstanceUSDC.setStanley(newStanleyAddress))
             .to.emit(strategyAaveInstanceUSDC, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
