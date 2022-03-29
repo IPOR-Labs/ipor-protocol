@@ -14,6 +14,7 @@ export const N0__000_1_18DEC = BigNumber.from("100000000000000");
 export const N0__000_01_18DEC = BigNumber.from("10000000000000");
 export const N0__000_001_18DEC = BigNumber.from("1000000000000");
 
+export const USD_1_18DEC = N1__0_18DEC;
 export const USD_3_18DEC = BigNumber.from("3").mul(N1__0_18DEC);
 export const USD_10_18DEC = BigNumber.from("10").mul(N1__0_18DEC);
 export const USD_20_18DEC = BigNumber.from("20").mul(N1__0_18DEC);

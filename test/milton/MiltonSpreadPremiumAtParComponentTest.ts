@@ -1,34 +1,38 @@
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const keccak256 = require("keccak256");
-
-const { USD_1_18DEC } = require("./Const.js");
-
-const {
-    prepareData,
+import hre from "hardhat";
+import chai from "chai";
+import { Signer, BigNumber } from "ethers";
+import { N0__001_18DEC, N0__1_18DEC, USD_1_18DEC, N0__01_18DEC } from "../utils/Constants";
+import {
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    prepareMockMiltonSpreadModel,
     prepareMiltonSpreadCase2,
-} = require("./Utils");
+} from "../utils/MiltonUtils";
 
-describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
-    let data = null;
-    let admin, userOne, userTwo, userThree, liquidityProvider;
+const { expect } = chai;
+
+describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
+    let miltonSpreadModel: MockMiltonSpreadModel;
+    let admin: Signer,
+        userOne: Signer,
+        userTwo: Signer,
+        userThree: Signer,
+        liquidityProvider: Signer,
+        miltonStorageAddress: Signer;
 
     before(async () => {
-        [admin, userOne, userTwo, userThree, liquidityProvider] =
-            await ethers.getSigners();
-        data = await prepareData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            1
-        );
+        [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
+            await hre.ethers.getSigners();
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("3").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
         let actualSpreadAtParComponentValue = BigInt(
@@ -41,7 +45,7 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
                 )
         );
 
-        const expectedSpreadAtParComponentValue = BigInt("46265766473020359");
+        const expectedSpreadAtParComponentValue = BigNumber.from("46265766473020359");
         //then
 
         expect(
@@ -52,25 +56,22 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
 
     it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator != 0, KHist denominator == 0", async () => {
         //given
-        const maxSpreadValue = BigInt("300000000000000000");
+        const maxSpreadValue = BigNumber.from("3").mul(N0__1_18DEC);
 
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("50000000000000000");
-        const exponentialMovingAverage = BigInt("1050000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("5").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("105").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = maxSpreadValue;
 
         //then
@@ -82,25 +83,22 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
 
     it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator != 0", async () => {
         //given
-        const maxSpreadValue = BigInt("300000000000000000");
+        const maxSpreadValue = BigNumber.from("3").mul(N0__1_18DEC);
 
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("30000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
+        const iporIndexValue = BigNumber.from("3").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = maxSpreadValue;
 
         //then
@@ -112,25 +110,22 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
 
     it("should calculate spread - at par component - Pay Fixed, EMAi > Ii, KVol denominator == 0, KHist denominator == 0", async () => {
         //given
-        const maxSpreadValue = BigInt("300000000000000000");
+        const maxSpreadValue = BigNumber.from("3").mul(N0__1_18DEC);
 
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("50000000000000000");
-        const exponentialMovingAverage = BigInt("1050000000000000000");
+        const iporIndexValue = BigNumber.from("5").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("105").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = maxSpreadValue;
 
         //then
@@ -144,22 +139,19 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("60000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
-        const expectedSpreadAtParComponentValue = BigInt("32124352331606218");
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
+        const expectedSpreadAtParComponentValue = BigNumber.from("32124352331606218");
         //then
 
         expect(
@@ -171,23 +163,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Pay Fixed, EMAi < Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
 
-        const iporIndexValue = BigInt("60000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
@@ -201,22 +190,19 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("60000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
         const exponentialMovingAverage = iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
-        const expectedSpreadAtParComponentValue = BigInt("46124352331606218");
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
+        const expectedSpreadAtParComponentValue = BigNumber.from("46124352331606218");
         //then
 
         expect(
@@ -228,23 +214,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Pay Fixed, EMAi == Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
 
-        const iporIndexValue = BigInt("60000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
         const exponentialMovingAverage = iporIndexValue;
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentPayFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentPayFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
@@ -258,22 +241,19 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("60000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
-        const expectedSpreadAtParComponentValue = BigInt("46410066617320504");
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
+        const expectedSpreadAtParComponentValue = BigNumber.from("46410066617320504");
         //then
 
         expect(
@@ -285,23 +265,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator != 0, KHist denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
 
-        const iporIndexValue = BigInt("1050000000000000000");
-        const exponentialMovingAverage = BigInt("50000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("105").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("5").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
@@ -314,23 +291,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator != 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
 
-        const iporIndexValue = BigInt("60000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
+        const iporIndexValue = BigNumber.from("6").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
@@ -343,21 +317,19 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi < Ii, KVol denominator == 0, KHist denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
-        const iporIndexValue = BigInt("1050000000000000000");
-        const exponentialMovingAverage = BigInt("50000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
+        const iporIndexValue = BigNumber.from("105").mul(N0__01_18DEC);
+        const exponentialMovingAverage = BigNumber.from("5").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
 
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
@@ -372,22 +344,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("33000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const iporIndexValue = BigNumber.from("33000000000000000");
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
 
-        const expectedSpreadAtParComponentValue = BigInt("32124352331606218");
+        const expectedSpreadAtParComponentValue = BigNumber.from("32124352331606218");
         //then
 
         expect(
@@ -399,22 +369,19 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi > Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
-        const iporIndexValue = BigInt("33000000000000000");
-        const exponentialMovingAverage = BigInt("40000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
+        const iporIndexValue = BigNumber.from("33000000000000000");
+        const exponentialMovingAverage = BigNumber.from("4").mul(N0__01_18DEC);
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
-
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then
 
@@ -428,22 +395,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
 
-        const iporIndexValue = BigInt("33000000000000000");
+        const iporIndexValue = BigNumber.from("33000000000000000");
         const exponentialMovingAverage = iporIndexValue;
-        const exponentialWeightedMovingVariance = BigInt("35000000000000000");
+        const exponentialWeightedMovingVariance = BigNumber.from("35").mul(N0__001_18DEC);
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
 
-        const expectedSpreadAtParComponentValue = BigInt("46124352331606218");
+        const expectedSpreadAtParComponentValue = BigNumber.from("46124352331606218");
         //then
 
         expect(
@@ -455,22 +420,20 @@ describe("MiltonSpreadModel - Spread Premium At Par Component", () => {
     it("should calculate spread - at par component - Rec Fixed, EMAi == Ii, KVol denominator == 0", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase2();
-        const spreadPremiumsMaxValue = BigInt("300000000000000000");
+        const spreadPremiumsMaxValue = BigNumber.from("3").mul(N0__1_18DEC);
 
-        const iporIndexValue = BigInt("33000000000000000");
+        const iporIndexValue = BigNumber.from("33000000000000000");
         const exponentialMovingAverage = iporIndexValue;
         const exponentialWeightedMovingVariance = USD_1_18DEC;
 
         //when
-        let actualSpreadAtParComponentValue = BigInt(
-            await miltonSpread
-                .connect(userOne)
-                .calculateAtParComponentRecFixed(
-                    iporIndexValue,
-                    exponentialMovingAverage,
-                    exponentialWeightedMovingVariance
-                )
-        );
+        const actualSpreadAtParComponentValue = await miltonSpread
+            .connect(userOne)
+            .calculateAtParComponentRecFixed(
+                iporIndexValue,
+                exponentialMovingAverage,
+                exponentialWeightedMovingVariance
+            );
 
         const expectedSpreadAtParComponentValue = spreadPremiumsMaxValue;
         //then

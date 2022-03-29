@@ -2,66 +2,24 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    USD_28_000_18DEC,
     N1__0_18DEC,
-    N0__001_18DEC,
-    PERCENTAGE_5_18DEC,
-    PERCENTAGE_3_18DEC,
-    LEVERAGE_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     N0__1_18DEC,
-    PERIOD_25_DAYS_IN_SECONDS,
-    PERIOD_6_HOURS_IN_SECONDS,
-    PERCENTAGE_95_18DEC,
-    USD_28_000_6DEC,
-    USD_10_000_6DEC,
-    N1__0_6DEC,
-    USD_100_18DEC,
-    USD_500_18DEC,
     USD_1_000_18DEC,
     USD_2_000_18DEC,
     USD_14_000_18DEC,
     USD_20_18DEC,
-    USD_10_000_000_18DEC,
     ZERO,
-    N0__01_18DEC,
 } from "../utils/Constants";
-import { assertError } from "../utils/AssertUtils";
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
-    MiltonUsdcCase,
-    MiltonUsdtCase,
-    MiltonDaiCase,
     prepareMockMiltonSpreadModel,
     prepareMiltonSpreadCase2,
     prepareMiltonSpreadCase3,
     prepareMiltonSpreadCase4,
     prepareMiltonSpreadCase5,
-    prepareMiltonSpreadCase6,
-    prepareMiltonSpreadCase8,
-    prepareMiltonSpreadCase9,
-    prepareMiltonSpreadCase10,
-    prepareMiltonSpreadCase11,
-    getPayFixedDerivativeParamsUSDTCase1,
 } from "../utils/MiltonUtils";
-import {
-    prepareTestData,
-    prepareApproveForUsers,
-    setupTokenDaiInitialValuesForUsers,
-    setupTokenUsdtInitialValuesForUsers,
-} from "../utils/DataUtils";
-import { MockStanleyCase } from "../utils/StanleyUtils";
-import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
-import {
-    preprareSwapPayFixedStruct18DecSimpleCase1,
-    openSwapPayFixed,
-    testCasePaginationPayFixed,
-    testCasePaginationReceiveFixed,
-    testCaseIdsPaginationPayFixed,
-    testCaseIdsPaginationReceiveFixed,
-    testCaseIdsPagination,
-} from "../utils/MiltonStorageUtils";
 
 const { expect } = chai;
 
