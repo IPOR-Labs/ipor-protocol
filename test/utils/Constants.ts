@@ -42,6 +42,7 @@ export const PERCENTAGE_8_18DEC = BigNumber.from("8").mul(N0__01_18DEC);
 export const PERCENTAGE_50_18DEC = BigNumber.from("50").mul(N0__01_18DEC);
 export const PERCENTAGE_95_18DEC = BigNumber.from("95").mul(N0__01_18DEC);
 export const PERCENTAGE_120_18DEC = BigNumber.from("120").mul(N0__01_18DEC);
+export const PERCENTAGE_100_18DEC = BigNumber.from("100").mul(N0__01_18DEC);
 export const PERCENTAGE_160_18DEC = BigNumber.from("160").mul(N0__01_18DEC);
 
 export const TC_TOTAL_AMOUNT_100_18DEC = BigNumber.from("100").mul(N1__0_18DEC);
