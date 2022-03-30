@@ -69,7 +69,7 @@ export default {
     docgen: {
         path: "./docs",
         clear: true,
-        runOnCompile: true,
+        runOnCompile: false,
         only: [
             "contracts/amm/Milton.sol",
             "contracts/amm/MiltonStorage.sol",
