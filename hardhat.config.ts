@@ -2,7 +2,6 @@ import "@openzeppelin/hardhat-upgrades";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-web3";
-
 import { task } from "hardhat/config";
 import "hardhat-tracer";
 import "solidity-coverage";
@@ -12,7 +11,9 @@ import networks from "./hardhat.network";
 import "dotenv";
 
 require("dotenv").config();
-
+require("hardhat-docgen");
+import '@hardhat-docgen/core'
+import '@hardhat-docgen/markdown'
 require("hardhat-contract-sizer");
 
 if (process.env.REPORT_GAS === "true") {
@@ -65,4 +66,24 @@ export default {
             pretty: false,
         },
     ],
+    docgen: {
+        path: "./docs",
+        clear: true,
+        runOnCompile: true,
+        only: [
+            "contracts/amm/Milton.sol",
+            "contracts/amm/MiltonStorage.sol",
+            "contracts/amm/MiltonSpreadModel.sol",
+            "contracts/amm/pool/Joseph.sol",
+            "contracts/facades/cockpit/CockpitDataProvider.sol",
+            "contracts/facades/MiltonFacadeDataProvider.sol",
+            "contracts/facades/WarrenFacadeDataProvider.sol",
+            "contracts/oracles/Warren.sol",
+            "contracts/tokens/IpToken.sol",
+            "contracts/tokens/IvToken.sol",
+            "contracts/vault/Stanley.sol",
+            "contracts/vault/strategies/StrategyCompound.sol",
+            "contracts/vault/strategies/StrategyAave.sol",
+        ],
+    },
 };
