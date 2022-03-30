@@ -374,6 +374,20 @@ export const prepareComplexTestDataDaiCase000 = async (
     return testData;
 };
 
+export const prepareComplexTestDataUsdtCase000 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataUsdtCase000(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "USDT", testData);
+    if (testData.tokenUsdt === undefined) {
+        expect(true).to.be.false;
+        return testData;
+    }
+    await setupTokenUsdtInitialValuesForUsers(accounts, testData.tokenUsdt);
+    return testData;
+};
+
 export const prepareComplexTestDataDaiCase400 = async (
     accounts: Signer[],
     miltonSpreadModel: MockMiltonSpreadModel
@@ -453,6 +467,18 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
+        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: UsdtMockedToken) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
         toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,

@@ -310,6 +310,60 @@ describe("Milton", () => {
         );
     });
 
+    it("should NOT open position because Liquidity Pool balance is to low", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: BigInt("10000000000000000000000"), //10 000 USD
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        let closeSwapTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp);
+
+        await openSwapPayFixed(testData, params);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, BigInt("50000000000000000"), closeSwapTimestamp);
+
+        await testData.miltonStorageDai.setJoseph(userOne.address);
+
+        await testData.miltonStorageDai
+            .connect(userOne)
+            .subtractLiquidity(BigInt("20000000000000000000000"));
+
+        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
+            //then
+            "IPOR_319"
+        );
+    });
+
+    // #######################################
+
     it("should open pay fixed position - simple case DAI - 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
@@ -470,6 +524,215 @@ describe("Milton", () => {
         ).to.be.eq(actualDerivativesTotalBalanceWad);
     });
 
+    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 50%", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            4,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let expectedTreasuryTotalBalanceWad = BigInt("149505148455463361");
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002840597820653803859");
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        //then
+        let balance = await testData.miltonStorageDai.getExtendedBalance();
+
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
+
+        expect(
+            expectedLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
+        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
+        expect(
+            expectedTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
+        ).to.be.eq(actualTreasuryTotalBalanceWad);
+    });
+
+    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 25%", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            5,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
+
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        let expectedTreasuryTotalBalanceWad = BigInt("74752574227731681");
+
+        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002915350394881535539");
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        //then
+        let balance = await testData.miltonStorageDai.getExtendedBalance();
+
+        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
+        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
+
+        expect(
+            expectedLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
+            expected: ${expectedLiquidityPoolTotalBalanceWad}`
+        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
+        expect(
+            expectedTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
+            expected: ${expectedTreasuryTotalBalanceWad}`
+        ).to.be.eq(actualTreasuryTotalBalanceWad);
+    });
+
+    it("should open pay fixed position, DAI, custom leverage - simple case 1", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: BigInt("15125000000000000000"),
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+
+        //when
+        await testData.miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.toleratedQuoteValue,
+                params.leverage
+            );
+
+        //then
+        let actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
+        let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
+        let expectedNotionalAmount = BigInt("150751024692592222333298");
+
+        expect(
+            expectedNotionalAmount,
+            `Incorrect notional amount for ${params.asset}, actual:  ${actualNotionalAmount},
+            expected: ${expectedNotionalAmount}`
+        ).to.be.eq(actualNotionalAmount);
+    });
+
+    it("should open pay fixed position - when open timestamp is long time ago", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
+        let expectedIncomeFeeValue = ZERO;
+        let expectedIncomeFeeValueWad = ZERO;
+        let expectedPositionValue = ZERO;
+        let expectedPositionValueWad = ZERO;
+
+        await testCaseWhenMiltonEarnAndUserLost(
+            testData,
+            testData.tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_3_18DEC,
+            PERCENTAGE_4_18DEC,
+            0,
+            0,
+            ZERO,
+            expectedIncomeFeeValueWad,
+            ZERO,
+            veryLongTimeAgoTimestamp,
+            expectedIncomeFeeValueWad,
+            expectedPositionValue,
+            expectedPositionValueWad
+        );
+    });
+
+    // #########################################################
+
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -600,58 +863,6 @@ describe("Milton", () => {
             expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
-        );
-    });
-
-    it("should NOT open position because Liquidity Pool balance is to low", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: BigInt("10000000000000000000000"), //10 000 USD
-            toleratedQuoteValue: BigInt("900000000000000000"),
-            leverage: LEVERAGE_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-        let closeSwapTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, BigInt("10000000000000000"), params.openTimestamp);
-
-        await openSwapPayFixed(testData, params);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, BigInt("1600000000000000000"), params.openTimestamp);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, BigInt("50000000000000000"), closeSwapTimestamp);
-
-        await testData.miltonStorageDai.setJoseph(userOne.address);
-
-        await testData.miltonStorageDai
-            .connect(userOne)
-            .subtractLiquidity(BigInt("20000000000000000000000"));
-
-        await testData.miltonStorageDai.setJoseph(testData.josephDai.address);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
-            //then
-            "IPOR_319"
         );
     });
 
@@ -1146,84 +1357,6 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
-            leverage: USD_10_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        await openSwapPayFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
-        );
-    });
-
-    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
-            leverage: USD_10_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        await openSwapPayFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_27_DAYS_17_HOURS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
-        );
-    });
-
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, 5 hours before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
@@ -1390,46 +1523,6 @@ describe("Milton", () => {
             expectedIncomeTaxValueWad,
             expectedPositionValue,
             expectedPositionValueWad
-        );
-    });
-
-    it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: PERCENTAGE_121_18DEC,
-            leverage: LEVERAGE_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        await openSwapPayFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
         );
     });
 
@@ -1930,86 +2023,6 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("11900000000000000000"),
-            leverage: USD_10_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        await openSwapReceiveFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
-        );
-    });
-
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("11900000000000000000"),
-            leverage: USD_10_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        await openSwapReceiveFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_27_DAYS_17_HOURS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
-        );
-    });
-
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
@@ -2074,45 +2087,6 @@ describe("Milton", () => {
             expectedIncomeTaxValueWad,
             expectedPositionValue,
             expectedPositionValueWad
-        );
-    });
-
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
-            leverage: USD_10_18DEC,
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
-        await openSwapReceiveFixed(testData, params);
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
-        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
-
-        //when
-        await assertError(
-            //when
-            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
-            //then
-            "IPOR_320"
         );
     });
 
@@ -2285,6 +2259,245 @@ describe("Milton", () => {
             expectedIncomeFeeValueWad,
             expectedPositionValue,
             expectedPositionValueWad
+        );
+    });
+
+    // ######################################
+
+    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_27_DAYS_17_HOURS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: PERCENTAGE_121_18DEC,
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("11900000000000000000"),
+            leverage: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        await openSwapReceiveFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("11900000000000000000"),
+            leverage: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        await openSwapReceiveFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_27_DAYS_17_HOURS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
+        );
+    });
+
+    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            data
+        );
+
+        const params = {
+            asset: testData.tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            toleratedQuoteValue: BigInt("900000000000000000"),
+            leverage: USD_10_18DEC,
+            openTimestamp: Math.floor(Date.now() / 1000),
+            from: userTwo,
+        };
+        await testData.josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapReceiveFixed(testData, params);
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        let endTimestamp = params.openTimestamp + PERIOD_25_DAYS_IN_SECONDS;
+        await testData.warren
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        //when
+        await assertError(
+            //when
+            testData.miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
+            //then
+            "IPOR_320"
         );
     });
 
@@ -2462,6 +2675,624 @@ describe("Milton", () => {
             "IPOR_304"
         );
     });
+
+    it("should NOT close position, pay fixed, single id function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapPayFixed(1);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, pay fixed, multiple ids function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, receive fixed, single id function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapReceiveFixed(1);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, receive fixed, multiple ids function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Pausable: paused"
+        );
+    });
+
+    it("should NOT close position, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsPayFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapPayFixed(1);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsReceiveFixed([1]);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapReceiveFixed(1);
+                },
+                0,
+                true
+            ),
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("should NOT close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsPayFixed([1]);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, pay fixed, single id emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapPayFixed(1);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapsReceiveFixed([1]);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close position by owner, receive fixed, single id emergency function, DAI, when contract is not paused", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                admin,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                1,
+                (contract) => {
+                    return contract.emergencyCloseSwapReceiveFixed(1);
+                },
+                0,
+                false
+            ),
+            "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                2,
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1, 300]);
+                },
+                0,
+                false
+            ),
+            "IPOR_305"
+        );
+    });
+
+    it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            data,
+            3,
+            1,
+            0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            data,
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            testCaseWhenUserClosesPositions(
+                testData,
+                testData.tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                2,
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1, 300]);
+                },
+                0,
+                false
+            ),
+            "IPOR_305"
+        );
+    });
+
+    //  ##########################
 
     it("should close only one position - close first position", async () => {
         //given
@@ -3205,6 +4036,8 @@ describe("Milton", () => {
         ).to.be.eq(actualUserDerivativeIdsSecond.length);
     });
 
+    // ####################################
+
     it("should calculate income fee, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3593,132 +4426,7 @@ describe("Milton", () => {
         );
     });
 
-    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 50%", async () => {
-        //given
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            4,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        let expectedTreasuryTotalBalanceWad = BigInt("149505148455463361");
-
-        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002840597820653803859");
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-
-        //when
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.totalAmount,
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        //then
-        let balance = await testData.miltonStorageDai.getExtendedBalance();
-
-        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
-        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
-
-        expect(
-            expectedLiquidityPoolTotalBalanceWad,
-            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
-            expected: ${expectedLiquidityPoolTotalBalanceWad}`
-        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
-        expect(
-            expectedTreasuryTotalBalanceWad,
-            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
-            expected: ${expectedTreasuryTotalBalanceWad}`
-        ).to.be.eq(actualTreasuryTotalBalanceWad);
-    });
-
-    it("should open pay fixed position, DAI, custom Opening Fee for Treasury 25%", async () => {
-        //given
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            5,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, testData);
-
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        let expectedTreasuryTotalBalanceWad = BigInt("74752574227731681");
-
-        let miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-        let expectedLiquidityPoolTotalBalanceWad = BigInt("28002915350394881535539");
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
-
-        //when
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.totalAmount,
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        //then
-        let balance = await testData.miltonStorageDai.getExtendedBalance();
-
-        const actualLiquidityPoolTotalBalanceWad = BigInt(balance.liquidityPool);
-        const actualTreasuryTotalBalanceWad = BigInt(balance.treasury);
-
-        expect(
-            expectedLiquidityPoolTotalBalanceWad,
-            `Incorrect Liquidity Pool total balance for ${params.asset}, actual:  ${actualLiquidityPoolTotalBalanceWad},
-            expected: ${expectedLiquidityPoolTotalBalanceWad}`
-        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
-        expect(
-            expectedTreasuryTotalBalanceWad,
-            `Incorrect Treasury total balance for ${params.asset}, actual:  ${actualTreasuryTotalBalanceWad},
-            expected: ${expectedTreasuryTotalBalanceWad}`
-        ).to.be.eq(actualTreasuryTotalBalanceWad);
-    });
+    // #####################
 
     it("should NOT open pay fixed position, DAI, leverage too low", async () => {
         //given
@@ -3787,86 +4495,6 @@ describe("Milton", () => {
                 ),
             //then
             "IPOR_307"
-        );
-    });
-
-    it("should open pay fixed position, DAI, custom leverage - simple case 1", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        const params = {
-            asset: testData.tokenDai.address,
-            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
-            leverage: BigInt("15125000000000000000"),
-            openTimestamp: Math.floor(Date.now() / 1000),
-            from: userTwo,
-        };
-        await testData.warren
-            .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
-
-        await testData.josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-
-        //when
-        await testData.miltonDai
-            .connect(userTwo)
-            .itfOpenSwapPayFixed(
-                params.openTimestamp,
-                params.totalAmount,
-                params.toleratedQuoteValue,
-                params.leverage
-            );
-
-        //then
-        let actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-        let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
-        let expectedNotionalAmount = BigInt("150751024692592222333298");
-
-        expect(
-            expectedNotionalAmount,
-            `Incorrect notional amount for ${params.asset}, actual:  ${actualNotionalAmount},
-            expected: ${expectedNotionalAmount}`
-        ).to.be.eq(actualNotionalAmount);
-    });
-
-    it("should open pay fixed position - when open timestamp is long time ago", async () => {
-        //given
-        const testData = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            data
-        );
-
-        let veryLongTimeAgoTimestamp = 31536000; //1971-01-01
-        let expectedIncomeFeeValue = ZERO;
-        let expectedIncomeFeeValueWad = ZERO;
-        let expectedPositionValue = ZERO;
-        let expectedPositionValueWad = ZERO;
-
-        await testCaseWhenMiltonEarnAndUserLost(
-            testData,
-            testData.tokenDai.address,
-            USD_10_18DEC,
-            0,
-            userTwo,
-            userTwo,
-            PERCENTAGE_3_18DEC,
-            PERCENTAGE_3_18DEC,
-            PERCENTAGE_4_18DEC,
-            0,
-            0,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            ZERO,
-            veryLongTimeAgoTimestamp,
-            expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad
         );
     });
 
@@ -4031,50 +4659,6 @@ describe("Milton", () => {
         );
     });
 
-    it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                2,
-                (contract) => {
-                    return contract.closeSwapsPayFixed([1, 300]);
-                },
-                0,
-                false
-            ),
-            "IPOR_305"
-        );
-    });
-
     it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -4198,578 +4782,6 @@ describe("Milton", () => {
             },
             0,
             false
-        );
-    });
-
-    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                2,
-                (contract) => {
-                    return contract.closeSwapsReceiveFixed([1, 300]);
-                },
-                0,
-                false
-            ),
-            "IPOR_305"
-        );
-    });
-
-    it("should NOT close position, pay fixed, single id function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.closeSwapPayFixed(1);
-                },
-                0,
-                true
-            ),
-            "Pausable: paused"
-        );
-    });
-
-    it("should NOT close position, pay fixed, multiple ids function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.closeSwapsPayFixed([1]);
-                },
-                0,
-                true
-            ),
-            "Pausable: paused"
-        );
-    });
-
-    it("should NOT close position, receive fixed, single id function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.closeSwapReceiveFixed(1);
-                },
-                0,
-                true
-            ),
-            "Pausable: paused"
-        );
-    });
-
-    it("should NOT close position, receive fixed, multiple ids function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.closeSwapsReceiveFixed([1]);
-                },
-                0,
-                true
-            ),
-            "Pausable: paused"
-        );
-    });
-
-    it("should NOT close position, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapsPayFixed([1]);
-                },
-                0,
-                true
-            ),
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should NOT close position, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapPayFixed(1);
-                },
-                0,
-                true
-            ),
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should NOT close position, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapsReceiveFixed([1]);
-                },
-                0,
-                true
-            ),
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should NOT close position, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapReceiveFixed(1);
-                },
-                0,
-                true
-            ),
-            "Ownable: caller is not the owner"
-        );
-    });
-
-    it("should NOT close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                admin,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapsPayFixed([1]);
-                },
-                0,
-                false
-            ),
-            "Pausable: not paused"
-        );
-    });
-
-    it("should NOT close position by owner, pay fixed, single id emergency function, DAI, when contract is not paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                admin,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapPayFixed(1);
-                },
-                0,
-                false
-            ),
-            "Pausable: not paused"
-        );
-    });
-
-    it("should NOT close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                admin,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapsReceiveFixed([1]);
-                },
-                0,
-                false
-            ),
-            "Pausable: not paused"
-        );
-    });
-
-    it("should NOT close position by owner, receive fixed, single id emergency function, DAI, when contract is not paused", async () => {
-        const testData = await prepareTestData(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            data,
-            3,
-            1,
-            0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            data,
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            testCaseWhenUserClosesPositions(
-                testData,
-                testData.tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                admin,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                1,
-                (contract) => {
-                    return contract.emergencyCloseSwapReceiveFixed(1);
-                },
-                0,
-                false
-            ),
-            "Pausable: not paused"
         );
     });
 
