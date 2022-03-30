@@ -11,7 +11,7 @@ import "../libraries/errors/StanleyErrors.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIvToken.sol";
-import "../interfaces/IStanleyAdministration.sol";
+import "../interfaces/IStanleyInternal.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
@@ -24,7 +24,7 @@ abstract contract Stanley is
     ReentrancyGuardUpgradeable,
     IporOwnableUpgradeable,
     IStanley,
-    IStanleyAdministration
+    IStanleyInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -36,6 +36,11 @@ abstract contract Stanley is
     address internal _aaveShareToken;
     address internal _strategyCompound;
     address internal _compoundShareToken;
+
+    modifier onlyMilton() {
+        require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
+        _;
+    }
 
     /**
      * @dev Deploy IPORVault.
@@ -62,21 +67,6 @@ abstract contract Stanley is
 
         _setStrategyAave(strategyAave);
         _setStrategyCompound(strategyCompound);
-    }
-
-    modifier onlyMilton() {
-        require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
-        _;
-    }
-
-    function _getDecimals() internal pure virtual returns (uint256);
-
-    function getVersion() external pure override returns (uint256) {
-        return 1;
-    }
-
-    function getAsset() external view override returns (address) {
-        return _asset;
     }
 
     function totalBalance(address who) external view override returns (uint256) {
@@ -293,6 +283,14 @@ abstract contract Stanley is
         vaultBalance = 0;
     }
 
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
+
     //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
         (
@@ -345,6 +343,8 @@ abstract contract Stanley is
     function unpause() external override onlyOwner {
         _unpause();
     }
+
+    function _getDecimals() internal pure virtual returns (uint256);
 
     // Find highest apy strategy to deposit underlying asset
     function _getMaxApyStrategy()

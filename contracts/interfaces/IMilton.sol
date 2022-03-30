@@ -7,12 +7,6 @@ import "./types/MiltonTypes.sol";
 
 /// @title Interface for interaction with Milton, smart contract resposnible for working Automated Market Maker.
 interface IMilton {
-    /// @notice Gets Milton's balances accrued with amounts which was earned by Stanley in external Protocols.
-    /// @dev Balances includes total collateral for Pay Fixed leg and for Receive Fixed leg,
-    /// includes Liquidity Pool Balance, and vault balance transferred to Stanley.
-    /// @return Milton Balance structure `IporTypes.MiltonBalancesMemory`.
-    function getAccruedBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
-
     /// @notice Calculates Spread in current block.
     /// @return spreadPayFixed spread for Pay Fixed leg.
     /// @return spreadReceiveFixed spread for Receive Fixed leg.
@@ -33,38 +27,6 @@ interface IMilton {
             int256 soapReceiveFixed,
             int256 soap
         );
-
-    /// @notice Calculates SOAP in given moment.
-    /// @param calculateTimestamp epoch timestamp for which SOAP is computed.
-    /// @return soapPayFixed SOAP for Pay Fixed leg.
-    /// @return soapReceiveFixed SOAP for Receive Fixed leg.
-    /// @return soap total SOAP, sum of Pay Fixed and Receive Fixed SOAP.
-    function calculateSoapForTimestamp(uint256 calculateTimestamp)
-        external
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        );
-
-    /// @notice Calculats Pay Fixed Swap Value for a given Swap structure.
-    /// @param swap `IporTypes.IporSwapMemory` structure
-    /// @return Pay Fixed Swap value, can be negative,
-    /// @dev absolute value cannot be higher than collateral for this particular swap
-    function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        returns (int256);
-
-    /// @notice Calculats Receive Fixed Swap Value for a given Swap structure.
-    /// @param swap `IporTypes.IporSwapMemory` structure
-    /// @return Receive Fixed Swap value, can be negative,
-    /// @dev absolute value cannot be higher than collateral for this particular swap
-    function calculateSwapReceiveFixedValue(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        returns (int256);
 
     /// @notice Opens Pay Fixed, Receive Floating Swap for a given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
@@ -111,18 +73,6 @@ interface IMilton {
     /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
     /// @param swapIds List of Receive Fixed swaps.
     function closeSwapsReceiveFixed(uint256[] memory swapIds) external;
-
-    /// @notice Transfers assets (underlying tokens / stablecoins) from Milton to Stanley. Action available only for Joseph.
-    /// @dev Milton Balance in storage is not changing after this deposit, balance of ERC20 assets on Milton is changing.
-    /// @dev Emits {Deposit} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Mint} event from ivToken
-    /// @param assetAmount amount of assets
-    function depositToStanley(uint256 assetAmount) external;
-
-    /// @notice Transfers assets (underlying tokens / stablecoins) from Milton to Stanley. Action available only for Joseph.
-    /// @dev Milton Balance in storage is not changing after this wi, balance of ERC20 assets on Milton is changing.
-    /// @dev Emits {Withdraw} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
-    /// @param assetAmount amount of assets
-    function withdrawFromStanley(uint256 assetAmount) external;
 
     /// @notice Emmited when trader opens new Swap.
     event OpenSwap(

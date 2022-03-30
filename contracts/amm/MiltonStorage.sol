@@ -2,6 +2,7 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
 import "../libraries/Constants.sol";
@@ -14,7 +15,12 @@ import "./libraries/SoapIndicatorLogic.sol";
 import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
-contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorage {
+contract MiltonStorage is
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    IporOwnableUpgradeable,
+    IMiltonStorage
+{
     using SafeCast for uint256;
     using SoapIndicatorLogic for AmmMiltonStorageTypes.SoapIndicatorsMemory;
 
@@ -457,6 +463,14 @@ contract MiltonStorage is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonStorag
         address oldJoseph = _joseph;
         _joseph = newJoseph;
         emit JosephChanged(msg.sender, oldJoseph, newJoseph);
+    }
+
+    function pause() external override onlyOwner {
+        _pause();
+    }
+
+    function unpause() external override onlyOwner {
+        _unpause();
     }
 
     function _getPositions(

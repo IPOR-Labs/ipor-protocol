@@ -20,14 +20,6 @@ contract MockCaseBaseStanley is IStanley {
         _asset = IERC20(asset);
     }
 
-    function getVersion() external pure override returns (uint256) {
-        return 1;
-    }
-
-    function getAsset() external view override returns (address) {
-        return address(_asset);
-    }
-
     function totalBalance(address who) external view override returns (uint256) {
         //@dev for simplicity we assume that reading total balance not include interest
         return _balance[who];
@@ -38,7 +30,10 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function testDeposit(address recipient, uint256 assetAmount) external returns (uint256 balance) {
+    function testDeposit(address recipient, uint256 assetAmount)
+        external
+        returns (uint256 balance)
+    {
         balance = _balance[recipient] + assetAmount;
 
         _balance[recipient] = balance;

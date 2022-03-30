@@ -1,13 +1,6 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IWarren.sol";
@@ -15,10 +8,8 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IMiltonAdministration.sol";
-import "./configuration/MiltonConfiguration.sol";
+import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
-import "./libraries/IporSwapLogic.sol";
 import "./MiltonStorage.sol";
 
 import "hardhat/console.sol";
@@ -28,13 +19,7 @@ import "hardhat/console.sol";
  *
  * @author IPOR Labs
  */
-abstract contract Milton is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
-    MiltonConfiguration,
-    IMiltonAdministration,
-    IMilton
-{
+abstract contract Milton is MiltonInternal, IMilton {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
@@ -64,15 +49,6 @@ abstract contract Milton is
         _stanley = IStanley(stanley);
     }
 
-    function getAccruedBalance()
-        external
-        view
-        override
-        returns (IporTypes.MiltonBalancesMemory memory)
-    {
-        return _getAccruedBalance();
-    }
-
     function calculateSpread()
         external
         view
@@ -96,40 +72,6 @@ abstract contract Milton is
             block.timestamp
         );
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function calculateSoapForTimestamp(uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(
-            calculateTimestamp
-        );
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        override
-        returns (int256)
-    {
-        return _calculateSwapPayFixedValue(block.timestamp, swap);
-    }
-
-    function calculateSwapReceiveFixedValue(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        override
-        returns (int256)
-    {
-        return _calculateSwapReceiveFixedValue(block.timestamp, swap);
     }
 
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
@@ -202,84 +144,7 @@ abstract contract Milton is
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
-    //@param assetAmount underlying token amount represented in 18 decimals
-    function depositToStanley(uint256 assetAmount) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _stanley.deposit(assetAmount);
-        _miltonStorage.updateStorageWhenDepositToStanley(assetAmount, vaultBalance);
-    }
-
-    //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetAmount)
-        external
-        nonReentrant
-        onlyJoseph
-        whenNotPaused
-    {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdraw(assetAmount);
-        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
-    }
-
-    function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAll();
-        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
-    }
-
-    function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
-        IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
-    }
-
-    function setJoseph(address newJoseph) external override onlyOwner whenNotPaused {
-        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-        address oldJoseph = _joseph;
-        _joseph = newJoseph;
-        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
-    }
-
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
-
-        uint256 actualVaultBalance = _stanley.totalBalance(address(this));
-        int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
-            actualVaultBalance.toInt256() -
-            accruedBalance.vault.toInt256();
-
-        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
-        accruedBalance.liquidityPool = liquidityPool.toUint256();
-
-        accruedBalance.vault = actualVaultBalance;
-        return accruedBalance;
-    }
-
-    function _calculateSwapPayFixedValue(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
-        internal
-        view
-        returns (int256)
-    {
-        return
-            swap.calculateSwapPayFixedValue(
-                timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
-            );
-    }
-
-    function _calculateSwapReceiveFixedValue(
-        uint256 timestamp,
-        IporTypes.IporSwapMemory memory swap
-    ) internal view returns (int256) {
-        return
-            swap.calculateSwapReceiveFixedValue(
-                timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
-            );
-    }
+    
 
     function _calculateIncomeFeeValue(int256 positionValue) internal pure returns (uint256) {
         return
@@ -311,21 +176,6 @@ abstract contract Milton is
             accruedIpor,
             balance
         );
-    }
-
-    function _calculateSoap(uint256 calculateTimestamp)
-        internal
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        uint256 accruedIbtPrice = _warren.calculateAccruedIbtPrice(_asset, calculateTimestamp);
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _miltonStorage
-            .calculateSoap(accruedIbtPrice, calculateTimestamp);
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
     function _beforeOpenSwap(

@@ -24,12 +24,12 @@ interface IIpToken is IERC20 {
     /// @notice Burns the `amount` of ipTokens from `account`, reducing the total supply
     /// @dev Emits {Transfer} from ERC20 asset and {Burn} event from ipToken
     /// @param account from which burned ipTokens are taken
-    /// @param amount volume of ipTokens that will be burned
+    /// @param amount volume of ipTokens that will be burned, represented in 18 decimals
     function burn(address account, uint256 amount) external;
 
     /// @notice Emmited after the `amount` ipTokens were mint and transferred to `account`.
     /// @param account address where ipTokens are transferred after minting
-    /// @param amount of ipTokens minted
+    /// @param amount of ipTokens minted, represented in 18 decimals
     event Mint(address indexed account, uint256 amount);
 
     /// @notice Emmited after `amount` ipTokens were transferred from `account` and burnt.

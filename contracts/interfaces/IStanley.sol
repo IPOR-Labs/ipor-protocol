@@ -3,14 +3,6 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interaction with Stanley smart contract, which is reposnsible for investing Milton's assets.
 interface IStanley {
-    /// @notice Returns current version of Stanley's
-    /// @return current Stanley version
-    function getVersion() external pure returns (uint256);
-
-    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Stanley instance
-    /// @return asset / underlying token / stablecoin address
-    function getAsset() external view returns (address);
-
     /// @notice Gets total balance of account `who`,  transferred to Stanley and earned by Stanley using external DeFi protocols.
     /// @param who Account for which total balance is returned.
     /// @return Total balance for specific account given as a parameter, represented in 18 decimals.
