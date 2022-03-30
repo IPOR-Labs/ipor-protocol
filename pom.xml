@@ -144,12 +144,9 @@
                         <argument>@openzeppelin/contracts-upgradeable=${PWD}/node_modules/@openzeppelin/contracts-upgradeable</argument>
                         <argument>hardhat/console.sol=${PWD}/node_modules/hardhat/console.sol</argument>
                         <!-- INFO: wildcards not working here :( -->
-                        <argument>${contracts.sources}/amm/Milton.sol</argument>
-                        <argument>${contracts.sources}/amm/spread/MiltonSpreadModelCore.sol</argument>
+                        <argument>${contracts.sources}/amm/Milton.sol</argument>                        
                         <argument>${contracts.sources}/amm/spread/MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                               
-                        <argument>${contracts.sources}/amm/configuration/MiltonConfiguration.sol</argument>
-                        <argument>${contracts.sources}/amm/configuration/MiltonSpreadConfiguration.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                                                                               
                         <argument>${contracts.sources}/facades/cockpit/CockpitSmartContracts.sol</argument>
                         <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
                         <argument>${contracts.sources}/facades/MiltonFacadeDataProvider.sol</argument>                        
@@ -157,11 +154,11 @@
                         <argument>${contracts.sources}/interfaces/types/IporTypes.sol</argument>
 						<argument>${contracts.sources}/interfaces/IIpToken.sol</argument>
                         <argument>${contracts.sources}/interfaces/IJoseph.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonConfiguration.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonInternal.sol</argument>
                         <argument>${contracts.sources}/interfaces/ICockpitDataProvider.sol</argument>                        
                         <argument>${contracts.sources}/interfaces/IMiltonFacadeDataProvider.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMilton.sol</argument>
-                        <argument>${contracts.sources}/interfaces/IMiltonSpreadConfiguration.sol</argument>
+                        <argument>${contracts.sources}/interfaces/IMiltonSpreadInternal.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/interfaces/IMiltonStorage.sol</argument>                        
                         <argument>${contracts.sources}/interfaces/IWarrenFacadeDataProvider.sol</argument>
