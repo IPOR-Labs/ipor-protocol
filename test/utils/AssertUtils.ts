@@ -1,6 +1,5 @@
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
-
 import {
     prepareTestData,
     prepareApproveForUsers,
@@ -191,4 +190,43 @@ export const testCasePagination = async (
             expectedError
         );
     }
+};
+
+export type SoapIndicatorsMemory = {
+    rebalanceTimestamp: BigNumber;
+    //N_0
+    totalNotional: BigNumber;
+    //I_0
+    averageInterestRate: BigNumber;
+    //TT
+    totalIbtQuantity: BigNumber;
+    //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+    quasiHypotheticalInterestCumulative: BigNumber;
+};
+
+export const assertSoapIndicator = async (
+    actualSoapIndicator: SoapIndicatorsMemory,
+    expectedRebalanceTimestamp: BigNumber,
+    expectedTotalNotional: BigNumber,
+    expectedTotalIbtQuantity: BigNumber,
+    expectedAverageInterestRate: BigNumber,
+    expectedQuasiHypotheticalInterestCumulative: BigNumber
+) => {
+    expect(expectedRebalanceTimestamp, "Incorrect rebalance timestamp").to.be.eq(
+        actualSoapIndicator.rebalanceTimestamp
+    );
+
+    expect(expectedTotalNotional, "Incorrect total notional").to.be.eq(
+        actualSoapIndicator.totalNotional
+    );
+    expect(expectedTotalIbtQuantity, "Incorrect total IBT quantity").to.be.eq(
+        actualSoapIndicator.totalIbtQuantity
+    );
+    expect(expectedAverageInterestRate, "Incorrect average weighted interest rate").to.be.eq(
+        actualSoapIndicator.averageInterestRate
+    );
+    expect(
+        expectedQuasiHypotheticalInterestCumulative,
+        "Incorrect quasi hypothetical interest cumulative"
+    ).to.be.eq(actualSoapIndicator.quasiHypotheticalInterestCumulative);
 };

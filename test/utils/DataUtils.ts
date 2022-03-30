@@ -44,6 +44,8 @@ import {
     LEVERAGE_18DEC,
     ZERO,
     N0__01_18DEC,
+    N1__0_18DEC,
+    YEAR_IN_SECONDS,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -484,5 +486,41 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
+    };
+};
+
+const prepareSoapIndicatorD18Case1 = async (rebalanceTimestamp: BigNumber, direction: number) => {
+    return {
+        rebalanceTimestamp: rebalanceTimestamp,
+        direction: direction,
+        quasiHypotheticalInterestCumulative: BigNumber.from("500")
+            .mul(N1__0_18DEC)
+            .mul(N1__0_18DEC)
+            .mul(N1__0_18DEC)
+            .mul(YEAR_IN_SECONDS),
+
+        totalNotional: BigNumber.from("20000").mul(N1__0_18DEC),
+        averageInterestRate: BigNumber.from("8").mul(N0__01_18DEC),
+        totalIbtQuantity: BigNumber.from("100").mul(N1__0_18DEC),
+        soap: ZERO,
+    };
+};
+
+export const prepareSoapIndicatorPayFixedCaseD18 = async () => {
+    return prepareSoapIndicatorD18Case1(BigNumber.from(Math.floor(Date.now() / 1000)), 0);
+};
+
+export const prepareInitialDefaultSoapIndicator = async (
+    rebalanceTimestamp: BigNumber,
+    direction: number
+) => {
+    return {
+        rebalanceTimestamp: rebalanceTimestamp,
+        direction: direction,
+        quasiHypotheticalInterestCumulative: ZERO,
+        totalNotional: ZERO,
+        averageInterestRate: ZERO,
+        totalIbtQuantity: ZERO,
+        soap: ZERO,
     };
 };
