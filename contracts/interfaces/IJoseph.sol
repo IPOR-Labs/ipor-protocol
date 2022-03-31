@@ -22,7 +22,7 @@ interface IJoseph {
     /// @param ipTokenVolume redeem amount
     function redeem(uint256 ipTokenVolume) external;
 
-    /// @notice Returns reserve ratio of Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset. 
+    /// @notice Returns reserve ratio of Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset.
     /// Resere ratio is the ratio between ERC20 asset kept on hand by Milton, not delegated to Stanley and total amount of asset.
     /// @return reserves ratio
     function checkVaultReservesRatio() external returns (uint256);
@@ -63,7 +63,7 @@ interface IJoseph {
         /// @notice redeemed IP Token value
         /// @dev value represented in 18 decimals
         uint256 ipTokenAmount,
-        /// @notice underlying asset fee deducted when redeeming ipToken. 
+        /// @notice underlying asset fee deducted when redeeming ipToken.
         /// @dev value represented in 18 decimals
         uint256 redeemFee,
         /// @notice net asset amount transferred from Milton to `to`/sender's account, redudced by the redeem fee

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-/// @title Administrative interface for interaction with Joseph. 
+/// @title Administrative interface for interaction with Joseph.
 interface IJosephInternal {
     /// @notice Returns current version of Joseph
     /// @return Joseph's current version
@@ -18,7 +18,7 @@ interface IJosephInternal {
     function getRedeemFeePercentage() external pure returns (uint256);
 
     /// TODO: consider changing Percentage to Rate
-    /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate 
+    /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
     /// Liquidity Pool utilization rate treshold during redemption of ipTokens by the trader.
     /// @return redeem Liquidity Pool max utilization percentage
     function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
