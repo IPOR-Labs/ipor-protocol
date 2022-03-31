@@ -990,7 +990,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1004,7 +1004,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1021,7 +1021,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1035,7 +1035,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1052,7 +1052,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1066,7 +1066,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxLeverageValue"
+                                method="getMaxLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1089,7 +1089,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1103,7 +1103,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1120,7 +1120,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1134,7 +1134,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1151,7 +1151,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -1165,7 +1165,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMinLeverageValue"
+                                method="getMinLeverage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

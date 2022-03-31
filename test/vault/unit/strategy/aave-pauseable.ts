@@ -11,7 +11,7 @@ import {
     MockAaveIncentivesController,
 } from "../../../../types";
 
-const { assertError } = require("../../../Utils");
+import { assertError } from "../../../utils/AssertUtils";
 
 chai.use(solidity);
 const { expect } = chai;

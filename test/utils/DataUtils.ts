@@ -44,6 +44,8 @@ import {
     LEVERAGE_18DEC,
     ZERO,
     N0__01_18DEC,
+    N1__0_18DEC,
+    YEAR_IN_SECONDS,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -374,6 +376,20 @@ export const prepareComplexTestDataDaiCase000 = async (
     return testData;
 };
 
+export const prepareComplexTestDataUsdtCase000 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataUsdtCase000(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "USDT", testData);
+    if (testData.tokenUsdt === undefined) {
+        expect(true).to.be.false;
+        return testData;
+    }
+    await setupTokenUsdtInitialValuesForUsers(accounts, testData.tokenUsdt);
+    return testData;
+};
+
 export const prepareComplexTestDataDaiCase400 = async (
     accounts: Signer[],
     miltonSpreadModel: MockMiltonSpreadModel
@@ -440,6 +456,15 @@ export const setupTokenUsdtInitialValuesForUsers = async (
     }
 };
 
+export const setupTokenUsdcInitialValuesForUsers = async (
+    users: Signer[],
+    tokenUsdc: UsdcMockedToken
+) => {
+    for (let i = 0; i < users.length; i++) {
+        await tokenUsdc.setupInitialAmount(await users[i].getAddress(), USER_SUPPLY_6_DECIMALS);
+    }
+};
+
 export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
     return {
         asset: tokenDai.address,
@@ -449,5 +474,53 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
+    };
+};
+
+export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: UsdtMockedToken) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+const prepareSoapIndicatorD18Case1 = async (rebalanceTimestamp: BigNumber, direction: number) => {
+    return {
+        rebalanceTimestamp: rebalanceTimestamp,
+        direction: direction,
+        quasiHypotheticalInterestCumulative: BigNumber.from("500")
+            .mul(N1__0_18DEC)
+            .mul(N1__0_18DEC)
+            .mul(N1__0_18DEC)
+            .mul(YEAR_IN_SECONDS),
+
+        totalNotional: BigNumber.from("20000").mul(N1__0_18DEC),
+        averageInterestRate: BigNumber.from("8").mul(N0__01_18DEC),
+        totalIbtQuantity: BigNumber.from("100").mul(N1__0_18DEC),
+        soap: ZERO,
+    };
+};
+
+export const prepareSoapIndicatorPayFixedCaseD18 = async () => {
+    return prepareSoapIndicatorD18Case1(BigNumber.from(Math.floor(Date.now() / 1000)), 0);
+};
+
+export const prepareInitialDefaultSoapIndicator = async (
+    rebalanceTimestamp: BigNumber,
+    direction: number
+) => {
+    return {
+        rebalanceTimestamp: rebalanceTimestamp,
+        direction: direction,
+        quasiHypotheticalInterestCumulative: ZERO,
+        totalNotional: ZERO,
+        averageInterestRate: ZERO,
+        totalIbtQuantity: ZERO,
+        soap: ZERO,
     };
 };
