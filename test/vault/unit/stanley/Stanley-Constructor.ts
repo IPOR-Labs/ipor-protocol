@@ -8,7 +8,7 @@ import { MockStrategy, Stanley, TestERC20, IvToken } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
-const { assertError } = require("../../../Utils");
+import { assertError } from "../../../utils/AssertUtils";
 const one = BigNumber.from("1000000000000000000");
 
 describe("Stanley -> constructor", () => {
