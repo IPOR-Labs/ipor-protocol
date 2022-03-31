@@ -2,17 +2,18 @@ import "@openzeppelin/hardhat-upgrades";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@nomiclabs/hardhat-web3";
-
 import { task } from "hardhat/config";
 import "hardhat-tracer";
 import "solidity-coverage";
 import "@typechain/hardhat";
-
+import "hardhat-abi-exporter";
 import networks from "./hardhat.network";
 import "dotenv";
 
 require("dotenv").config();
-
+require("hardhat-docgen");
+import '@hardhat-docgen/core'
+import '@hardhat-docgen/markdown'
 require("hardhat-contract-sizer");
 
 if (process.env.REPORT_GAS === "true") {
@@ -54,5 +55,35 @@ export default {
         target: "ethers-v5",
         alwaysGenerateOverloads: true, // should overloads with full signatures like deposit(uint256) be generated always, even if there are no overloads?
         externalArtifacts: ["externalArtifacts/*.json"], // optional array of glob patterns with external artifacts to process (for example external libs from node_modules)
+    },
+    abiExporter: [
+        {
+            path: "./abi/pretty",
+            pretty: true,
+        },
+        {
+            path: "./abi/ugly",
+            pretty: false,
+        },
+    ],
+    docgen: {
+        path: "./docs",
+        clear: true,
+        runOnCompile: false,
+        only: [
+            "contracts/amm/Milton.sol",
+            "contracts/amm/MiltonStorage.sol",
+            "contracts/amm/MiltonSpreadModel.sol",
+            "contracts/amm/pool/Joseph.sol",
+            "contracts/facades/cockpit/CockpitDataProvider.sol",
+            "contracts/facades/MiltonFacadeDataProvider.sol",
+            "contracts/facades/WarrenFacadeDataProvider.sol",
+            "contracts/oracles/Warren.sol",
+            "contracts/tokens/IpToken.sol",
+            "contracts/tokens/IvToken.sol",
+            "contracts/vault/Stanley.sol",
+            "contracts/vault/strategies/StrategyCompound.sol",
+            "contracts/vault/strategies/StrategyAave.sol",
+        ],
     },
 };

@@ -76,7 +76,7 @@ describe("Joseph Treasury", () => {
             testData
         );
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
-        const liquidityAmount = USD_14_000_18DEC;
+        const assetAmount = USD_14_000_18DEC;
         const withdrawAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const redeemFee18Dec = BigNumber.from("50").mul(N1__0_18DEC);
@@ -91,7 +91,7 @@ describe("Joseph Treasury", () => {
 
         await josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmount, params.openTimestamp);
+            .itfProvideLiquidity(assetAmount, params.openTimestamp);
 
         //when
         await josephDai.connect(liquidityProvider).itfRedeem(withdrawAmount, params.openTimestamp);
@@ -164,7 +164,7 @@ describe("Joseph Treasury", () => {
             tokenUsdt
         );
         const params = getStandardDerivativeParamsUSDT(userTwo, tokenUsdt);
-        const liquidityAmount = USD_14_000_6DEC;
+        const assetAmount = USD_14_000_6DEC;
         const withdrawIpTokenAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
         const redeemFee18Dec = BigNumber.from("50").mul(N1__0_18DEC);
         const redeemFee6Dec = BigNumber.from("50").mul(N1__0_6DEC);
@@ -181,7 +181,7 @@ describe("Joseph Treasury", () => {
 
         await josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmount, params.openTimestamp);
+            .itfProvideLiquidity(assetAmount, params.openTimestamp);
 
         //when
         await josephUsdt
@@ -253,12 +253,12 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const liquidityAmount = USD_14_000_18DEC;
+        const assetAmount = USD_14_000_18DEC;
         const withdrawAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await josephDai.connect(liquidityProvider).itfProvideLiquidity(liquidityAmount, timestamp);
+        await josephDai.connect(liquidityProvider).itfProvideLiquidity(assetAmount, timestamp);
 
         //when
         await josephDai.connect(liquidityProvider).itfRedeem(withdrawAmount, timestamp);
@@ -446,10 +446,10 @@ describe("Joseph Treasury", () => {
             tokenUsdt
         );
 
-        const liquidityAmountDAI = USD_14_000_18DEC;
+        const assetAmountDAI = USD_14_000_18DEC;
         const withdrawIpTokenAmountDAI = TC_TOTAL_AMOUNT_10_000_18DEC;
 
-        const liquidityAmountUSDT = USD_14_000_6DEC;
+        const assetAmountUSDT = USD_14_000_6DEC;
         const withdrawIpTokenAmountUSDT = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const redeemFee18Dec = BigNumber.from("50").mul(N1__0_18DEC);
@@ -475,12 +475,8 @@ describe("Joseph Treasury", () => {
 
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await josephDai
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmountDAI, timestamp);
-        await josephUsdt
-            .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmountUSDT, timestamp);
+        await josephDai.connect(liquidityProvider).itfProvideLiquidity(assetAmountDAI, timestamp);
+        await josephUsdt.connect(liquidityProvider).itfProvideLiquidity(assetAmountUSDT, timestamp);
 
         //when
         await josephDai.connect(liquidityProvider).itfRedeem(withdrawIpTokenAmountDAI, timestamp);
@@ -606,9 +602,9 @@ describe("Joseph Treasury", () => {
             tokenUsdt
         );
 
-        const liquidityAmountDAI = USD_14_000_18DEC;
+        const assetAmountDAI = USD_14_000_18DEC;
         const withdrawIpTokenAmountDAI = TC_TOTAL_AMOUNT_10_000_18DEC;
-        const liquidityAmountUSDT = USD_14_000_6DEC;
+        const assetAmountUSDT = USD_14_000_6DEC;
         const withdrawIpTokenAmountUSDT = TC_TOTAL_AMOUNT_10_000_18DEC;
 
         const redeemFee18Dec = BigNumber.from("50").mul(N1__0_18DEC);
@@ -636,9 +632,9 @@ describe("Joseph Treasury", () => {
 
         const timestamp = Math.floor(Date.now() / 1000);
 
-        await josephDai.connect(daiUser).itfProvideLiquidity(liquidityAmountDAI, timestamp);
+        await josephDai.connect(daiUser).itfProvideLiquidity(assetAmountDAI, timestamp);
 
-        await josephUsdt.connect(usdtUser).itfProvideLiquidity(liquidityAmountUSDT, timestamp);
+        await josephUsdt.connect(usdtUser).itfProvideLiquidity(assetAmountUSDT, timestamp);
 
         //when
         await josephDai.connect(daiUser).itfRedeem(withdrawIpTokenAmountDAI, timestamp);

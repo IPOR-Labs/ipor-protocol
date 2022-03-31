@@ -366,8 +366,8 @@ export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer
         notionalAmount: BigNumber.from("50000").mul(N1__0_18DEC),
         fixedInterestRate: BigNumber.from("234"),
         ibtQuantity: BigNumber.from("123"),
-        openingFeeLPValue: BigNumber.from("1500").mul(N1__0_18DEC),
-        openingFeeTreasuryValue: BigNumber.from("1500").mul(N1__0_18DEC),
+        openingFeeLPAmount: BigNumber.from("1500").mul(N1__0_18DEC),
+        openingFeeTreasuryAmount: BigNumber.from("1500").mul(N1__0_18DEC),
     };
 };
 // [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress]

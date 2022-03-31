@@ -11,31 +11,21 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../libraries/errors/StanleyErrors.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IStrategy.sol";
+import "../../interfaces/IStrategyAave.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
+import "./StrategyCore.sol";
 import "hardhat/console.sol";
 
-contract AaveStrategy is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
-    PausableUpgradeable,
-    IporOwnableUpgradeable,
-    IStrategy
-{
+contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address private _asset;
-    address private _shareToken;
     address private _aave;
     address private _stkAave;
-    address private _stanley;
-    address private _treasury;
-    address private _treasuryManager;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
@@ -75,38 +65,6 @@ contract AaveStrategy is
         _stkAave = stkAave;
         _aave = aaveToken;
         _treasuryManager = msg.sender;
-    }
-
-    modifier onlyStanley() {
-        require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
-        _;
-    }
-
-    modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
-        _;
-    }
-
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    /**
-     * @dev _asset return
-     */
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    /**
-     * @dev Share token to track _asset (DAI -> aDAI)
-     */
-    function getShareToken() external view override returns (address) {
-        return _shareToken;
     }
 
     /**
@@ -168,11 +126,11 @@ contract AaveStrategy is
      */
     function beforeClaim() external override whenNotPaused nonReentrant {
         require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        address[] memory assets = new address[](1);
-        assets[0] = _shareToken;
-        _aaveIncentive.claimRewards(assets, type(uint256).max, address(this));
+        address[] memory shareTokens = new address[](1);
+        shareTokens[0] = _shareToken;
+        _aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
-        emit DoBeforeClaim(address(this), assets);
+        emit DoBeforeClaim(msg.sender, shareTokens);
     }
 
     /**
@@ -183,57 +141,43 @@ contract AaveStrategy is
         when window is open you can call this function to claim _aave
      */
     function doClaim() external override whenNotPaused nonReentrant {
-        require(_treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+        address treasury = _treasury;
+
+        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
+
         uint256 cooldownStartTimestamp = _stakedAaveInterface.stakersCooldowns(address(this));
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
+
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
         ) {
             address aave = _aave;
+
             // claim AAVE governace token second after claim stakedAave token
             _stakedAaveInterface.redeem(
                 address(this),
                 IERC20Upgradeable(_stkAave).balanceOf(address(this))
             );
+
             uint256 balance = IERC20Upgradeable(aave).balanceOf(address(this));
-            IERC20Upgradeable(aave).safeTransfer(_treasury, balance);
-            address[] memory assets = new address[](1);
-            assets[0] = _shareToken;
-            emit DoClaim(address(this), assets, _treasury, balance);
+
+            IERC20Upgradeable(aave).safeTransfer(treasury, balance);
+
+            emit DoClaim(msg.sender, _shareToken, treasury, balance);
         }
-    }
-
-    function setStanley(address stanley) external override whenNotPaused onlyOwner {
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        _stanley = stanley;
-        emit StanleyChanged(msg.sender, stanley, address(this));
-    }
-
-    function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
-        require(manager != address(0), IporErrors.WRONG_ADDRESS);
-        _treasuryManager = manager;
-        emit TreasuryManagerChanged(address(this), manager);
-    }
-
-    function setTreasury(address treasury) external whenNotPaused onlyTreasuryManager {
-        require(treasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        _treasury = treasury;
-        emit TreasuryChanged(address(this), treasury);
     }
 
     /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
-     * @param stkAave stakedAAVE token
+     * @param newStkAave stakedAAVE token
      */
-    function setStkAave(address stkAave) external whenNotPaused onlyOwner {
-        require(stkAave != address(0), IporErrors.WRONG_ADDRESS);
-        _stkAave = stkAave;
-        emit StkAaveChanged(msg.sender, stkAave);
+    function setStkAave(address newStkAave) external whenNotPaused onlyOwner {
+        require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
+        address oldStkAave = _stkAave;
+        _stkAave = newStkAave;
+        emit StkAaveChanged(msg.sender, oldStkAave, newStkAave);
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

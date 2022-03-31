@@ -25,6 +25,10 @@ contract WarrenFacadeDataProvider is
         _assets = assets;
     }
 
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
+
     function getIndexes() external view override returns (WarrenFacadeTypes.IporFront[] memory) {
         WarrenFacadeTypes.IporFront[] memory indexes = new WarrenFacadeTypes.IporFront[](
             _assets.length

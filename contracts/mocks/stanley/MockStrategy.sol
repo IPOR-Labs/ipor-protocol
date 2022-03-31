@@ -14,6 +14,9 @@ contract MockStrategy is IStrategy {
     address private _treasury;
     address private _treasuryManager;
 
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
     function deposit(uint256 amount) external {}
 
     function withdraw(uint256 amount) external {}
@@ -69,6 +72,10 @@ contract MockStrategy is IStrategy {
     }
 
     function beforeClaim() external {}
+
+    function getStanley() external view override returns (address) {
+        return _stanley;
+    }
 
     function setStanley(address stanley) external {
         _stanley = stanley;

@@ -92,7 +92,7 @@ describe("Joseph - provide liquidity", () => {
 
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
-        const liquidityAmount = USD_14_000_18DEC;
+        const assetAmount = USD_14_000_18DEC;
 
         const expectedLiquidityProviderStableBalance = BigNumber.from("9986000").mul(N1__0_18DEC);
         const expectedLiquidityPoolBalanceMilton = USD_14_000_18DEC;
@@ -100,7 +100,7 @@ describe("Joseph - provide liquidity", () => {
         //when
         await josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmount, params.openTimestamp);
+            .itfProvideLiquidity(assetAmount, params.openTimestamp);
 
         // //then
         const actualIpTokenBalanceSender = await ipTokenDai.balanceOf(
@@ -114,13 +114,13 @@ describe("Joseph - provide liquidity", () => {
             await liquidityProvider.getAddress()
         );
         expect(
-            liquidityAmount,
-            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${liquidityAmount}`
+            assetAmount,
+            `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${assetAmount}`
         ).to.be.eql(actualIpTokenBalanceSender);
 
         expect(
-            liquidityAmount,
-            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount}`
+            assetAmount,
+            `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${assetAmount}`
         ).to.be.eql(actualUnderlyingBalanceMilton);
 
         expect(
@@ -161,7 +161,7 @@ describe("Joseph - provide liquidity", () => {
             tokenUsdt
         );
         const params = getStandardDerivativeParamsUSDT(userTwo, tokenUsdt);
-        const liquidityAmount = USD_14_000_6DEC;
+        const assetAmount = USD_14_000_6DEC;
         const wadLiquidityAmount = USD_14_000_18DEC;
 
         const expectedLiquidityProviderStableBalance = BigNumber.from("9986000000000");
@@ -170,7 +170,7 @@ describe("Joseph - provide liquidity", () => {
         //when
         await josephUsdt
             .connect(liquidityProvider)
-            .itfProvideLiquidity(liquidityAmount, params.openTimestamp);
+            .itfProvideLiquidity(assetAmount, params.openTimestamp);
 
         //then
         const actualIpTokenBalanceSender = await ipTokenUsdt.balanceOf(
@@ -191,8 +191,8 @@ describe("Joseph - provide liquidity", () => {
         ).to.be.eql(actualIpTokenBalanceSender.toString());
 
         expect(
-            liquidityAmount,
-            `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${liquidityAmount}`
+            assetAmount,
+            `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${assetAmount}`
         ).to.be.eql(actualUnderlyingBalanceMilton);
 
         expect(

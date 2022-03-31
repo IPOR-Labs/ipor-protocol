@@ -30,45 +30,48 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function testDeposit(address recipient, uint256 assetValue) external returns (uint256 balance) {
-        balance = _balance[recipient] + assetValue;
+    function testDeposit(address recipient, uint256 assetAmount)
+        external
+        returns (uint256 balance)
+    {
+        balance = _balance[recipient] + assetAmount;
 
         _balance[recipient] = balance;
 
-        _asset.safeTransferFrom(msg.sender, address(this), assetValue);
+        _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
-    function deposit(uint256 assetValue) external override returns (uint256 balance) {
-        balance = _balance[msg.sender] + assetValue;
+    function deposit(uint256 assetAmount) external override returns (uint256 balance) {
+        balance = _balance[msg.sender] + assetAmount;
 
         _balance[msg.sender] = balance;
 
-        _asset.safeTransferFrom(msg.sender, address(this), assetValue);
+        _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
-    function withdraw(uint256 assetValue)
+    function withdraw(uint256 assetAmount)
         external
         override
-        returns (uint256 withdrawnValue, uint256 balance)
+        returns (uint256 withdrawnAmount, uint256 balance)
     {
-        uint256 finalAssetValue = IporMath.division(
-            assetValue * _withdrawPercentage(),
+        uint256 finalAssetAmount = IporMath.division(
+            assetAmount * _withdrawPercentage(),
             Constants.D18
         );
 
-        balance = _balance[msg.sender] - finalAssetValue;
-        withdrawnValue = finalAssetValue;
+        balance = _balance[msg.sender] - finalAssetAmount;
+        withdrawnAmount = finalAssetAmount;
 
         _balance[msg.sender] = balance;
 
-        _asset.safeTransfer(msg.sender, finalAssetValue);
+        _asset.safeTransfer(msg.sender, finalAssetAmount);
     }
 
     //solhint-disable no-empty-blocks
     function withdrawAll()
         external
         override
-        returns (uint256 withdrawnValue, uint256 vaultBalance)
+        returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {}
 
     function _getCurrentInterest() internal pure virtual returns (uint256) {

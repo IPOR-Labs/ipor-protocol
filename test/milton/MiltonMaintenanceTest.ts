@@ -135,7 +135,7 @@ describe("Milton Maintenance", () => {
         await assertError(miltonDai.connect(userTwo).withdrawFromStanley(1), "Pausable: paused");
 
         await assertError(
-            miltonDai.connect(admin).setupMaxAllowance(await userThree.getAddress()),
+            miltonDai.connect(admin).setupMaxAllowanceForAsset(await userThree.getAddress()),
             "Pausable: paused"
         );
 

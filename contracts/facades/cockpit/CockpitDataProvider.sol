@@ -55,6 +55,10 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
+
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
 
