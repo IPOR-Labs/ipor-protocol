@@ -1,9 +1,12 @@
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
+
+import { UsdtMockedToken, UsdcMockedToken, DaiMockedToken } from "../../types";
 import {
     prepareTestData,
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
+    TestData,
 } from "./DataUtils";
 import {
     MockMiltonSpreadModel,
@@ -11,6 +14,8 @@ import {
     MiltonUsdtCase,
     MiltonDaiCase,
 } from "./MiltonUtils";
+
+import { Derivatives, countOpenSwaps } from "./SwapUtiles";
 
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "./JosephUtils";
 import { MockStanleyCase } from "./StanleyUtils";
@@ -22,6 +27,10 @@ import {
     LEVERAGE_18DEC,
     PERCENTAGE_5_18DEC,
     USD_50_000_18DEC,
+    USD_10_18DEC,
+    USD_10_000_000_18DEC,
+    USD_10_000_000_6DEC,
+    ZERO,
 } from "./Constants";
 
 const { expect } = chai;
@@ -134,7 +143,7 @@ export const testCasePagination = async (
     }
 
     const paramsDai = {
-        asset: tokenDai,
+        asset: tokenDai.address,
         totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
         toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
@@ -144,7 +153,7 @@ export const testCasePagination = async (
 
     await warren
         .connect(userOne)
-        .itfUpdateIndex(paramsDai.asset.address, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
+        .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
     await josephDai
         .connect(liquidityProvider)
@@ -174,7 +183,7 @@ export const testCasePagination = async (
     if (expectedError == null) {
         const response = await miltonFacadeDataProvider
             .connect(paramsDai.from)
-            .getMySwaps(paramsDai.asset.address, offset, pageSize);
+            .getMySwaps(paramsDai.asset, offset, pageSize);
 
         const actualSwapsLength = response.swaps.length;
         const totalSwapCount = response.totalCount;
@@ -186,7 +195,7 @@ export const testCasePagination = async (
         await assertError(
             miltonFacadeDataProvider
                 .connect(paramsDai.from)
-                .getMySwaps(paramsDai.asset.address, offset, pageSize),
+                .getMySwaps(paramsDai.asset, offset, pageSize),
             expectedError
         );
     }
@@ -229,4 +238,315 @@ export const assertSoapIndicator = async (
         expectedQuasiHypotheticalInterestCumulative,
         "Incorrect quasi hypothetical interest cumulative"
     ).to.be.eq(actualSoapIndicator.quasiHypotheticalInterestCumulative);
+};
+
+export const assertExpectedValues = async function (
+    testData: TestData,
+    asset: string,
+    direction: number,
+    openerUser: Signer,
+    closerUser: Signer,
+    miltonBalanceBeforePayout: BigNumber,
+    expectedMiltonUnderlyingTokenBalance: BigNumber,
+    expectedOpenerUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+    expectedCloserUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+    expectedLiquidityPoolTotalBalanceWad: BigNumber,
+    expectedOpenedPositions: BigNumber,
+    expectedDerivativesTotalBalanceWad: BigNumber,
+    expectedTreasuryTotalBalanceWad: BigNumber
+) {
+    let actualDerivatives: Derivatives | undefined;
+    if (testData.miltonStorageUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        if (direction == 0) {
+            actualDerivatives = await testData.miltonStorageUsdt.getSwapsPayFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+        if (direction == 1) {
+            actualDerivatives = await testData.miltonStorageUsdt.getSwapsReceiveFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+    }
+
+    if (testData.miltonStorageUsdc && testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+        if (direction == 0) {
+            actualDerivatives = await testData.miltonStorageUsdc.getSwapsPayFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+        if (direction == 1) {
+            actualDerivatives = await testData.miltonStorageUsdc.getSwapsReceiveFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+    }
+
+    if (testData.miltonStorageDai && testData.tokenDai && asset === testData.tokenDai.address) {
+        if (direction == 0) {
+            actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+        if (direction == 1) {
+            actualDerivatives = await testData.miltonStorageDai.getSwapsReceiveFixed(
+                await openerUser.getAddress(),
+                0,
+                50
+            );
+        }
+    }
+
+    const actualOpenSwapsVol = countOpenSwaps(actualDerivatives);
+
+    expect(
+        expectedOpenedPositions,
+        `Incorrect number of opened derivatives, actual:  ${actualOpenSwapsVol}, expected: ${expectedOpenedPositions}`
+    ).to.be.eq(actualOpenSwapsVol);
+
+    let expectedPublicationFeeTotalBalanceWad = USD_10_18DEC;
+    let openerUserUnderlyingTokenBalanceBeforePayout = null;
+    let closerUserUnderlyingTokenBalanceBeforePayout = null;
+    let miltonUnderlyingTokenBalanceAfterPayout = null;
+    let openerUserUnderlyingTokenBalanceAfterPayout = ZERO;
+    let closerUserUnderlyingTokenBalanceAfterPayout = null;
+
+    if (testData.miltonDai && testData.tokenDai && asset === testData.tokenDai.address) {
+        openerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_18DEC;
+        closerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_18DEC;
+
+        miltonUnderlyingTokenBalanceAfterPayout = await testData.tokenDai.balanceOf(
+            testData.miltonDai.address
+        );
+        openerUserUnderlyingTokenBalanceAfterPayout = await testData.tokenDai.balanceOf(
+            await openerUser.getAddress()
+        );
+        closerUserUnderlyingTokenBalanceAfterPayout = await testData.tokenDai.balanceOf(
+            await closerUser.getAddress()
+        );
+    }
+
+    if (testData.miltonUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        openerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_6DEC;
+        closerUserUnderlyingTokenBalanceBeforePayout = USD_10_000_000_6DEC;
+        miltonUnderlyingTokenBalanceAfterPayout = await testData.tokenUsdt.balanceOf(
+            testData.miltonUsdt.address
+        );
+        openerUserUnderlyingTokenBalanceAfterPayout = await testData.tokenUsdt.balanceOf(
+            await openerUser.getAddress()
+        );
+        closerUserUnderlyingTokenBalanceAfterPayout = await testData.tokenUsdt.balanceOf(
+            await closerUser.getAddress()
+        );
+    }
+
+    await assertBalances(
+        testData,
+        asset,
+        openerUser,
+        closerUser,
+        expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+        expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+        expectedMiltonUnderlyingTokenBalance,
+        expectedDerivativesTotalBalanceWad,
+        expectedPublicationFeeTotalBalanceWad,
+        expectedLiquidityPoolTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad
+    );
+
+    let expectedSumOfBalancesBeforePayout = null;
+    let actualSumOfBalances = null;
+
+    if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
+        expectedSumOfBalancesBeforePayout = miltonBalanceBeforePayout.add(
+            openerUserUnderlyingTokenBalanceBeforePayout || ZERO
+        );
+        actualSumOfBalances = openerUserUnderlyingTokenBalanceAfterPayout.add(
+            miltonUnderlyingTokenBalanceAfterPayout || ZERO
+        );
+    } else {
+        expectedSumOfBalancesBeforePayout = miltonBalanceBeforePayout
+            .add(openerUserUnderlyingTokenBalanceBeforePayout || ZERO)
+            .add(closerUserUnderlyingTokenBalanceBeforePayout || ZERO);
+        actualSumOfBalances = openerUserUnderlyingTokenBalanceAfterPayout
+            .add(closerUserUnderlyingTokenBalanceAfterPayout || ZERO)
+            .add(miltonUnderlyingTokenBalanceAfterPayout || ZERO);
+    }
+
+    expect(
+        expectedSumOfBalancesBeforePayout,
+        `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`
+    ).to.be.eql(actualSumOfBalances);
+};
+
+const assertBalances = async (
+    testData: TestData,
+    asset: string,
+    openerUser: Signer,
+    closerUser: Signer,
+    expectedOpenerUserUnderlyingTokenBalance: BigNumber,
+    expectedCloserUserUnderlyingTokenBalance: BigNumber,
+    expectedMiltonUnderlyingTokenBalance: BigNumber,
+    expectedDerivativesTotalBalanceWad: BigNumber,
+    expectedPublicationFeeTotalBalanceWad: BigNumber,
+    expectedLiquidityPoolTotalBalanceWad: BigNumber,
+    expectedTreasuryTotalBalanceWad: BigNumber
+) => {
+    let actualOpenerUserUnderlyingTokenBalance = null;
+    let actualCloserUserUnderlyingTokenBalance = null;
+    let balance = null;
+
+    if (
+        testData.miltonStorageDai &&
+        testData.tokenDai &&
+        testData.tokenDai &&
+        asset === testData.tokenDai.address
+    ) {
+        actualOpenerUserUnderlyingTokenBalance = await testData.tokenDai.balanceOf(
+            await openerUser.getAddress()
+        );
+        actualCloserUserUnderlyingTokenBalance = await testData.tokenDai.balanceOf(
+            await closerUser.getAddress()
+        );
+        balance = await testData.miltonStorageDai.getExtendedBalance();
+    }
+
+    if (testData.miltonStorageUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        actualOpenerUserUnderlyingTokenBalance = await testData.tokenUsdt.balanceOf(
+            await openerUser.getAddress()
+        );
+        actualCloserUserUnderlyingTokenBalance = await testData.tokenUsdt.balanceOf(
+            await closerUser.getAddress()
+        );
+        balance = await testData.miltonStorageUsdt.getExtendedBalance();
+    }
+
+    let actualMiltonUnderlyingTokenBalance = null;
+    if (testData.miltonDai && testData.tokenDai && asset === testData.tokenDai.address) {
+        actualMiltonUnderlyingTokenBalance = await testData.tokenDai.balanceOf(
+            testData.miltonDai.address
+        );
+    }
+    if (testData.miltonUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        actualMiltonUnderlyingTokenBalance = await testData.tokenUsdt.balanceOf(
+            testData.miltonUsdt.address
+        );
+    }
+    if (testData.miltonUsdc && testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+        actualMiltonUnderlyingTokenBalance = await testData.tokenUsdc.balanceOf(
+            testData.miltonUsdc.address
+        );
+    }
+
+    const actualPayFixedDerivativesBalance = balance?.payFixedTotalCollateral;
+    const actualRecFixedDerivativesBalance = balance?.receiveFixedTotalCollateral;
+    const actualDerivativesTotalBalance = actualPayFixedDerivativesBalance?.add(
+        actualRecFixedDerivativesBalance || ZERO
+    );
+
+    const actualPublicationFeeTotalBalance = balance?.iporPublicationFee;
+    const actualLiquidityPoolTotalBalanceWad = balance?.liquidityPool;
+    const actualTreasuryTotalBalanceWad = balance?.treasury;
+
+    if (expectedMiltonUnderlyingTokenBalance !== null) {
+        expect(
+            actualMiltonUnderlyingTokenBalance,
+            `Incorrect underlying token balance for ${asset} in Milton address, actual: ${actualMiltonUnderlyingTokenBalance}, expected: ${expectedMiltonUnderlyingTokenBalance}`
+        ).to.be.eq(expectedMiltonUnderlyingTokenBalance);
+    }
+
+    if (expectedOpenerUserUnderlyingTokenBalance != null) {
+        expect(
+            actualOpenerUserUnderlyingTokenBalance,
+            `Incorrect token balance for ${asset} in Opener User address, actual: ${actualOpenerUserUnderlyingTokenBalance}, expected: ${expectedOpenerUserUnderlyingTokenBalance}`
+        ).to.be.eq(expectedOpenerUserUnderlyingTokenBalance);
+    }
+
+    if (expectedCloserUserUnderlyingTokenBalance != null) {
+        expect(
+            actualCloserUserUnderlyingTokenBalance,
+            `Incorrect token balance for ${asset} in Closer User address, actual: ${actualCloserUserUnderlyingTokenBalance}, expected: ${expectedCloserUserUnderlyingTokenBalance}`
+        ).to.be.eq(expectedCloserUserUnderlyingTokenBalance);
+    }
+
+    if (expectedDerivativesTotalBalanceWad != null) {
+        expect(
+            expectedDerivativesTotalBalanceWad,
+            `Incorrect derivatives total balance for ${asset}, actual:  ${actualDerivativesTotalBalance}, expected: ${expectedDerivativesTotalBalanceWad}`
+        ).to.be.eq(actualDerivativesTotalBalance);
+    }
+
+    if (expectedPublicationFeeTotalBalanceWad != null) {
+        expect(
+            expectedPublicationFeeTotalBalanceWad,
+            `Incorrect ipor publication fee total balance for ${asset}, actual: ${actualPublicationFeeTotalBalance}, expected: ${expectedPublicationFeeTotalBalanceWad}`
+        ).to.be.eq(actualPublicationFeeTotalBalance);
+    }
+
+    if (expectedLiquidityPoolTotalBalanceWad != null) {
+        expect(
+            expectedLiquidityPoolTotalBalanceWad,
+            `Incorrect Liquidity Pool total balance for ${asset}, actual:  ${actualLiquidityPoolTotalBalanceWad}, expected: ${expectedLiquidityPoolTotalBalanceWad}`
+        ).to.be.eq(actualLiquidityPoolTotalBalanceWad);
+    }
+
+    if (expectedTreasuryTotalBalanceWad != null) {
+        expect(
+            expectedTreasuryTotalBalanceWad,
+            `Incorrect Treasury total balance for ${asset}, actual:  ${actualTreasuryTotalBalanceWad}, expected: ${expectedTreasuryTotalBalanceWad}`
+        ).to.be.eq(actualTreasuryTotalBalanceWad);
+    }
+};
+
+export const assertMiltonDerivativeItem = async (
+    testData: TestData,
+    asset: string,
+    swapId: number,
+    direction: number,
+    expectedIdsIndex: number,
+    expectedUserDerivativeIdsIndex: number
+) => {
+    let actualDerivativeItem: { id: BigNumber; idsIndex: BigNumber } = { id: ZERO, idsIndex: ZERO };
+    if (testData.miltonStorageUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        if (direction == 0) {
+            actualDerivativeItem = await testData.miltonStorageUsdt.getSwapPayFixed(swapId);
+        }
+
+        if (direction == 1) {
+            actualDerivativeItem = await testData.miltonStorageUsdt.getSwapReceiveFixed(swapId);
+        }
+    }
+    if (testData.miltonStorageUsdc && testData.tokenUsdc && asset === testData.tokenUsdc.address) {
+        if (direction == 0) {
+            actualDerivativeItem = await testData.miltonStorageUsdc.getSwapPayFixed(swapId);
+        }
+
+        if (direction == 1) {
+            actualDerivativeItem = await testData.miltonStorageUsdc.getSwapReceiveFixed(swapId);
+        }
+    }
+    if (testData.miltonStorageDai && testData.tokenDai && asset === testData.tokenDai.address) {
+        if (direction == 0) {
+            actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(swapId);
+        }
+
+        if (direction == 1) {
+            actualDerivativeItem = await testData.miltonStorageDai.getSwapReceiveFixed(swapId);
+        }
+    }
+
+    expect(
+        BigInt(expectedUserDerivativeIdsIndex),
+        `Incorrect idsIndex for swap id ${actualDerivativeItem?.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
+    ).to.be.eq(actualDerivativeItem.idsIndex);
 };

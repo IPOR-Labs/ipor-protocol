@@ -8,8 +8,16 @@ import {
     MiltonDai,
 } from "../../types";
 import { BigNumber, Signer } from "ethers";
-import { N1__0_18DEC, TC_50_000_18DEC, ZERO } from "../utils/Constants";
+import {
+    N1__0_18DEC,
+    TC_50_000_18DEC,
+    ZERO,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
+    USD_10_000_6DEC,
+    N0__1_18DEC,
+} from "../utils/Constants";
 import { TestData } from "./DataUtils";
+import { assertExpectedValues } from "./AssertUtils";
 
 const { expect } = chai;
 
@@ -34,7 +42,7 @@ export type SWAP = {
 };
 
 export type Params = {
-    asset?: UsdcMockedToken | UsdtMockedToken | DaiMockedToken;
+    asset?: string;
     miltonUsdt?: MiltonUsdt;
     miltonUsdc?: MiltonUsdc;
     miltonDai?: MiltonDai;
@@ -77,12 +85,7 @@ export const prepareSwapPayFixedCase1 = async (
 };
 
 export const openSwapReceiveFixed = async (testData: TestData, params: Params) => {
-    if (
-        testData.miltonUsdt &&
-        testData.tokenUsdt &&
-        params.asset &&
-        params.asset.address === testData.tokenUsdt.address
-    ) {
+    if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
         await testData.miltonUsdt
             .connect(params.from)
             .itfOpenSwapReceiveFixed(
@@ -93,12 +96,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             );
     }
 
-    if (
-        testData.miltonUsdc &&
-        testData.tokenUsdc &&
-        params.asset &&
-        params.asset.address === testData.tokenUsdc.address
-    ) {
+    if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
         await testData.miltonUsdc
             .connect(params.from)
             .itfOpenSwapReceiveFixed(
@@ -109,12 +107,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             );
     }
 
-    if (
-        testData.miltonDai &&
-        testData.tokenDai &&
-        params.asset &&
-        params.asset.address === testData.tokenDai.address
-    ) {
+    if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
         await testData.miltonDai
             .connect(params.from)
             .itfOpenSwapReceiveFixed(
@@ -131,7 +124,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
         testData.miltonUsdt &&
         testData.tokenUsdt &&
         params.asset &&
-        params.asset.address === testData.tokenUsdt.address
+        params.asset === testData.tokenUsdt.address
     ) {
         await testData.miltonUsdt
             .connect(params.from)
@@ -147,7 +140,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
         testData.miltonUsdc &&
         testData.tokenUsdc &&
         params.asset &&
-        params.asset.address === testData.tokenUsdc.address
+        params.asset === testData.tokenUsdc.address
     ) {
         await testData.miltonUsdc
             .connect(params.from)
@@ -163,7 +156,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
         testData.miltonDai &&
         testData.tokenDai &&
         params.asset &&
-        params.asset.address === testData.tokenDai.address
+        params.asset === testData.tokenDai.address
     ) {
         await testData.miltonDai
             .connect(params.from)
@@ -192,7 +185,7 @@ export const calculateSoap = async (testData: TestData, params: Params) => {
         testData.miltonUsdt &&
         testData.tokenUsdt &&
         params.asset &&
-        params.asset.address === testData.tokenUsdt.address
+        params.asset === testData.tokenUsdt.address
     ) {
         return await testData.miltonUsdt
             .connect(params.from)
@@ -203,7 +196,7 @@ export const calculateSoap = async (testData: TestData, params: Params) => {
         testData.miltonUsdc &&
         testData.tokenUsdc &&
         params.asset &&
-        params.asset.address === testData.tokenUsdc.address
+        params.asset === testData.tokenUsdc.address
     ) {
         return await testData.miltonUsdc
             .connect(params.from)
@@ -214,10 +207,353 @@ export const calculateSoap = async (testData: TestData, params: Params) => {
         testData.miltonDai &&
         testData.tokenDai &&
         params.asset &&
-        params.asset.address === testData.tokenDai.address
+        params.asset === testData.tokenDai.address
     ) {
         return await testData.miltonDai
             .connect(params.from)
             .itfCalculateSoap(params.calculateTimestamp || ZERO);
+    }
+};
+
+type State = {
+    state: BigNumber;
+};
+
+export type Derivatives = {
+    swaps: State[];
+};
+
+export const countOpenSwaps = (derivatives: Derivatives | undefined): number => {
+    if (derivatives === undefined) {
+        return 0;
+    }
+    let count = 0;
+    const ONE = BigNumber.from("1");
+    for (let i = 0; i < derivatives.swaps.length; i++) {
+        if (derivatives.swaps[i].state.eq(ONE)) {
+            count++;
+        }
+    }
+    return count;
+};
+
+export const exetuceCloseSwapTestCase = async function (
+    testData: TestData,
+    asset: string,
+    leverage: BigNumber,
+    direction: number,
+    openerUser: Signer,
+    closerUser: Signer,
+    iporValueBeforeOpenSwap: BigNumber,
+    iporValueAfterOpenSwap: BigNumber,
+    toleratedQuoteValue: BigNumber,
+    periodOfTimeElapsedInSeconds: BigNumber,
+    providedLiquidityAmount: BigNumber,
+    expectedMiltonUnderlyingTokenBalance: BigNumber,
+    expectedOpenerUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+    expectedCloserUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+    expectedLiquidityPoolTotalBalanceWad: BigNumber,
+    expectedOpenedPositions: BigNumber,
+    expectedDerivativesTotalBalanceWad: BigNumber,
+    expectedTreasuryTotalBalanceWad: BigNumber,
+    expectedSoap: BigNumber,
+    openTimestamp: BigNumber,
+    expectedPositionValue: BigNumber,
+    expectedIncomeFeeValue: BigNumber,
+    userOne: Signer,
+    liquidityProvider: Signer
+) {
+    //given
+    let localOpenTimestamp = ZERO;
+    if (openTimestamp != null) {
+        localOpenTimestamp = openTimestamp;
+    } else {
+        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+    }
+
+    let totalAmount = ZERO;
+
+    if (testData.tokenDai && asset === testData.tokenDai.address) {
+        totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
+    }
+
+    if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        totalAmount = USD_10_000_6DEC;
+    }
+
+    const params = {
+        asset: asset,
+        totalAmount: totalAmount,
+        toleratedQuoteValue: toleratedQuoteValue,
+        leverage: leverage,
+        direction: direction,
+        openTimestamp: localOpenTimestamp,
+        from: openerUser,
+    };
+
+    if (providedLiquidityAmount != null) {
+        //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
+        if (
+            testData.josephUsdt &&
+            testData.tokenUsdt &&
+            params.asset === testData.tokenUsdt.address
+        ) {
+            await testData.josephUsdt
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+        if (
+            testData.josephUsdc &&
+            testData.tokenUsdc &&
+            params.asset === testData.tokenUsdc.address
+        ) {
+            await testData.josephUsdc
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+        if (testData.josephDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+    }
+
+    await testData.warren
+        .connect(userOne)
+        .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
+    if (params.direction == 0) {
+        await openSwapPayFixed(testData, params);
+    } else if (params.direction == 1) {
+        await openSwapReceiveFixed(testData, params);
+    }
+
+    await testData.warren
+        .connect(userOne)
+        .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
+
+    let endTimestamp = params.openTimestamp.add(periodOfTimeElapsedInSeconds);
+
+    let actualPositionValue = ZERO;
+    let actualIncomeFeeValue = null;
+
+    //when
+    if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+        if (params.direction == 0) {
+            actualPositionValue = await testData.miltonUsdt
+                .connect(params.from)
+                .itfCalculateSwapPayFixedValue(endTimestamp, 1);
+            await testData.miltonUsdt.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+        } else if (params.direction == 1) {
+            actualPositionValue = await testData.miltonUsdt
+                .connect(params.from)
+                .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
+
+            await testData.miltonUsdt.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+        }
+        actualIncomeFeeValue = await testData.miltonUsdt
+            .connect(params.from)
+            .itfCalculateIncomeFeeValue(actualPositionValue);
+    }
+
+    if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+        if (params.direction == 0) {
+            actualPositionValue = await testData.miltonUsdc
+                .connect(params.from)
+                .itfCalculateSwapPayFixedValue(endTimestamp, 1);
+            await testData.miltonUsdc.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+        } else if (params.direction == 1) {
+            actualPositionValue = await testData.miltonUsdc
+                .connect(params.from)
+                .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
+
+            await testData.miltonUsdc.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+        }
+        actualIncomeFeeValue = await testData.miltonUsdc
+            .connect(params.from)
+            .itfCalculateIncomeFeeValue(actualPositionValue);
+    }
+
+    if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
+        if (params.direction == 0) {
+            actualPositionValue = await testData.miltonDai
+                .connect(params.from)
+                .itfCalculateSwapPayFixedValue(endTimestamp, 1);
+
+            await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+        } else if (params.direction == 1) {
+            actualPositionValue = await testData.miltonDai
+                .connect(params.from)
+                .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
+
+            await testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+        }
+        actualIncomeFeeValue = await testData.miltonDai
+            .connect(params.from)
+            .itfCalculateIncomeFeeValue(actualPositionValue);
+    }
+
+    expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
+    expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
+
+    //then
+    await assertExpectedValues(
+        testData,
+        params.asset,
+        params.direction,
+        openerUser,
+        closerUser,
+        providedLiquidityAmount,
+        expectedMiltonUnderlyingTokenBalance,
+        expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
+        expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
+        expectedLiquidityPoolTotalBalanceWad,
+        expectedOpenedPositions,
+        expectedDerivativesTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad
+    );
+
+    const soapParams = {
+        asset: params.asset,
+        calculateTimestamp: endTimestamp,
+        expectedSoap: expectedSoap,
+        from: openerUser,
+    };
+    await assertSoap(testData, soapParams);
+};
+
+// testData: TestData,
+// asset: string,
+// leverage: BigNumber,
+// direction: number,
+// openerUser: Signer,
+// closerUser: Signer,
+// iporValueBeforeOpenSwap: BigNumber,
+// iporValueAfterOpenSwap: BigNumber,
+// toleratedQuoteValue: BigNumber,
+// periodOfTimeElapsedInSeconds: BigNumber,
+// providedLiquidityAmount: BigNumber,
+// expectedMiltonUnderlyingTokenBalance: BigNumber,
+// expectedOpenerUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+// expectedCloserUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
+// expectedLiquidityPoolTotalBalanceWad: BigNumber,
+// expectedOpenedPositions: BigNumber,
+// expectedDerivativesTotalBalanceWad: BigNumber,
+// expectedTreasuryTotalBalanceWad: BigNumber,
+// expectedSoap: BigNumber,
+// openTimestamp: BigNumber,
+// expectedPositionValue: BigNumber,
+// expectedIncomeFeeValue: BigNumber,
+// userOne: Signer,
+// liquidityProvider: Signer
+export const executeCloseSwapsTestCase = async function (
+    testData: TestData,
+    asset: string,
+    leverage: BigNumber,
+    direction: number,
+    openerUser: Signer,
+    closerUser: Signer,
+    iporValueBeforeOpenSwap: BigNumber,
+    iporValueAfterOpenSwap: BigNumber,
+    periodOfTimeElapsedInSeconds: BigNumber,
+    providedLiquidityAmount: BigNumber,
+    swapsToCreate: BigNumber,
+    closeCallback: (x: any) => {},
+    openTimestamp: BigNumber,
+    pauseMilton: boolean,
+    admin: Signer,
+    userOne: Signer,
+    liquidityProvider: Signer
+) {
+    //given
+    let localOpenTimestamp = ZERO;
+    if (openTimestamp != null) {
+        localOpenTimestamp = openTimestamp;
+    } else {
+        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+    }
+
+    let totalAmount = ZERO;
+
+    if (testData.tokenDai && asset === testData.tokenDai.address) {
+        totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
+    }
+
+    if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        totalAmount = USD_10_000_6DEC;
+    }
+
+    const params = {
+        asset: asset,
+        totalAmount: totalAmount,
+        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        leverage: leverage,
+        direction: direction || 0,
+        openTimestamp: localOpenTimestamp,
+        from: openerUser,
+    };
+
+    if (providedLiquidityAmount != null) {
+        //in test we expect that Liquidity Pool is loosing and from its pool Milton has to paid out to closer user
+        if (
+            testData.josephUsdt &&
+            testData.tokenUsdt &&
+            params.asset === testData.tokenUsdt.address
+        ) {
+            await testData.josephUsdt
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+        if (
+            testData.josephUsdc &&
+            testData.tokenUsdc &&
+            params.asset === testData.tokenUsdc.address
+        ) {
+            await testData.josephUsdc
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+        if (testData.josephDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
+            await testData.josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(providedLiquidityAmount, params.openTimestamp);
+        }
+    }
+
+    await testData.warren
+        .connect(userOne)
+        .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
+
+    for (let i = 0; BigNumber.from(i).lt(swapsToCreate); i++) {
+        if (params.direction === 0) {
+            await openSwapPayFixed(testData, params);
+        } else if (params.direction === 1) {
+            await openSwapReceiveFixed(testData, params);
+        }
+    }
+
+    await testData.warren
+        .connect(userOne)
+        .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
+
+    //when
+    if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
+        if (pauseMilton) {
+            await testData.miltonUsdt.connect(admin).pause();
+        }
+        await closeCallback(testData.miltonUsdt.connect(closerUser));
+    }
+
+    if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
+        if (pauseMilton) {
+            await testData.miltonUsdc.connect(admin).pause();
+        }
+        await closeCallback(testData.miltonUsdc.connect(closerUser));
+    }
+
+    if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
+        if (pauseMilton) {
+            await testData.miltonDai.connect(admin).pause();
+        }
+        await closeCallback(testData.miltonDai.connect(closerUser));
     }
 };

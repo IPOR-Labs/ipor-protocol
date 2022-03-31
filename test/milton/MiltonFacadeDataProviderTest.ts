@@ -307,7 +307,7 @@ describe("MiltonFacadeDataProvider", () => {
         );
 
         const paramsDai = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
@@ -316,7 +316,7 @@ describe("MiltonFacadeDataProvider", () => {
         };
 
         const paramsUsdt = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
@@ -325,7 +325,7 @@ describe("MiltonFacadeDataProvider", () => {
         };
 
         const paramsUsdc = {
-            asset: tokenUsdc,
+            asset: tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
@@ -335,15 +335,15 @@ describe("MiltonFacadeDataProvider", () => {
 
         await warren
             .connect(userOne)
-            .itfUpdateIndex(paramsDai.asset.address, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
+            .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
         await warren
             .connect(userOne)
-            .itfUpdateIndex(paramsUsdc.asset.address, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
+            .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
         await warren
             .connect(userOne)
-            .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
+            .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
         await josephDai
             .connect(liquidityProvider)
@@ -379,17 +379,17 @@ describe("MiltonFacadeDataProvider", () => {
 
         const responseDai = await miltonFacadeDataProvider
             .connect(paramsDai.from)
-            .getMySwaps(paramsDai.asset.address, ZERO, BigNumber.from(50));
+            .getMySwaps(paramsDai.asset, ZERO, BigNumber.from(50));
         const itemsDai = responseDai.swaps;
 
         const responseUsdc = await miltonFacadeDataProvider
             .connect(paramsUsdc.from)
-            .getMySwaps(paramsUsdc.asset.address, 0, 50);
+            .getMySwaps(paramsUsdc.asset, 0, 50);
         const itemsUsdc = responseUsdc.swaps;
 
         const responseUsdt = await miltonFacadeDataProvider
             .connect(paramsUsdt.from)
-            .getMySwaps(paramsUsdt.asset.address, 0, 50);
+            .getMySwaps(paramsUsdt.asset, 0, 50);
         const itemsUsdt = responseUsdt.swaps;
 
         const actualDaiSwapsLength = itemsDai.length;

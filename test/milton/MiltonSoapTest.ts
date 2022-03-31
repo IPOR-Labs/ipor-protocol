@@ -88,10 +88,11 @@ describe("MiltonSpreadModel - Core", () => {
 
         if (tokenDai === undefined) {
             expect(true).to.be.false;
+            return;
         }
 
         const params = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: BigNumber.from(BigNumber.from(Math.floor(Date.now() / 1000))),
             from: userTwo,
         };
@@ -143,7 +144,7 @@ describe("MiltonSpreadModel - Core", () => {
         const iporValueBeforeOpenSwap = PERCENTAGE_5_18DEC;
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -157,7 +158,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -167,7 +168,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -210,7 +211,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -224,7 +225,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -234,7 +235,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -277,7 +278,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -291,7 +292,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -301,7 +302,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -344,7 +345,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -358,7 +359,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -368,7 +369,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -412,7 +413,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -426,7 +427,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -441,7 +442,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: endTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -487,7 +488,7 @@ describe("MiltonSpreadModel - Core", () => {
         const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -501,7 +502,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -519,7 +520,7 @@ describe("MiltonSpreadModel - Core", () => {
         await miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -564,7 +565,7 @@ describe("MiltonSpreadModel - Core", () => {
         let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const firstDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -573,7 +574,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const secondDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -586,11 +587,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                firstDerivativeParams.asset.address,
-                iporValueBeforOpenSwap,
-                openTimestamp
-            );
+            .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, secondDerivativeParams);
 
@@ -598,7 +595,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -645,7 +642,7 @@ describe("MiltonSpreadModel - Core", () => {
         let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const firstDerivativeParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -654,7 +651,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const secondDerivativeParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -667,11 +664,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_6DEC), openTimestamp);
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                firstDerivativeParams.asset.address,
-                iporValueBeforOpenSwap,
-                openTimestamp
-            );
+            .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, firstDerivativeParams);
 
@@ -679,7 +672,7 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
         const soapParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             calculateTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -744,7 +737,7 @@ describe("MiltonSpreadModel - Core", () => {
         let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeDAIParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -753,7 +746,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const derivativeUSDTParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -769,14 +762,14 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeDAIParams.asset.address,
+                derivativeDAIParams.asset,
                 iporValueBeforOpenSwapDAI,
                 derivativeDAIParams.openTimestamp
             );
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeUSDTParams.asset.address,
+                derivativeUSDTParams.asset,
                 iporValueBeforOpenSwapUSDT,
                 derivativeUSDTParams.openTimestamp
             );
@@ -791,7 +784,7 @@ describe("MiltonSpreadModel - Core", () => {
         let expectedUSDTSoap = BigNumber.from("-68267191075554066594");
 
         const soapDAIParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: derivativeDAIParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedDAISoap,
             from: userTwo,
@@ -799,7 +792,7 @@ describe("MiltonSpreadModel - Core", () => {
         await assertSoap(testData, soapDAIParams);
 
         const soapUSDTParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             calculateTimestamp: derivativeUSDTParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedUSDTSoap,
             from: userTwo,
@@ -845,7 +838,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const payFixDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -854,7 +847,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const recFixDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -866,11 +859,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_18DEC), openTimestamp);
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                payFixDerivativeParams.asset.address,
-                iporValueBeforOpenSwap,
-                openTimestamp
-            );
+            .itfUpdateIndex(payFixDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, payFixDerivativeParams);
         await openSwapReceiveFixed(testData, recFixDerivativeParams);
 
@@ -883,7 +872,7 @@ describe("MiltonSpreadModel - Core", () => {
         const expectedSoap = BigNumber.from("-68267191075554066594");
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -930,7 +919,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const payFixDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -939,7 +928,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const recFixDerivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -951,11 +940,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_18DEC), openTimestamp);
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                payFixDerivativeParams.asset.address,
-                iporValueBeforOpenSwap,
-                openTimestamp
-            );
+            .itfUpdateIndex(payFixDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, payFixDerivativeParams);
         await openSwapReceiveFixed(testData, recFixDerivativeParams);
 
@@ -968,7 +953,7 @@ describe("MiltonSpreadModel - Core", () => {
         const expectedSoap = BigNumber.from("-68267191075554025634");
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -1035,7 +1020,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const payFixDerivativeDAIParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1044,7 +1029,7 @@ describe("MiltonSpreadModel - Core", () => {
         };
 
         const recFixDerivativeUSDTParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1063,14 +1048,14 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                payFixDerivativeDAIParams.asset.address,
+                payFixDerivativeDAIParams.asset,
                 iporValueBeforOpenSwapDAI,
                 openTimestamp
             );
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                recFixDerivativeUSDTParams.asset.address,
+                recFixDerivativeUSDTParams.asset,
                 iporValueBeforOpenSwapUSDT,
                 openTimestamp
             );
@@ -1092,7 +1077,7 @@ describe("MiltonSpreadModel - Core", () => {
         const expectedSoapDAI = BigNumber.from("-68267191075554066594");
 
         const soapParamsDAI = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             expectedSoap: expectedSoapDAI,
             from: userTwo,
@@ -1139,7 +1124,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1155,7 +1140,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -1165,24 +1150,20 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                derivativeParams.asset.address,
-                PERCENTAGE_6_18DEC,
-                calculationTimestamp
-            );
+            .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_18DEC, calculationTimestamp);
 
         const expectedSoap = BigNumber.from("7918994164764269327487");
 
         //when
         //then
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -1229,7 +1210,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1245,7 +1226,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -1255,24 +1236,20 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                derivativeParams.asset.address,
-                PERCENTAGE_6_6DEC,
-                calculationTimestamp
-            );
+            .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_6DEC, calculationTimestamp);
 
         const expectedSoap = BigNumber.from("7918994164764269327487");
 
         //when
         //then
         const soapParams = {
-            asset: tokenUsdt,
+            asset: tokenUsdt.address,
             calculateTimestamp: calculationTimestamp,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -1318,7 +1295,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1339,7 +1316,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -1347,17 +1324,13 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
         await warren
             .connect(userOne)
-            .itfUpdateIndex(
-                derivativeParams.asset.address,
-                PERCENTAGE_6_18DEC,
-                calculationTimestamp25days
-            );
+            .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_18DEC, calculationTimestamp25days);
 
         const expectedSoap28Days = BigNumber.from("7935378290622402313573");
         const expectedSoap50Days = BigNumber.from("8055528546915377478426");
@@ -1365,7 +1338,7 @@ describe("MiltonSpreadModel - Core", () => {
         //when
         //then
         const soapParams28days = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp28days,
             expectedSoap: expectedSoap28Days,
             from: userTwo,
@@ -1373,7 +1346,7 @@ describe("MiltonSpreadModel - Core", () => {
         await assertSoap(testData, soapParams28days);
 
         const soapParams50days = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap50Days,
             from: userTwo,
@@ -1418,7 +1391,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeParamsFirst = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1426,7 +1399,7 @@ describe("MiltonSpreadModel - Core", () => {
             from: openerUser,
         };
         const derivativeParams25days = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1447,7 +1420,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
@@ -1458,7 +1431,7 @@ describe("MiltonSpreadModel - Core", () => {
         const expectedSoap = BigNumber.from("-205221535441070939561");
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -1503,7 +1476,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeParamsFirst = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1511,7 +1484,7 @@ describe("MiltonSpreadModel - Core", () => {
             from: openerUser,
         };
         const derivativeParams25days = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1528,7 +1501,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParamsFirst.openTimestamp
             );
@@ -1536,7 +1509,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams25days.openTimestamp
             );
@@ -1544,7 +1517,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
@@ -1553,7 +1526,7 @@ describe("MiltonSpreadModel - Core", () => {
         const expectedSoap = BigNumber.from("-205221535441070939561");
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             expectedSoap: expectedSoap,
             from: userTwo,
@@ -1598,7 +1571,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1612,7 +1585,7 @@ describe("MiltonSpreadModel - Core", () => {
             derivativeParams.openTimestamp.add(PERIOD_50_DAYS_IN_SECONDS);
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: calculationTimestamp50days,
             from: userTwo,
         };
@@ -1625,7 +1598,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 derivativeParams.openTimestamp
             );
@@ -1637,7 +1610,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 calculationTimestamp25days
             );
@@ -1647,7 +1620,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParams.asset.address,
+                derivativeParams.asset,
                 iporValueBeforeOpenSwap,
                 calculationTimestamp50days
             );
@@ -1712,7 +1685,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondUpdateIndexTimestamp = firstUpdateIndexTimestamp.add(PERIOD_1_DAY_IN_SECONDS);
 
         const derivativeParamsFirst = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
             toleratedQuoteValue: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
@@ -1727,7 +1700,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueBeforeOpenSwap,
                 firstUpdateIndexTimestamp
             );
@@ -1737,7 +1710,7 @@ describe("MiltonSpreadModel - Core", () => {
         await warren
             .connect(userOne)
             .itfUpdateIndex(
-                derivativeParamsFirst.asset.address,
+                derivativeParamsFirst.asset,
                 iporValueAfterOpenSwap,
                 secondUpdateIndexTimestamp
             );
@@ -1747,7 +1720,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
 
         const soapParams = {
-            asset: tokenDai,
+            asset: tokenDai.address,
             calculateTimestamp: rightAfterOpenedPositionTimestamp,
             expectedSoap: ZERO,
             from: userTwo,

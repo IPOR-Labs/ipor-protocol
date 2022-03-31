@@ -38,7 +38,25 @@ import {
     UsdtMockedToken,
 } from "../../types";
 
-import { USD_10_000_6DEC, LEVERAGE_18DEC, N0__01_18DEC } from "./Constants";
+import { exetuceCloseSwapTestCase } from "./SwapUtiles";
+
+import {
+    USD_10_000_6DEC,
+    LEVERAGE_18DEC,
+    N0__01_18DEC,
+    ZERO,
+    TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
+    TC_OPENING_FEE_18DEC,
+    TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
+    TC_IPOR_PUBLICATION_AMOUNT_18DEC,
+    USER_SUPPLY_10MLN_18DEC,
+    TC_LP_BALANCE_BEFORE_CLOSE_6DEC,
+    TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC,
+    TC_IPOR_PUBLICATION_AMOUNT_6DEC,
+    TC_OPENING_FEE_6DEC,
+    USER_SUPPLY_6_DECIMALS,
+} from "./Constants";
+import { TestData } from "./DataUtils";
 
 const { ethers } = hre;
 
@@ -270,4 +288,257 @@ export const prepareMiltonSpreadBase = async () => {
     const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
     await miltonSpread.initialize();
     return miltonSpread;
+};
+
+export const testCaseWhenMiltonEarnAndUserLost = async function (
+    testData: TestData,
+    asset: string,
+    leverage: BigNumber,
+    direction: number,
+    openerUser: Signer,
+    closerUser: Signer,
+    iporValueBeforeOpenSwap: BigNumber,
+    iporValueAfterOpenSwap: BigNumber,
+    toleratedQuoteValue: BigNumber,
+    periodOfTimeElapsedInSeconds: BigNumber,
+    expectedOpenedPositions: BigNumber,
+    expectedDerivativesTotalBalanceWad: BigNumber,
+    expectedTreasuryTotalBalanceWad: BigNumber,
+    expectedSoap: BigNumber,
+    openTimestamp: BigNumber,
+    expectedIncomeFeeValueWad: BigNumber,
+    expectedPositionValue: BigNumber,
+    expectedPositionValueWad: BigNumber,
+    userOne: Signer,
+    liquidityProvider: Signer
+) {
+    let expectedPositionValueWadAbs = expectedPositionValueWad;
+    let expectedPositionValueAbs = expectedPositionValue;
+
+    if (expectedPositionValueWad.lt(ZERO)) {
+        expectedPositionValueWadAbs = BigNumber.from(expectedPositionValueWadAbs).mul("-1");
+        expectedPositionValueAbs = BigNumber.from(expectedPositionValueAbs).mul("-1");
+    }
+
+    let miltonBalanceBeforePayout = ZERO;
+    let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
+    let openerUserLost = null;
+    let openerUserEarned = null;
+    let closerUserLost = null;
+    let closerUserEarned = null;
+    let expectedOpenerUserUnderlyingTokenBalanceAfterClose = ZERO;
+    let expectedCloserUserUnderlyingTokenBalanceAfterClose = ZERO;
+    let expectedMiltonUnderlyingTokenBalance = ZERO;
+    let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
+        .add(TC_OPENING_FEE_18DEC)
+        .add(expectedPositionValueWadAbs)
+        .sub(expectedIncomeFeeValueWad);
+
+    if (testData.tokenDai && asset === testData.tokenDai.address) {
+        miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
+        closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
+            .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
+            .add(expectedPositionValueAbs);
+
+        if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
+            closerUserLost = openerUserLost;
+            openerUserEarned = closerUserEarned;
+        } else {
+            closerUserLost = ZERO;
+            openerUserEarned = ZERO;
+        }
+
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC.add(openerUserEarned).sub(openerUserLost);
+        expectedCloserUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC.add(closerUserEarned).sub(closerUserLost);
+        expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_18DEC.add(
+            TC_OPENING_FEE_18DEC
+        )
+            .add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
+            .add(expectedPositionValueAbs);
+    }
+
+    if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_6DEC;
+        closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
+        openerUserLost = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+            .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
+            .add(expectedPositionValueAbs);
+
+        if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
+            closerUserLost = openerUserLost;
+            openerUserEarned = closerUserEarned;
+        } else {
+            closerUserLost = ZERO;
+            openerUserEarned = ZERO;
+        }
+
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_6_DECIMALS.add(openerUserEarned).sub(openerUserLost);
+        expectedCloserUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
+        expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_6DEC.add(
+            TC_OPENING_FEE_6DEC
+        )
+            .add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+            .add(expectedPositionValueAbs);
+    }
+
+    await exetuceCloseSwapTestCase(
+        testData,
+        asset,
+        leverage,
+        direction,
+        openerUser,
+        closerUser,
+        iporValueBeforeOpenSwap,
+        iporValueAfterOpenSwap,
+        toleratedQuoteValue,
+        periodOfTimeElapsedInSeconds,
+        miltonBalanceBeforePayout,
+        expectedMiltonUnderlyingTokenBalance,
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+        expectedCloserUserUnderlyingTokenBalanceAfterClose,
+        expectedLiquidityPoolTotalBalanceWad,
+        expectedOpenedPositions,
+        expectedDerivativesTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad,
+        expectedSoap,
+        openTimestamp,
+        expectedPositionValueWad,
+        expectedIncomeFeeValueWad,
+        userOne,
+        liquidityProvider
+    );
+};
+
+export const testCaseWhenMiltonLostAndUserEarn = async function (
+    testData: TestData,
+    asset: string,
+    leverage: BigNumber,
+    direction: number,
+    openerUser: Signer,
+    closerUser: Signer,
+    iporValueBeforeOpenSwap: BigNumber,
+    iporValueAfterOpenSwap: BigNumber,
+    toleratedQuoteValue: BigNumber,
+    periodOfTimeElapsedInSeconds: BigNumber,
+    expectedOpenedPositions: BigNumber,
+    expectedDerivativesTotalBalanceWad: BigNumber,
+    expectedTreasuryTotalBalanceWad: BigNumber,
+    expectedSoap: BigNumber,
+    openTimestamp: BigNumber,
+    expectedIncomeFeeValue: BigNumber,
+    expectedIncomeFeeValueWad: BigNumber,
+    expectedPositionValue: BigNumber,
+    expectedPositionValueWad: BigNumber,
+    userOne: Signer,
+    liquidityProvider: Signer
+) {
+    let expectedPositionValueWadAbs = expectedPositionValueWad;
+    let expectedPositionValueAbs = expectedPositionValue;
+
+    if (expectedPositionValueWad.lt(ZERO)) {
+        expectedPositionValueWadAbs = expectedPositionValueWadAbs.mul("-1");
+        expectedPositionValueAbs = expectedPositionValueAbs.mul("-1");
+    }
+
+    let miltonBalanceBeforePayout = ZERO;
+    let miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
+    let closerUserEarned = null;
+    let openerUserLost = null;
+    let closerUserLost = null;
+    let openerUserEarned = null;
+    let expectedMiltonUnderlyingTokenBalance = ZERO;
+    let expectedOpenerUserUnderlyingTokenBalanceAfterClose = ZERO;
+    let expectedCloserUserUnderlyingTokenBalanceAfterClose = ZERO;
+
+    let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
+        .sub(expectedPositionValueWadAbs)
+        .add(TC_OPENING_FEE_18DEC);
+
+    if (testData.tokenDai && asset === testData.tokenDai.address) {
+        miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
+        closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
+            .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
+            .sub(expectedPositionValueAbs)
+            .add(expectedIncomeFeeValue);
+
+        if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
+            closerUserLost = openerUserLost;
+            openerUserEarned = closerUserEarned;
+        } else {
+            closerUserLost = ZERO;
+            openerUserEarned = ZERO;
+        }
+
+        expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_18DEC.add(
+            TC_OPENING_FEE_18DEC
+        )
+            .add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
+            .sub(expectedPositionValueAbs)
+            .add(expectedIncomeFeeValue);
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC.add(openerUserEarned).sub(openerUserLost);
+        expectedCloserUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_10MLN_18DEC.add(closerUserEarned).sub(closerUserLost);
+    }
+
+    if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
+        miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_6DEC;
+        closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
+        openerUserLost = TC_OPENING_FEE_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+            .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
+            .sub(expectedPositionValueAbs)
+            .add(expectedIncomeFeeValue);
+
+        if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
+            closerUserLost = openerUserLost;
+            openerUserEarned = closerUserEarned;
+        } else {
+            closerUserLost = ZERO;
+            openerUserEarned = ZERO;
+        }
+
+        expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_6DEC.add(
+            TC_OPENING_FEE_6DEC
+        )
+            .add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+            .sub(expectedPositionValueAbs)
+            .add(expectedIncomeFeeValue);
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_6_DECIMALS.add(openerUserEarned).sub(openerUserLost);
+        expectedCloserUserUnderlyingTokenBalanceAfterClose =
+            USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
+    }
+    expectedPositionValue = expectedPositionValueWad;
+    await exetuceCloseSwapTestCase(
+        testData,
+        asset,
+        leverage,
+        direction,
+        openerUser,
+        closerUser,
+        iporValueBeforeOpenSwap,
+        iporValueAfterOpenSwap,
+        toleratedQuoteValue,
+        periodOfTimeElapsedInSeconds,
+        miltonBalanceBeforePayout,
+        expectedMiltonUnderlyingTokenBalance,
+        expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+        expectedCloserUserUnderlyingTokenBalanceAfterClose,
+        expectedLiquidityPoolTotalBalanceWad,
+        expectedOpenedPositions,
+        expectedDerivativesTotalBalanceWad,
+        expectedTreasuryTotalBalanceWad,
+        expectedSoap,
+        openTimestamp,
+        expectedPositionValueWad,
+        expectedIncomeFeeValueWad,
+        userOne,
+        liquidityProvider
+    );
 };
