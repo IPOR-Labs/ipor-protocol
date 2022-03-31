@@ -2,7 +2,15 @@
 pragma solidity 0.8.9;
 
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.
-interface IStanleyAdministration {
+interface IStanleyInternal {
+	/// @notice Returns current version of Stanley's
+    /// @return current Stanley version
+    function getVersion() external pure returns (uint256);
+
+    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Stanley instance
+    /// @return asset / underlying token / stablecoin address
+    function getAsset() external view returns (address);
+	
     /// @notice Transfer all asset in current strategy to strategy with max APR. Function available only for Owner.
     /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley. Emits {Transfer} from ERC20 asset.
     function migrateAssetToStrategyWithMaxApr() external;
@@ -10,12 +18,12 @@ interface IStanleyAdministration {
     /// @notice Sets AAVE stratedy address. Function available only for Owner.
     /// @dev Emits {StrategyChanged} event
     /// @param newStrategy new AAVE strategy address.
-    function setAaveStrategy(address newStrategy) external;
+    function setStrategyAave(address newStrategy) external;
 
     /// @notice Sets Compound stratedy address. Function available only for Owner.
     /// @dev Emits {StrategyChanged} event
     /// @param newStrategy new Compound strategy address.
-    function setCompoundStrategy(address newStrategy) external;
+    function setStrategyCompound(address newStrategy) external;
 
     /// @notice Sets Milton address. Function available only for Owner.
     /// @dev Emits {MiltonChanged} event

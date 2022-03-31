@@ -8,8 +8,8 @@ library AmmMiltonTypes {
         uint256 wadTotalAmount;
         uint256 collateral;
         uint256 notional;
-        uint256 openingFeeLPValue;
-        uint256 openingFeeTreasuryValue;
+        uint256 openingFeeLPAmount;
+        uint256 openingFeeTreasuryAmount;
         uint256 iporPublicationFeeAmount;
         uint256 liquidationDepositAmount;
         IporTypes.AccruedIpor accruedIpor;

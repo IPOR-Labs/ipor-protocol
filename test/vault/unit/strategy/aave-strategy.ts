@@ -5,7 +5,7 @@ import { constants, Signer } from "ethers";
 const { AddressZero } = constants;
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
+    StrategyAave,
     ERC20,
     MockAaveLendingPoolProvider,
     MockStakedAave,
@@ -19,7 +19,7 @@ const { expect } = chai;
 const stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
 describe("AAVE strategy", () => {
-    let aaveStrategyInstance: AaveStrategy;
+    let strategyAaveInstance: StrategyAave;
     let DAI: ERC20;
     let aDAI: ERC20;
     let stkAAVE: ERC20;
@@ -28,7 +28,7 @@ describe("AAVE strategy", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let addressProvider: MockAaveLendingPoolProvider;
     let aaveIncentivesController: MockAaveIncentivesController;
-    let AaveStrategyInstance: any;
+    let StrategyAaveInstance: any;
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
@@ -63,8 +63,8 @@ describe("AAVE strategy", () => {
             stakedAave.address
         )) as MockAaveIncentivesController;
 
-        AaveStrategyInstance = await hre.ethers.getContractFactory("AaveStrategy");
-        aaveStrategyInstance = await upgrades.deployProxy(AaveStrategyInstance, [
+        StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
+        strategyAaveInstance = await upgrades.deployProxy(StrategyAaveInstance, [
             DAI.address,
             aDAI.address,
             addressProvider.address,
@@ -72,20 +72,19 @@ describe("AAVE strategy", () => {
             aaveIncentivesController.address,
             AAVE.address,
         ]);
-        await aaveStrategyInstance.setTreasury(await userTwo.getAddress());
+        await strategyAaveInstance.setTreasury(await userTwo.getAddress());
     });
 
     it("Should be able to setup Stanley", async () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
-        const oldStanleyAddress = await aaveStrategyInstance.getStanley();
+        const oldStanleyAddress = await strategyAaveInstance.getStanley();
         //when
-        await expect(aaveStrategyInstance.setStanley(newStanleyAddress))
-            .to.emit(aaveStrategyInstance, "StanleyChanged")
+        await expect(strategyAaveInstance.setStanley(newStanleyAddress))
+            .to.emit(strategyAaveInstance, "StanleyChanged")
             .withArgs(
                 await admin.getAddress,
-                oldStanleyAddress,
-                newStanleyAddress
+                oldStanleyAddress, newStanleyAddress
             );
     });
 
@@ -94,23 +93,23 @@ describe("AAVE strategy", () => {
         const stanleyAddress = await userTwo.getAddress(); // random address
         //when
         await expect(
-            aaveStrategyInstance.connect(userOne).setStanley(stanleyAddress)
+            strategyAaveInstance.connect(userOne).setStanley(stanleyAddress)
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("Should not be able to setup Treasury aave strategy", async () => {
-        await expect(aaveStrategyInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_502");
+        await expect(strategyAaveInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_000");
     });
 
     it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
         await expect(
-            aaveStrategyInstance.connect(userOne).setTreasury(AddressZero)
+            strategyAaveInstance.connect(userOne).setTreasury(AddressZero)
         ).to.be.revertedWith("IPOR_505");
     });
 
     it("Should not be able to setup Treasury Manager aave strategy", async () => {
         await expect(
-            aaveStrategyInstance.connect(userOne).setTreasuryManager(AddressZero)
+            strategyAaveInstance.connect(userOne).setTreasuryManager(AddressZero)
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });

@@ -84,7 +84,7 @@ describe("Joseph Maintenance", () => {
         await josephDai.connect(admin).pause();
 
         //then
-        await assertError(josephDai.connect(userOne).rebalance(), "Pausable: paused");
+        await assertError(josephDai.connect(admin).rebalance(), "Pausable: paused");
 
         await assertError(josephDai.connect(admin).depositToStanley(123), "Pausable: paused");
 
@@ -148,7 +148,7 @@ describe("Joseph Maintenance", () => {
         await josephDai.connect(userOne).getCharlieTreasuryManager();
         await josephDai.connect(userOne).getTreasuryManager();
         await josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
-        await josephDai.connect(userOne).getMiltonStanleyBalancePercentage();
+        await josephDai.connect(userOne).getMiltonStanleyBalanceRatioPercentage();
         await josephDai.connect(userOne).getAsset();
         await josephDai.connect(userOne).calculateExchangeRate();
     });

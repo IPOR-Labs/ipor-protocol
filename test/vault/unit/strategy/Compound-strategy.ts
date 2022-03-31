@@ -3,7 +3,7 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
+    StrategyAave,
     ERC20,
     MockWhitePaper,
     MockComptroller,
@@ -30,9 +30,9 @@ const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
 const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
 
 describe("Compound strategy", () => {
-    let compoundStrategyInstanceDAI: AaveStrategy;
-    let compoundStrategyInstanceUSDC: AaveStrategy;
-    let compoundStrategyInstanceUSDT: AaveStrategy;
+    let strategyCompoundInstanceDAI: StrategyAave;
+    let strategyCompoundInstanceUSDC: StrategyAave;
+    let strategyCompoundInstanceUSDT: StrategyAave;
     let DAI: DaiMockedToken;
     let USDC: UsdcMockedToken;
     let USDT: UsdtMockedToken;
@@ -109,37 +109,37 @@ describe("Compound strategy", () => {
             cUSDC.address
         )) as MockComptroller;
 
-        const compoundNewStartegy = await hre.ethers.getContractFactory("CompoundStrategy");
-        compoundStrategyInstanceDAI = await upgrades.deployProxy(compoundNewStartegy, [
+        const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
+        strategyCompoundInstanceDAI = await upgrades.deployProxy(compoundNewStartegy, [
             DAI.address,
             cDAI.address,
             comptrollerDAI.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceDAI.setTreasury(await admin.getAddress());
-        compoundStrategyInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
+        await strategyCompoundInstanceDAI.setTreasury(await admin.getAddress());
+        strategyCompoundInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
             cUSDT.address,
             comptrollerUSDT.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceUSDT.setTreasury(await admin.getAddress());
-        compoundStrategyInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
+        await strategyCompoundInstanceUSDT.setTreasury(await admin.getAddress());
+        strategyCompoundInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
             comptrollerUSDT.address,
             COMP.address,
         ]);
-        await compoundStrategyInstanceUSDC.setTreasury(await admin.getAddress());
+        await strategyCompoundInstanceUSDC.setTreasury(await admin.getAddress());
     });
 
     it("Should be able to setup Stanley", async () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
-        const oldStanleyAddress = await compoundStrategyInstanceDAI.getStanley();
+        const oldStanleyAddress = await strategyCompoundInstanceDAI.getStanley();
         //when
-        await expect(compoundStrategyInstanceDAI.setStanley(newStanleyAddress))
-            .to.emit(compoundStrategyInstanceDAI, "StanleyChanged")
+        await expect(strategyCompoundInstanceDAI.setStanley(newStanleyAddress))
+            .to.emit(strategyCompoundInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
     });
 
@@ -148,104 +148,105 @@ describe("Compound strategy", () => {
         const stanleyAddress = await userTwo.getAddress(); // random address
         //when
         await expect(
-            compoundStrategyInstanceDAI.connect(userOne).setStanley(stanleyAddress)
+            strategyCompoundInstanceDAI.connect(userOne).setStanley(stanleyAddress)
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
     it("Should be able to setup Stanley and interact with DAI", async () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
-        const oldStanleyAddress = await compoundStrategyInstanceDAI.getStanley();
-        await expect(compoundStrategyInstanceDAI.setStanley(newStanleyAddress))
-            .to.emit(compoundStrategyInstanceDAI, "StanleyChanged")
+        const oldStanleyAddress = await strategyCompoundInstanceDAI.getStanley();
+
+        await expect(strategyCompoundInstanceDAI.setStanley(newStanleyAddress))
+            .to.emit(strategyCompoundInstanceDAI, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
         await DAI.setupInitialAmount(newStanleyAddress, TC_10_000_USD_18DEC);
 
         DAI.connect(userTwo).increaseAllowance(
-            compoundStrategyInstanceDAI.address,
+            strategyCompoundInstanceDAI.address,
             TC_1000_USD_18DEC
         );
 
-        await compoundStrategyInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
         expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
-        expect((await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).toString()).to.be.equal(
+        expect((await cDAI.balanceOf(strategyCompoundInstanceDAI.address)).toString()).to.be.equal(
             "754533916231843181332"
         );
 
-        await compoundStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
         expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_999_USD_18DEC);
-        expect(await cDAI.balanceOf(compoundStrategyInstanceDAI.address)).to.be.equal(ONE);
+        expect(await cDAI.balanceOf(strategyCompoundInstanceDAI.address)).to.be.equal(ONE);
     });
 
     it("Should be able to setup Stanley and interact with USDT", async () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
-        const oldStanleyAddress = await compoundStrategyInstanceUSDT.getStanley();
-        await expect(compoundStrategyInstanceUSDT.setStanley(newStanleyAddress))
-            .to.emit(compoundStrategyInstanceUSDT, "StanleyChanged")
+        const oldStanleyAddress = await strategyCompoundInstanceUSDT.getStanley();
+        await expect(strategyCompoundInstanceUSDT.setStanley(newStanleyAddress))
+            .to.emit(strategyCompoundInstanceUSDT, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
         await USDT.setupInitialAmount(newStanleyAddress, TC_10_000_USD_6DEC);
 
         USDT.connect(userTwo).increaseAllowance(
-            compoundStrategyInstanceUSDT.address,
+            strategyCompoundInstanceUSDT.address,
             TC_10_000_USD_6DEC
         );
 
-        await compoundStrategyInstanceUSDT.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceUSDT.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
         expect(await USDT.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
 
         expect(
-            (await cUSDT.balanceOf(compoundStrategyInstanceUSDT.address)).toString()
+            (await cUSDT.balanceOf(strategyCompoundInstanceUSDT.address)).toString()
         ).to.be.equal("754533916");
 
-        await compoundStrategyInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
         expect(await USDT.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
-        expect(await cUSDC.balanceOf(compoundStrategyInstanceUSDT.address)).to.be.equal(ZERO);
+        expect(await cUSDC.balanceOf(strategyCompoundInstanceUSDT.address)).to.be.equal(ZERO);
     });
 
     it("Should be able to setup Stanley and interact with USDC", async () => {
         //given
         const newStanleyAddress = await userTwo.getAddress(); // random address
-        const oldStanleyAddress = await compoundStrategyInstanceUSDC.getStanley();
-        await expect(compoundStrategyInstanceUSDC.setStanley(newStanleyAddress))
-            .to.emit(compoundStrategyInstanceUSDC, "StanleyChanged")
+        const oldStanleyAddress = await strategyCompoundInstanceUSDC.getStanley();
+        await expect(strategyCompoundInstanceUSDC.setStanley(newStanleyAddress))
+            .to.emit(strategyCompoundInstanceUSDC, "StanleyChanged")
             .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
         await USDC.setupInitialAmount(newStanleyAddress, TC_10_000_USD_6DEC);
 
         USDC.connect(userTwo).increaseAllowance(
-            compoundStrategyInstanceUSDC.address,
+            strategyCompoundInstanceUSDC.address,
             TC_10_000_USD_6DEC
         );
 
-        await compoundStrategyInstanceUSDC.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceUSDC.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
         expect(await USDC.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
         expect(
-            (await cUSDC.balanceOf(compoundStrategyInstanceUSDC.address)).toString()
+            (await cUSDC.balanceOf(strategyCompoundInstanceUSDC.address)).toString()
         ).to.be.equal("754533916");
 
-        await compoundStrategyInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyCompoundInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
         expect(await USDC.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
-        expect(await cUSDC.balanceOf(compoundStrategyInstanceUSDC.address)).to.be.equal(ZERO);
+        expect(await cUSDC.balanceOf(strategyCompoundInstanceUSDC.address)).to.be.equal(ZERO);
     });
 
     it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
         await expect(
-            compoundStrategyInstanceUSDC.connect(userOne).setTreasury(constants.AddressZero)
+            strategyCompoundInstanceUSDC.connect(userOne).setTreasury(constants.AddressZero)
         ).to.be.revertedWith("IPOR_505");
     });
 
     it("Should not be able to setup Treasury Manager aave strategy", async () => {
         await expect(
-            compoundStrategyInstanceUSDC.connect(userOne).setTreasuryManager(constants.AddressZero)
+            strategyCompoundInstanceUSDC.connect(userOne).setTreasuryManager(constants.AddressZero)
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });

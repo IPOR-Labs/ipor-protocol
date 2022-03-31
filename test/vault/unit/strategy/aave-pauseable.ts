@@ -4,7 +4,7 @@ import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
+    StrategyAave,
     ERC20,
     DaiMockedToken,
     MockStakedAave,
@@ -21,7 +21,7 @@ const totalSupply6Decimals = "100000000000000000000";
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 
 describe("AAVE strategy pauseable", () => {
-    let strategy: AaveStrategy;
+    let strategy: StrategyAave;
     let DAI: DaiMockedToken;
     let USDC: DaiMockedToken;
     let USDT: DaiMockedToken;
@@ -99,9 +99,9 @@ describe("AAVE strategy pauseable", () => {
         // #####################         AAVE Strategy   ###################################
         // #################################################################################
 
-        const AaveStrategyInstance = await hre.ethers.getContractFactory("AaveStrategy");
+        const StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
 
-        strategy = await upgrades.deployProxy(AaveStrategyInstance, [
+        strategy = await upgrades.deployProxy(StrategyAaveInstance, [
             USDT.address,
             aUSDT.address,
             addressProvider.address,

@@ -4,13 +4,13 @@ pragma solidity 0.8.9;
 library IporErrors {
     // 000-199 - general codes
 
-    //@notice General problem, address is wrong
+    /// @notice General problem, address is wrong
     string public constant WRONG_ADDRESS = "IPOR_000";
 
-    //@notice General problem. Wrong decimals
+    /// @notice General problem. Wrong decimals
     string public constant WRONG_DECIMALS = "IPOR_001";
 
-    //@notice Asset has too low decimals
+    /// @notice Asset has too low decimals
     string public constant ASSET_DECIMALS_TOO_LOW = "IPOR_002";
 
     //@notice Trader doesnt have enought tokens to execute transaction

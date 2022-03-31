@@ -1,45 +1,19 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IJoseph.sol";
-import "../configuration/JosephConfiguration.sol";
+import "./JosephInternal.sol";
 import "hardhat/console.sol";
 
-abstract contract Joseph is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
-    JosephConfiguration,
-    IJoseph
-{
+abstract contract Joseph is JosephInternal, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for int256;
-
-    modifier onlyCharlieTreasuryManager() {
-        require(
-            msg.sender == _charlieTreasuryManager,
-            JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
-        );
-        _;
-    }
-
-    modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
-        _;
-    }
 
     function initialize(
         address initAsset,
@@ -65,125 +39,31 @@ abstract contract Joseph is
 
         _asset = initAsset;
         _ipToken = iipToken;
-        _milton = IMilton(milton);
+        _milton = IMiltonInternal(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
-    }
-
-    function getVersion() external pure override virtual returns (uint256) {
-        return 1;
-    }
-	
-	function getAsset() external view override returns (address) {
-        return _asset;
     }
 
     function calculateExchangeRate() external view override returns (uint256) {
         return _calculateExchangeRate(block.timestamp);
     }
 
-    //@param liquidityAmount underlying token amount represented in decimals specific for underlying asset
-    function provideLiquidity(uint256 liquidityAmount) external override whenNotPaused {
-        _provideLiquidity(liquidityAmount, _getDecimals(), block.timestamp);
+    //@param assetAmount underlying token amount represented in decimals specific for underlying asset
+    function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
+        _provideLiquidity(assetAmount, _getDecimals(), block.timestamp);
     }
 
-    //@param ipTokenValue IpToken amount represented in 18 decimals
-    function redeem(uint256 ipTokenValue) external override whenNotPaused {
-        _redeem(ipTokenValue, block.timestamp);
-    }
-
-    function rebalance() external override whenNotPaused {
-        (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-
-        require(totalBalance != 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
-
-        uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
-
-        if (ratio > _MILTON_STANLEY_BALANCE_PERCENTAGE) {
-            uint256 assetValue = wadMiltonAssetBalance -
-                IporMath.division(_MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance, Constants.D18);
-            _milton.depositToStanley(assetValue);
-        } else {
-            uint256 assetValue = IporMath.division(
-                _MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance,
-                Constants.D18
-            ) - wadMiltonAssetBalance;
-            _milton.withdrawFromStanley(assetValue);
-        }
-    }
-
-    //@param assetValue underlying token amount represented in 18 decimals
-    function depositToStanley(uint256 assetValue) external override onlyOwner whenNotPaused {
-        _milton.depositToStanley(assetValue);
-    }
-
-    //@param assetValue underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetValue) external override onlyOwner whenNotPaused {
-        _milton.withdrawFromStanley(assetValue);
-    }
-
-    //@param assetValue underlying token amount represented in 18 decimals
-    function transferToTreasury(uint256 assetValue)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        onlyTreasuryManager
-    {
-        require(address(0) != _treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
-
-        _miltonStorage.updateStorageWhenTransferToTreasury(assetValue);
-
-        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetValue,
-            _getDecimals()
-        );
-
-        IERC20Upgradeable(_asset).safeTransferFrom(
-            address(_milton),
-            _treasury,
-            assetValueAssetDecimals
-        );
-    }
-
-    //@param assetValue underlying token amount represented in 18 decimals
-    function transferToCharlieTreasury(uint256 assetValue)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        onlyCharlieTreasuryManager
-    {
-        require(address(0) != _charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
-
-        _miltonStorage.updateStorageWhenTransferToCharlieTreasury(assetValue);
-
-        uint256 assetValueAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetValue,
-            _getDecimals()
-        );
-
-        IERC20Upgradeable(_asset).safeTransferFrom(
-            address(_milton),
-            _charlieTreasury,
-            assetValueAssetDecimals
-        );
+    //@param ipTokenAmount IpToken amount represented in 18 decimals
+    function redeem(uint256 ipTokenAmount) external override whenNotPaused {
+        _redeem(ipTokenAmount, block.timestamp);
     }
 
     function checkVaultReservesRatio() external view override returns (uint256) {
         return _checkVaultReservesRatio();
     }
 
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
     function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
-        IMilton milton = _milton;
+        IMiltonInternal milton = _milton;
 
         (, , int256 soap) = milton.calculateSoapForTimestamp(calculateTimestamp);
 
@@ -206,80 +86,65 @@ abstract contract Joseph is
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
-    function _getIporTotalBalance()
-        internal
-        view
-        returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
-    {
-        address miltonAddr = address(_milton);
-
-        wadMiltonAssetBalance = IporMath.convertToWad(
-            IERC20Upgradeable(_asset).balanceOf(miltonAddr),
-            _getDecimals()
-        );
-
-        totalBalance = wadMiltonAssetBalance + _stanley.totalBalance(miltonAddr);
-    }
-
-    //@param assetValue in decimals like asset
+    //@param assetAmount in decimals like asset
     function _provideLiquidity(
-        uint256 assetValue,
+        uint256 assetAmount,
         uint256 assetDecimals,
         uint256 timestamp
     ) internal nonReentrant {
-        IMilton milton = _milton;
+        IMiltonInternal milton = _milton;
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadAssetValue = IporMath.convertToWad(assetValue, assetDecimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
-        _miltonStorage.addLiquidity(wadAssetValue);
+        _miltonStorage.addLiquidity(wadAssetAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(milton), assetValue);
+        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(milton), assetAmount);
 
-        uint256 ipTokenValue = IporMath.division(wadAssetValue * Constants.D18, exchangeRate);
-        _ipToken.mint(msg.sender, ipTokenValue);
+        uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
+        _ipToken.mint(msg.sender, ipTokenAmount);
 
         emit ProvideLiquidity(
             timestamp,
             msg.sender,
             address(milton),
             exchangeRate,
-            assetValue,
-            ipTokenValue
+            assetAmount,
+            ipTokenAmount
         );
     }
 
-    function _redeem(uint256 ipTokenValue, uint256 timestamp) internal nonReentrant {
+    function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
         require(
-            ipTokenValue != 0 && ipTokenValue <= _ipToken.balanceOf(msg.sender),
+            ipTokenAmount != 0 && ipTokenAmount <= _ipToken.balanceOf(msg.sender),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
-        IMilton milton = _milton;
+        IMiltonInternal milton = _milton;
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
         require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadAssetValue = IporMath.division(ipTokenValue * exchangeRate, Constants.D18);
+        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
 
         uint256 wadRedeemFee = IporMath.division(
-            wadAssetValue * _getRedeemFeePercentage(),
+            wadAssetAmount * _getRedeemFeePercentage(),
             Constants.D18
         );
 
-        uint256 wadRedeemValue = wadAssetValue - wadRedeemFee;
+        uint256 wadRedeemAmount = wadAssetAmount - wadRedeemFee;
 
         IporTypes.MiltonBalancesMemory memory balance = _milton.getAccruedBalance();
 
-        uint256 assetValue = IporMath.convertWadToAssetDecimals(wadRedeemValue, _getDecimals());
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadRedeemAmount, _getDecimals());
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
             balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral,
-            wadRedeemValue
+            wadRedeemAmount
         );
 
         require(
@@ -287,21 +152,21 @@ abstract contract Joseph is
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
-        _ipToken.burn(msg.sender, ipTokenValue);
+        _ipToken.burn(msg.sender, ipTokenAmount);
 
-        _miltonStorage.subtractLiquidity(wadRedeemValue);
+        _miltonStorage.subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), msg.sender, assetValue);
+        IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), msg.sender, assetAmount);
 
         emit Redeem(
             timestamp,
             address(milton),
             msg.sender,
             exchangeRate,
-            assetValue,
-            ipTokenValue,
+            assetAmount,
+            ipTokenAmount,
             wadRedeemFee,
-            wadRedeemValue
+            wadRedeemAmount
         );
     }
 
@@ -321,7 +186,4 @@ abstract contract Joseph is
             return Constants.MAX_VALUE;
         }
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

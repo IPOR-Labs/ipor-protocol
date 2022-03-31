@@ -15,6 +15,7 @@ library MiltonFacadeTypes {
         address joseph;
     }
 
+	/// @notice Struct which groups Milton balances required for frontedn
     struct Balance {
         uint256 liquidityPool;
         uint256 payFixedTotalNotional;

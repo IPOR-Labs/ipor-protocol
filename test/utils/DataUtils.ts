@@ -151,8 +151,8 @@ export const prepareTestData = async (
             await ipTokenUsdt.setJoseph(josephUsdt.address);
 
             await miltonUsdt.setJoseph(josephUsdt.address);
-            await miltonUsdt.setupMaxAllowance(josephUsdt.address);
-            await miltonUsdt.setupMaxAllowance(stanleyUsdt.address);
+            await miltonUsdt.setupMaxAllowanceForAsset(josephUsdt.address);
+            await miltonUsdt.setupMaxAllowanceForAsset(stanleyUsdt.address);
             // await stanleyUsdt.authorizeMilton(miltonUsdt.address);
             await warren.addAsset(tokenUsdt.address);
         }
@@ -196,8 +196,8 @@ export const prepareTestData = async (
             await ipTokenUsdc.setJoseph(josephUsdc.address);
 
             await miltonUsdc.setJoseph(josephUsdc.address);
-            await miltonUsdc.setupMaxAllowance(josephUsdc.address);
-            await miltonUsdc.setupMaxAllowance(stanleyUsdc.address);
+            await miltonUsdc.setupMaxAllowanceForAsset(josephUsdc.address);
+            await miltonUsdc.setupMaxAllowanceForAsset(stanleyUsdc.address);
             // await stanleyUsdc.authorizeMilton(miltonUsdc.address);
             await warren.addAsset(tokenUsdc.address);
         }
@@ -237,8 +237,8 @@ export const prepareTestData = async (
             await ipTokenDai.setJoseph(josephDai.address);
 
             await miltonDai.setJoseph(josephDai.address);
-            await miltonDai.setupMaxAllowance(josephDai.address);
-            await miltonDai.setupMaxAllowance(stanleyDai.address);
+            await miltonDai.setupMaxAllowanceForAsset(josephDai.address);
+            await miltonDai.setupMaxAllowanceForAsset(stanleyDai.address);
             await warren.addAsset(tokenDai.address);
         }
     }

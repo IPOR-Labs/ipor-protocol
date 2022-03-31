@@ -1,29 +1,14 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../../security/IporOwnableUpgradeable.sol";
-import "../../libraries/Constants.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
-import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
-import "../configuration/MiltonSpreadConfiguration.sol";
-import "./MiltonSpreadModelCore.sol";
+import "./MiltonSpreadInternal.sol";
 
-contract MiltonSpreadModel is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    MiltonSpreadModelCore,
-    MiltonSpreadConfiguration,
-    IMiltonSpreadModel
-{
+contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function initialize() public initializer {
         __Ownable_init();
-    }
-
-    function getVersion() external pure override returns (uint256) {
-        return 1;
     }
 
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
@@ -358,7 +343,4 @@ contract MiltonSpreadModel is
             return exponentialMovingAverage;
         }
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

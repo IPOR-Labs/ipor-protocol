@@ -5,8 +5,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
 import "../interfaces/types/MiltonFacadeTypes.sol";
 import "../interfaces/IWarren.sol";
-import "../interfaces/IMiltonConfiguration.sol";
 import "../interfaces/IMilton.sol";
+import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -55,6 +55,10 @@ contract MiltonFacadeDataProvider is
         _assets = assets;
     }
 
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
+
     function getConfiguration()
         external
         view
@@ -84,7 +88,7 @@ contract MiltonFacadeDataProvider is
         (balance.payFixedTotalNotional, balance.recFixedTotalNotional) = miltonStorage
             .getTotalOutstandingNotional();
 
-        IMilton milton = IMilton(config.milton);
+        IMiltonInternal milton = IMiltonInternal(config.milton);
         IporTypes.MiltonBalancesMemory memory accruedBalance = milton.getAccruedBalance();
 
         balance.payFixedTotalCollateral = accruedBalance.payFixedTotalCollateral;
@@ -118,7 +122,7 @@ contract MiltonFacadeDataProvider is
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
             .getSwapIds(msg.sender, offset, chunkSize);
 
-        IMilton milton = IMilton(config.milton);
+        IMiltonInternal milton = IMiltonInternal(config.milton);
 
         MiltonFacadeTypes.IporSwap[] memory iporDerivatives = new MiltonFacadeTypes.IporSwap[](
             swapIds.length
@@ -181,14 +185,14 @@ contract MiltonFacadeDataProvider is
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         address miltonAddr = config.milton;
 
-        IMiltonConfiguration milton = IMiltonConfiguration(miltonAddr);
+        IMiltonInternal milton = IMiltonInternal(miltonAddr);
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
         IporTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
             timestamp,
             asset
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = IMilton(miltonAddr).getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr).getAccruedBalance();
 
         uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
             miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),

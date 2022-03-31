@@ -5,8 +5,8 @@ import {
     IpToken,
     IvToken,
     MiltonFaucet,
-    AaveStrategy,
-    CompoundStrategy,
+    StrategyAave,
+    StrategyCompound,
     StanleyDai,
     StanleyUsdc,
     StanleyUsdt,
@@ -64,14 +64,14 @@ import {
     aaveUsdtStrategyFactory,
     aaveUsdcStrategyFactory,
     aaveDaiStrategyFactory,
-    aaveStrategySetup,
+    strategyAaveSetup,
 } from "./aave";
 import {
     compTokenFactory,
     compoundDaiStrategyFactory,
     compoundUsdcStrategyFactory,
     compoundUsdtStrategyFactory,
-    compoundStrategySetup,
+    strategyCompoundSetup,
 } from "./compound";
 export type DeployType = {
     dai: ERC20;
@@ -92,12 +92,12 @@ export type DeployType = {
     ivTokenDai: IvToken;
     ivTokenUsdc: IvToken;
     ivTokenUsdt: IvToken;
-    strategyAaveDai: AaveStrategy;
-    strategyAaveUsdc: AaveStrategy;
-    strategyAaveUsdt: AaveStrategy;
-    strategyCompoundDai: CompoundStrategy;
-    strategyCompoundUsdc: CompoundStrategy;
-    strategyCompoundUsdt: CompoundStrategy;
+    strategyAaveDai: StrategyAave;
+    strategyAaveUsdc: StrategyAave;
+    strategyAaveUsdt: StrategyAave;
+    strategyCompoundDai: StrategyCompound;
+    strategyCompoundUsdc: StrategyCompound;
+    strategyCompoundUsdt: StrategyCompound;
     stanleyDai: StanleyDai;
     stanleyUsdc: StanleyUsdc;
     stanleyUsdt: StanleyUsdt;
@@ -220,9 +220,9 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageDai,
         miltonStorageUsdc,
         miltonStorageUsdt,
-		josephUsdt,
-		josephUsdc,
-		josephDai,
+        josephUsdt,
+        josephUsdc,
+        josephDai,
         warren
     );
     return {
@@ -321,13 +321,13 @@ export const setup = async (deployed: DeployType) => {
     await ivTokenSetup(ivTokenUsdc, stanleyUsdc.address);
     await ivTokenSetup(ivTokenUsdt, stanleyUsdt.address);
 
-    await aaveStrategySetup(strategyAaveDai, stanleyDai.address);
-    await aaveStrategySetup(strategyAaveUsdc, stanleyUsdc.address);
-    await aaveStrategySetup(strategyAaveUsdt, stanleyUsdt.address);
+    await strategyAaveSetup(strategyAaveDai, stanleyDai.address);
+    await strategyAaveSetup(strategyAaveUsdc, stanleyUsdc.address);
+    await strategyAaveSetup(strategyAaveUsdt, stanleyUsdt.address);
 
-    await compoundStrategySetup(strategyCompoundDai, stanleyDai.address);
-    await compoundStrategySetup(strategyCompoundUsdc, stanleyUsdc.address);
-    await compoundStrategySetup(strategyCompoundUsdt, stanleyUsdt.address);
+    await strategyCompoundSetup(strategyCompoundDai, stanleyDai.address);
+    await strategyCompoundSetup(strategyCompoundUsdc, stanleyUsdc.address);
+    await strategyCompoundSetup(strategyCompoundUsdt, stanleyUsdt.address);
 
     await warrenSetup(warren);
     await initIporValues(warren);

@@ -5,10 +5,6 @@ import "./types/IporTypes.sol";
 
 /// @title Interface for interaction with Milton Spread Model smart contract.
 interface IMiltonSpreadModel {
-    /// @notice Returns current version of Milton Spread Model's
-    /// @return current Milton Spread Model version
-    function getVersion() external pure returns (uint256);
-
     /// @notice Calculates Quote for Pay Fixed Leg.
     /// @param soap SOAP - Sum Of All Payouts.
     /// @param accruedIpor - accrued IPOR at moment of calculation
