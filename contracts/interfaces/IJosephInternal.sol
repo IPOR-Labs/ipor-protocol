@@ -1,24 +1,29 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-/// @title Interface for interaction with Joseph. Administration part.
+/// @title Administrative interface for interaction with Joseph.
 interface IJosephInternal {
-    /// @notice Returns current version of Joseph's
-    /// @return current Joseph version
+    /// @notice Returns current version of Joseph
+    /// @return Joseph's current version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Joseph instance
-    /// @return asset / underlying token / stablecoin address
+    /// @notice Gets asset - underlying ERC20 token which is assocciated with this Joseph instance
+    /// @return ERC20 token address
     function getAsset() external view returns (address);
 
-    /// @notice Gets redeem fee percentage config param which is used in calculation redeem fee taken by Joseph when trader redeem his ipTokens
-    /// @return redeem fee percentage represented in 18 decimals
+
+    /// TODO: consider changing Percentage to Rate
+    /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
+    /// @return redeem fee rate represented in 18 decimals
     function getRedeemFeePercentage() external pure returns (uint256);
 
-    /// @notice Gets redeem Liquidity Pool max utilization percentage config param which is used by Joseph to validate Liquidity Pool utilization rate treshold during redeeming ipTokens by trader.
+    /// TODO: consider changing Percentage to Rate
+    /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
+    /// Liquidity Pool utilization rate treshold during redemption of ipTokens by the trader.
     /// @return redeem Liquidity Pool max utilization percentage
     function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
 
+    /// TODO: consider dropping "Percentage"
     /// @notice Gets balance ratio config param presented in percentages in 18 decimals between Milton and Stanley
     /// @return gets balance ratio config param between Milton and Stanley
     function getMiltonStanleyBalanceRatioPercentage() external pure returns (uint256);
@@ -115,18 +120,18 @@ interface IJosephInternal {
 
     /// @notice Emmited when Treasury Manager address was changed
     /// @param changedBy account address who changed Treasury Manager address
-    /// @param oldTreasuryManager old Treasury Manager address
-    /// @param newTreasuryManager new Treasury Manager address
+    /// @param oldTreasuryManager Treasury's old Manager address
+    /// @param newTreasuryManager Treasury's new Manager address
     event TreasuryManagerChanged(
         address indexed changedBy,
         address indexed oldTreasuryManager,
         address indexed newTreasuryManager
     );
 
-    /// @notice Emmited when Treasury address changed
-    /// @param changedBy account address who changed Treasury address
-    /// @param oldTreasury old Treasury address
-    /// @param newTreasury new Treasury address
+    /// @notice Emmited after the Treasury address has changed
+    /// @param changedBy account address that changed Treasury address
+    /// @param oldTreasury Treasury's old address
+    /// @param newTreasury Treasury's new address
     event TreasuryChanged(
         address indexed changedBy,
         address indexed oldTreasury,

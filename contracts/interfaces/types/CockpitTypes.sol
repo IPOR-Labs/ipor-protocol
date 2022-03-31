@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-/// @title Types used in comunication with Cockpit - an internal web responsible for IPOR Protocol diagnosis and monitoring.
+/// @title Types used in comunication with Cockpit - an internal webapp responsible for IPOR Protocol diagnosis and monitoring.
 /// @dev used by ICockpitDataProvider interface
 library CockpitTypes {
     /// @notice Struct groupping important addresses used by CockpitDataProvider,
