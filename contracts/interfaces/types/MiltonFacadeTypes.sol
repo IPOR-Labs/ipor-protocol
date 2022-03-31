@@ -15,7 +15,7 @@ library MiltonFacadeTypes {
         address joseph;
     }
 
-    /// @notice Struct which groups Milton balances used in facades
+	/// @notice Struct which groups Milton balances required for frontedn
     struct Balance {
         /// @notice Liquiditiy Pool Balance. Represented in 18 decimals.
         uint256 liquidityPool;

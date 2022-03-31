@@ -14,32 +14,32 @@ interface IIvToken is IERC20 {
     /// @param newStanley Stanley address
     function setStanley(address newStanley) external;
 
-    /// @notice Creates `amount` IV Tokens and assign them to `account`
+    /// @notice Creates ivTokens in the given `amount`  and assigns them to the `account`
     /// @dev Emits {Transfer} from ERC20 asset and {Mint} event from ivToken
-    /// @param account to which the created IV Tokens were assigned
-    /// @param amount volume of IV Tokens which will be created
+    /// @param account to which the created ivTokens are being assigned
+    /// @param amount volume of ivTokens being created
     function mint(address account, uint256 amount) external;
 
-    /// @notice Destroys `amount` IV Tokens from `account`, reducing the total supply
+    /// @notice Destroys ivTokens in the given `amount` assigned to the `account`, reducing the total supply
     /// @dev Emits {Transfer} event from ERC20 asset and {Burn} event from ivToken
-    /// @param account from which the destroyed IV Tokens will be taken
-    /// @param amount volume of IV Tokens which will be destroyed
+    /// @param account from which the destroyed ivTokens are being taken
+    /// @param amount volume of ivTokens being destroyed
     function burn(address account, uint256 amount) external;
 
-    /// @notice Emmited when `amount` IV Tokens were mint and transferred to `account`.
-    /// @param account address where IV Tokens are transferred after mind
-    /// @param amount volume of IV Tokens which will be minted
+    /// @notice Emmited when `amount` of ivTokens were minted and transferred to the`account`.
+    /// @param account address where ivTokens are transferred after minting
+    /// @param amount volume of ivTokens which will are being minted
     event Mint(address indexed account, uint256 amount);
 
-    /// @notice Emmited when `amount` IV Tokens were burnt and transferred from `account`.
-    /// @param account address where IV Tokens are transferred from, after burn
-    /// @param amount volume of IV Tokens which will be burned
+    /// @notice Emmited when the `amount` of ivTokens from `account` was burnt.
+    /// @param account address from where ivTokens are being burned
+    /// @param amount of ivTokens being burned
     event Burn(address indexed account, uint256 amount);
 
-    /// @notice Emmited when Stanley address is changed by Owner.
-    /// @param changedBy account address who changed Stanley address
-    /// @param oldStanley old Stanley address
-    /// @param newStanley new Stanley address
+    /// @notice Emmited when Stanley's address is changed by the owner.
+    /// @param changedBy account address of entity that has changed Stanley's address
+    /// @param oldStanley Stanley's old address
+    /// @param newStanley Stanley's new address
     event StanleyChanged(
         address indexed changedBy,
         address indexed oldStanley,
