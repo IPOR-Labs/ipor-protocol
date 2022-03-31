@@ -14,11 +14,11 @@ import {
     MiltonDaiCase,
 } from "./MiltonUtils";
 
-import { Derivatives, countOpenSwaps } from "./SwapUtiles";
+import { Derivatives, countOpenSwaps } from "./SwapUtils";
 
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "./JosephUtils";
 import { MockStanleyCase } from "./StanleyUtils";
-import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtiles";
+import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtils";
 
 import {
     N0__1_18DEC,
@@ -106,7 +106,7 @@ export const testCasePagination = async (
         miltonDai,
         tokenDai,
         josephDai,
-        warren,
+        iporOracle,
         tokenUsdt,
         tokenUsdc,
         miltonUsdt,
@@ -145,7 +145,7 @@ export const testCasePagination = async (
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
@@ -158,7 +158,7 @@ export const testCasePagination = async (
     );
     const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
     await miltonFacadeDataProvider.initialize(
-        warren.address,
+        iporOracle.address,
         [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
         [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
         [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],

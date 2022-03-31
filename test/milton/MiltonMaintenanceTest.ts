@@ -37,10 +37,11 @@ describe("Milton Maintenance", () => {
 
     it("should pause Smart Contract, sender is an admin", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { tokenDai, iporOracle, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -49,7 +50,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -75,10 +76,11 @@ describe("Milton Maintenance", () => {
 
     it("should pause Smart Contract specific methods", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { tokenDai, iporOracle, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -87,7 +89,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -155,7 +157,7 @@ describe("Milton Maintenance", () => {
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai, miltonStorageDai } =
+        const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel
@@ -173,7 +175,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -249,7 +251,7 @@ describe("Milton Maintenance", () => {
 
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai, miltonStorageDai } =
+        const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel
@@ -267,7 +269,9 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
         const timestamp = params.openTimestamp;
-        await warren.connect(userOne).itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, timestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, timestamp);
 
         await josephDai.connect(liquidityProvider).itfProvideLiquidity(USD_50_000_18DEC, timestamp);
 

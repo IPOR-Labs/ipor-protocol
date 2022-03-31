@@ -31,7 +31,7 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
-import { openSwapPayFixed } from "../utils/SwapUtiles";
+import { openSwapPayFixed } from "../utils/SwapUtils";
 
 const { expect } = chai;
 
@@ -69,7 +69,7 @@ describe("MiltonFacadeDataProvider", () => {
             tokenUsdc,
             tokenUsdt,
             tokenDai,
-            warren,
+            iporOracle,
             josephDai,
             josephUsdc,
             josephUsdt,
@@ -156,15 +156,15 @@ describe("MiltonFacadeDataProvider", () => {
             from: userTwo,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsDai.asset.address, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdc.asset.address, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -186,7 +186,7 @@ describe("MiltonFacadeDataProvider", () => {
         const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
         await miltonFacadeDataProvider.deployed();
         await miltonFacadeDataProvider.initialize(
-            warren.address,
+            iporOracle.address,
             [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
             [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
             [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
@@ -244,7 +244,7 @@ describe("MiltonFacadeDataProvider", () => {
             tokenUsdc,
             tokenUsdt,
             tokenDai,
-            warren,
+            iporOracle,
             josephDai,
             josephUsdc,
             josephUsdt,
@@ -331,15 +331,15 @@ describe("MiltonFacadeDataProvider", () => {
             from: userTwo,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -363,7 +363,7 @@ describe("MiltonFacadeDataProvider", () => {
         const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
 
         await miltonFacadeDataProvider.initialize(
-            warren.address,
+            iporOracle.address,
             [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
             [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
             [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],

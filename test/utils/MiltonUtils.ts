@@ -38,7 +38,7 @@ import {
     UsdtMockedToken,
 } from "../../types";
 
-import { exetuceCloseSwapTestCase } from "./SwapUtiles";
+import { exetuceCloseSwapTestCase } from "./SwapUtils";
 
 import {
     USD_10_000_6DEC,

@@ -63,7 +63,7 @@ describe("Milton Utilisation Rate", () => {
     //         testData
     //     );
 
-    //     await warren.connect(userOne).itfUpdateIndex(
+    //     await iporOracle.connect(userOne).itfUpdateIndex(
     //         params.asset,
     //         PERCENTAGE_3_18DEC,
     //         params.openTimestamp
@@ -105,7 +105,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -121,7 +121,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -157,7 +157,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -174,7 +174,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -210,7 +210,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -227,7 +227,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from("100000").mul(N1__0_18DEC), params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -257,7 +257,7 @@ describe("Milton Utilisation Rate", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -279,7 +279,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from("100000").mul(N1__0_18DEC), params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -315,7 +315,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -332,7 +332,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -372,7 +372,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -389,7 +389,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -429,7 +429,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -446,7 +446,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -486,7 +486,7 @@ describe("Milton Utilisation Rate", () => {
             testData
         );
 
-        const { josephDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai } = testData;
 
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -503,7 +503,7 @@ describe("Milton Utilisation Rate", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 

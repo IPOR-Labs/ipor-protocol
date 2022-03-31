@@ -1,0 +1,15 @@
+// SPDX-License-Identifier: agpl-3.0
+pragma solidity 0.8.9;
+
+import "./types/IporOracleFacadeTypes.sol";
+
+/// @title Interface frontend and other external systems for reading data from IporOracle smart contract.
+interface IIporOracleFacadeDataProvider {
+    /// @notice Returns current version of IporOracle Facade Data Provider
+    /// @return current IporOracle Facade Data Provider version
+    function getVersion() external pure returns (uint256);
+
+    /// @notice Gets list of indexes.
+    /// @return list of elements {IporOracleFacadeTypes.IporFront} one element represents IPOR Index data for one specific asset.
+    function getIndexes() external view returns (IporOracleFacadeTypes.IporFront[] memory);
+}

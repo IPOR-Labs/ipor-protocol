@@ -191,7 +191,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonStorageDai, warren, miltonDai } = testData;
+        const { josephDai, tokenDai, miltonStorageDai, iporOracle, miltonDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -206,7 +206,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
 
         const expectedExchangeRate = BigNumber.from("1000074977506747976");
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await josephDai
@@ -257,7 +257,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
 
         const expectedExchangeRate = N1__0_18DEC;
 
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -308,7 +308,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             testData
         );
 
-        const { josephUsdt, tokenUsdt, warren, miltonUsdt } = testData;
+        const { josephUsdt, tokenUsdt, iporOracle, miltonUsdt } = testData;
         if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
             expect(true).to.be.false;
             return;
@@ -322,7 +322,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
 
         const expectedExchangeRate = BigNumber.from("1000074977506747976");
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await josephUsdt

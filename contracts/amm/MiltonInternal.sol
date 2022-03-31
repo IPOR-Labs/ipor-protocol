@@ -13,7 +13,7 @@ import "../libraries/errors/MiltonErrors.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -64,7 +64,7 @@ abstract contract MiltonInternal is
     address internal _asset;
     IIpToken internal _ipToken;
     address internal _joseph;
-    IWarren internal _warren;
+    IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
     IStanley internal _stanley;
@@ -298,7 +298,7 @@ abstract contract MiltonInternal is
             int256 soap
         )
     {
-        uint256 accruedIbtPrice = _warren.calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(_asset, calculateTimestamp);
         (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _miltonStorage
             .calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
@@ -312,7 +312,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapPayFixedValue(
                 timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 
@@ -323,7 +323,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapReceiveFixedValue(
                 timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 }

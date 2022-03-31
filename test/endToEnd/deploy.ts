@@ -14,7 +14,7 @@ import {
     MiltonStorageUsdc,
     MiltonStorageUsdt,
     MiltonSpreadModel,
-    Warren,
+    IporOracle,
     MiltonUsdc,
     MiltonUsdt,
     MiltonDai,
@@ -38,7 +38,7 @@ import {
     miltonFacadeDataProviderFactory,
 } from "./milton";
 import { josephDaiFactory, josephUsdcFactory, josephUsdtFactory } from "./joseph";
-import { warrenFactory, warrenSetup, initIporValues } from "./warren";
+import { iporOracleFactory, iporOracleSetup, initIporValues } from "./iporOracle";
 import { stanleyDaiFactory, stanleyUsdcFactory, stanleyUsdtFactory, stanleySetup } from "./stanley";
 import {
     aDaiFactory,
@@ -106,7 +106,7 @@ export type DeployType = {
     miltonStorageUsdt: MiltonStorageUsdt;
     miltonSpreadModel: MiltonSpreadModel;
     miltonFacadeDataProvider: MiltonFacadeDataProvider;
-    warren: Warren;
+    iporOracle: IporOracle;
     miltonDai: MiltonDai;
     miltonUsdc: MiltonUsdc;
     miltonUsdt: MiltonUsdt;
@@ -171,22 +171,22 @@ export const deploy = async (): Promise<DeployType> => {
     const miltonStorageUsdt = await miltonStorageUsdtFactory();
     const miltonSpreadModel = await miltonSpreadModelFactory();
 
-    const warren = await warrenFactory();
+    const iporOracle = await iporOracleFactory();
 
     const miltonDai = await miltonDaiFactory(
-        warren.address,
+        iporOracle.address,
         miltonStorageDai.address,
         miltonSpreadModel.address,
         stanleyDai.address
     );
     const miltonUsdc = await miltonUsdcFactory(
-        warren.address,
+        iporOracle.address,
         miltonStorageUsdc.address,
         miltonSpreadModel.address,
         stanleyUsdc.address
     );
     const miltonUsdt = await miltonUsdtFactory(
-        warren.address,
+        iporOracle.address,
         miltonStorageUsdt.address,
         miltonSpreadModel.address,
         stanleyUsdt.address
@@ -223,7 +223,7 @@ export const deploy = async (): Promise<DeployType> => {
         josephUsdt,
         josephUsdc,
         josephDai,
-        warren
+        iporOracle
     );
     return {
         dai,
@@ -258,7 +258,7 @@ export const deploy = async (): Promise<DeployType> => {
         miltonStorageUsdt,
         miltonSpreadModel,
         miltonFacadeDataProvider,
-        warren,
+        iporOracle,
         miltonDai,
         miltonUsdc,
         miltonUsdt,
@@ -292,7 +292,7 @@ export const setup = async (deployed: DeployType) => {
         miltonStorageDai,
         miltonStorageUsdc,
         miltonStorageUsdt,
-        warren,
+        iporOracle,
         miltonDai,
         miltonUsdc,
         miltonUsdt,
@@ -329,8 +329,8 @@ export const setup = async (deployed: DeployType) => {
     await strategyCompoundSetup(strategyCompoundUsdc, stanleyUsdc.address);
     await strategyCompoundSetup(strategyCompoundUsdt, stanleyUsdt.address);
 
-    await warrenSetup(warren);
-    await initIporValues(warren);
+    await iporOracleSetup(iporOracle);
+    await initIporValues(iporOracle);
 
     await miltonFaucetSetup(miltonFaucet, dai, usdc, usdt);
 };

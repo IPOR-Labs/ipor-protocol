@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
 import "../interfaces/types/MiltonFacadeTypes.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IJoseph.sol";
@@ -19,12 +19,12 @@ contract MiltonFacadeDataProvider is
     UUPSUpgradeable,
     IMiltonFacadeDataProvider
 {
-    address internal _warren;
+    address internal _iporOracle;
     address[] internal _assets;
     mapping(address => MiltonFacadeTypes.AssetConfig) internal _assetConfig;
 
     function initialize(
-        address warren,
+        address iporOracle,
         address[] memory assets,
         address[] memory miltons,
         address[] memory miltonStorages,
@@ -34,10 +34,10 @@ contract MiltonFacadeDataProvider is
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
 
         __Ownable_init();
-        _warren = warren;
+        _iporOracle = iporOracle;
 
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
@@ -187,7 +187,7 @@ contract MiltonFacadeDataProvider is
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        IporTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
             timestamp,
             asset
         );

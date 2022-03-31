@@ -6,12 +6,12 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/WarrenErrors.sol";
+import "../libraries/errors/IporOracleErrors.sol";
 import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/WarrenTypes.sol";
+import "../interfaces/types/IporOracleTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 
@@ -20,18 +20,18 @@ import "./libraries/IporLogic.sol";
  *
  * @author IPOR Labs
  */
-contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IWarren {
+contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IIporOracle {
     using SafeCast for uint256;
-    using IporLogic for WarrenTypes.IPOR;
+    using IporLogic for IporOracleTypes.IPOR;
 
     uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
 
-    mapping(address => WarrenTypes.IPOR) internal _indexes;
+    mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
-        require(_updaters[msg.sender] == 1, WarrenErrors.CALLER_NOT_UPDATER);
+        require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 
@@ -39,7 +39,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         __Ownable_init();
     }
 
-    function getVersion() external pure override virtual returns (uint256) {
+    function getVersion() external pure virtual override returns (uint256) {
         return 1;
     }
 
@@ -55,10 +55,10 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
             uint256 lastUpdateTimestamp
         )
     {
-        WarrenTypes.IPOR memory ipor = _indexes[asset];
+        IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            WarrenErrors.ASSET_NOT_SUPPORTED
+            IporOracleErrors.ASSET_NOT_SUPPORTED
         );
         return (
             indexValue = ipor.indexValue,
@@ -75,10 +75,10 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         override
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
-        WarrenTypes.IPOR memory ipor = _indexes[asset];
+        IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(
             ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            WarrenErrors.ASSET_NOT_SUPPORTED
+            IporOracleErrors.ASSET_NOT_SUPPORTED
         );
 
         accruedIpor = IporTypes.AccruedIpor(
@@ -139,9 +139,15 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
-            WarrenErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+            IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
-        _indexes[asset] = WarrenTypes.IPOR(0, 0, Constants.WAD_YEAR_IN_SECONDS.toUint128(), 0, 0);
+        _indexes[asset] = IporOracleTypes.IPOR(
+            0,
+            0,
+            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
+            0,
+            0
+        );
         emit IporIndexAddAsset(asset);
     }
 
@@ -149,7 +155,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
-            WarrenErrors.ASSET_NOT_SUPPORTED
+            IporOracleErrors.ASSET_NOT_SUPPORTED
         );
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
@@ -180,8 +186,8 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
         uint256 indexValue,
         uint256 updateTimestamp
     ) internal {
-        WarrenTypes.IPOR memory ipor = _indexes[asset];
-        require(ipor.quasiIbtPrice != 0, WarrenErrors.ASSET_NOT_SUPPORTED);
+        IporOracleTypes.IPOR memory ipor = _indexes[asset];
+        require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
@@ -206,7 +212,7 @@ contract Warren is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable,
                 );
         }
 
-        _indexes[asset] = WarrenTypes.IPOR(
+        _indexes[asset] = IporOracleTypes.IPOR(
             updateTimestamp.toUint32(),
             indexValue.toUint128(),
             newQuasiIbtPrice.toUint128(),

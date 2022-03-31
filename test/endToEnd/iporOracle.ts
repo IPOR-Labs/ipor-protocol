@@ -1,28 +1,28 @@
 import hre, { upgrades } from "hardhat";
 import { BigNumber } from "ethers";
 
-import { Warren } from "../../types";
+import { IporOracle } from "../../types";
 import { daiAddress, usdcAddress, usdtAddress } from "./tokens";
 
-export const warrenFactory = async (): Promise<Warren> => {
+export const iporOracleFactory = async (): Promise<IporOracle> => {
     const [admin] = await hre.ethers.getSigners();
-    const factory = await hre.ethers.getContractFactory("Warren", admin);
+    const factory = await hre.ethers.getContractFactory("IporOracle", admin);
     return upgrades.deployProxy(factory, [], {
         kind: "uups",
-    }) as Promise<Warren>;
+    }) as Promise<IporOracle>;
 };
 
-export const warrenSetup = async (warren: Warren) => {
+export const iporOracleSetup = async (iporOracle: IporOracle) => {
     const [admin] = await hre.ethers.getSigners();
     const adminAddress = await admin.getAddress();
-    await warren.addUpdater(adminAddress);
-    await warren.addAsset(usdtAddress);
-    await warren.addAsset(usdcAddress);
-    await warren.addAsset(daiAddress);
+    await iporOracle.addUpdater(adminAddress);
+    await iporOracle.addAsset(usdtAddress);
+    await iporOracle.addAsset(usdcAddress);
+    await iporOracle.addAsset(daiAddress);
 };
 
-export const initIporValues = async (warren: Warren) => {
-    await warren.updateIndexes(
+export const initIporValues = async (iporOracle: IporOracle) => {
+    await iporOracle.updateIndexes(
         [daiAddress, usdtAddress, usdcAddress],
         [
             BigNumber.from("30000000000000000"),

@@ -1,5 +1,5 @@
-import Warren from "./contracts/Warren.json";
-import ItfWarren from "./contracts/ItfWarren.json";
+import IporOracle from "./contracts/IporOracle.json";
+import ItfIporOracle from "./contracts/ItfIporOracle.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
 import MiltonDai from "./contracts/MiltonDai.json";
@@ -58,8 +58,8 @@ const options = {
     contracts: [
         CockpitDataProvider,
         MiltonFacadeDataProvider,
-        Warren,
-        ItfWarren,
+        IporOracle,
+        ItfIporOracle,
         MiltonUsdt,
         MiltonUsdc,
         MiltonDai,

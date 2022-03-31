@@ -350,12 +350,12 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        const { miltonStorageDai, miltonDai, tokenDai, warren, josephDai } = testData;
+        const { miltonStorageDai, miltonDai, tokenDai, iporOracle, josephDai } = testData;
         if (
             miltonStorageDai === undefined ||
             miltonDai === undefined ||
             tokenDai === undefined ||
-            warren === undefined ||
+            iporOracle === undefined ||
             josephDai === undefined
         ) {
             expect(true).to.be.false;
@@ -377,7 +377,7 @@ describe("MiltonStorage", () => {
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,
@@ -435,7 +435,7 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonStorageUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonStorageUsdt, miltonUsdt } = testData;
         if (
             tokenUsdt === undefined ||
             josephUsdt === undefined ||
@@ -461,7 +461,7 @@ describe("MiltonStorage", () => {
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,
@@ -515,12 +515,12 @@ describe("MiltonStorage", () => {
             "DAI",
             testData
         );
-        const { tokenDai, warren, josephDai, miltonStorageDai, miltonDai } = testData;
+        const { tokenDai, iporOracle, josephDai, miltonStorageDai, miltonDai } = testData;
         if (
             miltonStorageDai === undefined ||
             miltonDai === undefined ||
             tokenDai === undefined ||
-            warren === undefined ||
+            iporOracle === undefined ||
             josephDai === undefined
         ) {
             expect(true).to.be.false;
@@ -540,7 +540,7 @@ describe("MiltonStorage", () => {
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,

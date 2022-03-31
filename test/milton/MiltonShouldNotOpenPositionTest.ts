@@ -23,7 +23,7 @@ import {
     MiltonDaiCase,
     prepareMockMiltonSpreadModel,
 } from "../utils/MiltonUtils";
-import { openSwapPayFixed } from "../utils/SwapUtiles";
+import { openSwapPayFixed } from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
@@ -80,10 +80,11 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT open position because tolerated quote value exceeded - pay fixed 18 decimals", async () => {
         //given
-        const { warren, tokenDai, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { iporOracle, tokenDai, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         const totalAmount = BigNumber.from("30000000000000000001");
         const maxAcceptableFixedInterestRate = BigNumber.from("39999999999999999");
@@ -95,7 +96,7 @@ describe("MiltonSpreadModel - Core", () => {
             return;
         }
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(tokenDai.address, PERCENTAGE_3_18DEC, timestamp);
 
@@ -116,10 +117,11 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT open position because tolerated quote value exceeded - receive fixed 18 decimals", async () => {
         //given
-        const { warren, tokenDai, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { iporOracle, tokenDai, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -131,7 +133,7 @@ describe("MiltonSpreadModel - Core", () => {
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(tokenDai.address, PERCENTAGE_3_18DEC, timestamp);
 
@@ -171,7 +173,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonUsdt } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
             expect(true).to.be.false;
@@ -187,7 +189,7 @@ describe("MiltonSpreadModel - Core", () => {
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(tokenUsdt.address, PERCENTAGE_3_18DEC, timestamp);
 
@@ -227,7 +229,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonUsdt } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
             expect(true).to.be.false;
@@ -244,7 +246,7 @@ describe("MiltonSpreadModel - Core", () => {
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(tokenUsdt.address, PERCENTAGE_3_18DEC, timestamp);
 
@@ -329,7 +331,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, miltonDai, iporOracle, miltonStorageDai } = testData;
 
         if (
             tokenDai === undefined ||
@@ -355,13 +357,13 @@ describe("MiltonSpreadModel - Core", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, N0__01_18DEC, params.openTimestamp);
 
         await openSwapPayFixed(testData, params);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -369,7 +371,7 @@ describe("MiltonSpreadModel - Core", () => {
                 params.openTimestamp
             );
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,
@@ -401,7 +403,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, warren, miltonDai } = testData;
+        const { tokenDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -415,7 +417,7 @@ describe("MiltonSpreadModel - Core", () => {
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
         };
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -442,7 +444,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, warren, miltonDai } = testData;
+        const { tokenDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -456,7 +458,7 @@ describe("MiltonSpreadModel - Core", () => {
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
         };
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 

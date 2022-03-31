@@ -804,7 +804,7 @@ describe("MiltonSpreadRecFixed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { warren, josephUsdt, miltonUsdt, tokenUsdt } = testData;
+        const { iporOracle, josephUsdt, miltonUsdt, tokenUsdt } = testData;
         if (josephUsdt === undefined || miltonUsdt === undefined || tokenUsdt === undefined) {
             expect(true).to.be.false;
             return;
@@ -812,7 +812,7 @@ describe("MiltonSpreadRecFixed", () => {
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 

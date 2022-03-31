@@ -12,20 +12,20 @@ const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt.sol");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc.sol");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai.sol");
 
-const Warren = artifacts.require("Warren");
+const IporOracle = artifacts.require("IporOracle");
 const one = "1000000000000000000";
 
 const delay = (time) => {
     return new Promise((resolve) => setTimeout(resolve, time));
 };
 
-const calculate = async (milton, asset, warren, zeroNight, timeDeltaPerYear) => {
+const calculate = async (milton, asset, iporOracle, zeroNight, timeDeltaPerYear) => {
     const { totalCollateralPayFixed, totalCollateralReceiveFixed, liquidityPool } =
         await milton.getBalance();
     const total = BigNumber.from(liquidityPool)
         .add(BigNumber.from(totalCollateralReceiveFixed))
         .add(BigNumber.from(totalCollateralPayFixed));
-    const { indexValue } = await warren.getIndex(asset.address);
+    const { indexValue } = await iporOracle.getIndex(asset.address);
     return BigNumber.from(indexValue.toString())
         .mul(total)
         .div(one)
@@ -44,7 +44,7 @@ module.exports = async (done) => {
     const miltonStorageUsdt = await MiltonStorageUsdt.deployed();
     const miltonStorageUsdc = await MiltonStorageUsdc.deployed();
     const miltonStorageDai = await MiltonStorageDai.deployed();
-    const warren = await Warren.deployed();
+    const iporOracle = await IporOracle.deployed();
 
     const data = [
         { milton: miltonStorageUsdt, asset: usdtToken },
@@ -60,7 +60,7 @@ module.exports = async (done) => {
             const result = await calculate(
                 data[i].milton,
                 data[i].asset,
-                warren,
+                iporOracle,
                 zeroNight,
                 timeDeltaPerYear
             );

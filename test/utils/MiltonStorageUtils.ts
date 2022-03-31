@@ -390,7 +390,7 @@ const preparePayFixedState = async (
         JosephDaiMockCases.CASE0
     );
 
-    const { tokenUsdt, josephUsdt, warren } = testData;
+    const { tokenUsdt, josephUsdt, iporOracle } = testData;
 
     if (tokenUsdt === undefined || josephUsdt === undefined) {
         expect(true).to.be.false;
@@ -417,7 +417,7 @@ const preparePayFixedState = async (
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -451,7 +451,7 @@ const prepareReceiveFixedState = async (
         JosephDaiMockCases.CASE0
     );
 
-    const { tokenUsdt, warren, josephUsdt } = testData;
+    const { tokenUsdt, iporOracle, josephUsdt } = testData;
 
     if (tokenUsdt === undefined || josephUsdt === undefined) {
         expect(true).to.be.false;
@@ -478,7 +478,7 @@ const prepareReceiveFixedState = async (
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -541,7 +541,7 @@ const prepareState = async (
         direction: 0,
     };
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 

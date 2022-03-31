@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
@@ -28,7 +28,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function initialize(
         address asset,
-        address warren,
+        address iporOracle,
         address miltonStorage,
         address miltonSpreadModel,
         address stanley
@@ -36,7 +36,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
@@ -44,7 +44,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
-        _warren = IWarren(warren);
+        _iporOracle = IIporOracle(iporOracle);
         _asset = asset;
         _stanley = IStanley(stanley);
     }
@@ -169,7 +169,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         view
         returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
-        IporTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
         );
@@ -244,7 +244,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 openingFeeTreasuryAmount,
                 _getIporPublicationFee(),
                 _getLiquidationDepositAmount(),
-                _warren.getAccruedIndex(openTimestamp, _asset)
+                _iporOracle.getAccruedIndex(openTimestamp, _asset)
             );
     }
 
@@ -472,7 +472,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 notional,
         uint256 quoteValue
     ) internal view returns (MiltonTypes.IporSwapIndicator memory indicator) {
-        IporTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
         );

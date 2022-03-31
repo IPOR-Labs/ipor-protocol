@@ -52,7 +52,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -104,7 +104,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -121,7 +121,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_2_5_18DEC, params.openTimestamp);
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
@@ -152,7 +152,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle } = testData;
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -161,7 +161,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -178,7 +178,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_8_18DEC, params.openTimestamp);
 
@@ -209,7 +209,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle } = testData;
         if (josephDai === undefined || tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -218,7 +218,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_8_18DEC, params.openTimestamp);
 
@@ -235,7 +235,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -264,7 +264,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
         if (
             josephDai === undefined ||
             tokenDai === undefined ||
@@ -278,7 +278,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -301,7 +301,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         await miltonStorageDai.setJoseph(josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
@@ -337,7 +337,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
         if (
             josephDai === undefined ||
             tokenDai === undefined ||
@@ -351,7 +351,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
@@ -374,7 +374,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         await miltonStorageDai.setJoseph(josephDai.address);
         //END HACK - substract liquidity without  burn ipToken
 
-        await testData.warren
+        await testData.iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -409,7 +409,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
         if (
             josephDai === undefined ||
             tokenDai === undefined ||
@@ -423,7 +423,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 
@@ -446,7 +446,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         await miltonStorageDai.setJoseph(josephDai.address);
         //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -481,7 +481,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
         if (
             josephDai === undefined ||
             tokenDai === undefined ||
@@ -495,7 +495,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -518,7 +518,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         await miltonStorageDai.setJoseph(josephDai.address);
         //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_50_18DEC, params.openTimestamp);
 

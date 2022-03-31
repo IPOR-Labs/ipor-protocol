@@ -948,7 +948,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonUsdt } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
             expect(true).to.be.false;
@@ -957,7 +957,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -1050,7 +1050,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonUsdt } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
             expect(true).to.be.false;
@@ -1059,7 +1059,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 

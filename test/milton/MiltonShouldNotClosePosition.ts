@@ -31,7 +31,7 @@ import {
     openSwapPayFixed,
     openSwapReceiveFixed,
     executeCloseSwapsTestCase,
-} from "../utils/SwapUtiles";
+} from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
@@ -66,7 +66,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -83,15 +83,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         await openSwapPayFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -111,7 +111,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -128,15 +128,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         await openSwapPayFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -156,7 +156,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -174,15 +174,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         await openSwapPayFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -202,7 +202,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -220,15 +220,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         await openSwapReceiveFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -248,7 +248,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -266,15 +266,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         await openSwapReceiveFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -294,7 +294,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -311,15 +311,15 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
         await openSwapReceiveFixed(testData, params);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
         const endTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
@@ -339,7 +339,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -358,7 +358,7 @@ describe("MiltonSpreadModel - Core", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -387,7 +387,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -406,7 +406,7 @@ describe("MiltonSpreadModel - Core", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -450,7 +450,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
@@ -469,7 +469,7 @@ describe("MiltonSpreadModel - Core", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,

@@ -43,7 +43,8 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const { josephDai, ipTokenDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, ipTokenDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } =
+            testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -61,7 +62,7 @@ describe("Joseph Treasury", () => {
 
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -117,7 +118,8 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const { josephDai, ipTokenDai, tokenDai, miltonDai, warren, miltonStorageDai } = testData;
+        const { josephDai, ipTokenDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } =
+            testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -136,7 +138,7 @@ describe("Joseph Treasury", () => {
 
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -193,7 +195,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const { josephDai, ipTokenDai, tokenDai, miltonDai, warren } = testData;
+        const { josephDai, ipTokenDai, tokenDai, miltonDai, iporOracle } = testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -211,7 +213,7 @@ describe("Joseph Treasury", () => {
 
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -261,7 +263,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const { josephDai, ipTokenDai, tokenDai, miltonDai, warren } = testData;
+        const { josephDai, ipTokenDai, tokenDai, miltonDai, iporOracle } = testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -279,7 +281,7 @@ describe("Joseph Treasury", () => {
 
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 

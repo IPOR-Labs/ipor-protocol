@@ -21,7 +21,7 @@ import {
     StanleyUsdt,
     MiltonStorage,
     ERC20,
-    Warren,
+    IporOracle,
     MiltonFacadeDataProvider,
 } from "../../types";
 import {
@@ -132,7 +132,7 @@ export const miltonSpreadModelFactory = async (): Promise<MiltonSpreadModel> => 
 };
 
 export const miltonUsdtFactory = async (
-    warrenAddress: string,
+    iporOracleAddress: string,
     miltonStorageUsdtAddress: string,
     miltonSpreadModelAddress: string,
     stanleyUsdtAddress: string
@@ -143,7 +143,7 @@ export const miltonUsdtFactory = async (
         miltonFactory,
         [
             usdtAddress,
-            warrenAddress,
+            iporOracleAddress,
             miltonStorageUsdtAddress,
             miltonSpreadModelAddress,
             stanleyUsdtAddress,
@@ -155,7 +155,7 @@ export const miltonUsdtFactory = async (
 };
 
 export const miltonUsdcFactory = async (
-    warrenAddress: string,
+    iporOracleAddress: string,
     miltonStorageUsdcAddress: string,
     miltonSpreadModelAddress: string,
     stanleyUsdcAddress: string
@@ -166,7 +166,7 @@ export const miltonUsdcFactory = async (
         miltonFactory,
         [
             usdcAddress,
-            warrenAddress,
+            iporOracleAddress,
             miltonStorageUsdcAddress,
             miltonSpreadModelAddress,
             stanleyUsdcAddress,
@@ -178,7 +178,7 @@ export const miltonUsdcFactory = async (
 };
 
 export const miltonDaiFactory = async (
-    warrenAddress: string,
+    iporOracleAddress: string,
     miltonStorageDaiAddress: string,
     miltonSpreadModelAddress: string,
     stanleyDaiAddress: string
@@ -189,7 +189,7 @@ export const miltonDaiFactory = async (
         miltonFactory,
         [
             daiAddress,
-            warrenAddress,
+            iporOracleAddress,
             miltonStorageDaiAddress,
             miltonSpreadModelAddress,
             stanleyDaiAddress,
@@ -213,7 +213,7 @@ export const miltonFacadeDataProviderFactory = async (
     josephUsdt: JosephUsdt,
     josephUsdc: JosephUsdc,
     josephDai: JosephDai,
-    warren: Warren
+    iporOracle: IporOracle
 ): Promise<MiltonFacadeDataProvider> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFacadeDataProvider = await hre.ethers.getContractFactory(
@@ -223,7 +223,7 @@ export const miltonFacadeDataProviderFactory = async (
     return upgrades.deployProxy(
         miltonFacadeDataProvider,
         [
-            warren.address,
+            iporOracle.address,
             [usdt.address, usdc.address, dai.address],
             [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
             [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],

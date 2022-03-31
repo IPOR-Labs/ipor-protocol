@@ -3,13 +3,13 @@ const keccak256 = require("keccak256");
 const { upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-const Warren = artifacts.require("MiltonSpreadModel");
-const ItfWarren = artifacts.require("MiltonSpreadModel");
+const IporOracle = artifacts.require("MiltonSpreadModel");
+const ItfIporOracle = artifacts.require("MiltonSpreadModel");
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
 
-    await upgradeContract(Warren);
-    await upgradeContract(ItfWarren);
+    await upgradeContract(IporOracle);
+    await upgradeContract(ItfIporOracle);
     await upgradeContract(MiltonSpreadModel);
 
     console.log("Congratulations! Upgrade Smart Contracts...");

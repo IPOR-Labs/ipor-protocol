@@ -6,19 +6,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/types/CockpitTypes.sol";
 import "../../libraries/Constants.sol";
-import "../../interfaces/IWarren.sol";
+import "../../interfaces/IIporOracle.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpitDataProvider {
-    address internal _warren;
+    address internal _iporOracle;
     mapping(address => CockpitTypes.AssetConfig) internal _assetConfig;
     address[] internal _assets;
 
     function initialize(
-        address warren,
+        address iporOracle,
         address[] memory assets,
         address[] memory miltons,
         address[] memory miltonStorages,
@@ -27,13 +27,13 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address[] memory ivTokens
     ) public initializer {
         __Ownable_init();
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        _warren = warren;
+        _iporOracle = iporOracle;
         _assets = assets;
 
         uint256 assetsLength = assets.length;
@@ -172,7 +172,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance,
             uint256 date
-        ) = IWarren(_warren).getIndex(asset);
+        ) = IIporOracle(_iporOracle).getIndex(asset);
 
         iporFront = CockpitTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),

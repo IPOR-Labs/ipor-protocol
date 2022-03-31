@@ -8,7 +8,7 @@ import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     N0__1_18DEC,
-} from "../utils/Constants";
+} from "./Constants";
 import { TestData } from "./DataUtils";
 import { assertExpectedValues } from "./AssertUtils";
 
@@ -311,7 +311,7 @@ export const exetuceCloseSwapTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
     if (params.direction == 0) {
@@ -320,7 +320,7 @@ export const exetuceCloseSwapTestCase = async function (
         await openSwapReceiveFixed(testData, params);
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
@@ -512,7 +512,7 @@ export const executeCloseSwapsTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
 
@@ -524,7 +524,7 @@ export const executeCloseSwapsTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 

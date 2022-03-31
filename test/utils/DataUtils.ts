@@ -24,13 +24,13 @@ import {
     getMockJosephDaiCase,
 } from "./JosephUtils";
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
-import { prepareWarren } from "./WarrenUtils";
+import { prepareIporOracle } from "./IporOracleUtils";
 import {
     DaiMockedToken,
     UsdtMockedToken,
     UsdcMockedToken,
     IpToken,
-    ItfWarren,
+    ItfIporOracle,
     MiltonStorage,
 } from "../../types";
 import {
@@ -75,7 +75,7 @@ export type TestData = {
     stanleyUsdt?: MockStanley;
     stanleyUsdc?: MockStanley;
     stanleyDai?: MockStanley;
-    warren: ItfWarren;
+    iporOracle: ItfIporOracle;
 };
 
 export const prepareTestData = async (
@@ -115,7 +115,7 @@ export const prepareTestData = async (
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
 
-    const warren = await prepareWarren(accounts);
+    const iporOracle = await prepareIporOracle(accounts);
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -133,7 +133,7 @@ export const prepareTestData = async (
             miltonUsdt = await getMockMiltonUsdtCase(miltonUsdtCase);
             miltonUsdt.initialize(
                 tokenUsdt.address,
-                warren.address,
+                iporOracle.address,
                 miltonStorageUsdt.address,
                 miltonSpreadModel.address,
                 stanleyUsdt.address
@@ -156,7 +156,7 @@ export const prepareTestData = async (
             await miltonUsdt.setupMaxAllowanceForAsset(josephUsdt.address);
             await miltonUsdt.setupMaxAllowanceForAsset(stanleyUsdt.address);
             // await stanleyUsdt.authorizeMilton(miltonUsdt.address);
-            await warren.addAsset(tokenUsdt.address);
+            await iporOracle.addAsset(tokenUsdt.address);
         }
         if (assets[k] === "USDC") {
             tokenUsdc = (await UsdcMockedToken.deploy(
@@ -176,7 +176,7 @@ export const prepareTestData = async (
             await miltonUsdc.deployed();
             miltonUsdc.initialize(
                 tokenUsdc.address,
-                warren.address,
+                iporOracle.address,
                 miltonStorageUsdc.address,
                 miltonSpreadModel.address,
                 stanleyUsdc.address
@@ -201,7 +201,7 @@ export const prepareTestData = async (
             await miltonUsdc.setupMaxAllowanceForAsset(josephUsdc.address);
             await miltonUsdc.setupMaxAllowanceForAsset(stanleyUsdc.address);
             // await stanleyUsdc.authorizeMilton(miltonUsdc.address);
-            await warren.addAsset(tokenUsdc.address);
+            await iporOracle.addAsset(tokenUsdc.address);
         }
         if (assets[k] === "DAI") {
             tokenDai = (await DaiMockedToken.deploy(
@@ -218,7 +218,7 @@ export const prepareTestData = async (
             miltonDai = await getMockMiltonDaiCase(miltonDaiCase);
             miltonDai.initialize(
                 tokenDai.address,
-                warren.address,
+                iporOracle.address,
                 miltonStorageDai.address,
                 miltonSpreadModel.address,
                 stanleyDai.address
@@ -241,7 +241,7 @@ export const prepareTestData = async (
             await miltonDai.setJoseph(josephDai.address);
             await miltonDai.setupMaxAllowanceForAsset(josephDai.address);
             await miltonDai.setupMaxAllowanceForAsset(stanleyDai.address);
-            await warren.addAsset(tokenDai.address);
+            await iporOracle.addAsset(tokenDai.address);
         }
     }
 
@@ -252,7 +252,7 @@ export const prepareTestData = async (
         ipTokenUsdt,
         ipTokenUsdc,
         ipTokenDai,
-        warren,
+        iporOracle,
         miltonUsdt,
         miltonStorageUsdt,
         josephUsdt,
