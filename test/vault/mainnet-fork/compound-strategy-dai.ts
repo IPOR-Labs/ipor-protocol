@@ -76,7 +76,7 @@ describe("compound deployed Contract on Mainnet fork", function () {
             //  **************                      Deploy strategy                           **************
             //  ********************************************************************************************
 
-            strategyContract = await hre.ethers.getContractFactory("CompoundStrategy", signer);
+            strategyContract = await hre.ethers.getContractFactory("StrategyCompound", signer);
             strategyContract_Instance = await upgrades.deployProxy(strategyContract, [
                 daiAddress,
                 cDaiAddress,

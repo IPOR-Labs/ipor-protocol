@@ -4,10 +4,6 @@ pragma solidity 0.8.9;
 /// @title Interface for interaction with Joseph - smart contract responsible
 /// for managing ipTokens and ERC20 tokens in IPOR Protocol.
 interface IJoseph {
-    /// @notice Returns current version of Joseph's
-    /// @return current Joseph version
-    function getVersion() external pure returns (uint256);
-
     /// @notice Calculates ipToken exchange rate
     /// @dev exchange rate is a Liqudity Pool Balance and ipToken total supply ratio
     /// @return ipToken exchange rate for a specific asset
@@ -17,8 +13,8 @@ interface IJoseph {
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to Milton,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken
     /// in return transfers minted ipTokens to the sender. Volume of transferred ipTokens is based on current ipToken exchange rate
-    /// @param assetValue volume of ERC20 tokens which are transferred from sender to Milton
-    function provideLiquidity(uint256 assetValue) external;
+    /// @param assetAmount volume of ERC20 tokens which are transferred from sender to Milton
+    function provideLiquidity(uint256 assetAmount) external;
 
     /// @notice Redeems `ipTokenVolume` IpTokens for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken,
@@ -26,46 +22,9 @@ interface IJoseph {
     /// @param ipTokenVolume redeem amount
     function redeem(uint256 ipTokenVolume) external;
 
-    /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
-    /// `_MILTON_STANLEY_BALANCE_PERCENTAGE` part of Milton balance is transferred to Stanley or vice versa.
-    /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
-    /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley.
-    /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on Milton and Stanley.
-    /// @dev Emits {Transfer} from ERC20 asset.
-    function rebalance() external;
-
-    /// @notice Executes deposit underlying asset in the `amount` from Milton to Stanley
-    /// @dev Emits {Deposit} event from Stanley, {Mint} event from ivToken, {Transfer} event from ERC20 asset.
-    function depositToStanley(uint256 amount) external;
-
-    /// @notice Executes withdraw underlying asset in the `amount` from Stanley to Milton
-    /// @dev Emits {Withdraw} event from Stanley, {Burn} event from ivToken, {Transfer} event from ERC20 asset.
-    function withdrawFromStanley(uint256 amount) external;
-
-    /// @notice Transfers `amount` of asset from Miltons's Treasury Balance to Treasury (ie. external multisig wallet)
-    /// Treasury's address is configured in `_treasury` field
-    /// @dev Transfer can be requested by address defined in field `_treasuryManager`
-    /// @dev Emits {Transfer} event from ERC20 asset
-    /// @param amount asset amount transferred from Milton's Treasury Balance
-    function transferToTreasury(uint256 amount) external;
-
-    /// @notice Transfers amount of assetfrom Miltons's IPOR Publication Fee Balance to Charlie Treasurer account
-    /// @dev Transfer can be requested by an address defined in field `_charlieTreasuryManager`,
-    /// Emits {Transfer} event from ERC20 asset.
-    /// @param amount asset amount transferred from Milton's IPOR Publication Fee Balance
-    function transferToCharlieTreasury(uint256 amount) external;
-
     /// @notice Returns reserve ratio on Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset
     /// @return reserves ratio
     function checkVaultReservesRatio() external returns (uint256);
-
-    /// @notice Pauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Paused} event from Joseph.
-    function pause() external;
-
-    /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from Joseph.
-    function unpause() external;
 
     /// @notice Emitted when `from` account provides liquidity to Milton Liquidity Pool
     event ProvideLiquidity(
@@ -80,10 +39,10 @@ interface IJoseph {
         uint256 exchangeRate,
         /// @notice asset amount which was provided by user to Milton liquidity pool
         /// @dev value represented in 18 decimals
-        uint256 assetValue,
-        /// @notice ipToken value corresponding to `assetValue` and `excangeRate`
+        uint256 assetAmount,
+        /// @notice ipToken value corresponding to `assetAmount` and `excangeRate`
         /// @dev value represented in 18 decimals
-        uint256 ipTokenValue
+        uint256 ipTokenAmount
     );
 
     /// @notice Emitted when `to` accound executes redeem ipTokens
@@ -94,20 +53,20 @@ interface IJoseph {
         address from,
         /// @notice sender account where underlying asset tokens are transferred after redeem
         address to,
-        /// @notice IP Token exchange rate used for calculating `assetValue`
+        /// @notice IP Token exchange rate used for calculating `assetAmount`
         /// @dev value represented in 18 decimals
         uint256 exchangeRate,
-        /// @notice underlying asset value calculated based on `exchangeRate` and `ipTokenValue`
+        /// @notice underlying asset value calculated based on `exchangeRate` and `ipTokenAmount`
         /// @dev value represented in 18 decimals
-        uint256 assetValue,
+        uint256 assetAmount,
         /// @notice redeemed IP Token value
         /// @dev value represented in 18 decimals
-        uint256 ipTokenValue,
+        uint256 ipTokenAmount,
         /// @notice underlying asset fee taken for redeeming
         /// @dev value represented in 18 decimals
         uint256 redeemFee,
-        /// @notice final asset value transferred from Milton to `to` / sender account, substraction assetValue - redeemFee
+        /// @notice final asset value transferred from Milton to `to` / sender account, substraction assetAmount - redeemFee
         /// @dev value represented in 18 decimals
-        uint256 redeemValue
+        uint256 redeemAmount
     );
 }

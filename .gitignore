@@ -20,6 +20,7 @@
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
 /smart-contract-addresses.yaml
+/docs
 
 ### IntelliJ IDEA ###
 .idea

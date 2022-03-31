@@ -120,25 +120,25 @@ describe("Joseph Treasury", () => {
 
         await josephDai.connect(admin).setCharlieTreasury(await userOne.getAddress());
 
-        const transferredValue = BigNumber.from("100");
+        const transferredAmount = BigNumber.from("100");
 
         //when
-        await josephDai.connect(userThree).transferToCharlieTreasury(transferredValue);
+        await josephDai.connect(userThree).transferToCharlieTreasury(transferredAmount);
 
         //then
         const balance = await miltonStorageDai.getExtendedBalance();
 
-        const expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC.add(transferredValue);
+        const expectedErc20BalanceCharlieTreasury = USER_SUPPLY_10MLN_18DEC.add(transferredAmount);
         const actualErc20BalanceCharlieTreasury = await tokenDai.balanceOf(
             await userOne.getAddress()
         );
 
         const expectedErc20BalanceMilton = USD_28_000_18DEC.add(TC_TOTAL_AMOUNT_10_000_18DEC).sub(
-            transferredValue
+            transferredAmount
         );
         const actualErc20BalanceMilton = await tokenDai.balanceOf(miltonDai.address);
 
-        const expectedPublicationFeeBalanceMilton = USD_10_18DEC.sub(transferredValue);
+        const expectedPublicationFeeBalanceMilton = USD_10_18DEC.sub(transferredAmount);
         const actualPublicationFeeBalanceMilton = balance.iporPublicationFee;
 
         expect(
@@ -245,19 +245,19 @@ describe("Joseph Treasury", () => {
 
         await josephDai.connect(admin).setTreasury(await userOne.getAddress());
 
-        const transferredValue = BigNumber.from("100");
+        const transferredAmount = BigNumber.from("100");
 
         //when
-        await josephDai.connect(userThree).transferToTreasury(transferredValue);
+        await josephDai.connect(userThree).transferToTreasury(transferredAmount);
 
         //then
         const balance = await miltonStorageDai.getExtendedBalance();
 
-        const expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC.add(transferredValue);
+        const expectedErc20BalanceTreasury = USER_SUPPLY_10MLN_18DEC.add(transferredAmount);
         const actualErc20BalanceTreasury = await tokenDai.balanceOf(await userOne.getAddress());
 
         const expectedErc20BalanceMilton = USD_28_000_18DEC.add(TC_TOTAL_AMOUNT_10_000_18DEC).sub(
-            transferredValue
+            transferredAmount
         );
         const actualErc20BalanceMilton = await tokenDai.balanceOf(miltonDai.address);
 

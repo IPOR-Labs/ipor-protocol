@@ -240,6 +240,14 @@ interface IMiltonStorage {
     /// @param joseph Joseph address
     function setJoseph(address joseph) external;
 
+    /// @notice Pauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Paused} event from Milton.
+    function pause() external;
+
+    /// @notice Unpauses current smart contract, it can be executed only by the Owner
+    /// @dev Emits {Unpaused} event from Milton.
+    function unpause() external;
+
     /// @notice Emmited when Milton address changed by smart contract Owner.
     /// @param changedBy account address who changed Milton address
     /// @param oldMilton old Milton address
@@ -251,6 +259,4 @@ interface IMiltonStorage {
     /// @param oldJoseph old Joseph address
     /// @param newJoseph new Joseph address
     event JosephChanged(address changedBy, address oldJoseph, address newJoseph);
-
-    //TODO: pause and unpause
 }

@@ -75,7 +75,7 @@ describe("aave deployed Contract on Mainnet fork", function () {
             //  **************                      Deploy strategy                           **************
             //  ********************************************************************************************
 
-            strategyContract = await hre.ethers.getContractFactory("AaveStrategy", signer);
+            strategyContract = await hre.ethers.getContractFactory("StrategyAave", signer);
 
             strategyContract_Instance = await upgrades.deployProxy(strategyContract, [
                 usdtAddress,

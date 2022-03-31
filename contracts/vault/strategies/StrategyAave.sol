@@ -11,31 +11,21 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../../libraries/errors/StanleyErrors.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IStrategy.sol";
+import "../../interfaces/IStrategyAave.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 import "../interfaces/aave/AaveLendingPoolV2.sol";
 import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
+import "./StrategyCore.sol";
 import "hardhat/console.sol";
 
-contract AaveStrategy is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
-    PausableUpgradeable,
-    IporOwnableUpgradeable,
-    IStrategy
-{
+contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    address private _asset;
-    address private _shareToken;
     address private _aave;
     address private _stkAave;
-    address private _stanley;
-    address private _treasury;
-    address private _treasuryManager;
 
     AaveLendingPoolProviderV2 private _provider;
     StakedAaveInterface private _stakedAaveInterface;
@@ -75,38 +65,6 @@ contract AaveStrategy is
         _stkAave = stkAave;
         _aave = aaveToken;
         _treasuryManager = msg.sender;
-    }
-
-    modifier onlyStanley() {
-        require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
-        _;
-    }
-
-    modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
-        _;
-    }
-
-    function pause() external override onlyOwner {
-        _pause();
-    }
-
-    function unpause() external override onlyOwner {
-        _unpause();
-    }
-
-    /**
-     * @dev _asset return
-     */
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    /**
-     * @dev Share token to track _asset (DAI -> aDAI)
-     */
-    function getShareToken() external view override returns (address) {
-        return _shareToken;
     }
 
     /**
@@ -211,31 +169,6 @@ contract AaveStrategy is
         }
     }
 
-    function getStanley() external view override returns (address) {
-        return _stanley;
-    }
-
-    function setStanley(address newStanley) external override whenNotPaused onlyOwner {
-        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStanley = _stanley;
-        _stanley = newStanley;
-        emit StanleyChanged(msg.sender, oldStanley, newStanley);
-    }
-
-    function setTreasuryManager(address newTreasuryManager) external whenNotPaused onlyOwner {
-        require(newTreasuryManager != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _treasuryManager;
-        _treasuryManager = newTreasuryManager;
-        emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, newTreasuryManager);
-    }
-
-    function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
-        require(newTreasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        address oldTreasury = _treasury;
-        _treasury = newTreasury;
-        emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
-    }
-
     /**
      * @dev Change staked AAVE token address.
      * @notice Change can only done by current governance.
@@ -247,7 +180,4 @@ contract AaveStrategy is
         _stkAave = newStkAave;
         emit StkAaveChanged(msg.sender, oldStkAave, newStkAave);
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

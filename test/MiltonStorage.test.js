@@ -826,8 +826,8 @@ describe("MiltonStorage", () => {
             notionalAmount: BigInt("50000000000000000000000"),
             fixedInterestRate: 234,
             ibtQuantity: 123,
-            openingFeeLPValue: BigInt("1500000000000000000000"),
-			openingFeeTreasuryValue: BigInt("1500000000000000000000")
+            openingFeeLPAmount: BigInt("1500000000000000000000"),
+			openingFeeTreasuryAmount: BigInt("1500000000000000000000")
         };
     };
 

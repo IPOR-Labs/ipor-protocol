@@ -1,6 +1,6 @@
 import hre from "hardhat";
 
-import { ERC20, AaveStrategy } from "../../types";
+import { ERC20, StrategyAave } from "../../types";
 import {
     daiAddress,
     aDaiAddress,
@@ -25,42 +25,42 @@ export const aaveTokenFactory = async (): Promise<ERC20> => {
     return new hre.ethers.Contract(aaveAaddress, daiAbi, admin) as ERC20;
 };
 
-export const aaveDaiStrategyFactory = async (): Promise<AaveStrategy> => {
+export const aaveDaiStrategyFactory = async (): Promise<StrategyAave> => {
     const [admin] = await hre.ethers.getSigners();
-    const aaveStrategyContract = await hre.ethers.getContractFactory("AaveStrategy", admin);
+    const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
-        aaveStrategyContract,
+        strategyAaveContract,
         [daiAddress, aDaiAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
         {
             kind: "uups",
         }
-    )) as Promise<AaveStrategy>;
+    )) as Promise<StrategyAave>;
 };
 
-export const aaveUsdcStrategyFactory = async (): Promise<AaveStrategy> => {
+export const aaveUsdcStrategyFactory = async (): Promise<StrategyAave> => {
     const [admin] = await hre.ethers.getSigners();
-    const aaveStrategyContract = await hre.ethers.getContractFactory("AaveStrategy", admin);
+    const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
-        aaveStrategyContract,
+        strategyAaveContract,
         [usdcAddress, aUsdcAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
         {
             kind: "uups",
         }
-    )) as Promise<AaveStrategy>;
+    )) as Promise<StrategyAave>;
 };
 
-export const aaveUsdtStrategyFactory = async (): Promise<AaveStrategy> => {
+export const aaveUsdtStrategyFactory = async (): Promise<StrategyAave> => {
     const [admin] = await hre.ethers.getSigners();
-    const aaveStrategyContract = await hre.ethers.getContractFactory("AaveStrategy", admin);
+    const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
-        aaveStrategyContract,
+        strategyAaveContract,
         [usdtAddress, aUsdtAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
         {
             kind: "uups",
         }
-    )) as Promise<AaveStrategy>;
+    )) as Promise<StrategyAave>;
 };
 
-export const aaveStrategySetup = async (strategy: AaveStrategy, stanleyAddress: string) => {
+export const strategyAaveSetup = async (strategy: StrategyAave, stanleyAddress: string) => {
     await strategy.setStanley(stanleyAddress);
 };

@@ -128,13 +128,13 @@ module.exports = async function (deployer, _network, addresses) {
         await itfMiltonUsdcProxy.setJoseph(itfJosephUsdcProxy.address);
         await itfMiltonDaiProxy.setJoseph(itfJosephDaiProxy.address);
 
-        await itfMiltonUsdtProxy.setupMaxAllowance(itfJosephUsdtProxy.address);
-        await itfMiltonUsdcProxy.setupMaxAllowance(itfJosephUsdcProxy.address);
-        await itfMiltonDaiProxy.setupMaxAllowance(itfJosephDaiProxy.address);
+        await itfMiltonUsdtProxy.setupMaxAllowanceForAsset(itfJosephUsdtProxy.address);
+        await itfMiltonUsdcProxy.setupMaxAllowanceForAsset(itfJosephUsdcProxy.address);
+        await itfMiltonDaiProxy.setupMaxAllowanceForAsset(itfJosephDaiProxy.address);
 
-        await itfMiltonUsdtProxy.setupMaxAllowance(itfStanleyUsdtProxy.address);
-        await itfMiltonUsdcProxy.setupMaxAllowance(itfStanleyUsdcProxy.address);
-        await itfMiltonDaiProxy.setupMaxAllowance(itfStanleyDaiProxy.address);
+        await itfMiltonUsdtProxy.setupMaxAllowanceForAsset(itfStanleyUsdtProxy.address);
+        await itfMiltonUsdcProxy.setupMaxAllowanceForAsset(itfStanleyUsdcProxy.address);
+        await itfMiltonDaiProxy.setupMaxAllowanceForAsset(itfStanleyDaiProxy.address);
 
         const itfWarrenProxy = await ItfWarren.deployed();
 
@@ -191,13 +191,13 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonUsdcProxy.setJoseph(josephUsdcProxy.address);
         await miltonDaiProxy.setJoseph(josephDaiProxy.address);
 
-        await miltonUsdtProxy.setupMaxAllowance(josephUsdtProxy.address);
-        await miltonUsdcProxy.setupMaxAllowance(josephUsdcProxy.address);
-        await miltonDaiProxy.setupMaxAllowance(josephDaiProxy.address);
+        await miltonUsdtProxy.setupMaxAllowanceForAsset(josephUsdtProxy.address);
+        await miltonUsdcProxy.setupMaxAllowanceForAsset(josephUsdcProxy.address);
+        await miltonDaiProxy.setupMaxAllowanceForAsset(josephDaiProxy.address);
 
-        await miltonUsdtProxy.setupMaxAllowance(stanleyUsdtProxy.address);
-        await miltonUsdcProxy.setupMaxAllowance(stanleyUsdcProxy.address);
-        await miltonDaiProxy.setupMaxAllowance(stanleyDaiProxy.address);
+        await miltonUsdtProxy.setupMaxAllowanceForAsset(stanleyUsdtProxy.address);
+        await miltonUsdcProxy.setupMaxAllowanceForAsset(stanleyUsdcProxy.address);
+        await miltonDaiProxy.setupMaxAllowanceForAsset(stanleyDaiProxy.address);
 
         const warrenProxy = await Warren.deployed();
         await warrenProxy.addUpdater(admin);

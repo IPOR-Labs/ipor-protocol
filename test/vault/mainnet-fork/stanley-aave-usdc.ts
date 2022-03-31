@@ -12,8 +12,8 @@ const maxValue = BigNumber.from(
 );
 
 import {
-    AaveStrategy,
-    CompoundStrategy,
+    StrategyAave,
+    StrategyCompound,
     StanleyUsdc,
     IvToken,
     ERC20,
@@ -27,7 +27,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let accountToImpersonate: string;
     let usdcAddress: string;
     let usdcContract: ERC20;
-    let aaveStrategyContract_Instance: AaveStrategy;
+    let strategyAaveContract_Instance: StrategyAave;
     let signer: Signer;
     let aUsdcAddress: string;
     let AAVE: string;
@@ -44,7 +44,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let aaveIncentiveContract: IAaveIncentivesController;
     let stkAave: string;
     let stakeAaveContract: ERC20;
-    let compoundStrategyContract_Instance: CompoundStrategy;
+    let strategyCompoundContract_Instance: StrategyCompound;
     let ivToken: IvToken;
     let stanleyUsdc: StanleyUsdc;
 
@@ -93,15 +93,15 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         stakeAaveContract = new hre.ethers.Contract(stkAave, usdcAbi, signer) as ERC20;
         aTokenContract = new hre.ethers.Contract(aUsdcAddress, usdcAbi, signer) as ERC20;
 
-        const aaveStrategyContract = await hre.ethers.getContractFactory("AaveStrategy", signer);
-        aaveStrategyContract_Instance = (await upgrades.deployProxy(aaveStrategyContract, [
+        const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", signer);
+        strategyAaveContract_Instance = (await upgrades.deployProxy(strategyAaveContract, [
             usdcAddress,
             aUsdcAddress,
             addressProvider,
             stkAave,
             aaveIncentiveAddress,
             AAVE,
-        ])) as AaveStrategy;
+        ])) as StrategyAave;
         aaveIncentiveContract = new hre.ethers.Contract(
             aaveIncentiveAddress,
             aaveIncentiveContractAbi,
@@ -121,17 +121,17 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         cTokenContract = new hre.ethers.Contract(cUsdcAddress, usdcAbi, signer) as ERC20;
         signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
-        const compoundStrategyContract = await hre.ethers.getContractFactory(
-            "CompoundStrategy",
+        const strategyCompoundContract = await hre.ethers.getContractFactory(
+            "StrategyCompound",
             signer
         );
 
-        compoundStrategyContract_Instance = (await upgrades.deployProxy(compoundStrategyContract, [
+        strategyCompoundContract_Instance = (await upgrades.deployProxy(strategyCompoundContract, [
             usdcAddress,
             cUsdcAddress,
             ComptrollerAddress,
             COMP,
-        ])) as CompoundStrategy;
+        ])) as StrategyCompound;
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
@@ -150,15 +150,15 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         stanleyUsdc = (await await upgrades.deployProxy(IPORVaultFactory, [
             usdcAddress,
             ivToken.address,
-            aaveStrategyContract_Instance.address,
-            compoundStrategyContract_Instance.address,
+            strategyAaveContract_Instance.address,
+            strategyCompoundContract_Instance.address,
         ])) as StanleyUsdc;
 
         await stanleyUsdc.setMilton(await signer.getAddress());
-        await aaveStrategyContract_Instance.setStanley(stanleyUsdc.address);
-        await aaveStrategyContract_Instance.setTreasury(await signer.getAddress());
-        await compoundStrategyContract_Instance.setStanley(stanleyUsdc.address);
-        await compoundStrategyContract_Instance.setTreasury(await signer.getAddress());
+        await strategyAaveContract_Instance.setStanley(stanleyUsdc.address);
+        await strategyAaveContract_Instance.setTreasury(await signer.getAddress());
+        await strategyCompoundContract_Instance.setStanley(stanleyUsdc.address);
+        await strategyCompoundContract_Instance.setTreasury(await signer.getAddress());
 
         await usdcContract.approve(await signer.getAddress(), maxValue);
         await usdcContract.approve(stanleyUsdc.address, maxValue);
@@ -170,31 +170,31 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const depositAmound = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractBefore = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
-        expect(aaveStrategyBalanceBefore, "aaveStrategyBalanceBefore = 0").to.be.equal(zero);
+        expect(strategyAaveBalanceBefore, "strategyAaveBalanceBefore = 0").to.be.equal(zero);
 
         //When
         const balance = await stanleyUsdc.connect(signer).deposit(depositAmound);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceAfter = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractAfter = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         expect(userIvTokenAfter.gt(userIvTokenBefore), "userIvTokenAfter > userIvTokenAfter").to.be
             .true;
         expect(
-            aaveStrategyBalanceAfter.gt(aaveStrategyBalanceBefore),
-            "aaveStrategyBalanceAfter > aaveStrategyBalanceAfter"
+            strategyAaveBalanceAfter.gt(strategyAaveBalanceBefore),
+            "strategyAaveBalanceAfter > strategyAaveBalanceAfter"
         ).to.be.true;
         expect(
             userUsdcBalanceAfter.lt(userUsdcBalanceBefore),
@@ -211,10 +211,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const depositAmound = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractBefore = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         //When
@@ -223,17 +223,17 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceAfter = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractAfter = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         expect(userIvTokenAfter.gte(userIvTokenBefore), "userIvTokenAfter > userIvTokenBefore").to
             .be.true;
         expect(
-            aaveStrategyBalanceAfter.gt(aaveStrategyBalanceBefore),
-            "aaveStrategyBalanceAfter > aaveStrategyBalanceBefore"
+            strategyAaveBalanceAfter.gt(strategyAaveBalanceBefore),
+            "strategyAaveBalanceAfter > strategyAaveBalanceBefore"
         ).to.be.true;
         expect(
             userUsdcBalanceAfter.lt(userUsdcBalanceBefore),
@@ -250,10 +250,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const withdrawAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractBefore = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         //when
@@ -261,17 +261,17 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceAfter = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceAfter = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractAfter = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
             .true;
         expect(
-            aaveStrategyBalanceAfter.lt(aaveStrategyBalanceBefore),
-            "aaveStrategyBalanceAfter < aaveStrategyBalanceBefore"
+            strategyAaveBalanceAfter.lt(strategyAaveBalanceBefore),
+            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
         ).to.be.true;
         expect(
             userUsdcBalanceAfter.gt(userUsdcBalanceBefore),
@@ -287,20 +287,20 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         //given
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const aaveStrategyBalanceBefore = await aaveStrategyContract_Instance.balanceOf();
+        const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractBefore = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         //when
-        await stanleyUsdc.withdraw(aaveStrategyBalanceBefore);
+        await stanleyUsdc.withdraw(strategyAaveBalanceBefore);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyATokenContractAfter = await aTokenContract.balanceOf(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
 
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
@@ -324,7 +324,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await hre.network.provider.send("evm_mine");
 
         const claimable = await aaveIncentiveContract.getUserUnclaimedRewards(
-            aaveStrategyContract_Instance.address
+            strategyAaveContract_Instance.address
         );
         const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
 
@@ -332,10 +332,10 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
 
         // when
-        await aaveStrategyContract_Instance.beforeClaim();
+        await strategyAaveContract_Instance.beforeClaim();
         await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
         await hre.network.provider.send("evm_mine");
-        await aaveStrategyContract_Instance.doClaim();
+        await strategyAaveContract_Instance.doClaim();
 
         // then
         const userOneBalance = await aaveContract.balanceOf(await signer.getAddress());

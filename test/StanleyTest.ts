@@ -95,7 +95,7 @@ describe("Stanley - Asset Management Vault", () => {
         const expectedIporVaultStableBalance = BigInt("18302745000000000000000");
 
         //when
-        await josephDai.connect(userOne).rebalance();
+        await josephDai.connect(admin).rebalance();
 
         //then
         const actualMiltonStableBalance = await tokenDai.balanceOf(miltonDai.address);
@@ -183,7 +183,7 @@ describe("Stanley - Asset Management Vault", () => {
         const expectedIporVaultStableBalance = BigInt("19215000000000000000000");
 
         //when
-        await josephDai.connect(userOne).rebalance();
+        await josephDai.connect(admin).rebalance();
 
         //then
         const actualMiltonStableBalance = await tokenDai.balanceOf(miltonDai.address);
@@ -273,7 +273,7 @@ describe("Stanley - Asset Management Vault", () => {
         const expectedIporVaultStableBalance = BigInt("19372000000000000000000");
 
         //when
-        await josephDai.connect(userOne).rebalance();
+        await josephDai.connect(admin).rebalance();
 
         //then
         const actualMiltonStableBalance = await tokenDai.balanceOf(miltonDai.address);

@@ -5,8 +5,8 @@ import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
-    CompoundStrategy,
+    StrategyAave,
+    StrategyCompound,
     TestERC20,
     MockADAI,
     MockAaveLendingPoolProvider,
@@ -42,12 +42,12 @@ describe("Stanley -> Deposit", () => {
 
     let aDAI: MockADAI;
     let AAVE: TestERC20;
-    let aaveNewStartegyInstance: AaveStrategy;
+    let aaveNewStartegyInstance: StrategyAave;
     let lendingPool: MockAaveLendingPoolV2;
     let stakedAave: MockStakedAave;
 
     let cDAI: MockCDAI;
-    let compoundStartegyInstance: CompoundStrategy;
+    let compoundStartegyInstance: StrategyCompound;
     let comptroller: MockComptroller;
     let COMP: TestERC20;
     let ivToken: IvToken;
@@ -133,7 +133,7 @@ describe("Stanley -> Deposit", () => {
         await lendingPool.setInterestRateStrategyAddress(interestRateStrategyV2.address);
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("2"));
         aDAI.connect(admin).transfer(lendingPool.address, one.mul(1000));
-        const aaveNewStartegy = await hre.ethers.getContractFactory("AaveStrategy");
+        const aaveNewStartegy = await hre.ethers.getContractFactory("StrategyAave");
         aaveNewStartegyInstance = (await upgrades.deployProxy(aaveNewStartegy, [
             DAI.address,
             aDAI.address,
@@ -141,7 +141,7 @@ describe("Stanley -> Deposit", () => {
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ])) as AaveStrategy;
+        ])) as StrategyAave;
 
         await aaveNewStartegyInstance.setTreasuryManager(await admin.getAddress());
         await aaveNewStartegyInstance.setTreasury(await userTwo.getAddress());
@@ -160,14 +160,14 @@ describe("Stanley -> Deposit", () => {
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
         comptroller = (await MockComptroller.deploy(COMP.address, cDAI.address)) as MockComptroller;
         await COMP.transfer(comptroller.address, one.mul(1000));
-        const compoundNewStartegy = await hre.ethers.getContractFactory("CompoundStrategy");
+        const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
 
         compoundStartegyInstance = (await upgrades.deployProxy(compoundNewStartegy, [
             DAI.address,
             cDAI.address,
             comptroller.address,
             COMP.address,
-        ])) as CompoundStrategy;
+        ])) as StrategyCompound;
 
         await compoundStartegyInstance.setTreasuryManager(await admin.getAddress());
         await compoundStartegyInstance.setTreasury(await userTwo.getAddress());

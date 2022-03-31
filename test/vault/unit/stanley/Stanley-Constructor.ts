@@ -16,8 +16,8 @@ describe("Stanley -> constructor", () => {
     let stanley: Stanley;
     let DAI: TestERC20;
     let USDt: TestERC20;
-    let aaveStrategy: MockStrategy;
-    let compoundStrategy: MockStrategy;
+    let strategyAave: MockStrategy;
+    let strategyCompound: MockStrategy;
     let StanleyDaiFactory: any;
     let ivToken: IvToken;
 
@@ -30,14 +30,14 @@ describe("Stanley -> constructor", () => {
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
         ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
-        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
-        await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setAsset(DAI.address);
-        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
-        await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setAsset(DAI.address);
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        strategyAave = (await StrategyAave.deploy()) as MockStrategy;
+        await strategyAave.setShareToken(DAI.address);
+        await strategyAave.setAsset(DAI.address);
+        const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
+        strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
+        await strategyCompound.setShareToken(DAI.address);
+        await strategyCompound.setAsset(DAI.address);
     });
 
     it("Shoudl throw error when underlyingToken address is 0", async () => {
@@ -48,8 +48,8 @@ describe("Stanley -> constructor", () => {
             upgrades.deployProxy(StanleyDaiFactory, [
                 constants.AddressZero,
                 ivToken.address,
-                aaveStrategy.address,
-                compoundStrategy.address,
+                strategyAave.address,
+                strategyCompound.address,
             ])
             //then
         ).to.be.revertedWith("IPOR_000");
@@ -61,8 +61,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
 
         // then
@@ -77,14 +77,14 @@ describe("Stanley -> constructor", () => {
             upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 constants.AddressZero,
-                aaveStrategy.address,
-                compoundStrategy.address,
+                strategyAave.address,
+                strategyCompound.address,
             ])
             //then
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud throw error when aaveStrategy address is 0", async () => {
+    it("Shoud throw error when strategyAave address is 0", async () => {
         // given
         // when
         await expect(
@@ -93,13 +93,13 @@ describe("Stanley -> constructor", () => {
                 DAI.address,
                 ivToken.address,
                 constants.AddressZero,
-                compoundStrategy.address,
+                strategyCompound.address,
             ])
             //then
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud throw error when compoundStrategy address is 0", async () => {
+    it("Shoud throw error when strategyCompound address is 0", async () => {
         // given
         // when
         await expect(
@@ -107,40 +107,40 @@ describe("Stanley -> constructor", () => {
             upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
-                aaveStrategy.address,
+                strategyAave.address,
                 constants.AddressZero,
             ])
             //then
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Should throw error when aaveStrategy asset != from IporVault asset", async () => {
+    it("Should throw error when strategyAave asset != from IporVault asset", async () => {
         // given
-        await aaveStrategy.setAsset(USDt.address);
+        await strategyAave.setAsset(USDt.address);
         // when
         await expect(
             //when
             upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
-                aaveStrategy.address,
-                compoundStrategy.address,
+                strategyAave.address,
+                strategyCompound.address,
             ])
             //then
         ).to.be.revertedWith("IPOR_500");
     });
 
-    it("Shoud throw error when compoundStrategy asset != from IporVault asset", async () => {
+    it("Shoud throw error when strategyCompound asset != from IporVault asset", async () => {
         // given
-        await compoundStrategy.setAsset(USDt.address);
+        await strategyCompound.setAsset(USDt.address);
         // when
         await expect(
             //when
             upgrades.deployProxy(StanleyDaiFactory, [
                 DAI.address,
                 ivToken.address,
-                aaveStrategy.address,
-                compoundStrategy.address,
+                strategyAave.address,
+                strategyCompound.address,
             ])
             //then
         ).to.be.revertedWith("IPOR_500");
@@ -151,8 +151,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         //when
         await stanley.pause();
@@ -165,8 +165,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
@@ -181,8 +181,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
@@ -199,8 +199,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         //when
 
@@ -216,8 +216,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         //when
         await stanley.pause();
@@ -230,8 +230,8 @@ describe("Stanley -> constructor", () => {
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as Stanley;
         // stanley.setMilton(await userOne.getAddress());
         //when
@@ -241,8 +241,8 @@ describe("Stanley -> constructor", () => {
         await assertError(stanley.withdraw(one), "Pausable: paused");
         await assertError(stanley.withdrawAll(), "Pausable: paused");
         await assertError(stanley.migrateAssetToStrategyWithMaxApr(), "Pausable: paused");
-        await assertError(stanley.setAaveStrategy(aaveStrategy.address), "Pausable: paused");
-        await assertError(stanley.setAaveStrategy(compoundStrategy.address), "Pausable: paused");
+        await assertError(stanley.setStrategyAave(strategyAave.address), "Pausable: paused");
+        await assertError(stanley.setStrategyAave(strategyCompound.address), "Pausable: paused");
         await assertError(stanley.setMilton(await userOne.getAddress()), "Pausable: paused");
     });
 });

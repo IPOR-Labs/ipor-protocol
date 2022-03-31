@@ -68,6 +68,10 @@ Notice! `npx hardhat coverage` not includes coverage from tests in mainnet fork,
 
 Run in command line: `truffle run contract-size`
 
+#### How to generate documentation with markdown?
+
+Run in command line: `yarn run hardhat docgen --theme markdown`
+
 #### How to reset Ethereum blockchain state?
 
 Run in command line: `./run.sh c`

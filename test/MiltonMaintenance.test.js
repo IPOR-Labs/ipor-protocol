@@ -170,7 +170,7 @@ describe("Milton Maintenance", () => {
         );
 
         await assertError(
-            testData.miltonDai.connect(admin).setupMaxAllowance(userThree.address),
+            testData.miltonDai.connect(admin).setupMaxAllowanceForAsset(userThree.address),
             "Pausable: paused"
         );
 
