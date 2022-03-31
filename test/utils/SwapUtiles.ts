@@ -1,12 +1,5 @@
 import chai from "chai";
-import {
-    DaiMockedToken,
-    UsdtMockedToken,
-    UsdcMockedToken,
-    MiltonUsdt,
-    MiltonUsdc,
-    MiltonDai,
-} from "../../types";
+import { DaiMockedToken, MiltonUsdt, MiltonUsdc, MiltonDai } from "../../types";
 import { BigNumber, Signer } from "ethers";
 import {
     N1__0_18DEC,

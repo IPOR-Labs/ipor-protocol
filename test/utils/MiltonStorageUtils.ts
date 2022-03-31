@@ -16,7 +16,6 @@ import {
     TC_TOTAL_AMOUNT_100_6DEC,
     LEVERAGE_18DEC,
     USD_50_000_6DEC,
-    N0__1_6DEC,
 } from "./Constants";
 import {
     MiltonUsdcCase,

@@ -1,7 +1,6 @@
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 
-import { UsdtMockedToken, UsdcMockedToken, DaiMockedToken } from "../../types";
 import {
     prepareTestData,
     prepareApproveForUsers,
@@ -34,10 +33,6 @@ import {
 } from "./Constants";
 
 const { expect } = chai;
-
-// ########################################################################################################
-//                                           assert
-// ########################################################################################################
 
 type ErrorWithMessage = {
     message: string;
@@ -77,7 +72,6 @@ export const assertError = async (promise: Promise<any>, error: string) => {
     }
     expect(false).to.be.true;
 };
-// [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress]
 export const testCasePagination = async (
     users: Signer[],
     numberOfSwapsToCreate: BigNumber,

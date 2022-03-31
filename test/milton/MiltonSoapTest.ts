@@ -3,15 +3,9 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
-    N0__001_18DEC,
-    N0__1_18DEC,
-    USD_100_18DEC,
-    N0__01_18DEC,
-    USD_10_000_000_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
-    N1__0_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     PERCENTAGE_5_18DEC,
     USD_28_000_18DEC,
@@ -31,14 +25,7 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMiltonSpreadCase6,
-    prepareMiltonSpreadCase7,
-    prepareMiltonSpreadCase8,
-    prepareMiltonSpreadCase9,
-    prepareMiltonSpreadCase10,
-    getPayFixedDerivativeParamsUSDTCase1,
 } from "../utils/MiltonUtils";
-import { assertError } from "../utils/AssertUtils";
 import {
     prepareTestData,
     prepareApproveForUsers,
