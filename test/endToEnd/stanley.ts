@@ -6,14 +6,14 @@ import { StanleyDai, StanleyUsdc, StanleyUsdt } from "../../types";
 
 export const stanleyDaiFactory = async (
     ivTokenDaiAddress: string,
-    aaveStrategyDaiAddress: string,
-    compoundStrategyDaiAddress: string
+    strategyAaveDaiAddress: string,
+    strategyCompoundDaiAddress: string
 ): Promise<StanleyDai> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyDai", admin);
     return (await await upgrades.deployProxy(
         stanleyFactory,
-        [daiAddress, ivTokenDaiAddress, aaveStrategyDaiAddress, compoundStrategyDaiAddress],
+        [daiAddress, ivTokenDaiAddress, strategyAaveDaiAddress, strategyCompoundDaiAddress],
         {
             kind: "uups",
         }
@@ -22,14 +22,14 @@ export const stanleyDaiFactory = async (
 
 export const stanleyUsdcFactory = async (
     ivTokenUsdcAddress: string,
-    aaveStrategyUsdcAddress: string,
-    compoundStrategyUsdcAddress: string
+    strategyAaveUsdcAddress: string,
+    strategyCompoundUsdcAddress: string
 ): Promise<StanleyUsdc> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyUsdc", admin);
     return (await await upgrades.deployProxy(
         stanleyFactory,
-        [usdcAddress, ivTokenUsdcAddress, aaveStrategyUsdcAddress, compoundStrategyUsdcAddress],
+        [usdcAddress, ivTokenUsdcAddress, strategyAaveUsdcAddress, strategyCompoundUsdcAddress],
         {
             kind: "uups",
         }
@@ -38,14 +38,14 @@ export const stanleyUsdcFactory = async (
 
 export const stanleyUsdtFactory = async (
     ivTokenUsdtAddress: string,
-    aaveStrategyUsdtAddress: string,
-    compoundStrategyUsdtAddress: string
+    strategyAaveUsdtAddress: string,
+    strategyCompoundUsdtAddress: string
 ): Promise<StanleyUsdt> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyUsdt", admin);
     return (await await upgrades.deployProxy(
         stanleyFactory,
-        [usdtAddress, ivTokenUsdtAddress, aaveStrategyUsdtAddress, compoundStrategyUsdtAddress],
+        [usdtAddress, ivTokenUsdtAddress, strategyAaveUsdtAddress, strategyCompoundUsdtAddress],
         {
             kind: "uups",
         }

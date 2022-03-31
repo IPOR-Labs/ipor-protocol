@@ -55,6 +55,10 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
+
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
 
@@ -144,7 +148,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
     {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
-
+        // TODO: change names _spreadPayFixedValue/_spreadRecFixedValue
         try milton.calculateSpread() returns (
             uint256 _spreadPayFixedValue,
             uint256 _spreadRecFixedValue

@@ -20,6 +20,7 @@
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
 /smart-contract-addresses.yaml
+/docs
 
 ### IntelliJ IDEA ###
 .idea
@@ -52,3 +53,4 @@ app/.env
 .openzeppelin/unknown-*.json
 /coverage.json
 /types/
+/ipor-abi/

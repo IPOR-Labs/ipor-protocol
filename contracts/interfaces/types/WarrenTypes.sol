@@ -5,7 +5,11 @@ pragma solidity 0.8.9;
 library WarrenTypes {
     //@notice IPOR Index Structure for a given asset
     struct IPOR {
+<<<<<<< HEAD
         //@notice Tiestamp of most recent IPOR index update
+=======
+        //@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)
+>>>>>>> 74ec89f79c92512ac61d8d0a0c4754ba12c010df
         uint32 lastUpdateTimestamp;
         //@notice IPOR Index value.
         uint128 indexValue;

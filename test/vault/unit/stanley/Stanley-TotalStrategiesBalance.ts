@@ -17,8 +17,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
     let stanley: StanleyDai;
     let DAI: TestERC20;
     let ivTokenDai: IvToken;
-    let aaveStrategy: MockStrategy;
-    let compoundStrategy: MockStrategy;
+    let strategyAave: MockStrategy;
+    let strategyCompound: MockStrategy;
 
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
@@ -27,15 +27,15 @@ describe("Stanley -> totalStrategiesBalance", () => {
 
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
 
-        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
-        await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setAsset(DAI.address);
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        strategyAave = (await StrategyAave.deploy()) as MockStrategy;
+        await strategyAave.setShareToken(DAI.address);
+        await strategyAave.setAsset(DAI.address);
 
-        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
-        await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setAsset(DAI.address);
+        const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
+        strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
+        await strategyCompound.setShareToken(DAI.address);
+        await strategyCompound.setAsset(DAI.address);
 
         ivTokenDai = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
 
@@ -43,8 +43,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
         stanley = (await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivTokenDai.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as StanleyDai;
 
         await ivTokenDai.setStanley(stanley.address);
@@ -56,8 +56,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
         const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
         await DAI.approve(stanley.address, expectedBalance);
 
-        await aaveStrategy.setApy(BigNumber.from("555"));
-        await compoundStrategy.setApy(BigNumber.from("444"));
+        await strategyAave.setApy(BigNumber.from("555"));
+        await strategyCompound.setApy(BigNumber.from("444"));
 
         await stanley.deposit(expectedBalance);
 
@@ -66,8 +66,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
+        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
 
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
         expect(actualBalance).to.be.equal(expectedBalance);
@@ -82,8 +82,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
         const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
         await DAI.approve(stanley.address, expectedBalance);
 
-        await aaveStrategy.setApy(BigNumber.from("33333333"));
-        await compoundStrategy.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApy(BigNumber.from("33333333"));
+        await strategyCompound.setApy(BigNumber.from("55555555"));
 
         await stanley.deposit(expectedBalance);
 
@@ -92,8 +92,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
+        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
 
         expect(actualBalance).to.be.equal(expectedBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
@@ -108,12 +108,12 @@ describe("Stanley -> totalStrategiesBalance", () => {
         const expectedTotalBalance = TC_AMOUNT_20000_USD_18DEC;
         await DAI.approve(stanley.address, expectedTotalBalance);
 
-        await aaveStrategy.setApy(BigNumber.from("33333333"));
-        await compoundStrategy.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApy(BigNumber.from("33333333"));
+        await strategyCompound.setApy(BigNumber.from("55555555"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
-        await aaveStrategy.setApy(BigNumber.from("55555555"));
-        await compoundStrategy.setApy(BigNumber.from("33333333"));
+        await strategyAave.setApy(BigNumber.from("55555555"));
+        await strategyCompound.setApy(BigNumber.from("33333333"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         //when
@@ -122,8 +122,8 @@ describe("Stanley -> totalStrategiesBalance", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
 
-        const actualAssetBalanceAave = await DAI.balanceOf(aaveStrategy.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(compoundStrategy.address);
+        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
+        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
 
         expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);

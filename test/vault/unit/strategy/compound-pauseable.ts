@@ -4,7 +4,7 @@ import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
+    StrategyAave,
     ERC20,
     MockWhitePaper,
     MockComptroller,
@@ -12,7 +12,7 @@ import {
     UsdtMockedToken,
     MockCToken,
     DaiMockedToken,
-    CompoundStrategy,
+    StrategyCompound,
 } from "../../../../types";
 
 const { assertError } = require("../../../Utils");
@@ -25,7 +25,7 @@ const totalSupply6Decimals = "100000000000000000000";
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 
 describe("COMPOUND strategy pauseable", () => {
-    let strategy: CompoundStrategy;
+    let strategy: StrategyCompound;
     let USDC: UsdcMockedToken;
     let cUSDC: MockCToken;
     let COMP: ERC20;
@@ -61,7 +61,7 @@ describe("COMPOUND strategy pauseable", () => {
             cUSDC.address
         )) as MockComptroller;
 
-        const compoundNewStartegy = await hre.ethers.getContractFactory("CompoundStrategy");
+        const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
         strategy = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
@@ -125,7 +125,6 @@ describe("COMPOUND strategy pauseable", () => {
         await assertError(strategy.deposit(TC_1000_USD_18DEC), "Pausable: paused");
         await assertError(strategy.withdraw(TC_1000_USD_18DEC), "Pausable: paused");
         await assertError(strategy.setBlocksPerYear(BigNumber.from("2102400")), "Pausable: paused");
-        await assertError(strategy.beforeClaim(), "Pausable: paused");
         await assertError(strategy.doClaim(), "Pausable: paused");
         await assertError(strategy.setStanley(mockAddress), "Pausable: paused");
         await assertError(strategy.setTreasury(mockAddress), "Pausable: paused");

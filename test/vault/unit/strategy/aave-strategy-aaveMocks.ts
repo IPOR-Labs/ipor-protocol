@@ -6,7 +6,7 @@ import { constants, BigNumber, Signer } from "ethers";
 const { MaxUint256 } = constants;
 import { solidity } from "ethereum-waffle";
 import {
-    AaveStrategy,
+    StrategyAave,
     ERC20,
     DaiMockedToken,
     MockStakedAave,
@@ -28,9 +28,9 @@ const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
 const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
 
 describe("AAVE strategy", () => {
-    let aaveStrategyInstanceDAI: AaveStrategy;
-    let aaveStrategyInstanceUSDC: AaveStrategy;
-    let aaveStrategyInstanceUSDT: AaveStrategy;
+    let strategyAaveInstanceDAI: StrategyAave;
+    let strategyAaveInstanceUSDC: StrategyAave;
+    let strategyAaveInstanceUSDT: StrategyAave;
     let DAI: DaiMockedToken;
     let USDC: DaiMockedToken;
     let USDT: DaiMockedToken;
@@ -113,8 +113,8 @@ describe("AAVE strategy", () => {
         // #####################         AAVE Strategy   ###################################
         // #################################################################################
 
-        const AaveStrategyInstance = await hre.ethers.getContractFactory("AaveStrategy");
-        aaveStrategyInstanceDAI = await upgrades.deployProxy(AaveStrategyInstance, [
+        const StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
+        strategyAaveInstanceDAI = await upgrades.deployProxy(StrategyAaveInstance, [
             DAI.address,
             aDAI.address,
             addressProvider.address,
@@ -123,7 +123,7 @@ describe("AAVE strategy", () => {
             AAVE.address,
         ]);
 
-        aaveStrategyInstanceUSDC = await upgrades.deployProxy(AaveStrategyInstance, [
+        strategyAaveInstanceUSDC = await upgrades.deployProxy(StrategyAaveInstance, [
             USDC.address,
             aUSDC.address,
             addressProvider.address,
@@ -132,7 +132,7 @@ describe("AAVE strategy", () => {
             AAVE.address,
         ]);
 
-        aaveStrategyInstanceUSDT = await upgrades.deployProxy(AaveStrategyInstance, [
+        strategyAaveInstanceUSDT = await upgrades.deployProxy(StrategyAaveInstance, [
             USDT.address,
             aUSDT.address,
             addressProvider.address,
@@ -144,82 +144,86 @@ describe("AAVE strategy", () => {
 
     it("Should be able to setup Stanley and interact with DAI", async () => {
         //given
-        const stanleyAddress = await userTwo.getAddress(); // random address
-        await expect(aaveStrategyInstanceDAI.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceDAI, "SetStanley")
-            .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceDAI.address);
+        const newStanleyAddress = await userTwo.getAddress(); // random address
+        const oldStanleyAddress = await strategyAaveInstanceUSDC.getStanley();
+        await expect(strategyAaveInstanceDAI.setStanley(newStanleyAddress))
+            .to.emit(strategyAaveInstanceDAI, "StanleyChanged")
+            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
-        await DAI.setupInitialAmount(stanleyAddress, TC_10_000_USD_18DEC);
+        await DAI.setupInitialAmount(newStanleyAddress, TC_10_000_USD_18DEC);
 
         DAI.connect(userTwo).increaseAllowance(
-            aaveStrategyInstanceDAI.address,
+            strategyAaveInstanceDAI.address,
             TC_10_000_USD_18DEC
         );
 
-        await aaveStrategyInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyAaveInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
-        expect(await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).to.be.equal(
+        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
+        expect(await aDAI.balanceOf(strategyAaveInstanceDAI.address)).to.be.equal(
             TC_1000_USD_18DEC
         );
 
-        await aaveStrategyInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyAaveInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect(await DAI.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
-        expect(await aDAI.balanceOf(aaveStrategyInstanceDAI.address)).to.be.equal(ZERO);
+        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
+        expect(await aDAI.balanceOf(strategyAaveInstanceDAI.address)).to.be.equal(ZERO);
     });
 
     it("Should be able to setup Stanley and interact with USDC", async () => {
         //given
-        const stanleyAddress = await userTwo.getAddress(); // random address
-        await expect(aaveStrategyInstanceUSDC.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceUSDC, "SetStanley")
-            .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDC.address);
+        const newStanleyAddress = await userTwo.getAddress(); // random address
+        const oldStanleyAddress = await strategyAaveInstanceUSDC.getStanley();
 
-        await USDC.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
+        await expect(strategyAaveInstanceUSDC.setStanley(newStanleyAddress))
+            .to.emit(strategyAaveInstanceUSDC, "StanleyChanged")
+            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
+
+        await USDC.setupInitialAmount(newStanleyAddress, TC_10_000_USD_6DEC);
 
         USDC.connect(userTwo).increaseAllowance(
-            aaveStrategyInstanceUSDC.address,
+            strategyAaveInstanceUSDC.address,
             TC_10_000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDC.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyAaveInstanceUSDC.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect((await USDC.balanceOf(stanleyAddress)).toString()).to.be.equal(TC_9_000_USD_6DEC);
-        expect(await aUSDC.balanceOf(aaveStrategyInstanceUSDC.address)).to.be.equal(
+        expect((await USDC.balanceOf(newStanleyAddress)).toString()).to.be.equal(TC_9_000_USD_6DEC);
+        expect(await aUSDC.balanceOf(strategyAaveInstanceUSDC.address)).to.be.equal(
             TC_1000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyAaveInstanceUSDC.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect(await USDC.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
-        expect(await aUSDC.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(ZERO);
+        expect(await USDC.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
+        expect(await aUSDC.balanceOf(strategyAaveInstanceUSDT.address)).to.be.equal(ZERO);
     });
 
     it("Should be able to setup Stanley and interacti with USDT", async () => {
         //given
-        const stanleyAddress = await userTwo.getAddress(); // random address
-        await expect(aaveStrategyInstanceUSDT.setStanley(stanleyAddress))
-            .to.emit(aaveStrategyInstanceUSDT, "SetStanley")
-            .withArgs(await admin.getAddress, stanleyAddress, aaveStrategyInstanceUSDT.address);
+        const newStanleyAddress = await userTwo.getAddress(); // random address
+        const oldStanleyAddress = await strategyAaveInstanceUSDT.getStanley();
+        await expect(strategyAaveInstanceUSDT.setStanley(newStanleyAddress))
+            .to.emit(strategyAaveInstanceUSDT, "StanleyChanged")
+            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
-        await USDT.setupInitialAmount(stanleyAddress, TC_10_000_USD_6DEC);
+        await USDT.setupInitialAmount(newStanleyAddress, TC_10_000_USD_6DEC);
 
         USDT.connect(userTwo).increaseAllowance(
-            aaveStrategyInstanceUSDT.address,
+            strategyAaveInstanceUSDT.address,
             TC_10_000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDT.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        await strategyAaveInstanceUSDT.connect(userTwo).deposit(TC_1000_USD_18DEC);
 
-        expect(await USDT.balanceOf(stanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
-        expect(await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(
+        expect(await USDT.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_6DEC);
+        expect(await aUSDT.balanceOf(strategyAaveInstanceUSDT.address)).to.be.equal(
             TC_1000_USD_6DEC
         );
 
-        await aaveStrategyInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
+        await strategyAaveInstanceUSDT.connect(userTwo).withdraw(TC_1000_USD_18DEC);
 
-        expect(await USDT.balanceOf(stanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
-        expect(await aUSDT.balanceOf(aaveStrategyInstanceUSDT.address)).to.be.equal(ZERO);
+        expect(await USDT.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_6DEC);
+        expect(await aUSDT.balanceOf(strategyAaveInstanceUSDT.address)).to.be.equal(ZERO);
     });
 });

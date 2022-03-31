@@ -19,10 +19,15 @@ contract WarrenFacadeDataProvider is
     address[] internal _assets;
 
     function initialize(address[] memory assets, address warren) public initializer {
+        require(warren != address(0), IporErrors.WRONG_ADDRESS);
         __Ownable_init();
         _warren = warren;
         _assets = assets;
     }
+
+	function getVersion() external pure override returns (uint256) {
+		return 1;
+	}
 
     function getIndexes() external view override returns (WarrenFacadeTypes.IporFront[] memory) {
         WarrenFacadeTypes.IporFront[] memory indexes = new WarrenFacadeTypes.IporFront[](

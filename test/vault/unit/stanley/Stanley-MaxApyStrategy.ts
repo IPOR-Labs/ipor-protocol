@@ -13,8 +13,8 @@ describe("Stanley -> maxApyStrategy", () => {
     let admin: Signer;
     let stanley: ItfStanleyDai;
     let DAI: TestERC20;
-    let aaveStrategy: MockStrategy;
-    let compoundStrategy: MockStrategy;
+    let strategyAave: MockStrategy;
+    let strategyCompound: MockStrategy;
 
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
@@ -24,69 +24,69 @@ describe("Stanley -> maxApyStrategy", () => {
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
         const ivToken = await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address);
 
-        const AaveStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        aaveStrategy = (await AaveStrategy.deploy()) as MockStrategy;
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        strategyAave = (await StrategyAave.deploy()) as MockStrategy;
 
-        await aaveStrategy.setShareToken(DAI.address);
-        await aaveStrategy.setAsset(DAI.address);
+        await strategyAave.setShareToken(DAI.address);
+        await strategyAave.setAsset(DAI.address);
 
-        const CompoundStrategy = await hre.ethers.getContractFactory("MockStrategy");
-        compoundStrategy = (await CompoundStrategy.deploy()) as MockStrategy;
-        await compoundStrategy.setShareToken(DAI.address);
-        await compoundStrategy.setAsset(DAI.address);
+        const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
+        strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
+        await strategyCompound.setShareToken(DAI.address);
+        await strategyCompound.setAsset(DAI.address);
 
         const ItfStanleyDai = await hre.ethers.getContractFactory("ItfStanleyDai");
         stanley = (await await upgrades.deployProxy(ItfStanleyDai, [
             DAI.address,
             ivToken.address,
-            aaveStrategy.address,
-            compoundStrategy.address,
+            strategyAave.address,
+            strategyCompound.address,
         ])) as ItfStanleyDai;
         await ivToken.setStanley(stanley.address);
     });
 
     it("Should select aave strategy", async () => {
         //  given
-        await aaveStrategy.setApy(BigNumber.from("100000"));
-        await compoundStrategy.setApy(BigNumber.from("99999"));
+        await strategyAave.setApy(BigNumber.from("100000"));
+        await strategyCompound.setApy(BigNumber.from("99999"));
 
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
+        await stanley.setStrategyAave(strategyAave.address);
+        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();
 
         //  then
-        expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(strategyAave.address);
     });
 
     it("Should select aave strategy when aaveApy == compoundApy", async () => {
         //  given
-        await aaveStrategy.setApy(BigNumber.from("10"));
-        await compoundStrategy.setApy(BigNumber.from("10"));
+        await strategyAave.setApy(BigNumber.from("10"));
+        await strategyCompound.setApy(BigNumber.from("10"));
 
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
+        await stanley.setStrategyAave(strategyAave.address);
+        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();
 
         //  then
-        expect(result.strategyMaxApy).to.be.equal(aaveStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(strategyAave.address);
     });
 
     it("Should select compound strategy", async () => {
         //  given
-        await aaveStrategy.setApy(BigNumber.from("1000"));
-        await compoundStrategy.setApy(BigNumber.from("99999"));
+        await strategyAave.setApy(BigNumber.from("1000"));
+        await strategyCompound.setApy(BigNumber.from("99999"));
 
-        await stanley.setAaveStrategy(aaveStrategy.address);
-        await stanley.setCompoundStrategy(compoundStrategy.address);
+        await stanley.setStrategyAave(strategyAave.address);
+        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();
 
         //  then
-        expect(result.strategyMaxApy).to.be.equal(compoundStrategy.address);
+        expect(result.strategyMaxApy).to.be.equal(strategyCompound.address);
     });
 });

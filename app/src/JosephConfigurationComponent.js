@@ -141,7 +141,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdt"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -155,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdt"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -172,7 +172,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdc"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -186,7 +186,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdc"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -203,7 +203,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephDai"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -217,7 +217,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephDai"
-                                method="getMiltonStanleyBalancePercentage"
+                                method="getMiltonStanleyBalanceRatioPercentage"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
