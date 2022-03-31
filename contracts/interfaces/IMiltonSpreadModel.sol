@@ -43,7 +43,7 @@ interface IMiltonSpreadModel {
     /// @param accruedIpor - accrued IPOR at moment of calculation
     /// @param accruedBalance - accrued Milton balance (includes Stanley interest and collateral if present)
     /// @return spreadValue calculated spread value for Receive Fixed leg
-    function calculateSpreadRecFixed(
+    function calculateSpreadReceiveFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance

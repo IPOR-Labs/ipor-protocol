@@ -81,41 +81,41 @@ describe("MiltonConfiguration", () => {
 
     it("should setup init value for Max Lp Utilization Percentage", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxLpUtilizationPercentage();
+        let actualValue = await miltonConfiguration.getMaxLpUtilizationRate();
         //then
         expect(actualValue).to.be.eq(BigInt("800000000000000000"));
     });
 
     it("should setup init value for Max Lp Utilization Per Leg Percentage", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxLpUtilizationPerLegPercentage();
+        let actualValue = await miltonConfiguration.getMaxLpUtilizationPerLegRate();
         //then
         expect(actualValue).to.be.eq(BigInt("480000000000000000"));
     });
 
     it("should setup init value for Income Fee Percentage", async () => {
         //when
-        let actualValue = await miltonConfiguration.getIncomeFeePercentage();
+        let actualValue = await miltonConfiguration.getIncomeFeeRate();
         //then
         expect(actualValue).to.be.eq(BigInt("100000000000000000"));
     });
 
     it("should setup init value for Opening Fee Percentage", async () => {
         //when
-        let actualValue = await miltonConfiguration.getOpeningFeePercentage();
+        let actualValue = await miltonConfiguration.getOpeningFeeRate();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000"));
     });
     it("should setup init value for Opening Fee Treasury Percentage", async () => {
         //when
-        let actualValue = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        let actualValue = await miltonConfiguration.getOpeningFeeTreasuryPortionRate();
         //then
         expect(actualValue).to.be.eq(BigInt("0"));
     });
 
     it("should setup init value for IPOR Publication Fee Amount", async () => {
         //when
-        let actualValue = await miltonConfiguration.getIporPublicationFeeAmount();
+        let actualValue = await miltonConfiguration.getIporPublicationFee();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
     });
@@ -127,28 +127,28 @@ describe("MiltonConfiguration", () => {
     });
     it("should setup init value for Max Leveragey Value", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMaxLeverageValue();
+        let actualValue = await miltonConfiguration.getMaxLeverage();
         //then
         expect(actualValue).to.be.eq(BigInt("1000000000000000000000"));
     });
 
     it("should setup init value for Min Leveragey Value", async () => {
         //when
-        let actualValue = await miltonConfiguration.getMinLeverageValue();
+        let actualValue = await miltonConfiguration.getMinLeverage();
         //then
         expect(actualValue).to.be.eq(BigInt("10000000000000000000"));
     });
 
     it("should init value for Opening Fee Treasury Percentage lower than 100%", async () => {
         //when
-        let actualValue = await miltonConfiguration.getOpeningFeeForTreasuryPercentage();
+        let actualValue = await miltonConfiguration.getOpeningFeeTreasuryPortionRate();
         //then
         expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });
 
     it("should init value for Income Fee Percentage lower than 100%", async () => {
         //when
-        let actualValue = await miltonConfiguration.getIncomeFeePercentage();
+        let actualValue = await miltonConfiguration.getIncomeFeeRate();
         //then
         expect(parseInt(actualValue)).to.be.lte(parseInt(PERCENTAGE_100_18DEC));
     });

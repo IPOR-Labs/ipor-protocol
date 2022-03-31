@@ -829,13 +829,13 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
         const balance = await miltonDai.getAccruedBalance();
-        const actualCollateral = balance.payFixedTotalCollateral.add(
-            balance.receiveFixedTotalCollateral
+        const actualCollateral = balance.totalCollateralPayFixed.add(
+            balance.totalCollateralReceiveFixed
         );
         const actualLiquidityPoolBalance = balance.liquidityPool;
 
@@ -899,13 +899,13 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("40000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
         const balance = await miltonDai.getAccruedBalance();
-        const actualCollateral = balance.payFixedTotalCollateral.add(
-            balance.receiveFixedTotalCollateral
+        const actualCollateral = balance.totalCollateralPayFixed.add(
+            balance.totalCollateralReceiveFixed
         );
         const actualLiquidityPoolBalance = BigNumber.from(balance.liquidityPool);
 
@@ -970,7 +970,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("48000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -986,7 +986,7 @@ describe("Joseph Treasury", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     BigNumber.from("50").mul(N1__0_18DEC),
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             "IPOR_303"
@@ -1047,7 +1047,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("48000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -1063,7 +1063,7 @@ describe("Joseph Treasury", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     BigNumber.from("50").mul(N1__0_18DEC),
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             "IPOR_303"

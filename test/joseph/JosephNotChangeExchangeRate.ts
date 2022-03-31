@@ -88,7 +88,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -180,7 +180,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -275,7 +275,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

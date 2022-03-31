@@ -20,11 +20,11 @@ const delay = (time) => {
 };
 
 const calculate = async (milton, asset, warren, zeroNight, timeDeltaPerYear) => {
-    const { payFixedTotalCollateral, receiveFixedTotalCollateral, liquidityPool } =
+    const { totalCollateralPayFixed, totalCollateralReceiveFixed, liquidityPool } =
         await milton.getBalance();
     const total = BigNumber.from(liquidityPool)
-        .add(BigNumber.from(receiveFixedTotalCollateral))
-        .add(BigNumber.from(payFixedTotalCollateral));
+        .add(BigNumber.from(totalCollateralReceiveFixed))
+        .add(BigNumber.from(totalCollateralPayFixed));
     const { indexValue } = await warren.getIndex(asset.address);
     return BigNumber.from(indexValue.toString())
         .mul(total)

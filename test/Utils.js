@@ -40,7 +40,7 @@ module.exports.getStandardDerivativeParamsDAI = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        toleratedQuoteValue: BigInt("900000000000000000"),
+        maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -51,7 +51,7 @@ module.exports.getStandardDerivativeParamsUSDT = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        toleratedQuoteValue: BigInt("900000000000000000"),
+        maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -557,7 +557,7 @@ module.exports.getPayFixedDerivativeParamsDAICase1 = (user, testData) => {
     return {
         asset: testData.tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        toleratedQuoteValue: BigInt("60000000000000000"),
+        maxAcceptableFixedInterestRate: BigInt("60000000000000000"),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -569,7 +569,7 @@ module.exports.getPayFixedDerivativeParamsUSDTCase1 = (user, testData) => {
     return {
         asset: testData.tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        toleratedQuoteValue: BigInt("60000000000000000"),
+        maxAcceptableFixedInterestRate: BigInt("60000000000000000"),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),

@@ -47,7 +47,7 @@ library IporMath {
         return (uint256)(value < 0 ? -value : value);
     }
 
-    function percentOf(uint256 value, uint256 percentage) internal pure returns (uint256) {
-        return division(value * percentage, 1e18);
+    function percentOf(uint256 value, uint256 rate) internal pure returns (uint256) {
+        return division(value * rate, 1e18);
     }
 }

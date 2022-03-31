@@ -411,7 +411,7 @@ export const getStandardDerivativeParamsDAI = (user: Signer, tokenDai: DaiMocked
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -423,7 +423,7 @@ export const getStandardDerivativeParamsUSDT = (user: Signer, tokenUsdt: UsdtMoc
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -444,7 +444,7 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),

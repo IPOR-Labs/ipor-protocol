@@ -65,7 +65,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("26000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -117,7 +117,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -174,7 +174,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -231,7 +231,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -291,7 +291,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -364,7 +364,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -436,7 +436,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -508,7 +508,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

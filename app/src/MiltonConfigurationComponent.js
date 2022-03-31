@@ -289,7 +289,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Max Liquidity Pool Utilization Percentage</strong>
+                        <strong>Max Liquidity Pool Utilization Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -297,7 +297,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -311,7 +311,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -328,7 +328,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -342,7 +342,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -359,7 +359,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -373,7 +373,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxLpUtilizationPercentage"
+                                method="getMaxLpUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -388,7 +388,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Max Liquidity Pool Utilization Per Leg Percentage</strong>
+                        <strong>Max Liquidity Pool Utilization Per Leg Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -396,7 +396,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -410,7 +410,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -427,7 +427,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -441,7 +441,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -458,7 +458,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -472,7 +472,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getMaxLpUtilizationPerLegPercentage"
+                                method="getMaxLpUtilizationPerLegRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -487,7 +487,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Income Fee Percentage</strong>
+                        <strong>Income Fee Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -495,7 +495,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -509,7 +509,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -526,7 +526,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -540,7 +540,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -557,7 +557,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -571,7 +571,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getIncomeFeePercentage"
+                                method="getIncomeFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -586,7 +586,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Opening Fee Percentage</strong>
+                        <strong>Opening Fee Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -594,7 +594,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -608,7 +608,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -625,7 +625,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -639,7 +639,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -656,7 +656,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -670,7 +670,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getOpeningFeePercentage"
+                                method="getOpeningFeeRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -685,7 +685,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Opening Fee For Treasury Percentage</strong>
+                        <strong>Opening Fee For Treasury Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -693,7 +693,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -707,7 +707,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -724,7 +724,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -738,7 +738,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -755,7 +755,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -769,7 +769,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getOpeningFeeForTreasuryPercentage"
+                                method="getOpeningFeeTreasuryPortionRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -792,7 +792,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdt"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -806,7 +806,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdt"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -823,7 +823,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonUsdc"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -837,7 +837,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonUsdc"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -854,7 +854,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfMiltonDai"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -868,7 +868,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="MiltonDai"
-                                method="getIporPublicationFeeAmount"
+                                method="getIporPublicationFee"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

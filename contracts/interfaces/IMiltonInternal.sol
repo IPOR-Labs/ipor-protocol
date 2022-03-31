@@ -20,39 +20,39 @@ interface IMiltonInternal {
     /// @return max swap collateral amount represented in 18 decimals
     function getMaxSwapCollateralAmount() external pure returns (uint256);
 
-    /// @notice Gets max Liquidity Pool Utilization Percentage param value.
+    /// @notice Gets max Liquidity Pool Utilization rate param value.
     /// @dev Param used in validation upcoming opened swap.
-    /// @return max Liquidity Pool Utilization Percentage represented in 18 decimals
-    function getMaxLpUtilizationPercentage() external pure returns (uint256);
+    /// @return max Liquidity Pool Utilization rate represented in 18 decimals
+    function getMaxLpUtilizationRate() external pure returns (uint256);
 
-    /// @notice Gets max Liquidity Pool Utilization Per Leg Percentage param value.
+    /// @notice Gets max Liquidity Pool Utilization Per Leg rate param value.
     /// @dev Param used in validation upcoming opened swap.
-    /// @return max Liquidity Pool Utilization Per Leg Percentage represented in 18 decimals
-    function getMaxLpUtilizationPerLegPercentage() external pure returns (uint256);
+    /// @return max Liquidity Pool Utilization Per Leg rate represented in 18 decimals
+    function getMaxLpUtilizationPerLegRate() external pure returns (uint256);
 
-    /// @notice Gets Income Fee Percentage param value.
+    /// @notice Gets Income Fee rate param value.
     /// @dev Param used in closing swap. When trader earn then Milton takes fee from interest.
-    /// @return income fee percentage param value represented in 18 decimals
-    function getIncomeFeePercentage() external pure returns (uint256);
+    /// @return income fee rate param value represented in 18 decimals
+    function getIncomeFeeRate() external pure returns (uint256);
 
-    /// @notice Gets Opening Fee Percentage param value. When trader open position then Milton takes fee from collateral.
+    /// @notice Gets Opening Fee rate param value. When trader open position then Milton takes fee from collateral.
     /// Opening fee amount is divided and transfered to Liquidity Pool and to Milton Treasury
     /// @dev Param used in opening swap.
-    /// @return opening fee percentage param value represented in 18 decimals
-    function getOpeningFeePercentage() external pure returns (uint256);
+    /// @return opening fee rate param value represented in 18 decimals
+    function getOpeningFeeRate() external pure returns (uint256);
 
-    /// @notice Gets Opening Fee For Treasury Percentage param value. When trader open position then Milton takes fee from collateral.
+    /// @notice Gets Opening Fee For Treasury rate param value. When trader open position then Milton takes fee from collateral.
     /// Opening fee amount is divided and transfered to Liquidity Pool and to Milton Treasury.
     /// Opening Fee For Treasury define ration of Opening Fee transfered to Milton Treasury.
     /// @dev Param used in opening swap.
-    /// @return opening fee for treasury percentage param value represented in 18 decimals
-    function getOpeningFeeForTreasuryPercentage() external pure returns (uint256);
+    /// @return opening fee for treasury rate param value represented in 18 decimals
+    function getOpeningFeeTreasuryPortionRate() external pure returns (uint256);
 
     /// @notice Gets IPOR publication fee amount param. When trader open position then Milton takes
     /// IPOR publication fee amount from total amount invested by trader.
     /// @dev Param used in opening swap.
     /// @return IPOR publication fee amount value represented in 18 decimals
-    function getIporPublicationFeeAmount() external pure returns (uint256);
+    function getIporPublicationFee() external pure returns (uint256);
 
     /// @notice Gets liquidation deposit amount param. When trader open position then liquidation deposit amount is transfered from trader to Milton. This cash is intended to liquidator.
     /// @return liquidation deposit amount represented in 18 decimals
@@ -61,12 +61,12 @@ interface IMiltonInternal {
     /// @notice Gets max leverage value param.
     /// @dev Param used in validation upcoming opened swap.
     /// @return max leverage value represented in 18 decimals
-    function getMaxLeverageValue() external pure returns (uint256);
+    function getMaxLeverage() external pure returns (uint256);
 
     /// @notice Gets min leverage value param.
     /// @dev Param used in validation upcoming opened swap.
     /// @return min leverage value represented in 18 decimals
-    function getMinLeverageValue() external pure returns (uint256);
+    function getMinLeverage() external pure returns (uint256);
 
     /// @notice Gets Milton's balances accrued with amounts which was earned by Stanley in external Protocols.
     /// @dev Balances includes total collateral for Pay Fixed leg and for Receive Fixed leg,
@@ -80,7 +80,7 @@ interface IMiltonInternal {
     /// @return soapPayFixed SOAP for Pay Fixed leg.
     /// @return soapReceiveFixed SOAP for Receive Fixed leg.
     /// @return soap total SOAP, sum of Pay Fixed and Receive Fixed SOAP.
-    function calculateSoapForTimestamp(uint256 calculateTimestamp)
+    function calculateSoapAtTimestamp(uint256 calculateTimestamp)
         external
         view
         returns (

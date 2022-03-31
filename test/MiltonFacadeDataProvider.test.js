@@ -90,7 +90,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -99,7 +99,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -108,7 +108,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: testData.tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -172,19 +172,17 @@ describe("MiltonFacadeDataProvider", () => {
         //then
 
         for (let i = 0; i < configs.length; i++) {
-            expect(expectedMinLeverage).to.be.eq(configs[i].minLeverageValue);
-            expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverageValue);
-            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeePercentage);
+            expect(expectedMinLeverage).to.be.eq(configs[i].minLeverage);
+            expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverage);
+            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeeRate);
             expect(expectedIporPublicationFeeAmount).to.be.eq(configs[i].iporPublicationFeeAmount);
             expect(expectedLiquidationDepositAmount).to.be.eq(configs[i].liquidationDepositAmount);
-            expect(expectedIncomeFeePercentage).to.be.eq(configs[i].incomeFeePercentage);
-            expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixedValue);
-            expect(expectedSpreadRecFixedValue).to.be.eq(configs[i].spreadRecFixedValue);
-            expect(expectedMaxLpUtilizationPercentage).to.be.eq(
-                configs[i].maxLpUtilizationPercentage
-            );
+            expect(expectedIncomeFeePercentage).to.be.eq(configs[i].incomeFeeRate);
+            expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixed);
+            expect(expectedSpreadRecFixedValue).to.be.eq(configs[i].spreadReceiveFixed);
+            expect(expectedMaxLpUtilizationPercentage).to.be.eq(configs[i].maxLpUtilizationRate);
             expect(expectedMaxLpUtilizationPerLegPercentage).to.be.eq(
-                configs[i].maxLpUtilizationPerLegPercentage
+                configs[i].maxLpUtilizationPerLegRate
             );
         }
     });
@@ -236,7 +234,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -245,7 +243,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -254,7 +252,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: testData.tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -373,7 +371,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -384,7 +382,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -395,7 +393,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -408,7 +406,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -419,7 +417,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -430,7 +428,7 @@ describe("MiltonFacadeDataProvider", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -448,7 +446,7 @@ describe("MiltonFacadeDataProvider", () => {
             id: 1,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
-            notionalAmount: BigInt("50000000000000000000000"),
+            notional: BigInt("50000000000000000000000"),
             ibtQuantity: 123,
             fixedInterestRate: 234,
         };
@@ -485,7 +483,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,

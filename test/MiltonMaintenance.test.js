@@ -92,7 +92,11 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
     });
@@ -124,7 +128,11 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
 
@@ -133,7 +141,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapReceiveFixed(
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
@@ -202,7 +210,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
         const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
@@ -212,7 +220,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -228,20 +236,20 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(userOne).getAccruedBalance();
         await testData.miltonDai.connect(userOne).calculateSpread();
         await testData.miltonDai.connect(userOne).calculateSoap();
-        await testData.miltonDai.connect(userOne).calculateSoapForTimestamp(params.openTimestamp);
+        await testData.miltonDai.connect(userOne).calculateSoapAtTimestamp(params.openTimestamp);
         await testData.miltonDai.connect(userOne).calculateSwapPayFixedValue(swapPayFixed);
         await testData.miltonDai.connect(userOne).calculateSwapReceiveFixedValue(swapReceiveFixed);
         await testData.miltonDai.connect(userOne).getMiltonSpreadModel();
         await testData.miltonDai.connect(userOne).getMaxSwapCollateralAmount();
-        await testData.miltonDai.connect(userOne).getMaxLpUtilizationPercentage();
-        await testData.miltonDai.connect(userOne).getMaxLpUtilizationPerLegPercentage();
-        await testData.miltonDai.connect(userOne).getIncomeFeePercentage();
-        await testData.miltonDai.connect(userOne).getOpeningFeePercentage();
-        await testData.miltonDai.connect(userOne).getOpeningFeeForTreasuryPercentage();
-        await testData.miltonDai.connect(userOne).getIporPublicationFeeAmount();
+        await testData.miltonDai.connect(userOne).getMaxLpUtilizationRate();
+        await testData.miltonDai.connect(userOne).getMaxLpUtilizationPerLegRate();
+        await testData.miltonDai.connect(userOne).getIncomeFeeRate();
+        await testData.miltonDai.connect(userOne).getOpeningFeeRate();
+        await testData.miltonDai.connect(userOne).getOpeningFeeTreasuryPortionRate();
+        await testData.miltonDai.connect(userOne).getIporPublicationFee();
         await testData.miltonDai.connect(userOne).getLiquidationDepositAmount();
-        await testData.miltonDai.connect(userOne).getMaxLeverageValue();
-        await testData.miltonDai.connect(userOne).getMinLeverageValue();
+        await testData.miltonDai.connect(userOne).getMaxLeverage();
+        await testData.miltonDai.connect(userOne).getMinLeverage();
         await testData.miltonDai.connect(userOne).getJoseph();
     });
 
@@ -282,7 +290,11 @@ describe("Milton Maintenance", () => {
         await assertError(
             testData.miltonDai
                 .connect(userTwo)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
 
@@ -292,7 +304,11 @@ describe("Milton Maintenance", () => {
         await testData.miltonDai.connect(admin).unpause();
         await testData.miltonDai
             .connect(userTwo)
-            .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage);
+            .openSwapPayFixed(
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
 
         //then
         const swapPayFixed = await testData.miltonStorageDai.connect(userTwo).getSwapPayFixed(1);

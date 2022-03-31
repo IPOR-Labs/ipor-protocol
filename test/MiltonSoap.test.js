@@ -89,7 +89,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUserAddress,
@@ -146,7 +146,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
@@ -203,7 +203,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
@@ -260,7 +260,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
@@ -318,7 +318,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
@@ -382,7 +382,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: openerUser,
@@ -449,7 +449,7 @@ describe("MiltonSoap", () => {
         const firstDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -458,7 +458,7 @@ describe("MiltonSoap", () => {
         const secondDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -515,7 +515,7 @@ describe("MiltonSoap", () => {
         const firstDerivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -524,7 +524,7 @@ describe("MiltonSoap", () => {
         const secondDerivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -594,7 +594,7 @@ describe("MiltonSoap", () => {
         const derivativeDAIParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -603,7 +603,7 @@ describe("MiltonSoap", () => {
         const derivativeUSDTParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -685,7 +685,7 @@ describe("MiltonSoap", () => {
         const payFixDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -694,7 +694,7 @@ describe("MiltonSoap", () => {
         const recFixDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -756,7 +756,7 @@ describe("MiltonSoap", () => {
         const payFixDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -765,7 +765,7 @@ describe("MiltonSoap", () => {
         const recFixDerivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -839,7 +839,7 @@ describe("MiltonSoap", () => {
         const payFixDerivativeDAIParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -848,7 +848,7 @@ describe("MiltonSoap", () => {
         const recFixDerivativeUSDTParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -933,7 +933,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1008,7 +1008,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1083,7 +1083,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1166,7 +1166,7 @@ describe("MiltonSoap", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1174,7 +1174,7 @@ describe("MiltonSoap", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -1238,7 +1238,7 @@ describe("MiltonSoap", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1246,7 +1246,7 @@ describe("MiltonSoap", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -1323,7 +1323,7 @@ describe("MiltonSoap", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1426,7 +1426,7 @@ describe("MiltonSoap", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
@@ -1479,7 +1479,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -1490,7 +1490,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -1501,7 +1501,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -1514,7 +1514,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -1525,7 +1525,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -1536,7 +1536,7 @@ describe("MiltonSoap", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }

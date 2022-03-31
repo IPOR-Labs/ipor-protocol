@@ -204,7 +204,7 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(testData),
-                await testData.miltonDai.getIporPublicationFeeAmount()
+                await testData.miltonDai.getIporPublicationFee()
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -227,7 +227,7 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    await testData.miltonDai.getIporPublicationFeeAmount()
+                    await testData.miltonDai.getIporPublicationFee()
                 ),
             //then
             "IPOR_008"
@@ -259,7 +259,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -291,7 +291,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000000000000000"),
                 closeSwapTimestamp,
-                await testData.miltonDai.getIncomeFeePercentage(),
+                await testData.miltonDai.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -327,7 +327,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -359,7 +359,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigInt("10000000"),
                 closeSwapTimestamp,
-                await testData.miltonUsdt.getIncomeFeePercentage(),
+                await testData.miltonUsdt.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -391,7 +391,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -422,7 +422,7 @@ describe("MiltonStorage", () => {
                     derivativeItem,
                     BigInt("10000000000000000000"),
                     closeSwapTimestamp,
-                    await testData.miltonDai.getIncomeFeePercentage(),
+                    await testData.miltonDai.getIncomeFeeRate(),
                     PERCENTAGE_95_18DEC,
                     PERIOD_6_HOURS_IN_SECONDS
                 ),
@@ -748,7 +748,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -759,7 +759,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -770,7 +770,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -783,7 +783,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -794,7 +794,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -805,7 +805,7 @@ describe("MiltonStorage", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -823,11 +823,11 @@ describe("MiltonStorage", () => {
             id: 1,
             collateral: BigInt("1000000000000000000000"),
             liquidationDepositAmount: BigInt("20000000000000000000"),
-            notionalAmount: BigInt("50000000000000000000000"),
+            notional: BigInt("50000000000000000000000"),
             fixedInterestRate: 234,
             ibtQuantity: 123,
             openingFeeLPAmount: BigInt("1500000000000000000000"),
-			openingFeeTreasuryAmount: BigInt("1500000000000000000000")
+            openingFeeTreasuryAmount: BigInt("1500000000000000000000"),
         };
     };
 
@@ -855,7 +855,7 @@ describe("MiltonStorage", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -900,7 +900,7 @@ describe("MiltonStorage", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -948,7 +948,7 @@ describe("MiltonStorage", () => {
         const paramsUsdt = {
             asset: testData.tokenUsdt.address,
             totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,

@@ -219,7 +219,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("40").mul(N1__0_18DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -335,7 +335,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("40").mul(N1__0_6DEC),
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

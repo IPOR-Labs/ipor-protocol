@@ -31,26 +31,26 @@ interface IMilton {
     /// @notice Opens Pay Fixed, Receive Floating Swap for a given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
     /// @param totalAmount Total amount transferred from trader to Milton for the purpose of opening a position.
-    /// @param toleratedQuoteValue Max quote value which trader accept in case of changing quote
+    /// @param maxAcceptableFixedInterestRate Max quote value which trader accept in case of changing quote
     /// value for external interactions other traders with Milton. Value represented in 18 decimals.
     /// @param leverage Leverage of this posistion
     /// @return Swap Id in Pay Fixed Swaps
     function openSwapPayFixed(
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
     /// @notice Opens Receive Fixed, Pay Floating Swap for a given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
     /// @param totalAmount Total amount transferred from trader to Milton for the purpose of opening a position.
-    /// @param toleratedQuoteValue Max quote value which trader accept in case of changing quote value for external
+    /// @param maxAcceptableFixedInterestRate Max quote value which trader accept in case of changing quote value for external
     /// interactions other traders with Milton. Value represented in 18 decimals.
     /// @param leverage Leverage of this posisiton
     /// @return Swap Id in Pay Fixed Swaps
     function openSwapReceiveFixed(
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 

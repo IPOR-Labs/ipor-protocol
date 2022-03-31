@@ -82,7 +82,7 @@ describe("Milton", () => {
             data
         );
         const totalAmount = 0;
-        const toleratedQuoteValue = 3;
+        const maxAcceptableFixedInterestRate = 3;
         const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
         await assertError(
@@ -90,7 +90,7 @@ describe("Milton", () => {
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -106,7 +106,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("30000000000000000001");
-        const toleratedQuoteValue = BigInt("39999999999999999");
+        const maxAcceptableFixedInterestRate = BigInt("39999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -123,7 +123,7 @@ describe("Milton", () => {
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -139,7 +139,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("30000000000000000001");
-        const toleratedQuoteValue = BigInt("19999999999999999");
+        const maxAcceptableFixedInterestRate = BigInt("19999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -156,7 +156,7 @@ describe("Milton", () => {
             testData.miltonDai.itfOpenSwapReceiveFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -187,7 +187,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("30000001");
-        const toleratedQuoteValue = BigInt("39999999999999999");
+        const maxAcceptableFixedInterestRate = BigInt("39999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -204,7 +204,7 @@ describe("Milton", () => {
             testData.miltonUsdt.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -235,7 +235,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("30000001");
-        const toleratedQuoteValue = BigInt("19999999999999999");
+        const maxAcceptableFixedInterestRate = BigInt("19999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -252,7 +252,7 @@ describe("Milton", () => {
             testData.miltonUsdt.itfOpenSwapReceiveFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -268,7 +268,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("1000000000000000000000001");
-        const toleratedQuoteValue = 3;
+        const maxAcceptableFixedInterestRate = 3;
         const leverage = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -277,7 +277,7 @@ describe("Milton", () => {
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -293,7 +293,7 @@ describe("Milton", () => {
         );
 
         const totalAmount = BigInt("100688870576704582165765");
-        const toleratedQuoteValue = 3;
+        const maxAcceptableFixedInterestRate = 3;
         const leverage = BigInt(10000000000000000000);
         const timestamp = Math.floor(Date.now() / 1000);
 
@@ -302,7 +302,7 @@ describe("Milton", () => {
             testData.miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                toleratedQuoteValue,
+                maxAcceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -343,7 +343,7 @@ describe("Milton", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -367,12 +367,12 @@ describe("Milton", () => {
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonDai.getAccruedBalance()
-            ).payFixedTotalCollateral
+            ).totalCollateralPayFixed
         );
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonDai.getAccruedBalance()
-            ).receiveFixedTotalCollateral
+            ).totalCollateralReceiveFixed
         );
         const actualDerivativesTotalBalanceWad =
             actualPayFixDerivativesBalanceWad + actualRecFixDerivativesBalanceWad;
@@ -429,7 +429,7 @@ describe("Milton", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -452,13 +452,13 @@ describe("Milton", () => {
         const actualPayFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonUsdt.getAccruedBalance()
-            ).payFixedTotalCollateral
+            ).totalCollateralPayFixed
         );
 
         const actualRecFixDerivativesBalanceWad = BigInt(
             await (
                 await testData.miltonUsdt.getAccruedBalance()
-            ).receiveFixedTotalCollateral
+            ).totalCollateralReceiveFixed
         );
 
         const actualDerivativesTotalBalanceWad =
@@ -613,7 +613,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: BigInt("10000000000000000000000"), //10 000 USD
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -1156,7 +1156,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -1195,7 +1195,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -1403,7 +1403,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: PERCENTAGE_121_18DEC,
+            maxAcceptableFixedInterestRate: PERCENTAGE_121_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -1940,7 +1940,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("11900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("11900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -1980,7 +1980,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("11900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("11900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -2087,7 +2087,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -2303,7 +2303,7 @@ describe("Milton", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2345,7 +2345,7 @@ describe("Milton", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2368,7 +2368,7 @@ describe("Milton", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -2402,7 +2402,7 @@ describe("Milton", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2425,7 +2425,7 @@ describe("Milton", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -2478,7 +2478,7 @@ describe("Milton", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2501,7 +2501,7 @@ describe("Milton", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -2550,7 +2550,7 @@ describe("Milton", () => {
         const derivativeParamsFirst = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2573,7 +2573,7 @@ describe("Milton", () => {
         const derivativeParams25days = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp + PERIOD_25_DAYS_IN_SECONDS,
             from: openerUser,
@@ -2674,7 +2674,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: leverage,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
@@ -2756,7 +2756,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2813,7 +2813,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
@@ -2879,7 +2879,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
@@ -2948,7 +2948,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userTwo,
@@ -3019,7 +3019,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
@@ -3084,7 +3084,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
@@ -3150,7 +3150,7 @@ describe("Milton", () => {
         const derivativeParams = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: userThree,
@@ -3635,7 +3635,7 @@ describe("Milton", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3698,7 +3698,7 @@ describe("Milton", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3730,7 +3730,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: BigInt(500),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -3747,7 +3747,7 @@ describe("Milton", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -3765,7 +3765,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: BigInt("1000000000000000000001"),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -3782,7 +3782,7 @@ describe("Milton", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -3800,7 +3800,7 @@ describe("Milton", () => {
         const params = {
             asset: testData.tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: BigInt("15125000000000000000"),
             openTimestamp: Math.floor(Date.now() / 1000),
             from: userTwo,
@@ -3819,13 +3819,13 @@ describe("Milton", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
         //then
         let actualDerivativeItem = await testData.miltonStorageDai.getSwapPayFixed(1);
-        let actualNotionalAmount = BigInt(actualDerivativeItem.notionalAmount);
+        let actualNotionalAmount = BigInt(actualDerivativeItem.notional);
         let expectedNotionalAmount = BigInt("150751024692592222333298");
 
         expect(
@@ -4964,7 +4964,7 @@ describe("Milton", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -4974,7 +4974,7 @@ describe("Milton", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -4984,7 +4984,7 @@ describe("Milton", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -4996,7 +4996,7 @@ describe("Milton", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -5007,7 +5007,7 @@ describe("Milton", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -5018,7 +5018,7 @@ describe("Milton", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 );
         }
@@ -5086,7 +5086,7 @@ describe("Milton", () => {
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        toleratedQuoteValue,
+        maxAcceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
@@ -5185,7 +5185,7 @@ describe("Milton", () => {
             closerUser,
             iporValueBeforeOpenSwap,
             iporValueAfterOpenSwap,
-            toleratedQuoteValue,
+            maxAcceptableFixedInterestRate,
             periodOfTimeElapsedInSeconds,
             miltonBalanceBeforePayout,
             expectedMiltonUnderlyingTokenBalance,
@@ -5211,7 +5211,7 @@ describe("Milton", () => {
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        toleratedQuoteValue,
+        maxAcceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         expectedOpenedPositions,
         expectedDerivativesTotalBalanceWad,
@@ -5313,7 +5313,7 @@ describe("Milton", () => {
             closerUser,
             iporValueBeforeOpenSwap,
             iporValueAfterOpenSwap,
-            toleratedQuoteValue,
+            maxAcceptableFixedInterestRate,
             periodOfTimeElapsedInSeconds,
             miltonBalanceBeforePayout,
             expectedMiltonUnderlyingTokenBalance,
@@ -5373,7 +5373,7 @@ describe("Milton", () => {
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        toleratedQuoteValue,
+        maxAcceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         providedLiquidityAmount,
         expectedMiltonUnderlyingTokenBalance,
@@ -5409,7 +5409,7 @@ describe("Milton", () => {
         const params = {
             asset: asset,
             totalAmount: totalAmount,
-            toleratedQuoteValue: toleratedQuoteValue,
+            maxAcceptableFixedInterestRate: maxAcceptableFixedInterestRate,
             leverage: leverage,
             direction: direction,
             openTimestamp: localOpenTimestamp,
@@ -5581,7 +5581,7 @@ describe("Milton", () => {
         const params = {
             asset: asset,
             totalAmount: totalAmount,
-            toleratedQuoteValue: BigInt("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigInt("900000000000000000"),
             leverage: leverage,
             direction: direction,
             openTimestamp: localOpenTimestamp,
@@ -5861,8 +5861,8 @@ describe("Milton", () => {
             );
         }
 
-        const actualPayFixedDerivativesBalance = BigInt(balance.payFixedTotalCollateral);
-        const actualRecFixedDerivativesBalance = BigInt(balance.receiveFixedTotalCollateral);
+        const actualPayFixedDerivativesBalance = BigInt(balance.totalCollateralPayFixed);
+        const actualRecFixedDerivativesBalance = BigInt(balance.totalCollateralReceiveFixed);
         const actualDerivativesTotalBalance =
             actualPayFixedDerivativesBalance + actualRecFixedDerivativesBalance;
 

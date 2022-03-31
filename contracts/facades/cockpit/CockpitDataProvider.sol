@@ -55,9 +55,9 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
-	function getVersion() external pure override returns (uint256) {
-		return 1;
-	}
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
 
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
@@ -144,20 +144,20 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         external
         view
         override
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
-        // TODO: change names _spreadPayFixedValue/_spreadRecFixedValue
+        // TODO: change names _spreadPayFixed/_spreadReceiveFixed
         try milton.calculateSpread() returns (
-            uint256 _spreadPayFixedValue,
-            uint256 _spreadRecFixedValue
+            uint256 _spreadPayFixed,
+            uint256 _spreadReceiveFixed
         ) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-            spreadRecFixedValue = _spreadRecFixedValue;
+            spreadPayFixed = _spreadPayFixed;
+            spreadReceiveFixed = _spreadReceiveFixed;
         } catch {
-            spreadPayFixedValue = 999999999999999999999;
-            spreadRecFixedValue = 999999999999999999999;
+            spreadPayFixed = 999999999999999999999;
+            spreadReceiveFixed = 999999999999999999999;
         }
     }
 

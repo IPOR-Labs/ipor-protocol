@@ -17,7 +17,7 @@ export type SWAP = {
     idsIndex: BigNumber;
     collateral: BigNumber;
     liquidationDepositAmount: BigNumber;
-    notionalAmount: BigNumber;
+    notional: BigNumber;
     ibtQuantity: BigNumber;
     fixedInterestRate: BigNumber;
 };
@@ -32,7 +32,7 @@ export const prepareSwapPayFixedCase1 = async (
     const leverage = BigNumber.from("10");
 
     const timeStamp = Math.floor(Date.now() / 1000);
-    const notionalAmount = collateral.mul(leverage);
+    const notional = collateral.mul(leverage);
     const swap = {
         state: SwapState.ACTIVE,
         buyer: await admin.getAddress(),
@@ -43,7 +43,7 @@ export const prepareSwapPayFixedCase1 = async (
         idsIndex: BigNumber.from("0"),
         collateral: TC_50_000_18DEC,
         liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
-        notionalAmount,
+        notional,
         ibtQuantity: BigNumber.from("987030000000000000000"), //ibtQuantity
         fixedInterestRate: fixedInterestRate,
     };

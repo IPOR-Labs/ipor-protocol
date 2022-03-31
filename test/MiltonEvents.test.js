@@ -51,7 +51,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -66,7 +66,7 @@ describe("Milton Events", () => {
                     BigInt("9967009897030890732780"),
                     BigInt("99670098970308907327800"),
                     BigInt("2990102969109267220"),
-					BigInt("0"),
+                    BigInt("0"),
                     BigInt("10000000000000000000"),
                     BigInt("20000000000000000000"),
                 ],
@@ -103,7 +103,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -118,7 +118,7 @@ describe("Milton Events", () => {
                     BigInt("9967009897030890732780"),
                     BigInt("99670098970308907327800"),
                     BigInt("2990102969109267220"),
-					BigInt("0"),
+                    BigInt("0"),
                     BigInt("10000000000000000000"),
                     BigInt("20000000000000000000"),
                 ],
@@ -155,7 +155,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -170,7 +170,7 @@ describe("Milton Events", () => {
                     BigInt("9967009897030890732780"),
                     BigInt("99670098970308907327800"),
                     BigInt("2990102969109267220"),
-					BigInt("0"),
+                    BigInt("0"),
                     BigInt("10000000000000000000"),
                     BigInt("20000000000000000000"),
                 ],
@@ -207,7 +207,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -222,7 +222,7 @@ describe("Milton Events", () => {
                     BigInt("9967009897030890732780"),
                     BigInt("99670098970308907327800"),
                     BigInt("2990102969109267220"),
-					BigInt("0"),
+                    BigInt("0"),
                     BigInt("10000000000000000000"),
                     BigInt("20000000000000000000"),
                 ],
@@ -259,7 +259,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -305,7 +305,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -351,7 +351,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

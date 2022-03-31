@@ -27,9 +27,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -42,9 +42,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -57,9 +57,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -75,9 +75,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -90,9 +90,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -105,9 +105,9 @@ export default ({ drizzle, drizzleState }) => (
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
-                                {value.receiveFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.receiveFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />

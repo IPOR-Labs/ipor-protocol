@@ -37,8 +37,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
-        const payFixedTotalCollateralBalance = BigInt("2000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("2000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4222145503127467");
@@ -49,8 +49,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -70,8 +70,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4221122120887343");
@@ -82,8 +82,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -103,8 +103,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("2000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("2000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("4221122120887343");
@@ -115,8 +115,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -136,8 +136,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("1000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000");
-        const payFixedTotalCollateralBalance = USD_20_18DEC;
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = USD_20_18DEC;
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("300000000000000000");
@@ -148,8 +148,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -168,8 +168,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6461082251082251");
@@ -180,8 +180,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -200,8 +200,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("13000000000000000000000");
         const soap = BigInt("100000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6490531792366655");
@@ -212,8 +212,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -233,9 +233,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const soap = payFixedTotalCollateralBalance + swapCollateral;
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("13000000000000000000000");
+        const soap = totalCollateralPayFixedBalance + swapCollateral;
 
         const expectedSpreadDemandComponentValue = spreadPremiumsMaxValue;
 
@@ -245,8 +245,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -265,8 +265,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = ZERO;
-        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
+        const totalCollateralPayFixedBalance = ZERO;
+        const totalCollateralReceiveFixedBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("5747162162162162");
@@ -277,8 +277,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -297,8 +297,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = ZERO;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = ZERO;
-        const receiveFixedTotalCollateralBalance = BigInt("13000000000000000000000");
+        const totalCollateralPayFixedBalance = ZERO;
+        const totalCollateralReceiveFixedBalance = BigInt("13000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("5752372881355932");
@@ -309,8 +309,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -330,8 +330,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
-        const payFixedTotalCollateralBalance = USD_2_000_18DEC;
-        const receiveFixedTotalCollateralBalance = USD_1_000_18DEC;
+        const totalCollateralPayFixedBalance = USD_2_000_18DEC;
+        const totalCollateralReceiveFixedBalance = USD_1_000_18DEC;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = spreadPremiumsMaxValue;
@@ -342,8 +342,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateAdjustedUtilizationRatePayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     BigInt("300000000000000000")
                 )
         );
@@ -354,8 +354,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentPayFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance + swapCollateral,
-                    receiveFixedTotalCollateralBalance,
+                    totalCollateralPayFixedBalance + swapCollateral,
+                    totalCollateralReceiveFixedBalance,
                     soap
                 )
         );
@@ -375,8 +375,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6940360965820754");
@@ -387,8 +387,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -408,8 +408,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("5000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("5000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("5000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("5000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("754210000000000270");
@@ -420,8 +420,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -441,8 +441,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("3000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("3000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("10645643564356436");
@@ -453,8 +453,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -474,8 +474,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("1000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("1000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const receiveFixedTotalCollateralBalance = USD_20_18DEC;
+        const totalCollateralPayFixedBalance = BigInt("1000000000000000000000");
+        const totalCollateralReceiveFixedBalance = USD_20_18DEC;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("300000000000000000");
@@ -486,8 +486,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -507,8 +507,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6940360965820754");
@@ -519,8 +519,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -539,8 +539,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("100000000000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6969810507105158");
@@ -551,8 +551,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -572,9 +572,9 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
-        const soap = receiveFixedTotalCollateralBalance + swapCollateral;
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
+        const soap = totalCollateralReceiveFixedBalance + swapCollateral;
 
         const expectedSpreadDemandComponentValue = spreadPremiumsMaxValue;
 
@@ -584,8 +584,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -604,8 +604,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = ZERO;
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6196303167429811");
@@ -616,8 +616,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -636,8 +636,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = BigInt("10000000000000000000000");
         const swapOpeningFee = ZERO;
         const liquidityPoolBalance = BigInt("15000000000000000000000");
-        const payFixedTotalCollateralBalance = BigInt("13000000000000000000000");
-        const receiveFixedTotalCollateralBalance = ZERO;
+        const totalCollateralPayFixedBalance = BigInt("13000000000000000000000");
+        const totalCollateralReceiveFixedBalance = ZERO;
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = BigInt("6204233107035849");
@@ -648,8 +648,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
@@ -670,8 +670,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const swapOpeningFee = USD_20_18DEC;
         const liquidityPoolBalance = USD_14_000_18DEC;
-        const payFixedTotalCollateralBalance = USD_2_000_18DEC;
-        const receiveFixedTotalCollateralBalance = BigInt("1000000000000000000000");
+        const totalCollateralPayFixedBalance = USD_2_000_18DEC;
+        const totalCollateralReceiveFixedBalance = BigInt("1000000000000000000000");
         const soap = BigInt("-1234560000000000000");
 
         const expectedSpreadDemandComponentValue = spreadPremiumsMaxValue;
@@ -682,8 +682,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(liquidityProvider)
                 .calculateAdjustedUtilizationRateRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     BigInt("300000000000000000")
                 )
         );
@@ -694,8 +694,8 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                 .connect(userOne)
                 .calculateDemandComponentRecFixed(
                     liquidityPoolBalance + swapOpeningFee,
-                    payFixedTotalCollateralBalance,
-                    receiveFixedTotalCollateralBalance + swapCollateral,
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance + swapCollateral,
                     soap
                 )
         );
