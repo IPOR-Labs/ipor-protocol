@@ -16,11 +16,11 @@ interface IJoseph {
     /// @param assetAmount volume of ERC20 tokens which are transferred from sender to Milton
     function provideLiquidity(uint256 assetAmount) external;
 
-    /// @notice Redeems `ipTokenVolume` IpTokens for underlying asset
+    /// @notice Redeems `ipTokenAmount` IpTokens for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken,
     /// transfer asser ERC20 tokens from Milton to sender based on current exchange rate.
-    /// @param ipTokenVolume redeem amount
-    function redeem(uint256 ipTokenVolume) external;
+    /// @param ipTokenAmount redeem amount
+    function redeem(uint256 ipTokenAmount) external;
 
     /// @notice Returns reserve ratio on Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset
     /// @return reserves ratio

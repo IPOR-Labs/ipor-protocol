@@ -21,7 +21,7 @@ abstract contract ItfJoseph is Joseph {
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for burning ipToken
-    function itfRedeem(uint256 ipTokenVolume, uint256 timestamp) external {
-        _redeem(ipTokenVolume, timestamp);
+    function itfRedeem(uint256 ipTokenAmount, uint256 timestamp) external {
+        _redeem(ipTokenAmount, timestamp);
     }
 }
