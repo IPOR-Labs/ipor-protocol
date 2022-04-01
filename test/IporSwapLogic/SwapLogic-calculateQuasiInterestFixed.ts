@@ -22,13 +22,13 @@ describe("IporSwapLogic calculateQuasiInterestFixed", () => {
 
     it("Calculate Interest Fixed Case 1", async () => {
         //given
-        const notionalAmount = BigNumber.from("98703").mul(N1__0_18DEC);
+        const notional = BigNumber.from("98703").mul(N1__0_18DEC);
         const swapFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swapPeriodInSeconds = 0;
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
-            notionalAmount,
+            notional,
             swapFixedInterestRate,
             swapPeriodInSeconds
         );
@@ -41,13 +41,13 @@ describe("IporSwapLogic calculateQuasiInterestFixed", () => {
 
     it("Calculate Interest Fixed Case 2", async () => {
         //given
-        const notionalAmount = BigNumber.from(98703).mul(N1__0_18DEC);
+        const notional = BigNumber.from(98703).mul(N1__0_18DEC);
         const swapFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swapPeriodInSeconds = SWAP_DEFAULT_PERIOD_IN_SECONDS;
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
-            notionalAmount,
+            notional,
             swapFixedInterestRate,
             swapPeriodInSeconds
         );
@@ -60,13 +60,13 @@ describe("IporSwapLogic calculateQuasiInterestFixed", () => {
 
     it("Calculate Interest Fixed Case 3", async () => {
         //given
-        const notionalAmount = BigNumber.from("98703").mul(N1__0_18DEC);
+        const notional = BigNumber.from("98703").mul(N1__0_18DEC);
         const swapFixedInterestRate = BigNumber.from(4).mul(N0__01_18DEC);
         const swapPeriodInSeconds = YEAR_IN_SECONDS;
 
         //when
         const result = await iporSwapLogic.calculateQuasiInterestFixed(
-            notionalAmount,
+            notional,
             swapFixedInterestRate,
             swapPeriodInSeconds
         );

@@ -62,9 +62,9 @@ describe("Joseph - provide liquidity", () => {
         }
 
         //when
-        const actualValueUsdt = await josephUsdt.getRedeemLpMaxUtilizationPercentage();
-        const actualValueUsdc = await josephUsdc.getRedeemLpMaxUtilizationPercentage();
-        const actualValueDai = await josephDai.getRedeemLpMaxUtilizationPercentage();
+        const actualValueUsdt = await josephUsdt.getRedeemLpMaxUtilizationRate();
+        const actualValueUsdc = await josephUsdc.getRedeemLpMaxUtilizationRate();
+        const actualValueDai = await josephDai.getRedeemLpMaxUtilizationRate();
 
         //then
         expect(actualValueUsdt).to.be.eq(N1__0_18DEC);

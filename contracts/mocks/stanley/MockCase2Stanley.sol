@@ -11,7 +11,7 @@ contract MockCase2Stanley is MockCaseBaseStanley {
     }
 
     //@dev withdraw 80%
-    function _withdrawPercentage() internal pure override returns (uint256) {
+    function _withdrawRate() internal pure override returns (uint256) {
         return 8e17;
     }
 }

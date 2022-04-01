@@ -3,10 +3,10 @@ pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
 
-/// @title Interface for interaction with Warren, smart contract responsible for managing IPOR Index.
-interface IWarren {
-    /// @notice Returns current version of Warren's
-    /// @return current Warren version
+/// @title Interface for interaction with IporOracle, smart contract responsible for managing IPOR Index.
+interface IIporOracle {
+    /// @notice Returns current version of IporOracle's
+    /// @return current IporOracle version
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets IPOR Index indicators for a given asset
@@ -80,11 +80,11 @@ interface IWarren {
     function removeAsset(address asset) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Paused} event from Warren.
+    /// @dev Emits {Paused} event from IporOracle.
     function pause() external;
 
     /// @notice Unpauses current smart contract, it can be executed only by the Owner
-    /// @dev Emits {Unpaused} event from Warren.
+    /// @dev Emits {Unpaused} event from IporOracle.
     function unpause() external;
 
     /// @notice Emmited when Charlie update IPOR Index.

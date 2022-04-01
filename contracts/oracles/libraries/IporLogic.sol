@@ -2,13 +2,13 @@
 pragma solidity 0.8.9;
 
 import "../../libraries/Constants.sol";
-import "../../libraries/errors/WarrenErrors.sol";
+import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
-import "../../interfaces/types/WarrenTypes.sol";
+import "../../interfaces/types/IporOracleTypes.sol";
 import "../../libraries/math/IporMath.sol";
 
 library IporLogic {
-    function accrueQuasiIbtPrice(WarrenTypes.IPOR memory ipor, uint256 accrueTimestamp)
+    function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)
         internal
         pure
         returns (uint256)
@@ -33,7 +33,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         require(
             accrueTimestamp >= indexTimestamp,
-            WarrenErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
+            IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
         return quasiIbtPrice + (indexValue * (accrueTimestamp - indexTimestamp));
     }

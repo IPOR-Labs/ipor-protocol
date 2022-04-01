@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
@@ -28,7 +28,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function initialize(
         address asset,
-        address warren,
+        address iporOracle,
         address miltonStorage,
         address miltonSpreadModel,
         address stanley
@@ -36,7 +36,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
@@ -44,7 +44,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
-        _warren = IWarren(warren);
+        _iporOracle = IIporOracle(iporOracle);
         _asset = asset;
         _stanley = IStanley(stanley);
     }
@@ -53,9 +53,9 @@ abstract contract Milton is MiltonInternal, IMilton {
         external
         view
         override
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
-        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(block.timestamp);
+        (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(block.timestamp);
     }
 
     function calculateSoap()
@@ -77,19 +77,31 @@ abstract contract Milton is MiltonInternal, IMilton {
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
-        return _openSwapPayFixed(block.timestamp, totalAmount, toleratedQuoteValue, leverage);
+        return
+            _openSwapPayFixed(
+                block.timestamp,
+                totalAmount,
+                maxAcceptableFixedInterestRate,
+                leverage
+            );
     }
 
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
-        return _openSwapReceiveFixed(block.timestamp, totalAmount, toleratedQuoteValue, leverage);
+        return
+            _openSwapReceiveFixed(
+                block.timestamp,
+                totalAmount,
+                maxAcceptableFixedInterestRate,
+                leverage
+            );
     }
 
     function closeSwapPayFixed(uint256 swapId) external override nonReentrant whenNotPaused {
@@ -144,12 +156,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
 
-    
-
     function _calculateIncomeFeeValue(int256 positionValue) internal pure returns (uint256) {
         return
             IporMath.division(
-                IporMath.absoluteValue(positionValue) * _getIncomeFeePercentage(),
+                IporMath.absoluteValue(positionValue) * _getIncomeFeeRate(),
                 Constants.D18
             );
     }
@@ -157,21 +167,21 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _calculateSpread(uint256 calculateTimestamp)
         internal
         view
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
-        IporTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
         );
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        spreadPayFixedValue = _miltonSpreadModel.calculateSpreadPayFixed(
+        spreadPayFixed = _miltonSpreadModel.calculateSpreadPayFixed(
             _miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
         );
-        spreadRecFixedValue = _miltonSpreadModel.calculateSpreadRecFixed(
+        spreadReceiveFixed = _miltonSpreadModel.calculateSpreadReceiveFixed(
             _miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
@@ -192,11 +202,11 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
-        require(leverage >= _getMinLeverageValue(), MiltonErrors.LEVERAGE_TOO_LOW);
-        require(leverage <= _getMaxLeverageValue(), MiltonErrors.LEVERAGE_TOO_HIGH);
+        require(leverage >= _getMinLeverage(), MiltonErrors.LEVERAGE_TOO_LOW);
+        require(leverage <= _getMaxLeverage(), MiltonErrors.LEVERAGE_TOO_HIGH);
 
         require(
-            wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFeeAmount(),
+            wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFee(),
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -205,13 +215,13 @@ abstract contract Milton is MiltonInternal, IMilton {
                 wadTotalAmount,
                 leverage,
                 _getLiquidationDepositAmount(),
-                _getIporPublicationFeeAmount(),
-                _getOpeningFeePercentage()
+                _getIporPublicationFee(),
+                _getOpeningFeeRate()
             );
 
         (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = _splitOpeningFeeAmount(
             openingFeeAmount,
-            _getOpeningFeeForTreasuryPercentage()
+            _getOpeningFeeTreasuryPortionRate()
         );
 
         require(
@@ -221,7 +231,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         require(
             wadTotalAmount >
-                _getLiquidationDepositAmount() + _getIporPublicationFeeAmount() + openingFeeAmount,
+                _getLiquidationDepositAmount() + _getIporPublicationFee() + openingFeeAmount,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -232,18 +242,19 @@ abstract contract Milton is MiltonInternal, IMilton {
                 notional,
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
-                _getIporPublicationFeeAmount(),
+                _getIporPublicationFee(),
                 _getLiquidationDepositAmount(),
-                _warren.getAccruedIndex(openTimestamp, _asset)
+                _iporOracle.getAccruedIndex(openTimestamp, _asset)
             );
     }
 
-    function _splitOpeningFeeAmount(
-        uint256 openingFeeAmount,
-        uint256 openingFeeForTreasurePercentage
-    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
+    function _splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasureRate)
+        internal
+        pure
+        returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
+    {
         treasuryAmount = IporMath.division(
-            openingFeeAmount * openingFeeForTreasurePercentage,
+            openingFeeAmount * openingFeeForTreasureRate,
             Constants.D18
         );
         liquidityPoolAmount = openingFeeAmount - treasuryAmount;
@@ -253,7 +264,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
@@ -264,12 +275,12 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
-        balance.payFixedTotalCollateral = balance.payFixedTotalCollateral + bosStruct.collateral;
+        balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.payFixedTotalCollateral,
-            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
+            balance.totalCollateralPayFixed,
+            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -279,7 +290,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         require(
-            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            maxAcceptableFixedInterestRate != 0 && quoteValue <= maxAcceptableFixedInterestRate,
             MiltonErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
@@ -303,7 +314,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            _getIporPublicationFeeAmount()
+            _getIporPublicationFee()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -324,7 +335,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
@@ -336,14 +347,14 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
-        balance.receiveFixedTotalCollateral =
-            balance.receiveFixedTotalCollateral +
+        balance.totalCollateralReceiveFixed =
+            balance.totalCollateralReceiveFixed +
             bosStruct.collateral;
 
         _validateLiqudityPoolUtylization(
             balance.liquidityPool,
-            balance.receiveFixedTotalCollateral,
-            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral
+            balance.totalCollateralReceiveFixed,
+            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
@@ -353,7 +364,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         require(
-            toleratedQuoteValue != 0 && quoteValue <= toleratedQuoteValue,
+            maxAcceptableFixedInterestRate != 0 && quoteValue <= maxAcceptableFixedInterestRate,
             MiltonErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
         );
 
@@ -377,7 +388,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
-            _getIporPublicationFeeAmount()
+            _getIporPublicationFee()
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
@@ -418,12 +429,12 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
 
         require(
-            utilizationRate <= _getMaxLpUtilizationPercentage(),
+            utilizationRate <= _getMaxLpUtilizationRate(),
             MiltonErrors.LP_UTILIZATION_EXCEEDED
         );
 
         require(
-            utilizationRatePerLeg <= _getMaxLpUtilizationPerLegPercentage(),
+            utilizationRatePerLeg <= _getMaxLpUtilizationPerLegRate(),
             MiltonErrors.LP_UTILIZATION_PER_LEG_EXCEEDED
         );
     }
@@ -434,7 +445,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         AmmTypes.NewSwap memory newSwap,
         MiltonTypes.IporSwapIndicator memory indicator,
         uint256 direction,
-        uint256 iporPublicationAmount
+        uint256 iporPublicationFee
     ) internal {
         emit OpenSwap(
             newSwapId,
@@ -444,10 +455,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             AmmTypes.OpenSwapMoney(
                 wadTotalAmount,
                 newSwap.collateral,
-                newSwap.notionalAmount,
+                newSwap.notional,
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
-                iporPublicationAmount,
+                iporPublicationFee,
                 newSwap.liquidationDepositAmount
             ),
             newSwap.openTimestamp,
@@ -458,10 +469,10 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function _calculateSwapdicators(
         uint256 calculateTimestamp,
-        uint256 notionalAmount,
+        uint256 notional,
         uint256 quoteValue
     ) internal view returns (MiltonTypes.IporSwapIndicator memory indicator) {
-        IporTypes.AccruedIpor memory accruedIpor = _warren.getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
         );
@@ -471,7 +482,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         indicator = MiltonTypes.IporSwapIndicator(
             accruedIpor.indexValue,
             accruedIpor.ibtPrice,
-            IporMath.division(notionalAmount * Constants.D18, accruedIpor.ibtPrice),
+            IporMath.division(notional * Constants.D18, accruedIpor.ibtPrice),
             quoteValue
         );
     }
@@ -493,8 +504,8 @@ abstract contract Milton is MiltonInternal, IMilton {
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeFeePercentage(),
-            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getIncomeFeeRate(),
+            _getMinLiquidationThresholdToCloseBeforeMaturity(),
             _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
@@ -505,8 +516,8 @@ abstract contract Milton is MiltonInternal, IMilton {
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                _getIncomeFeePercentage(),
-                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getIncomeFeeRate(),
+                _getMinLiquidationThresholdToCloseBeforeMaturity(),
                 _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
@@ -537,8 +548,8 @@ abstract contract Milton is MiltonInternal, IMilton {
             iporSwap,
             positionValue,
             closeTimestamp,
-            _getIncomeFeePercentage(),
-            _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+            _getIncomeFeeRate(),
+            _getMinLiquidationThresholdToCloseBeforeMaturity(),
             _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         );
 
@@ -549,8 +560,8 @@ abstract contract Milton is MiltonInternal, IMilton {
                 iporSwap,
                 positionValue,
                 closeTimestamp,
-                _getIncomeFeePercentage(),
-                _getMinPercentagePositionValueWhenClosingBeforeMaturity(),
+                _getIncomeFeeRate(),
+                _getMinLiquidationThresholdToCloseBeforeMaturity(),
                 _getSecondsBeforeMaturityWhenPositionCanBeClosed()
             );
 
@@ -584,14 +595,14 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
         uint256 _calculationTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferredToBuyer, uint256 transferredToLiquidator) {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
             derivativeItem.collateral,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity
+            cfgMinLiquidationThresholdToCloseBeforeMaturity
         );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
@@ -613,7 +624,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral +
                     absPositionValue -
-                    IporMath.division(absPositionValue * cfgIncomeFeePercentage, Constants.D18)
+                    IporMath.division(absPositionValue * cfgIncomeFeeRate, Constants.D18)
             );
         } else {
             //Milton earn, Trader looseMiltonStorage

@@ -88,9 +88,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalNotional}</small>
+                                <small>{value.totalNotionalPayFixed}</small>
                             </div>
                         )}
                     />
@@ -104,9 +104,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalNotional}</small>
+                                <small>{value.totalNotionalPayFixed}</small>
                             </div>
                         )}
                     />
@@ -120,9 +120,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalNotional}</small>
+                                <small>{value.totalNotionalPayFixed}</small>
                             </div>
                         )}
                     />
@@ -139,9 +139,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalNotional}</small>
+                                <small>{value.totalNotionalReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -155,9 +155,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalNotional}</small>
+                                <small>{value.totalNotionalReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -171,9 +171,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalNotional / 1000000000000000000}
+                                {value.totalNotionalReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalNotional}</small>
+                                <small>{value.totalNotionalReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -190,9 +190,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -206,9 +206,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -222,9 +222,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.payFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.payFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
                     />
@@ -241,9 +241,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -257,9 +257,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -273,9 +273,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
                             <div>
-                                {value.recFixedTotalCollateral / 1000000000000000000}
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{value.recFixedTotalCollateral}</small>
+                                <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
                     />

@@ -38,7 +38,7 @@ import {
     UsdtMockedToken,
 } from "../../types";
 
-import { exetuceCloseSwapTestCase } from "./SwapUtiles";
+import { exetuceCloseSwapTestCase } from "./SwapUtils";
 
 import {
     USD_10_000_6DEC,
@@ -275,7 +275,7 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        toleratedQuoteValue: BigNumber.from("6").mul(N0__01_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -299,7 +299,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    toleratedQuoteValue: BigNumber,
+    maxAcceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -395,7 +395,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        toleratedQuoteValue,
+        maxAcceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,
@@ -423,7 +423,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    toleratedQuoteValue: BigNumber,
+    maxAcceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -524,7 +524,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        toleratedQuoteValue,
+        maxAcceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,

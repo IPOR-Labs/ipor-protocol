@@ -31,14 +31,14 @@ import { TestData, prepareTestData } from "./utils/DataUtils";
 import { MockStanleyCase } from "./utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "./utils/JosephUtils";
 import { assertError } from "./utils/AssertUtils";
-import { ItfWarren, DaiMockedToken, UsdtMockedToken, UsdcMockedToken } from "../types";
+import { ItfIporOracle, DaiMockedToken, UsdtMockedToken, UsdcMockedToken } from "../types";
 
 const { expect } = chai;
 
-describe("Warren", () => {
+describe("IporOracle", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let testData: TestData;
-    let _warren: ItfWarren;
+    let _iporOracle: ItfIporOracle;
     let _tokenDai: DaiMockedToken;
     let _tokenUsdt: UsdtMockedToken;
     let _tokenUsdc: UsdcMockedToken;
@@ -66,30 +66,30 @@ describe("Warren", () => {
             JosephUsdtMockCases.CASE0,
             JosephDaiMockCases.CASE0
         )) as TestData;
-        const { warren, tokenUsdt, tokenUsdc, tokenDai } = testData;
+        const { iporOracle, tokenUsdt, tokenUsdc, tokenDai } = testData;
         if (tokenUsdt === undefined || tokenUsdc === undefined || tokenDai === undefined) {
             expect(true).to.be.false;
             return;
         }
-        _warren = warren;
+        _iporOracle = iporOracle;
         _tokenDai = tokenDai;
         _tokenUsdt = tokenUsdt;
         _tokenUsdc = tokenUsdc;
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _warren.itfGetDecayFactorValue();
+        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
         //when
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(admin).pause();
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(admin).pause();
 
         //then
         await assertError(
-            _warren.connect(userOne).updateIndex(_tokenUsdt.address, BigNumber.from("123")),
+            _iporOracle.connect(userOne).updateIndex(_tokenUsdt.address, BigNumber.from("123")),
             "Pausable: paused"
         );
     });
@@ -103,37 +103,37 @@ describe("Warren", () => {
             BigNumber.from("7").mul(N0__01_18DEC),
         ];
 
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(admin).pause();
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(admin).pause();
 
         //when
         await assertError(
-            _warren.connect(userOne).updateIndex(_tokenUsdt.address, 123),
+            _iporOracle.connect(userOne).updateIndex(_tokenUsdt.address, 123),
             "Pausable: paused"
         );
 
         await assertError(
-            _warren.connect(userOne).updateIndexes(assets, indexValues),
+            _iporOracle.connect(userOne).updateIndexes(assets, indexValues),
             "Pausable: paused"
         );
 
         await assertError(
-            _warren.connect(admin).addAsset(await userThree.getAddress()),
+            _iporOracle.connect(admin).addAsset(await userThree.getAddress()),
             "Pausable: paused"
         );
 
         await assertError(
-            _warren.connect(admin).removeAsset(await userThree.getAddress()),
+            _iporOracle.connect(admin).removeAsset(await userThree.getAddress()),
             "Pausable: paused"
         );
 
         await assertError(
-            _warren.connect(admin).addUpdater(await userThree.getAddress()),
+            _iporOracle.connect(admin).addUpdater(await userThree.getAddress()),
             "Pausable: paused"
         );
 
         await assertError(
-            _warren.connect(admin).removeUpdater(await userThree.getAddress()),
+            _iporOracle.connect(admin).removeUpdater(await userThree.getAddress()),
             "Pausable: paused"
         );
     });
@@ -148,23 +148,23 @@ describe("Warren", () => {
         ];
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(admin).pause();
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(admin).pause();
 
         //when
-        await _warren.connect(userOne).getIndex(_tokenUsdt.address);
+        await _iporOracle.connect(userOne).getIndex(_tokenUsdt.address);
 
-        await _warren.connect(userOne).getAccruedIndex(timestamp, _tokenUsdt.address);
+        await _iporOracle.connect(userOne).getAccruedIndex(timestamp, _tokenUsdt.address);
 
-        await _warren.connect(userOne).calculateAccruedIbtPrice(_tokenUsdt.address, timestamp);
+        await _iporOracle.connect(userOne).calculateAccruedIbtPrice(_tokenUsdt.address, timestamp);
 
-        await _warren.connect(userOne).isUpdater(await userOne.getAddress());
+        await _iporOracle.connect(userOne).isUpdater(await userOne.getAddress());
     });
 
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //when
         await assertError(
-            _warren.connect(userThree).pause(),
+            _iporOracle.connect(userThree).pause(),
             //then
             "Ownable: caller is not the owner"
         );
@@ -181,20 +181,20 @@ describe("Warren", () => {
         ];
         const expectedIporIndexValue = BigNumber.from("7").mul(N0__01_18DEC);
 
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(admin).pause();
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(admin).pause();
 
         await assertError(
-            _warren.connect(userOne).updateIndexes(assets, indexValues),
+            _iporOracle.connect(userOne).updateIndexes(assets, indexValues),
             "Pausable: paused"
         );
 
         //when
-        await _warren.connect(admin).unpause();
-        await _warren.connect(userOne).updateIndexes(assets, indexValues);
+        await _iporOracle.connect(admin).unpause();
+        await _iporOracle.connect(userOne).updateIndexes(assets, indexValues);
 
         //then
-        const iporIndex = await _warren.connect(userOne).getIndex(_tokenDai.address);
+        const iporIndex = await _iporOracle.connect(userOne).getIndex(_tokenDai.address);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
         expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
@@ -202,11 +202,11 @@ describe("Warren", () => {
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
-        await _warren.connect(admin).pause();
+        await _iporOracle.connect(admin).pause();
 
         //when
         await assertError(
-            _warren.connect(userThree).unpause(),
+            _iporOracle.connect(userThree).unpause(),
             //then
             "Ownable: caller is not the owner"
         );
@@ -217,12 +217,12 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
-        await _warren.connect(expectedNewOwner).confirmTransferOwnership();
+        await _iporOracle.connect(expectedNewOwner).confirmTransferOwnership();
 
         //then
-        const actualNewOwner = await _warren.connect(userOne).owner();
+        const actualNewOwner = await _iporOracle.connect(userOne).owner();
         expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
     });
 
@@ -232,7 +232,7 @@ describe("Warren", () => {
 
         //when
         await assertError(
-            _warren.connect(userThree).transferOwnership(await expectedNewOwner.getAddress()),
+            _iporOracle.connect(userThree).transferOwnership(await expectedNewOwner.getAddress()),
             //then
             "Ownable: caller is not the owner"
         );
@@ -243,10 +243,10 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         await assertError(
-            _warren.connect(userThree).confirmTransferOwnership(),
+            _iporOracle.connect(userThree).confirmTransferOwnership(),
             //then
             "IPOR_007"
         );
@@ -257,24 +257,27 @@ describe("Warren", () => {
         const expectedNewOwner = userTwo;
 
         //when
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
-        await _warren.connect(expectedNewOwner).confirmTransferOwnership();
+        await _iporOracle.connect(expectedNewOwner).confirmTransferOwnership();
 
-        await assertError(_warren.connect(expectedNewOwner).confirmTransferOwnership(), "IPOR_007");
+        await assertError(
+            _iporOracle.connect(expectedNewOwner).confirmTransferOwnership(),
+            "IPOR_007"
+        );
     });
 
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
-        await _warren.connect(expectedNewOwner).confirmTransferOwnership();
+        await _iporOracle.connect(expectedNewOwner).confirmTransferOwnership();
 
         //when
         await assertError(
-            _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress()),
+            _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress()),
             //then
             "Ownable: caller is not the owner"
         );
@@ -284,35 +287,35 @@ describe("Warren", () => {
         //given
         const expectedNewOwner = userTwo;
 
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         //when
-        await _warren.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        await _iporOracle.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
         //then
-        const actualNewOwner = await _warren.connect(userOne).owner();
+        const actualNewOwner = await _iporOracle.connect(userOne).owner();
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _warren.itfGetDecayFactorValue();
+        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
     });
 
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
         await assertError(
-            _warren.connect(userThree).updateIndex(_tokenUsdt.address, 123),
+            _iporOracle.connect(userThree).updateIndex(_tokenUsdt.address, 123),
             "IPOR_202"
         );
     });
 
-    it("should NOT update IPOR Index because _warren is not on list of updaters", async () => {
+    it("should NOT update IPOR Index because _iporOracle is not on list of updaters", async () => {
         //given
-        await _warren.removeUpdater(_warren.address);
+        await _iporOracle.removeUpdater(_iporOracle.address);
 
         await assertError(
             //when
-            _warren.connect(userTwo).updateIndex(_tokenUsdt.address, 123),
+            _iporOracle.connect(userTwo).updateIndex(_tokenUsdt.address, 123),
             //then
             "IPOR_202"
         );
@@ -322,13 +325,13 @@ describe("Warren", () => {
         //given
         const asset = _tokenDai.address;
         const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
         //when
-        await _warren.connect(userOne).updateIndex(asset, expectedIndexValue);
+        await _iporOracle.connect(userOne).updateIndex(asset, expectedIndexValue);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
 
@@ -344,7 +347,7 @@ describe("Warren", () => {
 
     it("should add IPOR Index Updater", async () => {
         //given
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
         const expectedIporIndexValue = BigNumber.from("7").mul(N0__01_18DEC);
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
@@ -355,10 +358,10 @@ describe("Warren", () => {
         ];
 
         //when
-        await _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
-        const iporIndex = await _warren.connect(userOne).getIndex(_tokenDai.address);
+        const iporIndex = await _iporOracle.connect(userOne).getIndex(_tokenDai.address);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
         expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
@@ -366,18 +369,18 @@ describe("Warren", () => {
 
     it("should NOT add IPOR Index Updater", async () => {
         await assertError(
-            _warren.connect(userThree).addUpdater(await userTwo.getAddress()),
+            _iporOracle.connect(userThree).addUpdater(await userTwo.getAddress()),
             "Ownable: caller is not the owner"
         );
     });
 
     it("should remove IPOR Index Updater", async () => {
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.removeUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.removeUpdater(await userOne.getAddress());
 
         await assertError(
             //when
-            _warren.connect(userOne).updateIndex(_tokenUsdt.address, 123),
+            _iporOracle.connect(userOne).updateIndex(_tokenUsdt.address, 123),
             //then
             "IPOR_202"
         );
@@ -385,7 +388,7 @@ describe("Warren", () => {
 
     it("should NOT remove IPOR Index Updater", async () => {
         await assertError(
-            _warren.connect(userThree).removeUpdater(await userTwo.getAddress()),
+            _iporOracle.connect(userThree).removeUpdater(await userTwo.getAddress()),
             "Ownable: caller is not the owner"
         );
     });
@@ -395,14 +398,14 @@ describe("Warren", () => {
         const asset = _tokenUsdt.address;
         const expectedIndexValueOne = BigNumber.from("123000000000000000");
         const expectedIndexValueTwo = BigNumber.from("321000000000000000");
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
         //when
-        await _warren.connect(userOne).updateIndex(asset, expectedIndexValueOne);
-        await _warren.connect(userOne).updateIndex(asset, expectedIndexValueTwo);
+        await _iporOracle.connect(userOne).updateIndex(asset, expectedIndexValueOne);
+        await _iporOracle.connect(userOne).updateIndex(asset, expectedIndexValueTwo);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
         expect(
@@ -414,14 +417,14 @@ describe("Warren", () => {
     it("should calculate initial Interest Bearing Token Price", async () => {
         //given
         const asset = _tokenUsdt.address;
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const iporIndexValue = BigNumber.from("50000").mul(N0__01_18DEC);
 
         //when
-        await _warren.connect(userOne).updateIndex(asset, iporIndexValue);
+        await _iporOracle.connect(userOne).updateIndex(asset, iporIndexValue);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
@@ -438,20 +441,20 @@ describe("Warren", () => {
     it("should calculate next Interest Bearing Token Price - one year period", async () => {
         //given
         const asset = _tokenUsdt.address;
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         const updateDateSecond = updateDate.add(YEAR_IN_SECONDS);
 
         const iporIndexSecondValue = BigNumber.from("51000000000000000");
 
         //when
-        await _warren
+        await _iporOracle
             .connect(userOne)
             .itfUpdateIndex(asset, iporIndexSecondValue, updateDateSecond);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
         const expectedIbtPrice = BigNumber.from("105").mul(N0__01_18DEC);
@@ -470,16 +473,16 @@ describe("Warren", () => {
         //given
         const asset = _tokenUsdt.address;
         let updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate.add(MONTH_IN_SECONDS);
         const iporIndexSecondValue = PERCENTAGE_6_6DEC;
 
         //when
-        await _warren.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
@@ -500,11 +503,11 @@ describe("Warren", () => {
         //given
         const asset = _tokenUsdt.address;
         let updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
 
-        const actualFirstIporIndex = await _warren.getIndex(asset);
+        const actualFirstIporIndex = await _iporOracle.getIndex(asset);
         const actualFirstIbtPrice = BigNumber.from(actualFirstIporIndex.ibtPrice);
         const actualFirstIndexValue = BigNumber.from(actualFirstIporIndex.indexValue);
 
@@ -513,10 +516,10 @@ describe("Warren", () => {
         const iporIndexSecondValue = PERCENTAGE_5_18DEC;
 
         //when
-        await _warren.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
-        const actualSecondIporIndex = await _warren.getIndex(asset);
+        const actualSecondIporIndex = await _iporOracle.getIndex(asset);
         const actualSecondIbtPrice = BigNumber.from(actualSecondIporIndex.ibtPrice);
         const actualSecondIndexValue = BigNumber.from(actualSecondIporIndex.indexValue);
 
@@ -535,10 +538,10 @@ describe("Warren", () => {
         //given
         const asset = _tokenDai.address;
         let updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
 
-        const actualFirstIporIndex = await _warren.getIndex(asset);
+        const actualFirstIporIndex = await _iporOracle.getIndex(asset);
         const actualFirstIbtPrice = BigNumber.from(actualFirstIporIndex.ibtPrice);
         const actualFirstIndexValue = BigNumber.from(actualFirstIporIndex.indexValue);
 
@@ -547,10 +550,10 @@ describe("Warren", () => {
         const iporIndexSecondValue = PERCENTAGE_5_18DEC;
 
         //when
-        await _warren.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, iporIndexSecondValue, updateDate);
 
         //then
-        const actualSecondIporIndex = await _warren.getIndex(asset);
+        const actualSecondIporIndex = await _iporOracle.getIndex(asset);
         const actualSecondIbtPrice = BigNumber.from(actualSecondIporIndex.ibtPrice);
         const actualSecondIndexValue = BigNumber.from(actualSecondIporIndex.indexValue);
 
@@ -568,20 +571,20 @@ describe("Warren", () => {
     it("should calculate next after next Interest Bearing Token Price - half year and three months snapshots", async () => {
         //given
         const asset = _tokenUsdt.address;
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         let updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_5_18DEC, updateDate);
         updateDate = updateDate.add(YEAR_IN_SECONDS.div(BigNumber.from(2)));
-        await _warren.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_6_18DEC, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, PERCENTAGE_6_18DEC, updateDate);
         updateDate = updateDate.add(YEAR_IN_SECONDS.div(BigNumber.from(4)));
 
         let iporIndexThirdValue = PERCENTAGE_7_18DEC;
 
         //when
-        await _warren.connect(userOne).itfUpdateIndex(asset, iporIndexThirdValue, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndex(asset, iporIndexThirdValue, updateDate);
 
         //then
-        const iporIndex = await _warren.getIndex(asset);
+        const iporIndex = await _iporOracle.getIndex(asset);
 
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
@@ -600,14 +603,14 @@ describe("Warren", () => {
     it("should NOT update IPOR Index - asset not supported", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
         const assets = [await userOne.getAddress()];
         const indexValues = [BigNumber.from("5").mul(N0__01_18DEC)];
 
         await assertError(
             //when
-            _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
+            _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
             "IPOR_200"
         );
@@ -616,14 +619,14 @@ describe("Warren", () => {
     it("should NOT update IPOR Index - wrong input arrays", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
         const assets = [_tokenUsdc.address, _tokenDai.address];
         const indexValues = [BigNumber.from("5").mul(N0__01_18DEC)];
 
         await assertError(
             //when
-            _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
+            _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate),
             //then
             "IPOR_005"
         );
@@ -632,20 +635,20 @@ describe("Warren", () => {
     it("should NOT update IPOR Index - Accrue timestamp lower than current ipor index timestamp", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenUsdc.address, _tokenDai.address];
         const indexValues = [
             BigNumber.from("5").mul(N0__01_18DEC),
             BigNumber.from("5").mul(N0__01_18DEC),
         ];
-        await _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         const wrongUpdateDate = updateDate.sub(BigNumber.from(1));
 
         //when
         await assertError(
             //when
-            _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
+            _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, wrongUpdateDate),
             //then
             "IPOR_203"
         );
@@ -654,17 +657,17 @@ describe("Warren", () => {
     it("should update IPOR Index - correct input arrays", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
 
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
         const indexValues = [PERCENTAGE_8_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_5_18DEC];
 
         //when
-        await _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
         for (let i = 0; i < assets.length; i++) {
-            const iporIndex = await _warren.getIndex(assets[i]);
+            const iporIndex = await _iporOracle.getIndex(assets[i]);
             const actualIndexValue = BigNumber.from(iporIndex.indexValue);
             expect(
                 actualIndexValue,
@@ -676,15 +679,15 @@ describe("Warren", () => {
     it("should calculate initial Exponential Moving Average - simple case 1", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenDai.address, _tokenUsdc.address, _tokenUsdt.address];
         const indexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const expectedExpoMovingAverage = PERCENTAGE_7_18DEC;
         //when
-        await _warren.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
 
         //then
-        const iporIndex = await _warren.getIndex(assets[0]);
+        const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = BigNumber.from(
             await iporIndex.exponentialMovingAverage
         );
@@ -697,18 +700,18 @@ describe("Warren", () => {
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 18 decimals", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenDai.address, _tokenUsdt.address, _tokenUsdc.address];
         const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
         const expectedExpoMovingAverage = BigNumber.from("285000000000000000");
 
         //when
-        await _warren.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _warren.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
 
         //then
-        const iporIndex = await _warren.getIndex(assets[0]);
+        const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = BigNumber.from(
             await iporIndex.exponentialMovingAverage
         );
@@ -721,18 +724,18 @@ describe("Warren", () => {
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals", async () => {
         //given
         const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _warren.addUpdater(await userOne.getAddress());
+        await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
         const expectedExpoMovingAverage = BigNumber.from("285000");
 
         //when
-        await _warren.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _warren.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
+        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
 
         //then
-        const iporIndex = await _warren.getIndex(assets[0]);
+        const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
         expect(
             actualExponentialMovingAverage,
@@ -740,13 +743,13 @@ describe("Warren", () => {
         ).to.be.eql(expectedExpoMovingAverage);
     });
 
-    it("should not sent ETH to _warren", async () => {
+    it("should not sent ETH to _iporOracle", async () => {
         //given
 
         await assertError(
             //when
             admin.sendTransaction({
-                to: _warren.address,
+                to: _iporOracle.address,
                 value: hre.ethers.utils.parseEther("1.0"),
             }),
             //then

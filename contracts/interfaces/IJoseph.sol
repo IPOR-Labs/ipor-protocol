@@ -19,8 +19,8 @@ interface IJoseph {
     /// @notice Redeems `ipTokenAmount` IpTokens for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
     /// Transfers asser ERC20 tokens from Milton to sender based on current exchange rate.
-    /// @param ipTokenVolume redeem amount
-    function redeem(uint256 ipTokenVolume) external;
+    /// @param ipTokenAmount redeem amount
+    function redeem(uint256 ipTokenAmount) external;
 
     /// @notice Returns reserve ratio of Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset.
     /// Resere ratio is the ratio between ERC20 asset kept on hand by Milton, not delegated to Stanley and total amount of asset.

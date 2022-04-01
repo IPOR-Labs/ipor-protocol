@@ -7,19 +7,26 @@ abstract contract ItfMilton is Milton {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256) {
-        return _openSwapPayFixed(openTimestamp, totalAmount, toleratedQuoteValue, leverage);
+        return
+            _openSwapPayFixed(openTimestamp, totalAmount, maxAcceptableFixedInterestRate, leverage);
     }
 
     function itfOpenSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 toleratedQuoteValue,
+        uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256) {
-        return _openSwapReceiveFixed(openTimestamp, totalAmount, toleratedQuoteValue, leverage);
+        return
+            _openSwapReceiveFixed(
+                openTimestamp,
+                totalAmount,
+                maxAcceptableFixedInterestRate,
+                leverage
+            );
     }
 
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
@@ -53,9 +60,9 @@ abstract contract ItfMilton is Milton {
     function itfCalculateSpread(uint256 calculateTimestamp)
         external
         view
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
-        (spreadPayFixedValue, spreadRecFixedValue) = _calculateSpread(calculateTimestamp);
+        (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(calculateTimestamp);
     }
 
     function itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId)

@@ -81,7 +81,7 @@ describe("Joseph Treasury", () => {
 
     it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
         //given
-        const { josephDai, tokenDai, warren, miltonDai, miltonStorageDai } =
+        const { josephDai, tokenDai, iporOracle, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel
@@ -99,7 +99,7 @@ describe("Joseph Treasury", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -112,7 +112,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -211,7 +211,7 @@ describe("Joseph Treasury", () => {
             miltonSpreadModel
         );
 
-        const { josephDai, tokenDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { josephDai, tokenDai, iporOracle, miltonDai, miltonStorageDai } = testData;
 
         if (
             josephDai === undefined ||
@@ -224,7 +224,7 @@ describe("Joseph Treasury", () => {
         }
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -237,7 +237,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

@@ -13,7 +13,7 @@ import "../libraries/errors/MiltonErrors.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -32,40 +32,39 @@ abstract contract MiltonInternal is
     using SafeCast for uint256;
     using SafeCast for uint128;
     using SafeCast for int256;
-	using IporSwapLogic for IporTypes.IporSwapMemory;
+    using IporSwapLogic for IporTypes.IporSwapMemory;
 
     //@notice max total amount used when opening position
     uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
 
-    uint256 internal constant _MAX_LP_UTILIZATION_PERCENTAGE = 8 * 1e17;
+    uint256 internal constant _MAX_LP_UTILIZATION_RATE = 8 * 1e17;
 
-    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE = 48 * 1e16;
+    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 48 * 1e16;
 
-    uint256 internal constant _INCOME_TAX_PERCENTAGE = 1e17;
+    uint256 internal constant _INCOME_TAX_RATE = 1e17;
 
-    uint256 internal constant _OPENING_FEE_PERCENTAGE = 1e16;
+    uint256 internal constant _OPENING_FEE_RATE = 1e16;
 
     //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
     //below value define how big pie going to Treasury Balance
-    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PERCENTAGE = 0;
+    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 0;
 
-    uint256 internal constant _IPOR_PUBLICATION_FEE_AMOUNT = 10 * 1e18;
+    uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
     uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 20 * 1e18;
 
-    uint256 internal constant _MAX_LEVERAGE_VALUE = 1000 * 1e18;
+    uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
 
-    uint256 internal constant _MIN_LEVERAGE_VALUE = 10 * 1e18;
+    uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
-    uint256 internal constant _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY =
-        99 * 1e16;
+    uint256 internal constant _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY = 99 * 1e16;
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     address internal _asset;
     IIpToken internal _ipToken;
     address internal _joseph;
-    IWarren internal _warren;
+    IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
     IStanley internal _stanley;
@@ -87,40 +86,40 @@ abstract contract MiltonInternal is
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function getMaxLpUtilizationPercentage() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_PERCENTAGE;
+    function getMaxLpUtilizationRate() external pure override returns (uint256) {
+        return _MAX_LP_UTILIZATION_RATE;
     }
 
-    function getMaxLpUtilizationPerLegPercentage() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
+    function getMaxLpUtilizationPerLegRate() external pure override returns (uint256) {
+        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
     }
 
-    function getIncomeFeePercentage() external pure override returns (uint256) {
-        return _INCOME_TAX_PERCENTAGE;
+    function getIncomeFeeRate() external pure override returns (uint256) {
+        return _INCOME_TAX_RATE;
     }
 
-    function getOpeningFeePercentage() external pure override returns (uint256) {
-        return _OPENING_FEE_PERCENTAGE;
+    function getOpeningFeeRate() external pure override returns (uint256) {
+        return _OPENING_FEE_RATE;
     }
 
-    function getOpeningFeeForTreasuryPercentage() external pure override returns (uint256) {
-        return _OPENING_FEE_FOR_TREASURY_PERCENTAGE;
+    function getOpeningFeeTreasuryPortionRate() external pure override returns (uint256) {
+        return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
     }
 
-    function getIporPublicationFeeAmount() external pure override returns (uint256) {
-        return _IPOR_PUBLICATION_FEE_AMOUNT;
+    function getIporPublicationFee() external pure override returns (uint256) {
+        return _IPOR_PUBLICATION_FEE;
     }
 
     function getLiquidationDepositAmount() external pure override returns (uint256) {
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function getMaxLeverageValue() external pure override returns (uint256) {
-        return _MAX_LEVERAGE_VALUE;
+    function getMaxLeverage() external pure override returns (uint256) {
+        return _MAX_LEVERAGE;
     }
 
-    function getMinLeverageValue() external pure override returns (uint256) {
-        return _MIN_LEVERAGE_VALUE;
+    function getMinLeverage() external pure override returns (uint256) {
+        return _MIN_LEVERAGE;
     }
 
     function getAccruedBalance()
@@ -132,7 +131,7 @@ abstract contract MiltonInternal is
         return _getAccruedBalance();
     }
 
-    function calculateSoapForTimestamp(uint256 calculateTimestamp)
+    function calculateSoapAtTimestamp(uint256 calculateTimestamp)
         external
         view
         override
@@ -221,49 +220,49 @@ abstract contract MiltonInternal is
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxLpUtilizationPercentage() internal pure virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_PERCENTAGE;
+    function _getMaxLpUtilizationRate() internal pure virtual returns (uint256) {
+        return _MAX_LP_UTILIZATION_RATE;
     }
 
-    function _getMaxLpUtilizationPerLegPercentage() internal pure virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_PERCENTAGE;
+    function _getMaxLpUtilizationPerLegRate() internal pure virtual returns (uint256) {
+        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
     }
 
-    function _getIncomeFeePercentage() internal pure virtual returns (uint256) {
-        return _INCOME_TAX_PERCENTAGE;
+    function _getIncomeFeeRate() internal pure virtual returns (uint256) {
+        return _INCOME_TAX_RATE;
     }
 
-    function _getOpeningFeePercentage() internal pure virtual returns (uint256) {
-        return _OPENING_FEE_PERCENTAGE;
+    function _getOpeningFeeRate() internal pure virtual returns (uint256) {
+        return _OPENING_FEE_RATE;
     }
 
-    function _getOpeningFeeForTreasuryPercentage() internal pure virtual returns (uint256) {
-        return _OPENING_FEE_FOR_TREASURY_PERCENTAGE;
+    function _getOpeningFeeTreasuryPortionRate() internal pure virtual returns (uint256) {
+        return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
     }
 
-    function _getIporPublicationFeeAmount() internal pure virtual returns (uint256) {
-        return _IPOR_PUBLICATION_FEE_AMOUNT;
+    function _getIporPublicationFee() internal pure virtual returns (uint256) {
+        return _IPOR_PUBLICATION_FEE;
     }
 
     function _getLiquidationDepositAmount() internal pure virtual returns (uint256) {
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverageValue() internal pure virtual returns (uint256) {
-        return _MAX_LEVERAGE_VALUE;
+    function _getMaxLeverage() internal pure virtual returns (uint256) {
+        return _MAX_LEVERAGE;
     }
 
-    function _getMinLeverageValue() internal pure virtual returns (uint256) {
-        return _MIN_LEVERAGE_VALUE;
+    function _getMinLeverage() internal pure virtual returns (uint256) {
+        return _MIN_LEVERAGE;
     }
 
-    function _getMinPercentagePositionValueWhenClosingBeforeMaturity()
+    function _getMinLiquidationThresholdToCloseBeforeMaturity()
         internal
         pure
         virtual
         returns (uint256)
     {
-        return _MIN_PERCENTAGE_POSITION_VALUE_WHEN_CLOSING_BEFORE_MATURITY;
+        return _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
@@ -299,7 +298,7 @@ abstract contract MiltonInternal is
             int256 soap
         )
     {
-        uint256 accruedIbtPrice = _warren.calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(_asset, calculateTimestamp);
         (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _miltonStorage
             .calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
@@ -313,7 +312,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapPayFixedValue(
                 timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 
@@ -324,7 +323,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapReceiveFixedValue(
                 timestamp,
-                _warren.calculateAccruedIbtPrice(_asset, timestamp)
+                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 }

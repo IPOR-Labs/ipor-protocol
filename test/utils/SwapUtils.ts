@@ -8,7 +8,7 @@ import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     N0__1_18DEC,
-} from "../utils/Constants";
+} from "./Constants";
 import { TestData } from "./DataUtils";
 import { assertExpectedValues } from "./AssertUtils";
 
@@ -29,7 +29,7 @@ export type SWAP = {
     idsIndex: BigNumber;
     collateral: BigNumber;
     liquidationDepositAmount: BigNumber;
-    notionalAmount: BigNumber;
+    notional: BigNumber;
     ibtQuantity: BigNumber;
     fixedInterestRate: BigNumber;
 };
@@ -41,7 +41,7 @@ export type Params = {
     miltonDai?: MiltonDai;
     expectedSoap?: BigNumber;
     totalAmount?: BigNumber;
-    toleratedQuoteValue?: BigNumber;
+    maxAcceptableFixedInterestRate?: BigNumber;
     leverage?: BigNumber;
     direction?: number;
     openTimestamp?: BigNumber;
@@ -59,7 +59,7 @@ export const prepareSwapPayFixedCase1 = async (
     const leverage = BigNumber.from("10");
 
     const timeStamp = Math.floor(Date.now() / 1000);
-    const notionalAmount = collateral.mul(leverage);
+    const notional = collateral.mul(leverage);
     const swap = {
         state: SwapState.ACTIVE,
         buyer: await admin.getAddress(),
@@ -70,7 +70,7 @@ export const prepareSwapPayFixedCase1 = async (
         idsIndex: BigNumber.from("0"),
         collateral: TC_50_000_18DEC,
         liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
-        notionalAmount,
+        notional,
         ibtQuantity: BigNumber.from("987030000000000000000"), //ibtQuantity
         fixedInterestRate: fixedInterestRate,
     };
@@ -84,7 +84,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -95,7 +95,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -106,7 +106,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -124,7 +124,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -140,7 +140,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -156,7 +156,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.toleratedQuoteValue || ZERO,
+                params.maxAcceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -239,7 +239,7 @@ export const exetuceCloseSwapTestCase = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    toleratedQuoteValue: BigNumber,
+    maxAcceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     providedLiquidityAmount: BigNumber,
     expectedMiltonUnderlyingTokenBalance: BigNumber,
@@ -277,7 +277,7 @@ export const exetuceCloseSwapTestCase = async function (
     const params = {
         asset: asset,
         totalAmount: totalAmount,
-        toleratedQuoteValue: toleratedQuoteValue,
+        maxAcceptableFixedInterestRate: maxAcceptableFixedInterestRate,
         leverage: leverage,
         direction: direction,
         openTimestamp: localOpenTimestamp,
@@ -311,7 +311,7 @@ export const exetuceCloseSwapTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
     if (params.direction == 0) {
@@ -320,7 +320,7 @@ export const exetuceCloseSwapTestCase = async function (
         await openSwapReceiveFixed(testData, params);
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
@@ -422,7 +422,7 @@ export const exetuceCloseSwapTestCase = async function (
 // closerUser: Signer,
 // iporValueBeforeOpenSwap: BigNumber,
 // iporValueAfterOpenSwap: BigNumber,
-// toleratedQuoteValue: BigNumber,
+// maxAcceptableFixedInterestRate: BigNumber,
 // periodOfTimeElapsedInSeconds: BigNumber,
 // providedLiquidityAmount: BigNumber,
 // expectedMiltonUnderlyingTokenBalance: BigNumber,
@@ -478,7 +478,7 @@ export const executeCloseSwapsTestCase = async function (
     const params = {
         asset: asset,
         totalAmount: totalAmount,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: leverage,
         direction: direction || 0,
         openTimestamp: localOpenTimestamp,
@@ -512,7 +512,7 @@ export const executeCloseSwapsTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
 
@@ -524,7 +524,7 @@ export const executeCloseSwapsTestCase = async function (
         }
     }
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 

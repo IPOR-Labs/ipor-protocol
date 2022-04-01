@@ -65,7 +65,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
     function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
         IMiltonInternal milton = _milton;
 
-        (, , int256 soap) = milton.calculateSoapForTimestamp(calculateTimestamp);
+        (, , int256 soap) = milton.calculateSoapAtTimestamp(calculateTimestamp);
 
         int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
 
@@ -131,7 +131,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
 
         uint256 wadRedeemFee = IporMath.division(
-            wadAssetAmount * _getRedeemFeePercentage(),
+            wadAssetAmount * _getRedeemFeeRate(),
             Constants.D18
         );
 
@@ -143,12 +143,12 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
-            balance.payFixedTotalCollateral + balance.receiveFixedTotalCollateral,
+            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             wadRedeemAmount
         );
 
         require(
-            utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE,
+            utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_RATE,
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 

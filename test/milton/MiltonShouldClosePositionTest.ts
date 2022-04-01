@@ -54,7 +54,7 @@ import {
     executeCloseSwapsTestCase,
     countOpenSwaps,
     assertSoap,
-} from "../utils/SwapUtiles";
+} from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
@@ -1980,7 +1980,7 @@ describe("Milton - close position", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -1993,7 +1993,7 @@ describe("Milton - close position", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         const miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
@@ -2562,7 +2562,7 @@ describe("Milton - close position", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -2581,7 +2581,7 @@ describe("Milton - close position", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2592,7 +2592,7 @@ describe("Milton - close position", () => {
                 USD_28_000_18DEC.add(USD_28_000_18DEC),
                 derivativeParamsFirst.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -2604,7 +2604,7 @@ describe("Milton - close position", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2645,7 +2645,7 @@ describe("Milton - close position", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -2664,7 +2664,7 @@ describe("Milton - close position", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2675,7 +2675,7 @@ describe("Milton - close position", () => {
                 USD_28_000_18DEC.add(USD_28_000_18DEC),
                 derivativeParamsFirst.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -2687,7 +2687,7 @@ describe("Milton - close position", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2727,7 +2727,7 @@ describe("Milton - close position", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
-        const { tokenDai, josephDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -2796,7 +2796,7 @@ describe("Milton - close position", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: leverage,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
@@ -2809,17 +2809,17 @@ describe("Milton - close position", () => {
                 .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
         }
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
         await openSwapPayFixed(testData, params);
         const endTimestamp = params.openTimestamp.add(periodOfTimeElapsedInSeconds);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
         //Important difference in opposite to other standard test cases - ipor is calculated right before closing position.
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 params.asset,

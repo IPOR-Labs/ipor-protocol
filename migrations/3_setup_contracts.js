@@ -35,7 +35,7 @@ const ItfStanleyUsdt = artifacts.require("ItfStanleyUsdt");
 const ItfStanleyUsdc = artifacts.require("ItfStanleyUsdc");
 const ItfStanleyDai = artifacts.require("ItfStanleyDai");
 
-const Warren = artifacts.require("Warren");
+const IporOracle = artifacts.require("IporOracle");
 
 const JosephUsdt = artifacts.require("JosephUsdt");
 const JosephUsdc = artifacts.require("JosephUsdc");
@@ -45,7 +45,7 @@ const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
 const MiltonDai = artifacts.require("MiltonDai");
 
-const ItfWarren = artifacts.require("ItfWarren");
+const ItfIporOracle = artifacts.require("ItfIporOracle");
 
 const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
@@ -136,13 +136,13 @@ module.exports = async function (deployer, _network, addresses) {
         await itfMiltonUsdcProxy.setupMaxAllowanceForAsset(itfStanleyUsdcProxy.address);
         await itfMiltonDaiProxy.setupMaxAllowanceForAsset(itfStanleyDaiProxy.address);
 
-        const itfWarrenProxy = await ItfWarren.deployed();
+        const itfIporOracleProxy = await ItfIporOracle.deployed();
 
-        await itfWarrenProxy.addUpdater(admin);
-        await itfWarrenProxy.addUpdater(iporIndexAdmin);
-        await itfWarrenProxy.addAsset(mockedUsdt.address);
-        await itfWarrenProxy.addAsset(mockedUsdc.address);
-        await itfWarrenProxy.addAsset(mockedDai.address);
+        await itfIporOracleProxy.addUpdater(admin);
+        await itfIporOracleProxy.addUpdater(iporIndexAdmin);
+        await itfIporOracleProxy.addAsset(mockedUsdt.address);
+        await itfIporOracleProxy.addAsset(mockedUsdc.address);
+        await itfIporOracleProxy.addAsset(mockedDai.address);
 
         await ipUsdtToken.setJoseph(itfJosephUsdtProxy.address);
         await ipUsdcToken.setJoseph(itfJosephUsdcProxy.address);
@@ -174,7 +174,7 @@ module.exports = async function (deployer, _network, addresses) {
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Setup initial IPOR values...");
-            await itfWarrenProxy.updateIndexes(
+            await itfIporOracleProxy.updateIndexes(
                 [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
                 [
                     BigInt("30000000000000000"),
@@ -199,12 +199,12 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonUsdcProxy.setupMaxAllowanceForAsset(stanleyUsdcProxy.address);
         await miltonDaiProxy.setupMaxAllowanceForAsset(stanleyDaiProxy.address);
 
-        const warrenProxy = await Warren.deployed();
-        await warrenProxy.addUpdater(admin);
-        await warrenProxy.addUpdater(iporIndexAdmin);
-        await warrenProxy.addAsset(mockedUsdt.address);
-        await warrenProxy.addAsset(mockedUsdc.address);
-        await warrenProxy.addAsset(mockedDai.address);
+        const iporOracleProxy = await IporOracle.deployed();
+        await iporOracleProxy.addUpdater(admin);
+        await iporOracleProxy.addUpdater(iporIndexAdmin);
+        await iporOracleProxy.addAsset(mockedUsdt.address);
+        await iporOracleProxy.addAsset(mockedUsdc.address);
+        await iporOracleProxy.addAsset(mockedDai.address);
 
         await ipUsdtToken.setJoseph(josephUsdtProxy.address);
         await ipUsdcToken.setJoseph(josephUsdcProxy.address);
@@ -236,7 +236,7 @@ module.exports = async function (deployer, _network, addresses) {
 
         if (process.env.INITIAL_IPOR_MIGRATION_ENABLED === "true") {
             console.log("Setup initial IPOR values...");
-            await warrenProxy.updateIndexes(
+            await iporOracleProxy.updateIndexes(
                 [mockedDai.address, mockedUsdt.address, mockedUsdc.address],
                 [
                     BigInt("30000000000000000"),

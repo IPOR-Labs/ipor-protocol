@@ -37,10 +37,11 @@ describe("Milton Maintenance", () => {
 
     it("should pause Smart Contract, sender is an admin", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { tokenDai, iporOracle, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -49,7 +50,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -64,17 +65,22 @@ describe("Milton Maintenance", () => {
         await assertError(
             miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
     });
 
     it("should pause Smart Contract specific methods", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai } = await prepareComplexTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
+        const { tokenDai, iporOracle, josephDai, miltonDai } =
+            await prepareComplexTestDataDaiCase000(
+                [admin, userOne, userTwo, userThree, liquidityProvider],
+                miltonSpreadModel
+            );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -83,7 +89,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -101,7 +107,11 @@ describe("Milton Maintenance", () => {
         await assertError(
             miltonDai
                 .connect(userOne)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
 
@@ -110,7 +120,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapReceiveFixed(
                     params.totalAmount,
-                    params.toleratedQuoteValue,
+                    params.maxAcceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
@@ -147,7 +157,7 @@ describe("Milton Maintenance", () => {
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai, miltonStorageDai } =
+        const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel
@@ -165,7 +175,7 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -178,7 +188,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
         const swapPayFixed = await miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
@@ -188,7 +198,7 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -202,20 +212,20 @@ describe("Milton Maintenance", () => {
         await miltonDai.connect(userOne).getAccruedBalance();
         await miltonDai.connect(userOne).calculateSpread();
         await miltonDai.connect(userOne).calculateSoap();
-        await miltonDai.connect(userOne).calculateSoapForTimestamp(params.openTimestamp);
+        await miltonDai.connect(userOne).calculateSoapAtTimestamp(params.openTimestamp);
         await miltonDai.connect(userOne).calculateSwapPayFixedValue(swapPayFixed);
         await miltonDai.connect(userOne).calculateSwapReceiveFixedValue(swapReceiveFixed);
         await miltonDai.connect(userOne).getMiltonSpreadModel();
         await miltonDai.connect(userOne).getMaxSwapCollateralAmount();
-        await miltonDai.connect(userOne).getMaxLpUtilizationPercentage();
-        await miltonDai.connect(userOne).getMaxLpUtilizationPerLegPercentage();
-        await miltonDai.connect(userOne).getIncomeFeePercentage();
-        await miltonDai.connect(userOne).getOpeningFeePercentage();
-        await miltonDai.connect(userOne).getOpeningFeeForTreasuryPercentage();
-        await miltonDai.connect(userOne).getIporPublicationFeeAmount();
+        await miltonDai.connect(userOne).getMaxLpUtilizationRate();
+        await miltonDai.connect(userOne).getMaxLpUtilizationPerLegRate();
+        await miltonDai.connect(userOne).getIncomeFeeRate();
+        await miltonDai.connect(userOne).getOpeningFeeRate();
+        await miltonDai.connect(userOne).getOpeningFeeTreasuryPortionRate();
+        await miltonDai.connect(userOne).getIporPublicationFee();
         await miltonDai.connect(userOne).getLiquidationDepositAmount();
-        await miltonDai.connect(userOne).getMaxLeverageValue();
-        await miltonDai.connect(userOne).getMinLeverageValue();
+        await miltonDai.connect(userOne).getMaxLeverage();
+        await miltonDai.connect(userOne).getMinLeverage();
         await miltonDai.connect(userOne).getJoseph();
     });
 
@@ -241,7 +251,7 @@ describe("Milton Maintenance", () => {
 
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
-        const { tokenDai, warren, josephDai, miltonDai, miltonStorageDai } =
+        const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel
@@ -259,7 +269,9 @@ describe("Milton Maintenance", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
         const timestamp = params.openTimestamp;
-        await warren.connect(userOne).itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, timestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, timestamp);
 
         await josephDai.connect(liquidityProvider).itfProvideLiquidity(USD_50_000_18DEC, timestamp);
 
@@ -268,7 +280,11 @@ describe("Milton Maintenance", () => {
         await assertError(
             miltonDai
                 .connect(userTwo)
-                .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage),
+                .openSwapPayFixed(
+                    params.totalAmount,
+                    params.maxAcceptableFixedInterestRate,
+                    params.leverage
+                ),
             "Pausable: paused"
         );
 
@@ -278,7 +294,11 @@ describe("Milton Maintenance", () => {
         await miltonDai.connect(admin).unpause();
         await miltonDai
             .connect(userTwo)
-            .openSwapPayFixed(params.totalAmount, params.toleratedQuoteValue, params.leverage);
+            .openSwapPayFixed(
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
 
         //then
         const swapPayFixed = await miltonStorageDai.connect(userTwo).getSwapPayFixed(1);

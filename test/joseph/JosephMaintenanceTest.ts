@@ -147,8 +147,8 @@ describe("Joseph Maintenance", () => {
         await josephDai.connect(userOne).getTreasury();
         await josephDai.connect(userOne).getCharlieTreasuryManager();
         await josephDai.connect(userOne).getTreasuryManager();
-        await josephDai.connect(userOne).getRedeemLpMaxUtilizationPercentage();
-        await josephDai.connect(userOne).getMiltonStanleyBalanceRatioPercentage();
+        await josephDai.connect(userOne).getRedeemLpMaxUtilizationRate();
+        await josephDai.connect(userOne).getMiltonStanleyBalanceRatio();
         await josephDai.connect(userOne).getAsset();
         await josephDai.connect(userOne).calculateExchangeRate();
     });

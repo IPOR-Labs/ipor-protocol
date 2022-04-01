@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
 import "../interfaces/types/MiltonFacadeTypes.sol";
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IJoseph.sol";
@@ -19,12 +19,12 @@ contract MiltonFacadeDataProvider is
     UUPSUpgradeable,
     IMiltonFacadeDataProvider
 {
-    address internal _warren;
+    address internal _iporOracle;
     address[] internal _assets;
     mapping(address => MiltonFacadeTypes.AssetConfig) internal _assetConfig;
 
     function initialize(
-        address warren,
+        address iporOracle,
         address[] memory assets,
         address[] memory miltons,
         address[] memory miltonStorages,
@@ -34,10 +34,10 @@ contract MiltonFacadeDataProvider is
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
 
         __Ownable_init();
-        _warren = warren;
+        _iporOracle = iporOracle;
 
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
@@ -85,14 +85,14 @@ contract MiltonFacadeDataProvider is
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
-        (balance.payFixedTotalNotional, balance.recFixedTotalNotional) = miltonStorage
+        (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = miltonStorage
             .getTotalOutstandingNotional();
 
         IMiltonInternal milton = IMiltonInternal(config.milton);
         IporTypes.MiltonBalancesMemory memory accruedBalance = milton.getAccruedBalance();
 
-        balance.payFixedTotalCollateral = accruedBalance.payFixedTotalCollateral;
-        balance.recFixedTotalCollateral = accruedBalance.receiveFixedTotalCollateral;
+        balance.totalCollateralPayFixed = accruedBalance.totalCollateralPayFixed;
+        balance.totalCollateralReceiveFixed = accruedBalance.totalCollateralReceiveFixed;
         balance.liquidityPool = accruedBalance.liquidityPool;
     }
 
@@ -164,8 +164,8 @@ contract MiltonFacadeDataProvider is
                 iporSwap.id,
                 asset,
                 iporSwap.collateral,
-                iporSwap.notionalAmount,
-                IporMath.division(iporSwap.notionalAmount * Constants.D18, iporSwap.collateral),
+                iporSwap.notional,
+                IporMath.division(iporSwap.notional * Constants.D18, iporSwap.collateral),
                 direction,
                 iporSwap.fixedInterestRate,
                 value,
@@ -187,20 +187,21 @@ contract MiltonFacadeDataProvider is
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        IporTypes.AccruedIpor memory accruedIpor = IWarren(_warren).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
             timestamp,
             asset
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr).getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
+            .getAccruedBalance();
 
-        uint256 spreadPayFixedValue = spreadModel.calculateSpreadPayFixed(
+        uint256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
             miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance
         );
 
-        uint256 spreadRecFixedValue = spreadModel.calculateSpreadRecFixed(
+        uint256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(
             miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance
@@ -208,16 +209,16 @@ contract MiltonFacadeDataProvider is
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
-            milton.getMinLeverageValue(),
-            milton.getMaxLeverageValue(),
-            milton.getOpeningFeePercentage(),
-            milton.getIporPublicationFeeAmount(),
+            milton.getMinLeverage(),
+            milton.getMaxLeverage(),
+            milton.getOpeningFeeRate(),
+            milton.getIporPublicationFee(),
             milton.getLiquidationDepositAmount(),
-            milton.getIncomeFeePercentage(),
-            spreadPayFixedValue,
-            spreadRecFixedValue,
-            milton.getMaxLpUtilizationPercentage(),
-            milton.getMaxLpUtilizationPerLegPercentage()
+            milton.getIncomeFeeRate(),
+            spreadPayFixed,
+            spreadReceiveFixed,
+            milton.getMaxLpUtilizationRate(),
+            milton.getMaxLpUtilizationPerLegRate()
         );
     }
 

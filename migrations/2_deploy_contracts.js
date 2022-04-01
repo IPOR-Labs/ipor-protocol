@@ -35,8 +35,8 @@ const ItfStanleyDai = artifacts.require("ItfStanleyDai");
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
-const Warren = artifacts.require("Warren");
-const ItfWarren = artifacts.require("ItfWarren");
+const IporOracle = artifacts.require("IporOracle");
+const ItfIporOracle = artifacts.require("ItfIporOracle");
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
@@ -50,7 +50,7 @@ const JosephDai = artifacts.require("JosephDai");
 const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
 const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
-const WarrenFacadeDataProvider = artifacts.require("WarrenFacadeDataProvider");
+const IporOracleFacadeDataProvider = artifacts.require("IporOracleFacadeDataProvider");
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
 const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
@@ -371,13 +371,13 @@ module.exports = async function (deployer, _network) {
         kind: "uups",
     });
 
-    const warren = await deployProxy(Warren, {
+    const iporOracle = await deployProxy(IporOracle, {
         deployer: deployer,
         initializer: "initialize",
         kind: "uups",
     });
 
-    const itfWarren = await deployProxy(ItfWarren, {
+    const itfIporOracle = await deployProxy(ItfIporOracle, {
         deployer: deployer,
         initializer: "initialize",
         kind: "uups",
@@ -387,7 +387,7 @@ module.exports = async function (deployer, _network) {
         MiltonUsdt,
         [
             mockedUsdt.address,
-            warren.address,
+            iporOracle.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
             stanleyUsdt.address,
@@ -403,7 +403,7 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdt,
         [
             mockedUsdt.address,
-            itfWarren.address,
+            itfIporOracle.address,
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
             itfStanleyUsdt.address,
@@ -419,7 +419,7 @@ module.exports = async function (deployer, _network) {
         MiltonUsdc,
         [
             mockedUsdc.address,
-            warren.address,
+            iporOracle.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
             stanleyUsdc.address,
@@ -435,7 +435,7 @@ module.exports = async function (deployer, _network) {
         ItfMiltonUsdc,
         [
             mockedUsdc.address,
-            itfWarren.address,
+            itfIporOracle.address,
             miltonStorageUsdc.address,
             miltonSpreadModel.address,
             itfStanleyUsdc.address,
@@ -451,7 +451,7 @@ module.exports = async function (deployer, _network) {
         MiltonDai,
         [
             mockedDai.address,
-            warren.address,
+            iporOracle.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
             stanleyDai.address,
@@ -467,7 +467,7 @@ module.exports = async function (deployer, _network) {
         ItfMiltonDai,
         [
             mockedDai.address,
-            itfWarren.address,
+            itfIporOracle.address,
             miltonStorageDai.address,
             miltonSpreadModel.address,
             itfStanleyDai.address,
@@ -575,9 +575,9 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const warrenDarcyDataProvider = await deployProxy(
-        WarrenFacadeDataProvider,
-        [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], warren.address],
+    const iporOracleDarcyDataProvider = await deployProxy(
+        IporOracleFacadeDataProvider,
+        [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], iporOracle.address],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -588,7 +588,7 @@ module.exports = async function (deployer, _network) {
         const miltonDevToolDataProvider = await deployProxy(
             CockpitDataProvider,
             [
-                itfWarren.address,
+                itfIporOracle.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
                 [itfMiltonUsdt.address, itfMiltonUsdc.address, itfMiltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
@@ -606,7 +606,7 @@ module.exports = async function (deployer, _network) {
         const miltonFacadeDataProvider = await deployProxy(
             MiltonFacadeDataProvider,
             [
-                warren.address,
+                iporOracle.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
                 [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
@@ -622,7 +622,7 @@ module.exports = async function (deployer, _network) {
         const miltonDevToolDataProvider = await deployProxy(
             CockpitDataProvider,
             [
-                warren.address,
+                iporOracle.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
                 [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
@@ -639,7 +639,7 @@ module.exports = async function (deployer, _network) {
         const miltonFacadeDataProvider = await deployProxy(
             MiltonFacadeDataProvider,
             [
-                warren.address,
+                iporOracle.address,
                 [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
                 [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
                 [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],

@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../interfaces/IWarren.sol";
+import "../interfaces/IIporOracle.sol";
 import "../oracles/libraries/IporLogic.sol";
 
 contract MockIporLogic {
-    function accrueQuasiIbtPrice(WarrenTypes.IPOR memory ipor, uint256 accrueTimestamp)
+    function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)
         public
         pure
         returns (uint256)

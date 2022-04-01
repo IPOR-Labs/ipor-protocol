@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
-/// @dev structs used in IMiltonFacadeDataProvider and IWarrenFacadeDataProvider interfaces
+/// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
 library MiltonFacadeTypes {
     /// @notice Technical struct which groups important addresses used in smart contract MiltonFacadeDataProvider,
     /// struct represent data for one specific asset which is USDT, USDC, DAI etc.
@@ -15,18 +15,18 @@ library MiltonFacadeTypes {
         address joseph;
     }
 
-	/// @notice Struct which groups Milton balances required for frontedn
+    /// @notice Struct which groups Milton balances required for frontedn
     struct Balance {
         /// @notice Liquiditiy Pool Balance. Represented in 18 decimals.
         uint256 liquidityPool;
         /// @notice Total notional for leg Pay Fixed - Receive Floating. Represented in 18 decimals.
-        uint256 payFixedTotalNotional;
+        uint256 totalNotionalPayFixed;
         /// @notice Total notional for leg Receive Fixed - Pay Floating. Represented in 18 decimals.
-        uint256 recFixedTotalNotional;
+        uint256 totalNotionalReceiveFixed;
         /// @notice Total collateral for leg Pay Fixed - Receive Floating. Represented in 18 decimals.
-        uint256 payFixedTotalCollateral;
+        uint256 totalCollateralPayFixed;
         /// @notice Total collateral for leg Receive Fixed - Pay Floating. Represented in 18 decimals.
-        uint256 recFixedTotalCollateral;
+        uint256 totalCollateralReceiveFixed;
     }
 
     /// @notice Struct describe configuration for one asset (stablecoin / underlying token).
@@ -34,27 +34,27 @@ library MiltonFacadeTypes {
         /// @notice underlying token / stablecoin address
         address asset;
         /// @notice Minimal leverage value. Represented in 18 decimals.
-        uint256 minLeverageValue;
+        uint256 minLeverage;
         /// @notice Maximum leverage value. Represented in 18 decimals.
-        uint256 maxLeverageValue;
-        /// @notice Percentage of collateral taken as a opening fee. Represented in 18 decimals.
-        uint256 openingFeePercentage;
+        uint256 maxLeverage;
+        /// @notice Rate of collateral taken as a opening fee. Represented in 18 decimals.
+        uint256 openingFeeRate;
         /// @notice IPOR publication fee amount taken from buyer when opening new swap. Represented in 18 decimals.
         uint256 iporPublicationFeeAmount;
         /// @notice Liquidation deposit amount take from buyer when opening new swap. Represented in 18 decimals.
         uint256 liquidationDepositAmount;
-        /// @notice Percentage of income taken from buyer when closing swap. Represented in 18 decimals.
-        uint256 incomeFeePercentage;
+        /// @notice Rate of income taken from buyer when closing swap. Represented in 18 decimals.
+        uint256 incomeFeeRate;
         /// @notice Calculated Spread for leg Pay Fixed - Receive Floating. Represented in 18 decimals.
-        uint256 spreadPayFixedValue;
+        uint256 spreadPayFixed;
         /// @notice Calculated Spread for leg Receive Fixed - Pay Floating. Represented in 18 decimals.
-        uint256 spreadRecFixedValue;
+        uint256 spreadReceiveFixed;
         /// @notice Maximum Liquidity Pool Utilization.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
-        uint256 maxLpUtilizationPercentage;
+        uint256 maxLpUtilizationRate;
         /// @notice Maximum Liquidity Pool Utilization per one leg.
         /// @dev It is a ratio of total collateral balance for one leg / liquidity pool balance
-        uint256 maxLpUtilizationPerLegPercentage;
+        uint256 maxLpUtilizationPerLegRate;
     }
 
     /// @notice IPOR Swap structure used by facades.
@@ -66,7 +66,7 @@ library MiltonFacadeTypes {
         /// @notice Swap collateral, represented in 18 decimals.
         uint256 collateral;
         /// @notice Notional amount, represented in 18 decimals.
-        uint256 notionalAmount;
+        uint256 notional;
         /// @notice Swap leverage, represented in 18 decimals.
         uint256 leverage;
         /// @notice Swap direction

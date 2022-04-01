@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-/// @title Structs used in Warren smart contract
-library WarrenTypes {
+/// @title Structs used in IporOracle smart contract
+library IporOracleTypes {
     //@notice IPOR Index Structure for a given asset
     struct IPOR {
         //@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)

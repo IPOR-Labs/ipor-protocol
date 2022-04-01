@@ -8,15 +8,15 @@ export default ({ drizzle, drizzleState }) => (
         <table className="table" align="center">
             <tr>
                 <td>
-                    <strong>Warren</strong>
+                    <strong>IporOracle</strong>
                 </td>
-                <td>{drizzle.contracts.Warren.address}</td>
+                <td>{drizzle.contracts.IporOracle.address}</td>
             </tr>
             <tr>
                 <td>
-                    <strong>ItfWarren</strong>
+                    <strong>ItfIporOracle</strong>
                 </td>
-                <td>{drizzle.contracts.ItfWarren.address}</td>
+                <td>{drizzle.contracts.ItfIporOracle.address}</td>
             </tr>
             <tr>
                 <td>

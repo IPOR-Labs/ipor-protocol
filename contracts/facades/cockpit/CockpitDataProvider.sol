@@ -6,19 +6,19 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/types/CockpitTypes.sol";
 import "../../libraries/Constants.sol";
-import "../../interfaces/IWarren.sol";
+import "../../interfaces/IIporOracle.sol";
 import "../../interfaces/IMilton.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpitDataProvider {
-    address internal _warren;
+    address internal _iporOracle;
     mapping(address => CockpitTypes.AssetConfig) internal _assetConfig;
     address[] internal _assets;
 
     function initialize(
-        address warren,
+        address iporOracle,
         address[] memory assets,
         address[] memory miltons,
         address[] memory miltonStorages,
@@ -27,13 +27,13 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address[] memory ivTokens
     ) public initializer {
         __Ownable_init();
-        require(warren != address(0), IporErrors.WRONG_ADDRESS);
+        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
-        _warren = warren;
+        _iporOracle = iporOracle;
         _assets = assets;
 
         uint256 assetsLength = assets.length;
@@ -55,9 +55,9 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         }
     }
 
-	function getVersion() external pure override returns (uint256) {
-		return 1;
-	}
+    function getVersion() external pure override returns (uint256) {
+        return 1;
+    }
 
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
@@ -144,20 +144,20 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         external
         view
         override
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue)
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
     {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
-        // TODO: change names _spreadPayFixedValue/_spreadRecFixedValue
+        // TODO: change names _spreadPayFixed/_spreadReceiveFixed
         try milton.calculateSpread() returns (
-            uint256 _spreadPayFixedValue,
-            uint256 _spreadRecFixedValue
+            uint256 _spreadPayFixed,
+            uint256 _spreadReceiveFixed
         ) {
-            spreadPayFixedValue = _spreadPayFixedValue;
-            spreadRecFixedValue = _spreadRecFixedValue;
+            spreadPayFixed = _spreadPayFixed;
+            spreadReceiveFixed = _spreadReceiveFixed;
         } catch {
-            spreadPayFixedValue = 999999999999999999999;
-            spreadRecFixedValue = 999999999999999999999;
+            spreadPayFixed = 999999999999999999999;
+            spreadReceiveFixed = 999999999999999999999;
         }
     }
 
@@ -172,7 +172,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
             uint256 exponentialMovingAverage,
             uint256 exponentialWeightedMovingVariance,
             uint256 date
-        ) = IWarren(_warren).getIndex(asset);
+        ) = IIporOracle(_iporOracle).getIndex(asset);
 
         iporFront = CockpitTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),

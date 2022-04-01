@@ -33,9 +33,9 @@ export default (response) =>
                                     <small>{derivative.collateral}</small>
                                 </td>
                                 <td>
-                                    {derivative.notionalAmount / 1000000000000000000}
+                                    {derivative.notional / 1000000000000000000}
                                     <br />
-                                    <small>{derivative.notionalAmount}</small>
+                                    <small>{derivative.notional}</small>
                                 </td>
                                 <td>{derivative.leverage}</td>
                                 <td>{derivative.direction}</td>

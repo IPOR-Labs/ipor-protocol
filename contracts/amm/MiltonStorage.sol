@@ -59,8 +59,8 @@ contract MiltonStorage is
     function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
         return
             IporTypes.MiltonBalancesMemory(
-                _balances.payFixedTotalCollateral,
-                _balances.receiveFixedTotalCollateral,
+                _balances.totalCollateralPayFixed,
+                _balances.totalCollateralReceiveFixed,
                 _balances.liquidityPool,
                 _balances.vault
             );
@@ -74,8 +74,8 @@ contract MiltonStorage is
     {
         return
             MiltonStorageTypes.ExtendedBalancesMemory(
-                _balances.payFixedTotalCollateral,
-                _balances.receiveFixedTotalCollateral,
+                _balances.totalCollateralPayFixed,
+                _balances.totalCollateralReceiveFixed,
                 _balances.liquidityPool,
                 _balances.vault,
                 _balances.iporPublicationFee,
@@ -87,10 +87,10 @@ contract MiltonStorage is
         external
         view
         override
-        returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional)
+        returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed)
     {
-        payFixedTotalNotional = _soapIndicatorsPayFixed.totalNotional;
-        recFixedTotalNotional = _soapIndicatorsReceiveFixed.totalNotional;
+        totalNotionalPayFixed = _soapIndicatorsPayFixed.totalNotional;
+        totalNotionalReceiveFixed = _soapIndicatorsReceiveFixed.totalNotional;
     }
 
     function getSwapPayFixed(uint256 swapId)
@@ -111,7 +111,7 @@ contract MiltonStorage is
                 swap.idsIndex,
                 swap.collateral,
                 swap.liquidationDepositAmount,
-                swap.notionalAmount,
+                swap.notional,
                 swap.fixedInterestRate,
                 swap.ibtQuantity
             );
@@ -135,7 +135,7 @@ contract MiltonStorage is
                 swap.idsIndex,
                 swap.collateral,
                 swap.liquidationDepositAmount,
-                swap.notionalAmount,
+                swap.notional,
                 swap.fixedInterestRate,
                 swap.ibtQuantity
             );
@@ -297,19 +297,19 @@ contract MiltonStorage is
 
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
         _updateBalancesWhenOpenSwapPayFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
             newSwap.openingFeeTreasuryAmount,
-            cfgIporPublicationFeeAmount
+            cfgIporPublicationFee
         );
 
         _updateSoapIndicatorsWhenOpenSwapPayFixed(
             newSwap.openTimestamp,
-            newSwap.notionalAmount,
+            newSwap.notional,
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
@@ -318,18 +318,18 @@ contract MiltonStorage is
 
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) external override onlyMilton returns (uint256) {
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
         _updateBalancesWhenOpenSwapReceiveFixed(
             newSwap.collateral,
             newSwap.openingFeeLPAmount,
             newSwap.openingFeeTreasuryAmount,
-            cfgIporPublicationFeeAmount
+            cfgIporPublicationFee
         );
         _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
             newSwap.openTimestamp,
-            newSwap.notionalAmount,
+            newSwap.notional,
             newSwap.fixedInterestRate,
             newSwap.ibtQuantity
         );
@@ -341,8 +341,8 @@ contract MiltonStorage is
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
@@ -351,8 +351,8 @@ contract MiltonStorage is
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgIncomeFeeRate,
+            cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
@@ -363,8 +363,8 @@ contract MiltonStorage is
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
@@ -373,8 +373,8 @@ contract MiltonStorage is
             iporSwap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgIncomeFeeRate,
+            cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
@@ -503,7 +503,7 @@ contract MiltonStorage is
                 swap.idsIndex,
                 swap.collateral,
                 swap.liquidationDepositAmount,
-                swap.notionalAmount,
+                swap.notional,
                 swap.fixedInterestRate,
                 swap.ibtQuantity
             );
@@ -582,15 +582,15 @@ contract MiltonStorage is
         uint256 collateral,
         uint256 openingFeeLPAmount,
         uint256 openingFeeTreasuryAmount,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) internal {
-        _balances.payFixedTotalCollateral =
-            _balances.payFixedTotalCollateral +
+        _balances.totalCollateralPayFixed =
+            _balances.totalCollateralPayFixed +
             collateral.toUint128();
 
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
-            cfgIporPublicationFeeAmount.toUint128();
+            cfgIporPublicationFee.toUint128();
 
         _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
@@ -600,14 +600,14 @@ contract MiltonStorage is
         uint256 collateral,
         uint256 openingFeeLPAmount,
         uint256 openingFeeTreasuryAmount,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) internal {
-        _balances.receiveFixedTotalCollateral =
-            _balances.receiveFixedTotalCollateral +
+        _balances.totalCollateralReceiveFixed =
+            _balances.totalCollateralReceiveFixed +
             collateral.toUint128();
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
-            cfgIporPublicationFeeAmount.toUint128();
+            cfgIporPublicationFee.toUint128();
 
         _balances.liquidityPool = _balances.liquidityPool + openingFeeLPAmount.toUint128();
         _balances.treasury = _balances.treasury + openingFeeTreasuryAmount.toUint128();
@@ -618,8 +618,8 @@ contract MiltonStorage is
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
@@ -627,13 +627,13 @@ contract MiltonStorage is
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgIncomeFeeRate,
+            cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.payFixedTotalCollateral =
-            _balances.payFixedTotalCollateral -
+        _balances.totalCollateralPayFixed =
+            _balances.totalCollateralPayFixed -
             swap.collateral.toUint128();
     }
 
@@ -642,8 +642,8 @@ contract MiltonStorage is
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         _updateBalancesWhenCloseSwap(
@@ -651,13 +651,13 @@ contract MiltonStorage is
             swap,
             positionValue,
             closingTimestamp,
-            cfgIncomeFeePercentage,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity,
+            cfgIncomeFeeRate,
+            cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
 
-        _balances.receiveFixedTotalCollateral =
-            _balances.receiveFixedTotalCollateral -
+        _balances.totalCollateralReceiveFixed =
+            _balances.totalCollateralReceiveFixed -
             swap.collateral.toUint128();
     }
 
@@ -666,14 +666,14 @@ contract MiltonStorage is
         IporTypes.IporSwapMemory memory swap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
         uint256 absPositionValue = IporMath.absoluteValue(positionValue);
         uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
             swap.collateral,
-            cfgMinPercentagePositionValueToCloseBeforeMaturity
+            cfgMinLiquidationThresholdToCloseBeforeMaturity
         );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
@@ -688,10 +688,7 @@ contract MiltonStorage is
             }
         }
 
-        uint256 incomeFee = IporMath.division(
-            absPositionValue * cfgIncomeFeePercentage,
-            Constants.D18
-        );
+        uint256 incomeFee = IporMath.division(absPositionValue * cfgIncomeFeeRate, Constants.D18);
 
         _balances.treasury = _balances.treasury + incomeFee.toUint128();
 
@@ -725,7 +722,7 @@ contract MiltonStorage is
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
         swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint128();
-        swap.notionalAmount = newSwap.notionalAmount.toUint128();
+        swap.notional = newSwap.notional.toUint128();
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
 
@@ -752,7 +749,7 @@ contract MiltonStorage is
         swap.id = id;
         swap.collateral = newSwap.collateral.toUint128();
         swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint128();
-        swap.notionalAmount = newSwap.notionalAmount.toUint128();
+        swap.notional = newSwap.notional.toUint128();
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
 
@@ -810,7 +807,7 @@ contract MiltonStorage is
 
     function _updateSoapIndicatorsWhenOpenSwapPayFixed(
         uint256 openTimestamp,
-        uint256 notionalAmount,
+        uint256 notional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -823,7 +820,7 @@ contract MiltonStorage is
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
 
-        pf.rebalanceWhenOpenSwap(openTimestamp, notionalAmount, fixedInterestRate, ibtQuantity);
+        pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
@@ -835,7 +832,7 @@ contract MiltonStorage is
 
     function _updateSoapIndicatorsWhenOpenSwapReceiveFixed(
         uint256 openTimestamp,
-        uint256 notionalAmount,
+        uint256 notional,
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
@@ -847,7 +844,7 @@ contract MiltonStorage is
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
-        rf.rebalanceWhenOpenSwap(openTimestamp, notionalAmount, fixedInterestRate, ibtQuantity);
+        rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();
@@ -873,7 +870,7 @@ contract MiltonStorage is
         pf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
-            swap.notionalAmount,
+            swap.notional,
             swap.fixedInterestRate,
             swap.ibtQuantity
         );
@@ -903,7 +900,7 @@ contract MiltonStorage is
         rf.rebalanceWhenCloseSwap(
             closingTimestamp,
             swap.openTimestamp,
-            swap.notionalAmount,
+            swap.notional,
             swap.fixedInterestRate,
             swap.ibtQuantity
         );

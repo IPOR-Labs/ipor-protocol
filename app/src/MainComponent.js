@@ -3,7 +3,7 @@ import { newContextComponents } from "@drizzle/react-components";
 import logo from "./logo.png";
 import { Container, Navbar, Tabs } from "react-bootstrap";
 import { Tab } from "bootstrap";
-import WarrenComponent from "./WarrenComponent";
+import IporOracleComponent from "./IporOracleComponent";
 import MiltonComponent from "./MiltonComponent";
 import JosephComponent from "./JosephComponent";
 import StanleyComponent from "./StanleyComponent";
@@ -65,8 +65,8 @@ export default ({ drizzle, drizzleState }) => {
                 </table>
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="Warren">
-                    <WarrenComponent drizzle={drizzle} drizzleState={drizzleState} />
+                <Tab eventKey="iporIndex" title="IporOracle">
+                    <IporOracleComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />

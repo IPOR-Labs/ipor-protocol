@@ -31,7 +31,7 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
-import { openSwapPayFixed } from "../utils/SwapUtiles";
+import { openSwapPayFixed } from "../utils/SwapUtils";
 
 const { expect } = chai;
 
@@ -69,7 +69,7 @@ describe("MiltonFacadeDataProvider", () => {
             tokenUsdc,
             tokenUsdt,
             tokenDai,
-            warren,
+            iporOracle,
             josephDai,
             josephUsdc,
             josephUsdt,
@@ -132,7 +132,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -141,7 +141,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -150,21 +150,21 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsDai.asset.address, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdc.asset.address, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -186,7 +186,7 @@ describe("MiltonFacadeDataProvider", () => {
         const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
         await miltonFacadeDataProvider.deployed();
         await miltonFacadeDataProvider.initialize(
-            warren.address,
+            iporOracle.address,
             [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
             [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
             [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
@@ -198,11 +198,11 @@ describe("MiltonFacadeDataProvider", () => {
         const expectedOpeningFeePercentage = BigNumber.from("1").mul(N0__01_18DEC);
         const expectedIporPublicationFeeAmount = BigNumber.from("10").mul(N1__0_18DEC);
         const expectedLiquidationDepositAmount = BigNumber.from("20").mul(N1__0_18DEC);
-        const expectedIncomeFeePercentage = BigNumber.from("1").mul(N0__1_18DEC);
+        const expectedIncomeFeeRate = BigNumber.from("1").mul(N0__1_18DEC);
         const expectedSpreadPayFixedValue = BigNumber.from("1").mul(N0__01_18DEC);
         const expectedSpreadRecFixedValue = BigNumber.from("1").mul(N0__01_18DEC);
-        const expectedMaxLpUtilizationPercentage = BigNumber.from("8").mul(N0__1_18DEC);
-        const expectedMaxLpUtilizationPerLegPercentage = BigNumber.from("48").mul(N0__01_18DEC);
+        const expectedMaxLpUtilizationRate = BigNumber.from("8").mul(N0__1_18DEC);
+        const expectedMaxLpUtilizationPerLegRate = BigNumber.from("48").mul(N0__01_18DEC);
 
         //when
         const configs = await miltonFacadeDataProvider.getConfiguration();
@@ -210,19 +210,17 @@ describe("MiltonFacadeDataProvider", () => {
         //then
 
         for (let i = 0; i < configs.length; i++) {
-            expect(expectedMinLeverage).to.be.eq(configs[i].minLeverageValue);
-            expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverageValue);
-            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeePercentage);
+            expect(expectedMinLeverage).to.be.eq(configs[i].minLeverage);
+            expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverage);
+            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeeRate);
             expect(expectedIporPublicationFeeAmount).to.be.eq(configs[i].iporPublicationFeeAmount);
             expect(expectedLiquidationDepositAmount).to.be.eq(configs[i].liquidationDepositAmount);
-            expect(expectedIncomeFeePercentage).to.be.eq(configs[i].incomeFeePercentage);
-            expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixedValue);
-            expect(expectedSpreadRecFixedValue).to.be.eq(configs[i].spreadRecFixedValue);
-            expect(expectedMaxLpUtilizationPercentage).to.be.eq(
-                configs[i].maxLpUtilizationPercentage
-            );
-            expect(expectedMaxLpUtilizationPerLegPercentage).to.be.eq(
-                configs[i].maxLpUtilizationPerLegPercentage
+            expect(expectedIncomeFeeRate).to.be.eq(configs[i].incomeFeeRate);
+            expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixed);
+            expect(expectedSpreadRecFixedValue).to.be.eq(configs[i].spreadReceiveFixed);
+            expect(expectedMaxLpUtilizationRate).to.be.eq(configs[i].maxLpUtilizationRate);
+            expect(expectedMaxLpUtilizationPerLegRate).to.be.eq(
+                configs[i].maxLpUtilizationPerLegRate
             );
         }
     });
@@ -246,7 +244,7 @@ describe("MiltonFacadeDataProvider", () => {
             tokenUsdc,
             tokenUsdt,
             tokenDai,
-            warren,
+            iporOracle,
             josephDai,
             josephUsdc,
             josephUsdt,
@@ -309,7 +307,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -318,7 +316,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -327,21 +325,21 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdc.asset, PERCENTAGE_5_18DEC, paramsUsdc.openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(paramsUsdt.asset, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -365,7 +363,7 @@ describe("MiltonFacadeDataProvider", () => {
         const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
 
         await miltonFacadeDataProvider.initialize(
-            warren.address,
+            iporOracle.address,
             [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
             [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
             [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
