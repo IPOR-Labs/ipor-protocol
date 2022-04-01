@@ -33,7 +33,7 @@ const { expect } = chai;
 export type Params = {
     asset: UsdcMockedToken | UsdtMockedToken | DaiMockedToken;
     totalAmount: BigNumber;
-    toleratedQuoteValue: BigNumber;
+    maxAcceptableFixedInterestRate: BigNumber;
     leverage: BigNumber;
     direction: number;
     openTimestamp: BigNumber;
@@ -268,7 +268,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -283,7 +283,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -298,7 +298,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -315,7 +315,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -330,7 +330,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -345,7 +345,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
     }
@@ -363,7 +363,7 @@ export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer
         id: BigNumber.from("1"),
         collateral: BigNumber.from("1000").mul(N1__0_18DEC),
         liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
-        notionalAmount: BigNumber.from("50000").mul(N1__0_18DEC),
+        notional: BigNumber.from("50000").mul(N1__0_18DEC),
         fixedInterestRate: BigNumber.from("234"),
         ibtQuantity: BigNumber.from("123"),
         openingFeeLPAmount: BigNumber.from("1500").mul(N1__0_18DEC),
@@ -390,7 +390,7 @@ const preparePayFixedState = async (
         JosephDaiMockCases.CASE0
     );
 
-    const { tokenUsdt, josephUsdt, warren } = testData;
+    const { tokenUsdt, josephUsdt, iporOracle } = testData;
 
     if (tokenUsdt === undefined || josephUsdt === undefined) {
         expect(true).to.be.false;
@@ -410,14 +410,14 @@ const preparePayFixedState = async (
     const paramsUsdt = {
         asset: tokenUsdt,
         totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -451,7 +451,7 @@ const prepareReceiveFixedState = async (
         JosephDaiMockCases.CASE0
     );
 
-    const { tokenUsdt, warren, josephUsdt } = testData;
+    const { tokenUsdt, iporOracle, josephUsdt } = testData;
 
     if (tokenUsdt === undefined || josephUsdt === undefined) {
         expect(true).to.be.false;
@@ -471,14 +471,14 @@ const prepareReceiveFixedState = async (
     const paramsUsdt = {
         asset: tokenUsdt,
         totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         direction: 0,
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 
@@ -534,14 +534,14 @@ const prepareState = async (
     const paramsUsdt = {
         asset: tokenUsdt,
         totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: userTwo,
         direction: 0,
     };
 
-    await testData.warren
+    await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsUsdt.asset.address, PERCENTAGE_5_18DEC, paramsUsdt.openTimestamp);
 

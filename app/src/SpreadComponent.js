@@ -23,9 +23,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadPayFixedValue / 1000000000000000000}
+                                {item.spreadPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadPayFixedValue}</small>
+                                <small>{item.spreadPayFixed}</small>
                             </div>
                         )}
                     />
@@ -39,9 +39,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadPayFixedValue / 1000000000000000000}
+                                {item.spreadPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadPayFixedValue}</small>
+                                <small>{item.spreadPayFixed}</small>
                             </div>
                         )}
                     />
@@ -55,9 +55,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadPayFixedValue / 1000000000000000000}
+                                {item.spreadPayFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadPayFixedValue}</small>
+                                <small>{item.spreadPayFixed}</small>
                             </div>
                         )}
                     />
@@ -74,9 +74,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadRecFixedValue / 1000000000000000000}
+                                {item.spreadReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadRecFixedValue}</small>
+                                <small>{item.spreadReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -90,9 +90,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadRecFixedValue / 1000000000000000000}
+                                {item.spreadReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadRecFixedValue}</small>
+                                <small>{item.spreadReceiveFixed}</small>
                             </div>
                         )}
                     />
@@ -106,9 +106,9 @@ export default ({ drizzle, drizzleState }) => (
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(item) => (
                             <div>
-                                {item.spreadRecFixedValue / 1000000000000000000}
+                                {item.spreadReceiveFixed / 1000000000000000000}
                                 <br />
-                                <small>{item.spreadRecFixedValue}</small>
+                                <small>{item.spreadReceiveFixed}</small>
                             </div>
                         )}
                     />

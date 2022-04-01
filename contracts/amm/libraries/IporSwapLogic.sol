@@ -16,7 +16,7 @@ library IporSwapLogic {
         uint256 leverage,
         uint256 liquidationDepositAmount,
         uint256 iporPublicationFeeAmount,
-        uint256 openingFeePercentage
+        uint256 openingFeeRate
     )
         internal
         pure
@@ -28,10 +28,10 @@ library IporSwapLogic {
     {
         collateral = IporMath.division(
             (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 + openingFeePercentage
+            Constants.D18 + openingFeeRate
         );
         notional = IporMath.division(leverage * collateral, Constants.D18);
-        openingFee = IporMath.division(collateral * openingFeePercentage, Constants.D18);
+        openingFee = IporMath.division(collateral * openingFeeRate, Constants.D18);
     }
 
     function calculateSwapPayFixedValue(
@@ -95,7 +95,7 @@ library IporSwapLogic {
         }
 
         quasiIFixed = calculateQuasiInterestFixed(
-            swap.notionalAmount,
+            swap.notional,
             swap.fixedInterestRate,
             calculatedPeriodInSeconds
         );
@@ -105,14 +105,14 @@ library IporSwapLogic {
 
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
-        uint256 notionalAmount,
+        uint256 notional,
         uint256 swapFixedInterestRate,
         uint256 swapPeriodInSeconds
     ) internal pure returns (uint256) {
         return
-            notionalAmount *
+            notional *
             Constants.WAD_YEAR_IN_SECONDS +
-            notionalAmount *
+            notional *
             swapFixedInterestRate *
             swapPeriodInSeconds;
     }

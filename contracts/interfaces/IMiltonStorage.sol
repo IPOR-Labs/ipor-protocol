@@ -29,12 +29,12 @@ interface IMiltonStorage {
         returns (MiltonStorageTypes.ExtendedBalancesMemory memory);
 
     /// @notice Gets total outstanding notional.
-    /// @return payFixedTotalNotional total notional balance for Pay Fixed leg, represented in 18 decimals
-    /// @return recFixedTotalNotional total notional balance for Receive Fixed leg, represented in 18 decimals
+    /// @return totalNotionalPayFixed total notional balance for Pay Fixed leg, represented in 18 decimals
+    /// @return totalNotionalReceiveFixed total notional balance for Receive Fixed leg, represented in 18 decimals
     function getTotalOutstandingNotional()
         external
         view
-        returns (uint256 payFixedTotalNotional, uint256 recFixedTotalNotional);
+        returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed);
 
     /// @notice Gets Pay Fixed Swap for a given swap id
     /// @param swapId swap id.
@@ -155,20 +155,20 @@ interface IMiltonStorage {
 
     /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new pay fixed swap is opened. Function available only for Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
-    /// @param cfgIporPublicationFeeAmount publication fee amount taken from Milton configuration, represented in 18 decimals.
+    /// @param cfgIporPublicationFee publication fee amount taken from Milton configuration, represented in 18 decimals.
     /// @return new swap Id
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) external returns (uint256);
 
     /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new receive fixed swap is opened. Function available only for Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
-    /// @param cfgIporPublicationFeeAmount publication fee amount taken from Milton configuration, represented in 18 decimals.
+    /// @param cfgIporPublicationFee publication fee amount taken from Milton configuration, represented in 18 decimals.
     /// @return new swap Id
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
-        uint256 cfgIporPublicationFeeAmount
+        uint256 cfgIporPublicationFee
     ) external returns (uint256);
 
     /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close pay fixed swap. Function available only for Milton.
@@ -176,8 +176,8 @@ interface IMiltonStorage {
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
     /// @param closingTimestamp moment when swap is closed
-    /// @param cfgIncomeFeePercentage income fee percentage taken from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinPercentagePositionValueToCloseBeforeMaturity configuration param for validation closing swap, describe minimal percentage
+    /// @param cfgIncomeFeeRate income fee rate taken from trader profit positionValue, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for validation closing swap, describe minimal rate
     /// position value required to close swap before maturity. Value represented in 18 decimals.
     /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for validation closing swap, describe number of seconds before swap
     ///maturity after which swap can be closed by anybody not only by swap's buyer.
@@ -186,8 +186,8 @@ interface IMiltonStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
@@ -197,8 +197,8 @@ interface IMiltonStorage {
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
     /// @param closingTimestamp moment when swap is closed
-    /// @param cfgIncomeFeePercentage income fee percentage taken from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinPercentagePositionValueToCloseBeforeMaturity configuration param for validation closing swap, describe minimal percentage
+    /// @param cfgIncomeFeeRate income fee rate taken from trader profit positionValue, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for validation closing swap, describe minimal rate
     /// position value required to close swap before maturity. Value represented in 18 decimals.
     /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for validation closing swap, describe number of seconds before swap
     ///maturity after which swap can be closed by anybody not only by swap's buyer.
@@ -207,8 +207,8 @@ interface IMiltonStorage {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 positionValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeePercentage,
-        uint256 cfgMinPercentagePositionValueToCloseBeforeMaturity,
+        uint256 cfgIncomeFeeRate,
+        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 

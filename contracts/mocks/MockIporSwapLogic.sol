@@ -15,13 +15,13 @@ contract MockIporSwapLogic {
 
     //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
-        uint256 notionalAmount,
+        uint256 notional,
         uint256 swapFixedInterestRate,
         uint256 swapPeriodInSeconds
     ) public pure returns (uint256) {
         return
             IporSwapLogic.calculateQuasiInterestFixed(
-                notionalAmount,
+                notional,
                 swapFixedInterestRate,
                 swapPeriodInSeconds
             );

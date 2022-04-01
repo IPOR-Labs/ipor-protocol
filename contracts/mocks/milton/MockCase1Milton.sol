@@ -8,39 +8,27 @@ abstract contract MockCase1Milton is ItfMilton {
         return 1e23;
     }
 
-    function _getMaxLpUtilizationPercentage() internal pure virtual override returns (uint256) {
+    function _getMaxLpUtilizationRate() internal pure virtual override returns (uint256) {
         return 8 * 1e17;
     }
 
-    function _getMaxLpUtilizationPerLegPercentage()
-        internal
-        pure
-        virtual
-        override
-        returns (uint256)
-    {
+    function _getMaxLpUtilizationPerLegRate() internal pure virtual override returns (uint256) {
         return 48 * 1e18;
     }
 
-    function _getIncomeFeePercentage() internal pure virtual override returns (uint256) {
+    function _getIncomeFeeRate() internal pure virtual override returns (uint256) {
         return 1e17;
     }
 
-    function _getOpeningFeePercentage() internal pure virtual override returns (uint256) {
+    function _getOpeningFeeRate() internal pure virtual override returns (uint256) {
         return 600000000000000000;
     }
 
-    function _getOpeningFeeForTreasuryPercentage()
-        internal
-        pure
-        virtual
-        override
-        returns (uint256)
-    {
+    function _getOpeningFeeTreasuryPortionRate() internal pure virtual override returns (uint256) {
         return 0;
     }
 
-    function _getIporPublicationFeeAmount() internal pure virtual override returns (uint256) {
+    function _getIporPublicationFee() internal pure virtual override returns (uint256) {
         return 10 * 1e18;
     }
 
@@ -48,11 +36,11 @@ abstract contract MockCase1Milton is ItfMilton {
         return 20 * 1e18;
     }
 
-    function _getMaxLeverageValue() internal pure virtual override returns (uint256) {
+    function _getMaxLeverage() internal pure virtual override returns (uint256) {
         return 1000 * 1e18;
     }
 
-    function _getMinLeverageValue() internal pure virtual override returns (uint256) {
+    function _getMinLeverage() internal pure virtual override returns (uint256) {
         return 10 * 1e18;
     }
 }

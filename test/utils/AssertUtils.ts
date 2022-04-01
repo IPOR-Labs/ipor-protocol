@@ -14,11 +14,11 @@ import {
     MiltonDaiCase,
 } from "./MiltonUtils";
 
-import { Derivatives, countOpenSwaps } from "./SwapUtiles";
+import { Derivatives, countOpenSwaps } from "./SwapUtils";
 
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "./JosephUtils";
 import { MockStanleyCase } from "./StanleyUtils";
-import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtiles";
+import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtils";
 
 import {
     N0__1_18DEC,
@@ -106,7 +106,7 @@ export const testCasePagination = async (
         miltonDai,
         tokenDai,
         josephDai,
-        warren,
+        iporOracle,
         tokenUsdt,
         tokenUsdc,
         miltonUsdt,
@@ -139,13 +139,13 @@ export const testCasePagination = async (
     const paramsDai = {
         asset: tokenDai.address,
         totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
-        toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: userTwo,
     };
 
-    await warren
+    await iporOracle
         .connect(userOne)
         .itfUpdateIndex(paramsDai.asset, PERCENTAGE_5_18DEC, paramsDai.openTimestamp);
 
@@ -158,7 +158,7 @@ export const testCasePagination = async (
     );
     const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
     await miltonFacadeDataProvider.initialize(
-        warren.address,
+        iporOracle.address,
         [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
         [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
         [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
@@ -442,8 +442,8 @@ const assertBalances = async (
         );
     }
 
-    const actualPayFixedDerivativesBalance = balance?.payFixedTotalCollateral;
-    const actualRecFixedDerivativesBalance = balance?.receiveFixedTotalCollateral;
+    const actualPayFixedDerivativesBalance = balance?.totalCollateralPayFixed;
+    const actualRecFixedDerivativesBalance = balance?.totalCollateralReceiveFixed;
     const actualDerivativesTotalBalance = actualPayFixedDerivativesBalance?.add(
         actualRecFixedDerivativesBalance || ZERO
     );

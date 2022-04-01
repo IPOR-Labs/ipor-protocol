@@ -11,25 +11,21 @@ interface IJosephInternal {
     /// @return ERC20 token address
     function getAsset() external view returns (address);
 
-
-    /// TODO: consider changing Percentage to Rate
     /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
     /// @return redeem fee rate represented in 18 decimals
-    function getRedeemFeePercentage() external pure returns (uint256);
+    function getRedeemFeeRate() external pure returns (uint256);
 
-    /// TODO: consider changing Percentage to Rate
     /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
     /// Liquidity Pool utilization rate treshold during redemption of ipTokens by the trader.
-    /// @return redeem Liquidity Pool max utilization percentage
-    function getRedeemLpMaxUtilizationPercentage() external pure returns (uint256);
+    /// @return redeem Liquidity Pool max utilization rate
+    function getRedeemLpMaxUtilizationRate() external pure returns (uint256);
 
-    /// TODO: consider dropping "Percentage"
-    /// @notice Gets balance ratio config param presented in percentages in 18 decimals between Milton and Stanley
+    /// @notice Gets balance ratio config param presented ratio in 18 decimals between Milton and Stanley
     /// @return gets balance ratio config param between Milton and Stanley
-    function getMiltonStanleyBalanceRatioPercentage() external pure returns (uint256);
+    function getMiltonStanleyBalanceRatio() external pure returns (uint256);
 
     /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
-    /// `_MILTON_STANLEY_BALANCE_PERCENTAGE` part of Milton balance is transferred to Stanley or vice versa.
+    /// `_MILTON_STANLEY_BALANCE_RATIO` part of Milton balance is transferred to Stanley or vice versa.
     /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
     /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley.
     /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on Milton and Stanley.

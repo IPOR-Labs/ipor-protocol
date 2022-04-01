@@ -54,10 +54,7 @@ contract MockCaseBaseStanley is IStanley {
         override
         returns (uint256 withdrawnAmount, uint256 balance)
     {
-        uint256 finalAssetAmount = IporMath.division(
-            assetAmount * _withdrawPercentage(),
-            Constants.D18
-        );
+        uint256 finalAssetAmount = IporMath.division(assetAmount * _withdrawRate(), Constants.D18);
 
         balance = _balance[msg.sender] - finalAssetAmount;
         withdrawnAmount = finalAssetAmount;
@@ -79,7 +76,7 @@ contract MockCaseBaseStanley is IStanley {
         return 0;
     }
 
-    function _withdrawPercentage() internal pure virtual returns (uint256) {
+    function _withdrawRate() internal pure virtual returns (uint256) {
         return 1e18;
     }
 }

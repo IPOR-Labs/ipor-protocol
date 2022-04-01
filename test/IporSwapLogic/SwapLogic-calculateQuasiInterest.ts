@@ -3,7 +3,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { MockIporSwapLogic } from "../../types";
 import { N1__0_18DEC, N0__01_18DEC, PERIOD_25_DAYS_IN_SECONDS } from "../utils/Constants";
-import { prepareSwapPayFixedCase1 } from "../utils/SwapUtiles";
+import { prepareSwapPayFixedCase1 } from "../utils/SwapUtils";
 
 const { expect } = chai;
 

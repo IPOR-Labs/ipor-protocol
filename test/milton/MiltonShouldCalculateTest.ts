@@ -27,7 +27,7 @@ import {
     testCaseWhenMiltonEarnAndUserLost,
     testCaseWhenMiltonLostAndUserEarn,
 } from "../utils/MiltonUtils";
-import { openSwapPayFixed } from "../utils/SwapUtiles";
+import { openSwapPayFixed } from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
@@ -535,7 +535,7 @@ describe("Milton should calculate income - Core", () => {
             miltonSpreadModel
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -548,7 +548,7 @@ describe("Milton should calculate income - Core", () => {
 
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         const miltonBalanceBeforePayoutWad = USD_28_000_18DEC;

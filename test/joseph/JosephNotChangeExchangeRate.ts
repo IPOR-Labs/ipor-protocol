@@ -51,7 +51,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { josephDai, ipTokenDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, ipTokenDai, tokenDai, iporOracle, miltonDai } = testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -75,7 +75,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
         const amount = BigNumber.from("180").mul(N1__0_18DEC);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await josephDai
@@ -88,7 +88,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -142,7 +142,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { josephDai, ipTokenDai, tokenDai, warren, miltonDai } = testData;
+        const { josephDai, ipTokenDai, tokenDai, iporOracle, miltonDai } = testData;
         if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
@@ -166,7 +166,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
         const amount = BigNumber.from("180").mul(N1__0_18DEC);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
 
@@ -180,7 +180,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -239,7 +239,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             JosephDaiMockCases.CASE0
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonUsdt, ipTokenUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonUsdt, ipTokenUsdt } = testData;
         if (
             tokenUsdt === undefined ||
             josephUsdt === undefined ||
@@ -262,7 +262,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const params = getStandardDerivativeParamsUSDT(userTwo, tokenUsdt);
 
         const amount = BigNumber.from("180").mul(N1__0_6DEC);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
         await josephUsdt
@@ -275,7 +275,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 amount,
-                params.toleratedQuoteValue,
+                params.maxAcceptableFixedInterestRate,
                 params.leverage
             );
 

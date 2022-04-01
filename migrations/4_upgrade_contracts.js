@@ -4,8 +4,8 @@ const { erc1967, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 
-const Warren = artifacts.require("Warren");
-const ItfWarren = artifacts.require("ItfWarren");
+const IporOracle = artifacts.require("IporOracle");
+const ItfIporOracle = artifacts.require("ItfIporOracle");
 
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
@@ -28,7 +28,7 @@ const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
 const ItfJosephDai = artifacts.require("ItfJosephDai");
 
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
-const WarrenFacadeDataProvider = artifacts.require("WarrenFacadeDataProvider");
+const IporOracleFacadeDataProvider = artifacts.require("IporOracleFacadeDataProvider");
 const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network, addresses) {
@@ -36,10 +36,10 @@ module.exports = async function (deployer, _network, addresses) {
 
     await upgradeContract(MiltonSpreadModel);
 
-    await upgradeContract(Warren);
-    await upgradeContract(ItfWarren);
+    await upgradeContract(IporOracle);
+    await upgradeContract(ItfIporOracle);
 
-    await upgradeContract(WarrenFacadeDataProvider);
+    await upgradeContract(IporOracleFacadeDataProvider);
     await upgradeContract(CockpitDataProvider);
     await upgradeContract(MiltonFacadeDataProvider);
 

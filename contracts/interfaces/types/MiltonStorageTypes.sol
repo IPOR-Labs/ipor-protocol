@@ -17,9 +17,9 @@ library MiltonStorageTypes {
     /// IPOR publication fee balance, treasury balance, all balances are in 18 decimals
     struct ExtendedBalancesMemory {
         /// @notice Swap's balance for Pay Fixed leg
-        uint256 payFixedTotalCollateral;
+        uint256 totalCollateralPayFixed;
         /// @notice Swap's balance for Receive Fixed leg
-        uint256 receiveFixedTotalCollateral;
+        uint256 totalCollateralReceiveFixed;
         /// @notice Liquidity Pool's Balance
         uint256 liquidityPool;
         /// @notice Stanley's (Asset Management) balance

@@ -12,8 +12,8 @@ import "dotenv";
 
 require("dotenv").config();
 require("hardhat-docgen");
-import '@hardhat-docgen/core'
-import '@hardhat-docgen/markdown'
+import "@hardhat-docgen/core";
+import "@hardhat-docgen/markdown";
 require("hardhat-contract-sizer");
 
 if (process.env.REPORT_GAS === "true") {
@@ -77,8 +77,8 @@ export default {
             "contracts/amm/pool/Joseph.sol",
             "contracts/facades/cockpit/CockpitDataProvider.sol",
             "contracts/facades/MiltonFacadeDataProvider.sol",
-            "contracts/facades/WarrenFacadeDataProvider.sol",
-            "contracts/oracles/Warren.sol",
+            "contracts/facades/IporOracleFacadeDataProvider.sol",
+            "contracts/oracles/IporOracle.sol",
             "contracts/tokens/IpToken.sol",
             "contracts/tokens/IvToken.sol",
             "contracts/vault/Stanley.sol",

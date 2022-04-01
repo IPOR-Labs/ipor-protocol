@@ -9,26 +9,18 @@ export default ({ drizzle, drizzleState }) => (
         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
             <div>
                 <div>
-                    <strong>Add IPOR Index (ItfWarren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfWarren"
-                        method="updateIndex"
-                    />
+                    <strong>Add IPOR Index (ItfIporOracle)</strong>
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="updateIndex" />
                 </div>
                 <div>
-                    <strong>Add updater (ItfWarren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfWarren"
-                        method="addUpdater"
-                    />
+                    <strong>Add updater (ItfIporOracle)</strong>
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="addUpdater" />
                 </div>
                 <div>
-                    <strong>Remove updater (ItfWarren)</strong>
+                    <strong>Remove updater (ItfIporOracle)</strong>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="ItfWarren"
+                        contract="ItfIporOracle"
                         method="removeUpdater"
                     />
                 </div>
@@ -36,28 +28,16 @@ export default ({ drizzle, drizzleState }) => (
         ) : (
             <div>
                 <div>
-                    <strong>Add IPOR Index (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="updateIndex"
-                    />
+                    <strong>Add IPOR Index (IporOracle)</strong>
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="updateIndex" />
                 </div>
                 <div>
-                    <strong>Add updater (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="addUpdater"
-                    />
+                    <strong>Add updater (IporOracle)</strong>
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="addUpdater" />
                 </div>
                 <div>
-                    <strong>Remove updater (Warren)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="removeUpdater"
-                    />
+                    <strong>Remove updater (IporOracle)</strong>
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater" />
                 </div>
             </div>
         )}
@@ -80,34 +60,18 @@ export default ({ drizzle, drizzleState }) => (
                 <label>Pause</label>
 
                 {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfWarren"
-                        method="pause"
-                    />
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="pause" />
                 ) : (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="pause"
-                    />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="pause" />
                 )}
             </div>
             <div className="col-md-3">
                 <label>Unpause</label>
 
                 {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfWarren"
-                        method="unpause"
-                    />
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="unpause" />
                 ) : (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="Warren"
-                        method="unpause"
-                    />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="unpause" />
                 )}
             </div>
             <div className="col-md-3">
@@ -116,13 +80,13 @@ export default ({ drizzle, drizzleState }) => (
                 {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                     <ContractForm
                         drizzle={drizzle}
-                        contract="ItfWarren"
+                        contract="ItfIporOracle"
                         method="transferOwnership"
                     />
                 ) : (
                     <ContractForm
                         drizzle={drizzle}
-                        contract="Warren"
+                        contract="IporOracle"
                         method="transferOwnership"
                     />
                 )}
@@ -134,13 +98,13 @@ export default ({ drizzle, drizzleState }) => (
                 {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                     <ContractForm
                         drizzle={drizzle}
-                        contract="ItfWarren"
+                        contract="ItfIporOracle"
                         method="confirmTransferOwnership"
                     />
                 ) : (
                     <ContractForm
                         drizzle={drizzle}
-                        contract="Warren"
+                        contract="IporOracle"
                         method="confirmTransferOwnership"
                     />
                 )}

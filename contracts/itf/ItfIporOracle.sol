@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-import "../oracles/Warren.sol";
+import "../oracles/IporOracle.sol";
 
-contract ItfWarren is Warren {
+contract ItfIporOracle is IporOracle {
     function itfGetDecayFactorValue() external pure returns (uint256) {
         return _DECAY_FACTOR_VALUE;
     }

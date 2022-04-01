@@ -26,17 +26,17 @@ library AmmTypes {
         uint256 liquidationDepositAmount;
         /// @notice Swap's notional amount.
         /// @dev value represented in 18 decimals
-        uint256 notionalAmount;
+        uint256 notional;
         /// @notice Fixed interest rate at which the position has been opened.
         /// @dev value represented in 18 decimals
         uint256 fixedInterestRate;
         /// @notice Quantity of Interest Bearing Token (IBT) at moment when position was opened.
         /// @dev value represented in 18 decimals
         uint256 ibtQuantity;
-        /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a percentage of the swap's collateral.
+        /// @notice Opening fee amount part which is allocated in Liquidity Pool Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
         uint256 openingFeeLPAmount;
-        /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a percentage of the swap's collateral.
+        /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
         uint256 openingFeeTreasuryAmount;
     }
@@ -49,14 +49,14 @@ library AmmTypes {
         /// @notice Swap's collateral
         uint256 collateral;
         /// @notice Swap's notional
-        uint256 notionalAmount;
+        uint256 notional;
         /// @notice Opening Fee - part allocated as a profit of the Liquidity Pool
         uint256 openingFeeLPAmount;
         /// @notice  Part of the fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
-		/// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
+        /// @notice Opening Fee - part allocated in Treasury balance. Part of the fee set asside for subsidising the oracle that publishes IPOR rate. Flat fee set by the DAO.
         uint256 openingFeeTreasuryAmount;
         /// @notice Fee set aside for subsidizing the oracle that publishes IPOR rate. Flat fee set by the DAO.
-        uint256 iporPublicationAmount;
+        uint256 iporPublicationFee;
         /// @notice Liquidation deposit is retained when the swap is opened.
         uint256 liquidationDepositAmount;
     }

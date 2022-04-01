@@ -292,7 +292,7 @@ describe("MiltonStorage", () => {
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
                 await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo),
-                await miltonDai.getIporPublicationFeeAmount()
+                await miltonDai.getIporPublicationFee()
             );
         //then
     });
@@ -322,7 +322,7 @@ describe("MiltonStorage", () => {
                 .connect(userThree)
                 .updateStorageWhenOpenSwapPayFixed(
                     derivativeStruct,
-                    await miltonDai.getIporPublicationFeeAmount()
+                    await miltonDai.getIporPublicationFee()
                 ),
             //then
             "IPOR_008"
@@ -350,12 +350,12 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        const { miltonStorageDai, miltonDai, tokenDai, warren, josephDai } = testData;
+        const { miltonStorageDai, miltonDai, tokenDai, iporOracle, josephDai } = testData;
         if (
             miltonStorageDai === undefined ||
             miltonDai === undefined ||
             tokenDai === undefined ||
-            warren === undefined ||
+            iporOracle === undefined ||
             josephDai === undefined
         ) {
             expect(true).to.be.false;
@@ -370,14 +370,14 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,
@@ -403,7 +403,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_18DEC),
                 closeSwapTimestamp,
-                await miltonDai.getIncomeFeePercentage(),
+                await miltonDai.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -435,7 +435,7 @@ describe("MiltonStorage", () => {
             testData
         );
 
-        const { tokenUsdt, warren, josephUsdt, miltonStorageUsdt, miltonUsdt } = testData;
+        const { tokenUsdt, iporOracle, josephUsdt, miltonStorageUsdt, miltonUsdt } = testData;
         if (
             tokenUsdt === undefined ||
             josephUsdt === undefined ||
@@ -454,14 +454,14 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenUsdt,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,
@@ -487,7 +487,7 @@ describe("MiltonStorage", () => {
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_6DEC),
                 closeSwapTimestamp,
-                await miltonUsdt.getIncomeFeePercentage(),
+                await miltonUsdt.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -515,12 +515,12 @@ describe("MiltonStorage", () => {
             "DAI",
             testData
         );
-        const { tokenDai, warren, josephDai, miltonStorageDai, miltonDai } = testData;
+        const { tokenDai, iporOracle, josephDai, miltonStorageDai, miltonDai } = testData;
         if (
             miltonStorageDai === undefined ||
             miltonDai === undefined ||
             tokenDai === undefined ||
-            warren === undefined ||
+            iporOracle === undefined ||
             josephDai === undefined
         ) {
             expect(true).to.be.false;
@@ -533,14 +533,14 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("9").mul(N0__1_18DEC),
+            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
             direction: 0,
         };
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset.address,
@@ -565,7 +565,7 @@ describe("MiltonStorage", () => {
                     derivativeItem,
                     BigNumber.from("10").mul(N1__0_18DEC),
                     closeSwapTimestamp,
-                    await miltonDai.getIncomeFeePercentage(),
+                    await miltonDai.getIncomeFeeRate(),
                     PERCENTAGE_95_18DEC,
                     PERIOD_6_HOURS_IN_SECONDS
                 ),

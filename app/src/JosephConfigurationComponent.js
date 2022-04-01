@@ -34,7 +34,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Redeem Liquidity Pool Max Utilization Percentage</strong>
+                        <strong>Redeem Liquidity Pool Max Utilization Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -42,7 +42,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdt"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -56,7 +56,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdt"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -73,7 +73,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdc"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -87,7 +87,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdc"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -104,7 +104,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephDai"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -118,7 +118,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephDai"
-                                method="getRedeemLpMaxUtilizationPercentage"
+                                method="getRedeemLpMaxUtilizationRate"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -133,7 +133,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Milton Stanley Balance Percentage</strong>
+                        <strong>Milton Stanley Balance Rate</strong>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
@@ -141,7 +141,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdt"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -155,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdt"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -172,7 +172,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephUsdc"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -186,7 +186,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephUsdc"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -203,7 +203,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="ItfJosephDai"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}
@@ -217,7 +217,7 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="JosephDai"
-                                method="getMiltonStanleyBalanceRatioPercentage"
+                                method="getMiltonStanleyBalanceRatio"
                                 render={(value) => (
                                     <div>
                                         {value / 1000000000000000000}

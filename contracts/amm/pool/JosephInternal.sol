@@ -28,9 +28,9 @@ abstract contract JosephInternal is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 internal constant _REDEEM_FEE_PERCENTAGE = 5e15;
-    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE = 1e18;
-    uint256 internal constant _MILTON_STANLEY_BALANCE_PERCENTAGE = 85e15;
+    uint256 internal constant _REDEEM_FEE_RATE = 5e15;
+    uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
+    uint256 internal constant _MILTON_STANLEY_BALANCE_RATIO = 85e15;
 
     address internal _asset;
     IIpToken internal _ipToken;
@@ -64,16 +64,16 @@ abstract contract JosephInternal is
         return _asset;
     }
 
-    function _getRedeemFeePercentage() internal pure virtual returns (uint256) {
-        return _REDEEM_FEE_PERCENTAGE;
+    function _getRedeemFeeRate() internal pure virtual returns (uint256) {
+        return _REDEEM_FEE_RATE;
     }
 
-    function _getRedeemLpMaxUtilizationPercentage() internal pure virtual returns (uint256) {
-        return _REDEEM_LP_MAX_UTILIZATION_PERCENTAGE;
+    function _getRedeemLpMaxUtilizationRate() internal pure virtual returns (uint256) {
+        return _REDEEM_LP_MAX_UTILIZATION_RATE;
     }
 
-    function _getMiltonStanleyBalanceRatioPercentage() internal pure virtual returns (uint256) {
-        return _MILTON_STANLEY_BALANCE_PERCENTAGE;
+    function _getMiltonStanleyBalanceRatio() internal pure virtual returns (uint256) {
+        return _MILTON_STANLEY_BALANCE_RATIO;
     }
 
     function rebalance() external override onlyOwner whenNotPaused {
@@ -83,13 +83,13 @@ abstract contract JosephInternal is
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
-        if (ratio > _MILTON_STANLEY_BALANCE_PERCENTAGE) {
+        if (ratio > _MILTON_STANLEY_BALANCE_RATIO) {
             uint256 assetAmount = wadMiltonAssetBalance -
-                IporMath.division(_MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance, Constants.D18);
+                IporMath.division(_MILTON_STANLEY_BALANCE_RATIO * totalBalance, Constants.D18);
             _milton.depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
-                _MILTON_STANLEY_BALANCE_PERCENTAGE * totalBalance,
+                _MILTON_STANLEY_BALANCE_RATIO * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
             _milton.withdrawFromStanley(assetAmount);
@@ -225,16 +225,16 @@ abstract contract JosephInternal is
         emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, newTreasuryManager);
     }
 
-    function getRedeemFeePercentage() external pure override returns (uint256) {
-        return _getRedeemFeePercentage();
+    function getRedeemFeeRate() external pure override returns (uint256) {
+        return _getRedeemFeeRate();
     }
 
-    function getRedeemLpMaxUtilizationPercentage() external pure override returns (uint256) {
-        return _getRedeemLpMaxUtilizationPercentage();
+    function getRedeemLpMaxUtilizationRate() external pure override returns (uint256) {
+        return _getRedeemLpMaxUtilizationRate();
     }
 
-    function getMiltonStanleyBalanceRatioPercentage() external pure override returns (uint256) {
-        return _getMiltonStanleyBalanceRatioPercentage();
+    function getMiltonStanleyBalanceRatio() external pure override returns (uint256) {
+        return _getMiltonStanleyBalanceRatio();
     }
 
     function _getDecimals() internal pure virtual returns (uint256);

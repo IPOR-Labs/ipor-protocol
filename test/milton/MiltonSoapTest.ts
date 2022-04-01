@@ -39,7 +39,7 @@ import {
     openSwapPayFixed,
     assertSoap,
     openSwapReceiveFixed,
-} from "../utils/SwapUtiles";
+} from "../utils/SwapUtils";
 
 const { expect } = chai;
 
@@ -120,7 +120,7 @@ describe("MiltonSpreadModel - Core", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const { tokenDai, josephDai, warren } = testData;
+        const { tokenDai, josephDai, iporOracle } = testData;
 
         if (tokenDai === undefined || josephDai === undefined) {
             expect(true).to.be.false;
@@ -133,7 +133,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUserAddress,
@@ -142,7 +142,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -190,7 +190,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openerUser = userTwo;
         const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
-        const { tokenDai, josephDai, warren } = testData;
+        const { tokenDai, josephDai, iporOracle } = testData;
 
         if (tokenDai === undefined || josephDai === undefined) {
             expect(true).to.be.false;
@@ -200,7 +200,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -209,7 +209,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -257,7 +257,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openerUser = userTwo;
         const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
 
-        const { tokenDai, josephDai, warren } = testData;
+        const { tokenDai, josephDai, iporOracle } = testData;
 
         if (tokenDai === undefined || josephDai === undefined) {
             expect(true).to.be.false;
@@ -267,7 +267,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -276,7 +276,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -324,7 +324,7 @@ describe("MiltonSpreadModel - Core", () => {
         const openerUser = userTwo;
         const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
-        const { tokenDai, josephDai, warren } = testData;
+        const { tokenDai, josephDai, iporOracle } = testData;
 
         if (tokenDai === undefined || josephDai === undefined) {
             expect(true).to.be.false;
@@ -334,7 +334,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -343,7 +343,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -392,7 +392,7 @@ describe("MiltonSpreadModel - Core", () => {
         const closerUser = userTwo;
         const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -402,7 +402,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -411,7 +411,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -463,7 +463,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -477,7 +477,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -486,7 +486,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -540,7 +540,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -554,7 +554,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -563,7 +563,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -572,7 +572,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
@@ -612,7 +612,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenUsdt, josephUsdt, warren } = testData;
+        const { tokenUsdt, josephUsdt, iporOracle } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined) {
             expect(true).to.be.false;
@@ -631,7 +631,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -640,7 +640,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -649,7 +649,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_6DEC), openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
@@ -698,7 +698,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, tokenUsdt, josephUsdt } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai, tokenUsdt, josephUsdt } = testData;
 
         if (
             tokenDai === undefined ||
@@ -726,7 +726,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -735,7 +735,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -746,14 +746,14 @@ describe("MiltonSpreadModel - Core", () => {
         await josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_6DEC, openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeDAIParams.asset,
                 iporValueBeforOpenSwapDAI,
                 derivativeDAIParams.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeUSDTParams.asset,
@@ -817,7 +817,7 @@ describe("MiltonSpreadModel - Core", () => {
         const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -827,7 +827,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -836,7 +836,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -844,7 +844,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_18DEC), openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(payFixDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, payFixDerivativeParams);
@@ -893,7 +893,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -908,7 +908,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -917,7 +917,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -925,7 +925,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(BigNumber.from(2).add(USD_28_000_18DEC), openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(payFixDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, payFixDerivativeParams);
@@ -979,7 +979,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai, tokenUsdt, josephUsdt, miltonUsdt } =
+        const { tokenDai, josephDai, iporOracle, miltonDai, tokenUsdt, josephUsdt, miltonUsdt } =
             testData;
 
         if (
@@ -1009,7 +1009,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1018,7 +1018,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1032,14 +1032,14 @@ describe("MiltonSpreadModel - Core", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_6DEC, openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 payFixDerivativeDAIParams.asset,
                 iporValueBeforOpenSwapDAI,
                 openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 recFixDerivativeUSDTParams.asset,
@@ -1103,7 +1103,7 @@ describe("MiltonSpreadModel - Core", () => {
         const iporValueAfterOpenSwap = PERCENTAGE_120_18DEC;
         const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1113,7 +1113,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1124,7 +1124,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1134,14 +1134,14 @@ describe("MiltonSpreadModel - Core", () => {
 
         await openSwapPayFixed(testData, derivativeParams);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_18DEC, calculationTimestamp);
 
@@ -1179,7 +1179,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { warren, tokenUsdt, josephUsdt } = testData;
+        const { iporOracle, tokenUsdt, josephUsdt } = testData;
 
         if (tokenUsdt === undefined || josephUsdt === undefined) {
             expect(true).to.be.false;
@@ -1199,7 +1199,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1210,7 +1210,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephUsdt
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_6DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1220,14 +1220,14 @@ describe("MiltonSpreadModel - Core", () => {
 
         await openSwapPayFixed(testData, derivativeParams);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_6DEC, calculationTimestamp);
 
@@ -1269,7 +1269,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1284,7 +1284,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1300,7 +1300,7 @@ describe("MiltonSpreadModel - Core", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1308,14 +1308,14 @@ describe("MiltonSpreadModel - Core", () => {
                 derivativeParams.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
                 iporValueAfterOpenSwap,
                 derivativeParams.openTimestamp
             );
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(derivativeParams.asset, PERCENTAGE_6_18DEC, calculationTimestamp25days);
 
@@ -1366,7 +1366,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1380,7 +1380,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1388,7 +1388,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1404,7 +1404,7 @@ describe("MiltonSpreadModel - Core", () => {
             );
 
         //when
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -1451,7 +1451,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1465,7 +1465,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1473,7 +1473,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1485,7 +1485,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
 
         //when
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -1493,7 +1493,7 @@ describe("MiltonSpreadModel - Core", () => {
                 derivativeParamsFirst.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParamsFirst);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -1501,7 +1501,7 @@ describe("MiltonSpreadModel - Core", () => {
                 derivativeParams25days.openTimestamp
             );
         await openSwapPayFixed(testData, derivativeParams25days);
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -1546,7 +1546,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1560,7 +1560,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1582,7 +1582,7 @@ describe("MiltonSpreadModel - Core", () => {
             .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
 
         //when
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1594,7 +1594,7 @@ describe("MiltonSpreadModel - Core", () => {
         const soapBeforeUpdateIndexStruct = await calculateSoap(testData, soapParams);
         const soapBeforeUpdateIndex = soapBeforeUpdateIndexStruct?.soap || ZERO;
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1604,7 +1604,7 @@ describe("MiltonSpreadModel - Core", () => {
         const soapUpdateIndexAfter25DaysStruct = await calculateSoap(testData, soapParams);
         const soapUpdateIndexAfter25Days = soapUpdateIndexAfter25DaysStruct?.soap || ZERO;
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParams.asset,
@@ -1656,7 +1656,7 @@ describe("MiltonSpreadModel - Core", () => {
             testData
         );
 
-        const { tokenDai, josephDai, warren, miltonDai } = testData;
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
@@ -1674,7 +1674,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            toleratedQuoteValue: BigNumber.from("900000000000000000"),
+            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
@@ -1684,7 +1684,7 @@ describe("MiltonSpreadModel - Core", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, openTimestamp);
 
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,
@@ -1694,7 +1694,7 @@ describe("MiltonSpreadModel - Core", () => {
         await openSwapPayFixed(testData, derivativeParamsFirst);
 
         //when
-        await warren
+        await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
                 derivativeParamsFirst.asset,

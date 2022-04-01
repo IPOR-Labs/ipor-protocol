@@ -6,9 +6,9 @@ import "./types/CockpitTypes.sol";
 
 /// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
 interface ICockpitDataProvider {
-	/// @notice Returns current version of Cockpit Data Provider
+    /// @notice Returns current version of Cockpit Data Provider
     /// @return current Cockpit Data Provider version
-	function getVersion() external pure returns (uint256);
+    function getVersion() external pure returns (uint256);
 
     /// @notice gets list all IPOR Indexes for all supported assets
     /// @return List of all IPOR Indexes for all supported assets in IPOR Protocol
@@ -94,10 +94,10 @@ interface ICockpitDataProvider {
     /// @notice Calculates spread value for a given asset based on a current Milton balance,
     /// SOAP, utilization and IPOR Index indicators.
     /// @param asset asset / stablecoin address
-    /// @return spreadPayFixedValue Spread value for Pay Fixed leg for a given asset
-    /// @return spreadRecFixedValue Spread value for Receive Fixed leg for a given asset
+    /// @return spreadPayFixed Spread value for Pay Fixed leg for a given asset
+    /// @return spreadReceiveFixed Spread value for Receive Fixed leg for a given asset
     function calculateSpread(address asset)
         external
         view
-        returns (uint256 spreadPayFixedValue, uint256 spreadRecFixedValue);
+        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed);
 }
