@@ -5,6 +5,7 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "./types/AmmMiltonStorageTypes.sol";
+import "hardhat/console.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
@@ -40,7 +41,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -51,7 +52,10 @@ library SoapIndicatorLogic {
             si,
             rebalanceTimestamp
         );
-
+        console.log(
+            "[rebalanceWhenOpenSwap] quasiHypotheticalInterestTotal=",
+            quasiHypotheticalInterestTotal
+        );
         si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
         si.totalNotional = si.totalNotional + derivativeNotional.toUint128();
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
@@ -67,7 +71,7 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) internal view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
             si,
             rebalanceTimestamp
@@ -80,9 +84,19 @@ library SoapIndicatorLogic {
             swapFixedInterestRate
         );
 
+        console.log(
+            "[rebalanceWhenCloseSwap] currentQuasiHypoteticalInterestTotal=",
+            currentQuasiHypoteticalInterestTotal
+        );
+        console.log("[rebalanceWhenCloseSwap] quasiInterestPaidOut=", quasiInterestPaidOut);
+
         uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal -
             quasiInterestPaidOut;
 
+        console.log(
+            "[rebalanceWhenCloseSwap] quasiHypotheticalInterestTotal=",
+            quasiHypotheticalInterestTotal
+        );
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
 
         uint256 averageInterestRate = calculateInterestRateWhenCloseSwap(
