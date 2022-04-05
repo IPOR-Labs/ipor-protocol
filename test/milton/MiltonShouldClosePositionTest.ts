@@ -5,6 +5,7 @@ import {
     ZERO,
     USD_10_18DEC,
     USD_28_000_18DEC,
+    USD_50_000_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_365_18DEC,
     PERCENTAGE_366_18DEC,
@@ -37,6 +38,7 @@ import {
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
     TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     PERIOD_14_DAYS_IN_SECONDS,
+    PERIOD_28_DAYS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -3290,5 +3292,65 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+    });
+
+
+    it("should transfer all liquidation deposits in single transfer to liquidator ", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+
+        const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_18DEC, params.openTimestamp);
+
+        await miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
+
+        await miltonDai
+            .connect(userTwo)
+            .itfOpenSwapPayFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_160_18DEC, params.openTimestamp);
+
+        await expect(
+            miltonDai
+                .connect(userThree)
+                .itfCloseSwapsPayFixed([1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
+        )
+            .to.emit(tokenDai, "Transfer")
+            .withArgs(
+                miltonDai.address,
+                await userThree.getAddress(),
+                BigNumber.from("40000000000000000000")
+            );
     });
 });
