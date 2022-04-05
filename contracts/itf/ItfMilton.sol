@@ -30,19 +30,23 @@ abstract contract ItfMilton is Milton {
     }
 
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapPayFixed(swapId, closeTimestamp);
+        uint256 payoutForLiquidator = _closeSwapPayFixed(swapId, closeTimestamp);
+        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
     }
 
     function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapReceiveFixed(swapId, closeTimestamp);
+        uint256 payoutForLiquidator = _closeSwapReceiveFixed(swapId, closeTimestamp);
+        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
     }
 
     function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _closeSwapsPayFixed(swapIds, closeTimestamp);
+        uint256 payoutForLiquidator = _closeSwapsPayFixed(swapIds, closeTimestamp);
+        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
     }
 
     function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        uint256 payoutForLiquidator = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
