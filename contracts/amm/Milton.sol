@@ -670,7 +670,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             //transfer from Milton to Trader
             IERC20Upgradeable(_asset).safeTransfer(buyer, transferAmountAssetDecimals);
 
-            console.log("SENT", transferAmountAssetDecimals);
             transferredToBuyer = IporMath.convertToWad(transferAmountAssetDecimals, decimals);
         }
     }
@@ -680,17 +679,13 @@ abstract contract Milton is MiltonInternal, IMilton {
         address liquidator,
         uint256 liquidationDepositAmount
     ) internal {
-        console.log("SENDING TO LIQUIDATOR");
         if (liquidationDepositAmount != 0) {
-            console.log(liquidationDepositAmount);
             uint256 decimals = _getDecimals();
             uint256 liqDepositAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
                 liquidationDepositAmount,
                 decimals
             );
-            console.log(liqDepositAmountAssetDecimals);
             IERC20Upgradeable(_asset).safeTransfer(msg.sender, liqDepositAmountAssetDecimals);
-            console.log("SENT");
         }
     }
 
