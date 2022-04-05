@@ -11,6 +11,7 @@ import {
     PERCENTAGE_366_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
+    N1__0_18DEC,
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -3294,8 +3295,7 @@ describe("Milton - close position", () => {
         );
     });
 
-
-    it("should transfer all liquidation deposits in single transfer to liquidator ", async () => {
+    it("should transfer all liquidation deposits in single transfer to liquidator - pay fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -3350,7 +3350,66 @@ describe("Milton - close position", () => {
             .withArgs(
                 miltonDai.address,
                 await userThree.getAddress(),
-                BigNumber.from("40000000000000000000")
+                BigNumber.from("40").mul(N1__0_18DEC)
+            );
+    });
+
+    it("should transfer all liquidation deposits in single transfer to liquidator - receive fixed", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+
+        const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_50_000_18DEC, params.openTimestamp);
+
+        await miltonDai
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
+
+        await miltonDai
+            .connect(userTwo)
+            .itfOpenSwapReceiveFixed(
+                params.openTimestamp,
+                params.totalAmount,
+                params.maxAcceptableFixedInterestRate,
+                params.leverage
+            );
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_160_18DEC, params.openTimestamp);
+
+        await expect(
+            miltonDai
+                .connect(userThree)
+                .itfCloseSwapsReceiveFixed([1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
+        )
+            .to.emit(tokenDai, "Transfer")
+            .withArgs(
+                miltonDai.address,
+                await userThree.getAddress(),
+                BigNumber.from("40").mul(N1__0_18DEC)
             );
     });
 });

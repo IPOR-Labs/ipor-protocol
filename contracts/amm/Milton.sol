@@ -105,13 +105,17 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     function closeSwapPayFixed(uint256 swapId) external override nonReentrant whenNotPaused {
-        uint256 payoutForLiquidator = _closeSwapPayFixed(swapId, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapPayFixed(swapId, block.timestamp)
+        );
     }
 
     function closeSwapReceiveFixed(uint256 swapId) external override nonReentrant whenNotPaused {
-        uint256 payoutForLiquidator = _closeSwapReceiveFixed(swapId, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapReceiveFixed(swapId, block.timestamp)
+        );
     }
 
     function closeSwapsPayFixed(uint256[] memory swapIds)
@@ -120,8 +124,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         nonReentrant
         whenNotPaused
     {
-        uint256 payoutForLiquidator = _closeSwapsPayFixed(swapIds, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapsPayFixed(swapIds, block.timestamp)
+        );
     }
 
     function closeSwapsReceiveFixed(uint256[] memory swapIds)
@@ -130,18 +136,24 @@ abstract contract Milton is MiltonInternal, IMilton {
         nonReentrant
         whenNotPaused
     {
-        uint256 payoutForLiquidator = _closeSwapsReceiveFixed(swapIds, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapsReceiveFixed(swapIds, block.timestamp)
+        );
     }
 
     function emergencyCloseSwapPayFixed(uint256 swapId) external override onlyOwner whenPaused {
-        uint256 payoutForLiquidator = _closeSwapPayFixed(swapId, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapPayFixed(swapId, block.timestamp)
+        );
     }
 
     function emergencyCloseSwapReceiveFixed(uint256 swapId) external override onlyOwner whenPaused {
-        uint256 payoutForLiquidator = _closeSwapReceiveFixed(swapId, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapReceiveFixed(swapId, block.timestamp)
+        );
     }
 
     function emergencyCloseSwapsPayFixed(uint256[] memory swapIds)
@@ -150,8 +162,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         onlyOwner
         whenPaused
     {
-        uint256 payoutForLiquidator = _closeSwapsPayFixed(swapIds, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapsPayFixed(swapIds, block.timestamp)
+        );
     }
 
     function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds)
@@ -160,8 +174,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         onlyOwner
         whenPaused
     {
-        uint256 payoutForLiquidator = _closeSwapsReceiveFixed(swapIds, block.timestamp);
-        _transferLiquidationDepositAmount(msg.sender, payoutForLiquidator);
+        _transferLiquidationDepositAmount(
+            msg.sender,
+            _closeSwapsReceiveFixed(swapIds, block.timestamp)
+        );
     }
 
     function _calculateIncomeFeeValue(int256 positionValue) internal pure returns (uint256) {
