@@ -72,11 +72,13 @@ library SoapIndicatorLogic {
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) internal view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+        //TODO: !!!! current hypo different thant quasi interest paidout
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
             si,
             rebalanceTimestamp
         );
-
+        console.log("[rebalanceWhenCloseSwap] si.averageInterestRate=", si.averageInterestRate);
+        console.log("[rebalanceWhenCloseSwap] swapFixedInterestRate=", swapFixedInterestRate);
         uint256 quasiInterestPaidOut = calculateQuasiInterestPaidOut(
             rebalanceTimestamp,
             derivativeOpenTimestamp,
