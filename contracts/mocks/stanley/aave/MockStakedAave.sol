@@ -14,6 +14,7 @@ contract MockStakedAave is ERC20 {
     constructor(address aaveMock) ERC20("stkAAVE", "stkAAVE") {
         _aaveMock = aaveMock;
         _mint(msg.sender, 10**24); // 1.000.000 aDAI
+        _cooldownStartTimestamp = block.timestamp - (10 * 24 * 60 * 60);
     }
 
     function redeem(address to, uint256 amount) external {
@@ -32,5 +33,13 @@ contract MockStakedAave is ERC20 {
 
     function stakersCooldowns(address _addr) external view returns (uint256) {
         return _cooldownStartTimestamp;
+    }
+
+    function COOLDOWN_SECONDS() external returns (uint256) {
+        return 0;
+    }
+
+    function UNSTAKE_WINDOW() external returns (uint256) {
+        return 1e18;
     }
 }

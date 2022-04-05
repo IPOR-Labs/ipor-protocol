@@ -23,6 +23,7 @@ import {
     MockComptroller,
     IvToken,
 } from "../../../../types";
+import { ZERO } from "../../../utils/Constants";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -388,7 +389,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
 
-    it("Should withdrow from AAVE when deposit to both but COMPOUND has max APY", async () => {
+    it("Should withdraw from AAVE when deposit to both but COMPOUND has max APY", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));
@@ -522,5 +523,135 @@ describe("Stanley -> Withdraw", () => {
         //then
         const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
         expect(userIvTokenAfter).to.be.equal(zero);
+    });
+
+    it("Should withdraw all from  AAVE and COMPOUND", async () => {
+        const adminAddress = await await admin.getAddress();
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        await DAI.approve(stanley.address, one.mul(10000));
+        await stanley.deposit(TC_AMOUNT_10_USD_18DEC);
+        const aaveBalanceBefore = await aaveNewStartegyInstance.balanceOf();
+        expect(aaveBalanceBefore).to.be.equal(TC_AMOUNT_10_USD_18DEC);
+
+        await lendingPool.setCurrentLiquidityRate(oneRay.div("100"));
+
+        await stanley.deposit(one.mul(20));
+        const compoundBalanceBefore = await compoundStartegyInstance.balanceOf();
+        const userIvTokenBefore = await ivToken.balanceOf(adminAddress);
+        expect(compoundBalanceBefore).to.be.equal(one.mul(20));
+        expect(userIvTokenBefore).to.be.equal(one.mul(30));
+        //when
+
+        await stanley.withdrawAll();
+        //then
+        const aaveBalanceAfter = await aaveNewStartegyInstance.balanceOf();
+        const compoundBalanceAfter = await compoundStartegyInstance.balanceOf();
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
+
+        expect(compoundBalanceAfter).to.be.equal(ZERO);
+        expect(aaveBalanceAfter).to.be.equal(ZERO);
+        expect(userIvTokenAfter).to.be.equal(ZERO);
+        expect(balanceOfIporeVault).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw from Compound when deposit to both but AAVE has max APY", async () => {
+        const adminAddress = await await admin.getAddress();
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        await DAI.approve(stanley.address, one.mul(10000));
+        await stanley.deposit(one.mul(40));
+        const aaveBalanceBefore = await aaveNewStartegyInstance.balanceOf();
+        expect(aaveBalanceBefore).to.be.equal(one.mul(40));
+
+        await lendingPool.setCurrentLiquidityRate(oneRay.div("100"));
+
+        await stanley.deposit(one.mul(20));
+        const compoundBalanceBefore = await compoundStartegyInstance.balanceOf();
+        const userIvTokenBefore = await ivToken.balanceOf(adminAddress);
+        expect(compoundBalanceBefore).to.be.equal(one.mul(20));
+        expect(userIvTokenBefore).to.be.equal(one.mul(60));
+
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        //when
+
+        await stanley.withdraw(one.mul(10));
+        //then
+        const compoundBalanceAfter = await compoundStartegyInstance.balanceOf();
+        const aaveBalanceAfter = await aaveNewStartegyInstance.balanceOf();
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
+
+        expect(compoundBalanceAfter).to.be.equal(one.mul(10));
+        expect(aaveBalanceAfter).to.be.equal(one.mul(40));
+        expect(userIvTokenAfter).to.be.equal(one.mul(50));
+        expect(balanceOfIporeVault).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw from Aave when not all ampund in one strategy when deposit to both but AAVE has max APY", async () => {
+        const adminAddress = await await admin.getAddress();
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        await DAI.approve(stanley.address, one.mul(10000));
+        await stanley.deposit(one.mul(40));
+        const aaveBalanceBefore = await aaveNewStartegyInstance.balanceOf();
+        expect(aaveBalanceBefore).to.be.equal(one.mul(40));
+
+        await lendingPool.setCurrentLiquidityRate(oneRay.div("100"));
+
+        await stanley.deposit(one.mul(40));
+        const compoundBalanceBefore = await compoundStartegyInstance.balanceOf();
+        const userIvTokenBefore = await ivToken.balanceOf(adminAddress);
+        expect(compoundBalanceBefore).to.be.equal(one.mul(40));
+        expect(userIvTokenBefore).to.be.equal(one.mul(80));
+
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        //when
+
+        await stanley.withdraw(one.mul(50));
+        //then
+        const compoundBalanceAfter = await compoundStartegyInstance.balanceOf();
+        const aaveBalanceAfter = await aaveNewStartegyInstance.balanceOf();
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
+
+        expect(compoundBalanceAfter).to.be.equal(one.mul(40));
+        expect(aaveBalanceAfter).to.be.equal(ZERO);
+        expect(userIvTokenAfter).to.be.equal(one.mul(40));
+        expect(balanceOfIporeVault).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw from Compound when not all ampund in one strategy when deposit to both but AAVE has max APY", async () => {
+        const adminAddress = await await admin.getAddress();
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        await DAI.approve(await admin.getAddress(), one.mul(10000));
+        await DAI.approve(stanley.address, one.mul(10000));
+        await stanley.deposit(one.mul(30));
+        const aaveBalanceBefore = await aaveNewStartegyInstance.balanceOf();
+        expect(aaveBalanceBefore).to.be.equal(one.mul(30));
+
+        await lendingPool.setCurrentLiquidityRate(oneRay.div("100"));
+
+        await stanley.deposit(one.mul(40));
+        const compoundBalanceBefore = await compoundStartegyInstance.balanceOf();
+        const userIvTokenBefore = await ivToken.balanceOf(adminAddress);
+        expect(compoundBalanceBefore).to.be.equal(one.mul(40));
+        expect(userIvTokenBefore).to.be.equal(one.mul(70));
+
+        await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
+        //when
+
+        await stanley.withdraw(one.mul(50));
+        //then
+        const compoundBalanceAfter = await compoundStartegyInstance.balanceOf();
+        const aaveBalanceAfter = await aaveNewStartegyInstance.balanceOf();
+        const userIvTokenAfter = await ivToken.balanceOf(adminAddress);
+        const balanceOfIporeVault = await DAI.balanceOf(stanley.address);
+
+        expect(compoundBalanceAfter).to.be.equal(ZERO);
+        expect(aaveBalanceAfter).to.be.equal(one.mul(30));
+        expect(userIvTokenAfter).to.be.equal(one.mul(30));
+        expect(balanceOfIporeVault).to.be.equal(ZERO);
     });
 });

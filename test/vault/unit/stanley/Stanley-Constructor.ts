@@ -225,7 +225,7 @@ describe("Stanley -> constructor", () => {
         await stanley.totalBalance(await userOne.getAddress());
     });
 
-    it("should pause Smart Contract specific methods", async () => {
+    it("Should pause Smart Contract specific methods", async () => {
         //given
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
@@ -244,5 +244,34 @@ describe("Stanley -> constructor", () => {
         await assertError(stanley.setStrategyAave(strategyAave.address), "Pausable: paused");
         await assertError(stanley.setStrategyAave(strategyCompound.address), "Pausable: paused");
         await assertError(stanley.setMilton(await userOne.getAddress()), "Pausable: paused");
+    });
+
+    it("Should return version of contract ", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            strategyAave.address,
+            strategyCompound.address,
+        ])) as Stanley;
+        //when
+        const version = await stanley.getVersion();
+
+        // then
+        expect(version).to.be.equal(1);
+    });
+
+    it("Should return propper asset", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            strategyAave.address,
+            strategyCompound.address,
+        ])) as Stanley;
+        //when
+        const assetAddress = await stanley.getAsset();
+        //then
+        expect(assetAddress).to.be.equal(DAI.address);
     });
 });

@@ -167,21 +167,7 @@ abstract contract Stanley is
             return (withdrawnAmount, balance);
         }
 
-        if (address(strategyMaxApy) == _strategyAave && amount <= assetBalanceCompound) {
-            ivToken.burn(msg.sender, ivTokenAmount);
-            _withdrawFromStrategy(
-                address(strategyCompound),
-                amount,
-                ivTokenAmount,
-                exchangeRate,
-                true
-            );
-
-            withdrawnAmount = amount;
-            balance = assetBalanceAave + assetBalanceCompound - withdrawnAmount;
-
-            return (withdrawnAmount, balance);
-        } else if (amount <= assetBalanceAave) {
+        if (address(strategyMaxApy) == _strategyAave && amount <= assetBalanceAave) {
             ivToken.burn(msg.sender, ivTokenAmount);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenAmount, exchangeRate, true);
 
@@ -246,6 +232,7 @@ abstract contract Stanley is
             exchangeRate
         );
 
+        _ivToken.burn(msg.sender, _ivToken.balanceOf(msg.sender));
         _withdrawFromStrategy(
             address(strategyAave),
             assetBalanceAave,
@@ -291,7 +278,6 @@ abstract contract Stanley is
         return _asset;
     }
 
-    //TODO:!!! add test for it where ivTokens, shareTokens and balances are checked before and after execution
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
         (
             IStrategy strategyMaxApy,
@@ -304,12 +290,13 @@ abstract contract Stanley is
 
         if (address(strategyMaxApy) == address(strategyAave)) {
             from = address(strategyCompound);
-            uint256 shares = IERC20Upgradeable(_compoundShareToken).balanceOf(from);
+            uint256 shares = strategyCompound.balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+            console.log("shares: ", shares);
             strategyCompound.withdraw(IporMath.convertToWad(shares, decimals));
         } else {
             from = address(strategyAave);
-            uint256 shares = IERC20Upgradeable(_aaveShareToken).balanceOf(from);
+            uint256 shares = strategyAave.balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
             strategyAave.withdraw(IporMath.convertToWad(shares, decimals));
         }
