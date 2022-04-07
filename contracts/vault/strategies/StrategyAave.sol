@@ -148,10 +148,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         uint256 cooldownSeconds = _stakedAaveInterface.COOLDOWN_SECONDS();
         uint256 unstakeWindow = _stakedAaveInterface.UNSTAKE_WINDOW();
 
-        console.log("cooldownStartTimestamp: ", cooldownStartTimestamp);
-        console.log("cooldownSeconds: ", cooldownSeconds);
-        console.log("unstakeWindow: ", unstakeWindow);
-
         if (
             block.timestamp > cooldownStartTimestamp + cooldownSeconds &&
             (block.timestamp - (cooldownStartTimestamp + cooldownSeconds)) <= unstakeWindow
