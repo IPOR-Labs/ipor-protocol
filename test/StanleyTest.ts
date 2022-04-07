@@ -132,7 +132,7 @@ describe("Stanley - Asset Management Vault", () => {
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
             MiltonDaiCase.CASE0,
-            MockStanleyCase.CASE2,
+            MockStanleyCase.CASE1,
             JosephUsdcMockCases.CASE0,
             JosephUsdtMockCases.CASE0,
             JosephDaiMockCases.CASE0
@@ -176,11 +176,11 @@ describe("Stanley - Asset Management Vault", () => {
         //Force deposit to simulate that IporVault earn money for Milton $3
         await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
 
-        const expectedMiltonStableBalance = BigInt("1628000000000000000000");
+        const expectedMiltonStableBalance = BigInt("1785000000000000000000");
 
         const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt("19372000000000000000000");
+        const expectedIporVaultStableBalance = BigInt("19215000000000000000000");
 
         //when
         await josephDai.connect(admin).rebalance();

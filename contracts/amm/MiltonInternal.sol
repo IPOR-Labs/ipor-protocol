@@ -21,8 +21,6 @@ import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-import "hardhat/console.sol";
-
 abstract contract MiltonInternal is
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -181,15 +179,11 @@ abstract contract MiltonInternal is
         whenNotPaused
     {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdraw(assetAmount);
-        console.log("withdrawnAmount ", withdrawnAmount);
-        console.log("vaultBalance ", vaultBalance);
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 
     function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAll();
-        console.log("withdrawnAmount ", withdrawnAmount);
-        console.log("vaultBalance ", vaultBalance);
         _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 

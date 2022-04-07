@@ -417,7 +417,6 @@ describe("Stanley -> Deposit", () => {
 
     it("Should not deposit when is not milton", async () => {
         // given
-
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
 
@@ -427,7 +426,6 @@ describe("Stanley -> Deposit", () => {
 
     it("Should not deposit when user try deposit 0", async () => {
         // given
-
         await DAI.mint(await userOne.getAddress(), one.mul(10000));
         await DAI.connect(userOne).approve(stanley.address, one.mul(10000));
         await stanley.setMilton(await userOne.getAddress());
@@ -449,11 +447,11 @@ describe("Stanley -> Deposit", () => {
         await stanley.setMilton(await userTwo.getAddress());
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await stanley.connect(userTwo).deposit(one.mul(20));
-
         // when
-        const exchangeRate = await stanley.calculateExchangeRate();
-        // then
 
+        const exchangeRate = await stanley.calculateExchangeRate();
+
+        // then
         expect(exchangeRate).to.be.equal(one);
     });
 
@@ -462,16 +460,13 @@ describe("Stanley -> Deposit", () => {
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into compound
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-        //when
 
+        //when
         await stanley.migrateAssetToStrategyWithMaxApr();
 
         //then
-
         const aaveBalance = await aaveNewStartegyInstance.balanceOf();
-        console.log("aaveBalance: ", aaveBalance);
         const compoundBalance = await compoundStartegyInstance.balanceOf();
-        console.log("compoundBalance: ", compoundBalance);
         const userIvToken = await ivToken.balanceOf(adminAddress);
 
         expect(aaveBalance).to.be.equal(one.mul(10));
@@ -485,12 +480,11 @@ describe("Stanley -> Deposit", () => {
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into aave
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100"));
-        //when
 
+        //when
         await stanley.migrateAssetToStrategyWithMaxApr();
 
         //then
-
         const aaveBalance = await aaveNewStartegyInstance.balanceOf();
         const compoundBalance = await compoundStartegyInstance.balanceOf();
         const userIvToken = await ivToken.balanceOf(adminAddress);
