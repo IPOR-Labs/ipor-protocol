@@ -5,20 +5,20 @@ import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
 import "./types/MiltonTypes.sol";
 
-/// @title Interface for interaction with Milton, smart contract resposnible for working Automated Market Maker.
+/// @title Interface for interaction with Milton.
 interface IMilton {
-    /// @notice Calculates Spread in current block.
-    /// @return spreadPayFixed spread for Pay Fixed leg.
-    /// @return spreadReceiveFixed spread for Receive Fixed leg.
+    /// @notice Calculates spread for the current block.
+    /// @return spreadPayFixed spread for Pay-Fixed leg.
+    /// @return spreadReceiveFixed spread for Receive-Fixed leg.
     function calculateSpread()
         external
         view
         returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed);
 
-    /// @notice Calculates SOAP in current block
-    /// @return soapPayFixed SOAP for Pay Fixed leg.
-    /// @return soapReceiveFixed SOAP for Receive Fixed leg.
-    /// @return soap total SOAP, sum of Pay Fixed and Receive Fixed SOAP.
+    /// @notice Calculates the SOAP for the current block
+    /// @return soapPayFixed SOAP for Pay-Fixed leg.
+    /// @return soapReceiveFixed SOAP for Receive-Fixed leg.
+    /// @return soap total SOAP - sum of Pay-Fixed and Receive-Fixed SOAP.
     function calculateSoap()
         external
         view
@@ -28,67 +28,67 @@ interface IMilton {
             int256 soap
         );
 
-    /// @notice Opens Pay Fixed, Receive Floating Swap for a given parameters.
+    /// @notice Opens Pay-Fixed (and Receive-Floating) swap with given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
-    /// @param totalAmount Total amount transferred from trader to Milton for the purpose of opening a position.
-    /// @param maxAcceptableFixedInterestRate Max quote value which trader accept in case of changing quote
-    /// value for external interactions other traders with Milton. Value represented in 18 decimals.
-    /// @param leverage Leverage of this posistion
-    /// @return Swap Id in Pay Fixed Swaps
+    /// @param totalAmount Total amount transferred from the buyer to Milton for the purpose of opening a swap.
+    /// @param maxAcceptableFixedInterestRate Max quote value which trader accepts in case of rate slippage.
+    /// Value represented in 18 decimals.
+    /// @param leverage Leverage used in this posistion
+    /// @return Swap ID in Pay-Fixed swaps list
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Opens Receive Fixed, Pay Floating Swap for a given parameters.
+    /// @notice Opens Receive-Fixed (and Pay Floating) swap with given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
-    /// @param totalAmount Total amount transferred from trader to Milton for the purpose of opening a position.
-    /// @param maxAcceptableFixedInterestRate Max quote value which trader accept in case of changing quote value for external
-    /// interactions other traders with Milton. Value represented in 18 decimals.
-    /// @param leverage Leverage of this posisiton
-    /// @return Swap Id in Pay Fixed Swaps
+    /// @param totalAmount Total amount transferred from the buyer to Milton for the purpose of opening a swap.
+    /// @param maxAcceptableFixedInterestRate Max quote value which trader accept in case of rate slippage. 
+    /// Value represented in 18 decimals.
+    /// @param leverage Leverage used in this posisiton
+    /// @return Swap ID in Pay-Fixed swaps list
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 maxAcceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Closes Pay Fixed Swap for given id.
+    /// @notice Closes Pay-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
-    /// @param swapId Pay Fixed Swap Id.
+    /// @param swapId Pay-Fixed Swap ID.
     function closeSwapPayFixed(uint256 swapId) external;
 
-    /// @notice Closes Receive Fixed Swap for given id.
+    /// @notice Closes Receive-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
-    /// @param swapId Receive Fixed Swap Id.
+    /// @param swapId Receive-Fixed swap ID.
     function closeSwapReceiveFixed(uint256 swapId) external;
 
-    /// @notice Closes Pay Fixed Swaps for given list of ids.
+    /// @notice Closes Pay-Fixed swaps for given list of IDs.
     /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
-    /// @param swapIds List of Pay Fixed swaps.
+    /// @param swapIds List of Pay-Fixed swaps IDs.
     function closeSwapsPayFixed(uint256[] memory swapIds) external;
 
-    /// @notice Closes Receive Fixed Swaps for given list of ids.
+    /// @notice Closes Receive-Fixed swaps for given list of IDs.
     /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
-    /// @param swapIds List of Receive Fixed swaps.
+    /// @param swapIds List of Receive-Fixed swaps.
     function closeSwapsReceiveFixed(uint256[] memory swapIds) external;
 
-    /// @notice Emmited when trader opens new Swap.
+    /// @notice Emmited when trader opens new swap.
     event OpenSwap(
-        /// @notice swap id.
+        /// @notice swap ID.
         uint256 indexed swapId,
-        /// @notice trader who created this swap
+        /// @notice trader that opened the swap
         address indexed buyer,
-        /// @notice underlying asset / stablecoin assocciated with this swap
+        /// @notice underlying asset
         address asset,
-        /// @notice swap direction
+        /// @notice swap direction 
         MiltonTypes.SwapDirection direction,
         /// @notice money structure related with this swap
         AmmTypes.OpenSwapMoney money,
-        /// @notice moment when swap was opened
+        /// @notice the moment when swap was opened
         uint256 openTimestamp,
-        /// @notice moment when swap will achieve maturiry and should be closed
+        /// @notice the moment when swap will achieve maturity
         uint256 endTimestamp,
         /// @notice attributes taken from IPOR Index indicators.
         MiltonTypes.IporSwapIndicator indicator
@@ -96,17 +96,17 @@ interface IMilton {
 
     /// @notice Emmited when trader closes Swap.
     event CloseSwap(
-        /// @notice swap id.
+        /// @notice swap ID.
         uint256 indexed swapId,
-        /// @notice underlying asset / stablecoin assocciated with this swap
+        /// @notice underlying asset
         address asset,
-        /// @notice moment when Swap was closed
+        /// @notice the moment when swap was closed
         uint256 closeTimestamp,
-        /// @notice account who liquidate this Swap
+        /// @notice account that liquidated the swap
         address liquidator,
-        /// @notice asset amount after closing position which is transferred from Milton to Buyer
+        /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer
         uint256 transferredToBuyer,
-        /// @notice asset amount after closing position which is transferred from Milton to Liquidator
+        /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator
         uint256 transferredToLiquidator
     );
 }

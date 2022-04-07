@@ -15,8 +15,13 @@ import "./MiltonStorage.sol";
 import "hardhat/console.sol";
 
 /**
- * @title Milton - Automated Market Maker for derivatives based on IPOR Index.
- *
+ * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
+ * @dev Milton is scoped per asset (USDT, USDC, DAI or other type of ERC20 asset included by the DAO)
+ * Users can: 
+ *  # open and close own interest rate swaps 
+ *  # liquidate other's swaps at maturity 
+ *  # calculate the SOAP
+ *  # calculate spread
  * @author IPOR Labs
  */
 abstract contract Milton is MiltonInternal, IMilton {
@@ -25,6 +30,15 @@ abstract contract Milton is MiltonInternal, IMilton {
     using SafeCast for uint128;
     using SafeCast for int256;
     using IporSwapLogic for IporTypes.IporSwapMemory;
+
+    /**
+    * @param asset - Instance of Milton is initialised in the context of the given ERC20 asset. Every trasaction is by the default scoped to that ERC20.
+    * @param iporOracle - Address of Oracle treated as the source of true IPOR rate.   
+    * @param miltonStorage - Address of contract responsible for managing the state of Milton.   
+    * @param miltonSpreadModel - Address of smart contract responsible for calculating spreads on the interst rate swaps.   
+    * @param stanley - Address of smart contract responsible for asset management. 
+    * For more details refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
+    **/
 
     function initialize(
         address asset,
@@ -74,7 +88,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 maxAcceptableFixedInterestRate,
@@ -89,7 +102,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             );
     }
 
-    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
         uint256 maxAcceptableFixedInterestRate,
@@ -155,6 +167,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     {
         _closeSwapsReceiveFixed(swapIds, block.timestamp);
     }
+
 
     function _calculateIncomeFeeValue(int256 positionValue) internal pure returns (uint256) {
         return
@@ -591,6 +604,21 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
     }
 
+    /**
+    * @notice Function that transfers payout of the swap to the owner.
+    * @dev Function: 
+    * # checks if swap profit, loss or maturity allows for liquidataion
+    * # checks if swap's payout is larger than the collateral used to open it
+    * # should the payout be larger than the collateral then it transfers payout to the buyer
+    * @param derivativeItem - Derivative struct
+    * @param positionValue - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
+    * @param _calculationTimestamp - Time for which the calculations in this funciton are run
+    * @param cfgIncomeFeeRate - Income fee rate fetched from the configuration
+    * @param cfgMinLiquidationThresholdToCloseBeforeMaturity - Minimal profit to loss required to put the swap up for the liquidation by non-byer regardless of maturity 
+    * @param cfgSecondsBeforeMaturityWhenPositionCanBeClosed - Time before the appointed maturity allowing the liquidation of the swap
+    * for more information on liquidations refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
+    **/
+
     function _transferTokensBasedOnPositionValue(
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 positionValue,
@@ -606,7 +634,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
-            //verify if sender is an owner of swap if not then check if maturity - if not then reject, if yes then close even if not an owner
+            //verify if sender is an owner of swap. If not then check if maturity has been reached - if not then reject, if yes then close even if not an owner
             if (msg.sender != derivativeItem.buyer) {
                 require(
                     _calculationTimestamp >=
@@ -618,7 +646,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
 
         if (positionValue > 0) {
-            //Trader earn, Milton loose
+            //Buyer earns, Milton looses
             (transferredToBuyer, transferredToLiquidator) = _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
@@ -627,7 +655,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                     IporMath.division(absPositionValue * cfgIncomeFeeRate, Constants.D18)
             );
         } else {
-            //Milton earn, Trader looseMiltonStorage
+            //Milton earns, Buyer looses
             (transferredToBuyer, transferredToLiquidator) = _transferDerivativeAmount(
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
@@ -636,7 +664,16 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
     }
 
-    //Depends on condition transfer only to sender (when sender == buyer) or to sender and buyer
+
+    /**
+    * @notice Function that transfers the assets at the time of derivative closing
+    * @dev It trasfers the asset to the swap buyer and the liquidator. 
+    * Should buyer and the liquidator are the same entity it performs only one transfer. 
+    * @param buyer - address that opened the swap
+    * @param liquidationDepositAmount - amount of asset transfered to the liquidator
+    * @param transferAmount - amount of asset transfered to the swap owner
+    **/
+    
     function _transferDerivativeAmount(
         address buyer,
         uint256 liquidationDepositAmount,
@@ -670,6 +707,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             transferredToBuyer = IporMath.convertToWad(transferAmmountAssetDecimals, decimals);
         }
     }
+
+    /**
+    * @notice Function run at the time of the contract upgrade via proxy. Available only to the contract's owner. 
+    **/
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
