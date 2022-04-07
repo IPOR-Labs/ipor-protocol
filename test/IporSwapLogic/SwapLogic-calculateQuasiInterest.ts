@@ -67,6 +67,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
         );
     });
 
+	//TODO: fix it
     it("Calculate Quasi Interest Case 1", async () => {
         //given
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
@@ -108,7 +109,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
         );
     });
 
-    it("Calculate Quasi Interest Case 25 days Later IBT Price Not Changed Decimal18", async () => {
+    it("Calculate Quasi Interest Case 25 days Later IBT Price Not Changed Decimals 18", async () => {
         //given
 
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
@@ -153,4 +154,16 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
             "3890872260000000000000000000000000000000000000000"
         );
     });
+	it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
+		//TODO: add test
+	});
+	it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
+		//TODO: add test
+	});
+	it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
+		//TODO: add test
+	});
+	it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
+		//TODO: add test
+	});
 });
