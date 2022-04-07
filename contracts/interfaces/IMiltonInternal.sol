@@ -113,11 +113,16 @@ interface IMiltonInternal {
     /// @param assetAmount amount of assets
     function depositToStanley(uint256 assetAmount) external;
 
-    /// @notice Transfers assets (underlying tokens / stablecoins) from Milton to Stanley. Action available only for Joseph.
+    /// @notice Transfers assets (underlying tokens / stablecoins) from Stanley to Milton. Action available only for Joseph.
     /// @dev Milton Balance in storage is not changing after this wi, balance of ERC20 assets on Milton is changing.
     /// @dev Emits {Withdraw} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
     /// @param assetAmount amount of assets
     function withdrawFromStanley(uint256 assetAmount) external;
+
+    /// @notice Transfers assets (underlying tokens / stablecoins) from Stanley to Milton. Action available only for Joseph.
+    /// @dev Milton Balance in storage is not changing after this wi, balance of ERC20 assets on Milton is changing.
+    /// @dev Emits {Withdraw} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
+    function withdrawAllFromStanley() external;
 
     /// @notice Closes Pay Fixed Swap for given id in emergency mode. Action available only for Owner.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.

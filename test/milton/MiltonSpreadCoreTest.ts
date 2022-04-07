@@ -1,7 +1,14 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { N0__01_18DEC } from "../utils/Constants";
+import {
+    N0__01_18DEC,
+    N0__001_18DEC,
+    N0__000_1_18DEC,
+    N0__000_01_18DEC,
+    N0__000_001_18DEC,
+    ZERO,
+} from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
@@ -143,5 +150,28 @@ describe("MiltonSpreadModel - Core", () => {
 
         //then
         expect(expectedAdjustedUtilizationRate).to.be.eq(actualAdjustedUtilizationRate);
+    });
+
+    it("", async () => {
+        // given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        // when
+
+        const spreadPremiumsMaxValue = await miltonSpread.getSpreadPremiumsMaxValue();
+        const dCKfValue = await miltonSpread.getDCKfValue();
+        const dCLambdaValue = await miltonSpread.getDCLambdaValue();
+        const dCKOmegaValue = await miltonSpread.getDCKOmegaValue();
+        const atParComponentKVolValue = await miltonSpread.getAtParComponentKVolValue();
+        const atParComponentKHistValue = await miltonSpread.getAtParComponentKHistValue();
+
+        // then
+
+        expect(spreadPremiumsMaxValue).to.be.equal(BigNumber.from("3").mul(N0__001_18DEC));
+        expect(dCKfValue).to.be.equal(N0__000_01_18DEC);
+        expect(dCLambdaValue).to.be.equal(N0__01_18DEC);
+        expect(dCKOmegaValue).to.be.equal(BigNumber.from("5").mul(N0__000_01_18DEC));
+        expect(atParComponentKVolValue).to.be.equal(ZERO);
+        expect(atParComponentKHistValue).to.be.equal(BigNumber.from("3").mul(N0__000_1_18DEC));
     });
 });

@@ -40,6 +40,10 @@ interface IJosephInternal {
     /// @dev Emits {Withdraw} event from Stanley, {Burn} event from ivToken, {Transfer} event from ERC20 asset.
     function withdrawFromStanley(uint256 amount) external;
 
+    /// @notice Executes withdraw underlying asset in the `amount` from Stanley to Milton
+    /// @dev Emits {Withdraw} event from Stanley, {Burn} event from ivToken, {Transfer} event from ERC20 asset.
+    function withdrawAllFromStanley() external;
+
     /// @notice Transfers `amount` of asset from Miltons's Treasury Balance to Treasury (ie. external multisig wallet)
     /// Treasury's address is configured in `_treasury` field
     /// @dev Transfer can be requested by address defined in field `_treasuryManager`

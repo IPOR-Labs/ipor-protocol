@@ -107,6 +107,11 @@ abstract contract JosephInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
+    function withdrawAllFromStanley() external override onlyOwner whenNotPaused {
+        _milton.withdrawAllFromStanley();
+    }
+
+    //@param assetAmount underlying token amount represented in 18 decimals
     function transferToTreasury(uint256 assetAmount)
         external
         override

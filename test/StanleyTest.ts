@@ -123,7 +123,7 @@ describe("Stanley - Asset Management Vault", () => {
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
     });
 
-    it("should rebalance - AM Vault ratio < Optimal - withdraw from Vault full amount", async () => {
+    it("should rebalance - AM Vault ratio < Optimal - withdraw from Vault part amount", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -132,7 +132,7 @@ describe("Stanley - Asset Management Vault", () => {
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
             MiltonDaiCase.CASE0,
-            MockStanleyCase.CASE1,
+            MockStanleyCase.CASE2,
             JosephUsdcMockCases.CASE0,
             JosephUsdtMockCases.CASE0,
             JosephDaiMockCases.CASE0
@@ -176,11 +176,11 @@ describe("Stanley - Asset Management Vault", () => {
         //Force deposit to simulate that IporVault earn money for Milton $3
         await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
 
-        const expectedMiltonStableBalance = BigInt("1785000000000000000000");
+        const expectedMiltonStableBalance = BigInt("1628000000000000000000");
 
         const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt("19215000000000000000000");
+        const expectedIporVaultStableBalance = BigInt("19372000000000000000000");
 
         //when
         await josephDai.connect(admin).rebalance();
@@ -301,6 +301,70 @@ describe("Stanley - Asset Management Vault", () => {
             expectedMiltonLiquidityPoolBalance,
             `Incorrect Milton Accrued Liquidity Pool Balance`
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
+    });
+
+    it("should withdraw All FromStanley", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            mockMiltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE2,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        const { tokenDai, josephDai, miltonDai, stanleyDai, miltonStorageDai } = testData;
+
+        if (
+            tokenDai == undefined ||
+            josephDai == undefined ||
+            miltonDai == undefined ||
+            stanleyDai == undefined ||
+            miltonStorageDai == undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await tokenDai
+            .connect(liquidityProvider)
+            .approve(stanleyDai.address, TOTAL_SUPPLY_18_DECIMALS);
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const timestamp = Math.floor(Date.now() / 1000);
+
+        await josephDai.connect(liquidityProvider).itfProvideLiquidity(USD_1_000_18DEC, timestamp);
+
+        await tokenDai.transfer(miltonDai.address, USD_19_997_18DEC);
+
+        await josephDai.connect(admin).depositToStanley(USD_19_997_18DEC);
+
+        //Force deposit to simulate that IporVault earn money for Milton $3
+        await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
+
+        const stanleyBalanceBefore = await stanleyDai.totalBalance(miltonDai.address);
+
+        //when
+        await josephDai.connect(admin).withdrawAllFromStanley();
+
+        //then
+        const stanleyBalanceAfter = await stanleyDai.totalBalance(miltonDai.address);
+
+        expect(stanleyBalanceBefore.gt(stanleyBalanceAfter)).to.be.true;
     });
 
     it("should not sent ETH to Stanley DAI, USDT, USDC", async () => {

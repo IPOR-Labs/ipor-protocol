@@ -183,7 +183,6 @@ export const prepareTestData = async (
             );
 
             josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
-            await josephUsdc.deployed();
             await josephUsdc.initialize(
                 tokenUsdc.address,
                 ipTokenUsdc.address,
