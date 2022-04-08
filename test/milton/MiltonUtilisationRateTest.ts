@@ -75,7 +75,7 @@ describe("Milton Utilisation Rate", () => {
     //             params.openTimestamp,
     //             params.asset,
     //             params.totalAmount,
-    //             params.maxAcceptableFixedInterestRate,
+    //             params.acceptableFixedInterestRate,
     //             params.leverage,
     //             params.direction
     //         ),
@@ -131,7 +131,7 @@ describe("Milton Utilisation Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
     });
@@ -184,7 +184,7 @@ describe("Milton Utilisation Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
     });
@@ -237,7 +237,7 @@ describe("Milton Utilisation Rate", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
     });
@@ -289,7 +289,7 @@ describe("Milton Utilisation Rate", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
     });
@@ -343,7 +343,7 @@ describe("Milton Utilisation Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -400,7 +400,7 @@ describe("Milton Utilisation Rate", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -457,7 +457,7 @@ describe("Milton Utilisation Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     USD_14_000_18DEC,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -514,7 +514,7 @@ describe("Milton Utilisation Rate", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then

@@ -277,7 +277,7 @@ describe("Milton should calculate income - Core", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
+            PERCENTAGE_1_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,

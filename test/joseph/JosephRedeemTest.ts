@@ -35,7 +35,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 
 const { expect } = chai;
 
-describe("Joseph Treasury", () => {
+describe("Joseph Redeem", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
@@ -829,7 +829,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -884,7 +884,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -899,7 +899,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("40000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -970,7 +970,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("48000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -986,7 +986,7 @@ describe("Joseph Treasury", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     BigNumber.from("50").mul(N1__0_18DEC),
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "IPOR_303"
@@ -1031,7 +1031,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -1047,7 +1047,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("48000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -1063,7 +1063,7 @@ describe("Joseph Treasury", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     BigNumber.from("50").mul(N1__0_18DEC),
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "IPOR_303"

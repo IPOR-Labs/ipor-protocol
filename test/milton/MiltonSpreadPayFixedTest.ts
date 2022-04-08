@@ -982,7 +982,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("1000000000"),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -1084,7 +1084,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("1000000000"),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 

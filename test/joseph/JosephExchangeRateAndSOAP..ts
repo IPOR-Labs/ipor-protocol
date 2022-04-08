@@ -18,6 +18,7 @@ import {
 import {
     prepareComplexTestDataDaiCase000,
     getStandardDerivativeParamsDAI,
+	getReceiveFixedSwapParamsDAI
 } from "../utils/DataUtils";
 import { assertError } from "../utils/AssertUtils";
 
@@ -65,7 +66,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("26000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -101,7 +102,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             return;
         }
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
         await testData.iporOracle
@@ -117,7 +118,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -174,7 +175,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -215,7 +216,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             return;
         }
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
         await testData.iporOracle
@@ -231,7 +232,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -291,7 +292,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -348,7 +349,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             return;
         }
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
         await iporOracle
@@ -364,7 +365,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -436,7 +437,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -492,7 +493,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             return;
         }
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         //required to have IBT Price higher than 0
         await iporOracle
@@ -508,7 +509,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
