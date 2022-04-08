@@ -201,14 +201,14 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
                 ipor.exponentialMovingAverage,
                 indexValue,
-                _DECAY_FACTOR_VALUE
+                _decayFactorValue(0) // TODO: PRZ DECAY_FACTOR_VALUE
             );
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
                     ipor.exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
-                    _DECAY_FACTOR_VALUE
+                    _decayFactorValue(0) // TODO: PRZ DECAY_FACTOR_VALUE
                 );
         }
 
@@ -228,6 +228,15 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialWeightedMovingVariance,
             updateTimestamp
         );
+    }
+
+    function _decayFactorValue(uint256 timeFromLastPublication)
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return _DECAY_FACTOR_VALUE;
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)

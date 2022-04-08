@@ -5,7 +5,8 @@ import "../oracles/IporOracle.sol";
 
 contract ItfIporOracle is IporOracle {
     function itfGetDecayFactorValue() external pure returns (uint256) {
-        return _DECAY_FACTOR_VALUE;
+        // TODO: PRZ DECAY_FACTOR_VALUE
+        return _decayFactorValue(0);
     }
 
     function itfUpdateIndex(
