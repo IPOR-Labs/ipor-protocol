@@ -133,12 +133,11 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "-19437730520547945205478"
+            "-18658923287671232876711"
         );
     });
 
     it("Calculate Interest Case 100 days Later IBT Price Changed Decimals 18", async () => {
-        //TODO: fix it
         //given
 
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
@@ -155,7 +154,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "-19437730520547945205478"
+            "-18658923287671232876711"
         );
     });
 
@@ -175,7 +174,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "-19437730520547945205478"
+            "-18658923287671232876711"
         );
     });
 });

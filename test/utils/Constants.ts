@@ -73,8 +73,8 @@ export const USER_SUPPLY_10MLN_18DEC = BigNumber.from("10000000").mul(N1__0_18DE
 
 export const LEVERAGE_18DEC = BigNumber.from("10").mul(N1__0_18DEC);
 
-export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("636796358352768143662");
-export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6367963583527681436620");
+export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("600751281464875607313");
+export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6007512814648756073133");
 
 // #################################################################################
 //                              6 detimals

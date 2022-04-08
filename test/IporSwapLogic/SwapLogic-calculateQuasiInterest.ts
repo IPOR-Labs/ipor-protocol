@@ -60,14 +60,14 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
         //then
         expect(quasiInterest.quasiIFixed, "Wrong quasi interest fixed").to.be.equal(
-            "3122249099904000000000000000000000000000000000000"
+            "3146809564800000000000000000000000000000000000000"
         );
         expect(quasiInterest.quasiIFloating, "Wrong interest floating").to.be.equal(
             "3735237369600000000000000000000000000000000000000"
         );
     });
 
-	//TODO: fix it
+    //TODO: fix it
     it("Calculate Quasi Interest Case 1", async () => {
         //given
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
@@ -75,7 +75,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
         //when
         const quastiInterest = await iporSwapLogic.calculateQuasiInterest(
             swap,
-            BigNumber.from(Date.now() + 60 * 60 * 24 * 28),
+            swap.openTimestamp.add(BigNumber.from(60 * 60 * 24 * 28)),
             N1__0_18DEC
         );
         //then
@@ -154,16 +154,16 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
             "3890872260000000000000000000000000000000000000000"
         );
     });
-	it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
-		//TODO: add test
-	});
-	it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
-		//TODO: add test
-	});
-	it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
-		//TODO: add test
-	});
-	it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
-		//TODO: add test
-	});
+    it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
+        //TODO: add test
+    });
+    it("Calculate Quasi Interest Case Pay Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
+        //TODO: add test
+    });
+    it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 18", async () => {
+        //TODO: add test
+    });
+    it("Calculate Quasi Interest Case Receive Fixed, 50 days Later IBT Price Changed Decimals 6", async () => {
+        //TODO: add test
+    });
 });

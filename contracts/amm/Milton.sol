@@ -317,7 +317,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             bosStruct.notional,
             quoteValue
         );
-        console.log("[_openSwapPayFixed] fixedInterestRate=", indicator.fixedInterestRate);
+
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
             msg.sender,
             openTimestamp,

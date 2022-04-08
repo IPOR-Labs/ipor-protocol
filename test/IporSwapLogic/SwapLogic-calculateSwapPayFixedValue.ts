@@ -128,7 +128,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "19437730520547945205479"
+            "18658923287671232876712"
         );
     });
 
@@ -149,7 +149,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "19437730520547945205479"
+            "18658923287671232876712"
         );
     });
 
@@ -170,7 +170,7 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "19437730520547945205479"
+            "18658923287671232876712"
         );
     });
 });
