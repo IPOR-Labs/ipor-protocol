@@ -77,9 +77,21 @@ describe("IporOracle", () => {
         _tokenUsdc = tokenUsdc;
     });
 
+    it("Should removed asset", async () => {
+        await expect(_iporOracle.removeAsset(_tokenDai.address))
+            .emit(_iporOracle, "IporIndexRemoveAsset")
+            .withArgs(_tokenDai.address);
+    });
+
     it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
+    });
+
+    it("should return contract version", async () => {
+        const version = await _iporOracle["getVersion()"]();
+        // then
+        expect(version).to.be.equal(BigNumber.from("1"));
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
