@@ -152,7 +152,7 @@ describe("MiltonSpreadModel - Core", () => {
         expect(expectedAdjustedUtilizationRate).to.be.eq(actualAdjustedUtilizationRate);
     });
 
-    it("", async () => {
+    it("Should return proper constant", async () => {
         // given
         const miltonSpread = await prepareMiltonSpreadBase();
 
