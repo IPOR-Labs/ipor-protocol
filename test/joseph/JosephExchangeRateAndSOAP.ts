@@ -6,6 +6,7 @@ import {
     ZERO,
     PERCENTAGE_2_5_18DEC,
     PERCENTAGE_3_18DEC,
+    PERCENTAGE_4_5_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_5_2222_18DEC,
     PERCENTAGE_6_18DEC,
@@ -14,7 +15,9 @@ import {
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
+    PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_50_DAYS_IN_SECONDS,
+    PERIOD_56_DAYS_IN_SECONDS,
     PERIOD_60_DAYS_IN_SECONDS,
 } from "../utils/Constants";
 import {
@@ -554,7 +557,151 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     //     expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     // });
 
-    it("should calculate Exchange Rate when 2 swaps closed after 60 days, Pay Fixed", async () => {
+    // it("should calculate Exchange Rate when 2 swaps closed after 60 days, Pay Fixed", async () => {
+    //     //given
+    //     const testData = await prepareComplexTestDataDaiCase000(
+    //         [admin, userOne, userTwo, userThree, liquidityProvider],
+    //         miltonSpreadModel
+    //     );
+
+    //     const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
+    //     if (
+    //         josephDai === undefined ||
+    //         tokenDai === undefined ||
+    //         miltonDai === undefined ||
+    //         miltonStorageDai === undefined
+    //     ) {
+    //         expect(true).to.be.false;
+    //         return;
+    //     }
+
+    //     const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+    //     await iporOracle
+    //         .connect(userOne)
+    //         .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
+    //     await josephDai
+    //         .connect(liquidityProvider)
+    //         .itfProvideLiquidity(BigNumber.from("1000000").mul(N1__0_18DEC), params.openTimestamp);
+
+    //     await miltonDai
+    //         .connect(userTwo)
+    //         .itfOpenSwapPayFixed(
+    //             params.openTimestamp,
+    //             BigNumber.from("100000").mul(N1__0_18DEC),
+    //             params.maxAcceptableFixedInterestRate,
+    //             BigNumber.from("1000").mul(N1__0_18DEC)
+    //         );
+
+    //     await miltonDai
+    //         .connect(userTwo)
+    //         .itfOpenSwapPayFixed(
+    //             params.openTimestamp,
+    //             BigNumber.from("100000").mul(N1__0_18DEC),
+    //             params.maxAcceptableFixedInterestRate,
+    //             BigNumber.from("1000").mul(N1__0_18DEC)
+    //         );
+
+    //     await iporOracle
+    //         .connect(userOne)
+    //         .itfUpdateIndex(params.asset, PERCENTAGE_5_2222_18DEC, params.openTimestamp);
+
+    //     const soapBefore60Days = await miltonDai.itfCalculateSoap(params.openTimestamp);
+    //     const exchangeRateBefore60Days = await josephDai.itfCalculateExchangeRate(
+    //         params.openTimestamp
+    //     );
+
+    //     console.log("soapBefore60Days=", soapBefore60Days.soap.toString());
+    //     console.log("exchangeRateBefore60Days=", exchangeRateBefore60Days.toString());
+
+    // 	//401578 158881102880068583
+
+    //     // const timestamp25daysLater = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+    //     // await iporOracle
+    //     //     .connect(userOne)
+    //     //     .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, timestamp25daysLater);
+
+    //     // const soapAfter25DaysBeforeClose = await miltonDai.itfCalculateSoap(timestamp25daysLater);
+    //     // const exchangeRateAfter25DaysBeforeClose = await josephDai.itfCalculateExchangeRate(
+    //     //     timestamp25daysLater
+    //     // );
+    //     // const positionValue1_25days = await miltonDai.itfCalculateSwapPayFixedValue(
+    //     //     timestamp25daysLater,
+    //     //     1
+    //     // );
+    //     // const positionValue2_25days = await miltonDai.itfCalculateSwapPayFixedValue(
+    //     //     timestamp25daysLater,
+    //     //     2
+    //     // );
+
+    // 	// console.log("soapAfter25DaysBeforeClose=", soapAfter25DaysBeforeClose.soap.toString());
+    //     // console.log(
+    //     //     "exchangeRateAfter25DaysBeforeClose=",
+    //     //     exchangeRateAfter25DaysBeforeClose.toString()
+    //     // );
+    //     // console.log("positionValue1_25days=", positionValue1_25days.toString());
+    //     // console.log("positionValue2_25days=", positionValue2_25days.toString());
+
+    //     const timestamp60daysLater = params.openTimestamp.add(PERIOD_60_DAYS_IN_SECONDS);
+
+    //     const soapAfter60DaysBeforeClose = await miltonDai.itfCalculateSoap(timestamp60daysLater);
+    //     const exchangeRateAfter60DaysBeforeClose = await josephDai.itfCalculateExchangeRate(
+    //         timestamp60daysLater
+    //     );
+    //     const positionValue1 = await miltonDai.itfCalculateSwapPayFixedValue(
+    //         timestamp60daysLater,
+    //         1
+    //     );
+    //     const positionValue2 = await miltonDai.itfCalculateSwapPayFixedValue(
+    //         timestamp60daysLater,
+    //         2
+    //     );
+
+    //     console.log("soapAfter60DaysBeforeClose=", soapAfter60DaysBeforeClose.soap.toString());
+    //     console.log(
+    //         "exchangeRateAfter60DaysBeforeClose=",
+    //         exchangeRateAfter60DaysBeforeClose.toString()
+    //     );
+    //     console.log("positionValue1=", positionValue1.toString());
+    //     console.log("positionValue2=", positionValue2.toString());
+
+    //     await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, timestamp60daysLater);
+    //     await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, timestamp60daysLater);
+
+    //     const soapAfter60DaysAfterClose = await miltonDai.itfCalculateSoap(timestamp60daysLater);
+    //     const exchangeRateAfter60DaysAfterClose = await josephDai.itfCalculateExchangeRate(
+    //         timestamp60daysLater
+    //     );
+
+    //     console.log("soapAfter60DaysAfterClose=", soapAfter60DaysAfterClose.soap.toString());
+    //     console.log(
+    //         "exchangeRateAfter60DaysAfterClose=",
+    //         exchangeRateAfter60DaysAfterClose.toString()
+    //     );
+
+    //     const expectedExchangeRate = BigNumber.from("231204643857984158");
+    //     //Notice! |SOAP| > Liquidity Pool Balance
+    //     const expectedSoap = BigNumber.from("-8864190058051077882737");
+    //     const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
+
+    //     //      const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
+
+    //     //        const actualSoap = soap.soap;
+
+    //     // then
+    //     // expect(
+    //     //     expectedExchangeRate,
+    //     //     `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
+    //     // expected: ${expectedExchangeRate}`
+    //     // ).to.be.eql(actualExchangeRate);
+
+    //     // expect(actualSoap).to.be.eql(expectedSoap);
+    //     // expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
+    // });
+
+    it("[!!!] should calculate Exchange Rate, position values and SOAP when 2 swaps closed after 60 days, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -600,72 +747,132 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 BigNumber.from("1000").mul(N1__0_18DEC)
             );
 
+        // fixed interest rate on swaps is equal to 4%, so lets use 4,5% for IPOR here:
         await iporOracle
             .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_5_2222_18DEC, params.openTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_4_5_18DEC, params.openTimestamp);
 
-        const soapBefore60Days = await miltonDai.itfCalculateSoap(params.openTimestamp);
-        const exchangeRateBefore60Days = await josephDai.itfCalculateExchangeRate(
+        // const expectedInitialSOAP = BigNumber.from("");
+        // const expectedInitialExchangeRate = BigNumber.from("");
+        // const expectedSOAPAfter28Days = BigNumber.from("");
+        // const expectedExchangeRateAfter28Days = BigNumber.from("");
+        // const expectedPositionValue1After28Days = BigNumber.from("");
+        // const expectedPositionValue2After28Days = BigNumber.from("");
+
+        // const expectedSOAPAfter56DaysBeforeClose = BigNumber.from("");
+        // const expectedExchangeRateAfter56DaysBeforeClose = BigNumber.from("");
+        // const expectedPositionValue1After56Days = BigNumber.from("");
+        // const expectedPositionValue2After56Days = BigNumber.from("");
+
+        // const expectedSOAPAfter56DaysAfterClose = BigNumber.from("");
+        // const expectedExchangeRateAfter56DaysAfterClose = BigNumber.from("");
+
+        ///check
+
+        const actualInitialSOAP = await miltonDai.itfCalculateSoap(params.openTimestamp);
+        const actualInitialExchangeRate = await josephDai.itfCalculateExchangeRate(
             params.openTimestamp
         );
 
-        console.log("soapBefore60Days=", soapBefore60Days.soap.toString());
-        console.log("exchangeRateBefore60Days=", exchangeRateBefore60Days.toString());
+        console.log("initialSOAP=", actualInitialSOAP.soap.toString());
+        console.log("initialExchangeRate=", actualInitialExchangeRate.toString());
 
-        const timestamp60daysLater = params.openTimestamp.add(PERIOD_60_DAYS_IN_SECONDS);
+        //when
+        const timestamp28DaysLater = params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
-        const soapAfter60DaysBeforeClose = await miltonDai.itfCalculateSoap(timestamp60daysLater);
-        const exchangeRateAfter60DaysBeforeClose = await josephDai.itfCalculateExchangeRate(
-            timestamp60daysLater
+        const actualSOAPAfter28Days = await miltonDai.itfCalculateSoap(timestamp28DaysLater);
+        const actualExchangeRateAfter28Days = await josephDai.itfCalculateExchangeRate(
+            timestamp28DaysLater
         );
-        const positionValue1 = await miltonDai.itfCalculateSwapPayFixedValue(
-            timestamp60daysLater,
+        const actualPositionValue1After28days = await miltonDai.itfCalculateSwapPayFixedValue(
+            timestamp28DaysLater,
             1
         );
-        const positionValue2 = await miltonDai.itfCalculateSwapPayFixedValue(
-            timestamp60daysLater,
+        const actualPositionValue2After28days = await miltonDai.itfCalculateSwapPayFixedValue(
+            timestamp28DaysLater,
             2
         );
 
-        console.log("soapAfter60DaysBeforeClose=", soapAfter60DaysBeforeClose.soap.toString());
+        console.log("actualSOAPAfter28Days=", actualSOAPAfter28Days.soap.toString());
+        console.log("actualExchangeRateAfter28Days=", actualExchangeRateAfter28Days.toString());
+        console.log("actualPositionValue1After28days=", actualPositionValue1After28days.toString());
+        console.log("actualPositionValue2After28days=", actualPositionValue2After28days.toString());
+
+        const timestamp56DaysLater = params.openTimestamp.add(PERIOD_56_DAYS_IN_SECONDS);
+
+        const actualSOAPAfter56DaysBeforeClose = await miltonDai.itfCalculateSoap(
+            timestamp56DaysLater
+        );
+        const actualExchangeRateAfter56DaysBeforeClose = await josephDai.itfCalculateExchangeRate(
+            timestamp56DaysLater
+        );
+        const actualPositionValue1After56days = await miltonDai.itfCalculateSwapPayFixedValue(
+            timestamp56DaysLater,
+            1
+        );
+        const actualPositionValue2After56days = await miltonDai.itfCalculateSwapPayFixedValue(
+            timestamp56DaysLater,
+            2
+        );
+
         console.log(
-            "exchangeRateAfter60DaysBeforeClose=",
-            exchangeRateAfter60DaysBeforeClose.toString()
+            "actualSOAPAfter56DaysBeforeClose=",
+            actualSOAPAfter56DaysBeforeClose.soap.toString()
         );
-        console.log("positionValue1=", positionValue1.toString());
-        console.log("positionValue2=", positionValue2.toString());
-
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, timestamp60daysLater);
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, timestamp60daysLater);
-
-        const soapAfter60DaysAfterClose = await miltonDai.itfCalculateSoap(timestamp60daysLater);
-        const exchangeRateAfter60DaysAfterClose = await josephDai.itfCalculateExchangeRate(
-            timestamp60daysLater
-        );
-
-        console.log("soapAfter60DaysAfterClose=", soapAfter60DaysAfterClose.soap.toString());
         console.log(
-            "exchangeRateAfter60DaysAfterClose=",
-            exchangeRateAfter60DaysAfterClose.toString()
+            "actualExchangeRateAfter56DaysBeforeClose=",
+            actualExchangeRateAfter56DaysBeforeClose.toString()
+        );
+        console.log("actualPositionValue1After56days=", actualPositionValue1After56days.toString());
+        console.log("actualPositionValue2After56days=", actualPositionValue2After56days.toString());
+
+        const miltonBalanceBeforeClose = await miltonStorageDai.getBalance();
+
+        console.log("miltonBalanceBeforeClose=", miltonBalanceBeforeClose.liquidityPool.toString());
+        console.log(
+            "soap+balance=",
+            miltonBalanceBeforeClose.liquidityPool
+                .sub(actualSOAPAfter56DaysBeforeClose.soap)
+                .toString()
         );
 
-        const expectedExchangeRate = BigNumber.from("231204643857984158");
-        //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigNumber.from("-8864190058051077882737");
-        const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, timestamp56DaysLater);
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, timestamp56DaysLater);
 
-        //      const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
+        const miltonBalanceAfterClose = await miltonStorageDai.getBalance();
+        console.log("miltonBalanceAfterClose=", miltonBalanceAfterClose.liquidityPool.toString());
 
-        //        const actualSoap = soap.soap;
+        const actualSOAPAfter56DaysAfterClose = await miltonDai.itfCalculateSoap(
+            timestamp56DaysLater
+        );
+        const actualExchangeRateAfter56DaysAfterClose = await josephDai.itfCalculateExchangeRate(
+            timestamp56DaysLater
+        );
 
-        // then
-        // expect(
-        //     expectedExchangeRate,
-        //     `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
-        // expected: ${expectedExchangeRate}`
-        // ).to.be.eql(actualExchangeRate);
+        console.log(
+            "actualSOAPAfter56DaysAfterClose=",
+            actualSOAPAfter56DaysAfterClose.soap.toString()
+        );
+        console.log(
+            "actualExchangeRateAfter56DaysAfterClose=",
+            actualExchangeRateAfter56DaysAfterClose.toString()
+        );
 
-        // expect(actualSoap).to.be.eql(expectedSoap);
-        // expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
+        // expect(expectedInitialSOAP).to.be.eql(actualInitialSOAP);
+        // expect(expectedInitialExchangeRate).to.be.eql(actualInitialExchangeRate);
+        // expect(expectedSOAPAfter28Days).to.be.eql(actualSOAPAfter28Days);
+        // expect(expectedExchangeRateAfter28Days).to.be.eql(actualExchangeRateAfter28Days);
+        // expect(expectedPositionValue1After28Days).to.be.eql(actualPositionValue1After28days);
+        // expect(expectedPositionValue2After28Days).to.be.eql(actualPositionValue2After28days);
+        // expect(expectedSOAPAfter56DaysBeforeClose).to.be.eql(actualSOAPAfter56DaysBeforeClose);
+        // expect(expectedExchangeRateAfter56DaysBeforeClose).to.be.eql(
+        //     actualExchangeRateAfter56DaysBeforeClose
+        // );
+        // expect(expectedPositionValue1After56Days).to.be.eql(actualPositionValue1After56days);
+        // expect(expectedPositionValue2After56Days).to.be.eql(actualPositionValue2After56days);
+        // expect(expectedSOAPAfter56DaysAfterClose).to.be.eql(actualSOAPAfter56DaysAfterClose);
+        // expect(expectedExchangeRateAfter56DaysAfterClose).to.be.eql(
+        //     actualExchangeRateAfter56DaysAfterClose
+        // );
     });
 });

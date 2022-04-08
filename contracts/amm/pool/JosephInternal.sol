@@ -41,7 +41,7 @@ abstract contract JosephInternal is
     address internal _treasury;
     address internal _treasuryManager;
     address internal _charlieTreasury;
-    address internal _charlieTreasuryManager;
+    address internal _charlieTreasuryManager;	
 
     modifier onlyCharlieTreasuryManager() {
         require(
