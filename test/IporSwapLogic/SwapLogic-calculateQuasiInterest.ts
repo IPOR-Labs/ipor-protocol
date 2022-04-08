@@ -76,7 +76,6 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
         );
     });
 
-    //TODO: fix it
     it("Calculate Quasi Interest Case 1", async () => {
         //given
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
