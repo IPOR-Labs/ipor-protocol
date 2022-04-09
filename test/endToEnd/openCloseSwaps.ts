@@ -151,7 +151,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonDai.openSwapReceiveFixed(
                 ONE_18.mul("100"),
-                BigNumber.from("900000000000000000"),
+                BigNumber.from("10000000000000000"),
                 ONE_18.mul("10")
             );
             //then
@@ -261,7 +261,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonUsdc.openSwapReceiveFixed(
                 ONE_6.mul("3"),
-                BigNumber.from("39999999999999999"),
+                BigNumber.from("10000000000000000"),
                 ONE_18.mul("10")
             );
             //then
@@ -367,7 +367,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonUsdt.openSwapReceiveFixed(
                 ONE_6.mul("3"),
-                BigNumber.from("39999999999999999"),
+                BigNumber.from("10000000000000000"),
                 ONE_18.mul("10")
             );
             //then
