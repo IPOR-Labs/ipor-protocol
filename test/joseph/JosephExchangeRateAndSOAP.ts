@@ -28,7 +28,7 @@ import {
 import {
     prepareComplexTestDataDaiCase000,
     getStandardDerivativeParamsDAI,
-	getReceiveFixedSwapParamsDAI
+    getReceiveFixedSwapParamsDAI,
 } from "../utils/DataUtils";
 import { assertError } from "../utils/AssertUtils";
 
@@ -591,7 +591,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("100000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 BigNumber.from("1000").mul(N1__0_18DEC)
             );
 
@@ -600,7 +600,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("100000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 BigNumber.from("1000").mul(N1__0_18DEC)
             );
 

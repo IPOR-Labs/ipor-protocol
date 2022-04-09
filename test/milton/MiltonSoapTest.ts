@@ -3,7 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
-	N0__01_18DEC,
+    N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
@@ -1723,7 +1723,7 @@ describe("Milton SOAP", () => {
         );
     });
 
-	it("should calculate soap, DAI add pay fixed x2, wait 50 days", async () => {
+    it("should calculate soap, DAI add pay fixed x2, wait 50 days", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1762,7 +1762,7 @@ describe("Milton SOAP", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1770,7 +1770,7 @@ describe("Milton SOAP", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
