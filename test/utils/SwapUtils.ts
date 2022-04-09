@@ -1,7 +1,8 @@
 import chai from "chai";
-import { DaiMockedToken, MiltonUsdt, MiltonUsdc, MiltonDai } from "../../types";
+import { DaiMockedToken, UsdtMockedToken, MiltonUsdt, MiltonUsdc, MiltonDai } from "../../types";
 import { BigNumber, Signer } from "ethers";
 import {
+    N1__0_6DEC,
     N1__0_18DEC,
 	N0__01_18DEC,
     TC_50_000_18DEC,
@@ -54,6 +55,13 @@ export const prepareSwapPayFixedCase1 = async (
     fixedInterestRate: BigNumber,
     admin: Signer
 ): Promise<SWAP> => {
+    return prepareSwapDaiCase1(fixedInterestRate, admin);
+};
+
+export const prepareSwapDaiCase1 = async (
+    fixedInterestRate: BigNumber,
+    admin: Signer
+): Promise<SWAP> => {
     const DaiMockedToken = await hre.ethers.getContractFactory("DaiMockedToken");
     const daiMockedToken = (await DaiMockedToken.deploy(N1__0_18DEC, 18)) as DaiMockedToken;
     const collateral = BigNumber.from("9870300000000000000000");
@@ -65,6 +73,34 @@ export const prepareSwapPayFixedCase1 = async (
         state: SwapState.ACTIVE,
         buyer: await admin.getAddress(),
         asset: daiMockedToken.address,
+        openTimestamp: BigNumber.from(timeStamp),
+        endTimestamp: BigNumber.from(timeStamp + 60 * 60 * 24 * 28),
+        id: BigNumber.from("0"),
+        idsIndex: BigNumber.from("0"),
+        collateral: TC_50_000_18DEC,
+        liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
+        notional,
+        ibtQuantity: BigNumber.from("987030000000000000000"), //ibtQuantity
+        fixedInterestRate: fixedInterestRate,
+    };
+    return swap;
+};
+
+export const prepareSwapUsdtCase1 = async (
+    fixedInterestRate: BigNumber,
+    admin: Signer
+): Promise<SWAP> => {
+    const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
+    const usdtMockedToken = (await UsdtMockedToken.deploy(N1__0_6DEC, 6)) as UsdtMockedToken;
+    const collateral = BigNumber.from("9870300000000000000000");
+    const leverage = BigNumber.from("10");
+
+    const timeStamp = Math.floor(Date.now() / 1000);
+    const notional = collateral.mul(leverage);
+    const swap = {
+        state: SwapState.ACTIVE,
+        buyer: await admin.getAddress(),
+        asset: usdtMockedToken.address,
         openTimestamp: BigNumber.from(timeStamp),
         endTimestamp: BigNumber.from(timeStamp + 60 * 60 * 24 * 28),
         id: BigNumber.from("0"),
