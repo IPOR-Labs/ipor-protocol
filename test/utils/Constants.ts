@@ -37,7 +37,9 @@ export const USD_10_000_000_18DEC = BigNumber.from("10000000").mul(N1__0_18DEC);
 export const PERCENTAGE_2_5_18DEC = BigNumber.from("25").mul(N0__001_18DEC);
 export const PERCENTAGE_3_18DEC = BigNumber.from("3").mul(N0__01_18DEC);
 export const PERCENTAGE_4_18DEC = BigNumber.from("4").mul(N0__01_18DEC);
+export const PERCENTAGE_4_5_18DEC = BigNumber.from("45").mul(N0__001_18DEC);
 export const PERCENTAGE_5_18DEC = BigNumber.from("5").mul(N0__01_18DEC);
+export const PERCENTAGE_5_2222_18DEC = BigNumber.from("52222").mul(N0__000_001_18DEC);
 export const PERCENTAGE_6_18DEC = BigNumber.from("6").mul(N0__01_18DEC);
 export const PERCENTAGE_7_18DEC = BigNumber.from("7").mul(N0__01_18DEC);
 export const PERCENTAGE_8_18DEC = BigNumber.from("8").mul(N0__01_18DEC);
@@ -71,8 +73,8 @@ export const USER_SUPPLY_10MLN_18DEC = BigNumber.from("10000000").mul(N1__0_18DE
 
 export const LEVERAGE_18DEC = BigNumber.from("10").mul(N1__0_18DEC);
 
-export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("636796358352768143662");
-export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6367963583527681436620");
+export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("600751281464875607313");
+export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6007512814648756073133");
 
 // #################################################################################
 //                              6 detimals
@@ -114,7 +116,9 @@ export const MONTH_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 30);
 export const PERIOD_25_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 25);
 export const PERIOD_6_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 6);
 export const SWAP_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
+export const PERIOD_60_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 60);
 export const PERIOD_50_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 50);
+export const PERIOD_56_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 56);
 export const PERIOD_28_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 28);
 export const PERIOD_1_DAY_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 1);
 export const PERIOD_27_DAYS_19_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 19);

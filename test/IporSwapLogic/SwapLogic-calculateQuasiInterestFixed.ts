@@ -76,4 +76,5 @@ describe("IporSwapLogic calculateQuasiInterestFixed", () => {
             "3237205720320000000000000000000000000000000000000"
         );
     });
+
 });
