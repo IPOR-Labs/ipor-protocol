@@ -2,8 +2,9 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    N0__01_18DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
+    N0__001_18DEC,
     USD_28_000_6DEC,
     USD_10_000_18DEC,
     ZERO,
@@ -78,7 +79,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - pay fixed 18 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - pay fixed 18 decimals", async () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
@@ -115,7 +116,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - receive fixed 18 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - receive fixed 18 decimals", async () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
@@ -129,7 +130,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const totalAmount = BigNumber.from("30000000000000000001");
-        const acceptableFixedInterestRate = BigNumber.from("19999999999999999");
+        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -152,7 +153,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - pay fixed 6 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - pay fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -208,7 +209,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - receive fixed 6 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - receive fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -242,7 +243,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
 
         const totalAmount = BigNumber.from("30000001");
-        const acceptableFixedInterestRate = BigNumber.from("19999999999999999");
+        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 

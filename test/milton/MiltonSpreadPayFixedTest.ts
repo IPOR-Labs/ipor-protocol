@@ -24,6 +24,7 @@ import {
     prepareMiltonSpreadCase9,
     prepareMiltonSpreadCase10,
     getPayFixedDerivativeParamsUSDTCase1,
+    getReceiveFixedDerivativeParamsUSDTCase1,
 } from "../utils/MiltonUtils";
 import { assertError } from "../utils/AssertUtils";
 import {
@@ -955,7 +956,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
+        const params = getReceiveFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
         await iporOracle
             .connect(userOne)
@@ -1057,7 +1058,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
+        const params = getReceiveFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
         await iporOracle
             .connect(userOne)

@@ -3,6 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
+	N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
@@ -267,7 +268,7 @@ describe("Milton SOAP", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -334,7 +335,7 @@ describe("Milton SOAP", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -477,7 +478,7 @@ describe("Milton SOAP", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -563,7 +564,7 @@ describe("Milton SOAP", () => {
         const secondDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -640,7 +641,7 @@ describe("Milton SOAP", () => {
         const secondDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -653,7 +654,7 @@ describe("Milton SOAP", () => {
             .connect(userOne)
             .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
-        await openSwapReceiveFixed(testData, firstDerivativeParams);
+        await openSwapReceiveFixed(testData, secondDerivativeParams);
 
         const expectedSoap = BigNumber.from("-136534382151108092229");
 
@@ -836,7 +837,7 @@ describe("Milton SOAP", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -917,7 +918,7 @@ describe("Milton SOAP", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1018,7 +1019,7 @@ describe("Milton SOAP", () => {
         const recFixDerivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,

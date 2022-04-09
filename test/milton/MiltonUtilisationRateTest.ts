@@ -21,6 +21,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getPayFixedDerivativeParamsDAICase1,
+    getReceiveFixedDerivativeParamsDAICase1,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
@@ -168,7 +169,7 @@ describe("Milton Utilisation Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const params = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
         await josephDai
             .connect(liquidityProvider)
@@ -273,7 +274,7 @@ describe("Milton Utilisation Rate", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             testData
         );
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const params = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
         await josephDai
             .connect(liquidityProvider)

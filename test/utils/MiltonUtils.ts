@@ -283,6 +283,21 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     };
 };
 
+export const getReceiveFixedDerivativeParamsUSDTCase1 = (
+    user: Signer,
+    tokenUsdt: UsdtMockedToken
+) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
 export const prepareMiltonSpreadBase = async () => {
     const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     const miltonSpread = await MockBaseMiltonSpreadModel.deploy();

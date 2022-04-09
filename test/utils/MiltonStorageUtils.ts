@@ -9,8 +9,9 @@ import {
     setupTokenUsdtInitialValuesForUsers,
 } from "./DataUtils";
 import {
-    N0__1_18DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
+    N0__1_18DEC,
     PERCENTAGE_5_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     TC_TOTAL_AMOUNT_100_6DEC,
@@ -471,7 +472,7 @@ const prepareReceiveFixedState = async (
     const paramsUsdt = {
         asset: tokenUsdt,
         totalAmount: TC_TOTAL_AMOUNT_100_6DEC,
-        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: N0__01_18DEC,
         leverage: LEVERAGE_18DEC,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         direction: 0,
@@ -550,9 +551,11 @@ const prepareState = async (
         .itfProvideLiquidity(USD_50_000_6DEC, paramsUsdt.openTimestamp);
 
     for (let i = 0; BigNumber.from(i).lt(numberOfPayFixedSwapsToCreate); i++) {
+        paramsUsdt.acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
         await openSwapPayFixed(testData, paramsUsdt);
     }
     for (let i = 0; BigNumber.from(i).lt(numberOfReceiveFixedSwapsToCreate); i++) {
+        paramsUsdt.acceptableFixedInterestRate = N0__01_18DEC;
         await openSwapReceiveFixed(testData, paramsUsdt);
     }
 

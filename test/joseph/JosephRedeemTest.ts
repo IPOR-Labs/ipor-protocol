@@ -26,6 +26,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getStandardDerivativeParamsDAI,
+	getReceiveFixedSwapParamsDAI,
     setupTokenUsdtInitialValuesForUsers,
     getStandardDerivativeParamsUSDT,
 } from "../utils/DataUtils";

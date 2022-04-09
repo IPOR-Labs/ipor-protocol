@@ -376,11 +376,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance
         );
 
-        console.log("[_openSwapReceiveFixed] quoteValue=", quoteValue);
-        console.log(
-            "[_openSwapReceiveFixed] acceptableFixedInterestRate=",
-            acceptableFixedInterestRate
-        );
         require(
             acceptableFixedInterestRate <= quoteValue,
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
