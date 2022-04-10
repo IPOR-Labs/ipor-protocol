@@ -93,7 +93,7 @@ describe("IporLogic", () => {
         const exponentialMovingAverage = P_0_3_DEC18;
         const indexValue = P_0_05_DEC18;
         const alfa = P_0_01_DEC18;
-        const expectedExponentialMovingAverage = "30200000000000000";
+        const expectedExponentialMovingAverage = "49800000000000000";
 
         //when
         const actualExponentialMovingAverage = await iporLogic.calculateExponentialMovingAverage(

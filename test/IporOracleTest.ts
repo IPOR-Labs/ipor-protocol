@@ -17,6 +17,7 @@ import {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_7_6DEC,
     PERCENTAGE_50_6DEC,
+    N0__1_18DEC,
 } from "./utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -704,7 +705,7 @@ describe("IporOracle", () => {
         const assets = [_tokenDai.address, _tokenUsdt.address, _tokenUsdc.address];
         const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
-        const expectedExpoMovingAverage = BigNumber.from("285000000000000000");
+        const expectedExpoMovingAverage = BigNumber.from("7").mul(N0__01_18DEC);
 
         //when
         await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
@@ -712,9 +713,8 @@ describe("IporOracle", () => {
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
-        const actualExponentialMovingAverage = BigNumber.from(
-            await iporIndex.exponentialMovingAverage
-        );
+        const actualExponentialMovingAverage = await iporIndex.exponentialMovingAverage;
+        console.log("actualExponentialMovingAverage: ", actualExponentialMovingAverage.toString());
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
@@ -728,15 +728,22 @@ describe("IporOracle", () => {
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
-        const expectedExpoMovingAverage = BigNumber.from("285000");
+        const expectedExpoMovingAverage = BigNumber.from("76462");
 
         //when
         await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, secondIndexValues, updateDate.add(BigNumber.from("3600")));
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
+
+        console.log(
+            "actualExponentialMovingAverage 6 decimal: ",
+            actualExponentialMovingAverage.toString()
+        );
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
