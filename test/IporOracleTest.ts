@@ -18,6 +18,7 @@ import {
     PERCENTAGE_7_6DEC,
     PERCENTAGE_50_6DEC,
     N0__1_18DEC,
+    ZERO,
 } from "./utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -79,7 +80,7 @@ describe("IporOracle", () => {
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
+        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue(ZERO);
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
     });
 
@@ -299,7 +300,7 @@ describe("IporOracle", () => {
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
+        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue(ZERO);
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
     });
 
