@@ -299,9 +299,17 @@ describe("IporOracle", () => {
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
-    it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue(ZERO);
-        expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
+    it.only("should Decay Factor be lower than 100%", async () => {
+        const decayFactorValueInterval1 = await _iporOracle.itfGetDecayFactorValue(ZERO);
+        const decayFactorValueInterval2 = await _iporOracle.itfGetDecayFactorValue(
+            BigNumber.from("119780")
+        );
+        const decayFactorValueInterval3 = await _iporOracle.itfGetDecayFactorValue(
+            BigNumber.from("397890")
+        );
+        expect(decayFactorValueInterval1.lte(PERCENTAGE_100_18DEC)).to.be.true;
+        expect(decayFactorValueInterval2.lte(PERCENTAGE_100_18DEC)).to.be.true;
+        expect(decayFactorValueInterval3).to.be.equal(ZERO);
     });
 
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
