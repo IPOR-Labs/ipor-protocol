@@ -32,31 +32,31 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 3e14;
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
-        return _SPREAD_PREMIUMS_MAX_VALUE;
+        return _getSpreadPremiumsMaxValue();
     }
 
     function getDCKfValue() external pure override returns (uint256) {
-        return _DC_KF_VALUE;
+        return _getDCKfValue();
     }
 
     function getDCLambdaValue() external pure override returns (uint256) {
-        return _DC_LAMBDA_VALUE;
+        return _getDCLambdaValue();
     }
 
     function getDCKOmegaValue() external pure override returns (uint256) {
-        return _DC_K_OMEGA_VALUE;
+        return _getDCKOmegaValue();
     }
 
     function getDCMaxLiquidityRedemptionValue() external pure override returns (uint256) {
-        return _DC_MAX_LIQUIDITY_REDEMPTION_VALUE;
+        return _getDCMaxLiquidityRedemptionValue();
     }
 
     function getAtParComponentKVolValue() external pure override returns (uint256) {
-        return _AT_PAR_COMPONENT_K_VOL_VALUE;
+        return _getAtParComponentKVolValue();
     }
 
     function getAtParComponentKHistValue() external pure override returns (uint256) {
-        return _AT_PAR_COMPONENT_K_HIST_VALUE;
+        return _getAtParComponentKHistValue();
     }
 
     function _getSpreadPremiumsMaxValue() internal pure virtual returns (uint256) {

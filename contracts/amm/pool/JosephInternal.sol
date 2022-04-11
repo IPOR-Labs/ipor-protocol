@@ -41,7 +41,7 @@ abstract contract JosephInternal is
     address internal _treasury;
     address internal _treasuryManager;
     address internal _charlieTreasury;
-    address internal _charlieTreasuryManager;	
+    address internal _charlieTreasuryManager;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -83,13 +83,13 @@ abstract contract JosephInternal is
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
-        if (ratio > _MILTON_STANLEY_BALANCE_RATIO) {
+        if (ratio > _getMiltonStanleyBalanceRatio()) {
             uint256 assetAmount = wadMiltonAssetBalance -
-                IporMath.division(_MILTON_STANLEY_BALANCE_RATIO * totalBalance, Constants.D18);
+                IporMath.division(_getMiltonStanleyBalanceRatio() * totalBalance, Constants.D18);
             _milton.depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
-                _MILTON_STANLEY_BALANCE_RATIO * totalBalance,
+                _getMiltonStanleyBalanceRatio() * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
             _milton.withdrawFromStanley(assetAmount);

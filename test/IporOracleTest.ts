@@ -311,7 +311,7 @@ describe("IporOracle", () => {
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
-    it.only("should Decay Factor be lower than 100%", async () => {
+    it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValueInterval1 = await _iporOracle.itfGetDecayFactorValue(ZERO);
         const decayFactorValueInterval2 = await _iporOracle.itfGetDecayFactorValue(
             BigNumber.from("119780")

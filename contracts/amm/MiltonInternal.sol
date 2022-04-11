@@ -83,43 +83,43 @@ abstract contract MiltonInternal is
     }
 
     function getMaxSwapCollateralAmount() external pure override returns (uint256) {
-        return _MAX_SWAP_COLLATERAL_AMOUNT;
+        return _getMaxSwapCollateralAmount();
     }
 
     function getMaxLpUtilizationRate() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_RATE;
+        return _getMaxLpUtilizationRate();
     }
 
     function getMaxLpUtilizationPerLegRate() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
+        return _getMaxLpUtilizationPerLegRate();
     }
 
     function getIncomeFeeRate() external pure override returns (uint256) {
-        return _INCOME_TAX_RATE;
+        return _getIncomeFeeRate();
     }
 
     function getOpeningFeeRate() external pure override returns (uint256) {
-        return _OPENING_FEE_RATE;
+        return _getOpeningFeeRate();
     }
 
     function getOpeningFeeTreasuryPortionRate() external pure override returns (uint256) {
-        return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
+        return _getOpeningFeeTreasuryPortionRate();
     }
 
     function getIporPublicationFee() external pure override returns (uint256) {
-        return _IPOR_PUBLICATION_FEE;
+        return _getIporPublicationFee();
     }
 
     function getLiquidationDepositAmount() external pure override returns (uint256) {
-        return _LIQUIDATION_DEPOSIT_AMOUNT;
+        return _getLiquidationDepositAmount();
     }
 
     function getMaxLeverage() external pure override returns (uint256) {
-        return _MAX_LEVERAGE;
+        return _getMaxLeverage();
     }
 
     function getMinLeverage() external pure override returns (uint256) {
-        return _MIN_LEVERAGE;
+        return _getMinLeverage();
     }
 
     function getAccruedBalance()
