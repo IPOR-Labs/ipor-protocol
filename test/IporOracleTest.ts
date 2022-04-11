@@ -17,6 +17,8 @@ import {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_7_6DEC,
     PERCENTAGE_50_6DEC,
+    N0__1_18DEC,
+    ZERO,
 } from "./utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -84,7 +86,7 @@ describe("IporOracle", () => {
     });
 
     it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
+        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue(ZERO);
         expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
     });
 
@@ -309,9 +311,17 @@ describe("IporOracle", () => {
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
-    it("should Decay Factor be lower than 100%", async () => {
-        const decayFactorValue = await _iporOracle.itfGetDecayFactorValue();
-        expect(decayFactorValue.lte(PERCENTAGE_100_18DEC)).to.be.true;
+    it.only("should Decay Factor be lower than 100%", async () => {
+        const decayFactorValueInterval1 = await _iporOracle.itfGetDecayFactorValue(ZERO);
+        const decayFactorValueInterval2 = await _iporOracle.itfGetDecayFactorValue(
+            BigNumber.from("119780")
+        );
+        const decayFactorValueInterval3 = await _iporOracle.itfGetDecayFactorValue(
+            BigNumber.from("397890")
+        );
+        expect(decayFactorValueInterval1.lte(PERCENTAGE_100_18DEC)).to.be.true;
+        expect(decayFactorValueInterval2.lte(PERCENTAGE_100_18DEC)).to.be.true;
+        expect(decayFactorValueInterval3).to.be.equal(ZERO);
     });
 
     it("should NOT update IPOR Index, because sender is not an updater", async () => {
@@ -716,7 +726,7 @@ describe("IporOracle", () => {
         const assets = [_tokenDai.address, _tokenUsdt.address, _tokenUsdc.address];
         const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
-        const expectedExpoMovingAverage = BigNumber.from("285000000000000000");
+        const expectedExpoMovingAverage = BigNumber.from("7").mul(N0__01_18DEC);
 
         //when
         await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
@@ -724,9 +734,8 @@ describe("IporOracle", () => {
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
-        const actualExponentialMovingAverage = BigNumber.from(
-            await iporIndex.exponentialMovingAverage
-        );
+        const actualExponentialMovingAverage = await iporIndex.exponentialMovingAverage;
+        console.log("actualExponentialMovingAverage: ", actualExponentialMovingAverage.toString());
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
@@ -740,15 +749,22 @@ describe("IporOracle", () => {
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
-        const expectedExpoMovingAverage = BigNumber.from("285000");
+        const expectedExpoMovingAverage = BigNumber.from("76462");
 
         //when
         await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, secondIndexValues, updateDate.add(BigNumber.from("3600")));
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
+
+        console.log(
+            "actualExponentialMovingAverage 6 decimal: ",
+            actualExponentialMovingAverage.toString()
+        );
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
