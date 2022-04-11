@@ -264,7 +264,22 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getReceiveFixedDerivativeParamsUSDTCase1 = (
+    user: Signer,
+    tokenUsdt: UsdtMockedToken
+) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -287,7 +302,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    maxAcceptableFixedInterestRate: BigNumber,
+    acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -383,7 +398,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        maxAcceptableFixedInterestRate,
+        acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,
@@ -411,7 +426,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    maxAcceptableFixedInterestRate: BigNumber,
+    acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -512,7 +527,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        maxAcceptableFixedInterestRate,
+        acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,

@@ -4,6 +4,7 @@ import { BigNumber, Signer } from "ethers";
 import {
     N1__0_6DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
     TC_50_000_18DEC,
     ZERO,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -42,7 +43,7 @@ export type Params = {
     miltonDai?: MiltonDai;
     expectedSoap?: BigNumber;
     totalAmount?: BigNumber;
-    maxAcceptableFixedInterestRate?: BigNumber;
+    acceptableFixedInterestRate?: BigNumber;
     leverage?: BigNumber;
     direction?: number;
     openTimestamp?: BigNumber;
@@ -120,7 +121,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -131,7 +132,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -142,7 +143,7 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -160,7 +161,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -176,7 +177,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -192,7 +193,7 @@ export const openSwapPayFixed = async (testData: TestData, params: Params) => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp || ZERO,
                 params.totalAmount || ZERO,
-                params.maxAcceptableFixedInterestRate || ZERO,
+                params.acceptableFixedInterestRate || ZERO,
                 params.leverage || ZERO
             );
     }
@@ -275,7 +276,7 @@ export const exetuceCloseSwapTestCase = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    maxAcceptableFixedInterestRate: BigNumber,
+    acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     providedLiquidityAmount: BigNumber,
     expectedMiltonUnderlyingTokenBalance: BigNumber,
@@ -313,7 +314,7 @@ export const exetuceCloseSwapTestCase = async function (
     const params = {
         asset: asset,
         totalAmount: totalAmount,
-        maxAcceptableFixedInterestRate: maxAcceptableFixedInterestRate,
+        acceptableFixedInterestRate: acceptableFixedInterestRate,
         leverage: leverage,
         direction: direction,
         openTimestamp: localOpenTimestamp,
@@ -450,30 +451,6 @@ export const exetuceCloseSwapTestCase = async function (
     await assertSoap(testData, soapParams);
 };
 
-// testData: TestData,
-// asset: string,
-// leverage: BigNumber,
-// direction: number,
-// openerUser: Signer,
-// closerUser: Signer,
-// iporValueBeforeOpenSwap: BigNumber,
-// iporValueAfterOpenSwap: BigNumber,
-// maxAcceptableFixedInterestRate: BigNumber,
-// periodOfTimeElapsedInSeconds: BigNumber,
-// providedLiquidityAmount: BigNumber,
-// expectedMiltonUnderlyingTokenBalance: BigNumber,
-// expectedOpenerUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
-// expectedCloserUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
-// expectedLiquidityPoolTotalBalanceWad: BigNumber,
-// expectedOpenedPositions: BigNumber,
-// expectedDerivativesTotalBalanceWad: BigNumber,
-// expectedTreasuryTotalBalanceWad: BigNumber,
-// expectedSoap: BigNumber,
-// openTimestamp: BigNumber,
-// expectedPositionValue: BigNumber,
-// expectedIncomeFeeValue: BigNumber,
-// userOne: Signer,
-// liquidityProvider: Signer
 export const executeCloseSwapsTestCase = async function (
     testData: TestData,
     asset: string,
@@ -511,10 +488,18 @@ export const executeCloseSwapsTestCase = async function (
         totalAmount = USD_10_000_6DEC;
     }
 
+    let acceptableFixedInterestRate = null;
+
+    if (direction == 1) {
+        acceptableFixedInterestRate = N0__01_18DEC;
+    } else {
+        acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
+    }
+
     const params = {
         asset: asset,
         totalAmount: totalAmount,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: acceptableFixedInterestRate,
         leverage: leverage,
         direction: direction || 0,
         openTimestamp: localOpenTimestamp,

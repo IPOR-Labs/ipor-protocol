@@ -12,6 +12,7 @@ import {
     PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
     N1__0_18DEC,
+	N0__01_18DEC,
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -64,6 +65,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 import {
     prepareComplexTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
+	getReceiveFixedDerivativeParamsDAICase1,
     prepareApproveForUsers,
     prepareTestData,
     setupTokenUsdtInitialValuesForUsers,
@@ -886,7 +888,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_120_18DEC,
+            N0__01_18DEC,
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1217,7 +1219,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_3_18DEC,
             PERCENTAGE_3_18DEC,
-            PERCENTAGE_3_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1257,7 +1259,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_365_18DEC,
             PERCENTAGE_365_18DEC,
-            PERCENTAGE_365_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1298,7 +1300,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_160_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1340,7 +1342,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_120_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_120_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1380,7 +1382,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1421,7 +1423,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_120_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1462,7 +1464,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_160_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1504,7 +1506,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_120_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1546,7 +1548,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_120_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1584,7 +1586,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1624,7 +1626,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_160_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1666,7 +1668,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_151_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_151_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1708,7 +1710,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1750,7 +1752,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_149_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1792,7 +1794,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_160_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1835,7 +1837,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_120_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1878,7 +1880,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1920,7 +1922,7 @@ describe("Milton - close position", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -2584,7 +2586,7 @@ describe("Milton - close position", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2607,7 +2609,7 @@ describe("Milton - close position", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2667,7 +2669,7 @@ describe("Milton - close position", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2690,7 +2692,7 @@ describe("Milton - close position", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2799,7 +2801,7 @@ describe("Milton - close position", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: leverage,
             openTimestamp: localOpenTimestamp,
             from: openerUser,
@@ -3324,7 +3326,7 @@ describe("Milton - close position", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3333,7 +3335,7 @@ describe("Milton - close position", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3368,7 +3370,7 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const params = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -3383,7 +3385,7 @@ describe("Milton - close position", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3392,7 +3394,7 @@ describe("Milton - close position", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -3403,7 +3405,10 @@ describe("Milton - close position", () => {
         await expect(
             miltonDai
                 .connect(userThree)
-                .itfCloseSwapsReceiveFixed([1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
+                .itfCloseSwapsReceiveFixed(
+                    [1, 2],
+                    params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS)
+                )
         )
             .to.emit(tokenDai, "Transfer")
             .withArgs(

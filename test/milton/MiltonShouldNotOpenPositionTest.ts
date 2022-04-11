@@ -2,8 +2,9 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    N0__01_18DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
+    N0__001_18DEC,
     USD_28_000_6DEC,
     USD_10_000_18DEC,
     ZERO,
@@ -62,7 +63,7 @@ describe("MiltonSpreadModel - Core", () => {
             return;
         }
         const totalAmount = ZERO;
-        const maxAcceptableFixedInterestRate = BigNumber.from("3");
+        const acceptableFixedInterestRate = BigNumber.from("3");
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         await assertError(
@@ -70,7 +71,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -78,7 +79,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - pay fixed 18 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - pay fixed 18 decimals", async () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
@@ -87,7 +88,7 @@ describe("MiltonSpreadModel - Core", () => {
             );
 
         const totalAmount = BigNumber.from("30000000000000000001");
-        const maxAcceptableFixedInterestRate = BigNumber.from("39999999999999999");
+        const acceptableFixedInterestRate = BigNumber.from("39999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -107,7 +108,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -115,7 +116,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - receive fixed 18 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - receive fixed 18 decimals", async () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
@@ -129,7 +130,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const totalAmount = BigNumber.from("30000000000000000001");
-        const maxAcceptableFixedInterestRate = BigNumber.from("19999999999999999");
+        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -144,7 +145,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonDai.itfOpenSwapReceiveFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -152,7 +153,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - pay fixed 6 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - pay fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -185,7 +186,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
 
         const totalAmount = BigNumber.from("30000001");
-        const maxAcceptableFixedInterestRate = BigNumber.from("39999999999999999");
+        const acceptableFixedInterestRate = BigNumber.from("39999999999999999");
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -200,7 +201,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonUsdt.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -208,7 +209,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it("should NOT open position because tolerated quote value exceeded - receive fixed 6 decimals", async () => {
+    it("should NOT open position because acceptable fixed interest rate  exceeded - receive fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -242,7 +243,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
 
         const totalAmount = BigNumber.from("30000001");
-        const maxAcceptableFixedInterestRate = BigNumber.from("19999999999999999");
+        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -257,7 +258,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonUsdt.itfOpenSwapReceiveFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -278,7 +279,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const totalAmount = BigNumber.from("1000000000000000000000001");
-        const maxAcceptableFixedInterestRate = 3;
+        const acceptableFixedInterestRate = 3;
         const leverage = BigNumber.from("10").mul(N1__0_18DEC);
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -287,7 +288,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -307,7 +308,7 @@ describe("MiltonSpreadModel - Core", () => {
         }
 
         const totalAmount = BigNumber.from("100688870576704582165765");
-        const maxAcceptableFixedInterestRate = 3;
+        const acceptableFixedInterestRate = 3;
         const leverage = BigNumber.from("10").mul(N1__0_18DEC);
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -316,7 +317,7 @@ describe("MiltonSpreadModel - Core", () => {
             miltonDai.itfOpenSwapPayFixed(
                 timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             ),
             //then
@@ -346,7 +347,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: USD_10_000_18DEC, //10 000 USD
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -412,7 +413,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: BigNumber.from(500),
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -429,7 +430,7 @@ describe("MiltonSpreadModel - Core", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then
@@ -453,7 +454,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: BigNumber.from("1000000000000000000001"),
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -470,7 +471,7 @@ describe("MiltonSpreadModel - Core", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             //then

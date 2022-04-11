@@ -42,7 +42,7 @@ IPOR smart contracts
 
 #### How to run all tests?
 
-`npx hardhat test`
+`npm run test`
 
 #### How to run all tests with coverage?
 

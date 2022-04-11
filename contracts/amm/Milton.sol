@@ -77,29 +77,24 @@ abstract contract Milton is MiltonInternal, IMilton {
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapPayFixed(
         uint256 totalAmount,
-        uint256 maxAcceptableFixedInterestRate,
+        uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
-            _openSwapPayFixed(
-                block.timestamp,
-                totalAmount,
-                maxAcceptableFixedInterestRate,
-                leverage
-            );
+            _openSwapPayFixed(block.timestamp, totalAmount, acceptableFixedInterestRate, leverage);
     }
 
     //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function openSwapReceiveFixed(
         uint256 totalAmount,
-        uint256 maxAcceptableFixedInterestRate,
+        uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override nonReentrant whenNotPaused returns (uint256) {
         return
             _openSwapReceiveFixed(
                 block.timestamp,
                 totalAmount,
-                maxAcceptableFixedInterestRate,
+                acceptableFixedInterestRate,
                 leverage
             );
     }
@@ -282,7 +277,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _openSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maxAcceptableFixedInterestRate,
+        uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
@@ -308,8 +303,8 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         require(
-            maxAcceptableFixedInterestRate != 0 && quoteValue <= maxAcceptableFixedInterestRate,
-            MiltonErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
+            acceptableFixedInterestRate != 0 && quoteValue <= acceptableFixedInterestRate,
+            MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
         MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
@@ -353,7 +348,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _openSwapReceiveFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 maxAcceptableFixedInterestRate,
+        uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
@@ -382,8 +377,8 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         require(
-            maxAcceptableFixedInterestRate != 0 && quoteValue <= maxAcceptableFixedInterestRate,
-            MiltonErrors.TOLERATED_QUOTE_VALUE_EXCEEDED
+            acceptableFixedInterestRate <= quoteValue,
+            MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
         MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(

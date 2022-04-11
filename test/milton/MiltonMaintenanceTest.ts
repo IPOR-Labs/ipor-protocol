@@ -1,7 +1,12 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { PERCENTAGE_3_18DEC, USD_28_000_18DEC, USD_50_000_18DEC } from "../utils/Constants";
+import {
+    N0__01_18DEC,
+    PERCENTAGE_3_18DEC,
+    USD_28_000_18DEC,
+    USD_50_000_18DEC,
+} from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
@@ -15,6 +20,7 @@ import {
     prepareComplexTestDataDaiCase000,
     prepareTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
+    getReceiveFixedDerivativeParamsDAICase1,
     prepareTestData,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
@@ -67,7 +73,7 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
@@ -109,18 +115,19 @@ describe("Milton Maintenance", () => {
                 .connect(userOne)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
         );
 
+        params.acceptableFixedInterestRate = N0__01_18DEC;
         await assertError(
             miltonDai
                 .connect(userOne)
                 .openSwapReceiveFixed(
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
@@ -188,17 +195,18 @@ describe("Milton Maintenance", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
         const swapPayFixed = await miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
 
+        params.acceptableFixedInterestRate = N0__01_18DEC;
         await miltonDai
             .connect(userTwo)
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -282,7 +290,7 @@ describe("Milton Maintenance", () => {
                 .connect(userTwo)
                 .openSwapPayFixed(
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 ),
             "Pausable: paused"
@@ -296,7 +304,7 @@ describe("Milton Maintenance", () => {
             .connect(userTwo)
             .openSwapPayFixed(
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
