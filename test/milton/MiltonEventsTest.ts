@@ -20,8 +20,10 @@ import {
 import {
     prepareComplexTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
+	getReceiveFixedDerivativeParamsDAICase1,
     prepareComplexTestDataUsdtCase000,
     getPayFixedDerivativeParamsUSDTCase1,
+	getReceiveFixedDerivativeParamsUSDTCase1
 } from "../utils/DataUtils";
 
 const { expect } = chai;
@@ -68,7 +70,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -111,7 +113,7 @@ describe("Milton Events", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const params = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -126,7 +128,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -185,7 +187,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapPayFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -229,7 +231,7 @@ describe("Milton Events", () => {
             expect(true).to.be.false;
             return;
         }
-        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
+        const params = getReceiveFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
         await iporOracle
             .connect(userOne)
@@ -244,7 +246,7 @@ describe("Milton Events", () => {
                 .itfOpenSwapReceiveFixed(
                     params.openTimestamp,
                     params.totalAmount,
-                    params.maxAcceptableFixedInterestRate,
+                    params.acceptableFixedInterestRate,
                     params.leverage
                 )
         )
@@ -303,7 +305,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -356,7 +358,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -409,7 +411,7 @@ describe("Milton Events", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 params.totalAmount,
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 

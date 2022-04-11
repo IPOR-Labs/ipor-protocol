@@ -1,53 +1,53 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 
-/// @title Interface for interaction with specific Stanley's strategy which represent external DeFi protocol.
+/// @title Interface for interaction with  Stanley's strategy. 
+/// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
 interface IStrategy {
-    /// @notice Returns current version of Strategy's
-    /// @return current Strategy version
+    /// @notice Returns current version of strategy
+    /// @return current Strategy's version
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Strategy instance
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
 
-    /// @notice Gets share token address
-    /// return strategy's share token address
+    /// @notice Returns strategy's share token address
     function getShareToken() external view returns (address);
 
-    /// @notice Gets Annyal Percentage Rate for this strategy.
+    /// @notice Gets annualised interest rate (APR) for this strategy.
     /// @return APR value, represented in 18 decimals.
     function getApr() external view returns (uint256);
 
-    /// @notice Gets balance for given asset (underlying / stablecoin) in this strategy.
+    /// @notice Gets balance for given asset (underlying / stablecoin) allocated to this strategy.
     /// @return balance for given asset, represented in 18 decimals.
     function balanceOf() external view returns (uint256);
 
-    /// @notice Deposits given asset amount from Stanley to this specific Strategy. Function available only for Stanley.
+    /// @notice Deposits asset amount from Stanley to this specific Strategy. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
     function deposit(uint256 amount) external;
 
-    /// @notice Withdraws given asset amount from Strategy to Stanley. Function available only for Stanley.
+    /// @notice Withdraws asset amount from Strategy to Stanley. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
     function withdraw(uint256 amount) external;
 
-    /// @notice Claim rewards. Function can be executed by anyone.
+    /// @notice Claims rewards. Function can be executed by anyone.
     function doClaim() external;
 
     /// @notice Gets Stanley address.
     function getStanley() external view returns (address);
 
-    /// @notice Sets new Stanley address. Function can be executed only by smart contract Owner.
+    /// @notice Sets new Stanley address. Function can be executed only by the smart contract Owner.
     /// @param newStanley new Stanley address
     function setStanley(address newStanley) external;
 
-    /// @notice Sets new Treasury address. Function can be executed only by smart contract Owner.
+    /// @notice Sets new Treasury address. Function can be executed only by the smart contract Owner.
     /// @param newTreasury new Treasury address
     function setTreasury(address newTreasury) external;
 
-    /// @notice Sets new Treasury Manager address. Function can be executed only by smart contract Owner.
+    /// @notice Sets new Treasury Manager address. Function can be executed only by the smart contract Owner.
     /// @param newTreasuryManager new Treasury Manager address
     function setTreasuryManager(address newTreasuryManager) external;
 
@@ -60,14 +60,13 @@ interface IStrategy {
     function unpause() external;
 
     /// @notice Emmited when Stanley address is changed by Owner.
-    /// @param changedBy account address who changed Stanley address
+    /// @param changedBy account address that has changed Stanley address
     /// @param oldStanley old Stanley address
     /// @param newStanley new Stanley address
     event StanleyChanged(address changedBy, address oldStanley, address newStanley);
 
-    // TODO: ADD test for events into fork test
-    /// @notice Emmited when doClaim function was executed.
-    /// @param claimedBy account who execute claim action
+    /// @notice Emmited when doClaim function had been executed.
+    /// @param claimedBy account that executes claim action
     /// @param shareToken share token assocciated with one strategy
     /// @param treasury Treasury address where claimed tokens are transferred.
     /// @param amount S
@@ -78,14 +77,14 @@ interface IStrategy {
         uint256 amount
     );
 
-    /// @notice Emmited when Treasury address changed
-    /// @param changedBy account address who changed Treasury address
+    /// @notice Emmited when Treasury address has changed
+    /// @param changedBy account address that has changed Treasury address
     /// @param oldTreasury old Treasury address
     /// @param newTreasury new Treasury address
     event TreasuryChanged(address changedBy, address oldTreasury, address newTreasury);
 
-    /// @notice Emmited when Treasury Manager address changed
-    /// @param changedBy account address who changed Treasury Manager address
+    /// @notice Emmited when Treasury Manager address has changed
+    /// @param changedBy account address that changed Treasury Manager's address
     /// @param oldTreasuryManager old Treasury Manager address
     /// @param newTreasuryManager new Treasury Manager address
     event TreasuryManagerChanged(

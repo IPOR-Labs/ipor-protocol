@@ -1,7 +1,12 @@
 module.exports = {
     skipFiles: [
-        "contracts/itf/ItfMilton.sol",
-        "contracts/frontend/CockpitDataProvider.sol",        
-        "contracts/mocks/MiltonFaucet.sol",
+        "itf/",
+        "mocks/",
+        "vault/interfaces/aave/",
+        "vault/interfaces/compound/",
+        "facades/",
+        "facades/cockpit/",
+        "Migrations.sol",
+        "frontend/CockpitDataProvider.sol",
     ],
 };

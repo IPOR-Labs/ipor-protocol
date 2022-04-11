@@ -183,7 +183,6 @@ export const prepareTestData = async (
             );
 
             josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
-            await josephUsdc.deployed();
             await josephUsdc.initialize(
                 tokenUsdc.address,
                 ipTokenUsdc.address,
@@ -427,9 +426,21 @@ export const getStandardDerivativeParamsDAI = (user: Signer, tokenDai: DaiMocked
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getReceiveFixedSwapParamsDAI = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
@@ -439,7 +450,7 @@ export const getStandardDerivativeParamsUSDT = (user: Signer, tokenUsdt: UsdtMoc
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -469,9 +480,20 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+export const getReceiveFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
@@ -481,9 +503,23 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+export const getReceiveFixedDerivativeParamsUSDTCase1 = (
+    user: Signer,
+    tokenUsdt: UsdtMockedToken
+) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };

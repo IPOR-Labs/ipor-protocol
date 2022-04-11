@@ -12,8 +12,6 @@ import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "./StrategyCore.sol";
 
-import "hardhat/console.sol";
-
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -115,9 +113,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     /**
      * @dev Claim extra reward of Governace token(COMP).
-     * @notice claim can only done by owner.
      */
-    function doClaim() external override whenNotPaused nonReentrant {
+    function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);

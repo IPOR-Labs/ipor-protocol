@@ -36,8 +36,8 @@ library MiltonErrors {
     //@notice ibtPrice has to be higher than 0
     string public constant IBT_PRICE_CANNOT_BE_ZERO = "IPOR_311";
 
-    //@notice Maximum Slippage is too high
-    string public constant TOLERATED_QUOTE_VALUE_EXCEEDED = "IPOR_312";
+    //@notice Acceptable fixed interest rate exceeded.
+    string public constant ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED = "IPOR_312";
 
     //@notice Swap Notional Amount is higher than Total Notional
     string public constant SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_313";
