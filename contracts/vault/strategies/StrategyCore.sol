@@ -23,18 +23,6 @@ abstract contract StrategyCore is
     address internal _treasury;
     address internal _treasuryManager;
 
-    function _getStanley() internal view virtual returns (address) {
-        return _stanley;
-    }
-
-    function _getTreasury() internal view virtual returns (address) {
-        return _treasury;
-    }
-
-    function _getTreasuryManager() internal view virtual returns (address) {
-        return _treasuryManager;
-    }
-
     modifier onlyStanley() {
         require(msg.sender == _getStanley(), StanleyErrors.CALLER_NOT_STANLEY);
         _;
@@ -91,6 +79,18 @@ abstract contract StrategyCore is
 
     function unpause() external override onlyOwner {
         _unpause();
+    }
+
+    function _getStanley() internal view virtual returns (address) {
+        return _stanley;
+    }
+
+    function _getTreasury() internal view virtual returns (address) {
+        return _treasury;
+    }
+
+    function _getTreasuryManager() internal view virtual returns (address) {
+        return _treasuryManager;
     }
 
     //solhint-disable no-empty-blocks
