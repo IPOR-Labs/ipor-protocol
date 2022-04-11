@@ -62,7 +62,6 @@ abstract contract MiltonInternal is
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     address internal _asset;
-    IIpToken internal _ipToken; // TODO: PRZ : do we need this?
     address internal _joseph;
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
@@ -272,10 +271,6 @@ abstract contract MiltonInternal is
         returns (uint256)
     {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
-    }
-
-    function _getIpToken() internal view virtual returns (IIpToken) {
-        return _ipToken;
     }
 
     function _getJoseph() internal view virtual returns (address) {
