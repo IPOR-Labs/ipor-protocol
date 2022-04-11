@@ -23,13 +23,25 @@ abstract contract StrategyCore is
     address internal _treasury;
     address internal _treasuryManager;
 
+    function _getStanley() internal view virtual returns (address) {
+        return _stanley;
+    }
+
+    function _getTreasury() internal view virtual returns (address) {
+        return _treasury;
+    }
+
+    function _getTreasuryManager() internal view virtual returns (address) {
+        return _treasuryManager;
+    }
+
     modifier onlyStanley() {
-        require(msg.sender == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
+        require(msg.sender == _getStanley(), StanleyErrors.CALLER_NOT_STANLEY);
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(msg.sender == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
+        require(msg.sender == _getTreasuryManager(), StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
@@ -49,26 +61,26 @@ abstract contract StrategyCore is
     }
 
     function getStanley() external view override returns (address) {
-        return _stanley;
+        return _getStanley();
     }
 
     function setStanley(address newStanley) external whenNotPaused onlyOwner {
         require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStanley = _stanley;
+        address oldStanley = _getStanley();
         _stanley = newStanley;
         emit StanleyChanged(msg.sender, oldStanley, newStanley);
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _treasuryManager;
+        address oldTreasuryManager = _getTreasuryManager();
         _treasuryManager = manager;
         emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, manager);
     }
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasury = _treasury;
+        address oldTreasury = _getTreasury();
         _treasury = newTreasury;
         emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
     }
