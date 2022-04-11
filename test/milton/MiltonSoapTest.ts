@@ -3,6 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
+    N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
@@ -43,7 +44,7 @@ import {
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("Milton SOAP", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
@@ -133,7 +134,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUserAddress,
@@ -200,7 +201,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -267,7 +268,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -334,7 +335,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -402,7 +403,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -477,7 +478,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -554,7 +555,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -563,7 +564,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -631,7 +632,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -640,7 +641,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -653,7 +654,7 @@ describe("MiltonSpreadModel - Core", () => {
             .connect(userOne)
             .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
-        await openSwapReceiveFixed(testData, firstDerivativeParams);
+        await openSwapReceiveFixed(testData, secondDerivativeParams);
 
         const expectedSoap = BigNumber.from("-136534382151108092229");
 
@@ -726,7 +727,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -735,7 +736,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -827,7 +828,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -836,7 +837,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -908,7 +909,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -917,7 +918,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1009,7 +1010,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1018,7 +1019,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1113,7 +1114,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1199,7 +1200,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1284,7 +1285,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1380,7 +1381,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1388,7 +1389,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1465,7 +1466,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1473,7 +1474,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1560,7 +1561,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1674,7 +1675,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
@@ -1720,5 +1721,100 @@ describe("MiltonSpreadModel - Core", () => {
             0,
             `SOAP is positive but should be negative, actual: ${actualSoap}`
         );
+    });
+
+    it("should calculate soap, DAI add pay fixed x2, wait 50 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams25days.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParams25days);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                calculationTimestamp50days
+            );
+
+        //then
+        const expectedSoap = BigNumber.from("-205221535441070939561");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp50days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
     });
 });

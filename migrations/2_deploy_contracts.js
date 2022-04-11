@@ -217,6 +217,9 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
     const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
+    await deployer.deploy(MiltonSpreadModel);
+    const miltonSpreadModel = await MiltonSpreadModel.deployed();
+
     const strategyCompoundUsdt = await deployProxy(
         StrategyCompoundUsdt,
         [
@@ -360,12 +363,6 @@ module.exports = async function (deployer, _network) {
     });
 
     const miltonStorageDai = await deployProxy(MiltonStorageDai, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
-    const miltonSpreadModel = await deployProxy(MiltonSpreadModel, {
         deployer: deployer,
         initializer: "initialize",
         kind: "uups",

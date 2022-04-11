@@ -43,18 +43,18 @@ interface IMiltonInternal {
 
     /// @notice Gets opening fee rate used to calculate the part of the fee transferred to the Treasury. When the trader opens a position then fee is deducted from the collateral.
     /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
-    /// This param defines the proportion how the fee is divided and distributed to either liquidity pool or threasury 
+    /// This param defines the proportion how the fee is divided and distributed to either liquidity pool or threasury
     /// @dev Param used in swap opening.
     /// @return opening fee for treasury rate is represented in 18 decimals
     function getOpeningFeeTreasuryPortionRate() external pure returns (uint256);
 
-    /// @notice Gets IPOR publication fee. When swap is opened then publication fee is charged. This fee is intended to subsidize the publication of IPOR. 
+    /// @notice Gets IPOR publication fee. When swap is opened then publication fee is charged. This fee is intended to subsidize the publication of IPOR.
     /// IPOR publication fee is deducted from the total amount used to open the swap.
     /// @dev Param used in swap opening.
     /// @return IPOR publication fee is represented in 18 decimals
     function getIporPublicationFee() external pure returns (uint256);
 
-    /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap. 
+    /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap.
     /// Deposit is refunded to whoever closes the swap: either the buyer or the liquidator.
     /// @return liquidation deposit is represented in 18 decimals
     function getLiquidationDepositAmount() external pure returns (uint256);
@@ -93,7 +93,7 @@ interface IMiltonInternal {
     /// @notice Calculats Pay-Fixed Swap payoff for a given Swap structure.
     /// @param swap `IporTypes.IporSwapMemory` structure
     /// @return Pay-Fixed Swap payoff, can be negative, represented in 18 decimals.
-    /// @dev absolute value cannot be higher than the collateral 
+    /// @dev absolute value cannot be higher than the collateral
     function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
         external
         view
@@ -119,6 +119,11 @@ interface IMiltonInternal {
     /// @dev Emits {Withdraw} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
     /// @param assetAmount amount of assets
     function withdrawFromStanley(uint256 assetAmount) external;
+
+    /// @notice Transfers assets (underlying tokens / stablecoins) from Stanley to Milton. Action available only for Joseph.
+    /// @dev Milton Balance in storage is not changing after this wi, balance of ERC20 assets on Milton is changing.
+    /// @dev Emits {Withdraw} event from Stanley, emits {Transfer} event from ERC20 asset, emits {Burn} event from ivToken
+    function withdrawAllFromStanley() external;
 
     /// @notice Closes Pay-Fixed swap for a given ID in "emergency mode". Action available only to the Owner.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.

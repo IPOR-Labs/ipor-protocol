@@ -14,6 +14,7 @@ import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
+import "./libraries/DecayFactorCalculation.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -188,6 +189,10 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     ) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(
+            ipor.lastUpdateTimestamp <= updateTimestamp,
+            IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
+        );
 
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
@@ -201,14 +206,14 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
                 ipor.exponentialMovingAverage,
                 indexValue,
-                _DECAY_FACTOR_VALUE
+                _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
                     ipor.exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
-                    _DECAY_FACTOR_VALUE
+                    _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
                 );
         }
 
@@ -228,6 +233,15 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialWeightedMovingVariance,
             updateTimestamp
         );
+    }
+
+    function _decayFactorValue(uint256 timeFromLastPublication)
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return DecayFactorCalculation.calculate(timeFromLastPublication);
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)

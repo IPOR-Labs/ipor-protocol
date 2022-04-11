@@ -132,7 +132,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -141,7 +141,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -150,7 +150,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -307,7 +307,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -316,7 +316,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -325,7 +325,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,

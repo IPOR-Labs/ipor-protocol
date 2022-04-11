@@ -41,7 +41,7 @@ abstract contract JosephInternal is
     address internal _treasury;
     address internal _treasuryManager;
     address internal _charlieTreasury;
-    address internal _charlieTreasuryManager;
+    address internal _charlieTreasuryManager;	
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -104,6 +104,11 @@ abstract contract JosephInternal is
     //@param assetAmount underlying token amount represented in 18 decimals
     function withdrawFromStanley(uint256 assetAmount) external override onlyOwner whenNotPaused {
         _milton.withdrawFromStanley(assetAmount);
+    }
+
+    //@param assetAmount underlying token amount represented in 18 decimals
+    function withdrawAllFromStanley() external override onlyOwner whenNotPaused {
+        _milton.withdrawAllFromStanley();
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals

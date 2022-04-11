@@ -148,7 +148,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         );
 
         require(
-            utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_RATE,
+            utilizationRate <= _getRedeemLpMaxUtilizationRate(),
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 

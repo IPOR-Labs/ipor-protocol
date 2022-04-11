@@ -2,8 +2,6 @@ require("dotenv").config({ path: "../.env" });
 const keccak256 = require("keccak256");
 const { erc1967, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
-
 const IporOracle = artifacts.require("IporOracle");
 const ItfIporOracle = artifacts.require("ItfIporOracle");
 
@@ -33,8 +31,6 @@ const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network, addresses) {
     console.log("Upgrade Smart Contracts...");
-
-    await upgradeContract(MiltonSpreadModel);
 
     await upgradeContract(IporOracle);
     await upgradeContract(ItfIporOracle);
