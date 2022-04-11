@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.9;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import "../../security/IporOwnable.sol";
 import "../../interfaces/IMiltonSpreadInternal.sol";
 
-contract MiltonSpreadInternal is UUPSUpgradeable, IporOwnableUpgradeable, IMiltonSpreadInternal {
+contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     using SafeCast for int256;
     using SafeCast for uint256;
 
@@ -31,10 +30,6 @@ contract MiltonSpreadInternal is UUPSUpgradeable, IporOwnableUpgradeable, IMilto
 
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
     uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 3e14;
-
-    function getVersion() external pure override returns (uint256) {
-        return 1;
-    }
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
         return _SPREAD_PREMIUMS_MAX_VALUE;
@@ -176,7 +171,4 @@ contract MiltonSpreadInternal is UUPSUpgradeable, IporOwnableUpgradeable, IMilto
             }
         }
     }
-
-    //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
 }

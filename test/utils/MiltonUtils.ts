@@ -155,7 +155,6 @@ export const prepareMockMiltonSpreadModel = async (
 ): Promise<MockMiltonSpreadModel> => {
     const MockMiltonSpreadModel = await ethers.getContractFactory(spreadmiltonCase);
     const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockMiltonSpreadModel;
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -186,7 +185,6 @@ export const prepareMiltonSpreadCase2 = async () => {
         "MockCase2MiltonSpreadModel"
     );
     const miltonSpread = await MockCase2MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -195,7 +193,6 @@ export const prepareMiltonSpreadCase3 = async () => {
         "MockCase3MiltonSpreadModel"
     );
     const miltonSpread = await MockCase3MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -204,7 +201,6 @@ export const prepareMiltonSpreadCase4 = async () => {
         "MockCase4MiltonSpreadModel"
     );
     const miltonSpread = await MockCase4MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -213,7 +209,6 @@ export const prepareMiltonSpreadCase5 = async () => {
         "MockCase5MiltonSpreadModel"
     );
     const miltonSpread = await MockCase5MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -222,7 +217,6 @@ export const prepareMiltonSpreadCase6 = async () => {
         "MockCase6MiltonSpreadModel"
     );
     const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -231,7 +225,6 @@ export const prepareMiltonSpreadCase7 = async () => {
         "MockCase7MiltonSpreadModel"
     );
     const miltonSpread = await MockCase7MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -240,7 +233,6 @@ export const prepareMiltonSpreadCase8 = async () => {
         "MockCase8MiltonSpreadModel"
     );
     const miltonSpread = await MockCase8MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -249,7 +241,6 @@ export const prepareMiltonSpreadCase9 = async () => {
         "MockCase9MiltonSpreadModel"
     );
     const miltonSpread = await MockCase9MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -258,7 +249,6 @@ export const prepareMiltonSpreadCase10 = async () => {
         "MockCase10MiltonSpreadModel"
     );
     const miltonSpread = await MockCase10MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -267,7 +257,6 @@ export const prepareMiltonSpreadCase11 = async () => {
         "MockCase11MiltonSpreadModel"
     );
     const miltonSpread = await MockCase11MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -286,7 +275,6 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
 export const prepareMiltonSpreadBase = async () => {
     const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
