@@ -57,8 +57,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
-
         const expectedNewOwner = userTwo;
 
         //when
@@ -78,7 +76,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -96,7 +93,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -116,7 +112,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -137,7 +132,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -159,7 +153,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
 
         const expectedNewOwner = userTwo;
 

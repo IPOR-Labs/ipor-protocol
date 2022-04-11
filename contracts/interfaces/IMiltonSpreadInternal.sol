@@ -3,10 +3,6 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interacting with Milton Spread's internal use.
 interface IMiltonSpreadInternal {
-    /// @notice Returns current version of Milton Spread Model's
-    /// @return current Milton Spread Model version
-    function getVersion() external pure returns (uint256);
-
     /// @notice Gets Spread Premiums Max Value param which is used in spread equations.
     /// @return Spread Premiums Max Value param represented in 18 decimals.
     function getSpreadPremiumsMaxValue() external pure returns (uint256);

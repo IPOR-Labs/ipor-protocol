@@ -4,7 +4,6 @@ const { erc1967, deployProxy } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonFaucet = artifacts.require("MiltonFaucet");
 
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
