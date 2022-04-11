@@ -4,7 +4,7 @@ import { BigNumber, Signer } from "ethers";
 import {
     N1__0_6DEC,
     N1__0_18DEC,
-	N0__01_18DEC,
+    N0__01_18DEC,
     TC_50_000_18DEC,
     ZERO,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -451,30 +451,6 @@ export const exetuceCloseSwapTestCase = async function (
     await assertSoap(testData, soapParams);
 };
 
-// testData: TestData,
-// asset: string,
-// leverage: BigNumber,
-// direction: number,
-// openerUser: Signer,
-// closerUser: Signer,
-// iporValueBeforeOpenSwap: BigNumber,
-// iporValueAfterOpenSwap: BigNumber,
-// acceptableFixedInterestRate: BigNumber,
-// periodOfTimeElapsedInSeconds: BigNumber,
-// providedLiquidityAmount: BigNumber,
-// expectedMiltonUnderlyingTokenBalance: BigNumber,
-// expectedOpenerUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
-// expectedCloserUserUnderlyingTokenBalanceAfterPayOut: BigNumber,
-// expectedLiquidityPoolTotalBalanceWad: BigNumber,
-// expectedOpenedPositions: BigNumber,
-// expectedDerivativesTotalBalanceWad: BigNumber,
-// expectedTreasuryTotalBalanceWad: BigNumber,
-// expectedSoap: BigNumber,
-// openTimestamp: BigNumber,
-// expectedPositionValue: BigNumber,
-// expectedIncomeFeeValue: BigNumber,
-// userOne: Signer,
-// liquidityProvider: Signer
 export const executeCloseSwapsTestCase = async function (
     testData: TestData,
     asset: string,

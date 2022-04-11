@@ -41,50 +41,6 @@ describe("Milton Utilisation Rate", () => {
         miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
-    //TODO: clarify when spread equasion will be clarified
-    // it("should NOT open pay fixed position - liquidity pool utilization exceeded, liquidity pool and opening fee are ZERO", async () => {
-    //     //given
-    //     let testData = await prepareTestData(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         ["DAI"],
-    //         data
-    //     );
-    //     await prepareApproveForUsers(
-    //         [userOne, userTwo, userThree, liquidityProvider],
-    //         "DAI",
-    //         data,
-    //         testData
-    //     );
-    //     await setupTokenDaiInitialValuesForUsers(
-    //         [admin, userOne, userTwo, userThree, liquidityProvider],
-    //         testData
-    //     );
-    //     const params = getPayFixedDerivativeParamsDAICase1(
-    //         userTwo,
-    //         testData
-    //     );
-
-    //     await iporOracle.connect(userOne).itfUpdateIndex(
-    //         params.asset,
-    //         PERCENTAGE_3_18DEC,
-    //         params.openTimestamp
-    //     );
-
-    //     await assertError(
-    //         //when
-    //         data.milton.connect(userTwo).itfOpenSwap(
-    //             params.openTimestamp,
-    //             params.asset,
-    //             params.totalAmount,
-    //             params.acceptableFixedInterestRate,
-    //             params.leverage,
-    //             params.direction
-    //         ),
-    //         //then
-    //         "IPOR_303"
-    //     );
-    // });
-
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
         const testData = await prepareTestData(
