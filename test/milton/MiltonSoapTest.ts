@@ -4,7 +4,7 @@ import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
     N1__0_18DEC,
-	N0__01_18DEC,
+    N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
@@ -1859,15 +1859,16 @@ describe("Milton SOAP", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1000348983489384893923"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp,
             from: openerUser,
         };
+
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1964,7 +1965,7 @@ describe("Milton SOAP", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1000348983489384893923"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1972,7 +1973,7 @@ describe("Milton SOAP", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2069,7 +2070,7 @@ describe("Milton SOAP", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1000348983489384893923"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2077,7 +2078,7 @@ describe("Milton SOAP", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2174,7 +2175,7 @@ describe("Milton SOAP", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1000348983489384893923"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2182,7 +2183,7 @@ describe("Milton SOAP", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: BigNumber.from("1000").mul(N1__0_18DEC),
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
