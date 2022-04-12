@@ -32,6 +32,8 @@ import {
     IpToken,
     ItfIporOracle,
     MiltonStorage,
+    MockMiltonStorage,
+    MockCase8MiltonDai,
 } from "../../types";
 import {
     USD_10_000_6DEC,
@@ -70,7 +72,7 @@ export type TestData = {
     miltonStorageUsdc?: MiltonStorage;
     josephUsdc?: JosephUsdcMocks;
     miltonDai?: MiltonDaiMockCase;
-    miltonStorageDai?: MiltonStorage;
+    miltonStorageDai?: MockMiltonStorage | MiltonStorage;
     josephDai?: JosephDaiMocks;
     stanleyUsdt?: MockStanley;
     stanleyUsdc?: MockStanley;
@@ -104,7 +106,7 @@ export const prepareTestData = async (
     let miltonStorageUsdc: MiltonStorage | undefined;
     let josephUsdc: JosephUsdcMocks | undefined;
     let miltonDai: MiltonDaiMockCase | undefined;
-    let miltonStorageDai: MiltonStorage | undefined;
+    let miltonStorageDai: MockMiltonStorage | MiltonStorage | undefined;
     let josephDai: JosephDaiMocks | undefined;
     let stanleyUsdt: MockStanley | undefined;
     let stanleyUsdc: MockStanley | undefined;

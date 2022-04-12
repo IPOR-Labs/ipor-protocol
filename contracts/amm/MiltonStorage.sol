@@ -56,7 +56,13 @@ contract MiltonStorage is
         return _lastSwapId;
     }
 
-    function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
+    function getBalance()
+        external
+        view
+        virtual
+        override
+        returns (IporTypes.MiltonBalancesMemory memory)
+    {
         return
             IporTypes.MiltonBalancesMemory(
                 _balances.totalCollateralPayFixed,

@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { ItfIporOracle } from "../../types";
+import { ItfIporOracle, MockCase8MiltonDai } from "../../types";
 import {
     N1__0_18DEC,
     N0__01_18DEC,
@@ -569,6 +569,23 @@ describe("MiltonSpreadModel - Core", () => {
         };
         // when
         await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("IPOR_309");
+    });
+
+    it("Should not open position when total amount lower than fee", async () => {
+        //given
+        const { miltonDai } = await prepareComplexTestDataDaiCase800(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+        if (miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const MockMiltonStorage = await hre.ethers.getContractFactory("MockMiltonStorage");
+        const mockMiltonStorage = (await MockMiltonStorage.deploy()) as ItfIporOracle;
+        await (miltonDai as MockCase8MiltonDai).setMockMiltonStorage(mockMiltonStorage.address);
+        // when
+        await expect(miltonDai.getAccruedBalance()).to.be.revertedWith("IPOR_301");
     });
 
     it("Should revert when ibt price is zero", async () => {

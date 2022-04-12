@@ -302,11 +302,6 @@ abstract contract MiltonInternal is
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
-        console.log("liquidityPool:", liquidityPool.toUint256());
-        console.log("liquidityPool:", accruedBalance.liquidityPool);
-        console.log("actualVaultBalance:", actualVaultBalance);
-        console.log("vault:", accruedBalance.vault);
-        // TODO: PRZ !!!!!
         require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
 

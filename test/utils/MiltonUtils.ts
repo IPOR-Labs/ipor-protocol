@@ -35,6 +35,7 @@ import {
     MockCase4MiltonDai,
     MockCase5MiltonDai,
     MockCase6MiltonDai,
+    MockCase8MiltonDai,
     UsdtMockedToken,
 } from "../../types";
 
@@ -150,7 +151,8 @@ export type MiltonDaiMockCase =
     | MockCase3MiltonDai
     | MockCase4MiltonDai
     | MockCase5MiltonDai
-    | MockCase6MiltonDai;
+    | MockCase6MiltonDai
+    | MockCase8MiltonDai;
 
 export const prepareMockMiltonSpreadModel = async (
     spreadmiltonCase: MiltonSpreadModels
