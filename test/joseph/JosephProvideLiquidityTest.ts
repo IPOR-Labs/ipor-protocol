@@ -22,6 +22,7 @@ import {
     setupTokenUsdtInitialValuesForUsers,
     getStandardDerivativeParamsUSDT,
     setupTokenDaiInitialValuesForUsers,
+    prepareTestDataDaiCase001,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
@@ -251,6 +252,26 @@ describe("Joseph - provide liquidity", () => {
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
             "IPOR_300"
+        );
+    });
+
+    it("Should throw error when stanley balanse is zero", async () => {
+        //given
+        const { josephDai } = await prepareTestDataDaiCase001(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await assertError(
+            //when
+            josephDai.checkVaultReservesRatio(),
+            //then
+            "IPOR_408"
         );
     });
 });

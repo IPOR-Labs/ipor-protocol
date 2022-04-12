@@ -15,6 +15,7 @@ import "../interfaces/IIporOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
+import "hardhat/console.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -138,6 +139,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
 
     function addAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        console.log(asset);
         require(
             _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
             IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS

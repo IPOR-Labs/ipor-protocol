@@ -311,7 +311,7 @@ describe("IporOracle", () => {
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
-    it.only("should Decay Factor be lower than 100%", async () => {
+    it("should Decay Factor be lower than 100%", async () => {
         const decayFactorValueInterval1 = await _iporOracle.itfGetDecayFactorValue(ZERO);
         const decayFactorValueInterval2 = await _iporOracle.itfGetDecayFactorValue(
             BigNumber.from("119780")
@@ -783,5 +783,10 @@ describe("IporOracle", () => {
             //then
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
+    });
+
+    it("Should throw error when add asset twice", async () => {
+        //when
+        await expect(_iporOracle.addAsset(_tokenUsdc.address)).to.be.revertedWith("IPOR_201");
     });
 });

@@ -147,6 +147,21 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_500");
     });
 
+    it.only("Shoud throw error when stanley asset != from IvToken asset", async () => {
+        // given
+        // when
+        await expect(
+            //when
+            upgrades.deployProxy(StanleyDaiFactory, [
+                USDt.address,
+                ivToken.address,
+                strategyAave.address,
+                strategyCompound.address,
+            ])
+            //then
+        ).to.be.revertedWith("IPOR_011");
+    });
+
     it("Should be able to pause contract when sender is owner", async () => {
         //given
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [

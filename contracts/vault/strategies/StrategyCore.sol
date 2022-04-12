@@ -67,7 +67,7 @@ abstract contract StrategyCore is
     }
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
-        require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
+        require(newTreasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
         address oldTreasury = _treasury;
         _treasury = newTreasury;
         emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);

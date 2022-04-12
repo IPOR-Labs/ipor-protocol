@@ -20,6 +20,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "hardhat/console.sol";
 
 abstract contract MiltonInternal is
     UUPSUpgradeable,
@@ -278,10 +279,16 @@ abstract contract MiltonInternal is
         IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
 
         uint256 actualVaultBalance = _stanley.totalBalance(address(this));
+        console.log("actualVaultBalance:", actualVaultBalance);
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
+        console.log("liquidityPool:", liquidityPool.toUint256());
+        console.log("liquidityPool:", accruedBalance.liquidityPool);
+        console.log("actualVaultBalance:", actualVaultBalance);
+        console.log("vault:", accruedBalance.vault);
+        // TODO: PRZ !!!!!
         require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
 

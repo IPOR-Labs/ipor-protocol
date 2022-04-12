@@ -5,7 +5,7 @@ library MiltonErrors {
     // 300-399-milton
     //@notice Liquidity Pool balance is equal 0
     string public constant LIQUIDITY_POOL_IS_EMPTY = "IPOR_300";
-
+    // TODO: PRZ CODE NOT TEST !!!!
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
     string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
@@ -26,13 +26,13 @@ library MiltonErrors {
 
     //@notice Total Amount when opening swap is too low
     string public constant TOTAL_AMOUNT_TOO_LOW = "IPOR_308";
-
+    // TODO: PRZ CODE NOT TEST
     //@notice Total Amount when opening swap is lower than fee
     string public constant TOTAL_AMOUNT_LOWER_THAN_FEE = "IPOR_309";
 
     //@notice Amount of collateral used to open swap exceeds limit
     string public constant COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_310";
-
+    // TODO: PRZ CODE NOT TEST
     //@notice ibtPrice has to be higher than 0
     string public constant IBT_PRICE_CANNOT_BE_ZERO = "IPOR_311";
 
@@ -46,11 +46,11 @@ library MiltonErrors {
     string public constant SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW = "IPOR_314";
 
     string public constant SWAP_IDS_ARRAY_IS_EMPTY = "IPOR_315";
-
+    // TODO: PRZ CODE NOT TEST
     string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_316";
-
+    // TODO: PRZ CODE NOT TEST
     string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_317";
-
+    // TODO: PRZ CODE NOT TEST
     string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_318";
 
     //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
@@ -71,25 +71,22 @@ library MiltonErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_324";
 
-    //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX = "IPOR_325";
-
     //@notice The caller must be the Ipor Liquidity Pool - Joseph
     string public constant CALLER_NOT_JOSEPH = "IPOR_326";
-
+    // TODO: PRZ CODE NOT TEST
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_327";
-
+    // TODO: PRZ CODE NOT TEST
     //@notice Liquidity provider cannot withdraw because liquidity pool is too low
     string public constant CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_328";
-
+    // TODO: PRZ CODE NOT TEST
     // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
-    string public constant VAULT_BALANCE_TOO_LOW = "IPOR_329";
-
+    // string public constant VAULT_BALANCE_TOO_LOW = "IPOR_329";
+    // TODO: PRZ CODE NOT TEST
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_330";
-
+    // TODO: PRZ CODE NOT TEST
     string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_331";
-
+    // TODO: PRZ CODE NOT TEST
     //@notice Opening Fee Balance is too low
     string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_332";
 

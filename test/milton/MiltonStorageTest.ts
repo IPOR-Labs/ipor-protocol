@@ -329,6 +329,34 @@ describe("MiltonStorage", () => {
         );
     });
 
+    it("Should not update Storage when send 0", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo);
+        await miltonStorageDai.setJoseph(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.updateStorageWhenTransferToCharlieTreasury(ZERO),
+            //then
+            "IPOR_006"
+        );
+    });
+
     it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
         //given
         let testData = await prepareTestData(

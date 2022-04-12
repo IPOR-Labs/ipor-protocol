@@ -107,6 +107,8 @@ export enum MiltonDaiCase {
     CASE4 = "MockCase4MiltonDai",
     CASE5 = "MockCase5MiltonDai",
     CASE6 = "MockCase6MiltonDai",
+    CASE7 = "MockCase7MiltonDai",
+    CASE8 = "MockCase8MiltonDai",
 }
 
 export type MockMiltonSpreadModel =

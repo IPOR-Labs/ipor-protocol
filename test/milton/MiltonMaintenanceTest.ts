@@ -2,10 +2,12 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
+    N0__1_18DEC,
     N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     USD_28_000_18DEC,
     USD_50_000_18DEC,
+    ZERO,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -25,6 +27,7 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
+import { zeroPad } from "ethers/lib/utils";
 
 const { expect } = chai;
 
@@ -463,6 +466,23 @@ describe("Milton Maintenance", () => {
         //then
         const actualNewOwner = await miltonDai.connect(userOne).owner();
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+    });
+
+    it.only("XXX", async () => {
+        //given
+        const { miltonDai, miltonStorageDai } = await prepareTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+        if (miltonDai === undefined || miltonStorageDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        await miltonStorageDai.setMilton(await admin.getAddress());
+        await miltonStorageDai.updateStorageWhenWithdrawFromStanley(ZERO, N0__01_18DEC);
+        await miltonStorageDai.updateStorageWhenWithdrawFromStanley(ZERO, N0__1_18DEC);
+        //when
+        await miltonDai.getAccruedBalance();
     });
 
     it("should not sent ETH to Milton DAI, USDT, USDC", async () => {

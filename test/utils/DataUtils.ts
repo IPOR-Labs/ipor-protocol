@@ -329,6 +329,41 @@ export const prepareTestDataDaiCase000 = async (
     );
 };
 
+export const prepareTestDataDaiCase700 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE7,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+};
+export const prepareTestDataDaiCase800 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE8,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+};
+
 export const prepareTestDataDaiCase001 = async (
     accounts: Signer[],
     miltonSpreadModel: MockMiltonSpreadModel //data
@@ -370,6 +405,26 @@ export const prepareComplexTestDataDaiCase000 = async (
     miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     const testData = (await prepareTestDataDaiCase000(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const prepareComplexTestDataDaiCase700 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataDaiCase700(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const prepareComplexTestDataDaiCase800 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataDaiCase800(accounts, miltonSpreadModel)) as TestData;
     await prepareApproveForUsers(accounts, "DAI", testData);
     await setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;

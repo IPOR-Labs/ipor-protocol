@@ -10,9 +10,6 @@ library IporErrors {
     /// @notice General problem. Wrong decimals
     string public constant WRONG_DECIMALS = "IPOR_001";
 
-    /// @notice Asset has too low decimals
-    string public constant ASSET_DECIMALS_TOO_LOW = "IPOR_002";
-
     //@notice Trader doesnt have enought tokens to execute transaction
     string public constant ASSET_BALANCE_TOO_LOW = "IPOR_003";
 
@@ -31,5 +28,6 @@ library IporErrors {
 
     string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_009";
     string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
+
     string public constant ADDRESSES_MISMATCH = "IPOR_011";
 }
