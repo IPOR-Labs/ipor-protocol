@@ -46,11 +46,11 @@ library MiltonErrors {
     string public constant SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW = "IPOR_314";
 
     string public constant SWAP_IDS_ARRAY_IS_EMPTY = "IPOR_315";
-    // TODO: PRZ CODE NOT TEST
+
     string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_316";
-    // TODO: PRZ CODE NOT TEST
+
     string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_317";
-    // TODO: PRZ CODE NOT TEST
+
     string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_318";
 
     //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
@@ -58,9 +58,6 @@ library MiltonErrors {
 
     //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
     string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_320";
-
-    //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
-    // string public constant CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = "IPOR_321";
 
     //@notice Liquiditiy
     string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_322";
@@ -73,20 +70,14 @@ library MiltonErrors {
 
     //@notice The caller must be the Ipor Liquidity Pool - Joseph
     string public constant CALLER_NOT_JOSEPH = "IPOR_326";
-    // TODO: PRZ CODE NOT TEST
+
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_327";
-    // TODO: PRZ CODE NOT TEST
-    //@notice Liquidity provider cannot withdraw because liquidity pool is too low
-    string public constant CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_328";
-    // TODO: PRZ CODE NOT TEST
-    // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
-    // string public constant VAULT_BALANCE_TOO_LOW = "IPOR_329";
-    // TODO: PRZ CODE NOT TEST
+
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_330";
-    // TODO: PRZ CODE NOT TEST
+
     string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_331";
-    // TODO: PRZ CODE NOT TEST
+
     //@notice Opening Fee Balance is too low
     string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_332";
 
