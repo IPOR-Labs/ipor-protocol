@@ -529,10 +529,7 @@ contract MiltonStorage is
                 _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
             );
         int256 _soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
-
-        console.log("_quasiSoapPayFixed=", uint256(_soapPayFixed));
-		console.log("quasiHypotheticalInterestCumulative=", _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative);
-
+		
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
                 _soapIndicatorsReceiveFixed.rebalanceTimestamp,
@@ -542,8 +539,7 @@ contract MiltonStorage is
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
         int256 _soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
-        console.log("_quasiSoapReceiveFixed=", uint256(_soapReceiveFixed));
-		
+        		
         return (
             soapPayFixed = _soapPayFixed,
             soapReceiveFixed = _soapReceiveFixed,
