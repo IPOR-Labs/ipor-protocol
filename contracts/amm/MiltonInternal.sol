@@ -63,7 +63,6 @@ abstract contract MiltonInternal is
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     address internal _asset;
-    IIpToken internal _ipToken;
     address internal _joseph;
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
@@ -71,7 +70,7 @@ abstract contract MiltonInternal is
     IStanley internal _stanley;
 
     modifier onlyJoseph() {
-        require(msg.sender == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+        require(msg.sender == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -84,43 +83,43 @@ abstract contract MiltonInternal is
     }
 
     function getMaxSwapCollateralAmount() external pure override returns (uint256) {
-        return _MAX_SWAP_COLLATERAL_AMOUNT;
+        return _getMaxSwapCollateralAmount();
     }
 
     function getMaxLpUtilizationRate() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_RATE;
+        return _getMaxLpUtilizationRate();
     }
 
     function getMaxLpUtilizationPerLegRate() external pure override returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
+        return _getMaxLpUtilizationPerLegRate();
     }
 
     function getIncomeFeeRate() external pure override returns (uint256) {
-        return _INCOME_TAX_RATE;
+        return _getIncomeFeeRate();
     }
 
     function getOpeningFeeRate() external pure override returns (uint256) {
-        return _OPENING_FEE_RATE;
+        return _getOpeningFeeRate();
     }
 
     function getOpeningFeeTreasuryPortionRate() external pure override returns (uint256) {
-        return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
+        return _getOpeningFeeTreasuryPortionRate();
     }
 
     function getIporPublicationFee() external pure override returns (uint256) {
-        return _IPOR_PUBLICATION_FEE;
+        return _getIporPublicationFee();
     }
 
     function getLiquidationDepositAmount() external pure override returns (uint256) {
-        return _LIQUIDATION_DEPOSIT_AMOUNT;
+        return _getLiquidationDepositAmount();
     }
 
     function getMaxLeverage() external pure override returns (uint256) {
-        return _MAX_LEVERAGE;
+        return _getMaxLeverage();
     }
 
     function getMinLeverage() external pure override returns (uint256) {
-        return _MIN_LEVERAGE;
+        return _getMinLeverage();
     }
 
     function getAccruedBalance()
@@ -168,8 +167,8 @@ abstract contract MiltonInternal is
 
     //@param assetAmount underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetAmount) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _stanley.deposit(assetAmount);
-        _miltonStorage.updateStorageWhenDepositToStanley(assetAmount, vaultBalance);
+        uint256 vaultBalance = _getStanley().deposit(assetAmount);
+        _getMiltonStorage().updateStorageWhenDepositToStanley(assetAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
@@ -179,13 +178,13 @@ abstract contract MiltonInternal is
         onlyJoseph
         whenNotPaused
     {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdraw(assetAmount);
-        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
+        _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 
     function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _stanley.withdrawAll();
-        _miltonStorage.updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
+        (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdrawAll();
+        _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 
     function pause() external override onlyOwner {
@@ -202,17 +201,17 @@ abstract contract MiltonInternal is
 
     function setJoseph(address newJoseph) external override onlyOwner whenNotPaused {
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-        address oldJoseph = _joseph;
+        address oldJoseph = _getJoseph();
         _joseph = newJoseph;
         emit JosephChanged(msg.sender, oldJoseph, newJoseph);
     }
 
     function getJoseph() external view override returns (address) {
-        return _joseph;
+        return _getJoseph();
     }
 
     function getMiltonSpreadModel() external view override returns (address) {
-        return address(_miltonSpreadModel);
+        return address(_getMiltonSpreadModel());
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
@@ -275,11 +274,30 @@ abstract contract MiltonInternal is
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 
-    function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = _miltonStorage.getBalance();
+    function _getJoseph() internal view virtual returns (address) {
+        return _joseph;
+    }
 
-        uint256 actualVaultBalance = _stanley.totalBalance(address(this));
-        console.log("actualVaultBalance:", actualVaultBalance);
+    function _getIporOracle() internal view virtual returns (IIporOracle) {
+        return _iporOracle;
+    }
+
+    function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
+        return _miltonStorage;
+    }
+
+    function _getMiltonSpreadModel() internal view virtual returns (IMiltonSpreadModel) {
+        return _miltonSpreadModel;
+    }
+
+    function _getStanley() internal view virtual returns (IStanley) {
+        return _stanley;
+    }
+
+    function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
+        IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
+
+        uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
@@ -305,8 +323,11 @@ abstract contract MiltonInternal is
             int256 soap
         )
     {
-        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(_asset, calculateTimestamp);
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _miltonStorage
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            calculateTimestamp
+        );
+        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _getMiltonStorage()
             .calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
@@ -319,7 +340,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapPayFixedValue(
                 timestamp,
-                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
+                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 
@@ -330,7 +351,7 @@ abstract contract MiltonInternal is
         return
             swap.calculateSwapReceiveFixedValue(
                 timestamp,
-                _iporOracle.calculateAccruedIbtPrice(_asset, timestamp)
+                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 }

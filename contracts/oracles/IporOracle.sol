@@ -26,8 +26,6 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
-    uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
-
     mapping(address => uint256) internal _updaters;
 
     mapping(address => IporOracleTypes.IPOR) internal _indexes;

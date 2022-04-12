@@ -201,13 +201,13 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        spreadPayFixed = _miltonSpreadModel.calculateSpreadPayFixed(
-            _miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, calculateTimestamp),
+        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(
+            _getMiltonStorage().calculateSoapPayFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
         );
-        spreadReceiveFixed = _miltonSpreadModel.calculateSpreadReceiveFixed(
-            _miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, calculateTimestamp),
+        spreadReceiveFixed = _getMiltonSpreadModel().calculateSpreadReceiveFixed(
+            _getMiltonStorage().calculateSoapReceiveFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
         );
@@ -298,7 +298,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             leverage
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
@@ -308,8 +308,11 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
-        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
-            _miltonStorage.calculateSoapPayFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
+        uint256 quoteValue = _getMiltonSpreadModel().calculateQuotePayFixed(
+            _getMiltonStorage().calculateSoapPayFixed(
+                bosStruct.accruedIpor.ibtPrice,
+                openTimestamp
+            ),
             bosStruct.accruedIpor,
             balance
         );
@@ -337,7 +340,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             bosStruct.openingFeeTreasuryAmount
         );
 
-        uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapPayFixed(
+        uint256 newSwapId = _getMiltonStorage().updateStorageWhenOpenSwapPayFixed(
             newSwap,
             _getIporPublicationFee()
         );
@@ -369,7 +372,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             leverage
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed =
@@ -382,8 +385,11 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
-        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
-            _miltonStorage.calculateSoapReceiveFixed(bosStruct.accruedIpor.ibtPrice, openTimestamp),
+        uint256 quoteValue = _getMiltonSpreadModel().calculateQuoteReceiveFixed(
+            _getMiltonStorage().calculateSoapReceiveFixed(
+                bosStruct.accruedIpor.ibtPrice,
+                openTimestamp
+            ),
             bosStruct.accruedIpor,
             balance
         );
@@ -411,7 +417,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             bosStruct.openingFeeTreasuryAmount
         );
 
-        uint256 newSwapId = _miltonStorage.updateStorageWhenOpenSwapReceiveFixed(
+        uint256 newSwapId = _getMiltonStorage().updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
             _getIporPublicationFee()
         );
@@ -518,7 +524,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     {
         require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
 
-        IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapPayFixed(swapId);
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
 
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
@@ -527,7 +533,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         int256 positionValue = _calculateSwapPayFixedValue(closeTimestamp, iporSwap);
 
-        _miltonStorage.updateStorageWhenCloseSwapPayFixed(
+        _getMiltonStorage().updateStorageWhenCloseSwapPayFixed(
             msg.sender,
             iporSwap,
             positionValue,
@@ -563,7 +569,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     {
         require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
 
-        IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(swapId);
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
 
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
@@ -572,7 +578,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         int256 positionValue = _calculateSwapReceiveFixedValue(closeTimestamp, iporSwap);
 
-        _miltonStorage.updateStorageWhenCloseSwapReceiveFixed(
+        _getMiltonStorage().updateStorageWhenCloseSwapReceiveFixed(
             msg.sender,
             iporSwap,
             positionValue,
