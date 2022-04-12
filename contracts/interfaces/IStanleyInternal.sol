@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.9;
 
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.
