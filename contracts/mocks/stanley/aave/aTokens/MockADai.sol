@@ -3,7 +3,6 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./MockIAToken.sol";
-import "hardhat/console.sol";
 
 contract MockADai is ERC20, MockIAToken {
     //solhint-disable no-empty-blocks

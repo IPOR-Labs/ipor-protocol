@@ -5,7 +5,7 @@ library MiltonErrors {
     // 300-399-milton
     //@notice Liquidity Pool balance is equal 0
     string public constant LIQUIDITY_POOL_IS_EMPTY = "IPOR_300";
-    // TODO: PRZ CODE NOT TEST !!!!
+
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
     string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
@@ -59,6 +59,8 @@ library MiltonErrors {
     //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
     string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_320";
 
+    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_321";
+
     //@notice Liquiditiy
     string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_322";
 
@@ -68,18 +70,16 @@ library MiltonErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_324";
 
+    //@notice Opening Fee Balance is too low
+    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_325";
+
     //@notice The caller must be the Ipor Liquidity Pool - Joseph
     string public constant CALLER_NOT_JOSEPH = "IPOR_326";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_327";
 
-    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_330";
+    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_328";
 
-    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_331";
-
-    //@notice Opening Fee Balance is too low
-    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_332";
-
-    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_333";
+    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_329";
 }

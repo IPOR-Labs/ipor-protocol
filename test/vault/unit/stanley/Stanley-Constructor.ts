@@ -159,7 +159,7 @@ describe("Stanley -> constructor", () => {
                 strategyCompound.address,
             ])
             //then
-        ).to.be.revertedWith("IPOR_011");
+        ).to.be.revertedWith("IPOR_002");
     });
 
     it("Should be able to pause contract when sender is owner", async () => {

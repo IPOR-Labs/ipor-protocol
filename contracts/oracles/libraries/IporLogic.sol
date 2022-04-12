@@ -6,7 +6,6 @@ import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporOracleTypes.sol";
 import "../../libraries/math/IporMath.sol";
-import "hardhat/console.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)

@@ -20,7 +20,6 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
 
 abstract contract MiltonInternal is
     UUPSUpgradeable,
