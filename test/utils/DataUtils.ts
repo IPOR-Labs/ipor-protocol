@@ -88,7 +88,8 @@ export const prepareTestData = async (
     stanleyCaseNumber: MockStanleyCase,
     josephCaseUsdc: JosephUsdcMockCases,
     josephCaseUsdt: JosephUsdtMockCases,
-    josephCaseDai: JosephDaiMockCases
+    josephCaseDai: JosephDaiMockCases,
+    iporOracleOption?: ItfIporOracle
 ): Promise<TestData> => {
     let tokenDai: DaiMockedToken | undefined;
     let tokenUsdt: UsdtMockedToken | undefined;
@@ -115,7 +116,7 @@ export const prepareTestData = async (
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
 
-    const iporOracle = await prepareIporOracle(accounts);
+    const iporOracle = iporOracleOption || (await prepareIporOracle(accounts));
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -313,7 +314,8 @@ export const setupTokenDaiInitialValuesForUsers = async (users: Signer[], testDa
 
 export const prepareTestDataDaiCase000 = async (
     accounts: Signer[],
-    miltonSpreadModel: MockMiltonSpreadModel //data
+    miltonSpreadModel: MockMiltonSpreadModel, //data
+    iporOracleOption?: ItfIporOracle
 ): Promise<TestData> => {
     return await prepareTestData(
         accounts,
@@ -325,7 +327,8 @@ export const prepareTestDataDaiCase000 = async (
         MockStanleyCase.CASE0,
         JosephUsdcMockCases.CASE0,
         JosephUsdtMockCases.CASE0,
-        JosephDaiMockCases.CASE0
+        JosephDaiMockCases.CASE0,
+        iporOracleOption
     );
 };
 
@@ -402,9 +405,14 @@ export const prepareTestDataUsdtCase000 = async (
 
 export const prepareComplexTestDataDaiCase000 = async (
     accounts: Signer[],
-    miltonSpreadModel: MockMiltonSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel,
+    iporOracleOption?: ItfIporOracle
 ) => {
-    const testData = (await prepareTestDataDaiCase000(accounts, miltonSpreadModel)) as TestData;
+    const testData = (await prepareTestDataDaiCase000(
+        accounts,
+        miltonSpreadModel,
+        iporOracleOption
+    )) as TestData;
     await prepareApproveForUsers(accounts, "DAI", testData);
     await setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;

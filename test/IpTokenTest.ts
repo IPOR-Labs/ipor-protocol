@@ -183,7 +183,7 @@ describe("IpToken", () => {
         );
     });
 
-    it.only("should NOT mint ipToken if Zero", async () => {
+    it("should NOT mint ipToken if Zero", async () => {
         //given
         const { ipToken } = await preperateIpTokenCase110();
         await ipToken.setJoseph(await admin.getAddress());
@@ -196,7 +196,7 @@ describe("IpToken", () => {
         );
     });
 
-    it.only("should NOT burn ipToken if Zero", async () => {
+    it("should NOT burn ipToken if Zero", async () => {
         //given
         const { ipToken } = await preperateIpTokenCase110();
         await ipToken.setJoseph(await admin.getAddress());

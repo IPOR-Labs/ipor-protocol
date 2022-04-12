@@ -468,23 +468,6 @@ describe("Milton Maintenance", () => {
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
     });
 
-    it.only("XXX", async () => {
-        //given
-        const { miltonDai, miltonStorageDai } = await prepareTestDataDaiCase000(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
-        if (miltonDai === undefined || miltonStorageDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-        await miltonStorageDai.setMilton(await admin.getAddress());
-        await miltonStorageDai.updateStorageWhenWithdrawFromStanley(ZERO, N0__01_18DEC);
-        await miltonStorageDai.updateStorageWhenWithdrawFromStanley(ZERO, N0__1_18DEC);
-        //when
-        await miltonDai.getAccruedBalance();
-    });
-
     it("should not sent ETH to Milton DAI, USDT, USDC", async () => {
         //given
         const { miltonDai, miltonUsdt, miltonUsdc } = await prepareTestData(

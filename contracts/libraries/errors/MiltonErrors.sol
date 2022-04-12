@@ -26,13 +26,13 @@ library MiltonErrors {
 
     //@notice Total Amount when opening swap is too low
     string public constant TOTAL_AMOUNT_TOO_LOW = "IPOR_308";
-    // TODO: PRZ CODE NOT TEST
+
     //@notice Total Amount when opening swap is lower than fee
     string public constant TOTAL_AMOUNT_LOWER_THAN_FEE = "IPOR_309";
 
     //@notice Amount of collateral used to open swap exceeds limit
     string public constant COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_310";
-    // TODO: PRZ CODE NOT TEST
+
     //@notice ibtPrice has to be higher than 0
     string public constant IBT_PRICE_CANNOT_BE_ZERO = "IPOR_311";
 

@@ -147,7 +147,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_500");
     });
 
-    it.only("Shoud throw error when stanley asset != from IvToken asset", async () => {
+    it("Shoud throw error when stanley asset != from IvToken asset", async () => {
         // given
         // when
         await expect(

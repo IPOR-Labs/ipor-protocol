@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { ItfIporOracle } from "../../types";
 import {
     N1__0_18DEC,
     N0__01_18DEC,
@@ -82,7 +83,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it.only("should NOT open position because totalAmount > asset balance", async () => {
+    it("should NOT open position because totalAmount > asset balance", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -510,7 +511,7 @@ describe("MiltonSpreadModel - Core", () => {
         );
     });
 
-    it.only("Should not open position when utilization exceeded", async () => {
+    it("Should not open position when utilization exceeded", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase700(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -540,7 +541,7 @@ describe("MiltonSpreadModel - Core", () => {
         await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("IPOR_302");
     });
 
-    it.only("Should not open position when total amount lower than fee", async () => {
+    it("Should not open position when total amount lower than fee", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase800(
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -568,5 +569,46 @@ describe("MiltonSpreadModel - Core", () => {
         };
         // when
         await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("IPOR_309");
+    });
+
+    it("Should revert when ibt price is zero", async () => {
+        //given
+
+        const MockItfIporOracle = await hre.ethers.getContractFactory("MockItfIporOracle");
+        const mockIporOracle = (await MockItfIporOracle.deploy()) as ItfIporOracle;
+        await mockIporOracle.initialize();
+        await mockIporOracle.addUpdater(await admin.getAddress());
+
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            mockIporOracle
+        );
+
+        const { tokenDai, josephDai } = testData;
+        if (tokenDai === undefined || josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParams = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: USD_10_18DEC,
+            openTimestamp: openTimestamp,
+            from: userThree,
+        };
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(
+                BigNumber.from(2).mul(USD_28_000_18DEC),
+                derivativeParams.openTimestamp
+            );
+
+        await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("311");
     });
 });
