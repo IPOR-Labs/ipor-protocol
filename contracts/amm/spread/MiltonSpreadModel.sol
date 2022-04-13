@@ -5,6 +5,7 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
+import "hardhat/console.sol";
 
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
@@ -15,7 +16,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 quoteValue) {
+    ) external view override returns (uint256 quoteValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
@@ -34,7 +35,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 quoteValue) {
+    ) external view override returns (uint256 quoteValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
@@ -53,7 +54,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (int256 spreadValue) {
+    ) external view override returns (int256 spreadValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
@@ -68,7 +69,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (int256 spreadValue) {
+    ) external view override returns (int256 spreadValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
@@ -82,7 +83,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
+    ) internal view returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
 
         refLeg = _calculateReferenceLegPayFixed(
@@ -95,7 +96,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
+    ) internal view returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, accruedBalance);
 
         refLeg = _calculateReferenceLegReceiveFixed(
@@ -108,7 +109,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums) {
+    ) internal view returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -127,6 +128,13 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
+		if (volatilityAndMeanReversion < 0) {
+			console.log("[PF] MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
+		} else {
+			console.log("[PF] PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
+
+		}
+        
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
@@ -137,7 +145,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums) {
+    ) internal view returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -156,7 +164,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
+		if (volatilityAndMeanReversion < 0) {
+			console.log("[RF] MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
+		} else {
+			console.log("[RF] PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
 
+		}
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
 

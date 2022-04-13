@@ -31,12 +31,12 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
     uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 3e14;
 
-    int256 internal constant _B1 = 1e18;
-    int256 internal constant _B2 = 1e18;
-    int256 internal constant _V1 = 1e18;
-    int256 internal constant _V2 = 1e18;
-    int256 internal constant _M1 = 1e18;
-    int256 internal constant _M2 = 1e18;
+    int256 internal constant _B1 = -8260047328466268;
+    int256 internal constant _B2 = -9721941081703882;
+    int256 internal constant _V1 = 47294930726988593;
+    int256 internal constant _V2 = 8792990351805524;
+    int256 internal constant _M1 = -9721941081703882;
+    int256 internal constant _M2 = -3996501128463404;
 
     function _getB1() internal pure virtual returns (int256) {
         return _B1;
