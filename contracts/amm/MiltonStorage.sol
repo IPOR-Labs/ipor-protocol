@@ -12,7 +12,6 @@ import "../interfaces/IMiltonStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmMiltonStorageTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
-import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is
@@ -56,7 +55,13 @@ contract MiltonStorage is
         return _lastSwapId;
     }
 
-    function getBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
+    function getBalance()
+        external
+        view
+        virtual
+        override
+        returns (IporTypes.MiltonBalancesMemory memory)
+    {
         return
             IporTypes.MiltonBalancesMemory(
                 _balances.totalCollateralPayFixed,

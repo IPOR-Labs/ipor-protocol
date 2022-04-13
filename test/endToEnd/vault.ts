@@ -183,7 +183,7 @@ describe("End to End tests on mainnet fork", function () {
         // when
         await expect(
             josephUsdt.withdrawFromStanley(BigNumber.from("100000000000000000"))
-        ).to.be.revertedWith("IPOR_333");
+        ).to.be.revertedWith("IPOR_321");
 
         // then
         const stanleyUsdtBalanceAfter = await stanleyUsdt.totalBalance(miltonUsdt.address);

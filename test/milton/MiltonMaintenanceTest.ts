@@ -2,10 +2,12 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
+    N0__1_18DEC,
     N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     USD_28_000_18DEC,
     USD_50_000_18DEC,
+    ZERO,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -25,6 +27,7 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
+import { zeroPad } from "ethers/lib/utils";
 
 const { expect } = chai;
 

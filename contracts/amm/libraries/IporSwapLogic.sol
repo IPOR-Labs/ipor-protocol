@@ -6,7 +6,6 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "hardhat/console.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;

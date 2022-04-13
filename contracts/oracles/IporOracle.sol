@@ -71,6 +71,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     function getAccruedIndex(uint256 calculateTimestamp, address asset)
         external
         view
+        virtual
         override
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
