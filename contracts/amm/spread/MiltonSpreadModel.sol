@@ -7,18 +7,26 @@ import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
 
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
+    using SafeCast for uint256;
+    using SafeCast for int256;
+
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 quoteValue) {
-        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
+        (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
             accruedBalance
         );
-        quoteValue = refLeg + spreadPremiums;
+
+        int256 intQuoteValue = refLeg.toInt256() + spreadPremiums;
+
+        if (intQuoteValue > 0) {
+            return intQuoteValue.toUint256();
+        }
     }
 
     //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
@@ -27,14 +35,16 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external pure override returns (uint256 quoteValue) {
-        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
+        (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
             accruedBalance
         );
 
-        if (refLeg > spreadPremiums) {
-            quoteValue = refLeg - spreadPremiums;
+        int256 intQuoteValue = refLeg.toInt256() - spreadPremiums;
+
+        if (intQuoteValue > 0) {
+            quoteValue = intQuoteValue.toUint256();
         }
     }
 
@@ -43,14 +53,14 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 spreadValue) {
-        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
+    ) external pure override returns (int256 spreadValue) {
+        (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
             accruedBalance
         );
 
-        spreadValue = spreadPremiums + refLeg - accruedIpor.indexValue;
+        spreadValue = spreadPremiums + refLeg.toInt256() - accruedIpor.indexValue.toInt256();
     }
 
     //@dev Spread = SpreadPremiums + IPOR - RefLeg
@@ -58,21 +68,21 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 spreadValue) {
-        (uint256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
+    ) external pure override returns (int256 spreadValue) {
+        (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
             accruedBalance
         );
 
-        spreadValue = spreadPremiums + accruedIpor.indexValue - refLeg;
+        spreadValue = spreadPremiums + accruedIpor.indexValue.toInt256() - refLeg.toInt256();
     }
 
     function _calculateQuoteChunksPayFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
+    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
 
         refLeg = _calculateReferenceLegPayFixed(
@@ -85,10 +95,10 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (uint256 spreadPremiums, uint256 refLeg) {
-        spreadPremiums = _calculateSpreadPremiumsRecFixed(soap, accruedIpor, accruedBalance);
+    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
+        spreadPremiums = _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, accruedBalance);
 
-        refLeg = _calculateReferenceLegRecFixed(
+        refLeg = _calculateReferenceLegReceiveFixed(
             accruedIpor.indexValue,
             accruedIpor.exponentialMovingAverage
         );
@@ -98,49 +108,59 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (uint256 spreadPremiumsValue) {
+    ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
-        uint256 result = _calculateDemandComponentPayFixed(
+        uint256 demandComponent = _calculateDemandComponentPayFixed(
             accruedBalance.liquidityPool,
             accruedBalance.totalCollateralPayFixed,
             accruedBalance.totalCollateralReceiveFixed,
             soap
-        ) +
-            _calculateAtParComponentPayFixed(
-                accruedIpor.indexValue,
-                accruedIpor.exponentialMovingAverage,
-                accruedIpor.exponentialWeightedMovingVariance
-            );
-        uint256 maxValue = _getSpreadPremiumsMaxValue();
-        spreadPremiumsValue = result < maxValue ? result : maxValue;
+        );
+
+        int256 mu = accruedIpor.indexValue.toInt256() -
+            accruedIpor.exponentialMovingAverage.toInt256();
+
+        int256 volatilityAndMeanReversion = _calculateVolatilityAndMeanReversionPayFixed(
+            accruedIpor.exponentialWeightedMovingVariance,
+            mu
+        );
+
+        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+        int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+        spreadPremiums = result < maxValue ? result : maxValue;
     }
 
-    function _calculateSpreadPremiumsRecFixed(
+    function _calculateSpreadPremiumsReceiveFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (uint256 spreadValue) {
+    ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
-        uint256 result = _calculateDemandComponentRecFixed(
+        uint256 demandComponent = _calculateDemandComponentReceiveFixed(
             accruedBalance.liquidityPool,
             accruedBalance.totalCollateralPayFixed,
             accruedBalance.totalCollateralReceiveFixed,
             soap
-        ) +
-            _calculateAtParComponentRecFixed(
-                accruedIpor.indexValue,
-                accruedIpor.exponentialMovingAverage,
-                accruedIpor.exponentialWeightedMovingVariance
-            );
+        );
 
-        uint256 maxValue = _getSpreadPremiumsMaxValue();
-        spreadValue = result < maxValue ? result : maxValue;
+        int256 mu = accruedIpor.indexValue.toInt256() -
+            accruedIpor.exponentialMovingAverage.toInt256();
+
+        int256 volatilityAndMeanReversion = _calculateVolatilityAndMeanReversionReceiveFixed(
+            accruedIpor.exponentialWeightedMovingVariance,
+            mu
+        );
+
+        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+        int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+
+        spreadPremiums = result < maxValue ? result : maxValue;
     }
 
     function _calculateDemandComponentPayFixed(
@@ -178,35 +198,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    function _calculateAtParComponentPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) internal pure returns (uint256) {
-        uint256 maxValue = _getSpreadPremiumsMaxValue();
-
-        if (exponentialWeightedMovingVariance >= Constants.D18) {
-            return maxValue;
-        } else {
-            uint256 historicalDeviation = _calculateHistoricalDeviationPayFixed(
-                _getAtParComponentKHistValue(),
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxValue
-            );
-
-            if (historicalDeviation < maxValue) {
-                return
-                    IporMath.division(
-                        _getAtParComponentKVolValue() * Constants.D18,
-                        Constants.D18 - exponentialWeightedMovingVariance
-                    ) + historicalDeviation;
-            } else {
-                return maxValue;
-            }
-        }
-    }
-
     //URlambda_leg(M0)
     function _calculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
@@ -232,7 +223,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         return adjustedUtilizationRate;
     }
 
-    function _calculateDemandComponentRecFixed(
+    function _calculateDemandComponentReceiveFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -263,34 +254,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             }
         } else {
             return _getSpreadPremiumsMaxValue();
-        }
-    }
-
-    function _calculateAtParComponentRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) internal pure returns (uint256) {
-        uint256 maxSpreadValue = _getSpreadPremiumsMaxValue();
-
-        if (exponentialWeightedMovingVariance == Constants.D18) {
-            return maxSpreadValue;
-        } else {
-            uint256 historicalDeviation = _calculateHistoricalDeviationRecFixed(
-                _getAtParComponentKHistValue(),
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxSpreadValue
-            );
-            if (historicalDeviation < maxSpreadValue) {
-                return
-                    IporMath.division(
-                        _getAtParComponentKVolValue() * Constants.D18,
-                        Constants.D18 - exponentialWeightedMovingVariance
-                    ) + historicalDeviation;
-            } else {
-                return maxSpreadValue;
-            }
         }
     }
 
@@ -329,7 +292,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    function _calculateReferenceLegRecFixed(
+    function _calculateReferenceLegReceiveFixed(
         uint256 iporIndexValue,
         uint256 exponentialMovingAverage
     ) internal pure returns (uint256) {
@@ -338,5 +301,57 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         } else {
             return exponentialMovingAverage;
         }
+    }
+
+    /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg.
+    function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        int256 regionOne = _volatilityAndMeanReversionRegionOne(emaVar, mu);
+        int256 regionTwo = _volatilityAndMeanReversionRegionTwo(emaVar, mu);
+        if (regionOne >= regionTwo) {
+            return regionOne;
+        } else {
+            return regionTwo;
+        }
+    }
+
+    /// @dev Volatility and mean revesion component for Receive Fixed Pay Floating leg.
+    function _calculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        int256 regionOne = _volatilityAndMeanReversionRegionOne(emaVar, mu);
+        int256 regionTwo = _volatilityAndMeanReversionRegionTwo(emaVar, mu);
+        if (regionOne >= regionTwo) {
+            return regionTwo;
+        } else {
+            return regionOne;
+        }
+    }
+
+    function _volatilityAndMeanReversionRegionOne(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        return
+            _getB1() +
+            IporMath.divisionInt(_getV1() * emaVar.toInt256(), Constants.D18_INT) +
+            IporMath.divisionInt(_getM1() * mu, Constants.D18_INT);
+    }
+
+    function _volatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        return
+            _getB2() +
+            IporMath.divisionInt(_getV2() * emaVar.toInt256(), Constants.D18_INT) +
+            IporMath.divisionInt(_getM2() * mu, Constants.D18_INT);
     }
 }

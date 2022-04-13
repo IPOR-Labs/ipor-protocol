@@ -36,7 +36,7 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 spreadValue);
+    ) external pure returns (int256 spreadValue);
 
     /// @notice Calculates the spread for Receive-Fixed leg.
     /// @param soap SOAP - Sum Of All Payouts.
@@ -47,5 +47,5 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 spreadValue);
+    ) external pure returns (int256 spreadValue);
 }

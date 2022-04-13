@@ -10,7 +10,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (uint256 spreadValue) {
+    ) public pure returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
@@ -26,14 +26,14 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (uint256 spreadValue) {
+    ) public pure returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
             liquidityPoolBalance,
             0
         );
-        return _calculateSpreadPremiumsRecFixed(soap, accruedIpor, balance);
+        return _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, balance);
     }
 
     function testCalculateAdjustedUtilizationRate(
@@ -61,19 +61,6 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
                 totalCollateralPayFixedBalance,
                 totalCollateralReceiveFixedBalance,
                 soapPayFixed
-            );
-    }
-
-    function calculateAtParComponentPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) public pure returns (uint256) {
-        return
-            _calculateAtParComponentPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
             );
     }
 
@@ -114,24 +101,11 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         int256 soapRecFixed
     ) public pure returns (uint256) {
         return
-            _calculateDemandComponentRecFixed(
+            _calculateDemandComponentReceiveFixed(
                 liquidityPoolBalance,
                 totalCollateralPayFixedBalance,
                 totalCollateralReceiveFixedBalance,
                 soapRecFixed
-            );
-    }
-
-    function calculateAtParComponentRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) public pure returns (uint256) {
-        return
-            _calculateAtParComponentRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
             );
     }
 

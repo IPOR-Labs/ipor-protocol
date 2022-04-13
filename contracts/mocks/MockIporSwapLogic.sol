@@ -36,23 +36,19 @@ contract MockIporSwapLogic {
         return IporSwapLogic.calculateQuasiInterestFloating(ibtQuantity, ibtCurrentPrice);
     }
 
-    function calculateSwapPayFixedValue(
+    function calculatePayoffPayFixed(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculateSwapPayFixedValue(swap, closingTimestamp, mdIbtPrice);
+        swapValue = IporSwapLogic.calculatePayoffPayFixed(swap, closingTimestamp, mdIbtPrice);
     }
 
-    function calculateSwapReceiveFixedValue(
+    function calculatePayoffReceiveFixed(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) public pure returns (int256 swapValue) {
-        swapValue = IporSwapLogic.calculateSwapReceiveFixedValue(
-            swap,
-            closingTimestamp,
-            mdIbtPrice
-        );
+        swapValue = IporSwapLogic.calculatePayoffReceiveFixed(swap, closingTimestamp, mdIbtPrice);
     }
 }

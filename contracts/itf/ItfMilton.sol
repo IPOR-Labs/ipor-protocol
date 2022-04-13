@@ -29,23 +29,23 @@ abstract contract ItfMilton is Milton {
     }
 
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(msg.sender, _closeSwapPayFixed(swapId, closeTimestamp));
+        _transferLiquidationDepositAmount(_msgSender(), _closeSwapPayFixed(swapId, closeTimestamp));
     }
 
     function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) external {
         _transferLiquidationDepositAmount(
-            msg.sender,
+            _msgSender(),
             _closeSwapReceiveFixed(swapId, closeTimestamp)
         );
     }
 
     function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(msg.sender, _closeSwapsPayFixed(swapIds, closeTimestamp));
+        _transferLiquidationDepositAmount(_msgSender(), _closeSwapsPayFixed(swapIds, closeTimestamp));
     }
 
     function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
         _transferLiquidationDepositAmount(
-            msg.sender,
+            _msgSender(),
             _closeSwapsReceiveFixed(swapIds, closeTimestamp)
         );
     }
@@ -65,7 +65,7 @@ abstract contract ItfMilton is Milton {
     function itfCalculateSpread(uint256 calculateTimestamp)
         external
         view
-        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
         (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(calculateTimestamp);
     }
@@ -76,7 +76,7 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
-        return _calculateSwapPayFixedValue(calculateTimestamp, swap);
+        return _calculatePayoffPayFixed(calculateTimestamp, swap);
     }
 
     function itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
@@ -85,10 +85,10 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
-        return _calculateSwapReceiveFixedValue(calculateTimestamp, swap);
+        return _calculatePayoffReceiveFixed(calculateTimestamp, swap);
     }
 
-    function itfCalculateIncomeFeeValue(int256 positionValue) external pure returns (uint256) {
-        return _calculateIncomeFeeValue(positionValue);
+    function itfCalculateIncomeFeeValue(int256 payoff) external pure returns (uint256) {
+        return _calculateIncomeFeeValue(payoff);
     }
 }

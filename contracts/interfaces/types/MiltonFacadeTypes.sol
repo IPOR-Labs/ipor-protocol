@@ -46,9 +46,9 @@ library MiltonFacadeTypes {
         /// @notice Rate of income taken from buyer when closing swap. Represented in 18 decimals.
         uint256 incomeFeeRate;
         /// @notice Calculated Spread for leg Pay Fixed - Receive Floating. Represented in 18 decimals.
-        uint256 spreadPayFixed;
+        int256 spreadPayFixed;
         /// @notice Calculated Spread for leg Receive Fixed - Pay Floating. Represented in 18 decimals.
-        uint256 spreadReceiveFixed;
+        int256 spreadReceiveFixed;
         /// @notice Maximum Liquidity Pool Utilization.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
         uint256 maxLpUtilizationRate;
@@ -75,7 +75,7 @@ library MiltonFacadeTypes {
         /// @notice Fixed interest rate.
         uint256 fixedInterestRate;
         /// @notice Current position value, represented in 18 decimals.
-        int256 positionValue;
+        int256 payoff;
         /// @notice Moment when swap was opened.
         uint256 openTimestamp;
         /// @notice Mopment when swap achieve its maturity.

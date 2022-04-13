@@ -19,7 +19,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     address private _joseph;
 
     modifier onlyJoseph() {
-        require(msg.sender == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+        require(_msgSender() == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -45,7 +45,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
         address oldJoseph = _joseph;
         _joseph = newJoseph;
-        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
+        emit JosephChanged(_msgSender(), oldJoseph, newJoseph);
     }
 
     function mint(address account, uint256 amount) external override onlyJoseph {

@@ -46,7 +46,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         _compToken = IERC20Upgradeable(compToken);
         IERC20Upgradeable(_asset).safeApprove(shareToken, type(uint256).max);
         _blocksPerYear = 2102400;
-        _treasuryManager = msg.sender;
+        _treasuryManager = _msgSender();
     }
 
     /**
@@ -82,7 +82,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(_shareToken).mint(amount);
     }
 
@@ -106,7 +106,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         );
 
         IERC20Upgradeable(address(asset)).safeTransfer(
-            msg.sender,
+            _msgSender(),
             IERC20Upgradeable(asset).balanceOf(address(this))
         );
     }
@@ -128,13 +128,13 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         _compToken.safeTransfer(treasury, balance);
 
-        emit DoClaim(msg.sender, _shareToken, treasury, balance);
+        emit DoClaim(_msgSender(), _shareToken, treasury, balance);
     }
 
     function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
         require(newBlocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         uint256 oldBlocksPerYear = _blocksPerYear;
         _blocksPerYear = newBlocksPerYear;
-        emit BlocksPerYearChanged(msg.sender, oldBlocksPerYear, newBlocksPerYear);
+        emit BlocksPerYearChanged(_msgSender(), oldBlocksPerYear, newBlocksPerYear);
     }
 }

@@ -177,17 +177,17 @@ interface IMiltonStorage {
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap. Function is only available to Milton.
     /// @param liquidator account address that closes the swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param positionValue amount that trader has earned or lost on the swap, represented in 18 decimals, it can be negative.
+    /// @param payoff amount that trader has earned or lost on the swap, represented in 18 decimals, it can be negative.
     /// @param closingTimestamp moment when the swap was closed
-    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in 
+    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit payoff, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in
     /// position value required to close swap before maturity. Value represented in 18 decimals.
     /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for closing swap validation, describes number of seconds before swap
     /// maturity after which swap can be closed by anybody not only by swap's buyer.
     function updateStorageWhenCloseSwapPayFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -198,17 +198,17 @@ interface IMiltonStorage {
     /// Function is only available to Milton.
     /// @param liquidator address of account closing the swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param positionValue amount that trader has earned or lost, represented in 18 decimals, can be negative.
+    /// @param payoff amount that trader has earned or lost, represented in 18 decimals, can be negative.
     /// @param closingTimestamp moment when swap was closed
-    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in 
+    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit payoff, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in
     /// position value required to close swap before maturity. Value represented in 18 decimals.
     /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for closing swap validation, describes number of seconds before swap
     /// maturity after which swap can be closed by anybody not only by swap's buyer.
     function updateStorageWhenCloseSwapReceiveFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,

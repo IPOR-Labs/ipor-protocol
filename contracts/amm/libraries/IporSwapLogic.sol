@@ -33,7 +33,7 @@ library IporSwapLogic {
         openingFee = IporMath.division(collateral * openingFeeRate, Constants.D18);
     }
 
-    function calculateSwapPayFixedValue(
+    function calculatePayoffPayFixed(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
@@ -53,7 +53,7 @@ library IporSwapLogic {
         );
     }
 
-    function calculateSwapReceiveFixedValue(
+    function calculatePayoffReceiveFixed(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
