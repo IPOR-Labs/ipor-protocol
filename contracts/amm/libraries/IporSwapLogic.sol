@@ -85,19 +85,10 @@ library IporSwapLogic {
             MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
-        uint256 calculatedPeriodInSeconds = 0;
-
-        //calculated period cannot be longer than whole swap period
-        if (closingTimestamp > swap.endTimestamp) {
-            calculatedPeriodInSeconds = swap.endTimestamp - swap.openTimestamp;
-        } else {
-            calculatedPeriodInSeconds = closingTimestamp - swap.openTimestamp;
-        }
-
         quasiIFixed = calculateQuasiInterestFixed(
             swap.notional,
             swap.fixedInterestRate,
-            calculatedPeriodInSeconds
+            closingTimestamp - swap.openTimestamp
         );
 
         quasiIFloating = calculateQuasiInterestFloating(swap.ibtQuantity, mdIbtPrice);

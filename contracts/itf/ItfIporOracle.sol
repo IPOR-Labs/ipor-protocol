@@ -4,8 +4,12 @@ pragma solidity 0.8.9;
 import "../oracles/IporOracle.sol";
 
 contract ItfIporOracle is IporOracle {
-    function itfGetDecayFactorValue() external pure returns (uint256) {
-        return _DECAY_FACTOR_VALUE;
+    function itfGetDecayFactorValue(uint256 timeFromLastPublication)
+        external
+        pure
+        returns (uint256)
+    {
+        return _decayFactorValue(timeFromLastPublication);
     }
 
     function itfUpdateIndex(

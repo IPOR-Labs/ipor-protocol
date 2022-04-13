@@ -6,6 +6,7 @@ import "../../libraries/errors/IporOracleErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporOracleTypes.sol";
 import "../../libraries/math/IporMath.sol";
+import "hardhat/console.sol";
 
 library IporLogic {
     function accrueQuasiIbtPrice(IporOracleTypes.IPOR memory ipor, uint256 accrueTimestamp)
@@ -47,7 +48,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                lastExponentialMovingAverage * (Constants.D18 - alpha) + indexValue * alpha,
+                lastExponentialMovingAverage * alpha + indexValue * (Constants.D18 - alpha),
                 Constants.D18
             );
     }

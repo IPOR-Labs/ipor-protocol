@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -11,8 +11,6 @@ import "../../interfaces/IStrategyCompound.sol";
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "./StrategyCore.sol";
-
-import "hardhat/console.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -115,9 +113,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     /**
      * @dev Claim extra reward of Governace token(COMP).
-     * @notice claim can only done by owner.
      */
-    function doClaim() external override whenNotPaused nonReentrant {
+    function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);

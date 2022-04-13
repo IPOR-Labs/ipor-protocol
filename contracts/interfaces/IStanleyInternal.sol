@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.

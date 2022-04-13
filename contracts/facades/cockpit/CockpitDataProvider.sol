@@ -148,7 +148,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
     {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
-        // TODO: change names _spreadPayFixed/_spreadReceiveFixed
+
         try milton.calculateSpread() returns (
             uint256 _spreadPayFixed,
             uint256 _spreadReceiveFixed

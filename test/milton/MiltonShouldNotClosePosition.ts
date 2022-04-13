@@ -9,6 +9,7 @@ import {
     PERIOD_25_DAYS_IN_SECONDS,
     LEVERAGE_18DEC,
     N0__1_18DEC,
+    N0__01_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_5_18DEC,
@@ -46,7 +47,7 @@ import { assertError } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("Milton - not close position", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
@@ -75,7 +76,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -120,7 +121,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -165,7 +166,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate: PERCENTAGE_121_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -211,7 +212,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("11900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -257,7 +258,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("11900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -303,7 +304,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -353,7 +354,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -401,7 +402,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -424,7 +425,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -464,7 +465,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -487,7 +488,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,

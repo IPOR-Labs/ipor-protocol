@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -14,6 +14,7 @@ import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
+import "./libraries/DecayFactorCalculation.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -23,8 +24,6 @@ import "./libraries/IporLogic.sol";
 contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IIporOracle {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
-
-    uint256 internal constant _DECAY_FACTOR_VALUE = 5e17;
 
     mapping(address => uint256) internal _updaters;
 
@@ -188,6 +187,10 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     ) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(
+            ipor.lastUpdateTimestamp <= updateTimestamp,
+            IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
+        );
 
         uint256 newQuasiIbtPrice;
         uint256 newExponentialMovingAverage;
@@ -201,14 +204,14 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
                 ipor.exponentialMovingAverage,
                 indexValue,
-                _DECAY_FACTOR_VALUE
+                _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
             newExponentialWeightedMovingVariance = IporLogic
                 .calculateExponentialWeightedMovingVariance(
                     ipor.exponentialWeightedMovingVariance,
                     newExponentialMovingAverage,
                     indexValue,
-                    _DECAY_FACTOR_VALUE
+                    _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
                 );
         }
 
@@ -228,6 +231,15 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             newExponentialWeightedMovingVariance,
             updateTimestamp
         );
+    }
+
+    function _decayFactorValue(uint256 timeFromLastPublication)
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return DecayFactorCalculation.calculate(timeFromLastPublication);
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)

@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { JosephDai, JosephUsdc, JosephUsdt, TestERC20, IpToken } from "../../types";
 import { TC_TOTAL_AMOUNT_10_000_18DEC } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
@@ -89,6 +90,8 @@ describe("Joseph Maintenance", () => {
         await assertError(josephDai.connect(admin).depositToStanley(123), "Pausable: paused");
 
         await assertError(josephDai.connect(admin).withdrawFromStanley(123), "Pausable: paused");
+
+        await assertError(josephDai.connect(admin).withdrawAllFromStanley(), "Pausable: paused");
 
         await assertError(josephDai.connect(userOne).provideLiquidity(123), "Pausable: paused");
 
@@ -411,5 +414,74 @@ describe("Joseph Maintenance", () => {
             //then
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
+    });
+
+    it("should deploy JosephDai", async () => {
+        // given
+        const JosephDaiFactory = await hre.ethers.getContractFactory("JosephDai");
+        const josephDai = (await JosephDaiFactory.deploy()) as JosephDai;
+        const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+
+        const dai = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        await dai.setDecimals(BigNumber.from("18"));
+        const IpToken = await hre.ethers.getContractFactory("IpToken");
+        const ipTokenDai = (await IpToken.deploy("IP DAI", "ipDai", dai.address)) as IpToken;
+        // when
+        await josephDai.initialize(
+            dai.address, // we check only this position the rest could be random
+            ipTokenDai.address,
+            dai.address,
+            dai.address,
+            dai.address
+        );
+        // then
+        expect(josephDai.address).to.be.not.empty;
+        expect(await josephDai.getAsset()).to.be.equal(dai.address);
+    });
+
+    it("should deploy JosephUsdc", async () => {
+        // given
+        const JosephUsdcFactory = await hre.ethers.getContractFactory("JosephUsdc");
+        const josephUsdc = (await JosephUsdcFactory.deploy()) as JosephUsdc;
+        const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+
+        const usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        await usdc.setDecimals(BigNumber.from("6"));
+        const IpToken = await hre.ethers.getContractFactory("IpToken");
+        const ipTokenUsdc = (await IpToken.deploy("IP USDC", "ipUSDC", usdc.address)) as IpToken;
+        // when
+        await josephUsdc.initialize(
+            usdc.address, // we check only this position the rest could be random
+            ipTokenUsdc.address,
+            usdc.address,
+            usdc.address,
+            usdc.address
+        );
+        // then
+        expect(josephUsdc.address).to.be.not.empty;
+        expect(await josephUsdc.getAsset()).to.be.equal(usdc.address);
+    });
+
+    it("should deploy JosephUsdt", async () => {
+        // given
+        const JosephUsdtFactory = await hre.ethers.getContractFactory("JosephUsdt");
+        const josephUsdt = (await JosephUsdtFactory.deploy()) as JosephUsdt;
+        const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+        const usdt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        await usdt.setDecimals(BigNumber.from("6"));
+        const IpToken = await hre.ethers.getContractFactory("IpToken");
+        const ipTokenUsdt = (await IpToken.deploy("IP USDT", "ipUSDT", usdt.address)) as IpToken;
+
+        // when
+        await josephUsdt.initialize(
+            usdt.address, // we check only this position the rest could be random
+            ipTokenUsdt.address,
+            usdt.address,
+            usdt.address,
+            usdt.address
+        );
+        // then
+        expect(josephUsdt.address).to.be.not.empty;
+        expect(await josephUsdt.getAsset()).to.be.equal(usdt.address);
     });
 });

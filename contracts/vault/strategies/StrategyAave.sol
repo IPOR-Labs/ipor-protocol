@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -135,7 +135,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
     /**
      * @dev Claim extra reward of Governace token(AAVE).
-     * @notice claim can only done by owner.
      * @notice you have to claim first staked _aave then _aave token. 
         so you have to claim beforeClaim function. 
         when window is open you can call this function to claim _aave

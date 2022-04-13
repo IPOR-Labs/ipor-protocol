@@ -841,7 +841,8 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Transfer Publication Fee</strong>
+                        <strong>Transfer to Charlie Treasury</strong>
+                        <small>Publication Fee</small>
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (

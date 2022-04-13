@@ -5,6 +5,7 @@ import {
     ZERO,
     N0__1_18DEC,
     N0__01_18DEC,
+    N0__000_1_18DEC,
     N1__0_18DEC,
     PERCENTAGE_5_18DEC,
     USD_28_000_18DEC,
@@ -132,7 +133,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -141,7 +142,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -150,7 +151,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -195,7 +196,7 @@ describe("MiltonFacadeDataProvider", () => {
 
         const expectedMinLeverage = BigNumber.from("10").mul(N1__0_18DEC);
         const expectedMaxLeverage = BigNumber.from("1000").mul(N1__0_18DEC);
-        const expectedOpeningFeePercentage = BigNumber.from("1").mul(N0__01_18DEC);
+        const expectedOpeningFeePercentage = BigNumber.from("3").mul(N0__000_1_18DEC);
         const expectedIporPublicationFeeAmount = BigNumber.from("10").mul(N1__0_18DEC);
         const expectedLiquidationDepositAmount = BigNumber.from("20").mul(N1__0_18DEC);
         const expectedIncomeFeeRate = BigNumber.from("1").mul(N0__1_18DEC);
@@ -212,8 +213,10 @@ describe("MiltonFacadeDataProvider", () => {
         for (let i = 0; i < configs.length; i++) {
             expect(expectedMinLeverage).to.be.eq(configs[i].minLeverage);
             expect(expectedMaxLeverage).to.be.eq(configs[i].maxLeverage);
-            expect(expectedOpeningFeePercentage).to.be.eq(configs[i].openingFeeRate);
-            expect(expectedIporPublicationFeeAmount).to.be.eq(configs[i].iporPublicationFeeAmount);
+            expect(expectedOpeningFeePercentage).to.be.equal(configs[i].openingFeeRate);
+            expect(expectedIporPublicationFeeAmount).to.be.equal(
+                configs[i].iporPublicationFeeAmount
+            );
             expect(expectedLiquidationDepositAmount).to.be.eq(configs[i].liquidationDepositAmount);
             expect(expectedIncomeFeeRate).to.be.eq(configs[i].incomeFeeRate);
             expect(expectedSpreadPayFixedValue).to.be.eq(configs[i].spreadPayFixed);
@@ -307,7 +310,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsDai = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -316,7 +319,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdt = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -325,7 +328,7 @@ describe("MiltonFacadeDataProvider", () => {
         const paramsUsdc = {
             asset: tokenUsdc.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,

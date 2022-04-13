@@ -7,10 +7,6 @@ import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
 
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
-    function initialize() public initializer {
-        __Ownable_init();
-    }
-
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
         int256 soap,

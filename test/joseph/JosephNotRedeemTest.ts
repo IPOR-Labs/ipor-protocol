@@ -14,6 +14,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getStandardDerivativeParamsDAI,
+	getReceiveFixedSwapParamsDAI
 } from "../utils/DataUtils";
 
 const { expect } = chai;
@@ -76,7 +77,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -136,7 +137,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -152,7 +153,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -228,7 +229,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -279,7 +280,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -296,7 +297,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
