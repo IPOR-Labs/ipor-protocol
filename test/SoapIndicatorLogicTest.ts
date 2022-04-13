@@ -126,6 +126,30 @@ describe("SoapIndicatorLogic", () => {
         );
     });
 
+    it("should revert when calculateTimestamp >= lastRebalanceTimestamp", async () => {
+        //when
+        await expect(
+            mockSoapIndicatorLogic.calculateQuasiHypotheticalInterestDelta(
+                ZERO,
+                BigNumber.from("1"),
+                ZERO,
+                ZERO
+            )
+        ).to.be.revertedWith("IPOR_316");
+    });
+
+    it("should revert when calculateTimestamp >= derivativeOpenTimestamp", async () => {
+        //when
+        await expect(
+            mockSoapIndicatorLogic.calculateQuasiInterestPaidOut(
+                ZERO,
+                BigNumber.from("1"),
+                ZERO,
+                ZERO
+            )
+        ).to.be.revertedWith("IPOR_317");
+    });
+
     it("should calculate hypothetical interest delta - simple case 1 - 18 decimals", async () => {
         //given
         const soapIndicator = await prepareSoapIndicatorPayFixedCaseD18();

@@ -246,7 +246,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         //given
         const strategyCompoundBalance = await strategyCompoundUsdt.balanceOf();
         //when
-        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_333");
+        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_321");
         //then
         const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
         expect(
