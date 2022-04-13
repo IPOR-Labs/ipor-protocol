@@ -41,8 +41,8 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
-        uint256 averageInterestRate = calculateInterestRateWhenOpenSwap(
+    ) internal view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+        uint256 averageInterestRate = calculateAverageInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
             derivativeNotional,
@@ -52,11 +52,11 @@ library SoapIndicatorLogic {
             si,
             rebalanceTimestamp
         );
-        si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
-        si.totalNotional = si.totalNotional + derivativeNotional.toUint128();
+        si.rebalanceTimestamp = rebalanceTimestamp;
+        si.totalNotional = si.totalNotional + derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
-        si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;        
+        si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
         return si;
     }
 
@@ -68,6 +68,13 @@ library SoapIndicatorLogic {
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
     ) internal view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+        uint256 averageInterestRate = calculateAverageInterestRateWhenCloseSwap(
+            si.totalNotional,
+            si.averageInterestRate,
+            derivativeNotional,
+            swapFixedInterestRate
+        );
+
         uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
             si,
             rebalanceTimestamp
@@ -91,18 +98,15 @@ library SoapIndicatorLogic {
         }
 
         si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
-
-        uint256 averageInterestRate = calculateInterestRateWhenCloseSwap(
-            si.totalNotional,
-            si.averageInterestRate,
-            derivativeNotional,
-            swapFixedInterestRate
-        );
-
-        si.rebalanceTimestamp = rebalanceTimestamp.toUint32();
-        si.totalNotional = si.totalNotional - derivativeNotional.toUint128();
+        si.rebalanceTimestamp = rebalanceTimestamp;
+        si.totalNotional = si.totalNotional - derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
+        console.log("[rebalanceWhenCloseSwap] averageInterestRate=", averageInterestRate);
+        console.log(
+            "[rebalanceWhenCloseSwap] quasiHypotheticalInterestTotal=",
+            quasiHypotheticalInterestTotal
+        );
         return si;
     }
 
@@ -154,25 +158,40 @@ library SoapIndicatorLogic {
             ((calculateTimestamp - lastRebalanceTimestamp) * Constants.D18);
     }
 
-    function calculateInterestRateWhenOpenSwap(
+    function calculateAverageInterestRateWhenOpenSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) internal pure returns (uint256) {
-        return
+    ) internal view returns (uint256) {
+        console.log(
+            "[OPEN]CALC-ONE:",
             IporMath.division(
+                (totalNotional * averageInterestRate + derivativeNotional * swapFixedInterestRate) *
+                    1e9,
+                (totalNotional + derivativeNotional)
+            )
+        );
+        console.log(
+            "[OPEN]CALC-TWO:",
+            IporMath.division(
+                (totalNotional * averageInterestRate + derivativeNotional * swapFixedInterestRate),
+                (totalNotional + derivativeNotional)
+            )
+        );
+        return
+            IporMath.divisionWithoutRound(
                 (totalNotional * averageInterestRate + derivativeNotional * swapFixedInterestRate),
                 (totalNotional + derivativeNotional)
             );
     }
 
-    function calculateInterestRateWhenCloseSwap(
+    function calculateAverageInterestRateWhenCloseSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) internal pure returns (uint256) {
+    ) internal view returns (uint256) {
         require(
             derivativeNotional <= totalNotional,
             MiltonErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
@@ -180,8 +199,28 @@ library SoapIndicatorLogic {
         if (derivativeNotional == totalNotional) {
             return 0;
         } else {
-            return
+            console.log(
+                "[CLOSE]CALC-ONE:",
                 IporMath.division(
+                    (totalNotional *
+                        averageInterestRate -
+                        derivativeNotional *
+                        swapFixedInterestRate) * 1e9,
+                    (totalNotional - derivativeNotional)
+                )
+            );
+            console.log(
+                "[CLOSE]CALC-TWO:",
+                IporMath.division(
+                    (totalNotional *
+                        averageInterestRate -
+                        derivativeNotional *
+                        swapFixedInterestRate),
+                    (totalNotional - derivativeNotional)
+                )
+            );
+            return
+                IporMath.divisionWithoutRound(
                     (totalNotional *
                         averageInterestRate -
                         derivativeNotional *

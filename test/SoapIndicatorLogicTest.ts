@@ -40,12 +40,13 @@ describe("MiltonSpreadModel - Core", () => {
         const swapFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         //when
 
-        const actualInterestRate = await mockSoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
-            soapIndicator.totalNotional,
-            soapIndicator.averageInterestRate,
-            derivativeNotional,
-            swapFixedInterestRate
-        );
+        const actualInterestRate =
+            await mockSoapIndicatorLogic.calculateAverageInterestRateWhenOpenSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
+                derivativeNotional,
+                swapFixedInterestRate
+            );
 
         //then
         const expectedInterestRate = BigNumber.from("66666666666666667");
@@ -62,12 +63,13 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
 
-        const actualInterestRate = await mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
-            soapIndicator.totalNotional,
-            soapIndicator.averageInterestRate,
-            derivativeNotional,
-            swapFixedInterestRate
-        );
+        const actualInterestRate =
+            await mockSoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
+                derivativeNotional,
+                swapFixedInterestRate
+            );
 
         //then
         const expectedInterestRate = BigNumber.from("12").mul(N0__01_18DEC);
@@ -86,7 +88,7 @@ describe("MiltonSpreadModel - Core", () => {
         //when
         await assertError(
             //when
-            mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
+            mockSoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
                 soapIndicator.totalNotional,
                 soapIndicator.averageInterestRate,
                 derivativeNotional,

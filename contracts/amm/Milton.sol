@@ -346,7 +346,15 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), totalAmount);
-
+        console.log("TOTAL-RAW: ", bosStruct.wadTotalAmount);
+        console.log(
+            "TOTAL-SUM: ",
+            bosStruct.collateral +
+                bosStruct.iporPublicationFeeAmount +
+                bosStruct.openingFeeLPAmount +
+                bosStruct.openingFeeTreasuryAmount +
+                bosStruct.liquidationDepositAmount
+        );
         _emitOpenSwapEvent(
             newSwapId,
             bosStruct.wadTotalAmount,

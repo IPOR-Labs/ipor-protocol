@@ -96,14 +96,14 @@ contract MockSoapIndicatorLogic {
             );
     }
 
-    function calculateInterestRateWhenOpenSwap(
+    function calculateAverageInterestRateWhenOpenSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) public pure returns (uint256) {
+    ) public view returns (uint256) {
         return
-            SoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
+            SoapIndicatorLogic.calculateAverageInterestRateWhenOpenSwap(
                 totalNotional,
                 averageInterestRate,
                 derivativeNotional,
@@ -111,14 +111,14 @@ contract MockSoapIndicatorLogic {
             );
     }
 
-    function calculateInterestRateWhenCloseSwap(
+    function calculateAverageInterestRateWhenCloseSwap(
         uint256 totalNotional,
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) public pure returns (uint256) {
+    ) public view returns (uint256) {
         return
-            SoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
+            SoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
                 totalNotional,
                 averageInterestRate,
                 derivativeNotional,
