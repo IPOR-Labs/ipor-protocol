@@ -23,7 +23,7 @@ import { MockSoapIndicatorLogic } from "../types";
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("SoapIndicatorLogic", () => {
     let mockSoapIndicatorLogic: MockSoapIndicatorLogic;
 
     before(async () => {
@@ -49,7 +49,7 @@ describe("MiltonSpreadModel - Core", () => {
             );
 
         //then
-        const expectedInterestRate = BigNumber.from("66666666666666667");
+        const expectedInterestRate = BigNumber.from("66666666666666666");
         expect(expectedInterestRate, "Wrong interest rate when open position").to.be.eq(
             actualInterestRate
         );

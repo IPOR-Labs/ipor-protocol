@@ -38,7 +38,7 @@ import { assertError } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("Milton - Should Not Open Position", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
