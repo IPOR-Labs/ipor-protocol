@@ -49,7 +49,7 @@ describe("SoapIndicatorLogic", () => {
             );
 
         //then
-        const expectedInterestRate = BigNumber.from("66666666666666666");
+        const expectedInterestRate = BigNumber.from("66666666666666667");
         expect(expectedInterestRate, "Wrong interest rate when open position").to.be.eq(
             actualInterestRate
         );
