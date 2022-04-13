@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../libraries/errors/StanleyErrors.sol";
 import "../interfaces/IIvToken.sol";
 import "../security/IporOwnable.sol";
-import "hardhat/console.sol";
 
 contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeERC20 for IERC20;

@@ -784,4 +784,9 @@ describe("IporOracle", () => {
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
     });
+
+    it("Should throw error when add asset twice", async () => {
+        //when
+        await expect(_iporOracle.addAsset(_tokenUsdc.address)).to.be.revertedWith("IPOR_201");
+    });
 });

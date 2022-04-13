@@ -59,8 +59,7 @@ library MiltonErrors {
     //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
     string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_320";
 
-    //@notcie Swap cannot be closed because liquidation deposit balance is to low to pay sender for liquidation
-    // string public constant CANNOT_CLOSE_SWAP_LIQUIDATION_DEPOSIT_BALANCE_IS_TOO_LOW = "IPOR_321";
+    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_321";
 
     //@notice Liquiditiy
     string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_322";
@@ -71,8 +70,8 @@ library MiltonErrors {
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
     string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_324";
 
-    //@notice Spread value cannot be higher than Ipor Index Value for particular asset
-    string public constant SPREAD_PREMIUMS_CANNOT_BE_HIGHER_THAN_IPOR_INDEX = "IPOR_325";
+    //@notice Opening Fee Balance is too low
+    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_325";
 
     //@notice The caller must be the Ipor Liquidity Pool - Joseph
     string public constant CALLER_NOT_JOSEPH = "IPOR_326";
@@ -80,18 +79,7 @@ library MiltonErrors {
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
     string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_327";
 
-    //@notice Liquidity provider cannot withdraw because liquidity pool is too low
-    string public constant CANNOT_REDEEM_LIQUIDITY_POOL_IS_TOO_LOW = "IPOR_328";
+    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_328";
 
-    // @notice Milton Vault Balance in Asset Management is lower than last saved vaultBalance in Milton
-    string public constant VAULT_BALANCE_TOO_LOW = "IPOR_329";
-
-    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_330";
-
-    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_331";
-
-    //@notice Opening Fee Balance is too low
-    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_332";
-
-    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_333";
+    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_329";
 }

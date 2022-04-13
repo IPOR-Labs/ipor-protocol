@@ -15,7 +15,6 @@ import "../interfaces/IStanleyInternal.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
 
 /// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
@@ -292,7 +291,6 @@ abstract contract Stanley is
             from = address(strategyCompound);
             uint256 shares = strategyCompound.balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            console.log("shares: ", shares);
             strategyCompound.withdraw(IporMath.convertToWad(shares, decimals));
         } else {
             from = address(strategyAave);

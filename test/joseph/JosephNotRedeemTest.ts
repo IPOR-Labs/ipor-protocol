@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { PERCENTAGE_3_18DEC, N1__0_18DEC } from "../utils/Constants";
+import { PERCENTAGE_3_18DEC, N1__0_18DEC, ZERO } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
     MockMiltonSpreadModel,
@@ -14,7 +14,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getStandardDerivativeParamsDAI,
-	getReceiveFixedSwapParamsDAI
+    getReceiveFixedSwapParamsDAI,
 } from "../utils/DataUtils";
 
 const { expect } = chai;
@@ -409,6 +409,25 @@ describe("Joseph Treasury", () => {
                 .itfRedeem(params.totalAmount, params.openTimestamp),
             //then
             "IPOR_402"
+        );
+    });
+    it("should NOT redeem ipTokens because redeem amount is to low", async () => {
+        //given
+        const { josephDai } = await prepareTestDataDaiCase001(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await assertError(
+            //when
+            josephDai.connect(liquidityProvider).itfRedeem(ZERO, ZERO),
+            //then
+            "IPOR_403"
         );
     });
 });

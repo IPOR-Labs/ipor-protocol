@@ -95,7 +95,7 @@ describe("AAVE strategy", () => {
     });
 
     it("Should not be able to setup Treasury aave strategy", async () => {
-        await expect(strategyAaveInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_000");
+        await expect(strategyAaveInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_502");
     });
 
     it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
