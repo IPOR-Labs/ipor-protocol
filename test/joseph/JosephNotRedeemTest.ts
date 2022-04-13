@@ -411,7 +411,7 @@ describe("Joseph Treasury", () => {
             "IPOR_402"
         );
     });
-    it("should NOT redeem ipTokens because  redeem", async () => {
+    it("should NOT redeem ipTokens because redeem amount is to low", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase001(
             [admin, userOne, userTwo, userThree, liquidityProvider],

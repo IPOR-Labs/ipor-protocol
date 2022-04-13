@@ -255,7 +255,7 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("Should throw error when stanley balanse is zero", async () => {
+    it("Should throw error when stanley balance is zero", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase001(
             [admin, userOne, userTwo, userThree, liquidityProvider],
