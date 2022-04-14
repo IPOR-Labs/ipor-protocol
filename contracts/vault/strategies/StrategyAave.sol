@@ -63,7 +63,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
         _aave = aaveToken;
-        _treasuryManager = msg.sender;
+        _treasuryManager = _msgSender();
     }
 
     /**
@@ -97,7 +97,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        IERC20Upgradeable(asset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
 
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
 
@@ -115,7 +115,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(asset, amount, msg.sender);
+        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(asset, amount, _msgSender());
     }
 
     /**
@@ -129,7 +129,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         shareTokens[0] = _shareToken;
         _aaveIncentive.claimRewards(shareTokens, type(uint256).max, address(this));
         _stakedAaveInterface.cooldown();
-        emit DoBeforeClaim(msg.sender, shareTokens);
+        emit DoBeforeClaim(_msgSender(), shareTokens);
     }
 
     /**
@@ -163,7 +163,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
             IERC20Upgradeable(aave).safeTransfer(treasury, balance);
 
-            emit DoClaim(msg.sender, _shareToken, treasury, balance);
+            emit DoClaim(_msgSender(), _shareToken, treasury, balance);
         }
     }
 
@@ -176,6 +176,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         require(newStkAave != address(0), IporErrors.WRONG_ADDRESS);
         address oldStkAave = _stkAave;
         _stkAave = newStkAave;
-        emit StkAaveChanged(msg.sender, oldStkAave, newStkAave);
+        emit StkAaveChanged(_msgSender(), oldStkAave, newStkAave);
     }
 }

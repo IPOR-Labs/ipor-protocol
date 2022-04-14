@@ -99,5 +99,5 @@ interface ICockpitDataProvider {
     function calculateSpread(address asset)
         external
         view
-        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed);
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 }

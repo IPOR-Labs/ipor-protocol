@@ -45,14 +45,14 @@ abstract contract JosephInternal is
 
     modifier onlyCharlieTreasuryManager() {
         require(
-            msg.sender == _getCharlieTreasuryManager(),
+            _msgSender() == _getCharlieTreasuryManager(),
             JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(msg.sender == _getTreasuryManager(), JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+        require(_msgSender() == _getTreasuryManager(), JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
@@ -212,7 +212,7 @@ abstract contract JosephInternal is
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         address oldCharlieTreasury = _getCharlieTreasury();
         _charlieTreasury = newCharlieTreasury;
-        emit CharlieTreasuryChanged(msg.sender, oldCharlieTreasury, newCharlieTreasury);
+        emit CharlieTreasuryChanged(_msgSender(), oldCharlieTreasury, newCharlieTreasury);
     }
 
     function getTreasury() external view override returns (address) {
@@ -223,7 +223,7 @@ abstract contract JosephInternal is
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
         address oldTreasury = _getTreasury();
         _treasury = newTreasury;
-        emit TreasuryChanged(msg.sender, oldTreasury, newTreasury);
+        emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
     }
 
     function getCharlieTreasuryManager() external view override returns (address) {
@@ -240,7 +240,7 @@ abstract contract JosephInternal is
         address oldCharlieTreasuryManager = _getCharlieTreasuryManager();
         _charlieTreasuryManager = newCharlieTreasuryManager;
         emit CharlieTreasuryManagerChanged(
-            msg.sender,
+            _msgSender(),
             oldCharlieTreasuryManager,
             newCharlieTreasuryManager
         );
@@ -259,7 +259,7 @@ abstract contract JosephInternal is
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldTreasuryManager = _getTreasuryManager();
         _treasuryManager = newTreasuryManager;
-        emit TreasuryManagerChanged(msg.sender, oldTreasuryManager, newTreasuryManager);
+        emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
     }
 
     function getRedeemFeeRate() external pure override returns (uint256) {
