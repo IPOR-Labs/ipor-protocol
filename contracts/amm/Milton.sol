@@ -689,15 +689,6 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     /**
-<<<<<<< HEAD
-    * @notice Function that transfers the assets at the time of derivative closing
-    * @dev It trasfers the asset to the swap buyer and the liquidator.
-    * Should buyer and the liquidator are the same entity it performs only one transfer.
-    * @param buyer - address that opened the swap
-    * @param liquidationDepositAmount - amount of asset transfered to the liquidator
-    * @param transferAmount - amount of asset transfered to the swap owner
-    **/
-=======
      * @notice Function that transfers the assets at the time of derivative closing
      * @dev It trasfers the asset to the swap buyer and the liquidator.
      * Should buyer and the liquidator are the same entity it performs only one transfer.
@@ -705,8 +696,6 @@ abstract contract Milton is MiltonInternal, IMilton {
      * @param liquidationDepositAmount - amount of asset transfered to the liquidator
      * @param transferAmount - amount of asset transfered to the swap owner
      **/
-
->>>>>>> develop
     function _transferDerivativeAmount(
         address buyer,
         uint256 liquidationDepositAmount,
