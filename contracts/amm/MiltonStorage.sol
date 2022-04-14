@@ -544,6 +544,7 @@ contract MiltonStorage is
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
         int256 _soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
+
         return (
             soapPayFixed = _soapPayFixed,
             soapReceiveFixed = _soapReceiveFixed,
