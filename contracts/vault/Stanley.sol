@@ -81,7 +81,6 @@ abstract contract Stanley is
      * @notice only owner can deposit.
      * @param amount underlying token amount represented in 18 decimals
      */
-    //  TODO: ADD tests for amount = 0
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
@@ -193,7 +192,6 @@ abstract contract Stanley is
 
             withdrawnAmount = assetBalanceCompound;
         } else {
-            // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
             uint256 ivTokenAmountPart = IporMath.division(
                 assetBalanceAave * Constants.D18,
                 exchangeRate
