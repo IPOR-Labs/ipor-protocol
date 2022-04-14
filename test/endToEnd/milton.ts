@@ -125,10 +125,8 @@ export const miltonStorageUsdtFactory = async (): Promise<MiltonStorageUsdt> => 
 
 export const miltonSpreadModelFactory = async (): Promise<MiltonSpreadModel> => {
     const [admin] = await hre.ethers.getSigners();
-    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModel", admin);
-    return upgrades.deployProxy(spreadModelFactory, [], {
-        kind: "uups",
-    }) as Promise<MiltonSpreadModel>;
+    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModel");
+    return (await spreadModelFactory.deploy()) as MiltonSpreadModel;
 };
 
 export const miltonUsdtFactory = async (

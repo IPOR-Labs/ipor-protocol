@@ -5,11 +5,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract TestERC20 is IERC20 {
     uint256 private _totalSupply;
+    uint8 private _decimals;
     mapping(address => uint256) private _balance;
     mapping(address => mapping(address => uint256)) public allowance;
 
     constructor(uint256 amountToMint) {
         mint(msg.sender, amountToMint);
+        _decimals = 18;
     }
 
     function mint(address to, uint256 amount) public {
@@ -62,11 +64,15 @@ contract TestERC20 is IERC20 {
         return true;
     }
 
+    function setDecimals(uint8 newDecimals) external {
+        _decimals = newDecimals;
+    }
+
     function balanceOf(address account) public view override returns (uint256) {
         return _balance[account];
     }
 
-    function decimals() public pure returns (uint8) {
-        return 18;
+    function decimals() public view returns (uint8) {
+        return _decimals;
     }
 }

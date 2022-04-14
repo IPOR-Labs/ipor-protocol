@@ -5,6 +5,7 @@ import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
 import { MockIporMath } from "../../../../types";
+import { N1__0_18DEC } from "../../../utils/Constants";
 const itParam = require("mocha-param");
 
 type DivisionDataType = {};
@@ -56,4 +57,18 @@ describe("#AmMath division", () => {
             expect(resultFromLib.toString()).to.be.equal(result);
         }
     );
+
+    it("Should add extra zeros wken convert to asset decimals", async () => {
+        // when
+        const result = await amMath.convertWadToAssetDecimals(N1__0_18DEC, BigNumber.from("20"));
+        // then
+        expect(result).to.be.equal(N1__0_18DEC.mul(BigNumber.from("100")));
+    });
+
+    it("Should add extra zeros wken convert to asset decimals", async () => {
+        // when
+        const result = await amMath.convertToWad(N1__0_18DEC, BigNumber.from("20"));
+        // then
+        expect(result).to.be.equal(N1__0_18DEC.div(BigNumber.from("100")));
+    });
 });

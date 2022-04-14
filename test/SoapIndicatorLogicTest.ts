@@ -23,7 +23,7 @@ import { MockSoapIndicatorLogic } from "../types";
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("SoapIndicatorLogic", () => {
     let mockSoapIndicatorLogic: MockSoapIndicatorLogic;
 
     before(async () => {
@@ -40,12 +40,13 @@ describe("MiltonSpreadModel - Core", () => {
         const swapFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         //when
 
-        const actualInterestRate = await mockSoapIndicatorLogic.calculateInterestRateWhenOpenSwap(
-            soapIndicator.totalNotional,
-            soapIndicator.averageInterestRate,
-            derivativeNotional,
-            swapFixedInterestRate
-        );
+        const actualInterestRate =
+            await mockSoapIndicatorLogic.calculateAverageInterestRateWhenOpenSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
+                derivativeNotional,
+                swapFixedInterestRate
+            );
 
         //then
         const expectedInterestRate = BigNumber.from("66666666666666667");
@@ -62,12 +63,13 @@ describe("MiltonSpreadModel - Core", () => {
 
         //when
 
-        const actualInterestRate = await mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
-            soapIndicator.totalNotional,
-            soapIndicator.averageInterestRate,
-            derivativeNotional,
-            swapFixedInterestRate
-        );
+        const actualInterestRate =
+            await mockSoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
+                soapIndicator.totalNotional,
+                soapIndicator.averageInterestRate,
+                derivativeNotional,
+                swapFixedInterestRate
+            );
 
         //then
         const expectedInterestRate = BigNumber.from("12").mul(N0__01_18DEC);
@@ -86,7 +88,7 @@ describe("MiltonSpreadModel - Core", () => {
         //when
         await assertError(
             //when
-            mockSoapIndicatorLogic.calculateInterestRateWhenCloseSwap(
+            mockSoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
                 soapIndicator.totalNotional,
                 soapIndicator.averageInterestRate,
                 derivativeNotional,
@@ -122,6 +124,30 @@ describe("MiltonSpreadModel - Core", () => {
         expect(expectedQuasiInterestDelta, "Incorrect quasi interest in delta time").to.be.eq(
             actualQuasiInterestRate
         );
+    });
+
+    it("should revert when calculateTimestamp >= lastRebalanceTimestamp", async () => {
+        //when
+        await expect(
+            mockSoapIndicatorLogic.calculateQuasiHypotheticalInterestDelta(
+                ZERO,
+                BigNumber.from("1"),
+                ZERO,
+                ZERO
+            )
+        ).to.be.revertedWith("IPOR_316");
+    });
+
+    it("should revert when calculateTimestamp >= derivativeOpenTimestamp", async () => {
+        //when
+        await expect(
+            mockSoapIndicatorLogic.calculateQuasiInterestPaidOut(
+                ZERO,
+                BigNumber.from("1"),
+                ZERO,
+                ZERO
+            )
+        ).to.be.revertedWith("IPOR_317");
     });
 
     it("should calculate hypothetical interest delta - simple case 1 - 18 decimals", async () => {

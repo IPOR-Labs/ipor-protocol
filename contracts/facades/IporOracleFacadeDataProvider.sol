@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -46,14 +46,17 @@ contract IporOracleFacadeDataProvider is
         return indexes;
     }
 
+    function _getIporOracle() internal view virtual returns (address) {
+        return _iporOracle;
+    }
+
     function _createIporFront(address asset)
         internal
         view
         returns (IporOracleFacadeTypes.IporFront memory iporFront)
     {
-        (uint256 value, uint256 ibtPrice, , , uint256 date) = IIporOracle(_iporOracle).getIndex(
-            asset
-        );
+        (uint256 value, uint256 ibtPrice, , , uint256 date) = IIporOracle(_getIporOracle())
+            .getIndex(asset);
         iporFront = IporOracleFacadeTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),
             asset,

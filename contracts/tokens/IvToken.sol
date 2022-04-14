@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "../libraries/errors/StanleyErrors.sol";
 import "../interfaces/IIvToken.sol";
 import "../security/IporOwnable.sol";
-import "hardhat/console.sol";
 
 contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeERC20 for IERC20;

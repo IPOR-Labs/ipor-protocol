@@ -1,27 +1,30 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
 import "./types/MiltonStorageTypes.sol";
 
-/// @title Interface for interaction with Milton Storage smart contract, which is reposnsible for managing AMM storage.
+/// @title Interface for interaction with Milton Storage smart contract, reposnsible for managing AMM storage.
 interface IMiltonStorage {
-    /// @notice Returns current version of Milton Storage's
-    /// @return current Milton Storage version, this is integer.
+    /// @notice Returns current version of Milton Storage
+    /// @return current Milton Storage version, integer.
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets lasw swap Id.
-    /// @dev swap id is incremented when new position is opened, last swap id is used in Pay Fixed and Receive Fixed swaps.
-    /// @return last swap id, this is integer
+    /// @notice Gets last swap ID.
+    /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
+    /// @return last swap ID, integer
     function getLastSwapId() external view returns (uint256);
 
     /// @notice Gets balance struct
-    /// @dev Balance contain, Pay Fixed Total Collateral, Receive Fixed Total Collateral, Liquidity Pool and Vault balances.
+    /// @dev Balance contains:
+    /// # Pay Fixed Total Collateral
+    /// # Receive Fixed Total Collateral
+    /// # Liquidity Pool and Vault balances.
     /// @return balance structure {IporTypes.MiltonBalancesMemory}
     function getBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
 
-    /// @notice Gets balance with extended information like IPOR publication fee balance and Treasury balance.
+    /// @notice Gets balance with extended information: IPOR publication fee balance and Treasury balance.
     /// @return balance structure {MiltonStorageTypes.ExtendedBalancesMemory}
     function getExtendedBalance()
         external
@@ -29,95 +32,95 @@ interface IMiltonStorage {
         returns (MiltonStorageTypes.ExtendedBalancesMemory memory);
 
     /// @notice Gets total outstanding notional.
-    /// @return totalNotionalPayFixed total notional balance for Pay Fixed leg, represented in 18 decimals
-    /// @return totalNotionalReceiveFixed total notional balance for Receive Fixed leg, represented in 18 decimals
+    /// @return totalNotionalPayFixed Sum of notional amount of all swaps for Pay-Fixed leg, represented in 18 decimals
+    /// @return totalNotionalReceiveFixed Sum of notional amount of all swaps for Receive-Fixed leg, represented in 18 decimals
     function getTotalOutstandingNotional()
         external
         view
         returns (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed);
 
-    /// @notice Gets Pay Fixed Swap for a given swap id
-    /// @param swapId swap id.
+    /// @notice Gets Pay-Fixed swap for a given swap ID
+    /// @param swapId swap ID.
     /// @return swap structure {IporTypes.IporSwapMemory}
     function getSwapPayFixed(uint256 swapId)
         external
         view
         returns (IporTypes.IporSwapMemory memory);
 
-    /// @notice Gets Receive Fixed Swap for a given swap id
-    /// @param swapId swap id.
+    /// @notice Gets Receive-Fixed swap for a given swap ID
+    /// @param swapId swap ID.
     /// @return swap structure {IporTypes.IporSwapMemory}
     function getSwapReceiveFixed(uint256 swapId)
         external
         view
         returns (IporTypes.IporSwapMemory memory);
 
-    /// @notice Gets Pay Fixed active swaps for a given account address.
+    /// @notice Gets active Pay-Fixed swaps for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed swaps
-    /// @return swaps array where one element is {IporTypes.IporSwapMemory}
+    /// @return totalCount total number of active Pay-Fixed swaps
+    /// @return swaps array where each element has structure {IporTypes.IporSwapMemory}
     function getSwapsPayFixed(
         address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
-    /// @notice Gets Receive Fixed active swaps for a given account address.
+    /// @notice Gets active Receive-Fixed swaps for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of active Receive Fixed swaps
-    /// @return swaps array where one element is {IporTypes.IporSwapMemory}
+    /// @return swaps array where each element has structure {IporTypes.IporSwapMemory}
     function getSwapsReceiveFixed(
         address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps);
 
-    /// @notice Gets Pay Fixed ids of active swaps for a given account address.
+    /// @notice Gets active Pay-Fixed swaps IDs for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed Ids
-    /// @return ids list of ids
+    /// @return totalCount total number of active Pay-Fixed IDs
+    /// @return ids list of IDs
     function getSwapPayFixedIds(
         address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, uint128[] memory ids);
 
-    /// @notice Gets Receive Fixed ids of active swaps for a given account address.
+    /// @notice Gets active Receive-Fixed swaps IDs for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Receive Fixed Ids
-    /// @return ids list of ids
+    /// @return totalCount total number of active Receive-Fixed IDs
+    /// @return ids list of IDs
     function getSwapReceiveFixedIds(
         address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, uint128[] memory ids);
 
-    /// @notice Gets Pay Fixed and Receive Fixed ids of active swaps for a given account address.
+    /// @notice Gets active Pay-Fixed and Receive-Fixed swaps IDs for a given account address.
     /// @param account account address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
-    /// @return totalCount total number of active Pay Fixed and Receive Fixed Ids with theirs direction.
-    /// @return ids array where one element is {MiltonStorageTypes.IporSwapId}
+    /// @return totalCount total number of active Pay-Fixed and Receive-Fixed IDs.
+    /// @return ids array where each element has structure {MiltonStorageTypes.IporSwapId}
     function getSwapIds(
         address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids);
 
-    /// @notice Calculates total SOAP for a given IBT price and calculation timestamp.
+    /// @notice Calculates SOAP for a given IBT price and timestamp. For more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/soap
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
-    /// @return soapPayFixed SOAP for Pay Fixed and Receive Floating Leg, represented in 18 decimals
-    /// @return soapReceiveFixed SOAP for Receive Fixed and Pay Floating Leg, represented in 18 decimals
-    /// @return soap total SOAP Pay Fixed Leg and Receive Fixed Leg , represented in 18 decimals
+    /// @return soapPayFixed SOAP for Pay-Fixed and Receive-Floating leg, represented in 18 decimals
+    /// @return soapReceiveFixed SOAP for Receive-Fixed and Pay-Floating leg, represented in 18 decimals
+    /// @return soap Sum of SOAP for Pay-Fixed leg and Receive-Fixed leg , represented in 18 decimals
     function calculateSoap(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
@@ -127,60 +130,60 @@ interface IMiltonStorage {
             int256 soap
         );
 
-    /// @notice Calculates SOAP for Pay Fixed Leg for a given IBT price and time.
+    /// @notice Calculates SOAP for Pay-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
-    /// @return soapPayFixed SOAP for Pay Fixed leg, represented in 18 decimals
+    /// @return soapPayFixed SOAP for Pay-Fixed leg, represented in 18 decimals
     function calculateSoapPayFixed(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
         returns (int256 soapPayFixed);
 
-    /// @notice Calculates SOAP for Receive Fixed Leg for a given IBT price and time.
+    /// @notice Calculates SOAP for Receive-Fixed leg at given IBT price and time.
     /// @param ibtPrice IBT (Interest Bearing Token) price
     /// @param calculateTimestamp epoch timestamp, the time for which SOAP is calculated
-    /// @return soapReceiveFixed SOAP for Receive Fixed leg, represented in 18 decimals
+    /// @return soapReceiveFixed SOAP for Receive-Fixed leg, represented in 18 decimals
     function calculateSoapReceiveFixed(uint256 ibtPrice, uint256 calculateTimestamp)
         external
         view
         returns (int256 soapReceiveFixed);
 
-    /// @notice add liquidity to Liquidity Pool balance in storage. Function available only for Joseph.
-    /// @param assetAmount amount of asset which is added to Liquidity Pool balance, represented in 18 decimals
+    /// @notice add liquidity to the Liquidity Pool. Function available only to Joseph.
+    /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     function addLiquidity(uint256 assetAmount) external;
 
-    /// @notice substract liquyidity from Liquidity Pool balance in storage. Function available only for Joseph.
-    /// @param assetAmount amount of asset which is substracted from Liquidity Pool balance, represented in 18 decimals
+    /// @notice subtract liquidity from the Liquidity Pool. Function available only to Joseph.
+    /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
     function subtractLiquidity(uint256 assetAmount) external;
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new pay fixed swap is opened. Function available only for Milton.
+    /// @notice Updates structures in storage: balance, swaps, SOAP indicators when new Pay-Fixed swap is opened. Function available only to Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from Milton configuration, represented in 18 decimals.
-    /// @return new swap Id
+    /// @return new swap ID
     function updateStorageWhenOpenSwapPayFixed(
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external returns (uint256);
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when new receive fixed swap is opened. Function available only for Milton.
+    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when new Receive-Fixed swap is opened. Function is only available to Milton.
     /// @param newSwap new swap structure {AmmTypes.NewSwap}
     /// @param cfgIporPublicationFee publication fee amount taken from Milton configuration, represented in 18 decimals.
-    /// @return new swap Id
+    /// @return new swap ID
     function updateStorageWhenOpenSwapReceiveFixed(
         AmmTypes.NewSwap memory newSwap,
         uint256 cfgIporPublicationFee
     ) external returns (uint256);
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close pay fixed swap. Function available only for Milton.
-    /// @param liquidator account address who closes swap
+    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap. Function is only available to Milton.
+    /// @param liquidator account address that closes the swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
-    /// @param closingTimestamp moment when swap is closed
-    /// @param cfgIncomeFeeRate income fee rate taken from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for validation closing swap, describe minimal rate
+    /// @param positionValue amount that trader has earned or lost on the swap, represented in 18 decimals, it can be negative.
+    /// @param closingTimestamp moment when the swap was closed
+    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit positionValue, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in 
     /// position value required to close swap before maturity. Value represented in 18 decimals.
-    /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for validation closing swap, describe number of seconds before swap
-    ///maturity after which swap can be closed by anybody not only by swap's buyer.
+    /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for closing swap validation, describes number of seconds before swap
+    /// maturity after which swap can be closed by anybody not only by swap's buyer.
     function updateStorageWhenCloseSwapPayFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
@@ -191,17 +194,17 @@ interface IMiltonStorage {
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    /// @notice Updates structures in storage - balance, swaps, SOAP indicators when close receive fixed swap.
-    /// Function available only for Milton.
-    /// @param liquidator account address who closes swap
+    /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Receive-Fixed swap.
+    /// Function is only available to Milton.
+    /// @param liquidator address of account closing the swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
-    /// @param positionValue amount which trader earned or lost for this bet, represented in 18 decimals, can be negative.
-    /// @param closingTimestamp moment when swap is closed
-    /// @param cfgIncomeFeeRate income fee rate taken from trader profit positionValue, configuration param represented in 18 decimals
-    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for validation closing swap, describe minimal rate
+    /// @param positionValue amount that trader has earned or lost, represented in 18 decimals, can be negative.
+    /// @param closingTimestamp moment when swap was closed
+    /// @param cfgIncomeFeeRate income fee rate used to calculate the income fee deducted from trader profit positionValue, configuration param represented in 18 decimals
+    /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in 
     /// position value required to close swap before maturity. Value represented in 18 decimals.
-    /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for validation closing swap, describe number of seconds before swap
-    ///maturity after which swap can be closed by anybody not only by swap's buyer.
+    /// @param cfgSecondsToMaturityWhenPositionCanBeClosed configuration param for closing swap validation, describes number of seconds before swap
+    /// maturity after which swap can be closed by anybody not only by swap's buyer.
     function updateStorageWhenCloseSwapReceiveFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
@@ -212,32 +215,32 @@ interface IMiltonStorage {
         uint256 cfgSecondsToMaturityWhenPositionCanBeClosed
     ) external;
 
-    /// @notice Updates balance when Joseph withdraws Milton's cash from Stanley. Function available only for Milton.
-    /// @param withdrawnAmount asset amount which was withdrawn from Stanley to Milton by Joseph, represented in 18 decimals.
-    /// @param vaultBalance actual Asset Management Vault balance, represented in 18 decimals
+    /// @notice Updates the balance when Joseph withdraws Milton's assets from Stanley. Function is only available to Milton.
+    /// @param withdrawnAmount asset amount that was withdrawn from Stanley to Milton by Joseph, represented in 18 decimals.
+    /// @param vaultBalance Asset Management Vault (Stanley) balance, represented in 18 decimals
     function updateStorageWhenWithdrawFromStanley(uint256 withdrawnAmount, uint256 vaultBalance)
         external;
 
-    /// @notice Updates balance when Joseph deposits Milton's cash to Stanley. Function available only for Milton.
-    /// @param depositAmount asset amount which was deposited from Milton to Stanley by Joseph, represented in 18 decimals.
-    /// @param vaultBalance actual Asset Management Vault balance (Stanley's balance), represented in 18 decimals
+    /// @notice Updates the balance when Joseph deposits Milton's assets to Stanley. Function is only available to Milton.
+    /// @param depositAmount asset amount deposited from Milton to Stanley by Joseph, represented in 18 decimals.
+    /// @param vaultBalance actual Asset Management Vault(Stanley) balance , represented in 18 decimals
     function updateStorageWhenDepositToStanley(uint256 depositAmount, uint256 vaultBalance)
         external;
 
-    /// @notice Updates balance when Joseph transfers Milton's cash to Charlie Treasury's multisig wallet. Function available only for Joseph.
-    /// @param transferredAmount asset amount which is transferred to Charlie Treasury multisig wallet.
+    /// @notice Updates the balance when Joseph transfers Milton's assets to Charlie Treasury's multisig wallet. Function is only available to Joseph.
+    /// @param transferredAmount asset amount transferred to Charlie Treasury multisig wallet.
     function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount) external;
 
-    /// @notice Updates balance when Joseph transfers Milton's cash to Treasury's multisig wallet. Function available only for Joseph.
-    /// @param transferredAmount asset amount which is transferred to Treasury multisig wallet.
+    /// @notice Updates the balance when Joseph transfers Milton's assets to Treasury's multisig wallet. Function is only available to Joseph.
+    /// @param transferredAmount asset amount transferred to Treasury's multisig wallet.
     function updateStorageWhenTransferToTreasury(uint256 transferredAmount) external;
 
-    /// @notice Sets Milton address. Function available only for smart contract Owner.
-    /// @param milton Milton address
+    /// @notice Sets Milton's address. Function is only available to the smart contract Owner.
+    /// @param milton Milton's address
     function setMilton(address milton) external;
 
-    /// @notice Sets Joseph address. Function available only for smart contract Owner.
-    /// @param joseph Joseph address
+    /// @notice Sets Joseph's address. Function is only available to smart contract Owner.
+    /// @param joseph Joseph's address
     function setJoseph(address joseph) external;
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
@@ -248,15 +251,15 @@ interface IMiltonStorage {
     /// @dev Emits {Unpaused} event from Milton.
     function unpause() external;
 
-    /// @notice Emmited when Milton address changed by smart contract Owner.
-    /// @param changedBy account address who changed Milton address
-    /// @param oldMilton old Milton address
-    /// @param newMilton new Milton address
+    /// @notice Emmited when Milton address has changed by the smart contract Owner.
+    /// @param changedBy account address that has changed Milton's address
+    /// @param oldMilton old Milton's address
+    /// @param newMilton new Milton's address
     event MiltonChanged(address changedBy, address oldMilton, address newMilton);
 
-    /// @notice Emmited when Joseph address changed by smart contract Owner.
-    /// @param changedBy account address who changed Jospeh address
-    /// @param oldJoseph old Joseph address
-    /// @param newJoseph new Joseph address
+    /// @notice Emmited when Joseph address has been changed by smart contract Owner.
+    /// @param changedBy account address that has changed Jospeh's address
+    /// @param oldJoseph old Joseph's address
+    /// @param newJoseph new Joseph's address
     event JosephChanged(address changedBy, address oldJoseph, address newJoseph);
 }

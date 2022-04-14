@@ -9,6 +9,7 @@ import {
     PERIOD_25_DAYS_IN_SECONDS,
     LEVERAGE_18DEC,
     N0__1_18DEC,
+    N0__01_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     PERCENTAGE_160_18DEC,
     PERCENTAGE_5_18DEC,
@@ -46,7 +47,7 @@ import { assertError } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("Milton - not close position", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
@@ -75,7 +76,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -120,7 +121,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -165,7 +166,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate: PERCENTAGE_121_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -211,7 +212,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("11900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -257,7 +258,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("11900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -303,7 +304,7 @@ describe("MiltonSpreadModel - Core", () => {
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -353,7 +354,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -401,7 +402,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -424,7 +425,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -464,7 +465,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -487,7 +488,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1421,6 +1422,63 @@ describe("MiltonSpreadModel - Core", () => {
                 liquidityProvider
             ),
             "IPOR_315"
+        );
+    });
+
+    it("should NOT close position, DAI, when ERC20: amount exceeds balance milton on DAI token", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const params = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: USD_10_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+        };
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        const endTimestamp = params.openTimestamp.add(PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        // await miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp);
+        await hre.network.provider.send("hardhat_setBalance", [
+            miltonDai.address,
+            "0x500000000000000000000",
+        ]);
+        await hre.network.provider.request({
+            method: "hardhat_impersonateAccount",
+            params: [miltonDai.address],
+        });
+        const signer = await hre.ethers.provider.getSigner(miltonDai.address);
+        const daiBalanceAfterOpen = await tokenDai.balanceOf(miltonDai.address);
+        await tokenDai.connect(signer).transfer(await admin.getAddress(), daiBalanceAfterOpen);
+
+        //when
+        await assertError(
+            //when
+            miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "ERC20: transfer amount exceeds balance"
         );
     });
 });

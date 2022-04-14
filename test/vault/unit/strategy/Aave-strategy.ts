@@ -82,10 +82,7 @@ describe("AAVE strategy", () => {
         //when
         await expect(strategyAaveInstance.setStanley(newStanleyAddress))
             .to.emit(strategyAaveInstance, "StanleyChanged")
-            .withArgs(
-                await admin.getAddress,
-                oldStanleyAddress, newStanleyAddress
-            );
+            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
     });
 
     it("Should not be able to setup Stanley when non owner want to setup new address", async () => {
@@ -98,7 +95,7 @@ describe("AAVE strategy", () => {
     });
 
     it("Should not be able to setup Treasury aave strategy", async () => {
-        await expect(strategyAaveInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_000");
+        await expect(strategyAaveInstance.setTreasury(AddressZero)).to.be.revertedWith("IPOR_502");
     });
 
     it("Should not be able to setup Treasury aave strategy when sender is not Treasury Manager", async () => {
@@ -111,5 +108,26 @@ describe("AAVE strategy", () => {
         await expect(
             strategyAaveInstance.connect(userOne).setTreasuryManager(AddressZero)
         ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("Should be able do before claim", async () => {
+        //when
+        await expect(strategyAaveInstance.beforeClaim()).to.emit(
+            strategyAaveInstance,
+            "DoBeforeClaim"
+        );
+    });
+
+    it("Should be able do claim", async () => {
+        //when
+        await expect(strategyAaveInstance.doClaim()).to.emit(strategyAaveInstance, "DoClaim");
+    });
+
+    it("Should be able to set StkAave address", async () => {
+        //when
+        await expect(strategyAaveInstance.setStkAave(await admin.getAddress())).to.emit(
+            strategyAaveInstance,
+            "StkAaveChanged"
+        );
     });
 });

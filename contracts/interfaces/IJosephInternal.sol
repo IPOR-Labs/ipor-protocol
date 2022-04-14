@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 /// @title Administrative interface for interaction with Joseph.
@@ -39,6 +39,10 @@ interface IJosephInternal {
     /// @notice Executes withdraw underlying asset in the `amount` from Stanley to Milton
     /// @dev Emits {Withdraw} event from Stanley, {Burn} event from ivToken, {Transfer} event from ERC20 asset.
     function withdrawFromStanley(uint256 amount) external;
+
+    /// @notice Executes withdraw underlying asset in the `amount` from Stanley to Milton
+    /// @dev Emits {Withdraw} event from Stanley, {Burn} event from ivToken, {Transfer} event from ERC20 asset.
+    function withdrawAllFromStanley() external;
 
     /// @notice Transfers `amount` of asset from Miltons's Treasury Balance to Treasury (ie. external multisig wallet)
     /// Treasury's address is configured in `_treasury` field

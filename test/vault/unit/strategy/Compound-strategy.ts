@@ -11,6 +11,7 @@ import {
     UsdtMockedToken,
     MockCToken,
     DaiMockedToken,
+    StrategyCompound,
 } from "../../../../types";
 
 chai.use(solidity);
@@ -30,9 +31,9 @@ const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
 const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
 
 describe("Compound strategy", () => {
-    let strategyCompoundInstanceDAI: StrategyAave;
-    let strategyCompoundInstanceUSDC: StrategyAave;
-    let strategyCompoundInstanceUSDT: StrategyAave;
+    let strategyCompoundInstanceDAI: StrategyCompound;
+    let strategyCompoundInstanceUSDC: StrategyCompound;
+    let strategyCompoundInstanceUSDT: StrategyCompound;
     let DAI: DaiMockedToken;
     let USDC: UsdcMockedToken;
     let USDT: UsdtMockedToken;
@@ -247,6 +248,42 @@ describe("Compound strategy", () => {
     it("Should not be able to setup Treasury Manager aave strategy", async () => {
         await expect(
             strategyCompoundInstanceUSDC.connect(userOne).setTreasuryManager(constants.AddressZero)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+    });
+
+    it("Should setup new blocksPerYear", async () => {
+        // whan
+        await expect(strategyCompoundInstanceDAI.setBlocksPerYear(BigNumber.from("2102500")))
+            .to.emit(strategyCompoundInstanceDAI, "BlocksPerYearChanged")
+            .withArgs(await admin.getAddress, BigNumber.from("2102400"), BigNumber.from("2102500"));
+    });
+
+    it("Should not setup new blocksPerYear to zero", async () => {
+        // whan
+        await expect(strategyCompoundInstanceDAI.setBlocksPerYear(ZERO)).to.be.revertedWith(
+            "IPOR_004"
+        );
+    });
+
+    it("Should be able do claim", async () => {
+        //when
+        await strategyCompoundInstanceDAI.doClaim();
+        await expect(strategyCompoundInstanceDAI.doClaim()).to.emit(
+            strategyCompoundInstanceDAI,
+            "DoClaim"
+        );
+    });
+
+    it("Should not be able do claim when not owner", async () => {
+        await expect(strategyCompoundInstanceUSDC.connect(userOne).doClaim()).to.be.revertedWith(
+            "Ownable: caller is not the owner"
+        );
+    });
+
+    it("Should not setup new blocksPerYear when no owner", async () => {
+        // whan
+        await expect(
+            strategyCompoundInstanceDAI.connect(userOne).setBlocksPerYear(BigNumber.from("2102500"))
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });

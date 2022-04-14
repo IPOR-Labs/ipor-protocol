@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { PERCENTAGE_3_18DEC, N1__0_18DEC } from "../utils/Constants";
+import { PERCENTAGE_3_18DEC, N1__0_18DEC, ZERO } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
     MockMiltonSpreadModel,
@@ -14,6 +14,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getStandardDerivativeParamsDAI,
+    getReceiveFixedSwapParamsDAI,
 } from "../utils/DataUtils";
 
 const { expect } = chai;
@@ -76,7 +77,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -136,7 +137,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -152,7 +153,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -228,7 +229,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapPayFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -279,7 +280,7 @@ describe("Joseph Treasury", () => {
             testData
         );
 
-        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+        const params = getReceiveFixedSwapParamsDAI(userTwo, tokenDai);
 
         await iporOracle
             .connect(userOne)
@@ -296,7 +297,7 @@ describe("Joseph Treasury", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("27000").mul(N1__0_18DEC),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -408,6 +409,25 @@ describe("Joseph Treasury", () => {
                 .itfRedeem(params.totalAmount, params.openTimestamp),
             //then
             "IPOR_402"
+        );
+    });
+    it("should NOT redeem ipTokens because redeem amount is to low", async () => {
+        //given
+        const { josephDai } = await prepareTestDataDaiCase001(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await assertError(
+            //when
+            josephDai.connect(liquidityProvider).itfRedeem(ZERO, ZERO),
+            //then
+            "IPOR_403"
         );
     });
 });

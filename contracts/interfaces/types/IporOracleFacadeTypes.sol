@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.9;
 
 /// @title Structs used in comunication with data consumers such as off-chain applications or other smart contracts.

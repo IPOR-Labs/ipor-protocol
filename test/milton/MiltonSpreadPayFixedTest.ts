@@ -24,6 +24,7 @@ import {
     prepareMiltonSpreadCase9,
     prepareMiltonSpreadCase10,
     getPayFixedDerivativeParamsUSDTCase1,
+    getReceiveFixedDerivativeParamsUSDTCase1,
 } from "../utils/MiltonUtils";
 import { assertError } from "../utils/AssertUtils";
 import {
@@ -57,8 +58,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
-
         const expectedNewOwner = userTwo;
 
         //when
@@ -78,7 +77,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -96,7 +94,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -116,7 +113,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         //when
@@ -137,7 +133,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
         const expectedNewOwner = userTwo;
 
         await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -159,7 +154,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         );
         const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
         await miltonSpread.deployed();
-        await miltonSpread.initialize();
 
         const expectedNewOwner = userTwo;
 
@@ -955,7 +949,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
+        const params = getReceiveFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
         await iporOracle
             .connect(userOne)
@@ -982,7 +976,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("1000000000"),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 
@@ -1057,7 +1051,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             return;
         }
 
-        const params = getPayFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
+        const params = getReceiveFixedDerivativeParamsUSDTCase1(userTwo, tokenUsdt);
 
         await iporOracle
             .connect(userOne)
@@ -1084,7 +1078,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             .itfOpenSwapReceiveFixed(
                 params.openTimestamp,
                 BigNumber.from("1000000000"),
-                params.maxAcceptableFixedInterestRate,
+                params.acceptableFixedInterestRate,
                 params.leverage
             );
 

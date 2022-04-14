@@ -3,7 +3,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { MockIporSwapLogic } from "../../types";
 import { N1__0_18DEC, N0__01_18DEC, PERIOD_25_DAYS_IN_SECONDS } from "../utils/Constants";
-import { prepareSwapPayFixedCase1 } from "../utils/SwapUtils";
+import { prepareSwapPayFixedCase1, prepareSwapDaiCase1, prepareSwapUsdtCase1 } from "../utils/SwapUtils";
 
 const { expect } = chai;
 
@@ -128,7 +128,49 @@ describe("IporSwapLogic calculateSwapPayFixedValue", () => {
 
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            "19437730520547945205479"
+            "18658923287671232876712"
+        );
+    });
+
+    it("Calculate Interest Case 100 days Later IBT Price Changed Decimals 18", async () => {
+        //given
+
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        const swap = await prepareSwapDaiCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigNumber.from("120").mul(N1__0_18DEC);
+
+        //when
+
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            "18658923287671232876712"
+        );
+    });
+
+    it("Calculate Interest Case 100 days Later IBT Price Changed Decimals 6", async () => {
+        //given
+
+        const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        const swap = await prepareSwapUsdtCase1(fixedInterestRate, admin);
+        const ibtPriceSecond = BigNumber.from("120").mul(N1__0_18DEC);
+
+        //when
+
+        const swapValue = await iporSwapLogic.calculateSwapPayFixedValue(
+            swap,
+            swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
+            ibtPriceSecond
+        );
+
+        //then
+        expect(swapValue, "Wrong interest difference amount").to.be.equal(
+            "18658923287671232876712"
         );
     });
 });

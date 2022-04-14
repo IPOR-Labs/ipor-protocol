@@ -35,6 +35,7 @@ import {
     MockCase4MiltonDai,
     MockCase5MiltonDai,
     MockCase6MiltonDai,
+    MockCase8MiltonDai,
     UsdtMockedToken,
 } from "../../types";
 
@@ -107,6 +108,8 @@ export enum MiltonDaiCase {
     CASE4 = "MockCase4MiltonDai",
     CASE5 = "MockCase5MiltonDai",
     CASE6 = "MockCase6MiltonDai",
+    CASE7 = "MockCase7MiltonDai",
+    CASE8 = "MockCase8MiltonDai",
 }
 
 export type MockMiltonSpreadModel =
@@ -148,14 +151,14 @@ export type MiltonDaiMockCase =
     | MockCase3MiltonDai
     | MockCase4MiltonDai
     | MockCase5MiltonDai
-    | MockCase6MiltonDai;
+    | MockCase6MiltonDai
+    | MockCase8MiltonDai;
 
 export const prepareMockMiltonSpreadModel = async (
     spreadmiltonCase: MiltonSpreadModels
 ): Promise<MockMiltonSpreadModel> => {
     const MockMiltonSpreadModel = await ethers.getContractFactory(spreadmiltonCase);
     const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockMiltonSpreadModel;
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -186,7 +189,6 @@ export const prepareMiltonSpreadCase2 = async () => {
         "MockCase2MiltonSpreadModel"
     );
     const miltonSpread = await MockCase2MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -195,7 +197,6 @@ export const prepareMiltonSpreadCase3 = async () => {
         "MockCase3MiltonSpreadModel"
     );
     const miltonSpread = await MockCase3MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -204,7 +205,6 @@ export const prepareMiltonSpreadCase4 = async () => {
         "MockCase4MiltonSpreadModel"
     );
     const miltonSpread = await MockCase4MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -213,7 +213,6 @@ export const prepareMiltonSpreadCase5 = async () => {
         "MockCase5MiltonSpreadModel"
     );
     const miltonSpread = await MockCase5MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -222,7 +221,6 @@ export const prepareMiltonSpreadCase6 = async () => {
         "MockCase6MiltonSpreadModel"
     );
     const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -231,7 +229,6 @@ export const prepareMiltonSpreadCase7 = async () => {
         "MockCase7MiltonSpreadModel"
     );
     const miltonSpread = await MockCase7MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -240,7 +237,6 @@ export const prepareMiltonSpreadCase8 = async () => {
         "MockCase8MiltonSpreadModel"
     );
     const miltonSpread = await MockCase8MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -249,7 +245,6 @@ export const prepareMiltonSpreadCase9 = async () => {
         "MockCase9MiltonSpreadModel"
     );
     const miltonSpread = await MockCase9MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -258,7 +253,6 @@ export const prepareMiltonSpreadCase10 = async () => {
         "MockCase10MiltonSpreadModel"
     );
     const miltonSpread = await MockCase10MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -267,7 +261,6 @@ export const prepareMiltonSpreadCase11 = async () => {
         "MockCase11MiltonSpreadModel"
     );
     const miltonSpread = await MockCase11MiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -275,7 +268,22 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        leverage: LEVERAGE_18DEC,
+        direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getReceiveFixedDerivativeParamsUSDTCase1 = (
+    user: Signer,
+    tokenUsdt: UsdtMockedToken
+) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -286,7 +294,6 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
 export const prepareMiltonSpreadBase = async () => {
     const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
-    await miltonSpread.initialize();
     return miltonSpread;
 };
 
@@ -299,7 +306,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    maxAcceptableFixedInterestRate: BigNumber,
+    acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -395,7 +402,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        maxAcceptableFixedInterestRate,
+        acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,
@@ -423,7 +430,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     closerUser: Signer,
     iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
-    maxAcceptableFixedInterestRate: BigNumber,
+    acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     expectedOpenedPositions: BigNumber,
     expectedDerivativesTotalBalanceWad: BigNumber,
@@ -524,7 +531,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         closerUser,
         iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
-        maxAcceptableFixedInterestRate,
+        acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
         miltonBalanceBeforePayout,
         expectedMiltonUnderlyingTokenBalance,
