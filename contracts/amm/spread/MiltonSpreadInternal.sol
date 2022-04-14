@@ -25,18 +25,56 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     //@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
     uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
-    //@notice Part of Spread calculation - At Par Component - Volatility Kvol value - check Whitepaper
-    uint256 internal constant _AT_PAR_COMPONENT_K_VOL_VALUE = 0;
-
-    //@notice Part of Spread calculation - At Par Component - Historical Deviation Khist value - check Whitepaper
-    uint256 internal constant _AT_PAR_COMPONENT_K_HIST_VALUE = 3e14;
-
     int256 internal constant _B1 = -8260047328466268;
     int256 internal constant _B2 = -9721941081703882;
     int256 internal constant _V1 = 47294930726988593;
     int256 internal constant _V2 = 8792990351805524;
     int256 internal constant _M1 = -9721941081703882;
     int256 internal constant _M2 = -3996501128463404;
+
+    function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
+        return _getSpreadPremiumsMaxValue();
+    }
+
+    function getDCKfValue() external pure override returns (uint256) {
+        return _getDCKfValue();
+    }
+
+    function getDCLambdaValue() external pure override returns (uint256) {
+        return _getDCLambdaValue();
+    }
+
+    function getDCKOmegaValue() external pure override returns (uint256) {
+        return _getDCKOmegaValue();
+    }
+
+    function getDCMaxLiquidityRedemptionValue() external pure override returns (uint256) {
+        return _getDCMaxLiquidityRedemptionValue();
+    }
+
+    function getB1() external pure override returns (int256) {
+        return _getB1();
+    }
+
+    function getB2() external pure override returns (int256) {
+        return _getB2();
+    }
+
+    function getV1() external pure override returns (int256) {
+        return _getV1();
+    }
+
+    function getV2() external pure override returns (int256) {
+        return _getV2();
+    }
+
+    function getM1() external pure override returns (int256) {
+        return _getM1();
+    }
+
+    function getM2() external pure override returns (int256) {
+        return _getM2();
+    }
 
     function _getB1() internal pure virtual returns (int256) {
         return _B1;
@@ -62,34 +100,6 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
         return _M2;
     }
 
-    function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
-        return _getSpreadPremiumsMaxValue();
-    }
-
-    function getDCKfValue() external pure override returns (uint256) {
-        return _getDCKfValue();
-    }
-
-    function getDCLambdaValue() external pure override returns (uint256) {
-        return _getDCLambdaValue();
-    }
-
-    function getDCKOmegaValue() external pure override returns (uint256) {
-        return _getDCKOmegaValue();
-    }
-
-    function getDCMaxLiquidityRedemptionValue() external pure override returns (uint256) {
-        return _getDCMaxLiquidityRedemptionValue();
-    }
-
-    function getAtParComponentKVolValue() external pure override returns (uint256) {
-        return _getAtParComponentKVolValue();
-    }
-
-    function getAtParComponentKHistValue() external pure override returns (uint256) {
-        return _getAtParComponentKHistValue();
-    }
-
     function _getSpreadPremiumsMaxValue() internal pure virtual returns (uint256) {
         return _SPREAD_PREMIUMS_MAX_VALUE;
     }
@@ -108,14 +118,6 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
 
     function _getDCMaxLiquidityRedemptionValue() internal pure virtual returns (uint256) {
         return _DC_MAX_LIQUIDITY_REDEMPTION_VALUE;
-    }
-
-    function _getAtParComponentKVolValue() internal pure virtual returns (uint256) {
-        return _AT_PAR_COMPONENT_K_VOL_VALUE;
-    }
-
-    function _getAtParComponentKHistValue() internal pure virtual returns (uint256) {
-        return _AT_PAR_COMPONENT_K_HIST_VALUE;
     }
 
     function _calculateSoapPlus(int256 soap, uint256 swapsBalance) internal pure returns (uint256) {

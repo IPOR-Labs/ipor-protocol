@@ -24,11 +24,4 @@ contract MockCase5MiltonSpreadModel is MockBaseMiltonSpreadModel {
         return 784593437945791726;
     }
 
-    function _getAtParComponentKVolValue() internal pure virtual override returns (uint256) {
-        return 31000000000000000;
-    }
-
-    function _getAtParComponentKHistValue() internal pure virtual override returns (uint256) {
-        return 14000000000000000;
-    }
 }

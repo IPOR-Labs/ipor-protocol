@@ -24,11 +24,15 @@ interface IMiltonSpreadInternal {
     /// @return "Demand Component Liquidity Redemption Value" represented in 18 decimals.
     function getDCMaxLiquidityRedemptionValue() external pure returns (uint256);
 
-    /// @notice Gets "At Par Component KVol" - parameter used in spread calculations.
-    /// @return "At Par Component KVol" represented in 18 decimals.
-    function getAtParComponentKVolValue() external pure returns (uint256);
+    function getB1() external pure returns (int256);
 
-    /// @notice Gets "At Par Component KHist" value - parameter used in spread equations.
-    /// @return "At Par Component KHist" represented in 18 decimals.
-    function getAtParComponentKHistValue() external pure returns (uint256);
+    function getB2() external pure returns (int256);
+
+    function getV1() external pure returns (int256);
+
+    function getV2() external pure returns (int256);
+
+    function getM1() external pure returns (int256);
+
+    function getM2() external pure returns (int256);
 }

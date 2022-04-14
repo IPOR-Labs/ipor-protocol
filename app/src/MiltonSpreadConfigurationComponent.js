@@ -127,47 +127,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-                <tr>
-                    <td>
-                        <strong>At Par Component KVol Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getAtParComponentKVolValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>At Par Component KHist Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getAtParComponentKHistValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
+                
             </table>
         </div>
     </div>
