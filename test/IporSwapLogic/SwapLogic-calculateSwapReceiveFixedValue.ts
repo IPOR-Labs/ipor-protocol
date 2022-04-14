@@ -12,7 +12,7 @@ import { prepareSwapDaiCase1, prepareSwapUsdtCase1 } from "../utils/SwapUtils";
 
 const { expect } = chai;
 
-describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
+describe("IporSwapLogic calculatePayoffReceiveFixed", () => {
     let iporSwapLogic: MockIporSwapLogic;
     let admin: Signer;
 
@@ -28,7 +28,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
         const fixedInterestRate = BigNumber.from("40000000000000000");
         const swap = await prepareSwapDaiCase1(fixedInterestRate, admin);
         //when
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS),
             N1__0_18DEC
@@ -46,7 +46,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         const ibtPriceSecond = BigNumber.from(125).mul(N1__0_18DEC);
         //when
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp,
             ibtPriceSecond
@@ -67,7 +67,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //when
 
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             ibtPriceSecond
@@ -84,7 +84,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //when
 
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             ibtPriceSecond
@@ -106,7 +106,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
         const ibtPriceSecond = BigNumber.from(125).mul(N1__0_18DEC);
 
         //when
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             ibtPriceSecond
@@ -125,7 +125,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //when
 
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
             ibtPriceSecond
@@ -146,7 +146,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //when
 
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
             ibtPriceSecond
@@ -166,7 +166,7 @@ describe("IporSwapLogic calculateSwapReceiveFixedValue", () => {
 
         //when
 
-        const swapValue = await iporSwapLogic.calculateSwapReceiveFixedValue(
+        const swapValue = await iporSwapLogic.calculatePayoffReceiveFixed(
             swap,
             swap.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS.mul(BigNumber.from("4"))),
             ibtPriceSecond

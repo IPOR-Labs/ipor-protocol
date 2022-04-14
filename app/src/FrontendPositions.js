@@ -45,9 +45,9 @@ export default (response) =>
                                     <small>{derivative.fixedInterestRate}</small>
                                 </td>
                                 <td>
-                                    {derivative.positionValue / 1000000000000000000}
+                                    {derivative.payoff / 1000000000000000000}
                                     <br />
-                                    <small>{derivative.positionValue}</small>
+                                    <small>{derivative.payoff}</small>
                                 </td>
                                 <td>{toDate(derivative.openTimestamp)}</td>
                                 <td>{toDate(derivative.endTimestamp)}</td>

@@ -314,17 +314,17 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     expectedSoap: BigNumber,
     openTimestamp: BigNumber,
     expectedIncomeFeeValueWad: BigNumber,
-    expectedPositionValue: BigNumber,
-    expectedPositionValueWad: BigNumber,
+    expectedPayoff: BigNumber,
+    expectedPayoffWad: BigNumber,
     userOne: Signer,
     liquidityProvider: Signer
 ) {
-    let expectedPositionValueWadAbs = expectedPositionValueWad;
-    let expectedPositionValueAbs = expectedPositionValue;
+    let expectedPayoffWadAbs = expectedPayoffWad;
+    let expectedPayoffAbs = expectedPayoff;
 
-    if (expectedPositionValueWad.lt(ZERO)) {
-        expectedPositionValueWadAbs = BigNumber.from(expectedPositionValueWadAbs).mul("-1");
-        expectedPositionValueAbs = BigNumber.from(expectedPositionValueAbs).mul("-1");
+    if (expectedPayoffWad.lt(ZERO)) {
+        expectedPayoffWadAbs = BigNumber.from(expectedPayoffWadAbs).mul("-1");
+        expectedPayoffAbs = BigNumber.from(expectedPayoffAbs).mul("-1");
     }
 
     let miltonBalanceBeforePayout = ZERO;
@@ -338,7 +338,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     let expectedMiltonUnderlyingTokenBalance = ZERO;
     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
         .add(TC_OPENING_FEE_18DEC)
-        .add(expectedPositionValueWadAbs)
+        .add(expectedPayoffWadAbs)
         .sub(expectedIncomeFeeValueWad);
 
     if (testData.tokenDai && asset === testData.tokenDai.address) {
@@ -346,7 +346,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
-            .add(expectedPositionValueAbs);
+            .add(expectedPayoffAbs);
 
         if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
             closerUserLost = openerUserLost;
@@ -364,7 +364,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             TC_OPENING_FEE_18DEC
         )
             .add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
-            .add(expectedPositionValueAbs);
+            .add(expectedPayoffAbs);
     }
 
     if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
@@ -372,7 +372,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
         openerUserLost = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
-            .add(expectedPositionValueAbs);
+            .add(expectedPayoffAbs);
 
         if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
             closerUserLost = openerUserLost;
@@ -390,7 +390,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             TC_OPENING_FEE_6DEC
         )
             .add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
-            .add(expectedPositionValueAbs);
+            .add(expectedPayoffAbs);
     }
 
     await exetuceCloseSwapTestCase(
@@ -414,7 +414,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
-        expectedPositionValueWad,
+        expectedPayoffWad,
         expectedIncomeFeeValueWad,
         userOne,
         liquidityProvider
@@ -439,17 +439,17 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     openTimestamp: BigNumber,
     expectedIncomeFeeValue: BigNumber,
     expectedIncomeFeeValueWad: BigNumber,
-    expectedPositionValue: BigNumber,
-    expectedPositionValueWad: BigNumber,
+    expectedPayoff: BigNumber,
+    expectedPayoffWad: BigNumber,
     userOne: Signer,
     liquidityProvider: Signer
 ) {
-    let expectedPositionValueWadAbs = expectedPositionValueWad;
-    let expectedPositionValueAbs = expectedPositionValue;
+    let expectedPayoffWadAbs = expectedPayoffWad;
+    let expectedPayoffAbs = expectedPayoff;
 
-    if (expectedPositionValueWad.lt(ZERO)) {
-        expectedPositionValueWadAbs = expectedPositionValueWadAbs.mul("-1");
-        expectedPositionValueAbs = expectedPositionValueAbs.mul("-1");
+    if (expectedPayoffWad.lt(ZERO)) {
+        expectedPayoffWadAbs = expectedPayoffWadAbs.mul("-1");
+        expectedPayoffAbs = expectedPayoffAbs.mul("-1");
     }
 
     let miltonBalanceBeforePayout = ZERO;
@@ -463,7 +463,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     let expectedCloserUserUnderlyingTokenBalanceAfterClose = ZERO;
 
     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
-        .sub(expectedPositionValueWadAbs)
+        .sub(expectedPayoffWadAbs)
         .add(TC_OPENING_FEE_18DEC);
 
     if (testData.tokenDai && asset === testData.tokenDai.address) {
@@ -471,7 +471,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
-            .sub(expectedPositionValueAbs)
+            .sub(expectedPayoffAbs)
             .add(expectedIncomeFeeValue);
 
         if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
@@ -486,7 +486,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
             TC_OPENING_FEE_18DEC
         )
             .add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
-            .sub(expectedPositionValueAbs)
+            .sub(expectedPayoffAbs)
             .add(expectedIncomeFeeValue);
         expectedOpenerUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_10MLN_18DEC.add(openerUserEarned).sub(openerUserLost);
@@ -499,7 +499,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
         openerUserLost = TC_OPENING_FEE_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
-            .sub(expectedPositionValueAbs)
+            .sub(expectedPayoffAbs)
             .add(expectedIncomeFeeValue);
 
         if ((await openerUser.getAddress()) === (await closerUser.getAddress())) {
@@ -514,14 +514,14 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
             TC_OPENING_FEE_6DEC
         )
             .add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
-            .sub(expectedPositionValueAbs)
+            .sub(expectedPayoffAbs)
             .add(expectedIncomeFeeValue);
         expectedOpenerUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_6_DECIMALS.add(openerUserEarned).sub(openerUserLost);
         expectedCloserUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
     }
-    expectedPositionValue = expectedPositionValueWad;
+    expectedPayoff = expectedPayoffWad;
     await exetuceCloseSwapTestCase(
         testData,
         asset,
@@ -543,7 +543,7 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
         expectedTreasuryTotalBalanceWad,
         expectedSoap,
         openTimestamp,
-        expectedPositionValueWad,
+        expectedPayoffWad,
         expectedIncomeFeeValueWad,
         userOne,
         liquidityProvider

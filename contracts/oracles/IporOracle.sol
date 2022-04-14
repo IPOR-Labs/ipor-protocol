@@ -30,7 +30,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
 
     modifier onlyUpdater() {
-        require(_updaters[msg.sender] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 

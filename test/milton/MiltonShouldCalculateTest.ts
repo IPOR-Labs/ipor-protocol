@@ -87,8 +87,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
         const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
-        const expectedPositionValue = BigNumber.from("9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
+        const expectedPayoff = BigNumber.from("9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -108,8 +108,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -148,8 +148,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
         const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
 
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -169,8 +169,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -208,8 +208,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("395949708238213469173");
         const expectedIncomeFeeValueWad = BigNumber.from("395949708238213469173");
-        const expectedPositionValue = BigNumber.from("-7918994164764269383465");
-        const expectedPositionValueWad = BigNumber.from("-7918994164764269383465");
+        const expectedPayoff = BigNumber.from("-7918994164764269383465");
+        const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -228,8 +228,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -266,8 +266,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
         const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -286,8 +286,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -323,8 +323,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("9967009897030890732780");
         const expectedIncomeFeeValueWad = BigNumber.from("9967009897030890732780");
-        const expectedPositionValue = BigNumber.from("9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
+        const expectedPayoff = BigNumber.from("9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -344,8 +344,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -383,8 +383,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = TC_COLLATERAL_18DEC;
         const expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -404,8 +404,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -443,8 +443,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("7918994164764269383465");
         const expectedIncomeFeeValueWad = BigNumber.from("7918994164764269383465");
-        const expectedPositionValue = BigNumber.from("-7918994164764269383465");
-        const expectedPositionValueWad = BigNumber.from("-7918994164764269383465");
+        const expectedPayoff = BigNumber.from("-7918994164764269383465");
+        const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -463,8 +463,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -502,8 +502,8 @@ describe("Milton should calculate income - Core", () => {
 
         const expectedIncomeFeeValue = TC_COLLATERAL_18DEC;
         const expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -522,8 +522,8 @@ describe("Milton should calculate income - Core", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -559,10 +559,10 @@ describe("Milton should calculate income - Core", () => {
         await openSwapPayFixed(testData, params);
         const derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
 
-        const expectedPositionValue = BigNumber.from("-38229627002310297226");
+        const expectedPayoff = BigNumber.from("-38229627002310297226");
 
         //when
-        const actualPositionValue = BigNumber.from(
+        const actualPayoff = BigNumber.from(
             await miltonDai.itfCalculateSwapPayFixedValue(
                 params.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS),
                 derivativeItem.id
@@ -571,8 +571,8 @@ describe("Milton should calculate income - Core", () => {
 
         //then
         expect(
-            expectedPositionValue,
-            `Incorrect position value, actual: ${actualPositionValue}, expected: ${expectedPositionValue}`
-        ).to.be.eq(actualPositionValue);
+            expectedPayoff,
+            `Incorrect position value, actual: ${actualPayoff}, expected: ${expectedPayoff}`
+        ).to.be.eq(actualPayoff);
     });
 });
