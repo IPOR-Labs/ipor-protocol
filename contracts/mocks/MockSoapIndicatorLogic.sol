@@ -28,7 +28,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) public view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) public pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         return
             SoapIndicatorLogic.rebalanceWhenOpenSwap(
                 si,
@@ -46,7 +46,7 @@ contract MockSoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) external view returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
+    ) external pure returns (AmmMiltonStorageTypes.SoapIndicatorsMemory memory) {
         return
             SoapIndicatorLogic.rebalanceWhenCloseSwap(
                 si,
@@ -101,7 +101,7 @@ contract MockSoapIndicatorLogic {
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateAverageInterestRateWhenOpenSwap(
                 totalNotional,
@@ -116,7 +116,7 @@ contract MockSoapIndicatorLogic {
         uint256 averageInterestRate,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
-    ) public view returns (uint256) {
+    ) public pure returns (uint256) {
         return
             SoapIndicatorLogic.calculateAverageInterestRateWhenCloseSwap(
                 totalNotional,
