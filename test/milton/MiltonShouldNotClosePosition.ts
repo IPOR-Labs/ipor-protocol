@@ -1424,4 +1424,61 @@ describe("Milton - not close position", () => {
             "IPOR_315"
         );
     });
+
+    it("should NOT close position, DAI, when ERC20: amount exceeds balance milton on DAI token", async () => {
+        //given
+        const testData = await prepareComplexTestDataDaiCase000(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const params = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: USD_10_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+        };
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        const endTimestamp = params.openTimestamp.add(PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        // await miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp);
+        await hre.network.provider.send("hardhat_setBalance", [
+            miltonDai.address,
+            "0x500000000000000000000",
+        ]);
+        await hre.network.provider.request({
+            method: "hardhat_impersonateAccount",
+            params: [miltonDai.address],
+        });
+        const signer = await hre.ethers.provider.getSigner(miltonDai.address);
+        const daiBalanceAfterOpen = await tokenDai.balanceOf(miltonDai.address);
+        await tokenDai.connect(signer).transfer(await admin.getAddress(), daiBalanceAfterOpen);
+
+        //when
+        await assertError(
+            //when
+            miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp),
+            //then
+            "ERC20: transfer amount exceeds balance"
+        );
+    });
 });

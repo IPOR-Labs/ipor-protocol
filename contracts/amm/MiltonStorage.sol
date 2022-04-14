@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -544,6 +544,7 @@ contract MiltonStorage is
                 _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
             );
         int256 _soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
+
         return (
             soapPayFixed = _soapPayFixed,
             soapReceiveFixed = _soapReceiveFixed,

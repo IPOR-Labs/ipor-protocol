@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
@@ -82,7 +82,7 @@ interface IMilton {
         address indexed buyer,
         /// @notice underlying asset
         address asset,
-        /// @notice swap direction
+        /// @notice swap direction 
         MiltonTypes.SwapDirection direction,
         /// @notice money structure related with this swap
         AmmTypes.OpenSwapMoney money,

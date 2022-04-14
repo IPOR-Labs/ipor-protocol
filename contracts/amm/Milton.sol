@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "../interfaces/types/AmmTypes.sol";
@@ -693,7 +693,6 @@ abstract contract Milton is MiltonInternal, IMilton {
      * @param liquidationDepositAmount - amount of asset transfered to the liquidator
      * @param transferAmount - amount of asset transfered to the swap owner
      **/
-
     function _transferDerivativeAmount(
         address buyer,
         uint256 liquidationDepositAmount,
