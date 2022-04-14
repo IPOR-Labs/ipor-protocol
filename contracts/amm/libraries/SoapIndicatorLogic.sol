@@ -5,7 +5,6 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "./types/AmmMiltonStorageTypes.sol";
-import "hardhat/console.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
