@@ -128,17 +128,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
-		if (volatilityAndMeanReversion < 0) {
-			console.log("[PF] MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
-		} else {
-			console.log("[PF] PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
-
-		}
-        
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+
         spreadPremiums = result < maxValue ? result : maxValue;
+
     }
 
     function _calculateSpreadPremiumsReceiveFixed(
@@ -164,13 +159,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
-		if (volatilityAndMeanReversion < 0) {
-			console.log("[RF] MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
-		} else {
-			console.log("[RF] PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
-
-		}
-        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+     
+		int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
 
         spreadPremiums = result < maxValue ? result : maxValue;
@@ -353,8 +343,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     {
         return
             _getB1() +
-            IporMath.divisionInt(_getV1() * emaVar.toInt256(), Constants.D18_INT) +
-            IporMath.divisionInt(_getM1() * mu, Constants.D18_INT);
+            IporMath.divisionInt(_getV1() * emaVar.toInt256() + _getM1() * mu, Constants.D18_INT);
     }
 
     function _volatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
@@ -364,7 +353,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     {
         return
             _getB2() +
-            IporMath.divisionInt(_getV2() * emaVar.toInt256(), Constants.D18_INT) +
-            IporMath.divisionInt(_getM2() * mu, Constants.D18_INT);
+            IporMath.divisionInt(_getV2() * emaVar.toInt256() + _getM2() * mu, Constants.D18_INT);
     }
 }

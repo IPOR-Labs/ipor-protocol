@@ -49,7 +49,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateDemandComponentPayFixed(
+    function testCalculateDemandComponentPayFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -64,22 +64,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateHistoricalDeviationPayFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) public pure returns (uint256) {
-        return
-            _calculateHistoricalDeviationPayFixed(
-                kHist,
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxSpreadValue
-            );
-    }
-
-    function calculateAdjustedUtilizationRatePayFixed(
+    function testCalculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -94,7 +79,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateDemandComponentRecFixed(
+    function testCalculateDemandComponentRecFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -109,22 +94,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateHistoricalDeviationRecFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) public pure returns (uint256) {
-        return
-            _calculateHistoricalDeviationRecFixed(
-                kHist,
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxSpreadValue
-            );
-    }
-
-    function calculateAdjustedUtilizationRateRecFixed(
+    function testCalculateAdjustedUtilizationRateRecFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -137,5 +107,37 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
                 totalCollateralReceiveFixedBalance,
                 lambda
             );
+    }
+
+    function testCalculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _calculateVolatilityAndMeanReversionPayFixed(emaVar, mu);
+    }
+
+    function testCalculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionRegionOne(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionRegionOne(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionRegionTwo(emaVar, mu);
     }
 }

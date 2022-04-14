@@ -164,44 +164,4 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     ) internal pure returns (uint256) {
         return IporMath.division(swapsBalance * Constants.D18, liquidityPoolBalance);
     }
-
-    function _calculateHistoricalDeviationPayFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
-        if (exponentialMovingAverage < iporIndexValue) {
-            return 0;
-        } else {
-            uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
-            );
-            if (mu == Constants.D18) {
-                return maxSpreadValue;
-            } else {
-                return IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
-            }
-        }
-    }
-
-    function _calculateHistoricalDeviationRecFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) internal pure returns (uint256) {
-        if (exponentialMovingAverage > iporIndexValue) {
-            return 0;
-        } else {
-            uint256 mu = IporMath.absoluteValue(
-                exponentialMovingAverage.toInt256() - iporIndexValue.toInt256()
-            );
-            if (mu >= Constants.D18) {
-                return maxSpreadValue;
-            } else {
-                return IporMath.division(kHist * Constants.D18, Constants.D18 - mu);
-            }
-        }
-    }
 }

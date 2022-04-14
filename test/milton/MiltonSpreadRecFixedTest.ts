@@ -23,6 +23,7 @@ import {
     MiltonUsdtCase,
     MiltonDaiCase,
     prepareMockMiltonSpreadModel,
+    prepareMiltonSpreadBase,
     prepareMiltonSpreadCase6,
     prepareMiltonSpreadCase8,
     prepareMiltonSpreadCase9,
@@ -52,6 +53,45 @@ describe("MiltonSpreadRecFixed", () => {
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
         miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+    });
+
+    it("should calculate Quote Value Receive Fixed Value - Spread Premium < Spread Premium Max Value, Base Case 1, Spread negative", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const soap = BigNumber.from("500").mul(N1__0_18DEC);
+        const liquidityPoolBalance = USD_15_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
+        const openingFee = USD_20_18DEC;
+
+        const accruedIpor = {
+            indexValue: BigNumber.from("13").mul(N0__01_18DEC),
+            ibtPrice: N1__0_18DEC,
+            exponentialMovingAverage: BigNumber.from("4").mul(N0__01_18DEC),
+            exponentialWeightedMovingVariance: BigNumber.from("35").mul(N0__001_18DEC),
+        };
+        const accruedBalance = {
+            totalCollateralPayFixed: BigNumber.from("1000").mul(N1__0_18DEC).add(swapCollateral),
+            totalCollateralReceiveFixed: USD_13_000_18DEC,
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            vault: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: liquidityPoolBalance.add(openingFee),
+            treasury: ZERO,
+        };
+
+        const expectedQuoteValue = BigNumber.from("49647515085308830");
+
+        //when
+        let actualQuotedValue = BigNumber.from(
+            await miltonSpread
+                .connect(userOne)
+                .callStatic.calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
+        );
+
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
     });
 
     it.skip("should calculate Quote Value Receive Fixed Value - Spread Premium < Spread Premium Max Value, refLeg < spreadPremiums", async () => {
@@ -198,7 +238,7 @@ describe("MiltonSpreadRecFixed", () => {
         let actualAdjustedUtilizationRate = BigNumber.from(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateAdjustedUtilizationRateRecFixed(
+                .testCalculateAdjustedUtilizationRateRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),

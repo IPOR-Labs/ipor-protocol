@@ -5,11 +5,15 @@ import {
     ZERO,
     N0__001_18DEC,
     N0__1_18DEC,
+    USD_20_18DEC,
     USD_100_18DEC,
     N0__01_18DEC,
+    USD_13_000_18DEC,
+    USD_15_000_18DEC,
     USD_10_000_000_18DEC,
     PERCENTAGE_3_18DEC,
     N1__0_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -18,6 +22,7 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
+    prepareMiltonSpreadBase,
     prepareMiltonSpreadCase6,
     prepareMiltonSpreadCase7,
     prepareMiltonSpreadCase8,
@@ -165,6 +170,43 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //then
         const actualNewOwner = await miltonSpread.connect(userOne).owner();
         expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+    });
+
+    it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Base Case 1, Spread negative", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const soap = BigNumber.from("500").mul(N1__0_18DEC);
+        const liquidityPoolBalance = USD_15_000_18DEC;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
+        const openingFee = USD_20_18DEC;
+
+        const accruedIpor = {
+            indexValue: BigNumber.from("13").mul(N0__01_18DEC), //13%
+            ibtPrice: N1__0_18DEC,
+            exponentialMovingAverage: BigNumber.from("4").mul(N0__01_18DEC),
+            exponentialWeightedMovingVariance: BigNumber.from("35").mul(N0__001_18DEC),
+        };
+
+        const accruedBalance = {
+            totalCollateralPayFixed: BigNumber.from("1000").mul(N1__0_18DEC).add(swapCollateral),
+            totalCollateralReceiveFixed: USD_13_000_18DEC,
+            openingFee: openingFee,
+            liquidationDeposit: ZERO,
+            vault: ZERO,
+            iporPublicationFee: ZERO,
+            liquidityPool: liquidityPoolBalance.add(openingFee),
+            treasury: ZERO,
+        };
+
+        const expectedQuoteValue = BigNumber.from("122609859719827717"); //39%
+
+        //when
+        const actualQuotedValue = await miltonSpread
+            .connect(userOne)
+            .calculateQuotePayFixed(soap, accruedIpor, accruedBalance);
+        //then
+        expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
     });
 
     it.skip("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Ref Leg Case 1", async () => {
