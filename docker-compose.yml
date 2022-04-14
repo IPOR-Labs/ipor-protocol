@@ -2,11 +2,44 @@ version: "3.9"
 
 services:
 
-############################################ DEV-TOOL ############################################
+  ipor-itf:
+    container_name: ipor-itf
+    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:itf-develop
+    profiles:
+      - developer
+    ports:
+      - "29545:8545"   # HTTP-RPC server
+      - "29546:8546"   # WS-RPC server
+      - "29547:8547"   # GraphQL
+      - "29505:40505"  # Network
 
-  ipor-protocol-milton-tool:
-    container_name: ipor-protocol-milton-tool
-    image: io.ipor/ipor-protocol-milton-tool:latest
+  ipor-s0:
+    container_name: ipor-s0
+    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s0-develop
+    profiles:
+      - developer
+    ports:
+      - "39545:8545"   # HTTP-RPC server
+      - "39546:8546"   # WS-RPC server
+      - "39547:8547"   # GraphQL
+      - "39505:40505"  # Network
+
+  ipor-s12:
+    container_name: ipor-s12
+    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s12-develop
+    profiles:
+      - developer
+    ports:
+      - "49545:8545"   # HTTP-RPC server
+      - "49546:8546"   # WS-RPC server
+      - "49547:8547"   # GraphQL
+      - "49505:40505"  # Network
+
+############################################ COCKPIT ############################################
+
+  ipor-cockpit:
+    container_name: ipor-cockpit
+    image: io.ipor/ipor-cockpit:latest
     profiles:
       - dev-tool
       - dev-tool-provider
@@ -15,8 +48,6 @@ services:
     restart: always
     ports:
       - "4000:3000"
-    volumes:
-      - ./containers/dev-tool/.env:/usr/src/.env
     environment:
       - TZ=${TIMEZONE}
 
@@ -24,8 +55,11 @@ services:
 
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
-    image: ethereum/client-go:alltools-v1.10.12
+    # FROM TAG: alltools-v1.10.15
+    image: ethereum/client-go@sha256:bf38e772f2cc68565241a8f3ddb12d857d4e0e422f36018f84681608285e269c
+    #image: ethereum/client-go:alltools-v1.10.12
     profiles:
+      - eth-bc-and-explorer
       - eth-bc
       - eth-bc-provider
       - developer
@@ -60,10 +94,13 @@ services:
       - ETH_BC_MINER_THREADS=${ETH_BC_MINER_THREADS}
       - ETH_BC_NETWORK_ID=${ETH_BC_NETWORK_ID}
       - ETH_BC_BLOCK_PERIOD=${ETH_BC_BLOCK_PERIOD}
+      - ETH_BC_BLOCK_GAS_LIMIT=${ETH_BC_BLOCK_GAS_LIMIT}
       - ETH_BC_NODE_MODE=${ETH_BC_NODE_MODE}
       - ETH_BC_NODE_NAME=${ETH_BC_NODE_NAME}
       - ETH_BC_HTTP_API=${ETH_BC_HTTP_API}
       - ETH_BC_WS_API=${ETH_BC_WS_API}
+      - ETH_BC_VERBOSITY=${ETH_BC_VERBOSITY}
+      - ETH_BC_VMODULE_VERBOSITY=${ETH_BC_VMODULE_VERBOSITY}
 
 ############################################ SSL ############################################
 
@@ -88,7 +125,7 @@ services:
     environment:
       - TZ=${TIMEZONE}
     depends_on:
-      - ipor-protocol-milton-tool
+      - ipor-cockpit
 
   ipor-protocol-nginx-eth-bc:
     container_name: ipor-protocol-nginx-eth-bc
@@ -123,9 +160,10 @@ services:
     image: blockscout/blockscout-mainnet:4.0.1-pre-16
     profiles:
       - explorer
-      - eth-explorer-provider
-      - developer
-      - all
+#       - eth-bc-and-explorer
+#       - eth-explorer-provider
+#       - developer
+#       - all
     command: /blockscout-entrypoint.sh
     restart: always
     ports:
@@ -160,9 +198,10 @@ services:
     image: postgres:12.5-alpine
     profiles:
       - explorer
-      - eth-explorer-provider
-      - developer
-      - all
+#       - eth-bc-and-explorer
+#       - eth-explorer-provider
+#       - developer
+#       - all
     restart: always
     ports:
       - "9432:5432"
@@ -203,4 +242,7 @@ volumes:
     driver: local
   ipor-protocol-eth-exp-postgres-data:
     name: ipor-protocol-eth-exp-postgres-data
+    driver: local
+  ipor-itf-data:
+    name: ipor-itf-data
     driver: local

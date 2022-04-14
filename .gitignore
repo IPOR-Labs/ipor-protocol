@@ -62,3 +62,7 @@ app/.env
 
 ### Utiles results ###
 iporErrorList.json
+
+### ETH dumps ###
+/containers/eth-bc/eth-bc-dump
+
