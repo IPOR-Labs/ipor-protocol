@@ -197,8 +197,7 @@
                         <argument>${contracts.sources}/mocks/spread/MockCase8MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/mocks/spread/MockCase9MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/TusdMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>                        
                         <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
                         <argument>${contracts.sources}/oracles/IporOracle.sol</argument>

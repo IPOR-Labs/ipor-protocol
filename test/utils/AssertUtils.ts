@@ -22,6 +22,7 @@ import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtils";
 
 import {
     N0__1_18DEC,
+    N0__01_18DEC,
     TC_TOTAL_AMOUNT_100_18DEC,
     LEVERAGE_18DEC,
     PERCENTAGE_5_18DEC,
@@ -139,8 +140,8 @@ export const testCasePagination = async (
     const paramsDai = {
         asset: tokenDai.address,
         totalAmount: TC_TOTAL_AMOUNT_100_18DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
+        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: userTwo,
     };
@@ -167,8 +168,10 @@ export const testCasePagination = async (
 
     for (let i = 0; BigNumber.from(i).lt(numberOfSwapsToCreate); i++) {
         if (i % 2 === 0) {
+            paramsDai.acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
             await openSwapPayFixed(testData, paramsDai);
         } else {
+            paramsDai.acceptableFixedInterestRate = N0__01_18DEC;
             await openSwapReceiveFixed(testData, paramsDai);
         }
     }

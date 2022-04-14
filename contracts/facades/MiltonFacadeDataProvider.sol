@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -153,6 +153,10 @@ contract MiltonFacadeDataProvider is
         return (totalCount, iporDerivatives);
     }
 
+    function _getIporOracle() internal view virtual returns (address) {
+        return _iporOracle;
+    }
+
     function _mapToIporSwap(
         address asset,
         IporTypes.IporSwapMemory memory iporSwap,
@@ -187,7 +191,7 @@ contract MiltonFacadeDataProvider is
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(
             timestamp,
             asset
         );

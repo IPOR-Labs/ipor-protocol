@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "../../libraries/errors/IporErrors.sol";
@@ -8,7 +8,6 @@ import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IJoseph.sol";
 import "./JosephInternal.sol";
-import "hardhat/console.sol";
 
 abstract contract Joseph is JosephInternal, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -63,7 +62,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
     }
 
     function _calculateExchangeRate(uint256 calculateTimestamp) internal view returns (uint256) {
-        IMiltonInternal milton = _milton;
+        IMiltonInternal milton = _getMilton();
 
         (, , int256 soap) = milton.calculateSoapAtTimestamp(calculateTimestamp);
 
@@ -71,7 +70,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
-        uint256 ipTokenTotalSupply = _ipToken.totalSupply();
+        uint256 ipTokenTotalSupply = _getIpToken().totalSupply();
 
         if (ipTokenTotalSupply != 0) {
             return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
@@ -92,7 +91,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 assetDecimals,
         uint256 timestamp
     ) internal nonReentrant {
-        IMiltonInternal milton = _milton;
+        IMiltonInternal milton = _getMilton();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
@@ -100,12 +99,12 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
-        _miltonStorage.addLiquidity(wadAssetAmount);
+        _getMiltonStorage().addLiquidity(wadAssetAmount);
 
         IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
-        _ipToken.mint(msg.sender, ipTokenAmount);
+        _getIpToken().mint(msg.sender, ipTokenAmount);
 
         emit ProvideLiquidity(
             timestamp,
@@ -119,10 +118,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
         require(
-            ipTokenAmount != 0 && ipTokenAmount <= _ipToken.balanceOf(msg.sender),
+            ipTokenAmount != 0 && ipTokenAmount <= _getIpToken().balanceOf(msg.sender),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
-        IMiltonInternal milton = _milton;
+        IMiltonInternal milton = _getMilton();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
@@ -137,7 +136,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 wadRedeemAmount = wadAssetAmount - wadRedeemFee;
 
-        IporTypes.MiltonBalancesMemory memory balance = _milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = _getMilton().getAccruedBalance();
 
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadRedeemAmount, _getDecimals());
 
@@ -148,15 +147,15 @@ abstract contract Joseph is JosephInternal, IJoseph {
         );
 
         require(
-            utilizationRate <= _REDEEM_LP_MAX_UTILIZATION_RATE,
+            utilizationRate <= _getRedeemLpMaxUtilizationRate(),
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
-        _ipToken.burn(msg.sender, ipTokenAmount);
+        _getIpToken().burn(msg.sender, ipTokenAmount);
 
-        _miltonStorage.subtractLiquidity(wadRedeemAmount);
+        _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_milton), msg.sender, assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), msg.sender, assetAmount);
 
         emit Redeem(
             timestamp,

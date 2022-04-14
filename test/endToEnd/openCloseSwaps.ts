@@ -1,5 +1,6 @@
 import { BigNumber, Signer } from "ethers";
 const { expect } = require("chai");
+import { N0__01_18DEC } from "../utils/Constants";
 import {
     ERC20,
     MiltonFaucet,
@@ -149,11 +150,7 @@ describe("Open/Close Swap", function () {
 
         it("Should open Swap Receive Fixed", async () => {
             //when
-            await miltonDai.openSwapReceiveFixed(
-                ONE_18.mul("100"),
-                BigNumber.from("900000000000000000"),
-                ONE_18.mul("10")
-            );
+            await miltonDai.openSwapReceiveFixed(ONE_18.mul("100"), N0__01_18DEC, ONE_18.mul("10"));
             //then
 
             const swaps = await miltonFacadeDataProvider.getMySwaps(
@@ -211,12 +208,8 @@ describe("Open/Close Swap", function () {
                 await admin.getAddress(),
                 BigNumber.from("1000000000000000")
             );
-            await usdc
-                .connect(admin)
-                .approve(josephUsdc.address, BigNumber.from("10000000000000000"));
-            await usdc
-                .connect(admin)
-                .approve(miltonUsdc.address, BigNumber.from("10000000000000000"));
+            await usdc.connect(admin).approve(josephUsdc.address, N0__01_18DEC);
+            await usdc.connect(admin).approve(miltonUsdc.address, N0__01_18DEC);
             //when
             await josephUsdc.connect(admin).provideLiquidity(deposit);
 
@@ -259,11 +252,7 @@ describe("Open/Close Swap", function () {
 
         it("Should open Swap Receive Fixed", async () => {
             //when
-            await miltonUsdc.openSwapReceiveFixed(
-                ONE_6.mul("3"),
-                BigNumber.from("39999999999999999"),
-                ONE_18.mul("10")
-            );
+            await miltonUsdc.openSwapReceiveFixed(ONE_6.mul("3"), N0__01_18DEC, ONE_18.mul("10"));
             //then
 
             const swaps = await miltonFacadeDataProvider.getMySwaps(
@@ -365,11 +354,7 @@ describe("Open/Close Swap", function () {
 
         it("Should open Swap Receive Fixed", async () => {
             //when
-            await miltonUsdt.openSwapReceiveFixed(
-                ONE_6.mul("3"),
-                BigNumber.from("39999999999999999"),
-                ONE_18.mul("10")
-            );
+            await miltonUsdt.openSwapReceiveFixed(ONE_6.mul("3"), N0__01_18DEC, ONE_18.mul("10"));
             //then
 
             const swaps = await miltonFacadeDataProvider.getMySwaps(

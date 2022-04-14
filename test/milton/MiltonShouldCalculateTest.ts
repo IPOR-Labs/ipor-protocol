@@ -3,6 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
+    N0__01_18DEC,
     USD_10_18DEC,
     USD_28_000_18DEC,
     PERCENTAGE_3_18DEC,
@@ -84,10 +85,10 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("420798965789715138682");
-        const expectedIncomeFeeValueWad = BigNumber.from("420798965789715138682");
-        const expectedPositionValue = BigNumber.from("8415979315794302773646");
-        const expectedPositionValueWad = BigNumber.from("8415979315794302773646");
+        const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
+        const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
+        const expectedPositionValue = BigNumber.from("9967009897030890732780");
+        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -98,7 +99,7 @@ describe("Milton should calculate income - Core", () => {
             userThree,
             PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_120_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -277,7 +278,7 @@ describe("Milton should calculate income - Core", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -320,10 +321,10 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("8415979315794302773646");
-        const expectedIncomeFeeValueWad = BigNumber.from("8415979315794302773646");
-        const expectedPositionValue = BigNumber.from("8415979315794302773646");
-        const expectedPositionValueWad = BigNumber.from("8415979315794302773646");
+        const expectedIncomeFeeValue = BigNumber.from("9967009897030890732780");
+        const expectedIncomeFeeValueWad = BigNumber.from("9967009897030890732780");
+        const expectedPositionValue = BigNumber.from("9967009897030890732780");
+        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -513,7 +514,7 @@ describe("Milton should calculate income - Core", () => {
             userThree,
             PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_160_18DEC,
+            N0__01_18DEC,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,

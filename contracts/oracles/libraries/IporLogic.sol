@@ -47,7 +47,7 @@ library IporLogic {
     ) internal pure returns (uint256) {
         return
             IporMath.division(
-                lastExponentialMovingAverage * (Constants.D18 - alpha) + indexValue * alpha,
+                lastExponentialMovingAverage * alpha + indexValue * (Constants.D18 - alpha),
                 Constants.D18
             );
     }

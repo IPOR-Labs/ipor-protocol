@@ -202,7 +202,10 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdc.json" "ipor_ip_token_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdt.json" "ipor_ip_token_usdt_address")
   RESULT=$(set_smart_contract_address_from_json_file "IpTokenDai.json" "ipor_ip_token_dai_address")
-  
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdc.json" "stanley_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdt.json" "stanley_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyDai.json" "stanley_dai_address")
+
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }

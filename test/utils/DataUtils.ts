@@ -32,6 +32,8 @@ import {
     IpToken,
     ItfIporOracle,
     MiltonStorage,
+    MockMiltonStorage,
+    MockCase8MiltonDai,
 } from "../../types";
 import {
     USD_10_000_6DEC,
@@ -70,7 +72,7 @@ export type TestData = {
     miltonStorageUsdc?: MiltonStorage;
     josephUsdc?: JosephUsdcMocks;
     miltonDai?: MiltonDaiMockCase;
-    miltonStorageDai?: MiltonStorage;
+    miltonStorageDai?: MockMiltonStorage | MiltonStorage;
     josephDai?: JosephDaiMocks;
     stanleyUsdt?: MockStanley;
     stanleyUsdc?: MockStanley;
@@ -88,7 +90,8 @@ export const prepareTestData = async (
     stanleyCaseNumber: MockStanleyCase,
     josephCaseUsdc: JosephUsdcMockCases,
     josephCaseUsdt: JosephUsdtMockCases,
-    josephCaseDai: JosephDaiMockCases
+    josephCaseDai: JosephDaiMockCases,
+    iporOracleOption?: ItfIporOracle
 ): Promise<TestData> => {
     let tokenDai: DaiMockedToken | undefined;
     let tokenUsdt: UsdtMockedToken | undefined;
@@ -103,7 +106,7 @@ export const prepareTestData = async (
     let miltonStorageUsdc: MiltonStorage | undefined;
     let josephUsdc: JosephUsdcMocks | undefined;
     let miltonDai: MiltonDaiMockCase | undefined;
-    let miltonStorageDai: MiltonStorage | undefined;
+    let miltonStorageDai: MockMiltonStorage | MiltonStorage | undefined;
     let josephDai: JosephDaiMocks | undefined;
     let stanleyUsdt: MockStanley | undefined;
     let stanleyUsdc: MockStanley | undefined;
@@ -115,7 +118,7 @@ export const prepareTestData = async (
     const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
     const MiltonStorage = await ethers.getContractFactory("MiltonStorage");
 
-    const iporOracle = await prepareIporOracle(accounts);
+    const iporOracle = iporOracleOption || (await prepareIporOracle(accounts));
 
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
@@ -183,7 +186,6 @@ export const prepareTestData = async (
             );
 
             josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
-            await josephUsdc.deployed();
             await josephUsdc.initialize(
                 tokenUsdc.address,
                 ipTokenUsdc.address,
@@ -314,7 +316,8 @@ export const setupTokenDaiInitialValuesForUsers = async (users: Signer[], testDa
 
 export const prepareTestDataDaiCase000 = async (
     accounts: Signer[],
-    miltonSpreadModel: MockMiltonSpreadModel //data
+    miltonSpreadModel: MockMiltonSpreadModel, //data
+    iporOracleOption?: ItfIporOracle
 ): Promise<TestData> => {
     return await prepareTestData(
         accounts,
@@ -323,6 +326,42 @@ export const prepareTestDataDaiCase000 = async (
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
         MiltonDaiCase.CASE0,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0,
+        iporOracleOption
+    );
+};
+
+export const prepareTestDataDaiCase700 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE7,
+        MockStanleyCase.CASE0,
+        JosephUsdcMockCases.CASE0,
+        JosephUsdtMockCases.CASE0,
+        JosephDaiMockCases.CASE0
+    );
+};
+export const prepareTestDataDaiCase800 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel //data
+): Promise<TestData> => {
+    return await prepareTestData(
+        accounts,
+        ["DAI"],
+        miltonSpreadModel,
+        MiltonUsdcCase.CASE0,
+        MiltonUsdtCase.CASE0,
+        MiltonDaiCase.CASE8,
         MockStanleyCase.CASE0,
         JosephUsdcMockCases.CASE0,
         JosephUsdtMockCases.CASE0,
@@ -368,9 +407,34 @@ export const prepareTestDataUsdtCase000 = async (
 
 export const prepareComplexTestDataDaiCase000 = async (
     accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel,
+    iporOracleOption?: ItfIporOracle
+) => {
+    const testData = (await prepareTestDataDaiCase000(
+        accounts,
+        miltonSpreadModel,
+        iporOracleOption
+    )) as TestData;
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const prepareComplexTestDataDaiCase700 = async (
+    accounts: Signer[],
     miltonSpreadModel: MockMiltonSpreadModel
 ) => {
-    const testData = (await prepareTestDataDaiCase000(accounts, miltonSpreadModel)) as TestData;
+    const testData = (await prepareTestDataDaiCase700(accounts, miltonSpreadModel)) as TestData;
+    await prepareApproveForUsers(accounts, "DAI", testData);
+    await setupTokenDaiInitialValuesForUsers(accounts, testData);
+    return testData;
+};
+
+export const prepareComplexTestDataDaiCase800 = async (
+    accounts: Signer[],
+    miltonSpreadModel: MockMiltonSpreadModel
+) => {
+    const testData = (await prepareTestDataDaiCase800(accounts, miltonSpreadModel)) as TestData;
     await prepareApproveForUsers(accounts, "DAI", testData);
     await setupTokenDaiInitialValuesForUsers(accounts, testData);
     return testData;
@@ -427,9 +491,21 @@ export const getStandardDerivativeParamsDAI = (user: Signer, tokenDai: DaiMocked
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+
+export const getReceiveFixedSwapParamsDAI = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
@@ -439,7 +515,7 @@ export const getStandardDerivativeParamsUSDT = (user: Signer, tokenUsdt: UsdtMoc
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
         openTimestamp: Math.floor(Date.now() / 1000),
@@ -469,9 +545,20 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
     return {
         asset: tokenDai.address,
         totalAmount: USD_10_000_18DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+export const getReceiveFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiMockedToken) => {
+    return {
+        asset: tokenDai.address,
+        totalAmount: USD_10_000_18DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
@@ -481,9 +568,23 @@ export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: Us
     return {
         asset: tokenUsdt.address,
         totalAmount: USD_10_000_6DEC,
-        maxAcceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
+        acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
         direction: 0,
+        openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+        from: user,
+    };
+};
+export const getReceiveFixedDerivativeParamsUSDTCase1 = (
+    user: Signer,
+    tokenUsdt: UsdtMockedToken
+) => {
+    return {
+        asset: tokenUsdt.address,
+        totalAmount: USD_10_000_6DEC,
+        acceptableFixedInterestRate: N0__01_18DEC,
+        leverage: LEVERAGE_18DEC,
+        direction: 1,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };

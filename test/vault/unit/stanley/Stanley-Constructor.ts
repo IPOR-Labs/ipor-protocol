@@ -26,6 +26,7 @@ describe("Stanley -> constructor", () => {
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         USDt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+
         StanleyDaiFactory = await hre.ethers.getContractFactory("StanleyDai");
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
         ivToken = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
@@ -146,6 +147,21 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_500");
     });
 
+    it("Shoud throw error when stanley asset != from IvToken asset", async () => {
+        // given
+        // when
+        await expect(
+            //when
+            upgrades.deployProxy(StanleyDaiFactory, [
+                USDt.address,
+                ivToken.address,
+                strategyAave.address,
+                strategyCompound.address,
+            ])
+            //then
+        ).to.be.revertedWith("IPOR_002");
+    });
+
     it("Should be able to pause contract when sender is owner", async () => {
         //given
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
@@ -225,7 +241,7 @@ describe("Stanley -> constructor", () => {
         await stanley.totalBalance(await userOne.getAddress());
     });
 
-    it("should pause Smart Contract specific methods", async () => {
+    it("Should pause Smart Contract specific methods", async () => {
         //given
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
             DAI.address,
@@ -244,5 +260,100 @@ describe("Stanley -> constructor", () => {
         await assertError(stanley.setStrategyAave(strategyAave.address), "Pausable: paused");
         await assertError(stanley.setStrategyAave(strategyCompound.address), "Pausable: paused");
         await assertError(stanley.setMilton(await userOne.getAddress()), "Pausable: paused");
+    });
+
+    it("Should return version of contract ", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            strategyAave.address,
+            strategyCompound.address,
+        ])) as Stanley;
+        //when
+        const version = await stanley.getVersion();
+
+        // then
+        expect(version).to.be.equal(1);
+    });
+
+    it("Should return propper asset", async () => {
+        //given
+        stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
+            DAI.address,
+            ivToken.address,
+            strategyAave.address,
+            strategyCompound.address,
+        ])) as Stanley;
+        //when
+        const assetAddress = await stanley.getAsset();
+        //then
+        expect(assetAddress).to.be.equal(DAI.address);
+    });
+
+    it("Shoud deploy new StanleyUsdt", async () => {
+        // given
+        const StanleyUsdtFactory = await hre.ethers.getContractFactory("StanleyUsdt");
+        const tokenFactoryIvTokenUsdt = await hre.ethers.getContractFactory("IvToken");
+        const ivTokenUsdt = (await tokenFactoryIvTokenUsdt.deploy(
+            "IvToken",
+            "IVT",
+            USDt.address
+        )) as IvToken;
+        ivTokenUsdt;
+        await USDt.setDecimals(BigNumber.from("6"));
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyAaveUsdt = (await StrategyAave.deploy()) as MockStrategy;
+        await strategyAaveUsdt.setShareToken(USDt.address);
+        await strategyAaveUsdt.setAsset(USDt.address);
+
+        const StrategyCompoundUsdt = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyCompoundUsdt = (await StrategyCompoundUsdt.deploy()) as MockStrategy;
+        await strategyCompoundUsdt.setShareToken(USDt.address);
+        await strategyCompoundUsdt.setAsset(USDt.address);
+        // when
+        stanley = (await upgrades.deployProxy(StanleyUsdtFactory, [
+            USDt.address,
+            ivTokenUsdt.address,
+            strategyAaveUsdt.address,
+            strategyCompoundUsdt.address,
+        ])) as Stanley;
+
+        // then
+        expect(stanley.address).to.be.not.empty;
+    });
+
+    it("Shoud deploy new StanleyUsdc", async () => {
+        // given
+        const StanleyUsdtFactory = await hre.ethers.getContractFactory("StanleyUsdc");
+        const tokenFactoryIvTokenUsdt = await hre.ethers.getContractFactory("IvToken");
+        const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+        const usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        await usdc.setDecimals(BigNumber.from("6"));
+        const ivTokenUsdc = (await tokenFactoryIvTokenUsdt.deploy(
+            "IvToken",
+            "IVT",
+            usdc.address
+        )) as IvToken;
+
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyAaveUsdc = (await StrategyAave.deploy()) as MockStrategy;
+        await strategyAaveUsdc.setShareToken(usdc.address);
+        await strategyAaveUsdc.setAsset(usdc.address);
+
+        const StrategyCompoundUsdc = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyCompoundUsdc = (await StrategyCompoundUsdc.deploy()) as MockStrategy;
+        await strategyCompoundUsdc.setShareToken(usdc.address);
+        await strategyCompoundUsdc.setAsset(usdc.address);
+        // when
+        stanley = (await upgrades.deployProxy(StanleyUsdtFactory, [
+            usdc.address,
+            ivTokenUsdc.address,
+            strategyAaveUsdc.address,
+            strategyCompoundUsdc.address,
+        ])) as Stanley;
+
+        // then
+        expect(stanley.address).to.be.not.empty;
     });
 });

@@ -3,6 +3,8 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     ZERO,
+    N1__0_18DEC,
+    N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_120_18DEC,
@@ -17,6 +19,7 @@ import {
     PERIOD_50_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_1_DAY_IN_SECONDS,
+    PERCENTAGE_50_18DEC,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -43,7 +46,7 @@ import {
 
 const { expect } = chai;
 
-describe("MiltonSpreadModel - Core", () => {
+describe("Milton SOAP", () => {
     let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
@@ -133,7 +136,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUserAddress,
@@ -200,7 +203,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -267,7 +270,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -334,7 +337,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -402,7 +405,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -477,7 +480,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: openerUser,
@@ -554,7 +557,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -563,7 +566,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -631,7 +634,7 @@ describe("MiltonSpreadModel - Core", () => {
         const firstDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -640,7 +643,7 @@ describe("MiltonSpreadModel - Core", () => {
         const secondDerivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -653,7 +656,7 @@ describe("MiltonSpreadModel - Core", () => {
             .connect(userOne)
             .itfUpdateIndex(firstDerivativeParams.asset, iporValueBeforOpenSwap, openTimestamp);
         await openSwapPayFixed(testData, firstDerivativeParams);
-        await openSwapReceiveFixed(testData, firstDerivativeParams);
+        await openSwapReceiveFixed(testData, secondDerivativeParams);
 
         const expectedSoap = BigNumber.from("-136534382151108092229");
 
@@ -726,7 +729,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -735,7 +738,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -827,7 +830,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -836,7 +839,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -908,7 +911,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -917,7 +920,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1009,7 +1012,7 @@ describe("MiltonSpreadModel - Core", () => {
         const payFixDerivativeDAIParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1018,7 +1021,7 @@ describe("MiltonSpreadModel - Core", () => {
         const recFixDerivativeUSDTParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: N0__01_18DEC,
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1113,7 +1116,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1199,7 +1202,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenUsdt.address,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1284,7 +1287,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1380,7 +1383,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1388,7 +1391,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1465,7 +1468,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1473,7 +1476,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -1560,7 +1563,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParams = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -1674,7 +1677,7 @@ describe("MiltonSpreadModel - Core", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
             leverage: LEVERAGE_18DEC,
             openTimestamp: secondUpdateIndexTimestamp,
             from: openerUser,
@@ -1720,5 +1723,946 @@ describe("MiltonSpreadModel - Core", () => {
             0,
             `SOAP is positive but should be negative, actual: ${actualSoap}`
         );
+    });
+
+    it("should calculate soap, DAI add pay fixed x2, wait 50 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+        const iporValueBeforeOpenSwap = PERCENTAGE_3_18DEC;
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                derivativeParams25days.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParams25days);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                iporValueBeforeOpenSwap,
+                calculationTimestamp50days
+            );
+
+        //then
+        const expectedSoap = BigNumber.from("-205221535441070939561");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp50days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, DAI, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, complex total amounts", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1000348983489384893923"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1492747383748202058744"),
+            acceptableFixedInterestRate: BigNumber.from("1500000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, DAI, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, simple total amounts", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1040000000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1040000000000000000000"),
+            acceptableFixedInterestRate: BigNumber.from("1500000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, DAI, IPOR 6%, open PayFixed, IPOR 3% after 25 days, open PayFixed, IPOR 3% after 50 days, close all swaps after 75 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1000348983489384893923"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1492747383748202058744"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, DAI, IPOR 3%, open ReceiveFixed, IPOR 5% after 25 days, open ReceiveFixed, IPOR 6% after 50 days, close all swaps after 75 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1000348983489384893923"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1492747383748202058744"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapReceiveFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapReceiveFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, DAI, IPOR 6%, open ReceiveFixed, IPOR 3% after 25 days, open ReceiveFixed, IPOR 3% after 50 days, close all swaps after 75 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
+
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1000348983489384893923"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenDai.address,
+            totalAmount: BigNumber.from("1492747383748202058744"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_18DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapReceiveFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapReceiveFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenDai.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, USDT, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, simple total amounts", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            testData
+        );
+
+        const { tokenUsdt, josephUsdt, iporOracle, miltonUsdt } = testData;
+
+        if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            tokenUsdt
+        );
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1040000000"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+
+        const derivativeParams25days = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1040000000"),
+            acceptableFixedInterestRate: BigNumber.from("1500000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_6DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenUsdt.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, USDT, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, complex total amounts", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        const { tokenUsdt, josephUsdt, iporOracle, miltonUsdt } = testData;
+
+        if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            testData
+        );
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            tokenUsdt
+        );
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1000348983"),
+            acceptableFixedInterestRate: BigNumber.from("900000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+
+        const derivativeParams25days = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1492747383"),
+            acceptableFixedInterestRate: BigNumber.from("1500000000000000000"),
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_6DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapPayFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapPayFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenUsdt.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
+    });
+
+    it("[!] should calculate soap = 0, USDT, IPOR 3%, open ReceiveFixed, IPOR 5% after 25 days, open ReceiveFixed, IPOR 6% after 50 days, close all swaps after 75 days", async () => {
+        //given
+        const testData = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDT"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "USDT",
+            testData
+        );
+
+        const { tokenUsdt, josephUsdt, iporOracle, miltonUsdt } = testData;
+
+        if (tokenUsdt === undefined || josephUsdt === undefined || miltonUsdt === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenUsdtInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            tokenUsdt
+        );
+
+        const openerUser = userTwo;
+
+        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+
+        const derivativeParamsFirst = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1000348983"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp,
+            from: openerUser,
+        };
+        const derivativeParams25days = {
+            asset: tokenUsdt.address,
+            totalAmount: BigNumber.from("1492747383"),
+            acceptableFixedInterestRate: N0__01_18DEC,
+            leverage: BigNumber.from("1000").mul(N1__0_18DEC),
+            openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
+            from: openerUser,
+        };
+        let calculationTimestamp50days =
+            derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await josephUsdt
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(BigNumber.from(2).mul(USD_28_000_6DEC), openTimestamp);
+
+        //when
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_3_18DEC,
+                derivativeParamsFirst.openTimestamp
+            );
+        await openSwapReceiveFixed(testData, derivativeParamsFirst);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_5_18DEC,
+                derivativeParams25days.openTimestamp
+            );
+
+        await openSwapReceiveFixed(testData, derivativeParams25days);
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParamsFirst.asset,
+                PERCENTAGE_6_18DEC,
+                calculationTimestamp50days
+            );
+
+        const calculationTimestamp75days =
+            calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonUsdt.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+
+        //then
+        const expectedSoap = BigNumber.from("0");
+
+        const soapParams = {
+            asset: tokenUsdt.address,
+            calculateTimestamp: calculationTimestamp75days,
+            expectedSoap: expectedSoap,
+            from: userTwo,
+        };
+        await assertSoap(testData, soapParams);
     });
 });

@@ -2,7 +2,7 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer } from "ethers";
 import { IpToken, DaiMockedToken } from "../types";
-import { TC_TOTAL_AMOUNT_10_000_18DEC } from "./utils/Constants";
+import { TC_TOTAL_AMOUNT_10_000_18DEC, ZERO } from "./utils/Constants";
 
 import { assertError } from "./utils/AssertUtils";
 import { prepareTestData } from "./utils/DataUtils";
@@ -180,6 +180,32 @@ describe("IpToken", () => {
             ipToken.connect(userTwo).mint(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
             "IPOR_326"
+        );
+    });
+
+    it("should NOT mint ipToken if Zero", async () => {
+        //given
+        const { ipToken } = await preperateIpTokenCase110();
+        await ipToken.setJoseph(await admin.getAddress());
+        //when
+        await assertError(
+            //when
+            ipToken.mint(await userOne.getAddress(), ZERO),
+            //then
+            "IPOR_400"
+        );
+    });
+
+    it("should NOT burn ipToken if Zero", async () => {
+        //given
+        const { ipToken } = await preperateIpTokenCase110();
+        await ipToken.setJoseph(await admin.getAddress());
+        //when
+        await assertError(
+            //when
+            ipToken.burn(await userOne.getAddress(), ZERO),
+            //then
+            "IPOR_401"
         );
     });
 

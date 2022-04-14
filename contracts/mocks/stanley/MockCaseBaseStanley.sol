@@ -69,7 +69,13 @@ contract MockCaseBaseStanley is IStanley {
         external
         override
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
-    {}
+    {
+        uint256 toWithdraw = _balance[msg.sender];
+        _asset.safeTransfer(msg.sender, toWithdraw);
+        withdrawnAmount = _balance[msg.sender];
+        _balance[msg.sender] = 0;
+        vaultBalance = 0;
+    }
 
     function _getCurrentInterest() internal pure virtual returns (uint256) {
         //@dev for test purposes always the same fixed interest for any msg.sender

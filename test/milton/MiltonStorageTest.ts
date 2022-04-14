@@ -329,6 +329,144 @@ describe("MiltonStorage", () => {
         );
     });
 
+    it("should NOT add Liquidity when assetAmount is zero", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        await miltonStorageDai.setJoseph(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.addLiquidity(ZERO),
+            //then
+            "IPOR_327"
+        );
+    });
+
+    it("should NOT update Storage When transferredAmount > balance", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        await miltonStorageDai.setJoseph(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.updateStorageWhenTransferToTreasury(N1__0_18DEC.mul(N1__0_18DEC)),
+            //then
+            "IPOR_329"
+        );
+    });
+
+    it("should NOT update Storage When vaultBalance < depositAmount", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        await miltonStorageDai.setMilton(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.updateStorageWhenDepositToStanley(N1__0_18DEC, ZERO),
+            //then
+            "IPOR_328"
+        );
+    });
+
+    it("should NOT update Storage When transferredAmount > balanc", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        await miltonStorageDai.setJoseph(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.updateStorageWhenTransferToCharlieTreasury(
+                N1__0_18DEC.mul(N1__0_18DEC)
+            ),
+            //then
+            "IPOR_325"
+        );
+    });
+
+    it("Should not update Storage when send 0", async () => {
+        //given
+        const { miltonStorageDai, miltonDai } = await prepareTestData(
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        if (miltonStorageDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo);
+        await miltonStorageDai.setJoseph(await admin.getAddress());
+        await assertError(
+            //when
+            miltonStorageDai.updateStorageWhenTransferToCharlieTreasury(ZERO),
+            //then
+            "IPOR_006"
+        );
+    });
+
     it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
         //given
         let testData = await prepareTestData(
@@ -370,7 +508,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -454,7 +592,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenUsdt,
             totalAmount: USD_10_000_6DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,
@@ -533,7 +671,7 @@ describe("MiltonStorage", () => {
         const derivativeParams = {
             asset: tokenDai,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            maxAcceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
             leverage: LEVERAGE_18DEC,
             openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
             from: userTwo,

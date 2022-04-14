@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -6,7 +6,6 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "hardhat/console.sol";
 
 library IporSwapLogic {
     using SafeCast for uint256;
@@ -85,19 +84,10 @@ library IporSwapLogic {
             MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
 
-        uint256 calculatedPeriodInSeconds = 0;
-
-        //calculated period cannot be longer than whole swap period
-        if (closingTimestamp > swap.endTimestamp) {
-            calculatedPeriodInSeconds = swap.endTimestamp - swap.openTimestamp;
-        } else {
-            calculatedPeriodInSeconds = closingTimestamp - swap.openTimestamp;
-        }
-
         quasiIFixed = calculateQuasiInterestFixed(
             swap.notional,
             swap.fixedInterestRate,
-            calculatedPeriodInSeconds
+            closingTimestamp - swap.openTimestamp
         );
 
         quasiIFloating = calculateQuasiInterestFloating(swap.ibtQuantity, mdIbtPrice);
