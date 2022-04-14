@@ -6,6 +6,7 @@ import "../../libraries/math/IporMath.sol";
 
 uint256 constant END_INTERVAL_ONE = 119775;
 uint256 constant END_INTERVAL_TWO = 397877;
+uint256 constant END_INTERVAL_THREE = 863989;
 
 // Line One Parameters in wand
 int256 constant SLPO_ONE = -4174466310925;
@@ -14,6 +15,10 @@ int256 constant BASE_ONE = 1000000000000000000;
 // Line two Parameters in wand
 int256 constant SLPO_TWO = -1438263483253;
 int256 constant BASE_TWO = 672262133606895744;
+
+// Line three Parameters in wand
+int256 constant SLPO_THREE = -200088090873;
+int256 constant BASE_THREE = 179614057514071616;
 
 library DecayFactorCalculation {
     using SafeCast for uint256;
@@ -28,6 +33,10 @@ library DecayFactorCalculation {
 
         if (timeInterval < END_INTERVAL_TWO) {
             return linearFunction(SLPO_TWO, BASE_TWO, timeInterval.toInt256()).toUint256();
+        }
+
+        if (timeInterval < END_INTERVAL_THREE) {
+            return linearFunction(SLPO_THREE, BASE_THREE, timeInterval.toInt256()).toUint256();
         }
 
         decayFactor = 0;
