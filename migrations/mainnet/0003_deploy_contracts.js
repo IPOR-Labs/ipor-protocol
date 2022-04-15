@@ -1,6 +1,7 @@
 // require("dotenv").config({ path: "../.env" });
 
-const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
+const { deployProxy } = require("@openzeppelin/truffle-upgrades");
+const { deployProxyImpl } = require("@openzeppelin/truffle-upgrades/dist/utils");
 // const { artifacts } = require("hardhat");
 
 // const keccak256 = require("keccak256");
@@ -28,28 +29,17 @@ const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
-const ItfStanleyUsdt = artifacts.require("ItfStanleyUsdt");
-const ItfStanleyUsdc = artifacts.require("ItfStanleyUsdc");
-const ItfStanleyDai = artifacts.require("ItfStanleyDai");
-
 const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
 const IporOracle = artifacts.require("IporOracle");
-const ItfIporOracle = artifacts.require("ItfIporOracle");
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
 const MiltonDai = artifacts.require("MiltonDai");
-const ItfMiltonUsdt = artifacts.require("ItfMiltonUsdt");
-const ItfMiltonUsdc = artifacts.require("ItfMiltonUsdc");
-const ItfMiltonDai = artifacts.require("ItfMiltonDai");
 const JosephUsdt = artifacts.require("JosephUsdt");
 const JosephUsdc = artifacts.require("JosephUsdc");
 const JosephDai = artifacts.require("JosephDai");
-const ItfJosephUsdt = artifacts.require("ItfJosephUsdt");
-const ItfJosephUsdc = artifacts.require("ItfJosephUsdc");
-const ItfJosephDai = artifacts.require("ItfJosephDai");
 const IporOracleFacadeDataProvider = artifacts.require("IporOracleFacadeDataProvider");
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
 const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
@@ -73,9 +63,6 @@ module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
-    await deployer.deploy(MiltonFaucet);
-    const miltonFaucet = await MiltonFaucet.deployed();
-
     await deployer.deploy(UsdtMockedToken, stableTotalSupply6Decimals, 6);
     const mockedUsdt = await UsdtMockedToken.deployed();
 
@@ -95,7 +82,66 @@ module.exports = async function (deployer, _network) {
     const mockedADai = await MockADai.deployed();
 
     await deployer.deploy(AAVEMockedToken, stableTotalSupply18Decimals, 18);
-    const AAVE = await AAVEMockedToken.deployed();
+    const mockedAAVE = await AAVEMockedToken.deployed();
+
+    await deployer.deploy(
+        MockLendingPoolAave,
+        mockedDai.address,
+        mockedADai.address,
+        BigInt("1000000000000000000"),
+        mockedUsdc.address,
+        mockedAUsdc.address,
+        BigInt("2000000"),
+        mockedUsdt.address,
+        mockedAUsdt.address,
+        BigInt("2000000")
+    );
+    const mockedLendingPool = await MockLendingPoolAave.deployed();
+
+    await deployer.deploy(MockProviderAave, mockedLendingPool.address);
+    const mockedAaveProvider = await MockProviderAave.deployed();
+
+    await deployer.deploy(MockStakedAave, mockedAAVE.address);
+    const mockedStakedAave = await MockStakedAave.deployed();
+
+    await deployer.deploy(MockAaveIncentivesController, mockedStakedAave.address);
+    const mockedAaveIncentivesController = await MockAaveIncentivesController.deployed();
+
+    await deployer.deploy(MockWhitePaper);
+    const mockedWhitePaperInstance = await MockWhitePaper.deployed();
+
+    await deployer.deploy(MockCUSDC, mockedUsdc.address, mockedWhitePaperInstance.address);
+    const mockedCUsdc = await MockCUSDC.deployed();
+
+    await deployer.deploy(MockCUSDT, mockedUsdt.address, mockedWhitePaperInstance.address);
+    const mockedCUsdt = await MockCUSDT.deployed();
+
+    await deployer.deploy(MockCDai, mockedDai.address, mockedWhitePaperInstance.address);
+    const mockedCDai = await MockCDai.deployed();
+
+    await deployer.deploy(MockedCOMPTokenDAI, stableTotalSupply18Decimals, 18);
+    const mockedCOMPDAI = await MockedCOMPTokenDAI.deployed();
+
+    await deployer.deploy(MockedCOMPTokenUSDC, stableTotalSupply6Decimals, 6);
+    const mockedCOMPUSDC = await MockedCOMPTokenUSDC.deployed();
+
+    await deployer.deploy(MockedCOMPTokenUSDT, stableTotalSupply6Decimals, 6);
+    const mockedCOMPUSDT = await MockedCOMPTokenUSDT.deployed();
+
+    await deployer.deploy(MockComptrollerUSDT, mockedCOMPUSDT.address, mockedCUsdt.address);
+    const mockComptrollerUSDT = await MockComptrollerUSDT.deployed();
+
+    await deployer.deploy(MockComptrollerUSDC, mockedCOMPUSDC.address, mockedCUsdc.address);
+    const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
+
+    await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
+    const mockComptrollerDAI = await MockComptrollerDAI.deployed();
+
+    await deployer.deploy(MiltonFaucet);
+    const miltonFaucet = await MiltonFaucet.deployed();
+	
+	//------------------------------------
+    
 
     await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", mockedUsdt.address);
     const ipTokenUsdt = await IpTokenUsdt.deployed();
@@ -115,29 +161,6 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", mockedDai.address);
     const ivTokenDai = await IvTokenDai.deployed();
 
-    await deployer.deploy(
-        MockLendingPoolAave,
-        mockedDai.address,
-        mockedADai.address,
-        BigInt("1000000000000000000"),
-        mockedUsdc.address,
-        mockedAUsdc.address,
-        BigInt("2000000"),
-        mockedUsdt.address,
-        mockedAUsdt.address,
-        BigInt("2000000")
-    );
-    const lendingPool = await MockLendingPoolAave.deployed();
-
-    await deployer.deploy(MockProviderAave, lendingPool.address);
-    const aaveProvider = await MockProviderAave.deployed();
-
-    await deployer.deploy(MockStakedAave, AAVE.address);
-    const stakedAave = await MockStakedAave.deployed();
-
-    await deployer.deploy(MockAaveIncentivesController, stakedAave.address);
-    const aaveIncentivesController = await MockAaveIncentivesController.deployed();
-
     const strategyAaveUsdt = await deployProxy(
         StrategyAaveUsdt,
         [
@@ -154,10 +177,6 @@ module.exports = async function (deployer, _network) {
             kind: "uups",
         }
     );
-
-	console.log ("Strategy Aaave USDT: ", erc1967.getImplementationAddress(strategyAaveUsdt.address);
-
-	
 
     const strategyAaveUsdc = await deployProxy(
         StrategyAaveUsdc,
@@ -192,34 +211,6 @@ module.exports = async function (deployer, _network) {
             kind: "uups",
         }
     );
-
-    await deployer.deploy(MockWhitePaper);
-    const mockWhitePaperInstance = await MockWhitePaper.deployed();
-
-    await deployer.deploy(MockCUSDC, mockedUsdc.address, mockWhitePaperInstance.address);
-    const mockedCUsdc = await MockCUSDC.deployed();
-    await deployer.deploy(MockCUSDT, mockedUsdt.address, mockWhitePaperInstance.address);
-    const mockedCUsdt = await MockCUSDT.deployed();
-    await deployer.deploy(MockCDai, mockedDai.address, mockWhitePaperInstance.address);
-    const mockedCDai = await MockCDai.deployed();
-
-    await deployer.deploy(MockedCOMPTokenDAI, stableTotalSupply18Decimals, 18);
-    const mockedCOMPDAI = await MockedCOMPTokenDAI.deployed();
-
-    await deployer.deploy(MockedCOMPTokenUSDC, stableTotalSupply6Decimals, 6);
-    const mockedCOMPUSDC = await MockedCOMPTokenUSDC.deployed();
-
-    await deployer.deploy(MockedCOMPTokenUSDT, stableTotalSupply6Decimals, 6);
-    const mockedCOMPUSDT = await MockedCOMPTokenUSDT.deployed();
-
-    await deployer.deploy(MockComptrollerUSDT, mockedCOMPUSDT.address, mockedCUsdt.address);
-    const mockComptrollerUSDT = await MockComptrollerUSDT.deployed();
-
-    await deployer.deploy(MockComptrollerUSDC, mockedCOMPUSDC.address, mockedCUsdc.address);
-    const mockComptrollerUSDC = await MockComptrollerUSDC.deployed();
-
-    await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
-    const mockComptrollerDAI = await MockComptrollerDAI.deployed();
 
     await deployer.deploy(MiltonSpreadModel);
     const miltonSpreadModel = await MiltonSpreadModel.deployed();
@@ -309,51 +300,6 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const itfStanleyUsdt = await deployProxy(
-        ItfStanleyUsdt,
-        [
-            mockedUsdt.address,
-            ivTokenUsdt.address,
-            strategyAaveUsdt.address,
-            strategyCompoundUsdt.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const itfStanleyUsdc = await deployProxy(
-        ItfStanleyUsdc,
-        [
-            mockedUsdc.address,
-            ivTokenUsdc.address,
-            strategyAaveUsdc.address,
-            strategyCompoundUsdc.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const itfStanleyDai = await deployProxy(
-        ItfStanleyDai,
-        [
-            mockedDai.address,
-            ivTokenDai.address,
-            strategyAaveDai.address,
-            strategyCompoundDai.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
     const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
         deployer: deployer,
         initializer: "initialize",
@@ -378,12 +324,6 @@ module.exports = async function (deployer, _network) {
         kind: "uups",
     });
 
-    const itfIporOracle = await deployProxy(ItfIporOracle, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
     const miltonUsdt = await deployProxy(
         MiltonUsdt,
         [
@@ -392,22 +332,6 @@ module.exports = async function (deployer, _network) {
             miltonStorageUsdt.address,
             miltonSpreadModel.address,
             stanleyUsdt.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const itfMiltonUsdt = await deployProxy(
-        ItfMiltonUsdt,
-        [
-            mockedUsdt.address,
-            itfIporOracle.address,
-            miltonStorageUsdt.address,
-            miltonSpreadModel.address,
-            itfStanleyUsdt.address,
         ],
         {
             deployer: deployer,
@@ -432,22 +356,6 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const itfMiltonUsdc = await deployProxy(
-        ItfMiltonUsdc,
-        [
-            mockedUsdc.address,
-            itfIporOracle.address,
-            miltonStorageUsdc.address,
-            miltonSpreadModel.address,
-            itfStanleyUsdc.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
     const miltonDai = await deployProxy(
         MiltonDai,
         [
@@ -456,22 +364,6 @@ module.exports = async function (deployer, _network) {
             miltonStorageDai.address,
             miltonSpreadModel.address,
             stanleyDai.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const itfMiltonDai = await deployProxy(
-        ItfMiltonDai,
-        [
-            mockedDai.address,
-            itfIporOracle.address,
-            miltonStorageDai.address,
-            miltonSpreadModel.address,
-            itfStanleyDai.address,
         ],
         {
             deployer: deployer,
@@ -496,22 +388,6 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const itfJosephUsdt = await deployProxy(
-        ItfJosephUsdt,
-        [
-            mockedUsdt.address,
-            ipTokenUsdt.address,
-            itfMiltonUsdt.address,
-            miltonStorageUsdt.address,
-            itfStanleyUsdt.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
     const josephUsdc = await deployProxy(
         JosephUsdc,
         [
@@ -520,22 +396,6 @@ module.exports = async function (deployer, _network) {
             miltonUsdc.address,
             miltonStorageUsdc.address,
             stanleyUsdc.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
-    const itfJosephUsdc = await deployProxy(
-        ItfJosephUsdc,
-        [
-            mockedUsdc.address,
-            ipTokenUsdc.address,
-            itfMiltonUsdc.address,
-            miltonStorageUsdc.address,
-            itfStanleyUsdc.address,
         ],
         {
             deployer: deployer,
@@ -560,22 +420,6 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const itfJosephDai = await deployProxy(
-        ItfJosephDai,
-        [
-            mockedDai.address,
-            ipTokenDai.address,
-            itfMiltonDai.address,
-            miltonStorageDai.address,
-            itfStanleyDai.address,
-        ],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-
     const iporOracleDarcyDataProvider = await deployProxy(
         IporOracleFacadeDataProvider,
         [[mockedDai.address, mockedUsdt.address, mockedUsdc.address], iporOracle.address],
@@ -585,74 +429,39 @@ module.exports = async function (deployer, _network) {
             kind: "uups",
         }
     );
-    if (process.env.ITF_ENABLED === "true") {
-        const miltonDevToolDataProvider = await deployProxy(
-            CockpitDataProvider,
-            [
-                itfIporOracle.address,
-                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
-                [itfMiltonUsdt.address, itfMiltonUsdc.address, itfMiltonDai.address],
-                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-                [itfJosephUsdt.address, itfJosephUsdc.address, itfJosephDai.address],
-                [ipTokenUsdt.address, ipTokenUsdc.address, ipTokenDai.address],
-                [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
-            ],
-            {
-                deployer: deployer,
-                initializer: "initialize",
-                kind: "uups",
-            }
-        );
 
-        const miltonFacadeDataProvider = await deployProxy(
-            MiltonFacadeDataProvider,
-            [
-                iporOracle.address,
-                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
-                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
-                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-                [itfJosephUsdt.address, itfJosephUsdc.address, itfJosephDai.address],
-            ],
-            {
-                deployer: deployer,
-                initializer: "initialize",
-                kind: "uups",
-            }
-        );
-    } else {
-        const miltonDevToolDataProvider = await deployProxy(
-            CockpitDataProvider,
-            [
-                iporOracle.address,
-                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
-                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
-                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-                [josephUsdt.address, josephUsdc.address, josephDai.address],
-                [ipTokenUsdt.address, ipTokenUsdc.address, ipTokenDai.address],
-                [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
-            ],
-            {
-                deployer: deployer,
-                initializer: "initialize",
-                kind: "uups",
-            }
-        );
-        const miltonFacadeDataProvider = await deployProxy(
-            MiltonFacadeDataProvider,
-            [
-                iporOracle.address,
-                [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
-                [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
-                [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
-                [josephUsdt.address, josephUsdc.address, josephDai.address],
-            ],
-            {
-                deployer: deployer,
-                initializer: "initialize",
-                kind: "uups",
-            }
-        );
-    }
+    const miltonDevToolDataProvider = await deployProxy(
+        CockpitDataProvider,
+        [
+            iporOracle.address,
+            [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+            [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+            [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+            [josephUsdt.address, josephUsdc.address, josephDai.address],
+            [ipTokenUsdt.address, ipTokenUsdc.address, ipTokenDai.address],
+            [ivTokenUsdt.address, ivTokenUsdc.address, ivTokenDai.address],
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+    const miltonFacadeDataProvider = await deployProxy(
+        MiltonFacadeDataProvider,
+        [
+            iporOracle.address,
+            [mockedUsdt.address, mockedUsdc.address, mockedDai.address],
+            [miltonUsdt.address, miltonUsdc.address, miltonDai.address],
+            [miltonStorageUsdt.address, miltonStorageUsdc.address, miltonStorageDai.address],
+            [josephUsdt.address, josephUsdc.address, josephDai.address],
+        ],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
     console.log("Congratulations! DEPLOY Smart Contracts finished!");
 };
