@@ -11,13 +11,7 @@ module.exports = {
         // "buidler-gas-reporter",
         "solidity-coverage",
     ],
-    environments: {
-        dev: {},
-
-        testnet: {},
-        production: {},
-    },
-    // contracts_directory: path.join(__dirname, "contracts"),
+    migrations_directory: process.env.MIGRATION_DIRECTORY,
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
         dev: {
