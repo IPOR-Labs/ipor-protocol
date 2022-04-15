@@ -34,12 +34,12 @@ contract MiltonStorage is
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsReceiveFixed;
 
     modifier onlyMilton() {
-        require(msg.sender == _milton, IporErrors.CALLER_NOT_MILTON);
+        require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
     }
 
     modifier onlyJoseph() {
-        require(msg.sender == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+        require(_msgSender() == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -344,7 +344,7 @@ contract MiltonStorage is
     function updateStorageWhenCloseSwapPayFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -354,7 +354,7 @@ contract MiltonStorage is
         _updateBalancesWhenCloseSwapPayFixed(
             liquidator,
             iporSwap,
-            positionValue,
+            payoff,
             closingTimestamp,
             cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -366,7 +366,7 @@ contract MiltonStorage is
     function updateStorageWhenCloseSwapReceiveFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -376,7 +376,7 @@ contract MiltonStorage is
         _updateBalancesWhenCloseSwapReceiveFixed(
             liquidator,
             iporSwap,
-            positionValue,
+            payoff,
             closingTimestamp,
             cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -460,14 +460,14 @@ contract MiltonStorage is
         require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
         address oldMilton = _milton;
         _milton = newMilton;
-        emit MiltonChanged(msg.sender, oldMilton, newMilton);
+        emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
 
     function setJoseph(address newJoseph) external override onlyOwner {
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
         address oldJoseph = _joseph;
         _joseph = newJoseph;
-        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
+        emit JosephChanged(_msgSender(), oldJoseph, newJoseph);
     }
 
     function pause() external override onlyOwner {
@@ -622,7 +622,7 @@ contract MiltonStorage is
     function _updateBalancesWhenCloseSwapPayFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -631,7 +631,7 @@ contract MiltonStorage is
         _updateBalancesWhenCloseSwap(
             liquidator,
             swap,
-            positionValue,
+            payoff,
             closingTimestamp,
             cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -646,7 +646,7 @@ contract MiltonStorage is
     function _updateBalancesWhenCloseSwapReceiveFixed(
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -655,7 +655,7 @@ contract MiltonStorage is
         _updateBalancesWhenCloseSwap(
             liquidator,
             swap,
-            positionValue,
+            payoff,
             closingTimestamp,
             cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
@@ -670,19 +670,19 @@ contract MiltonStorage is
     function _updateBalancesWhenCloseSwap(
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
-        int256 positionValue,
+        int256 payoff,
         uint256 closingTimestamp,
         uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
-        uint256 absPositionValue = IporMath.absoluteValue(positionValue);
-        uint256 minPositionValueToCloseBeforeMaturity = IporMath.percentOf(
+        uint256 absPayoff = IporMath.absoluteValue(payoff);
+        uint256 minPayoffToCloseBeforeMaturity = IporMath.percentOf(
             swap.collateral,
             cfgMinLiquidationThresholdToCloseBeforeMaturity
         );
 
-        if (absPositionValue < minPositionValueToCloseBeforeMaturity) {
+        if (absPayoff < minPayoffToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner
             if (liquidator != swap.buyer) {
@@ -694,21 +694,19 @@ contract MiltonStorage is
             }
         }
 
-        uint256 incomeFee = IporMath.division(absPositionValue * cfgIncomeFeeRate, Constants.D18);
+        uint256 incomeFee = IporMath.division(absPayoff * cfgIncomeFeeRate, Constants.D18);
 
         _balances.treasury = _balances.treasury + incomeFee.toUint128();
 
-        if (positionValue > 0) {
+        if (payoff > 0) {
             require(
-                _balances.liquidityPool >= absPositionValue,
+                _balances.liquidityPool >= absPayoff,
                 MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
-            _balances.liquidityPool = _balances.liquidityPool - absPositionValue.toUint128();
+            _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
-            _balances.liquidityPool =
-                _balances.liquidityPool +
-                (absPositionValue - incomeFee).toUint128();
+            _balances.liquidityPool = _balances.liquidityPool + (absPayoff - incomeFee).toUint128();
         }
     }
 

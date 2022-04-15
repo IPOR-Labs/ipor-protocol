@@ -13,7 +13,7 @@ interface IMilton {
     function calculateSpread()
         external
         view
-        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed);
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 
     /// @notice Calculates the SOAP for the current block
     /// @return soapPayFixed SOAP for Pay-Fixed leg.

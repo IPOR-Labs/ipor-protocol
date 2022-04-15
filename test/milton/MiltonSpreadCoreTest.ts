@@ -2,6 +2,7 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
+    N1__0_18DEC,
     N0__01_18DEC,
     N0__001_18DEC,
     N0__000_1_18DEC,
@@ -157,21 +158,29 @@ describe("MiltonSpreadModel - Core", () => {
         const miltonSpread = await prepareMiltonSpreadBase();
 
         // when
-
         const spreadPremiumsMaxValue = await miltonSpread.getSpreadPremiumsMaxValue();
         const dCKfValue = await miltonSpread.getDCKfValue();
         const dCLambdaValue = await miltonSpread.getDCLambdaValue();
         const dCKOmegaValue = await miltonSpread.getDCKOmegaValue();
-        const atParComponentKVolValue = await miltonSpread.getAtParComponentKVolValue();
-        const atParComponentKHistValue = await miltonSpread.getAtParComponentKHistValue();
+        const dcMaxLiquidityRedemptionValue = await miltonSpread.getDCMaxLiquidityRedemptionValue();
+        const b1 = await miltonSpread.getB1();
+        const b2 = await miltonSpread.getB2();
+        const v1 = await miltonSpread.getV1();
+        const v2 = await miltonSpread.getV2();
+        const m1 = await miltonSpread.getM1();
+        const m2 = await miltonSpread.getM2();
 
         // then
-
         expect(spreadPremiumsMaxValue).to.be.equal(BigNumber.from("3").mul(N0__001_18DEC));
         expect(dCKfValue).to.be.equal(N0__000_01_18DEC);
         expect(dCLambdaValue).to.be.equal(N0__01_18DEC);
         expect(dCKOmegaValue).to.be.equal(BigNumber.from("5").mul(N0__000_01_18DEC));
-        expect(atParComponentKVolValue).to.be.equal(ZERO);
-        expect(atParComponentKHistValue).to.be.equal(BigNumber.from("3").mul(N0__000_1_18DEC));
+        expect(dcMaxLiquidityRedemptionValue).to.be.equal(N1__0_18DEC);
+        expect(b1).to.be.equal(BigNumber.from("-8260047328466268"));
+        expect(b2).to.be.equal(BigNumber.from("-9721941081703882"));
+        expect(v1).to.be.equal(BigNumber.from("47294930726988593"));
+        expect(v2).to.be.equal(BigNumber.from("8792990351805524"));
+        expect(m1).to.be.equal(BigNumber.from("-9721941081703882"));
+        expect(m2).to.be.equal(BigNumber.from("-3996501128463404"));
     });
 });

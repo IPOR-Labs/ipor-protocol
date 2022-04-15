@@ -7,11 +7,11 @@ import "../../libraries/math/IporMath.sol";
 uint256 constant END_INTERVAL_ONE = 119775;
 uint256 constant END_INTERVAL_TWO = 397877;
 
-// Line One Parameters in wand
+// Line One Parameters in WAD
 int256 constant SLPO_ONE = -4174466310925;
 int256 constant BASE_ONE = 1000000000000000000;
 
-// Line two Parameters in wand
+// Line two Parameters in WAD
 int256 constant SLPO_TWO = -1438263483253;
 int256 constant BASE_TWO = 672262133606895744;
 

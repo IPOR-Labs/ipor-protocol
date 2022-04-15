@@ -69,7 +69,7 @@ abstract contract MiltonInternal is
     IStanley internal _stanley;
 
     modifier onlyJoseph() {
-        require(msg.sender == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
+        require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -146,22 +146,22 @@ abstract contract MiltonInternal is
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
+    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap)
         external
         view
         override
         returns (int256)
     {
-        return _calculateSwapPayFixedValue(block.timestamp, swap);
+        return _calculatePayoffPayFixed(block.timestamp, swap);
     }
 
-    function calculateSwapReceiveFixedValue(IporTypes.IporSwapMemory memory swap)
+    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
         external
         view
         override
         returns (int256)
     {
-        return _calculateSwapReceiveFixedValue(block.timestamp, swap);
+        return _calculatePayoffReceiveFixed(block.timestamp, swap);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
@@ -202,7 +202,7 @@ abstract contract MiltonInternal is
         require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
         address oldJoseph = _getJoseph();
         _joseph = newJoseph;
-        emit JosephChanged(msg.sender, oldJoseph, newJoseph);
+        emit JosephChanged(_msgSender(), oldJoseph, newJoseph);
     }
 
     function getJoseph() external view override returns (address) {
@@ -326,24 +326,25 @@ abstract contract MiltonInternal is
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function _calculateSwapPayFixedValue(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
+    function _calculatePayoffPayFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
         internal
         view
         returns (int256)
     {
         return
-            swap.calculateSwapPayFixedValue(
+            swap.calculatePayoffPayFixed(
                 timestamp,
                 _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );
     }
 
-    function _calculateSwapReceiveFixedValue(
-        uint256 timestamp,
-        IporTypes.IporSwapMemory memory swap
-    ) internal view returns (int256) {
+    function _calculatePayoffReceiveFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
+        internal
+        view
+        returns (int256)
+    {
         return
-            swap.calculateSwapReceiveFixedValue(
+            swap.calculatePayoffReceiveFixed(
                 timestamp,
                 _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );

@@ -614,14 +614,14 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const expectedSOAPAfter28Days = BigNumber.from("76666315173940979346744");
         const expectedExchangeRateAfter28Days = BigNumber.from("923393648836855782");
 
-        const expectedPositionValue1After28Days = BigNumber.from("38333157586970489673372");
-        const expectedPositionValue2After28Days = BigNumber.from("38333157586970489673372");
+        const expectedPayoff1After28Days = BigNumber.from("38333157586970489673372");
+        const expectedPayoff2After28Days = BigNumber.from("38333157586970489673372");
 
         const expectedSOAPAfter56DaysBeforeClose = BigNumber.from("153332630347881958693488");
         const expectedExchangeRateAfter56DaysBeforeClose = BigNumber.from("846727333662914802");
 
-        const expectedPositionValue1After56Days = BigNumber.from("76666315173940979346744");
-        const expectedPositionValue2After56Days = BigNumber.from("76666315173940979346744");
+        const expectedPayoff1After56Days = BigNumber.from("76666315173940979346744");
+        const expectedPayoff2After56Days = BigNumber.from("76666315173940979346744");
 
         const expectedSOAPAfter56DaysAfterClose = BigNumber.from("0");
         const expectedExchangeRateAfter56DaysAfterClose = BigNumber.from("846727333662914802");
@@ -646,11 +646,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const actualExchangeRateAfter28Days = await josephDai.itfCalculateExchangeRate(
             timestamp28DaysLater
         );
-        const actualPositionValue1After28days = await miltonDai.itfCalculateSwapPayFixedValue(
+        const actualPayoff1After28days = await miltonDai.itfCalculateSwapPayFixedValue(
             timestamp28DaysLater,
             1
         );
-        const actualPositionValue2After28days = await miltonDai.itfCalculateSwapPayFixedValue(
+        const actualPayoff2After28days = await miltonDai.itfCalculateSwapPayFixedValue(
             timestamp28DaysLater,
             2
         );
@@ -661,11 +661,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const actualExchangeRateAfter56DaysBeforeClose = await josephDai.itfCalculateExchangeRate(
             timestamp56DaysLater
         );
-        const actualPositionValue1After56days = await miltonDai.itfCalculateSwapPayFixedValue(
+        const actualPayoff1After56days = await miltonDai.itfCalculateSwapPayFixedValue(
             timestamp56DaysLater,
             1
         );
-        const actualPositionValue2After56days = await miltonDai.itfCalculateSwapPayFixedValue(
+        const actualPayoff2After56days = await miltonDai.itfCalculateSwapPayFixedValue(
             timestamp56DaysLater,
             2
         );
@@ -695,14 +695,14 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         expect(expectedInitialExchangeRate).to.be.eql(actualInitialExchangeRate);
         expect(expectedSOAPAfter28Days).to.be.eql(actualSOAPAfter28Days.soap);
         expect(expectedExchangeRateAfter28Days).to.be.eql(actualExchangeRateAfter28Days);
-        expect(expectedPositionValue1After28Days).to.be.eql(actualPositionValue1After28days);
-        expect(expectedPositionValue2After28Days).to.be.eql(actualPositionValue2After28days);
+        expect(expectedPayoff1After28Days).to.be.eql(actualPayoff1After28days);
+        expect(expectedPayoff2After28Days).to.be.eql(actualPayoff2After28days);
         expect(expectedSOAPAfter56DaysBeforeClose).to.be.eql(actualSOAPAfter56DaysBeforeClose.soap);
         expect(expectedExchangeRateAfter56DaysBeforeClose).to.be.eql(
             actualExchangeRateAfter56DaysBeforeClose
         );
-        expect(expectedPositionValue1After56Days).to.be.eql(actualPositionValue1After56days);
-        expect(expectedPositionValue2After56Days).to.be.eql(actualPositionValue2After56days);
+        expect(expectedPayoff1After56Days).to.be.eql(actualPayoff1After56days);
+        expect(expectedPayoff2After56Days).to.be.eql(actualPayoff2After56days);
         expect(expectedSOAPAfter56DaysAfterClose).to.be.eql(actualSOAPAfter56DaysAfterClose.soap);
         expect(expectedExchangeRateAfter56DaysAfterClose).to.be.eql(
             actualExchangeRateAfter56DaysAfterClose

@@ -12,7 +12,7 @@ import {
     PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
     N1__0_18DEC,
-	N0__01_18DEC,
+    N0__01_18DEC,
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -65,7 +65,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 import {
     prepareComplexTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
-	getReceiveFixedDerivativeParamsDAICase1,
+    getReceiveFixedDerivativeParamsDAICase1,
     prepareApproveForUsers,
     prepareTestData,
     setupTokenUsdtInitialValuesForUsers,
@@ -117,7 +117,7 @@ describe("Milton - close position", () => {
             .add(openingFee)
             .sub(expectedIncomeFeeValue);
 
-        const expectedPositionValue = ZERO;
+        const expectedPayoff = ZERO;
 
         const { tokenDai } = testData;
         if (tokenDai === undefined) {
@@ -146,7 +146,7 @@ describe("Milton - close position", () => {
             expectedIncomeFeeValue,
             ZERO,
             ZERO,
-            expectedPositionValue,
+            expectedPayoff,
             expectedIncomeFeeValue,
             userOne,
             liquidityProvider
@@ -160,8 +160,8 @@ describe("Milton - close position", () => {
         );
 
         const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
-        const expectedPositionValue = BigNumber.from("-68267191075554046114");
-        const expectedPositionValueWad = BigNumber.from("-68267191075554046114");
+        const expectedPayoff = BigNumber.from("-68267191075554046114");
+        const expectedPayoffWad = BigNumber.from("-68267191075554046114");
 
         const { tokenDai } = testData;
         if (tokenDai === undefined) {
@@ -186,8 +186,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -224,8 +224,8 @@ describe("Milton - close position", () => {
         );
 
         const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
-        const expectedPositionValue = BigNumber.from("-68267191");
-        const expectedPositionValueWad = BigNumber.from("-68267191075554046114");
+        const expectedPayoff = BigNumber.from("-68267191");
+        const expectedPayoffWad = BigNumber.from("-68267191075554046114");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -244,8 +244,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -264,8 +264,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -284,8 +284,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -322,8 +322,8 @@ describe("Milton - close position", () => {
         );
 
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_6DEC.mul("-1");
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul("-1");
+        const expectedPayoff = TC_COLLATERAL_6DEC.mul("-1");
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul("-1");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -342,8 +342,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -362,8 +362,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = BigNumber.from("791899416476426938347");
-        const expectedPositionValue = BigNumber.from("-7918994164764269383465");
-        const expectedPositionValueWad = BigNumber.from("-7918994164764269383465");
+        const expectedPayoff = BigNumber.from("-7918994164764269383465");
+        const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
@@ -381,8 +381,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -420,8 +420,8 @@ describe("Milton - close position", () => {
         );
 
         const expectedIncomeFeeValueWad = BigNumber.from("791899416476426938347");
-        const expectedPositionValue = BigNumber.from("-7918994165");
-        const expectedPositionValueWad = BigNumber.from("-7918994164764269383465");
+        const expectedPayoff = BigNumber.from("-7918994165");
+        const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -440,8 +440,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -460,8 +460,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPositionValue = BigNumber.from("-9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("-9967009897030890732780");
+        const expectedPayoff = BigNumber.from("-9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("-9967009897030890732780");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -480,8 +480,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -501,8 +501,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -522,8 +522,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -560,8 +560,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("996700990");
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_6DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_6DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -581,8 +581,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -603,8 +603,8 @@ describe("Milton - close position", () => {
         const expectedIncomeFeeValue = BigNumber.from("778245978261316123526");
         const expectedIncomeFeeValueWad = BigNumber.from("778245978261316123526");
 
-        const expectedPositionValue = BigNumber.from("7782459782613161235257");
-        const expectedPositionValueWad = BigNumber.from("7782459782613161235257");
+        const expectedPayoff = BigNumber.from("7782459782613161235257");
+        const expectedPayoffWad = BigNumber.from("7782459782613161235257");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -624,8 +624,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -663,8 +663,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("778245978");
         const expectedIncomeFeeValueWad = BigNumber.from("778245978261316123526");
-        const expectedPositionValue = BigNumber.from("7782459782");
-        const expectedPositionValueWad = BigNumber.from("7782459782613161235257");
+        const expectedPayoff = BigNumber.from("7782459782");
+        const expectedPayoffWad = BigNumber.from("7782459782613161235257");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -684,8 +684,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -705,8 +705,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -726,8 +726,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -747,8 +747,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = SPECIFIC_INCOME_TAX_CASE_1;
         const expectedIncomeFeeValueWad = SPECIFIC_INCOME_TAX_CASE_1;
-        const expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
-        const expectedPositionValueWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        const expectedPayoff = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        const expectedPayoffWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -768,8 +768,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -790,8 +790,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -811,8 +811,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -833,8 +833,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("989874270595533665253");
         const expectedIncomeTaxValueWad = BigNumber.from("989874270595533665253");
-        const expectedPositionValue = BigNumber.from("9898742705955336652531");
-        const expectedPositionValueWad = BigNumber.from("9898742705955336652531");
+        const expectedPayoff = BigNumber.from("9898742705955336652531");
+        const expectedPayoffWad = BigNumber.from("9898742705955336652531");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -854,8 +854,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeTaxValue,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -876,8 +876,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("865150112500496428963");
         const expectedIncomeTaxValueWad = BigNumber.from("865150112500496428963");
-        const expectedPositionValue = BigNumber.from("8651501125004964289632");
-        const expectedPositionValueWad = BigNumber.from("8651501125004964289632");
+        const expectedPayoff = BigNumber.from("8651501125004964289632");
+        const expectedPayoffWad = BigNumber.from("8651501125004964289632");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -897,8 +897,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeTaxValue,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -918,8 +918,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -939,8 +939,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -960,8 +960,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = SPECIFIC_INCOME_TAX_CASE_1;
         const expectedIncomeFeeValueWad = SPECIFIC_INCOME_TAX_CASE_1;
-        const expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
-        const expectedPositionValueWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        const expectedPayoff = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        const expectedPayoffWad = SPECIFIC_INTEREST_AMOUNT_CASE_1;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -981,8 +981,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1002,8 +1002,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1022,8 +1022,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1043,8 +1043,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("989874270595533672762");
         const expectedIncomeTaxValueWad = BigNumber.from("989874270595533672762");
-        const expectedPositionValue = BigNumber.from("-9898742705955336727624");
-        const expectedPositionValueWad = BigNumber.from("-9898742705955336727624");
+        const expectedPayoff = BigNumber.from("-9898742705955336727624");
+        const expectedPayoffWad = BigNumber.from("-9898742705955336727624");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1063,8 +1063,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1084,8 +1084,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
         const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPositionValue = BigNumber.from("-9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("-9967009897030890732780");
+        const expectedPayoff = BigNumber.from("-9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("-9967009897030890732780");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1104,8 +1104,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1125,8 +1125,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("880328184649627945216");
         const expectedIncomeTaxValueWad = BigNumber.from("880328184649627945216");
-        const expectedPositionValue = BigNumber.from("-8803281846496279452160");
-        const expectedPositionValueWad = BigNumber.from("-8803281846496279452160");
+        const expectedPayoff = BigNumber.from("-8803281846496279452160");
+        const expectedPayoffWad = BigNumber.from("-8803281846496279452160");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1145,8 +1145,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1166,8 +1166,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1186,8 +1186,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1207,8 +1207,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("6826719107555402563");
         const expectedIncomeFeeValueWad = BigNumber.from("6826719107555402563");
-        const expectedPositionValue = BigNumber.from("-68267191075554025634");
-        const expectedPositionValueWad = BigNumber.from("-68267191075554025634");
+        const expectedPayoff = BigNumber.from("-68267191075554025634");
+        const expectedPayoffWad = BigNumber.from("-68267191075554025634");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1227,8 +1227,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1247,8 +1247,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
-        const expectedPositionValue = BigNumber.from("-68267191075554046114");
-        const expectedPositionValueWad = BigNumber.from("-68267191075554046114");
+        const expectedPayoff = BigNumber.from("-68267191075554046114");
+        const expectedPayoffWad = BigNumber.from("-68267191075554046114");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1267,8 +1267,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1288,8 +1288,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1309,8 +1309,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1330,8 +1330,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("279895483409771589481");
         const expectedIncomeFeeValueWad = BigNumber.from("279895483409771589481");
-        const expectedPositionValue = BigNumber.from("-2798954834097715894807");
-        const expectedPositionValueWad = BigNumber.from("-2798954834097715894807");
+        const expectedPayoff = BigNumber.from("-2798954834097715894807");
+        const expectedPayoffWad = BigNumber.from("-2798954834097715894807");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1350,8 +1350,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1370,8 +1370,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1390,8 +1390,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1411,8 +1411,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("791899416476426932749");
         const expectedIncomeFeeValueWad = BigNumber.from("791899416476426932749");
-        const expectedPositionValue = BigNumber.from("-7918994164764269327486");
-        const expectedPositionValueWad = BigNumber.from("-7918994164764269327486");
+        const expectedPayoff = BigNumber.from("-7918994164764269327486");
+        const expectedPayoffWad = BigNumber.from("-7918994164764269327486");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1431,8 +1431,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1452,8 +1452,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1473,8 +1473,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1494,8 +1494,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
         const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPositionValue = BigNumber.from("9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
+        const expectedPayoff = BigNumber.from("9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1515,8 +1515,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1536,8 +1536,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1556,8 +1556,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1574,8 +1574,8 @@ describe("Milton - close position", () => {
             return;
         }
         const expectedIncomeFeeValueWad = BigNumber.from("628058157895097225759");
-        const expectedPositionValue = BigNumber.from("-6280581578950972257591");
-        const expectedPositionValueWad = BigNumber.from("-6280581578950972257591");
+        const expectedPayoff = BigNumber.from("-6280581578950972257591");
+        const expectedPayoffWad = BigNumber.from("-6280581578950972257591");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1594,8 +1594,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1614,8 +1614,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1635,8 +1635,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1656,8 +1656,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("989874270595533672080");
         const expectedIncomeTaxValueWad = BigNumber.from("989874270595533672080");
-        const expectedPositionValue = BigNumber.from("9898742705955336720799");
-        const expectedPositionValueWad = BigNumber.from("9898742705955336720799");
+        const expectedPayoff = BigNumber.from("9898742705955336720799");
+        const expectedPayoffWad = BigNumber.from("9898742705955336720799");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1677,8 +1677,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeTaxValue,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1698,8 +1698,8 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1718,8 +1718,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1740,8 +1740,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeTaxValue = BigNumber.from("989874270595533666618");
         const expectedIncomeTaxValueWad = BigNumber.from("989874270595533666618");
-        const expectedPositionValue = BigNumber.from("-9898742705955336666184");
-        const expectedPositionValueWad = BigNumber.from("-9898742705955336666184");
+        const expectedPayoff = BigNumber.from("-9898742705955336666184");
+        const expectedPayoffWad = BigNumber.from("-9898742705955336666184");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1760,8 +1760,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeTaxValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1782,8 +1782,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC;
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC;
+        const expectedPayoff = TC_COLLATERAL_18DEC;
+        const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1803,8 +1803,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1825,8 +1825,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
         const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPositionValue = BigNumber.from("9967009897030890732780");
-        const expectedPositionValueWad = BigNumber.from("9967009897030890732780");
+        const expectedPayoff = BigNumber.from("9967009897030890732780");
+        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -1846,8 +1846,8 @@ describe("Milton - close position", () => {
             ZERO,
             expectedIncomeFeeValue,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1868,8 +1868,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1888,8 +1888,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1910,8 +1910,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = BigNumber.from("628058157895097225759");
         const expectedIncomeFeeValueWad = BigNumber.from("628058157895097225759");
-        const expectedPositionValue = BigNumber.from("-6280581578950972257591");
-        const expectedPositionValueWad = BigNumber.from("-6280581578950972257591");
+        const expectedPayoff = BigNumber.from("-6280581578950972257591");
+        const expectedPayoffWad = BigNumber.from("-6280581578950972257591");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1930,8 +1930,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -1951,8 +1951,8 @@ describe("Milton - close position", () => {
 
         const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPositionValue = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
-        const expectedPositionValueWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1971,8 +1971,8 @@ describe("Milton - close position", () => {
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
-            expectedPositionValue,
-            expectedPositionValueWad,
+            expectedPayoff,
+            expectedPayoffWad,
             userOne,
             liquidityProvider
         );
@@ -2008,10 +2008,10 @@ describe("Milton - close position", () => {
         await openSwapPayFixed(testData, params);
         const derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
 
-        const expectedPositionValue = BigNumber.from("-38229627002310297226");
+        const expectedPayoff = BigNumber.from("-38229627002310297226");
 
         //when
-        const actualPositionValue = BigNumber.from(
+        const actualPayoff = BigNumber.from(
             await miltonDai.itfCalculateSwapPayFixedValue(
                 params.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS),
                 derivativeItem.id
@@ -2020,9 +2020,9 @@ describe("Milton - close position", () => {
 
         //then
         expect(
-            expectedPositionValue,
-            `Incorrect position value, actual: ${actualPositionValue}, expected: ${expectedPositionValue}`
-        ).to.be.eq(actualPositionValue);
+            expectedPayoff,
+            `Incorrect position value, actual: ${actualPayoff}, expected: ${expectedPayoff}`
+        ).to.be.eq(actualPayoff);
     });
 
     it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
@@ -2744,7 +2744,7 @@ describe("Milton - close position", () => {
         }
 
         const expectedIncomeFeeValue = SPECIFIC_INCOME_TAX_CASE_1;
-        const expectedPositionValue = SPECIFIC_INTEREST_AMOUNT_CASE_1;
+        const expectedPayoff = SPECIFIC_INTEREST_AMOUNT_CASE_1;
         const leverage = USD_10_18DEC;
         const openerUser = userTwo;
         const closerUser = userTwo;
@@ -2762,7 +2762,7 @@ describe("Milton - close position", () => {
         const closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         const openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
-            .sub(expectedPositionValue)
+            .sub(expectedPayoff)
             .add(expectedIncomeFeeValue);
 
         let closerUserLost = null;
@@ -2779,7 +2779,7 @@ describe("Milton - close position", () => {
         const expectedMiltonUnderlyingTokenBalance = miltonBalanceBeforePayoutWad
             .add(TC_OPENING_FEE_18DEC)
             .add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
-            .sub(expectedPositionValue)
+            .sub(expectedPayoff)
             .add(expectedIncomeFeeValue);
 
         const expectedOpenerUserUnderlyingTokenBalanceAfterClose =
@@ -2788,7 +2788,7 @@ describe("Milton - close position", () => {
             USER_SUPPLY_10MLN_18DEC.add(closerUserEarned).sub(closerUserLost);
 
         const expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
-            .sub(expectedPositionValue)
+            .sub(expectedPayoff)
             .add(TC_OPENING_FEE_18DEC);
 
         //given
@@ -2833,15 +2833,15 @@ describe("Milton - close position", () => {
             );
 
         //additional check for position value and for incomeFee value
-        const actualPositionValue = await miltonDai
+        const actualPayoff = await miltonDai
             .connect(params.from)
             .itfCalculateSwapPayFixedValue(endTimestamp, 1);
 
         const actualIncomeFeeValue = await miltonDai
             .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPositionValue);
+            .itfCalculateIncomeFeeValue(actualPayoff);
 
-        expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
+        expect(actualPayoff, "Incorrect position value").to.be.eq(expectedPayoff);
         expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
 
         //when
