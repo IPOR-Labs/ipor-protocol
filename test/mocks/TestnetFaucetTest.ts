@@ -14,7 +14,7 @@ import {
 
 const { expect } = chai;
 
-describe("IvToken", () => {
+describe("TestnetFaucet", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer, userThree: Signer;
     let tokenDai: DaiMockedToken;
     let tokenUsdt: UsdtMockedToken;
