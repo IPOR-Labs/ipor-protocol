@@ -2,6 +2,7 @@
 
 const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 const { deployProxyImpl } = require("@openzeppelin/truffle-upgrades/dist/utils");
+const update = require("./test_json.ts");
 // const { artifacts } = require("hardhat");
 
 // const keccak256 = require("keccak256");
@@ -37,20 +38,32 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(UsdtMockedToken, stableTotalSupply6Decimals, 6);
     const mockedUsdt = await UsdtMockedToken.deployed();
 
+    update("USDT", mockedUsdt.address);
+
     await deployer.deploy(UsdcMockedToken, stableTotalSupply6Decimals, 6);
     const mockedUsdc = await UsdcMockedToken.deployed();
+
+    update("USDC", mockedUsdc.address);
 
     await deployer.deploy(DaiMockedToken, stableTotalSupply18Decimals, 18);
     const mockedDai = await DaiMockedToken.deployed();
 
+    update("DAI", mockedDai.address);
+
     await deployer.deploy(MockAUsdc);
     const mockedAUsdc = await MockAUsdc.deployed();
+
+    update("aUSDC", mockedAUsdc.address);
 
     await deployer.deploy(MockAUsdt);
     const mockedAUsdt = await MockAUsdt.deployed();
 
+    update("aUSDT", mockedAUsdt.address);
+
     await deployer.deploy(MockADai);
     const mockedADai = await MockADai.deployed();
+
+    update("aDAI", mockedADai.address);
 
     await deployer.deploy(AAVEMockedToken, stableTotalSupply18Decimals, 18);
     const mockedAAVE = await AAVEMockedToken.deployed();
@@ -108,7 +121,7 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
     const mockedComptrollerDAI = await MockComptrollerDAI.deployed();
 
-	//TODO: use TestnetFaucet
+    //TODO: use TestnetFaucet
     await deployer.deploy(MiltonFaucet);
     const faucet = await MiltonFaucet.deployed();
 };
