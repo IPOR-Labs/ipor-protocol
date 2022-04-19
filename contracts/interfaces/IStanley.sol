@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.9;
 
-/// @title Interface for interaction with Stanley smart contract. 
+/// @title Interface for interaction with Stanley smart contract.
 /// @notice Stanley is reposnsible for delegating assets stored in Milton to money markets where they can earn interest.
 interface IStanley {
     /// @notice Gets total balance of account `who`,  transferred assets to Stanley.
@@ -15,7 +15,8 @@ interface IStanley {
 
     /// @notice Deposits ERC20 underlying assets to Stanley. Function available only for Milton.
     /// @dev Emits {Deposit} event from Stanley, emits {Mint} event from ivToken, emits {Transfer} event from ERC20 asset.
-    /// @param amount amount deposited by Milton to Stanley
+    /// Input and output values are represented in 18 decimals.
+    /// @param amount amount deposited by Milton to Stanley.
     /// @return vaultBalance current balance including amount deposited on Stanley.
     function deposit(uint256 amount) external returns (uint256 vaultBalance);
 
