@@ -1,73 +1,105 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "../../../interfaces/types/AmmTypes.sol";
-
+/// @notice Structs used in the MiltonStorage interface
 library AmmMiltonStorageTypes {
     struct IporSwap {
+        /// @notice State of the swap
+        /// @dev 0 - INACTIVE, 1 - ACTIVE 
         AmmTypes.SwapState state;
-        //@notice Starting time of this swap
-        uint32 openTimestamp;
-        //@notice unique ID of this swap
-        //@notice Buyer of this swap
+        /// @notice Starting EPOCH timestamp of this swap.
+        uint32 openTimestamp;    
+        /// @notice Address of swap's Buyer
         address buyer;
+        /// @notice Swap's ID
         uint64 id;
+        /// @notice Index position of this Swap in an array of swaps' identification associated to swap's buyer
+        /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
+        /// During removal the last item in the array is switched with the one that just has been removed.
         uint64 idsIndex;
+        /// @notice Swap's collateral
+        /// @dev value represented in 18 decimals
         uint128 collateral;
+        /// @notice Liquidation deposit amount
+        /// @dev value represented in 18 decimals
         uint128 liquidationDepositAmount;
-        //@notice Notional Principal Amount
+        /// @notice Swap's notional amount
+        /// @dev value represented in 18 decimals
         uint128 notional;
+        /// @notice Fixed interest rate at which the position has been opened
+        /// @dev value represented in 18 decimals
         uint128 fixedInterestRate;
+        /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
+        /// @dev value represented in 18 decimals
         uint128 ibtQuantity;
     }
 
-    //@notice All active swaps available in Milton with information which swaps belong to account
+    /// @notice All active swaps available in Milton with information on swaps belong to the account. 
+    /// It describes swaps for a given leg.
     struct IporSwapContainer {
-        //@notice swap details, key in map is a swapId
+        /// @notice Swap details, key in the map is a swapId
         mapping(uint128 => IporSwap) swaps;
-        //@notice list of swap ids per account, key is account address, value is a list of swap ids
+        /// @notice List of swap IDs for every account, key in the list is the account's address, and the value is a list of swap IDs
         mapping(address => uint128[]) ids;
     }
 
-    //@dev all balances in 18 decimals
+    /// @notice A struct containing balances that Milton keeps track of. It acts as a Milton's accounting book. 
+    /// Those balances are used in various calculations across the protocol.
+    /// @dev All balances are in 18 decimals
     struct Balances {
-        //@notice derivatives balance for Pay Fixed & Receive Floating leg
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
         uint128 totalCollateralPayFixed;
-        //@notice derivatives balance for Pay Floating & Receive Fixed leg
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
         uint128 totalCollateralReceiveFixed;
-        //@notice Liquidity Pool Balance includes part of Opening Fee, how many of
-        //Opening Fee goes here is defined by param IporAssetConfiguration.openingFeeForTreasureRate
+        /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
+        /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
         uint128 liquidityPool;
-        //@notice Actual Balance on IporVault site in Asset Management
+        /// @notice Stanley's current balance. It includes interest accrued until Stanley's most recent state change.
         uint128 vault;
+        /// @notice This balance is used to track the funds accounted for IporOracle subsidization.
         uint128 iporPublicationFee;
-        //@notice income fee goes here, part of opening fee also goes here, how many of Opening Fee goes here is
-        //configured here IporAssetConfiguration.openingFeeForTreasureRate
+        /// @notice Tresury is the balance that belongs to IPOR DAO and funds up to this amount can be transfered to the DAO-appinted multi-sig wallet. 
+        /// this ballance is fed by the income fee and part of the opening fee appointed by the DAO. For more information refer to the documentation: 
+        /// https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps#fees
         uint128 treasury;
     }
 
-    //soap payfixed and soap recfixed indicators
+    /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs. 
+    /// @dev Saved to the databse. 
     struct SoapIndicators {
+        /// @notice EPOCH timestamp of when the most recent rebalancing took place
         uint32 rebalanceTimestamp;
-        //N_0
+        /// @notice Sum of all swaps' notional amounts for a given leg.
+        /// @dev Is represented in 18 decimals.
         uint128 totalNotional;
-        //I_0
+        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined. 
+        /// @dev Is represented in 18 decimals.
         uint128 averageInterestRate;
-        //TT
+        /// @notice Sum of all IBTs on a given leg. 
+        /// @dev Is represented in 18 decimals.
         uint128 totalIbtQuantity;
-        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+        /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
+        /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
         uint256 quasiHypotheticalInterestCumulative;
     }
 
+    /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs. 
+    /// @dev Committed to the memory.
     struct SoapIndicatorsMemory {
+        /// @notice EPOCH timestamp of when the most recent rebalancing took place
         uint256 rebalanceTimestamp;
-        //N_0
+        /// @notice Sum of all swaps' notional amounts for a given leg.
+        /// @dev Is represented in 18 decimals.
         uint256 totalNotional;
-        //I_0
+        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.     
+        /// @dev Is represented in 18 decimals.
         uint256 averageInterestRate;
-        //TT
+        /// @notice Sum of all IBTs on a given leg.
+        /// @dev Is represented in 18 decimals.     
         uint256 totalIbtQuantity;
-        //O_0, value without division by D18 * Constants.YEAR_IN_SECONDS
+        /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
+        /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
         uint256 quasiHypotheticalInterestCumulative;
     }
 }

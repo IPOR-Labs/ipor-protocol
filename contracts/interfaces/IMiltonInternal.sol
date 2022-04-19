@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
@@ -94,7 +94,7 @@ interface IMiltonInternal {
     /// @param swap `IporTypes.IporSwapMemory` structure
     /// @return Pay-Fixed Swap payoff, can be negative, represented in 18 decimals.
     /// @dev absolute value cannot be higher than the collateral
-    function calculateSwapPayFixedValue(IporTypes.IporSwapMemory memory swap)
+    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap)
         external
         view
         returns (int256);
@@ -103,7 +103,7 @@ interface IMiltonInternal {
     /// @param swap `IporTypes.IporSwapMemory` structure
     /// @return Receive Fixed Swap payoff, can be negative, represented in 18 decimals.
     /// @dev absolute value cannot be higher than the collateral
-    function calculateSwapReceiveFixedValue(IporTypes.IporSwapMemory memory swap)
+    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
         external
         view
         returns (int256);

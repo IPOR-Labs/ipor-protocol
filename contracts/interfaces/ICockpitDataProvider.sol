@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
@@ -99,5 +99,5 @@ interface ICockpitDataProvider {
     function calculateSpread(address asset)
         external
         view
-        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed);
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 }

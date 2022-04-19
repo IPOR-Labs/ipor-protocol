@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -37,7 +37,7 @@ abstract contract Stanley is
     address internal _compoundShareToken;
 
     modifier onlyMilton() {
-        require(msg.sender == _getMilton(), IporErrors.CALLER_NOT_MILTON);
+        require(_msgSender() == _getMilton(), IporErrors.CALLER_NOT_MILTON);
         _;
     }
 
@@ -81,7 +81,6 @@ abstract contract Stanley is
      * @notice only owner can deposit.
      * @param amount underlying token amount represented in 18 decimals
      */
-    //  TODO: ADD tests for amount = 0
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
@@ -97,11 +96,11 @@ abstract contract Stanley is
 
         _depositToStrategy(strategyMaxApy, amount);
 
-        _ivToken.mint(msg.sender, ivTokenAmount);
+        _ivToken.mint(_msgSender(), ivTokenAmount);
 
         emit Deposit(
             block.timestamp,
-            msg.sender,
+            _msgSender(),
             address(strategyMaxApy),
             exchangeRate,
             amount,
@@ -135,7 +134,7 @@ abstract contract Stanley is
         ) = _calcExchangeRate();
 
         uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
-        uint256 senderIvTokens = ivToken.balanceOf(msg.sender);
+        uint256 senderIvTokens = ivToken.balanceOf(_msgSender());
 
         if (senderIvTokens < ivTokenAmount) {
             amount = IporMath.divisionWithoutRound(senderIvTokens * exchangeRate, Constants.D18);
@@ -143,7 +142,7 @@ abstract contract Stanley is
         }
 
         if (address(strategyMaxApy) == _getStrategyCompound() && amount <= assetBalanceAave) {
-            ivToken.burn(msg.sender, ivTokenAmount);
+            ivToken.burn(_msgSender(), ivTokenAmount);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenAmount, exchangeRate, true);
 
             withdrawnAmount = amount;
@@ -151,7 +150,7 @@ abstract contract Stanley is
 
             return (withdrawnAmount, balance);
         } else if (amount <= assetBalanceCompound) {
-            ivToken.burn(msg.sender, ivTokenAmount);
+            ivToken.burn(_msgSender(), ivTokenAmount);
             _withdrawFromStrategy(
                 address(strategyCompound),
                 amount,
@@ -167,7 +166,7 @@ abstract contract Stanley is
         }
 
         if (address(strategyMaxApy) == _getStrategyAave() && amount <= assetBalanceAave) {
-            ivToken.burn(msg.sender, ivTokenAmount);
+            ivToken.burn(_msgSender(), ivTokenAmount);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenAmount, exchangeRate, true);
 
             withdrawnAmount = amount;
@@ -182,7 +181,7 @@ abstract contract Stanley is
                 exchangeRate
             );
 
-            _ivToken.burn(msg.sender, ivTokenAmountPart);
+            _ivToken.burn(_msgSender(), ivTokenAmountPart);
             _withdrawFromStrategy(
                 address(strategyCompound),
                 assetBalanceCompound,
@@ -193,12 +192,11 @@ abstract contract Stanley is
 
             withdrawnAmount = assetBalanceCompound;
         } else {
-            // TODO: Add tests for DAI(18 decimals) and for USDT (6 decimals)
             uint256 ivTokenAmountPart = IporMath.division(
                 assetBalanceAave * Constants.D18,
                 exchangeRate
             );
-            ivToken.burn(msg.sender, ivTokenAmountPart);
+            ivToken.burn(_msgSender(), ivTokenAmountPart);
             _withdrawFromStrategy(
                 address(strategyAave),
                 assetBalanceAave,
@@ -231,7 +229,7 @@ abstract contract Stanley is
             exchangeRate
         );
 
-        _ivToken.burn(msg.sender, _ivToken.balanceOf(msg.sender));
+        _ivToken.burn(_msgSender(), _ivToken.balanceOf(_msgSender()));
         _withdrawFromStrategy(
             address(strategyAave),
             assetBalanceAave,
@@ -259,7 +257,7 @@ abstract contract Stanley is
         uint256 balance = ERC20Upgradeable(_asset).balanceOf(address(this));
 
         if (balance != 0) {
-            IERC20Upgradeable(_asset).safeTransfer(msg.sender, balance);
+            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), balance);
             uint256 wadBalance = IporMath.convertToWad(balance, _getDecimals());
             withdrawnAmount = assetBalanceAave + assetBalanceCompound + wadBalance;
         } else {
@@ -303,7 +301,7 @@ abstract contract Stanley is
         uint256 wadAmount = IporMath.convertToWad(amount, decimals);
         _depositToStrategy(strategyMaxApy, wadAmount);
 
-        emit AssetMigrated(msg.sender, from, address(strategyMaxApy), wadAmount);
+        emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadAmount);
     }
 
     function setStrategyAave(address strategyAddress) external override whenNotPaused onlyOwner {
@@ -318,7 +316,7 @@ abstract contract Stanley is
         require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
         address oldMilton = _getMilton();
         _milton = newMilton;
-        emit MiltonChanged(msg.sender, oldMilton, newMilton);
+        emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
 
     function pause() external override onlyOwner {
@@ -401,7 +399,7 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit StrategyChanged(msg.sender, oldStrategy, newStrategy, address(newShareToken));
+        emit StrategyChanged(_msgSender(), oldStrategy, newStrategy, address(newShareToken));
     }
 
     function _setStrategyAave(address newStrategy) internal nonReentrant {
@@ -431,7 +429,7 @@ abstract contract Stanley is
         newShareToken.safeApprove(newStrategy, 0);
         newShareToken.safeApprove(newStrategy, type(uint256).max);
 
-        emit StrategyChanged(msg.sender, oldStrategy, newStrategy, address(newShareToken));
+        emit StrategyChanged(_msgSender(), oldStrategy, newStrategy, address(newShareToken));
     }
 
     /**
@@ -455,12 +453,12 @@ abstract contract Stanley is
             uint256 balance = asset.balanceOf(address(this));
 
             if (transfer) {
-                asset.safeTransfer(msg.sender, balance);
+                asset.safeTransfer(_msgSender(), balance);
             }
             emit Withdraw(
                 block.timestamp,
                 strategyAddress,
-                msg.sender,
+                _msgSender(),
                 exchangeRate,
                 amount,
                 ivTokenAmount
@@ -485,7 +483,7 @@ abstract contract Stanley is
         uint256 wadAmount,
         uint256 amount
     ) internal {
-        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(this), amount);
+        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
         strategyAddress.deposit(wadAmount);
     }
 

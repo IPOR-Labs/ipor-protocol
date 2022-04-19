@@ -288,7 +288,7 @@ export const exetuceCloseSwapTestCase = async function (
     expectedTreasuryTotalBalanceWad: BigNumber,
     expectedSoap: BigNumber,
     openTimestamp: BigNumber,
-    expectedPositionValue: BigNumber,
+    expectedPayoff: BigNumber,
     expectedIncomeFeeValue: BigNumber,
     userOne: Signer,
     liquidityProvider: Signer
@@ -363,18 +363,18 @@ export const exetuceCloseSwapTestCase = async function (
 
     let endTimestamp = params.openTimestamp.add(periodOfTimeElapsedInSeconds);
 
-    let actualPositionValue = ZERO;
+    let actualPayoff = ZERO;
     let actualIncomeFeeValue = null;
 
     //when
     if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
         if (params.direction == 0) {
-            actualPositionValue = await testData.miltonUsdt
+            actualPayoff = await testData.miltonUsdt
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
             await testData.miltonUsdt.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
         } else if (params.direction == 1) {
-            actualPositionValue = await testData.miltonUsdt
+            actualPayoff = await testData.miltonUsdt
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
 
@@ -382,17 +382,17 @@ export const exetuceCloseSwapTestCase = async function (
         }
         actualIncomeFeeValue = await testData.miltonUsdt
             .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPositionValue);
+            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
     if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
         if (params.direction == 0) {
-            actualPositionValue = await testData.miltonUsdc
+            actualPayoff = await testData.miltonUsdc
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
             await testData.miltonUsdc.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
         } else if (params.direction == 1) {
-            actualPositionValue = await testData.miltonUsdc
+            actualPayoff = await testData.miltonUsdc
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
 
@@ -400,18 +400,18 @@ export const exetuceCloseSwapTestCase = async function (
         }
         actualIncomeFeeValue = await testData.miltonUsdc
             .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPositionValue);
+            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
     if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
         if (params.direction == 0) {
-            actualPositionValue = await testData.miltonDai
+            actualPayoff = await testData.miltonDai
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
 
             await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
         } else if (params.direction == 1) {
-            actualPositionValue = await testData.miltonDai
+            actualPayoff = await testData.miltonDai
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
 
@@ -419,10 +419,10 @@ export const exetuceCloseSwapTestCase = async function (
         }
         actualIncomeFeeValue = await testData.miltonDai
             .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPositionValue);
+            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
-    expect(actualPositionValue, "Incorrect position value").to.be.eq(expectedPositionValue);
+    expect(actualPayoff, "Incorrect position value").to.be.eq(expectedPayoff);
     expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
 
     //then

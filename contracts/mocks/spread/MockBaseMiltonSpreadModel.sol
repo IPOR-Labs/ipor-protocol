@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
 import "../../amm/spread/MiltonSpreadModel.sol";
@@ -10,7 +10,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (uint256 spreadValue) {
+    ) public view returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
@@ -26,14 +26,14 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (uint256 spreadValue) {
+    ) public view returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
             liquidityPoolBalance,
             0
         );
-        return _calculateSpreadPremiumsRecFixed(soap, accruedIpor, balance);
+        return _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, balance);
     }
 
     function testCalculateAdjustedUtilizationRate(
@@ -49,7 +49,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateDemandComponentPayFixed(
+    function testCalculateDemandComponentPayFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -64,35 +64,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateAtParComponentPayFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) public pure returns (uint256) {
-        return
-            _calculateAtParComponentPayFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
-            );
-    }
-
-    function calculateHistoricalDeviationPayFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) public pure returns (uint256) {
-        return
-            _calculateHistoricalDeviationPayFixed(
-                kHist,
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxSpreadValue
-            );
-    }
-
-    function calculateAdjustedUtilizationRatePayFixed(
+    function testCalculateAdjustedUtilizationRatePayFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -107,14 +79,14 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateDemandComponentRecFixed(
+    function testCalculateDemandComponentRecFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
         int256 soapRecFixed
     ) public pure returns (uint256) {
         return
-            _calculateDemandComponentRecFixed(
+            _calculateDemandComponentReceiveFixed(
                 liquidityPoolBalance,
                 totalCollateralPayFixedBalance,
                 totalCollateralReceiveFixedBalance,
@@ -122,35 +94,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function calculateAtParComponentRecFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
-    ) public pure returns (uint256) {
-        return
-            _calculateAtParComponentRecFixed(
-                iporIndexValue,
-                exponentialMovingAverage,
-                exponentialWeightedMovingVariance
-            );
-    }
-
-    function calculateHistoricalDeviationRecFixed(
-        uint256 kHist,
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage,
-        uint256 maxSpreadValue
-    ) public pure returns (uint256) {
-        return
-            _calculateHistoricalDeviationRecFixed(
-                kHist,
-                iporIndexValue,
-                exponentialMovingAverage,
-                maxSpreadValue
-            );
-    }
-
-    function calculateAdjustedUtilizationRateRecFixed(
+    function testCalculateAdjustedUtilizationRateRecFixed(
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance,
@@ -163,5 +107,37 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
                 totalCollateralReceiveFixedBalance,
                 lambda
             );
+    }
+
+    function testCalculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _calculateVolatilityAndMeanReversionPayFixed(emaVar, mu);
+    }
+
+    function testCalculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionRegionOne(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionRegionOne(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionRegionTwo(emaVar, mu);
     }
 }

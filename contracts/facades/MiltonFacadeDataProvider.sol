@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -120,7 +120,7 @@ contract MiltonFacadeDataProvider is
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
-            .getSwapIds(msg.sender, offset, chunkSize);
+            .getSwapIds(_msgSender(), offset, chunkSize);
 
         IMiltonInternal milton = IMiltonInternal(config.milton);
 
@@ -135,7 +135,7 @@ contract MiltonFacadeDataProvider is
                     asset,
                     iporSwap,
                     0,
-                    milton.calculateSwapPayFixedValue(iporSwap)
+                    milton.calculatePayoffPayFixed(iporSwap)
                 );
             } else {
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
@@ -145,7 +145,7 @@ contract MiltonFacadeDataProvider is
                     asset,
                     iporSwap,
                     1,
-                    milton.calculateSwapReceiveFixedValue(iporSwap)
+                    milton.calculatePayoffReceiveFixed(iporSwap)
                 );
             }
         }
@@ -199,13 +199,13 @@ contract MiltonFacadeDataProvider is
         IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
             .getAccruedBalance();
 
-        uint256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
+        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
             miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance
         );
 
-        uint256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(
+        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(
             miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, timestamp),
             accruedIpor,
             balance

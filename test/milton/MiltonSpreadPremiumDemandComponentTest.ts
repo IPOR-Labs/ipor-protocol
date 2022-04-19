@@ -54,7 +54,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -84,7 +84,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -114,7 +114,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -144,7 +144,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -173,7 +173,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -202,7 +202,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         let actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -232,7 +232,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         let actualSpreadDemandComponentValue = await miltonSpread
             .connect(liquidityProvider)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -261,7 +261,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(userOne)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -290,7 +290,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         //when
         const actualSpreadDemandComponentValue = await miltonSpread
             .connect(userOne)
-            .calculateDemandComponentPayFixed(
+            .testCalculateDemandComponentPayFixed(
                 liquidityPoolBalance.add(swapOpeningFee),
                 totalCollateralPayFixedBalance.add(swapCollateral),
                 totalCollateralReceiveFixedBalance,
@@ -321,7 +321,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const actualAdjustedUtilizationRate = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateAdjustedUtilizationRatePayFixed(
+                .testCalculateAdjustedUtilizationRatePayFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance.add(swapCollateral),
                     totalCollateralReceiveFixedBalance,
@@ -333,7 +333,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .calculateDemandComponentPayFixed(
+                .testCalculateDemandComponentPayFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance.add(swapCollateral),
                     totalCollateralReceiveFixedBalance,
@@ -366,7 +366,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -399,7 +399,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -432,7 +432,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -465,7 +465,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -498,7 +498,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -530,7 +530,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -563,7 +563,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -595,7 +595,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -627,7 +627,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -661,7 +661,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         let actualAdjustedUtilizationRate = BigInt(
             await miltonSpread
                 .connect(liquidityProvider)
-                .calculateAdjustedUtilizationRateRecFixed(
+                .testCalculateAdjustedUtilizationRateRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),
@@ -673,7 +673,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
         const actualSpreadDemandComponentValue = BigInt(
             await miltonSpread
                 .connect(userOne)
-                .calculateDemandComponentRecFixed(
+                .testCalculateDemandComponentRecFixed(
                     liquidityPoolBalance.add(swapOpeningFee),
                     totalCollateralPayFixedBalance,
                     totalCollateralReceiveFixedBalance.add(swapCollateral),

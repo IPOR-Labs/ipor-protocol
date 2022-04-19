@@ -22,6 +22,8 @@ import {
     MockWhitePaper,
     MockComptroller,
     IvToken,
+    MockStrategy,
+    StanleyUsdc,
 } from "../../../../types";
 import { ZERO } from "../../../utils/Constants";
 
@@ -589,7 +591,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(ZERO);
     });
 
-    it("Should withdraw from Aave when not all ampund in one strategy when deposit to both but AAVE has max APR", async () => {
+    it("Should withdraw(DAI) from Aave when not all ampund in one strategy when deposit to both but AAVE has max APR", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));
@@ -622,7 +624,72 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(ZERO);
     });
 
-    it("Should withdraw from Compound when not all ampund in one strategy when deposit to both but AAVE has max APR", async () => {
+    it("Should withdraw(Usdc) from Aave when not all ampund in one strategy when deposit to both but AAVE has max APR", async () => {
+        const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+        const usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        await usdc.setDecimals(BigNumber.from("6"));
+
+        const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
+
+        const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyAave = (await StrategyAave.deploy()) as MockStrategy;
+        await strategyAave.setShareToken(usdc.address);
+        await strategyAave.setAsset(usdc.address);
+
+        const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
+        const strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
+        await strategyCompound.setShareToken(usdc.address);
+        await strategyCompound.setAsset(usdc.address);
+
+        const ivTokenUsdc = (await tokenFactoryIvToken.deploy(
+            "IvToken",
+            "IVT",
+            usdc.address
+        )) as IvToken;
+
+        const StanleyUsdc = await hre.ethers.getContractFactory("StanleyUsdc");
+        const stanley = (await upgrades.deployProxy(StanleyUsdc, [
+            usdc.address,
+            ivTokenUsdc.address,
+            strategyAave.address,
+            strategyCompound.address,
+        ])) as StanleyUsdc;
+
+        await ivTokenUsdc.setStanley(stanley.address);
+        await stanley.setMilton(await admin.getAddress());
+
+        await usdc.approve(await admin.getAddress(), one.mul(10000));
+        await usdc.approve(stanley.address, one.mul(10000));
+
+        await strategyAave.setApy(one.mul(3));
+        await stanley.deposit(one.mul(40));
+
+        const aaveBalanceBefore = await strategyAave.balanceOf();
+        expect(aaveBalanceBefore).to.be.equal(one.mul(40));
+
+        await strategyCompound.setApy(one.mul(4));
+        await stanley.deposit(one.mul(40));
+        const compoundBalanceBefore = await strategyCompound.balanceOf();
+        const userIvTokenBefore = await ivTokenUsdc.balanceOf(await admin.getAddress());
+        expect(compoundBalanceBefore).to.be.equal(one.mul(40));
+        expect(userIvTokenBefore).to.be.equal(one.mul(80));
+        await strategyAave.setApy(one.mul(5));
+        //when
+
+        await stanley.withdraw(one.mul(50));
+        //then
+        const compoundBalanceAfter = await strategyCompound.balanceOf();
+        const aaveBalanceAfter = await strategyAave.balanceOf();
+        const userIvTokenAfter = await ivTokenUsdc.balanceOf(await admin.getAddress());
+        const balanceOfIporeVault = await usdc.balanceOf(stanley.address);
+
+        expect(compoundBalanceAfter).to.be.equal(one.mul(40));
+        expect(aaveBalanceAfter).to.be.equal(ZERO);
+        expect(userIvTokenAfter).to.be.equal(one.mul(40));
+        expect(balanceOfIporeVault).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw from Compound when not all amound in one strategy when deposit to both but AAVE has max APR", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "../../libraries/errors/IporErrors.sol";
@@ -101,14 +101,14 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         _getMiltonStorage().addLiquidity(wadAssetAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(msg.sender, address(milton), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
-        _getIpToken().mint(msg.sender, ipTokenAmount);
+        _getIpToken().mint(_msgSender(), ipTokenAmount);
 
         emit ProvideLiquidity(
             timestamp,
-            msg.sender,
+            _msgSender(),
             address(milton),
             exchangeRate,
             assetAmount,
@@ -118,7 +118,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
         require(
-            ipTokenAmount != 0 && ipTokenAmount <= _getIpToken().balanceOf(msg.sender),
+            ipTokenAmount != 0 && ipTokenAmount <= _getIpToken().balanceOf(_msgSender()),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
         IMiltonInternal milton = _getMilton();
@@ -151,16 +151,16 @@ abstract contract Joseph is JosephInternal, IJoseph {
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
-        _getIpToken().burn(msg.sender, ipTokenAmount);
+        _getIpToken().burn(_msgSender(), ipTokenAmount);
 
         _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), msg.sender, assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), _msgSender(), assetAmount);
 
         emit Redeem(
             timestamp,
             address(milton),
-            msg.sender,
+            _msgSender(),
             exchangeRate,
             assetAmount,
             ipTokenAmount,

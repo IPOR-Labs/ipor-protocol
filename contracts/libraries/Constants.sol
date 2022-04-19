@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 library Constants {
@@ -6,6 +6,7 @@ library Constants {
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
     uint256 public constant D18 = 1e18;
+	int256 public constant D18_INT = 1e18;
     uint256 public constant D36 = 1e36;
     uint256 public constant D54 = 1e54;
 

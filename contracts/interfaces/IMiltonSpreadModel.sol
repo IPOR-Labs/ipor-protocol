@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "./types/IporTypes.sol";
@@ -14,7 +14,7 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 quoteValue);
+    ) external view returns (uint256 quoteValue);
 
     /// @notice Calculates the quote for Receive-Fixed leg.
     /// @param soap SOAP - Sum of All Payouts.
@@ -25,7 +25,7 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 quoteValue);
+    ) external view returns (uint256 quoteValue);
 
     /// @notice Calculates the spread for Pay-Fixed leg.
     /// @param soap SOAP - Sum of All Payouts.
@@ -36,7 +36,7 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 spreadValue);
+    ) external view returns (int256 spreadValue);
 
     /// @notice Calculates the spread for Receive-Fixed leg.
     /// @param soap SOAP - Sum Of All Payouts.
@@ -47,5 +47,5 @@ interface IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure returns (uint256 spreadValue);
+    ) external view returns (int256 spreadValue);
 }

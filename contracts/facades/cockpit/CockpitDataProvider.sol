@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: agpl-3.0
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
@@ -71,29 +71,29 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
 
     function getMyIpTokenBalance(address asset) external view override returns (uint256) {
         IERC20 token = IERC20(_assetConfig[asset].ipToken);
-        return token.balanceOf(msg.sender);
+        return token.balanceOf(_msgSender());
     }
 
     function getMyIvTokenBalance(address asset) external view override returns (uint256) {
         IERC20 token = IERC20(_assetConfig[asset].ivToken);
-        return token.balanceOf(msg.sender);
+        return token.balanceOf(_msgSender());
     }
 
     function getMyTotalSupply(address asset) external view override returns (uint256) {
         IERC20 token = IERC20(asset);
-        return token.balanceOf(msg.sender);
+        return token.balanceOf(_msgSender());
     }
 
     function getMyAllowanceInMilton(address asset) external view override returns (uint256) {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, config.milton);
+        return token.allowance(_msgSender(), config.milton);
     }
 
     function getMyAllowanceInJoseph(address asset) external view override returns (uint256) {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
-        return token.allowance(msg.sender, config.joseph);
+        return token.allowance(_msgSender(), config.joseph);
     }
 
     function getSwapsPayFixed(
@@ -123,7 +123,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(msg.sender, offset, chunkSize);
+        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(_msgSender(), offset, chunkSize);
     }
 
     function getMySwapsReceiveFixed(
@@ -134,7 +134,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         return
             IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(
-                msg.sender,
+                _msgSender(),
                 offset,
                 chunkSize
             );
@@ -144,14 +144,14 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         external
         view
         override
-        returns (uint256 spreadPayFixed, uint256 spreadReceiveFixed)
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IMilton milton = IMilton(config.milton);
 
         try milton.calculateSpread() returns (
-            uint256 _spreadPayFixed,
-            uint256 _spreadReceiveFixed
+            int256 _spreadPayFixed,
+            int256 _spreadReceiveFixed
         ) {
             spreadPayFixed = _spreadPayFixed;
             spreadReceiveFixed = _spreadReceiveFixed;
