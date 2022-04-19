@@ -108,6 +108,7 @@ module.exports = async function (deployer, _network) {
     await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
     const mockedComptrollerDAI = await MockComptrollerDAI.deployed();
 
+	//TODO: use TestnetFaucet
     await deployer.deploy(MiltonFaucet);
     const faucet = await MiltonFaucet.deployed();
 };
