@@ -71,6 +71,14 @@ contract TestnetFaucet is
         IERC20Upgradeable(asset).safeTransfer(_msgSender(), amound);
     }
 
+    function transferEth(address payable recipient, uint256 value) external payable onlyOwner {
+        recipient.transfer(value);
+    }
+
+    function balanceOfEth() external view returns (uint256) {
+        return address(this).balance;
+    }
+
     function couldClaimInSeconds() external view override returns (uint256) {
         return _couldClaimInSeconds();
     }
@@ -105,5 +113,5 @@ contract TestnetFaucet is
     }
 
     //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override onlyOwner {}
+    function _authorizeUpgrade(address) internal override onlyOwner {} //solhint-disable no-empty-blocks
 }

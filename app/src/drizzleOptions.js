@@ -9,7 +9,7 @@ import ItfMiltonDai from "./contracts/ItfMiltonDai.json";
 import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
 import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
-import MiltonFaucet from "./contracts/MiltonFaucet.json";
+import TestnetFaucet from "./contracts/TestnetFaucet.json";
 import DaiMockedToken from "./contracts/DaiMockedToken.json";
 import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
 import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
@@ -96,7 +96,7 @@ const options = {
         ItfStanleyUsdt,
         ItfStanleyUsdc,
         ItfStanleyDai,
-        MiltonFaucet,
+        TestnetFaucet,
         MiltonSpreadModel,
         StrategyAaveUsdt,
         StrategyAaveUsdc,
