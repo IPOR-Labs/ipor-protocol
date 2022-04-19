@@ -2,14 +2,6 @@
 
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const IpTokenUsdt = artifacts.require("IpTokenUsdt");
-const IpTokenUsdc = artifacts.require("IpTokenUsdc");
-const IpTokenDai = artifacts.require("IpTokenDai");
-
-const IvTokenUsdt = artifacts.require("IvTokenUsdt");
-const IvTokenUsdc = artifacts.require("IvTokenUsdc");
-const IvTokenDai = artifacts.require("IvTokenDai");
-
 const StrategyAaveUsdt = artifacts.require("StrategyAaveUsdt");
 const StrategyAaveUsdc = artifacts.require("StrategyAaveUsdc");
 const StrategyAaveDai = artifacts.require("StrategyAaveDai");
@@ -37,23 +29,32 @@ const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network) {
 
-    await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", mockedUsdt.address);
-    const ipTokenUsdt = await IpTokenUsdt.deployed();
+    await deployer.deploy(MiltonSpreadModel);
+    const miltonSpreadModel = await MiltonSpreadModel.deployed();
 
-    await deployer.deploy(IpTokenUsdc, "IP USDC", "ipUSDC", mockedUsdc.address);
-    const ipTokenUsdc = await IpTokenUsdc.deployed();
+	const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    await deployer.deploy(IpTokenDai, "IP DAI", "ipDAI", mockedDai.address);
-    const ipTokenDai = await IpTokenDai.deployed();
+    const miltonStorageUsdc = await deployProxy(MiltonStorageUsdc, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    await deployer.deploy(IvTokenUsdt, "IV USDT", "ivUSDT", mockedUsdt.address);
-    const ivTokenUsdt = await IvTokenUsdt.deployed();
+    const miltonStorageDai = await deployProxy(MiltonStorageDai, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
-    await deployer.deploy(IvTokenUsdc, "IV USDC", "ivUSDC", mockedUsdc.address);
-    const ivTokenUsdc = await IvTokenUsdc.deployed();
-
-    await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", mockedDai.address);
-    const ivTokenDai = await IvTokenDai.deployed();
+    const iporOracle = await deployProxy(IporOracle, {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
 
     const strategyAaveUsdt = await deployProxy(
         StrategyAaveUsdt,
@@ -110,8 +111,7 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    await deployer.deploy(MiltonSpreadModel);
-    const miltonSpreadModel = await MiltonSpreadModel.deployed();
+
 
     const strategyCompoundUsdt = await deployProxy(
         StrategyCompoundUsdt,
@@ -199,29 +199,7 @@ module.exports = async function (deployer, _network) {
     );
 
 
-    const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
-    const miltonStorageUsdc = await deployProxy(MiltonStorageUsdc, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
-    const miltonStorageDai = await deployProxy(MiltonStorageDai, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
-
-    const iporOracle = await deployProxy(IporOracle, {
-        deployer: deployer,
-        initializer: "initialize",
-        kind: "uups",
-    });
+    
 
 
     const miltonUsdt = await deployProxy(
