@@ -9,15 +9,15 @@ uint256 constant END_INTERVAL_TWO = 1392602;
 uint256 constant END_INTERVAL_THREE = 3024000;
 
 // Line One Parameters in wand
-int256 constant SLPO_ONE = -1192708355669;
+int256 constant SLOPE_FACTOR_ONE = -1192708355669;
 int256 constant BASE_ONE = 1000000000000000000;
 
 // Line two Parameters in wand
-int256 constant SLPO_TWO = -410935977479;
+int256 constant SLOPE_FACTOR_TWO = -410935977479;
 int256 constant BASE_TWO = 672270580524927104;
 
 // Line three Parameters in wand
-int256 constant SLPO_THREE = -57166749921;
+int256 constant SLOPE_FACTOR_THREE = -57166749921;
 int256 constant BASE_THREE = 179610198759512800;
 
 library DecayFactorCalculation {
@@ -28,15 +28,16 @@ library DecayFactorCalculation {
     //@dev return value represented in WAD
     function calculate(uint256 timeInterval) internal pure returns (uint256 decayFactor) {
         if (timeInterval < END_INTERVAL_ONE) {
-            return linearFunction(SLPO_ONE, BASE_ONE, timeInterval.toInt256()).toUint256();
+            return linearFunction(SLOPE_FACTOR_ONE, BASE_ONE, timeInterval.toInt256()).toUint256();
         }
 
         if (timeInterval < END_INTERVAL_TWO) {
-            return linearFunction(SLPO_TWO, BASE_TWO, timeInterval.toInt256()).toUint256();
+            return linearFunction(SLOPE_FACTOR_TWO, BASE_TWO, timeInterval.toInt256()).toUint256();
         }
 
         if (timeInterval < END_INTERVAL_THREE) {
-            return linearFunction(SLPO_THREE, BASE_THREE, timeInterval.toInt256()).toUint256();
+            return
+                linearFunction(SLOPE_FACTOR_THREE, BASE_THREE, timeInterval.toInt256()).toUint256();
         }
 
         decayFactor = 0;
