@@ -2,7 +2,7 @@ import { BigNumber } from "ethers";
 const { expect } = require("chai");
 import {
     ERC20,
-    MiltonFaucet,
+    TestnetFaucet,
     StrategyAave,
     StrategyCompound,
     StanleyDai,
@@ -31,7 +31,7 @@ describe("End to End tests on mainnet fork", function () {
     let usdc: ERC20;
     let usdt: ERC20;
 
-    let miltonFaucet: MiltonFaucet;
+    let testnetFaucet: TestnetFaucet;
 
     let strategyAaveDai: StrategyAave;
     let strategyAaveUsdc: StrategyAave;
@@ -56,7 +56,7 @@ describe("End to End tests on mainnet fork", function () {
     before(async () => {
         const deployd: DeployType = await deploy();
         ({
-            miltonFaucet,
+            testnetFaucet,
             usdc,
             usdt,
             dai,
@@ -89,7 +89,7 @@ describe("End to End tests on mainnet fork", function () {
         const stanleyDaiBalanceBefore = await stanleyDai.totalBalance(miltonDai.address);
 
         await transferFromFaucetTo(
-            miltonFaucet,
+            testnetFaucet,
             dai,
             miltonDai.address,
             BigNumber.from("10000000000000000000")
@@ -109,7 +109,7 @@ describe("End to End tests on mainnet fork", function () {
         // given
         const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
         await transferFromFaucetTo(
-            miltonFaucet,
+            testnetFaucet,
             usdc,
             miltonUsdc.address,
             BigNumber.from("1000000000")
@@ -130,7 +130,7 @@ describe("End to End tests on mainnet fork", function () {
         // given
         const stanleyUsdtBalanceBefore = await stanleyUsdt.totalBalance(miltonUsdt.address);
         await transferFromFaucetTo(
-            miltonFaucet,
+            testnetFaucet,
             usdt,
             miltonUsdt.address,
             BigNumber.from("1000000000")

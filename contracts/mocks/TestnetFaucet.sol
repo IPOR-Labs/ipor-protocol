@@ -61,19 +61,14 @@ contract TestnetFaucet is
         _lastClaim[_msgSender()] = block.timestamp;
     }
 
-    function transferAdmin(
-        address to,
-        address asset,
-        uint256 amound
-    ) external onlyOwner {
-        require(to != address(0), IporErrors.WRONG_ADDRESS);
+    function transfer(address asset, uint256 amound) external onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(amound != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         ERC20Upgradeable token = ERC20Upgradeable(asset);
         uint256 maxValue = token.balanceOf(address(this));
         require(amound <= maxValue, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
-        IERC20Upgradeable(asset).safeTransfer(to, amound);
+        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amound);
     }
 
     function couldClaimInSeconds() external view override returns (uint256) {

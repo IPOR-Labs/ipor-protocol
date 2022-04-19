@@ -144,9 +144,7 @@ describe("TestnetFaucet", () => {
         // Given
         // When
         await expect(
-            testnetFaucet
-                .connect(userOne)
-                .transferAdmin(await admin.getAddress(), tokenDai.address, N1__0_18DEC)
+            testnetFaucet.connect(userOne).transfer(tokenDai.address, N1__0_18DEC)
         ).to.be.revertedWith("Ownable: caller is not the owner");
         // Then
     });
@@ -154,43 +152,27 @@ describe("TestnetFaucet", () => {
     it("Should not be able to transfer with transferAdmin when ammound = 0", async () => {
         // Given
         // When
-        await expect(
-            testnetFaucet.transferAdmin(await admin.getAddress(), tokenDai.address, ZERO)
-        ).to.be.revertedWith("IPOR_004");
+        await expect(testnetFaucet.transfer(tokenDai.address, ZERO)).to.be.revertedWith("IPOR_004");
         // Then
     });
 
     it("Should not be able to transfer whe pass zero adres for asset", async () => {
-        await expect(
-            testnetFaucet.transferAdmin(
-                await admin.getAddress(),
-                constants.AddressZero,
-                N1__0_18DEC
-            )
-        ).to.be.revertedWith("IPOR_000");
-    });
-
-    it("Should not be able to transfer whe pass zero adres for 'to' address", async () => {
-        await expect(
-            testnetFaucet.transferAdmin(constants.AddressZero, tokenDai.address, N1__0_18DEC)
-        ).to.be.revertedWith("IPOR_000");
+        await expect(testnetFaucet.transfer(constants.AddressZero, N1__0_18DEC)).to.be.revertedWith(
+            "IPOR_000"
+        );
     });
 
     it("Should be able to transfer with transferAdmin", async () => {
         // Given
-        const balanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
+        const balanceBefore = await tokenDai.balanceOf(await admin.getAddress());
 
         // When
-        await testnetFaucet.transferAdmin(
-            await userOne.getAddress(),
-            tokenDai.address,
-            N1__0_18DEC
-        );
+        await testnetFaucet.transfer(tokenDai.address, N1__0_18DEC);
 
         // Then
-        const balanceAfter = await tokenDai.balanceOf(await userOne.getAddress());
+        const balanceAfter = await tokenDai.balanceOf(await admin.getAddress());
 
-        expect(balanceBefore).to.be.equal(ZERO);
-        expect(balanceAfter).to.be.equal(N1__0_18DEC);
+        expect(balanceBefore).to.be.equal(BigNumber.from("10000000000000000").mul(N1__0_18DEC));
+        expect(balanceAfter).to.be.equal(BigNumber.from("10000000000000001").mul(N1__0_18DEC));
     });
 });
