@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interaction with TestnetFaucet.
 interface ITestnetFaucet {
-    /// @notice Claim stable for amm system (ipDai, ipUsdc, ipUsdt) it can be done ones evary 24h.
+    /// @notice Claim stable for amm system (Dai, Usdc, Usdt) it can be done ones every 24h.
     /// First time transfer 100 000 otherwise 10 000
     /// @dev Emits `Claim` event from TestnetFaucet, {Transfer} event from ERC20 asset.
     function claim() external;
@@ -13,6 +13,10 @@ interface ITestnetFaucet {
     function couldClaimInSeconds() external view returns (uint256);
 
     function balanceOf(address asset) external view returns (uint256);
+
+    /// @notice Check if user has calim stables before
+    /// @return true if user calim before and false otherwise
+    function hasClaimBefore() external view returns (bool);
 
     event Claim(
         /// @notice address to which stable were transfer

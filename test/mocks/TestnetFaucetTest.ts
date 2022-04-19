@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
-import { BigNumber, Signer } from "ethers";
+import { BigNumber, Signer, constants } from "ethers";
 import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet } from "../../types";
 import {
     N1__0_18DEC,
@@ -52,14 +52,19 @@ describe("TestnetFaucet", () => {
         const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
         const usdtBalanceBefore = await tokenUsdt.balanceOf(await userOne.getAddress());
+        const hasClaimBefore = await testnetFaucet.connect(userOne).hasClaimBefore();
 
         // When
         await testnetFaucet.connect(userOne).claim();
 
         // Then
+        const hasClaimAfter = await testnetFaucet.connect(userOne).hasClaimBefore();
         const daiBalanceAfter = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceAfter = await tokenUsdc.balanceOf(await userOne.getAddress());
         const usdtBalanceAfter = await tokenUsdt.balanceOf(await userOne.getAddress());
+
+        expect(hasClaimBefore).to.be.false;
+        expect(hasClaimAfter).to.be.true;
 
         expect(daiBalanceBefore).to.be.equal(ZERO);
         expect(usdcBalanceBefore).to.be.equal(ZERO);
@@ -133,5 +138,59 @@ describe("TestnetFaucet", () => {
             N1__0_6DEC.mul(N100_000.add(N10_000))
         );
         expect(timeToNextClaim, "timeToNextClaim").to.be.equal(ZERO);
+    });
+
+    it("Should not be able to transfer with transferAdmin when not owner", async () => {
+        // Given
+        // When
+        await expect(
+            testnetFaucet
+                .connect(userOne)
+                .transferAdmin(await admin.getAddress(), tokenDai.address, N1__0_18DEC)
+        ).to.be.revertedWith("Ownable: caller is not the owner");
+        // Then
+    });
+
+    it("Should not be able to transfer with transferAdmin when ammound = 0", async () => {
+        // Given
+        // When
+        await expect(
+            testnetFaucet.transferAdmin(await admin.getAddress(), tokenDai.address, ZERO)
+        ).to.be.revertedWith("IPOR_004");
+        // Then
+    });
+
+    it("Should not be able to transfer whe pass zero adres for asset", async () => {
+        await expect(
+            testnetFaucet.transferAdmin(
+                await admin.getAddress(),
+                constants.AddressZero,
+                N1__0_18DEC
+            )
+        ).to.be.revertedWith("IPOR_000");
+    });
+
+    it("Should not be able to transfer whe pass zero adres for 'to' address", async () => {
+        await expect(
+            testnetFaucet.transferAdmin(constants.AddressZero, tokenDai.address, N1__0_18DEC)
+        ).to.be.revertedWith("IPOR_000");
+    });
+
+    it("Should be able to transfer with transferAdmin", async () => {
+        // Given
+        const balanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
+
+        // When
+        await testnetFaucet.transferAdmin(
+            await userOne.getAddress(),
+            tokenDai.address,
+            N1__0_18DEC
+        );
+
+        // Then
+        const balanceAfter = await tokenDai.balanceOf(await userOne.getAddress());
+
+        expect(balanceBefore).to.be.equal(ZERO);
+        expect(balanceAfter).to.be.equal(N1__0_18DEC);
     });
 });

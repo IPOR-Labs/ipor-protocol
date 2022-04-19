@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
-import "hardhat/console.sol";
 
 contract TestnetFaucet is
     UUPSUpgradeable,
@@ -19,7 +18,7 @@ contract TestnetFaucet is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 constant _SECUND_IN_DAY = 60 * 60 * 24;
+    uint256 constant _SECONDS_IN_DAY = 60 * 60 * 24;
 
     mapping(address => uint256) internal _lastClaim;
     address internal _dai;
@@ -62,8 +61,27 @@ contract TestnetFaucet is
         _lastClaim[_msgSender()] = block.timestamp;
     }
 
+    function transferAdmin(
+        address to,
+        address asset,
+        uint256 amound
+    ) external onlyOwner {
+        require(to != address(0), IporErrors.WRONG_ADDRESS);
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(amound != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+
+        ERC20Upgradeable token = ERC20Upgradeable(asset);
+        uint256 maxValue = token.balanceOf(address(this));
+        require(amound <= maxValue, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
+        IERC20Upgradeable(asset).safeTransfer(to, amound);
+    }
+
     function couldClaimInSeconds() external view override returns (uint256) {
         return _couldClaimInSeconds();
+    }
+
+    function hasClaimBefore() external view override returns (bool) {
+        return _lastClaim[_msgSender()] != 0;
     }
 
     function balanceOf(address asset) external view override returns (uint256) {
@@ -85,10 +103,10 @@ contract TestnetFaucet is
     function _couldClaimInSeconds() internal view returns (uint256) {
         uint256 lastDraw = _lastClaim[_msgSender()];
         uint256 blockTimestamp = block.timestamp;
-        if (blockTimestamp - lastDraw > _SECUND_IN_DAY) {
+        if (blockTimestamp - lastDraw > _SECONDS_IN_DAY) {
             return 0;
         }
-        return _SECUND_IN_DAY - (blockTimestamp - lastDraw);
+        return _SECONDS_IN_DAY - (blockTimestamp - lastDraw);
     }
 
     //solhint-disable no-empty-blocks
