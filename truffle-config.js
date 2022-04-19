@@ -2,9 +2,6 @@ const path = require("path");
 require("dotenv").config();
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 
-const Web3 = require("web3");
-const web3 = new Web3();
-
 module.exports = {
     plugins: [
         "truffle-contract-size",
@@ -55,7 +52,7 @@ module.exports = {
                 );
             },
             network_id: "42",
-            gasPrice: web3.utils.toWei("10", "gwei"),
+            gasPrice: "10000000000",
         },
 
         ropsten: {
