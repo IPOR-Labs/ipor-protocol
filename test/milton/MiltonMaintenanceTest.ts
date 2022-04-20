@@ -163,6 +163,11 @@ describe("Milton Maintenance", () => {
             miltonDai.connect(admin).setJoseph(await userThree.getAddress()),
             "Pausable: paused"
         );
+
+        await assertError(
+            miltonDai.connect(admin).setMiltonSpreadModel(await userThree.getAddress()),
+            "Pausable: paused"
+        );
     });
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {

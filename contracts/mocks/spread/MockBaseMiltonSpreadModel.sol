@@ -125,19 +125,35 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
     }
 
-    function testVolatilityAndMeanReversionRegionOne(uint256 emaVar, int256 mu)
+    function testVolatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 mu)
         public
         pure
         returns (int256)
     {
-        return _volatilityAndMeanReversionRegionOne(emaVar, mu);
+        return _volatilityAndMeanReversionPayFixedRegionOne(emaVar, mu);
     }
 
-    function testVolatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
+    function testVolatilityAndMeanReversionReceiveFixedRegionOne(uint256 emaVar, int256 mu)
         public
         pure
         returns (int256)
     {
-        return _volatilityAndMeanReversionRegionTwo(emaVar, mu);
+        return _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, mu);
+    }
+
+    function testVolatilityAndMeanReversionReceiveFixedRegionTwo(uint256 emaVar, int256 mu)
+        public
+        pure
+        returns (int256)
+    {
+        return _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, mu);
     }
 }

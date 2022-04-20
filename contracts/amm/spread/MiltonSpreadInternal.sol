@@ -25,12 +25,21 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     //@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
     uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
-    int256 internal constant _B1 = -8260047328466268;
-    int256 internal constant _B2 = -9721941081703882;
-    int256 internal constant _V1 = 47294930726988593;
-    int256 internal constant _V2 = 8792990351805524;
-    int256 internal constant _M1 = -9721941081703882;
-    int256 internal constant _M2 = -3996501128463404;
+    int256 internal constant _PAY_FIXED_REGION_ONE_BASE = 0;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 0;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 0;
+
+    int256 internal constant _PAY_FIXED_REGION_TWO_BASE = 0;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 0;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = 0;
+
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_BASE = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 0;
+
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_BASE = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = 0;
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
         return _getSpreadPremiumsMaxValue();
@@ -52,52 +61,100 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
         return _getDCMaxLiquidityRedemptionValue();
     }
 
-    function getB1() external pure override returns (int256) {
-        return _getB1();
+    function getPayFixedRegionOneBase() external pure override returns (int256) {
+        return _getPayFixedRegionOneBase();
     }
 
-    function getB2() external pure override returns (int256) {
-        return _getB2();
+    function getPayFixedRegionOneSlopeFactorOne() external pure override returns (int256) {
+        return _getPayFixedRegionOneSlopeFactorOne();
     }
 
-    function getV1() external pure override returns (int256) {
-        return _getV1();
+    function getPayFixedRegionOneSlopeFactorTwo() external pure override returns (int256) {
+        return _getPayFixedRegionOneSlopeFactorTwo();
     }
 
-    function getV2() external pure override returns (int256) {
-        return _getV2();
+    function getPayFixedRegionTwoBase() external pure override returns (int256) {
+        return _getPayFixedRegionTwoBase();
     }
 
-    function getM1() external pure override returns (int256) {
-        return _getM1();
+    function getPayFixedRegionTwoSlopeFactorOne() external pure override returns (int256) {
+        return _getPayFixedRegionTwoSlopeFactorOne();
     }
 
-    function getM2() external pure override returns (int256) {
-        return _getM2();
+    function getPayFixedRegionTwoSlopeFactorTwo() external pure override returns (int256) {
+        return _getPayFixedRegionTwoSlopeFactorTwo();
     }
 
-    function _getB1() internal pure virtual returns (int256) {
-        return _B1;
+    function getReceiveFixedRegionOneBase() external pure override returns (int256) {
+        return _getReceiveFixedRegionOneBase();
     }
 
-    function _getB2() internal pure virtual returns (int256) {
-        return _B2;
+    function getReceiveFixedRegionOneSlopeFactorOne() external pure override returns (int256) {
+        return _getReceiveFixedRegionOneSlopeFactorOne();
     }
 
-    function _getV1() internal pure virtual returns (int256) {
-        return _V1;
+    function getReceiveFixedRegionOneSlopeFactorTwo() external pure override returns (int256) {
+        return _getReceiveFixedRegionOneSlopeFactorTwo();
     }
 
-    function _getV2() internal pure virtual returns (int256) {
-        return _V2;
+    function getReceiveFixedRegionTwoBase() external pure override returns (int256) {
+        return _getReceiveFixedRegionTwoBase();
     }
 
-    function _getM1() internal pure virtual returns (int256) {
-        return _M1;
+    function getReceiveFixedRegionTwoSlopeFactorOne() external pure override returns (int256) {
+        return _getReceiveFixedRegionTwoSlopeFactorOne();
     }
 
-    function _getM2() internal pure virtual returns (int256) {
-        return _M2;
+    function getReceiveFixedRegionTwoSlopeFactorTwo() external pure override returns (int256) {
+        return _getReceiveFixedRegionTwoSlopeFactorTwo();
+    }
+
+    function _getPayFixedRegionOneBase() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_ONE_BASE;
+    }
+
+    function _getPayFixedRegionOneSlopeFactorOne() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE;
+    }
+
+    function _getPayFixedRegionOneSlopeFactorTwo() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO;
+    }
+
+    function _getPayFixedRegionTwoBase() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_TWO_BASE;
+    }
+
+    function _getPayFixedRegionTwoSlopeFactorOne() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE;
+    }
+
+    function _getPayFixedRegionTwoSlopeFactorTwo() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO;
+    }
+
+    function _getReceiveFixedRegionOneBase() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_ONE_BASE;
+    }
+
+    function _getReceiveFixedRegionOneSlopeFactorOne() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE;
+    }
+
+    function _getReceiveFixedRegionOneSlopeFactorTwo() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO;
+    }
+
+    function _getReceiveFixedRegionTwoBase() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_TWO_BASE;
+    }
+
+    function _getReceiveFixedRegionTwoSlopeFactorOne() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE;
+    }
+
+    function _getReceiveFixedRegionTwoSlopeFactorTwo() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO;
     }
 
     function _getSpreadPremiumsMaxValue() internal pure virtual returns (uint256) {

@@ -169,6 +169,10 @@ interface IMiltonInternal {
     /// @return Milton Spread model smart contract address
     function getMiltonSpreadModel() external view returns (address);
 
+    /// @notice Sets Milton Spread Model smart contract address (contract responsible for spread calculation).
+    /// @param newMiltonSpreadModel new Milton Spread Model address
+    function setMiltonSpreadModel(address newMiltonSpreadModel) external;
+
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
     /// @param oldJoseph Joseph's old address
@@ -177,5 +181,15 @@ interface IMiltonInternal {
         address indexed changedBy,
         address indexed oldJoseph,
         address indexed newJoseph
+    );
+
+    /// @notice Emmited when MiltonSpreadModel's address is changed by its owner.
+    /// @param changedBy account address that has changed Joseph's address
+    /// @param oldMiltonSpreadModel MiltonSpreadModel's old address
+    /// @param newMiltonSpreadModel MiltonSpreadModel's new address
+    event MiltonSpreadModelChanged(
+        address indexed changedBy,
+        address indexed oldMiltonSpreadModel,
+        address indexed newMiltonSpreadModel
     );
 }

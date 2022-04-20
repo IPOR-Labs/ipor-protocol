@@ -133,7 +133,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
 
         spreadPremiums = result < maxValue ? result : maxValue;
-
     }
 
     function _calculateSpreadPremiumsReceiveFixed(
@@ -159,8 +158,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
-     
-		int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+
+        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
 
         spreadPremiums = result < maxValue ? result : maxValue;
@@ -312,8 +311,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         pure
         returns (int256)
     {
-        int256 regionOne = _volatilityAndMeanReversionRegionOne(emaVar, mu);
-        int256 regionTwo = _volatilityAndMeanReversionRegionTwo(emaVar, mu);
+        int256 regionOne = _volatilityAndMeanReversionPayFixedRegionOne(emaVar, mu);
+        int256 regionTwo = _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, mu);
         if (regionOne >= regionTwo) {
             return regionOne;
         } else {
@@ -327,8 +326,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         pure
         returns (int256)
     {
-        int256 regionOne = _volatilityAndMeanReversionRegionOne(emaVar, mu);
-        int256 regionTwo = _volatilityAndMeanReversionRegionTwo(emaVar, mu);
+        int256 regionOne = _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, mu);
+        int256 regionTwo = _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, mu);
         if (regionOne >= regionTwo) {
             return regionTwo;
         } else {
@@ -336,23 +335,67 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    function _volatilityAndMeanReversionRegionOne(uint256 emaVar, int256 mu)
+    function _volatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 mu)
         internal
         pure
         returns (int256)
     {
         return
-            _getB1() +
-            IporMath.divisionInt(_getV1() * emaVar.toInt256() + _getM1() * mu, Constants.D18_INT);
+            _getPayFixedRegionOneBase() +
+            IporMath.divisionInt(
+                _getPayFixedRegionOneSlopeFactorOne() *
+                    emaVar.toInt256() +
+                    _getPayFixedRegionOneSlopeFactorTwo() *
+                    mu,
+                Constants.D18_INT
+            );
     }
 
-    function _volatilityAndMeanReversionRegionTwo(uint256 emaVar, int256 mu)
+    function _volatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 mu)
         internal
         pure
         returns (int256)
     {
         return
-            _getB2() +
-            IporMath.divisionInt(_getV2() * emaVar.toInt256() + _getM2() * mu, Constants.D18_INT);
+            _getPayFixedRegionTwoBase() +
+            IporMath.divisionInt(
+                _getPayFixedRegionTwoSlopeFactorOne() *
+                    emaVar.toInt256() +
+                    _getPayFixedRegionTwoSlopeFactorTwo() *
+                    mu,
+                Constants.D18_INT
+            );
+    }
+
+    function _volatilityAndMeanReversionReceiveFixedRegionOne(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        return
+            _getReceiveFixedRegionOneBase() +
+            IporMath.divisionInt(
+                _getReceiveFixedRegionOneSlopeFactorOne() *
+                    emaVar.toInt256() +
+                    _getReceiveFixedRegionOneSlopeFactorTwo() *
+                    mu,
+                Constants.D18_INT
+            );
+    }
+
+    function _volatilityAndMeanReversionReceiveFixedRegionTwo(uint256 emaVar, int256 mu)
+        internal
+        pure
+        returns (int256)
+    {
+        return
+            _getReceiveFixedRegionTwoBase() +
+            IporMath.divisionInt(
+                _getReceiveFixedRegionTwoSlopeFactorOne() *
+                    emaVar.toInt256() +
+                    _getReceiveFixedRegionTwoSlopeFactorTwo() *
+                    mu,
+                Constants.D18_INT
+            );
     }
 }
