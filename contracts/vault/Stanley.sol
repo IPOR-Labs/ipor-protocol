@@ -254,12 +254,15 @@ abstract contract Stanley is
             false
         );
 
-        uint256 balance = ERC20Upgradeable(_asset).balanceOf(address(this));
+        uint256 assetBalanceStanley = ERC20Upgradeable(_asset).balanceOf(address(this));
 
-        if (balance != 0) {
-            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), balance);
-            uint256 wadBalance = IporMath.convertToWad(balance, _getDecimals());
-            withdrawnAmount = assetBalanceAave + assetBalanceCompound + wadBalance;
+        if (assetBalanceStanley != 0) {
+            IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
+            uint256 wadAssetBalanceStanley = IporMath.convertToWad(
+                assetBalanceStanley,
+                _getDecimals()
+            );
+            withdrawnAmount = assetBalanceAave + assetBalanceCompound + wadAssetBalanceStanley;
         } else {
             withdrawnAmount = assetBalanceAave + assetBalanceCompound;
         }
@@ -289,16 +292,17 @@ abstract contract Stanley is
             from = address(strategyCompound);
             uint256 shares = strategyCompound.balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            strategyCompound.withdraw(IporMath.convertToWad(shares, decimals));
+            strategyCompound.withdraw(shares);
         } else {
             from = address(strategyAave);
             uint256 shares = strategyAave.balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            strategyAave.withdraw(IporMath.convertToWad(shares, decimals));
+            strategyAave.withdraw(shares);
         }
 
         uint256 amount = ERC20Upgradeable(_asset).balanceOf(address(this));
         uint256 wadAmount = IporMath.convertToWad(amount, decimals);
+
         _depositToStrategy(strategyMaxApy, wadAmount);
 
         emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadAmount);
@@ -475,16 +479,8 @@ abstract contract Stanley is
      */
     function _depositToStrategy(IStrategy strategyAddress, uint256 wadAmount) internal {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, _getDecimals());
-        _depositToStrategy(strategyAddress, wadAmount, amount);
-    }
-
-    function _depositToStrategy(
-        IStrategy strategyAddress,
-        uint256 wadAmount,
-        uint256 amount
-    ) internal {
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
-        strategyAddress.deposit(wadAmount);
+        strategyAddress.deposit(IporMath.convertToWad(amount, _getDecimals()));
     }
 
     function _calcExchangeRate()

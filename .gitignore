@@ -54,3 +54,4 @@ app/.env
 /coverage.json
 /types/
 /ipor-abi/
+/abi/

@@ -3,7 +3,7 @@ const { expect } = require("chai");
 import { N0__01_18DEC } from "../utils/Constants";
 import {
     ERC20,
-    MiltonFaucet,
+    TestnetFaucet,
     StrategyAave,
     StrategyCompound,
     StanleyUsdt,
@@ -57,7 +57,7 @@ describe("Open/Close Swap", function () {
 
     let ivTokenUsdt: IvToken;
 
-    let miltonFaucet: MiltonFaucet;
+    let testnetFaucet: TestnetFaucet;
     let miltonFacadeDataProvider: MiltonFacadeDataProvider;
 
     before(async () => {
@@ -65,7 +65,7 @@ describe("Open/Close Swap", function () {
 
         const deployd: DeployType = await deploy();
         ({
-            miltonFaucet,
+            testnetFaucet,
             usdc,
             usdt,
             dai,
@@ -102,7 +102,7 @@ describe("Open/Close Swap", function () {
 
             const deposit = ONE_18.mul("10000");
             await transferDaiToAddress(
-                miltonFaucet.address,
+                testnetFaucet.address,
                 await admin.getAddress(),
                 ONE_18.mul("10000000")
             );
@@ -204,7 +204,7 @@ describe("Open/Close Swap", function () {
 
             const deposit = BigNumber.from("10000000000");
             await transferUsdcToAddress(
-                miltonFaucet.address,
+                testnetFaucet.address,
                 await admin.getAddress(),
                 BigNumber.from("1000000000000000")
             );
@@ -306,7 +306,7 @@ describe("Open/Close Swap", function () {
 
             const deposit = BigNumber.from("10000000000");
             await transferUsdtToAddress(
-                miltonFaucet.address,
+                testnetFaucet.address,
                 await admin.getAddress(),
                 BigNumber.from("1000000000000000")
             );

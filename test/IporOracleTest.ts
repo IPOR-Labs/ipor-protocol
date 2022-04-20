@@ -317,7 +317,7 @@ describe("IporOracle", () => {
             BigNumber.from("119780")
         );
         const decayFactorValueInterval3 = await _iporOracle.itfGetDecayFactorValue(
-            BigNumber.from("397890")
+            BigNumber.from("3024001")
         );
         expect(decayFactorValueInterval1.lte(PERCENTAGE_100_18DEC)).to.be.true;
         expect(decayFactorValueInterval2.lte(PERCENTAGE_100_18DEC)).to.be.true;
@@ -749,7 +749,7 @@ describe("IporOracle", () => {
         const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
-        const expectedExpoMovingAverage = BigNumber.from("76462");
+        const expectedExpoMovingAverage = BigNumber.from("71846");
 
         //when
         await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
