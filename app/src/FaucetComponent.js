@@ -50,7 +50,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonFaucet"
+                        contract="TestnetFaucet"
                         method="balanceOf"
                         methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
                         render={(value) => (
@@ -66,7 +66,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonFaucet"
+                        contract="TestnetFaucet"
                         method="balanceOf"
                         methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
                         render={(value) => (
@@ -82,7 +82,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonFaucet"
+                        contract="TestnetFaucet"
                         method="balanceOf"
                         methodArgs={[drizzle.contracts.DaiMockedToken.address]}
                         render={(value) => (
@@ -157,7 +157,7 @@ export default ({ drizzle, drizzleState }) => (
                 <strong>Transfer ETH to specific address</strong>
                 <br />
                 <small>Value represented in WEI</small>
-                <ContractForm drizzle={drizzle} contract="MiltonFaucet" method="transferEth" />
+                <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="transferEth" />
             </div>
             <div className="col-md-6">
                 <strong>Transfer TOKENS to your wallet</strong>
@@ -167,7 +167,7 @@ export default ({ drizzle, drizzleState }) => (
                 <small>Max in 6 decimals: 1000000000000</small>
                 <br />
                 <small>Max in 18 decimals: 1000000000000000000000000</small>
-                <ContractForm drizzle={drizzle} contract="MiltonFaucet" method="transfer" />
+                <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="transfer" />
             </div>
         </div>
     </div>
