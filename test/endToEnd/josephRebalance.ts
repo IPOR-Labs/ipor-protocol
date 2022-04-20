@@ -2,7 +2,7 @@ import { BigNumber, Signer } from "ethers";
 const { expect } = require("chai");
 import {
     ERC20,
-    MiltonFaucet,
+    TestnetFaucet,
     StrategyAave,
     StrategyCompound,
     StanleyUsdt,
@@ -53,14 +53,14 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
 
     let ivTokenUsdt: IvToken;
 
-    let miltonFaucet: MiltonFaucet;
+    let testnetFaucet: TestnetFaucet;
 
     before(async () => {
         [admin] = await hre.ethers.getSigners();
 
         const deployd: DeployType = await deploy();
         ({
-            miltonFaucet,
+            testnetFaucet,
             usdc,
             usdt,
             dai,
@@ -92,7 +92,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
 
         const deposit = BigNumber.from("10000000000000000000");
         await transferDaiToAddress(
-            miltonFaucet.address,
+            testnetFaucet.address,
             await admin.getAddress(),
             BigNumber.from("100000000000000000000")
         );
@@ -148,7 +148,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
 
         const deposit = BigNumber.from("1000000000");
         await transferUsdcToAddress(
-            miltonFaucet.address,
+            testnetFaucet.address,
             await admin.getAddress(),
             BigNumber.from("10000000000")
         );
@@ -202,7 +202,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
 
         const deposit = BigNumber.from("1000000000");
         await transferUsdtToAddress(
-            miltonFaucet.address,
+            testnetFaucet.address,
             await admin.getAddress(),
             BigNumber.from("10000000000")
         );
