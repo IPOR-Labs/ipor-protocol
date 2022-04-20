@@ -4,10 +4,10 @@ const func = require("./json_func.js");
 const IpTokenUsdt = artifacts.require("IpTokenUsdt");
 
 module.exports = async function (deployer, _network) {
-    const stable = await func.get_value(keys.USDT);
+    const asset = await func.get_value(keys.USDT);
 
-    await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", stable);
+    await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", asset);
     const ipTokenUsdt = await IpTokenUsdt.deployed();
 
-    await func.update("ipUSDT", ipTokenUsdt.address);
+    await func.update(keys.ipUSDT, ipTokenUsdt.address);
 };
