@@ -16,7 +16,6 @@ const MiltonStorageUsdt = artifacts.require("MiltonStorageUsdt");
 const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
 const IporOracle = artifacts.require("IporOracle");
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 const MiltonUsdt = artifacts.require("MiltonUsdt");
 const MiltonUsdc = artifacts.require("MiltonUsdc");
 const MiltonDai = artifacts.require("MiltonDai");
@@ -29,8 +28,6 @@ const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
 module.exports = async function (deployer, _network) {
 
-    await deployer.deploy(MiltonSpreadModel);
-    const miltonSpreadModel = await MiltonSpreadModel.deployed();
 
 	const miltonStorageUsdt = await deployProxy(MiltonStorageUsdt, {
         deployer: deployer,
