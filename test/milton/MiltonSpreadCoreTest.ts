@@ -1,12 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import {
-    N1__0_18DEC,
-    N0__01_18DEC,
-    N0__001_18DEC,
-    N0__000_01_18DEC,
-} from "../utils/Constants";
+import { N1__0_18DEC, N0__01_18DEC, N0__001_18DEC, N0__000_01_18DEC } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
@@ -160,12 +155,26 @@ describe("MiltonSpreadModel - Core", () => {
         const dCLambdaValue = await miltonSpread.getDCLambdaValue();
         const dCKOmegaValue = await miltonSpread.getDCKOmegaValue();
         const dcMaxLiquidityRedemptionValue = await miltonSpread.getDCMaxLiquidityRedemptionValue();
-        const b1 = await miltonSpread.getB1();
-        const b2 = await miltonSpread.getB2();
-        const v1 = await miltonSpread.getV1();
-        const v2 = await miltonSpread.getV2();
-        const m1 = await miltonSpread.getM1();
-        const m2 = await miltonSpread.getM2();
+        const payFixedRegionOneBase = await miltonSpread.getPayFixedRegionOneBase();
+        const payFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionOneSlopeForVolatility();
+        const payFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionOneSlopeForMeanReversion();
+        const payFixedRegionTwoBase = await miltonSpread.getPayFixedRegionTwoBase();
+        const payFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionTwoSlopeForVolatility();
+        const payFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionTwoSlopeForMeanReversion();
+        const receiveFixedRegionOneBase = await miltonSpread.getReceiveFixedRegionOneBase();
+        const receiveFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForVolatility();
+        const receiveFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForMeanReversion();
+        const receiveFixedRegionTwoBase = await miltonSpread.getReceiveFixedRegionTwoBase();
+        const receiveFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForVolatility();
+        const receiveFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         // then
         expect(spreadPremiumsMaxValue).to.be.equal(BigNumber.from("3").mul(N0__001_18DEC));
@@ -173,11 +182,33 @@ describe("MiltonSpreadModel - Core", () => {
         expect(dCLambdaValue).to.be.equal(N0__01_18DEC);
         expect(dCKOmegaValue).to.be.equal(BigNumber.from("5").mul(N0__000_01_18DEC));
         expect(dcMaxLiquidityRedemptionValue).to.be.equal(N1__0_18DEC);
-        expect(b1).to.be.equal(BigNumber.from("-8260047328466268"));
-        expect(b2).to.be.equal(BigNumber.from("-9721941081703882"));
-        expect(v1).to.be.equal(BigNumber.from("47294930726988593"));
-        expect(v2).to.be.equal(BigNumber.from("8792990351805524"));
-        expect(m1).to.be.equal(BigNumber.from("-9721941081703882"));
-        expect(m2).to.be.equal(BigNumber.from("-3996501128463404"));
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("157019226449085840"));
+        expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("19995379670799840000")
+        );
+        expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-3841736186289212000")
+        );
+        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("595866254143749400"));
+        expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(
+            BigNumber.from("42133363586198140000")
+        );
+        expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-104460848714451840000")
+        );
+        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("23984087324369713"));
+        expect(receiveFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("3528665170882902700")
+        );
+        expect(receiveFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("1018371437526577500")
+        );
+        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-49374213950104766"));
+        expect(receiveFixedRegionTwoSlopeForVolatility).to.be.equal(
+            BigNumber.from("-269622133795293730000")
+        );
+        expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-92391136608777590000")
+        );
     });
 });

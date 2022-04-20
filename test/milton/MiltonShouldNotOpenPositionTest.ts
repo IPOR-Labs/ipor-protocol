@@ -162,7 +162,7 @@ describe("Milton - Should Not Open Position", () => {
         }
 
         const totalAmount = BigNumber.from("30000000000000000001");
-        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
+        const acceptableFixedInterestRate = BigNumber.from("48374213950104766").add(N0__01_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -275,7 +275,8 @@ describe("Milton - Should Not Open Position", () => {
         );
 
         const totalAmount = BigNumber.from("30000001");
-        const acceptableFixedInterestRate = N0__01_18DEC.add(N0__01_18DEC).add(N0__001_18DEC);
+
+        const acceptableFixedInterestRate = BigNumber.from("48374213950069062").add(N0__01_18DEC);
         const leverage = USD_10_18DEC;
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
