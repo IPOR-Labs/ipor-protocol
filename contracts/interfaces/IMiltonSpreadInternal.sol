@@ -30,11 +30,11 @@ interface IMiltonSpreadInternal {
 
     /// @notice Gets slope factor 1 for volatility in Region 1 for Pay Fixed - Receive Floating leg
     /// @return slope factor 1 for volatility in region 1 for pay fixed - receive floating leg represented in 18 decimals
-    function getPayFixedRegionOneSlopeFactorOne() external pure returns (int256);
+    function getPayFixedRegionOneSlopeForVolatility() external pure returns (int256);
 
     /// @notice Gets slope factor 2 for mean reversion in Region 1 for Pay Fixed - Receive Floating leg
     /// @return slope factor 2 for mean reversion in region 1 for pay fixed - receive floating leg represented in 18 decimals
-    function getPayFixedRegionOneSlopeFactorTwo() external pure returns (int256);
+    function getPayFixedRegionOneSlopeForMeanReversion() external pure returns (int256);
 
     /// @notice Gets Base in Region 2 for Pay Fixed - Receive Floating leg
     /// @return base in region 2 for pay fixed - receive floating leg represented in 18 decimals
@@ -42,11 +42,11 @@ interface IMiltonSpreadInternal {
 
     /// @notice Gets slope factor 1 for volatility in Region 2 for Pay Fixed - Receive Floating leg
     /// @return slope factor 1 for volatility in region 2 for pay fixed - receive floating leg represented in 18 decimals
-    function getPayFixedRegionTwoSlopeFactorOne() external pure returns (int256);
+    function getPayFixedRegionTwoSlopeForVolatility() external pure returns (int256);
 
     /// @notice Gets slope factor 2 for mean reversion in Region 2 for Pay Fixed - Receive Floating leg
     /// @return slope factor 2 for mean reversion in region 2 for pay fixed - receive floating leg represented in 18 decimals
-    function getPayFixedRegionTwoSlopeFactorTwo() external pure returns (int256);
+    function getPayFixedRegionTwoSlopeForMeanReversion() external pure returns (int256);
 
     /// @notice Gets Base in Region 1 for Receive Fixed - Pay Floating leg
     /// @return base in region 1 for receive fixed - pay floating leg represented in 18 decimals
@@ -54,11 +54,11 @@ interface IMiltonSpreadInternal {
 
     /// @notice Gets slope factor 1 for volatility in Region 1 for Receive Fixed - Pay Floating leg
     /// @return slope factor 1 for volatility in region 1 for receive fixed - pay floating leg represented in 18 decimals
-    function getReceiveFixedRegionOneSlopeFactorOne() external pure returns (int256);
+    function getReceiveFixedRegionOneSlopeForVolatility() external pure returns (int256);
 
     /// @notice Gets slope factor 2 for mean reversion in Region 1 for Receive Fixed - Pay Floating leg
     /// @return slope factor 2 for mean reversion in region 1 for receive fixed - pay floating leg represented in 18 decimals
-    function getReceiveFixedRegionOneSlopeFactorTwo() external pure returns (int256);
+    function getReceiveFixedRegionOneSlopeForMeanReversion() external pure returns (int256);
 
     /// @notice Gets Base in Region 2 for Receive Fixed - Pay Floating leg
     /// @return base in region 2 for receive fixed - pay floating leg represented in 18 decimals
@@ -66,9 +66,9 @@ interface IMiltonSpreadInternal {
 
     /// @notice Gets slope factor 1 for volatility in Region 2 for Receive Fixed - Pay Floating leg
     /// @return slope factor 1 for volatility in region 2 for receive fixed - pay floating leg represented in 18 decimals
-    function getReceiveFixedRegionTwoSlopeFactorOne() external pure returns (int256);
+    function getReceiveFixedRegionTwoSlopeForVolatility() external pure returns (int256);
 
     /// @notice Gets slope factor 2 for mean reversion in Region 2 for Receive Fixed - Pay Floating leg
     /// @return slope factor 2 for mean reversion in region 2 for receive fixed - pay floating leg represented in 18 decimals
-    function getReceiveFixedRegionTwoSlopeFactorTwo() external pure returns (int256);
+    function getReceiveFixedRegionTwoSlopeForMeanReversion() external pure returns (int256);
 }

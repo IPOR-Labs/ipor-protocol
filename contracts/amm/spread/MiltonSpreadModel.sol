@@ -146,7 +146,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
 
         spreadPremiums = result < maxValue ? result : maxValue;
     }
-	
+
     function _calculateSpreadPremiumsReceiveFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
@@ -355,9 +355,9 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         return
             _getPayFixedRegionOneBase() +
             IporMath.divisionInt(
-                _getPayFixedRegionOneSlopeFactorOne() *
+                _getPayFixedRegionOneSlopeForVolatility() *
                     emaVar.toInt256() +
-                    _getPayFixedRegionOneSlopeFactorTwo() *
+                    _getPayFixedRegionOneSlopeForMeanReversion() *
                     mu,
                 Constants.D18_INT
             );
@@ -371,9 +371,9 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         return
             _getPayFixedRegionTwoBase() +
             IporMath.divisionInt(
-                _getPayFixedRegionTwoSlopeFactorOne() *
+                _getPayFixedRegionTwoSlopeForVolatility() *
                     emaVar.toInt256() +
-                    _getPayFixedRegionTwoSlopeFactorTwo() *
+                    _getPayFixedRegionTwoSlopeForMeanReversion() *
                     mu,
                 Constants.D18_INT
             );
@@ -387,9 +387,9 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         return
             _getReceiveFixedRegionOneBase() +
             IporMath.divisionInt(
-                _getReceiveFixedRegionOneSlopeFactorOne() *
+                _getReceiveFixedRegionOneSlopeForVolatility() *
                     emaVar.toInt256() +
-                    _getReceiveFixedRegionOneSlopeFactorTwo() *
+                    _getReceiveFixedRegionOneSlopeForMeanReversion() *
                     mu,
                 Constants.D18_INT
             );
@@ -403,9 +403,9 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         return
             _getReceiveFixedRegionTwoBase() +
             IporMath.divisionInt(
-                _getReceiveFixedRegionTwoSlopeFactorOne() *
+                _getReceiveFixedRegionTwoSlopeForVolatility() *
                     emaVar.toInt256() +
-                    _getReceiveFixedRegionTwoSlopeFactorTwo() *
+                    _getReceiveFixedRegionTwoSlopeForMeanReversion() *
                     mu,
                 Constants.D18_INT
             );

@@ -26,20 +26,24 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
     int256 internal constant _PAY_FIXED_REGION_ONE_BASE = 157019226449085840;
-    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 19995379670799840000;
-    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = -3841736186289212000;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY = 19995379670799840000;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION = -3841736186289212000;
 
     int256 internal constant _PAY_FIXED_REGION_TWO_BASE = 595866254143749400;
-    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 42133363586198140000;
-    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = -104460848714451840000;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY = 42133363586198140000;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION =
+        -104460848714451840000;
 
     int256 internal constant _RECEIVE_FIXED_REGION_ONE_BASE = 23984087324369713;
-    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 3528665170882902700;
-    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 1018371437526577500;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY = 3528665170882902700;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION =
+        1018371437526577500;
 
     int256 internal constant _RECEIVE_FIXED_REGION_TWO_BASE = -49374213950104766;
-    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = -269622133795293730000;
-    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = -92391136608777590000;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY =
+        -269622133795293730000;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION =
+        -92391136608777590000;
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
         return _getSpreadPremiumsMaxValue();
@@ -65,96 +69,116 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
         return _getPayFixedRegionOneBase();
     }
 
-    function getPayFixedRegionOneSlopeFactorOne() external pure override returns (int256) {
-        return _getPayFixedRegionOneSlopeFactorOne();
+    function getPayFixedRegionOneSlopeForVolatility() external pure override returns (int256) {
+        return _getPayFixedRegionOneSlopeForVolatility();
     }
 
-    function getPayFixedRegionOneSlopeFactorTwo() external pure override returns (int256) {
-        return _getPayFixedRegionOneSlopeFactorTwo();
+    function getPayFixedRegionOneSlopeForMeanReversion() external pure override returns (int256) {
+        return _getPayFixedRegionOneSlopeForMeanReversion();
     }
 
     function getPayFixedRegionTwoBase() external pure override returns (int256) {
         return _getPayFixedRegionTwoBase();
     }
 
-    function getPayFixedRegionTwoSlopeFactorOne() external pure override returns (int256) {
-        return _getPayFixedRegionTwoSlopeFactorOne();
+    function getPayFixedRegionTwoSlopeForVolatility() external pure override returns (int256) {
+        return _getPayFixedRegionTwoSlopeForVolatility();
     }
 
-    function getPayFixedRegionTwoSlopeFactorTwo() external pure override returns (int256) {
-        return _getPayFixedRegionTwoSlopeFactorTwo();
+    function getPayFixedRegionTwoSlopeForMeanReversion() external pure override returns (int256) {
+        return _getPayFixedRegionTwoSlopeForMeanReversion();
     }
 
     function getReceiveFixedRegionOneBase() external pure override returns (int256) {
         return _getReceiveFixedRegionOneBase();
     }
 
-    function getReceiveFixedRegionOneSlopeFactorOne() external pure override returns (int256) {
-        return _getReceiveFixedRegionOneSlopeFactorOne();
+    function getReceiveFixedRegionOneSlopeForVolatility() external pure override returns (int256) {
+        return _getReceiveFixedRegionOneSlopeForVolatility();
     }
 
-    function getReceiveFixedRegionOneSlopeFactorTwo() external pure override returns (int256) {
-        return _getReceiveFixedRegionOneSlopeFactorTwo();
+    function getReceiveFixedRegionOneSlopeForMeanReversion()
+        external
+        pure
+        override
+        returns (int256)
+    {
+        return _getReceiveFixedRegionOneSlopeForMeanReversion();
     }
 
     function getReceiveFixedRegionTwoBase() external pure override returns (int256) {
         return _getReceiveFixedRegionTwoBase();
     }
 
-    function getReceiveFixedRegionTwoSlopeFactorOne() external pure override returns (int256) {
-        return _getReceiveFixedRegionTwoSlopeFactorOne();
+    function getReceiveFixedRegionTwoSlopeForVolatility() external pure override returns (int256) {
+        return _getReceiveFixedRegionTwoSlopeForVolatility();
     }
 
-    function getReceiveFixedRegionTwoSlopeFactorTwo() external pure override returns (int256) {
-        return _getReceiveFixedRegionTwoSlopeFactorTwo();
+    function getReceiveFixedRegionTwoSlopeForMeanReversion()
+        external
+        pure
+        override
+        returns (int256)
+    {
+        return _getReceiveFixedRegionTwoSlopeForMeanReversion();
     }
 
     function _getPayFixedRegionOneBase() internal pure virtual returns (int256) {
         return _PAY_FIXED_REGION_ONE_BASE;
     }
 
-    function _getPayFixedRegionOneSlopeFactorOne() internal pure virtual returns (int256) {
-        return _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE;
+    function _getPayFixedRegionOneSlopeForVolatility() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY;
     }
 
-    function _getPayFixedRegionOneSlopeFactorTwo() internal pure virtual returns (int256) {
-        return _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO;
+    function _getPayFixedRegionOneSlopeForMeanReversion() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION;
     }
 
     function _getPayFixedRegionTwoBase() internal pure virtual returns (int256) {
         return _PAY_FIXED_REGION_TWO_BASE;
     }
 
-    function _getPayFixedRegionTwoSlopeFactorOne() internal pure virtual returns (int256) {
-        return _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE;
+    function _getPayFixedRegionTwoSlopeForVolatility() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY;
     }
 
-    function _getPayFixedRegionTwoSlopeFactorTwo() internal pure virtual returns (int256) {
-        return _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO;
+    function _getPayFixedRegionTwoSlopeForMeanReversion() internal pure virtual returns (int256) {
+        return _PAY_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION;
     }
 
     function _getReceiveFixedRegionOneBase() internal pure virtual returns (int256) {
         return _RECEIVE_FIXED_REGION_ONE_BASE;
     }
 
-    function _getReceiveFixedRegionOneSlopeFactorOne() internal pure virtual returns (int256) {
-        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE;
+    function _getReceiveFixedRegionOneSlopeForVolatility() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY;
     }
 
-    function _getReceiveFixedRegionOneSlopeFactorTwo() internal pure virtual returns (int256) {
-        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO;
+    function _getReceiveFixedRegionOneSlopeForMeanReversion()
+        internal
+        pure
+        virtual
+        returns (int256)
+    {
+        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION;
     }
 
     function _getReceiveFixedRegionTwoBase() internal pure virtual returns (int256) {
         return _RECEIVE_FIXED_REGION_TWO_BASE;
     }
 
-    function _getReceiveFixedRegionTwoSlopeFactorOne() internal pure virtual returns (int256) {
-        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE;
+    function _getReceiveFixedRegionTwoSlopeForVolatility() internal pure virtual returns (int256) {
+        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY;
     }
 
-    function _getReceiveFixedRegionTwoSlopeFactorTwo() internal pure virtual returns (int256) {
-        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO;
+    function _getReceiveFixedRegionTwoSlopeForMeanReversion()
+        internal
+        pure
+        virtual
+        returns (int256)
+    {
+        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION;
     }
 
     function _getSpreadPremiumsMaxValue() internal pure virtual returns (uint256) {
