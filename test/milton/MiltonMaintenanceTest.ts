@@ -2,12 +2,10 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    N0__1_18DEC,
     N0__01_18DEC,
     PERCENTAGE_3_18DEC,
     USD_28_000_18DEC,
     USD_50_000_18DEC,
-    ZERO,
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
@@ -22,7 +20,6 @@ import {
     prepareComplexTestDataDaiCase000,
     prepareTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
-    getReceiveFixedDerivativeParamsDAICase1,
     prepareTestData,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";

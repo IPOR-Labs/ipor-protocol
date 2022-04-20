@@ -23,6 +23,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance
         );
 
+        if (spreadPremiums > 0) {
+            console.log("PLUS spreadPremiums=", uint256(spreadPremiums));
+        } else {
+            console.log("MINUS spreadPremiums=", uint256(-spreadPremiums));
+        }
+
         int256 intQuoteValue = refLeg.toInt256() + spreadPremiums;
 
         if (intQuoteValue > 0) {
@@ -129,12 +135,18 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             mu
         );
 
+        if (volatilityAndMeanReversion > 0) {
+            console.log("PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
+        } else {
+            console.log("MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
+        }
+
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
 
         spreadPremiums = result < maxValue ? result : maxValue;
     }
-
+	
     function _calculateSpreadPremiumsReceiveFixed(
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
@@ -305,7 +317,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg.
+    /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.
     function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
         internal
         pure
@@ -320,7 +332,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    /// @dev Volatility and mean revesion component for Receive Fixed Pay Floating leg.
+    /// @dev Volatility and mean revesion component for Receive Fixed Pay Floating leg. Minimum value between regions.
     function _calculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
         internal
         pure

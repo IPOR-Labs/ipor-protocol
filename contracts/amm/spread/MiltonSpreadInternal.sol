@@ -25,21 +25,21 @@ contract MiltonSpreadInternal is IporOwnable, IMiltonSpreadInternal {
     //@notice Part of Spread calculation - Demand Component Max Liquidity Redemption Value - check Whitepaper
     uint256 internal constant _DC_MAX_LIQUIDITY_REDEMPTION_VALUE = 1e18;
 
-    int256 internal constant _PAY_FIXED_REGION_ONE_BASE = 0;
-    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 0;
-    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 0;
+    int256 internal constant _PAY_FIXED_REGION_ONE_BASE = 157019226449085840;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 19995379670799840000;
+    int256 internal constant _PAY_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = -3841736186289212000;
 
-    int256 internal constant _PAY_FIXED_REGION_TWO_BASE = 0;
-    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 0;
-    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = 0;
+    int256 internal constant _PAY_FIXED_REGION_TWO_BASE = 595866254143749400;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 42133363586198140000;
+    int256 internal constant _PAY_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = -104460848714451840000;
 
-    int256 internal constant _RECEIVE_FIXED_REGION_ONE_BASE = 0;
-    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 0;
-    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_BASE = 23984087324369713;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_ONE = 3528665170882902700;
+    int256 internal constant _RECEIVE_FIXED_REGION_ONE_SLOPE_FACTOR_TWO = 1018371437526577500;
 
-    int256 internal constant _RECEIVE_FIXED_REGION_TWO_BASE = 0;
-    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = 0;
-    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = 0;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_BASE = -49374213950104766;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_ONE = -269622133795293730000;
+    int256 internal constant _RECEIVE_FIXED_REGION_TWO_SLOPE_FACTOR_TWO = -92391136608777590000;
 
     function getSpreadPremiumsMaxValue() external pure override returns (uint256) {
         return _getSpreadPremiumsMaxValue();
