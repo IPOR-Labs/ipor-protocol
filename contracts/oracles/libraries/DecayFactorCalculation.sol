@@ -4,8 +4,8 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/math/IporMath.sol";
 
-uint256 constant END_INTERVAL_ONE = 419211;
-uint256 constant END_INTERVAL_TWO = 1392602;
+uint256 constant END_INTERVAL_ONE = 419215;
+uint256 constant END_INTERVAL_TWO = 1392607;
 uint256 constant END_INTERVAL_THREE = 3024000;
 
 // Line One Parameters in wand
