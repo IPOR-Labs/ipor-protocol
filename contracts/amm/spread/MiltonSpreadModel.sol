@@ -5,7 +5,6 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
-import "hardhat/console.sol";
 
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
@@ -22,12 +21,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor,
             accruedBalance
         );
-
-        if (spreadPremiums > 0) {
-            console.log("PLUS spreadPremiums=", uint256(spreadPremiums));
-        } else {
-            console.log("MINUS spreadPremiums=", uint256(-spreadPremiums));
-        }
 
         int256 intQuoteValue = refLeg.toInt256() + spreadPremiums;
 
@@ -134,12 +127,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedIpor.exponentialWeightedMovingVariance,
             mu
         );
-
-        if (volatilityAndMeanReversion > 0) {
-            console.log("PLUS volatilityAndMeanReversion=", uint256(volatilityAndMeanReversion));
-        } else {
-            console.log("MINUS volatilityAndMeanReversion=", uint256(-volatilityAndMeanReversion));
-        }
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
         int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;

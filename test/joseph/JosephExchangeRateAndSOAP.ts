@@ -134,16 +134,18 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
         await testData.iporOracle
             .connect(userOne)
-            .itfUpdateIndex(params.asset, PERCENTAGE_2_5_18DEC, params.openTimestamp);
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigNumber.from("1001673731442211174");
+        const expectedExchangeRate = BigNumber.from("1000886318050552869");
 
         //when
         const actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
+
         //then
         expect(soap.soap.lte(ZERO)).to.be.true;
         const absSoap = soap.soap.mul(BigNumber.from("-1"));
@@ -254,7 +256,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigNumber.from("987823434476506362");
+        const expectedExchangeRate = BigNumber.from("979341411659456500");
 
         //when
         const actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
@@ -392,7 +394,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigNumber.from("8494848805632282973266");
+        const expectedSoap = BigNumber.from("9003770174655274718530");
         const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
 
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
@@ -408,7 +410,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         );
 
         //then
-
         expect(actualSoap).to.be.eql(expectedSoap);
         expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
@@ -536,10 +537,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         let actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
-        const expectedExchangeRate = BigNumber.from("231204643857984155");
+        const expectedExchangeRate = BigNumber.from("222722621040934293");
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigNumber.from("-8864190058051077712840");
+        const expectedSoap = BigNumber.from("-8355268689028085967576");
         const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
 
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
@@ -553,7 +554,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
         ).to.be.eql(actualExchangeRate);
-
         expect(actualSoap).to.be.eql(expectedSoap);
         expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });

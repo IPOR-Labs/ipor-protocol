@@ -201,7 +201,7 @@ describe("MiltonFacadeDataProvider", () => {
         const expectedLiquidationDepositAmount = BigNumber.from("20").mul(N1__0_18DEC);
         const expectedIncomeFeeRate = BigNumber.from("1").mul(N0__1_18DEC);
         const expectedSpreadPayFixedValue = BigNumber.from("1").mul(N0__01_18DEC);
-        const expectedSpreadRecFixedValue = BigNumber.from("1").mul(N0__01_18DEC);
+        const expectedSpreadRecFixedValue = BigNumber.from("-18374213950104766");
         const expectedMaxLpUtilizationRate = BigNumber.from("8").mul(N0__1_18DEC);
         const expectedMaxLpUtilizationPerLegRate = BigNumber.from("48").mul(N0__01_18DEC);
 
