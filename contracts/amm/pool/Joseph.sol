@@ -104,6 +104,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
+
         _getIpToken().mint(_msgSender(), ipTokenAmount);
 
         emit ProvideLiquidity(
@@ -111,7 +112,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
             _msgSender(),
             address(milton),
             exchangeRate,
-            assetAmount,
+            wadAssetAmount,
             ipTokenAmount
         );
     }
@@ -134,11 +135,14 @@ abstract contract Joseph is JosephInternal, IJoseph {
             Constants.D18
         );
 
-        uint256 wadRedeemAmount = wadAssetAmount - wadRedeemFee;
+        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(
+            wadAssetAmount - wadRedeemFee,
+            _getDecimals()
+        );
+
+        uint256 wadRedeemAmount = IporMath.convertToWad(redeemAmount, _getDecimals());
 
         IporTypes.MiltonBalancesMemory memory balance = _getMilton().getAccruedBalance();
-
-        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadRedeemAmount, _getDecimals());
 
         uint256 utilizationRate = _calculateRedeemedUtilizationRate(
             balance.liquidityPool,
@@ -155,14 +159,18 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), _msgSender(), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(
+            address(_getMilton()),
+            _msgSender(),
+            redeemAmount
+        );
 
         emit Redeem(
             timestamp,
             address(milton),
             _msgSender(),
             exchangeRate,
-            assetAmount,
+            wadAssetAmount,
             ipTokenAmount,
             wadRedeemFee,
             wadRedeemAmount

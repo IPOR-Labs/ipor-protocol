@@ -6,25 +6,25 @@ pragma solidity 0.8.9;
 interface IJoseph {
     /// @notice Calculates ipToken exchange rate
     /// @dev exchange rate is a ratio between Liqudity Pool Balance and ipToken total supply
-    /// @return ipToken exchange rate for a specific asset
+    /// @return ipToken exchange rate for a specific asset, represented in 18 decimals.
     function calculateExchangeRate() external view returns (uint256);
 
     /// @notice Function invoked to provide asset to Liquidity Pool in amount `assetValue`
     /// @dev Emits {ProvideLiquidity} event and transfers ERC20 tokens from sender to Milton,
     /// emits {Transfer} event from ERC20 asset, emits {Mint} event from ipToken.
     /// Transfers minted ipTokens to the sender. Amount of transferred ipTokens is based on current ipToken exchange rate
-    /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to Milton
+    /// @param assetAmount Amount of ERC20 tokens which are transferred from sender to Milton. Represented in decimals specific for asset.
     function provideLiquidity(uint256 assetAmount) external;
 
     /// @notice Redeems `ipTokenAmount` IpTokens for underlying asset
     /// @dev Emits {Redeem} event, emits {Transfer} event from ERC20 asset, emits {Burn} event from ipToken.
     /// Transfers asser ERC20 tokens from Milton to sender based on current exchange rate.
-    /// @param ipTokenAmount redeem amount
+    /// @param ipTokenAmount redeem amount, represented in 18 decimals.
     function redeem(uint256 ipTokenAmount) external;
 
     /// @notice Returns reserve ratio of Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset.
     /// Resere ratio is the ratio between ERC20 asset kept on hand by Milton, not delegated to Stanley and total amount of asset.
-    /// @return reserves ratio
+    /// @return reserves ratio, represented in 18 decimals
     function checkVaultReservesRatio() external returns (uint256);
 
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
@@ -66,7 +66,7 @@ interface IJoseph {
         /// @notice underlying asset fee deducted when redeeming ipToken.
         /// @dev value represented in 18 decimals
         uint256 redeemFee,
-        /// @notice net asset amount transferred from Milton to `to`/sender's account, redudced by the redeem fee
+        /// @notice net asset amount transferred from Milton to `to`/sender's account, reduced by the redeem fee
         /// @dev value represented in 18 decimals
         uint256 redeemAmount
     );
