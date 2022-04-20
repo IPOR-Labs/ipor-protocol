@@ -140,7 +140,7 @@ describe("TestnetFaucet", () => {
         expect(timeToNextClaim, "timeToNextClaim").to.be.equal(ZERO);
     });
 
-    it("Should not be able to transfer with transferAdmin when not owner", async () => {
+    it("Should not be able to transfer with transfer when not owner", async () => {
         // Given
         // When
         await expect(
@@ -149,7 +149,7 @@ describe("TestnetFaucet", () => {
         // Then
     });
 
-    it("Should not be able to transfer with transferAdmin when ammound = 0", async () => {
+    it("Should not be able to transfer with transfer when ammount = 0", async () => {
         // Given
         // When
         await expect(testnetFaucet.transfer(tokenDai.address, ZERO)).to.be.revertedWith("IPOR_004");
@@ -162,7 +162,7 @@ describe("TestnetFaucet", () => {
         );
     });
 
-    it("Should be able to transfer with transferAdmin", async () => {
+    it("Should be able to transfer with transfer", async () => {
         // Given
         const balanceBefore = await tokenDai.balanceOf(await admin.getAddress());
 

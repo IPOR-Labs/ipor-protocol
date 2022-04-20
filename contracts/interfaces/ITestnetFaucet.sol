@@ -24,6 +24,6 @@ interface ITestnetFaucet {
         /// @notice underlying asset
         address asset,
         /// @notice amount of stable
-        uint256 amound
+        uint256 amount
     );
 }
