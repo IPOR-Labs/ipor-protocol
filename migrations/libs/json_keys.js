@@ -69,4 +69,6 @@ module.exports = {
     MiltonFacadeDataProviderImpl: "MiltonFacadeDataProviderImpl",
     CockpitDataProviderProxy: "CockpitDataProviderProxy",
     CockpitDataProviderImpl: "CockpitDataProviderImpl",
+    TestnetFaucetProxy: "TestnetFaucetProxy",
+    TestnetFaucetImpl: "TestnetFaucetImpl",
 };
