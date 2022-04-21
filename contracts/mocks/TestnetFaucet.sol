@@ -39,6 +39,12 @@ contract TestnetFaucet is
         _usdt = usdt;
     }
 
+	//solhint-disable no-empty-blocks
+    fallback() external payable {}
+
+    //solhint-disable no-empty-blocks
+    receive() external payable {}
+	
     function getVersion() external pure virtual returns (uint256) {
         return 1;
     }
