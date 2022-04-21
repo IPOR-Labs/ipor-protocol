@@ -30,12 +30,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("791318358294630906100");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionPayFixed(emaVar, mu);
+            .testCalculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(expectedResult, `Incorrect Volatility and Mean Reversion, Pay Fixed leg`).to.be.eq(
@@ -48,7 +48,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("-3489159569625102261");
         //when
         const actualResult = await miltonSpread
@@ -67,12 +67,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("48882094945955889120");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionPayFixedRegionOne(emaVar, mu);
+            .testVolatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -86,12 +86,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("-3489159569625102261");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionReceiveFixedRegionOne(emaVar, mu);
+            .testVolatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -105,12 +105,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("791318358294630906100");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionPayFixedRegionTwo(emaVar, mu);
+            .testVolatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -124,12 +124,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
         const expectedResult = BigNumber.from("372475768680734065384");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, mu);
+            .testVolatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
         //then
 
         expect(

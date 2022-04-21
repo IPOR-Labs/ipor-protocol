@@ -120,12 +120,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             soap
         );
 
-        int256 mu = accruedIpor.indexValue.toInt256() -
+        int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
             accruedIpor.exponentialMovingAverage.toInt256();
 
         int256 volatilityAndMeanReversion = _calculateVolatilityAndMeanReversionPayFixed(
             accruedIpor.exponentialWeightedMovingVariance,
-            mu
+            diffIporIndexEma
         );
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
@@ -150,12 +150,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             soap
         );
 
-        int256 mu = accruedIpor.indexValue.toInt256() -
+        int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
             accruedIpor.exponentialMovingAverage.toInt256();
 
         int256 volatilityAndMeanReversion = _calculateVolatilityAndMeanReversionReceiveFixed(
             accruedIpor.exponentialWeightedMovingVariance,
-            mu
+            diffIporIndexEma
         );
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
@@ -305,13 +305,13 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     }
 
     /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.
-    function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
+    function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 diffIporIndexEma)
         internal
         pure
         returns (int256)
     {
-        int256 regionOne = _volatilityAndMeanReversionPayFixedRegionOne(emaVar, mu);
-        int256 regionTwo = _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, mu);
+        int256 regionOne = _volatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
+        int256 regionTwo = _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
         if (regionOne >= regionTwo) {
             return regionOne;
         } else {
@@ -320,13 +320,18 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     }
 
     /// @dev Volatility and mean revesion component for Receive Fixed Pay Floating leg. Minimum value between regions.
-    function _calculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
-        internal
-        pure
-        returns (int256)
-    {
-        int256 regionOne = _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, mu);
-        int256 regionTwo = _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, mu);
+    function _calculateVolatilityAndMeanReversionReceiveFixed(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) internal pure returns (int256) {
+        int256 regionOne = _volatilityAndMeanReversionReceiveFixedRegionOne(
+            emaVar,
+            diffIporIndexEma
+        );
+        int256 regionTwo = _volatilityAndMeanReversionReceiveFixedRegionTwo(
+            emaVar,
+            diffIporIndexEma
+        );
         if (regionOne >= regionTwo) {
             return regionTwo;
         } else {
@@ -334,7 +339,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         }
     }
 
-    function _volatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 mu)
+    function _volatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 diffIporIndexEma)
         internal
         pure
         returns (int256)
@@ -345,12 +350,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
                 _getPayFixedRegionOneSlopeForVolatility() *
                     emaVar.toInt256() +
                     _getPayFixedRegionOneSlopeForMeanReversion() *
-                    mu,
+                    diffIporIndexEma,
                 Constants.D18_INT
             );
     }
 
-    function _volatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 mu)
+    function _volatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 diffIporIndexEma)
         internal
         pure
         returns (int256)
@@ -361,39 +366,37 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
                 _getPayFixedRegionTwoSlopeForVolatility() *
                     emaVar.toInt256() +
                     _getPayFixedRegionTwoSlopeForMeanReversion() *
-                    mu,
+                    diffIporIndexEma,
                 Constants.D18_INT
             );
     }
 
-    function _volatilityAndMeanReversionReceiveFixedRegionOne(uint256 emaVar, int256 mu)
-        internal
-        pure
-        returns (int256)
-    {
+    function _volatilityAndMeanReversionReceiveFixedRegionOne(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) internal pure returns (int256) {
         return
             _getReceiveFixedRegionOneBase() +
             IporMath.divisionInt(
                 _getReceiveFixedRegionOneSlopeForVolatility() *
                     emaVar.toInt256() +
                     _getReceiveFixedRegionOneSlopeForMeanReversion() *
-                    mu,
+                    diffIporIndexEma,
                 Constants.D18_INT
             );
     }
 
-    function _volatilityAndMeanReversionReceiveFixedRegionTwo(uint256 emaVar, int256 mu)
-        internal
-        pure
-        returns (int256)
-    {
+    function _volatilityAndMeanReversionReceiveFixedRegionTwo(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) internal pure returns (int256) {
         return
             _getReceiveFixedRegionTwoBase() +
             IporMath.divisionInt(
                 _getReceiveFixedRegionTwoSlopeForVolatility() *
                     emaVar.toInt256() +
                     _getReceiveFixedRegionTwoSlopeForMeanReversion() *
-                    mu,
+                    diffIporIndexEma,
                 Constants.D18_INT
             );
     }

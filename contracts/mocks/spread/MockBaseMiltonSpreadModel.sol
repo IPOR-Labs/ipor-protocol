@@ -109,51 +109,45 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
             );
     }
 
-    function testCalculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _calculateVolatilityAndMeanReversionPayFixed(emaVar, mu);
+    function testCalculateVolatilityAndMeanReversionPayFixed(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _calculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
     }
 
-    function testCalculateVolatilityAndMeanReversionReceiveFixed(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
+    function testCalculateVolatilityAndMeanReversionReceiveFixed(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _volatilityAndMeanReversionPayFixedRegionOne(emaVar, mu);
+    function testVolatilityAndMeanReversionPayFixedRegionOne(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _volatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionReceiveFixedRegionOne(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, mu);
+    function testVolatilityAndMeanReversionReceiveFixedRegionOne(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, mu);
+    function testVolatilityAndMeanReversionPayFixedRegionTwo(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionReceiveFixedRegionTwo(uint256 emaVar, int256 mu)
-        public
-        pure
-        returns (int256)
-    {
-        return _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, mu);
+    function testVolatilityAndMeanReversionReceiveFixedRegionTwo(
+        uint256 emaVar,
+        int256 diffIporIndexEma
+    ) public pure returns (int256) {
+        return _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
     }
 }
