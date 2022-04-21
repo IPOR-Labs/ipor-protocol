@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 import {
     Milton,
-    MiltonFaucet,
+    TestnetFaucet,
     MiltonStorageUsdc,
     MiltonStorageUsdt,
     MiltonStorageDai,
@@ -35,66 +35,66 @@ import {
 
 const faucetSupply6Decimals = BigNumber.from("1000000000000000");
 const faucetSupply18Decimals = BigNumber.from("1000000000000000000000000000");
-export const miltonFaucetFactory = async (): Promise<MiltonFaucet> => {
-    const MiltonFaucetFactory = await hre.ethers.getContractFactory("MiltonFaucet");
-    return MiltonFaucetFactory.deploy() as Promise<MiltonFaucet>;
+export const testnetFaucetFactory = async (): Promise<TestnetFaucet> => {
+    const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
+    return TestnetFaucetFactory.deploy() as Promise<TestnetFaucet>;
 };
 
-export const miltonFaucetSetup = async (
-    miltonFaucet: MiltonFaucet,
+export const testnetFaucetSetup = async (
+    testnetFaucet: TestnetFaucet,
     dai: ERC20,
     usdc: ERC20,
     usdt: ERC20
 ) => {
     await hre.network.provider.send("hardhat_setBalance", [
-        miltonFaucet.address,
+        testnetFaucet.address,
         "0x500000000000000000000",
     ]);
     await transferDaiToAddress(
         "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
-        miltonFaucet.address,
+        testnetFaucet.address,
         faucetSupply18Decimals
     );
     console.log(
-        "daiAddress -> balanseOf -> miltonFaucet",
-        await dai.balanceOf(miltonFaucet.address)
+        "daiAddress -> balanseOf -> testnetFaucet",
+        await dai.balanceOf(testnetFaucet.address)
     );
     await transferUsdcToAddress(
         "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
-        miltonFaucet.address,
+        testnetFaucet.address,
         faucetSupply6Decimals
     );
     console.log(
-        "usdcAddress -> balanseOf -> miltonFaucet",
-        await usdc.balanceOf(miltonFaucet.address)
+        "usdcAddress -> balanseOf -> testnetFaucet",
+        await usdc.balanceOf(testnetFaucet.address)
     );
     await transferUsdtToAddress(
         "0x5754284f345afc66a98fbb0a0afe71e0f007b949",
-        miltonFaucet.address,
+        testnetFaucet.address,
         faucetSupply6Decimals
     );
     console.log(
-        "usdtAddress -> balanseOf -> miltonFaucet",
-        await usdt.balanceOf(miltonFaucet.address)
+        "usdtAddress -> balanseOf -> testnetFaucet",
+        await usdt.balanceOf(testnetFaucet.address)
     );
 };
 
 export const transferFromFaucetTo = async (
-    miltonFaucet: MiltonFaucet,
+    testnetFaucet: TestnetFaucet,
     asset: ERC20,
     to: string,
     amound: BigNumber
 ) => {
     if (asset.address === daiAddress) {
-        await transferDaiToAddress(miltonFaucet.address, to, amound);
+        await transferDaiToAddress(testnetFaucet.address, to, amound);
         return;
     }
     if (asset.address === usdcAddress) {
-        await transferUsdcToAddress(miltonFaucet.address, to, amound);
+        await transferUsdcToAddress(testnetFaucet.address, to, amound);
         return;
     }
     if (asset.address === usdtAddress) {
-        await transferUsdtToAddress(miltonFaucet.address, to, amound);
+        await transferUsdtToAddress(testnetFaucet.address, to, amound);
         return;
     }
 };

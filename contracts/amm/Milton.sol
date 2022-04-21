@@ -110,7 +110,10 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     function closeSwapPayFixed(uint256 swapId) external override nonReentrant whenNotPaused {
-        _transferLiquidationDepositAmount(_msgSender(), _closeSwapPayFixed(swapId, block.timestamp));
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapPayFixed(swapId, block.timestamp)
+        );
     }
 
     function closeSwapReceiveFixed(uint256 swapId) external override nonReentrant whenNotPaused {
@@ -145,7 +148,10 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     function emergencyCloseSwapPayFixed(uint256 swapId) external override onlyOwner whenPaused {
-        _transferLiquidationDepositAmount(_msgSender(), _closeSwapPayFixed(swapId, block.timestamp));
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapPayFixed(swapId, block.timestamp)
+        );
     }
 
     function emergencyCloseSwapReceiveFixed(uint256 swapId) external override onlyOwner whenPaused {
@@ -388,7 +394,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             bosStruct.accruedIpor,
             balance
         );
-
         require(
             acceptableFixedInterestRate <= quoteValue,
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED

@@ -153,12 +153,14 @@ abstract contract JosephInternal is
     {
         require(address(0) != _getTreasury(), JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        _getMiltonStorage().updateStorageWhenTransferToTreasury(assetAmount);
-
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetAmount,
             _getDecimals()
         );
+
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
+
+        _getMiltonStorage().updateStorageWhenTransferToTreasury(wadAssetAmount);
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_getMilton()),
@@ -177,12 +179,14 @@ abstract contract JosephInternal is
     {
         require(address(0) != _getCharlieTreasury(), JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
-        _getMiltonStorage().updateStorageWhenTransferToCharlieTreasury(assetAmount);
-
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetAmount,
             _getDecimals()
         );
+
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
+
+        _getMiltonStorage().updateStorageWhenTransferToCharlieTreasury(wadAssetAmount);
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_getMilton()),

@@ -28,7 +28,6 @@ import {
     prepareMiltonSpreadCase8,
     prepareMiltonSpreadCase9,
     prepareMiltonSpreadCase10,
-    getPayFixedDerivativeParamsUSDTCase1,
     getReceiveFixedDerivativeParamsUSDTCase1,
 } from "../utils/MiltonUtils";
 import { assertError } from "../utils/AssertUtils";
@@ -184,8 +183,8 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         const accruedIpor = {
             indexValue: BigNumber.from("13").mul(N0__01_18DEC), //13%
             ibtPrice: N1__0_18DEC,
-            exponentialMovingAverage: BigNumber.from("4").mul(N0__01_18DEC),
-            exponentialWeightedMovingVariance: BigNumber.from("35").mul(N0__001_18DEC),
+            exponentialMovingAverage: BigNumber.from("1").mul(N0__01_18DEC),
+            exponentialWeightedMovingVariance: BigNumber.from("15").mul(N0__001_18DEC),
         };
 
         const accruedBalance = {
@@ -199,7 +198,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("122609859719827717"); //39%
+        const expectedQuoteValue = BigNumber.from("126031138326580735");
 
         //when
         const actualQuotedValue = await miltonSpread

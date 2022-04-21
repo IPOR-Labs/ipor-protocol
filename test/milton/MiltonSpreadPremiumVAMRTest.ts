@@ -2,23 +2,10 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
-    N1__0_18DEC,
-    TC_TOTAL_AMOUNT_10_000_18DEC,
-    N0__1_18DEC,
-    USD_1_000_18DEC,
-    USD_2_000_18DEC,
-    USD_14_000_18DEC,
-    USD_20_18DEC,
-    ZERO,
-} from "../utils/Constants";
-import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
     prepareMockMiltonSpreadModel,
     prepareMiltonSpreadBase,
-    prepareMiltonSpreadCase3,
-    prepareMiltonSpreadCase4,
-    prepareMiltonSpreadCase5,
 } from "../utils/MiltonUtils";
 
 const { expect } = chai;
@@ -43,12 +30,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("111523713219142301");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("791318358294630906100");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionPayFixed(emaVar, mu);
+            .testCalculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(expectedResult, `Incorrect Volatility and Mean Reversion, Pay Fixed leg`).to.be.eq(
@@ -61,12 +48,12 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("28177611700197706");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("-3489159569625102261");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
+            .testCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -75,39 +62,79 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         ).to.be.eq(actualResult);
     });
 
-    it("should calculate spread - Volatility And Mean Reversion - Region One - Simple Case 1", async () => {
+    it("should calculate spread - Volatility And Mean Reversion, Pay Fixed - Region One - Simple Case 1", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("111523713219142301");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("48882094945955889120");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionRegionOne(emaVar, mu);
+            .testVolatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
-        expect(expectedResult, `Incorrect Volatility and Mean Reversion, Region One`).to.be.eq(
-            actualResult
-        );
+        expect(
+            expectedResult,
+            `Incorrect Volatility and Mean Reversion, Pay Fixed, Region One`
+        ).to.be.eq(actualResult);
     });
 
-    it("should calculate spread - Volatility And Mean Reversion - Region Two - Simple Case 1", async () => {
+    it("should calculate spread - Volatility And Mean Reversion, Receive Fixed - Region One - Simple Case 1", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const emaVar = BigNumber.from("1065000000000000000");
-        const mu = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("28177611700197706");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("-3489159569625102261");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionRegionTwo(emaVar, mu);
+            .testVolatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
-        expect(expectedResult, `Incorrect Volatility and Mean Reversion, Region Two`).to.be.eq(
-            actualResult
-        );
+        expect(
+            expectedResult,
+            `Incorrect Volatility and Mean Reversion, Receive Fixed, Region One`
+        ).to.be.eq(actualResult);
+    });
+
+    it("should calculate spread - Volatility And Mean Reversion, Pay Fixed - Region Two - Simple Case 1", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const emaVar = BigNumber.from("1065000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("791318358294630906100");
+        //when
+        const actualResult = await miltonSpread
+            .connect(liquidityProvider)
+            .testVolatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
+        //then
+
+        expect(
+            expectedResult,
+            `Incorrect Volatility and Mean Reversion, Pay Fixed, Region Two`
+        ).to.be.eq(actualResult);
+    });
+
+    it("should calculate spread - Volatility And Mean Reversion, Receive Fixed - Region Two - Simple Case 1", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadBase();
+
+        const emaVar = BigNumber.from("1065000000000000000");
+        const diffIporIndexEma = BigNumber.from("-7140000000000000000");
+        const expectedResult = BigNumber.from("372475768680734065384");
+        //when
+        const actualResult = await miltonSpread
+            .connect(liquidityProvider)
+            .testVolatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
+        //then
+
+        expect(
+            expectedResult,
+            `Incorrect Volatility and Mean Reversion, Receive Fixed, Region Two`
+        ).to.be.eq(actualResult);
     });
 });

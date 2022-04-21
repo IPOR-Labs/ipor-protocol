@@ -209,6 +209,18 @@ abstract contract MiltonInternal is
         return _getJoseph();
     }
 
+    function setMiltonSpreadModel(address newMiltonSpreadModel)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        require(newMiltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
+        address oldMiltonSpreadModel = _getJoseph();
+        _miltonSpreadModel = IMiltonSpreadModel(newMiltonSpreadModel);
+        emit MiltonSpreadModelChanged(_msgSender(), oldMiltonSpreadModel, newMiltonSpreadModel);
+    }
+
     function getMiltonSpreadModel() external view override returns (address) {
         return address(_getMiltonSpreadModel());
     }

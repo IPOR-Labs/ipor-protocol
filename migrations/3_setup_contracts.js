@@ -2,7 +2,7 @@ require("dotenv").config({ path: "../.env" });
 const keccak256 = require("keccak256");
 const { erc1967, deployProxy } = require("@openzeppelin/truffle-upgrades");
 
-const MiltonFaucet = artifacts.require("MiltonFaucet");
+const TestnetFaucet = artifacts.require("TestnetFaucet");
 
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
@@ -248,14 +248,14 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     console.log("Setup Faucet...");
-    const miltonFaucet = await MiltonFaucet.deployed();
-    miltonFaucet.sendTransaction({
+    const testnetFaucet = await TestnetFaucet.deployed();
+    testnetFaucet.sendTransaction({
         from: admin,
         value: "500000000000000000000000",
     });
-    await mockedUsdt.transfer(miltonFaucet.address, faucetSupply6Decimals);
-    await mockedUsdc.transfer(miltonFaucet.address, faucetSupply6Decimals);
-    await mockedDai.transfer(miltonFaucet.address, faucetSupply18Decimals);
+    await mockedUsdt.transfer(testnetFaucet.address, faucetSupply6Decimals);
+    await mockedUsdc.transfer(testnetFaucet.address, faucetSupply6Decimals);
+    await mockedDai.transfer(testnetFaucet.address, faucetSupply18Decimals);
     console.log("Setup Faucet finished.");
 
     console.log("Congratulations! Setup Smart Contracts finished!");

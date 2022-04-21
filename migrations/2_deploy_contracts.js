@@ -4,7 +4,7 @@ const { deployProxy } = require("@openzeppelin/truffle-upgrades");
 // const { artifacts } = require("hardhat");
 
 // const keccak256 = require("keccak256");
-const MiltonFaucet = artifacts.require("MiltonFaucet");
+const TestnetFaucet = artifacts.require("TestnetFaucet");
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
 const UsdcMockedToken = artifacts.require("UsdcMockedToken");
 const DaiMockedToken = artifacts.require("DaiMockedToken");
@@ -73,9 +73,6 @@ module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
-    await deployer.deploy(MiltonFaucet);
-    const miltonFaucet = await MiltonFaucet.deployed();
-
     await deployer.deploy(UsdtMockedToken, stableTotalSupply6Decimals, 6);
     const mockedUsdt = await UsdtMockedToken.deployed();
 
@@ -84,6 +81,16 @@ module.exports = async function (deployer, _network) {
 
     await deployer.deploy(DaiMockedToken, stableTotalSupply18Decimals, 18);
     const mockedDai = await DaiMockedToken.deployed();
+
+    const testnetFaucet = await deployProxy(
+        TestnetFaucet,
+        [mockedDai.address, mockedUsdc.address, mockedUsdt.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
 
     await deployer.deploy(MockAUsdc);
     const mockedAUsdc = await MockAUsdc.deployed();
