@@ -4,7 +4,7 @@ import {
     ERC20,
     IpToken,
     IvToken,
-    MiltonFaucet,
+    TestnetFaucet,
     StrategyAave,
     StrategyCompound,
     StanleyDai,
@@ -24,8 +24,8 @@ import {
     MiltonFacadeDataProvider,
 } from "../../types";
 import {
-    miltonFaucetFactory,
-    miltonFaucetSetup,
+    testnetFaucetFactory,
+    testnetFaucetSetup,
     miltonStorageDaiFactory,
     miltonStorageUsdcFactory,
     miltonStorageUsdtFactory,
@@ -85,7 +85,7 @@ export type DeployType = {
     cDai: ERC20;
     cUsdc: ERC20;
     cUsdt: ERC20;
-    miltonFaucet: MiltonFaucet;
+    testnetFaucet: TestnetFaucet;
     ipTokenDai: IpToken;
     ipTokenUsdc: IpToken;
     ipTokenUsdt: IpToken;
@@ -116,7 +116,7 @@ export type DeployType = {
 };
 
 export const deploy = async (): Promise<DeployType> => {
-    const miltonFaucet = await miltonFaucetFactory();
+    const testnetFaucet = await testnetFaucetFactory();
 
     const aUsdc = await aUsdcFactory();
     const aUsdt = await aUsdtFactory();
@@ -237,7 +237,7 @@ export const deploy = async (): Promise<DeployType> => {
         cDai,
         cUsdc,
         cUsdt,
-        miltonFaucet,
+        testnetFaucet,
         ipTokenDai,
         ipTokenUsdc,
         ipTokenUsdt,
@@ -270,7 +270,7 @@ export const deploy = async (): Promise<DeployType> => {
 
 export const setup = async (deployed: DeployType) => {
     const {
-        miltonFaucet,
+        testnetFaucet,
         usdc,
         usdt,
         dai,
@@ -332,5 +332,5 @@ export const setup = async (deployed: DeployType) => {
     await iporOracleSetup(iporOracle);
     await initIporValues(iporOracle);
 
-    await miltonFaucetSetup(miltonFaucet, dai, usdc, usdt);
+    await testnetFaucetSetup(testnetFaucet, dai, usdc, usdt);
 };

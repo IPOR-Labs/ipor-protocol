@@ -355,7 +355,7 @@ describe("Milton SOAP", () => {
             );
         await openSwapReceiveFixed(testData, derivativeParams);
 
-        const expectedSoap = BigNumber.from("-68267191075554025634");
+        const expectedSoap = BigNumber.from("121663028620296614064");
 
         //when
         const soapParams = {
@@ -581,7 +581,7 @@ describe("Milton SOAP", () => {
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, secondDerivativeParams);
 
-        const expectedSoap = BigNumber.from("-136534382151108092229");
+        const expectedSoap = BigNumber.from("55690485039200064200");
 
         //when
         const soapParams = {
@@ -658,7 +658,7 @@ describe("Milton SOAP", () => {
         await openSwapPayFixed(testData, firstDerivativeParams);
         await openSwapReceiveFixed(testData, secondDerivativeParams);
 
-        const expectedSoap = BigNumber.from("-136534382151108092229");
+        const expectedSoap = BigNumber.from("53396462878485987786");
 
         //when
         const soapParams = {
@@ -940,7 +940,7 @@ describe("Milton SOAP", () => {
         await miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
-        const expectedSoap = BigNumber.from("-68267191075554025634");
+        const expectedSoap = BigNumber.from("121663653953621856395");
 
         const soapParams = {
             asset: tokenDai.address,

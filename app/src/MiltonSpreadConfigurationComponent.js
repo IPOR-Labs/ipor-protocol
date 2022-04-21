@@ -106,9 +106,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>
-                            Demand Component Max Liquidity Redemption Value
-                        </strong>
+                        <strong>Demand Component Max Liquidity Redemption Value</strong>
                     </td>
                     <td>
                         <ContractData
@@ -127,7 +125,257 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-                
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region One Base</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionOneBase"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region One Volatility</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionOneSlopeForVolatility"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region One Mean Reversion</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionOneSlopeForMeanReversion"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region Two Base</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionTwoBase"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region Two Volatility</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionTwoSlopeForVolatility"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Pay Fixed Region Two Mean Reversion</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getPayFixedRegionTwoSlopeForMeanReversion"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region One Base</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionOneBase"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region One Volatility</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionOneSlopeForVolatility"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region One Mean Reversion</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionOneSlopeForMeanReversion"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region Two Base</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionTwoBase"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region Two Volatility</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionTwoSlopeForVolatility"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Receive Fixed Region Two Mean Reversion</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MiltonSpreadModel"
+                            method="getReceiveFixedRegionTwoSlopeForMeanReversion"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
