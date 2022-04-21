@@ -1,9 +1,10 @@
+const keys = require("../../json_keys.js");
+const func = require("../../json_func.js");
+
 var Migrations = artifacts.require("Migrations");
 
-const initial_migration = function (deployer) {
-    deployer.deploy(Migrations);
-};
-
-module.exports = {
-    execute: initial_migration,
+module.exports = async function (deployer) {
+    await deployer.deploy(Migrations);
+    const migration = await Migrations.deployed();
+    await func.update(keys.Migration, migration.address);
 };

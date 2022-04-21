@@ -1,8 +1,5 @@
-#!/usr/bin/node
-const fs = require("fs");
-const editJsonFile = require("edit-json-file");
-
 module.exports = {
+    Migration: "Migration",
     USDT: "USDT",
     USDC: "USDC",
     DAI: "DAI",
@@ -71,4 +68,24 @@ module.exports = {
     CockpitDataProviderImpl: "CockpitDataProviderImpl",
     TestnetFaucetProxy: "TestnetFaucetProxy",
     TestnetFaucetImpl: "TestnetFaucetImpl",
+    ItfIporOracleProxy: "ItfIporOracleProxy",
+    ItfIporOracleImpl: "ItfIporOracleImpl",
+    ItfJosephProxyUsdt: "ItfJosephProxyUsdt",
+    ItfJosephImplUsdt: "ItfJosephImplUsdt",
+    ItfJosephProxyUsdc: "ItfJosephProxyUsdc",
+    ItfJosephImplUsdc: "ItfJosephImplUsdc",
+    ItfJosephProxyDai: "ItfJosephProxyDai",
+    ItfJosephImplDai: "ItfJosephImplDai",
+    ItfMiltonProxyUsdt: "ItfMiltonProxyUsdt",
+    ItfMiltonImplUsdt: "ItfMiltonImplUsdt",
+    ItfMiltonProxyUsdc: "ItfMiltonProxyUsdc",
+    ItfMiltonImplUsdc: "ItfMiltonImplUsdc",
+    ItfMiltonProxyDai: "ItfMiltonProxyDai",
+    ItfMiltonImplDai: "ItfMiltonImplDai",
+    ItfStanleyProxyUsdt: "ItfStanleyProxyUsdt",
+    ItfStanleyImplUsdt: "ItfStanleyImplUsdt",
+    ItfStanleyProxyUsdc: "ItfStanleyProxyUsdc",
+    ItfStanleyImplUsdc: "ItfStanleyImplUsdc",
+    ItfStanleyProxyDai: "ItfStanleyProxyDai",
+    ItfStanleyImplDai: "ItfStanleyImplDai",
 };

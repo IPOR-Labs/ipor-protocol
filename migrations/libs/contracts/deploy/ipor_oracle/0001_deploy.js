@@ -1,5 +1,5 @@
-const keys = require("./json_keys.js");
-const func = require("./json_func.js");
+const keys = require("../../../json_keys.js");
+const func = require("../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 const IporOracle = artifacts.require("IporOracle");
 

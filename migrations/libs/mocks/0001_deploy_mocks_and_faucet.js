@@ -23,7 +23,7 @@ const MockCDai = artifacts.require("MockCDai");
 const MockCUSDT = artifacts.require("MockCUSDT");
 const MockCUSDC = artifacts.require("MockCUSDC");
 
-const deploy_mocks = async function (deployer, _network) {
+module.exports = async function (deployer, _network) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
@@ -116,6 +116,7 @@ const deploy_mocks = async function (deployer, _network) {
 
     await deployer.deploy(
         MockComptroller,
+        mockedCOMP.address,
         mockedCUsdt.address,
         mockedCUsdc.address,
         mockedCDai.address
@@ -126,7 +127,7 @@ const deploy_mocks = async function (deployer, _network) {
 
     const testnetFaucetProxy = await deployProxy(
         TestnetFaucet,
-        [mockedADai, mockedUsdc, mockedUsdt],
+        [mockedADai.address, mockedUsdc.address, mockedUsdt.address],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -134,12 +135,8 @@ const deploy_mocks = async function (deployer, _network) {
         }
     );
 
-    const testnetFaucetImpl = await erc1967.getImplementationAddress(miltonProxy.address);
+    const testnetFaucetImpl = await erc1967.getImplementationAddress(testnetFaucetProxy.address);
 
     await func.update(keys.TestnetFaucetProxy, testnetFaucetProxy.address);
     await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl.address);
-};
-
-module.exports = {
-    execute: deploy_mocks,
 };

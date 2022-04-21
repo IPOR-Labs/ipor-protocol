@@ -14,9 +14,10 @@ const update = async function update(name, value) {
 };
 
 const get_value = async function get_value(name) {
-    console.log(`[get_value] Name: ${name}`);
     let file = editJsonFile(`${__dirname}/${process.env.ENV_PROFILE}-ipor-addresses.json`);
-    return file.get(name);
+    const value = file.get(name);
+    console.log(`[get_value] Name: ${name}, value: ${value}`);
+    return value;
 };
 
 module.exports = {
