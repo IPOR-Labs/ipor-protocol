@@ -81,7 +81,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("49647515085308830");
+        const expectedQuoteValue = BigNumber.from("17841224835139724851");
 
         //when
         let actualQuotedValue = BigNumber.from(
@@ -810,7 +810,7 @@ describe("MiltonSpreadRecFixed", () => {
         }
 
         const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
-        const expectedSpreadReceiveFixed = BigNumber.from("-9661941081703882");
+        const expectedSpreadReceiveFixed = BigNumber.from("-49314213950104766");
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
@@ -885,10 +885,10 @@ describe("MiltonSpreadRecFixed", () => {
         //when
         const actualSpreadValue = await miltonUsdt
             .connect(userOne)
-            .callStatic.itfCalculateSpread(params.openTimestamp.add(BigNumber.from("1")));
+            .itfCalculateSpread(params.openTimestamp.add(BigNumber.from("1")));
 
         //then
-        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("-9661941081703882"))).to.be
+        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("-49314213950104766"))).to.be
             .true;
     });
 });
