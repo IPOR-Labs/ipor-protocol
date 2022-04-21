@@ -51,6 +51,7 @@ IS_NGINX_ETH_BC_RESTART="NO"
 IS_MOCK_ASSET_MANAGEMENT="NO"
 IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
 IS_UPDATE_DEV_TOOL="NO"
+IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="NO"
 
 
 if [ $# -eq 0 ]; then
@@ -93,6 +94,9 @@ do
         ;;
         update-dev-tool|udt)
             IS_UPDATE_DEV_TOOL="YES"
+        ;;
+        download-deployed-smart-contracts|ddsc)
+            IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="YES"
         ;;
         help|h|?)
             IS_HELP="YES"
@@ -372,6 +376,21 @@ if [ $IS_UPDATE_DEV_TOOL = "YES" ]; then
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} up -d
 fi
 
+
+if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mDownload deployed smart contracts zip archive..\e[0m\n"
+
+  IPOR_ENV_USER_AWS_ACCESS_KEY_ID="${IPOR_ENV_USER_AWS_ACCESS_KEY_ID:-$IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
+  IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY="${IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
+  export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$IPOR_ENV_USER_AWS_ACCESS_KEY_ID}"
+  export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY}"
+
+  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}"
+
+  unzip -o "${ENV_CONTRACTS_ZIP_DEST}" -d "${ENV_CONTRACTS_DIR}"
+fi
 
 
 if [ $IS_HELP = "YES" ]; then
