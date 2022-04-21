@@ -53,7 +53,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, mu);
+            .testCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(
