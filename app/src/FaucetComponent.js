@@ -35,7 +35,7 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonFaucet"
+                        contract="TestnetFaucet"
                         method="balanceOfEth"
                         render={(value) => (
                             <div>

@@ -36,6 +36,7 @@ export const USD_10_000_000_18DEC = BigNumber.from("10000000").mul(N1__0_18DEC);
 
 export const PERCENTAGE_2_5_18DEC = BigNumber.from("25").mul(N0__001_18DEC);
 export const PERCENTAGE_3_18DEC = BigNumber.from("3").mul(N0__01_18DEC);
+export const PERCENTAGE_3_5_18DEC = BigNumber.from("35").mul(N0__001_18DEC);
 export const PERCENTAGE_4_18DEC = BigNumber.from("4").mul(N0__01_18DEC);
 export const PERCENTAGE_4_5_18DEC = BigNumber.from("45").mul(N0__001_18DEC);
 export const PERCENTAGE_5_18DEC = BigNumber.from("5").mul(N0__01_18DEC);
@@ -52,6 +53,8 @@ export const PERCENTAGE_100_18DEC = BigNumber.from("100").mul(N0__01_18DEC);
 export const PERCENTAGE_149_18DEC = BigNumber.from("149").mul(N0__01_18DEC);
 export const PERCENTAGE_150_18DEC = BigNumber.from("150").mul(N0__01_18DEC);
 export const PERCENTAGE_151_18DEC = BigNumber.from("151").mul(N0__01_18DEC);
+export const PERCENTAGE_152_18DEC = BigNumber.from("152").mul(N0__01_18DEC);
+export const PERCENTAGE_155_18DEC = BigNumber.from("155").mul(N0__01_18DEC);
 export const PERCENTAGE_160_18DEC = BigNumber.from("160").mul(N0__01_18DEC);
 export const PERCENTAGE_161_18DEC = BigNumber.from("161").mul(N0__01_18DEC);
 export const PERCENTAGE_365_18DEC = BigNumber.from("365").mul(N0__01_18DEC);
