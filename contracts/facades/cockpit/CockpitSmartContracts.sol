@@ -99,14 +99,14 @@ contract MockCUSDC is MockCToken {
     {}
 }
 
-contract MockComptrollerUSDT is MockComptroller {
-    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
-}
+// contract MockComptrollerUSDT is MockComptroller {
+//     constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+// }
 
-contract MockComptrollerUSDC is MockComptroller {
-    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
-}
+// contract MockComptrollerUSDC is MockComptroller {
+//     constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+// }
 
-contract MockComptrollerDAI is MockComptroller {
-    constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
-}
+// contract MockComptrollerDAI is MockComptroller {
+//     constructor(address compToken, address cToken) MockComptroller(compToken, cToken) {}
+// }

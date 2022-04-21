@@ -27,6 +27,8 @@ const MockedCOMPTokenDAI = artifacts.require("MockedCOMPTokenDAI");
 const MockComptrollerUSDT = artifacts.require("MockComptrollerUSDT");
 const MockComptrollerUSDC = artifacts.require("MockComptrollerUSDC");
 const MockComptrollerDAI = artifacts.require("MockComptrollerDAI");
+const MockedCOMPToken = artifacts.require("MockedCOMPToken");
+const MockComptroller = artifacts.require("MockComptroller");
 const MockCDai = artifacts.require("MockCDai");
 const MockCUSDT = artifacts.require("MockCUSDT");
 const MockCUSDC = artifacts.require("MockCUSDC");
@@ -117,35 +119,50 @@ module.exports = async function (deployer, _network) {
 
     await func.update(keys.cDAI, mockedCDai.address);
 
-    await deployer.deploy(MockedCOMPTokenUSDT, stableTotalSupply6Decimals, 6);
-    const mockedCOMPUSDT = await MockedCOMPTokenUSDT.deployed();
+    // await deployer.deploy(MockedCOMPTokenUSDT, stableTotalSupply6Decimals, 6);
+    // const mockedCOMPUSDT = await MockedCOMPTokenUSDT.deployed();
 
-    await func.update("CompTokenForUsdt", mockedCOMPUSDT.address);
+    // await func.update("CompTokenForUsdt", mockedCOMPUSDT.address);
 
-    await deployer.deploy(MockedCOMPTokenUSDC, stableTotalSupply6Decimals, 6);
-    const mockedCOMPUSDC = await MockedCOMPTokenUSDC.deployed();
+    // await deployer.deploy(MockedCOMPTokenUSDC, stableTotalSupply6Decimals, 6);
+    // const mockedCOMPUSDC = await MockedCOMPTokenUSDC.deployed();
 
-    await func.update("CompTokenForUsdc", mockedCOMPUSDC.address);
+    // await func.update("CompTokenForUsdc", mockedCOMPUSDC.address);
 
-    await deployer.deploy(MockedCOMPTokenDAI, stableTotalSupply18Decimals, 18);
-    const mockedCOMPDAI = await MockedCOMPTokenDAI.deployed();
+    // await deployer.deploy(MockedCOMPTokenDAI, stableTotalSupply18Decimals, 18);
+    // const mockedCOMPDAI = await MockedCOMPTokenDAI.deployed();
 
-    await func.update("CompTokenForDai", mockedCOMPDAI.address);
+    // await func.update("CompTokenForDai", mockedCOMPDAI.address);
 
-    await deployer.deploy(MockComptrollerUSDT, mockedCOMPUSDT.address, mockedCUsdt.address);
-    const mockedComptrollerUSDT = await MockComptrollerUSDT.deployed();
+    await deployer.deploy(MockedCOMPToken, stableTotalSupply18Decimals, 18);
+    const mockedCOMP = await MockedCOMPToken.deployed();
 
-    await func.update("ComptrollerUsdt", mockedComptrollerUSDT.address);
+    await func.update(keys.COMP, mockedCOMP.address);
 
-    await deployer.deploy(MockComptrollerUSDC, mockedCOMPUSDC.address, mockedCUsdc.address);
-    const mockedComptrollerUSDC = await MockComptrollerUSDC.deployed();
+    // await deployer.deploy(MockComptrollerUSDT, mockedCOMPUSDT.address, mockedCUsdt.address);
+    // const mockedComptrollerUSDT = await MockComptrollerUSDT.deployed();
 
-    await func.update("ComptrollerUsdc", mockedComptrollerUSDC.address);
+    // await func.update("ComptrollerUsdt", mockedComptrollerUSDT.address);
 
-    await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
-    const mockedComptrollerDAI = await MockComptrollerDAI.deployed();
+    // await deployer.deploy(MockComptrollerUSDC, mockedCOMPUSDC.address, mockedCUsdc.address);
+    // const mockedComptrollerUSDC = await MockComptrollerUSDC.deployed();
 
-    await func.update("ComptrollerDai", mockedComptrollerDAI.address);
+    // await func.update("ComptrollerUsdc", mockedComptrollerUSDC.address);
+
+    // await deployer.deploy(MockComptrollerDAI, mockedCOMPDAI.address, mockedCDai.address);
+    // const mockedComptrollerDAI = await MockComptrollerDAI.deployed();
+
+    // await func.update("ComptrollerDai", mockedComptrollerDAI.address);
+
+    await deployer.deploy(
+        MockComptroller,
+        mockedCUsdt.address,
+        mockedCUsdc.address,
+        mockedCDai.address
+    );
+    const mockedComptroller = await MockComptroller.deployed();
+
+    await func.update(keys.Comptroller, mockedComptroller.address);
 
     //TODO: use TestnetFaucet
     await deployer.deploy(MiltonFaucet);

@@ -7,17 +7,20 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../../vault/interfaces/compound/Comptroller.sol";
 
 contract MockComptroller is Comptroller {
-    address private _compAddr;
-    address private _cTokenAddr;
-    uint256 private _amount;
+    address private _COMP;
+    mapping(address => uint256) private _cTokens;
+    uint256 internal _amount;
 
-    constructor(address comp, address cToken) public {
-        _compAddr = comp;
-        _cTokenAddr = cToken;
-    }
-
-    function setAmount(uint256 amount) external {
-        _amount = amount;
+    constructor(
+        address COMP,
+        address cUSDT,
+        address cUSDC,
+        address cDAI
+    ) public {
+        _COMP = COMP;
+        _cTokens[cUSDT] = 1;
+        _cTokens[cUSDC] = 1;
+        _cTokens[cDAI] = 1;
     }
 
     // This contract should have COMP inside
@@ -27,26 +30,26 @@ contract MockComptroller is Comptroller {
         bool borrowers,
         bool suppliers
     ) external override {
-        require(_cTokenAddr == cTokens[0], "Wrong cToken");
+        require(_cTokens[cTokens[0]] == 1, "Wrong cToken");
         require(!borrowers && suppliers, "Only suppliers should be true");
-        IERC20(_compAddr).transfer(
+        IERC20(_COMP).transfer(
             msg.sender,
-            _amount > IERC20(_compAddr).balanceOf(address(this)) ? 0 : _amount
+            _amount > IERC20(_COMP).balanceOf(address(this)) ? 0 : _amount
         );
     }
 
     function claimComp(address _sender) external override {
-        IERC20(_compAddr).transfer(
+        IERC20(_COMP).transfer(
             _sender,
-            _amount > IERC20(_compAddr).balanceOf(address(this)) ? 0 : _amount
+            _amount > IERC20(_COMP).balanceOf(address(this)) ? 0 : _amount
         );
     }
 
     //solhint-disable no-unused-vars
     function claimComp(address _sender, address[] memory assets) external {
-        IERC20(_compAddr).transfer(
+        IERC20(_COMP).transfer(
             _sender,
-            _amount > IERC20(_compAddr).balanceOf(address(this)) ? 0 : _amount
+            _amount > IERC20(_COMP).balanceOf(address(this)) ? 0 : _amount
         );
     }
 
