@@ -138,5 +138,5 @@ module.exports = async function (deployer, _network) {
     const testnetFaucetImpl = await erc1967.getImplementationAddress(testnetFaucetProxy.address);
 
     await func.update(keys.TestnetFaucetProxy, testnetFaucetProxy.address);
-    await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl.address);
+    await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl);
 };
