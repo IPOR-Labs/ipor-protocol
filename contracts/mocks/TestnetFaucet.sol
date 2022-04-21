@@ -18,7 +18,7 @@ contract TestnetFaucet is
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 constant _SECONDS_IN_DAY = 60 * 60 * 24;
+    uint256 private constant _SECONDS_IN_DAY = 60 * 60 * 24;
 
     mapping(address => uint256) internal _lastClaim;
     address internal _dai;
