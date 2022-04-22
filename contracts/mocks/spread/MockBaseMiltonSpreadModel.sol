@@ -10,7 +10,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public view returns (int256 spreadPremiums) {
+    ) public pure returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
@@ -26,7 +26,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public view returns (int256 spreadPremiums) {
+    ) public pure returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
