@@ -161,9 +161,15 @@ describe("Stanley -> Withdraw", () => {
             DAI.address,
             MockWhitePaperInstance.address
         )) as MockCDAI;
+
         DAI.mint(cDAI.address, TC_AMOUNT_10000_USD_18DEC);
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
-        comptroller = (await MockComptroller.deploy(COMP.address, cDAI.address)) as MockComptroller;
+        comptroller = (await MockComptroller.deploy(
+            COMP.address,
+            cDAI.address,
+            cDAI.address,
+            cDAI.address
+        )) as MockComptroller;
         await COMP.transfer(comptroller.address, one.mul(1000));
         const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
         compoundStartegyInstance = (await upgrades.deployProxy(compoundNewStartegy, [

@@ -42,9 +42,9 @@ describe("Compound strategy", () => {
     let cUSDT: MockCToken;
     let COMP: ERC20;
     let admin: Signer, userOne: Signer, userTwo: Signer;
-    let comptrollerDAI: MockComptroller;
-    let comptrollerUSDC: MockComptroller;
-    let comptrollerUSDT: MockComptroller;
+    let comptroller: MockComptroller;
+    // let comptrollerUSDC: MockComptroller;
+    // let comptrollerUSDT: MockComptroller;
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
@@ -97,38 +97,32 @@ describe("Compound strategy", () => {
         COMP = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
 
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
-        comptrollerDAI = (await MockComptroller.deploy(
+        comptroller = (await MockComptroller.deploy(
             COMP.address,
+            cUSDT.address,
+            cUSDC.address,
             cDAI.address
-        )) as MockComptroller;
-        comptrollerUSDT = (await MockComptroller.deploy(
-            COMP.address,
-            cUSDT.address
-        )) as MockComptroller;
-        comptrollerUSDC = (await MockComptroller.deploy(
-            COMP.address,
-            cUSDC.address
         )) as MockComptroller;
 
         const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
         strategyCompoundInstanceDAI = await upgrades.deployProxy(compoundNewStartegy, [
             DAI.address,
             cDAI.address,
-            comptrollerDAI.address,
+            comptroller.address,
             COMP.address,
         ]);
         await strategyCompoundInstanceDAI.setTreasury(await admin.getAddress());
         strategyCompoundInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
             cUSDT.address,
-            comptrollerUSDT.address,
+            comptroller.address,
             COMP.address,
         ]);
         await strategyCompoundInstanceUSDT.setTreasury(await admin.getAddress());
         strategyCompoundInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
-            comptrollerUSDT.address,
+            comptroller.address,
             COMP.address,
         ]);
         await strategyCompoundInstanceUSDC.setTreasury(await admin.getAddress());

@@ -158,7 +158,12 @@ describe("Stanley -> Deposit", () => {
         )) as MockCDAI;
         DAI.mint(cDAI.address, one.mul(10000));
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
-        comptroller = (await MockComptroller.deploy(COMP.address, cDAI.address)) as MockComptroller;
+        comptroller = (await MockComptroller.deploy(
+            COMP.address,
+            cDAI.address,
+            cDAI.address,
+            cDAI.address
+        )) as MockComptroller;
         await COMP.transfer(comptroller.address, one.mul(1000));
         const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
 
