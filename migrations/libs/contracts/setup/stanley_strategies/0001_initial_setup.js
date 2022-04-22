@@ -8,7 +8,7 @@ const StrategyCompoundUsdt = artifacts.require("StrategyCompoundUsdt");
 const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
 const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const strategyAaveUsdt = await func.get_value(keys.AaveStrategyProxyUsdt);
     const strategyAaveUsdc = await func.get_value(keys.AaveStrategyProxyUsdc);
     const strategyAaveDai = await func.get_value(keys.AaveStrategyProxyDai);

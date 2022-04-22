@@ -2,14 +2,12 @@ const keys = require("../../../json_keys.js");
 const func = require("../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const CockpitDataProvider = artifacts.require("CockpitDataProvider");
-
-module.exports = async function (deployer, _network, addresses) {
+module.exports = async function (deployer, _network, addresses, CockpitDataProvider) {
     const iporOracle = await func.get_value(keys.ItfIporOracleProxy);
 
     const usdt = await func.get_value(keys.USDT);
     const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);	
+    const dai = await func.get_value(keys.DAI);
 
     const miltonUsdt = await func.get_value(keys.ItfMiltonProxyUsdt);
     const miltonUsdc = await func.get_value(keys.ItfMiltonProxyUsdc);

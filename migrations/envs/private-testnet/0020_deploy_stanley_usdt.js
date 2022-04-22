@@ -4,8 +4,10 @@ const itfScript = require("../../libs/itf/deploy/stanley/usdt/0001_initial_deplo
 
 module.exports = async function (deployer, _network, addresses) {
     if (process.env.ITF_ENABLED === "true") {
-        await itfScript(deployer, _network, addresses);
+        const ItfStanleyUsdt = artifacts.require("ItfStanleyUsdt");
+        await itfScript(deployer, _network, addresses, ItfStanleyUsdt);
     } else {
-        await script(deployer, _network, addresses);
+        const StanleyUsdt = artifacts.require("StanleyUsdt");
+        await script(deployer, _network, addresses, StanleyUsdt);
     }
 };

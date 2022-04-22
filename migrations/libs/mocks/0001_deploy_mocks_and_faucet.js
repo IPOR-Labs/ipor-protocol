@@ -2,28 +2,31 @@ const keys = require("../json_keys.js");
 const func = require("../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const TestnetFaucet = artifacts.require("TestnetFaucet");
-const UsdtMockedToken = artifacts.require("UsdtMockedToken");
-const UsdcMockedToken = artifacts.require("UsdcMockedToken");
-const DaiMockedToken = artifacts.require("DaiMockedToken");
-
-const MockAUsdc = artifacts.require("MockAUsdc");
-const MockAUsdt = artifacts.require("MockAUsdt");
-const MockADai = artifacts.require("MockADai");
-
-const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
-const MockProviderAave = artifacts.require("MockProviderAave");
-const MockStakedAave = artifacts.require("MockStakedAave");
-const AAVEMockedToken = artifacts.require("AAVEMockedToken");
-const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
-const MockWhitePaper = artifacts.require("MockWhitePaper");
-const MockedCOMPToken = artifacts.require("MockedCOMPToken");
-const MockComptroller = artifacts.require("MockComptroller");
-const MockCDai = artifacts.require("MockCDai");
-const MockCUSDT = artifacts.require("MockCUSDT");
-const MockCUSDC = artifacts.require("MockCUSDC");
-
-module.exports = async function (deployer, _network) {
+module.exports = async function (
+    deployer,
+    _network,
+    addresses,
+    [
+        TestnetFaucet,
+        UsdtMockedToken,
+        UsdcMockedToken,
+        DaiMockedToken,
+        MockAUsdc,
+        MockAUsdt,
+        MockADai,
+        MockLendingPoolAave,
+        MockProviderAave,
+        MockStakedAave,
+        AAVEMockedToken,
+        MockAaveIncentivesController,
+        MockWhitePaper,
+        MockedCOMPToken,
+        MockComptroller,
+        MockCDai,
+        MockCUSDT,
+        MockCUSDC,
+    ]
+) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 

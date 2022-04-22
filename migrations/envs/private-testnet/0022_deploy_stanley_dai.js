@@ -4,8 +4,10 @@ const itfScript = require("../../libs/itf/deploy/stanley/dai/0001_initial_deploy
 
 module.exports = async function (deployer, _network, addresses) {
     if (process.env.ITF_ENABLED === "true") {
-        await itfScript(deployer, _network, addresses);
+        const ItfStanleyDai = artifacts.require("ItfStanleyDai");
+        await itfScript(deployer, _network, addresses, ItfStanleyDai);
     } else {
-        await script(deployer, _network, addresses);
+        const StanleyDai = artifacts.require("StanleyDai");
+        await script(deployer, _network, addresses, StanleyDai);
     }
 };

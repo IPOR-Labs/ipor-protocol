@@ -3,9 +3,7 @@ const func = require("../../../../../json_func.js");
 
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const StrategyAaveUsdc = artifacts.require("StrategyAaveUsdc");
-
-module.exports = async function (deployer, _network, addresses) {
+module.exports = async function (deployer, _network, addresses, StrategyAaveUsdc) {
     const aave = await func.get_value(keys.AAVE);
     const asset = await func.get_value(keys.USDC);
     const aToken = await func.get_value(keys.aUSDC);
@@ -23,9 +21,7 @@ module.exports = async function (deployer, _network, addresses) {
         }
     );
 
-    const aaveStrategyImpl = await erc1967.getImplementationAddress(
-        aaveStrategyProxy.address
-    );
+    const aaveStrategyImpl = await erc1967.getImplementationAddress(aaveStrategyProxy.address);
 
     await func.update(keys.AaveStrategyProxyUsdc, aaveStrategyProxy.address);
     await func.update(keys.AaveStrategyImplUsdc, aaveStrategyImpl);

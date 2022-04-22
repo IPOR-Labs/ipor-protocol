@@ -5,7 +5,7 @@ const StanleyUsdt = artifacts.require("StanleyUsdt");
 const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const stanleyUsdt = await func.get_value(keys.StanleyProxyUsdt);
     const stanleyUsdc = await func.get_value(keys.StanleyProxyUsdc);
     const stanleyDai = await func.get_value(keys.StanleyProxyDai);

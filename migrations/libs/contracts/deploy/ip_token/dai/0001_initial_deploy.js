@@ -3,7 +3,7 @@ const func = require("../../../../json_func.js");
 
 const IpTokenDai = artifacts.require("IpTokenDai");
 
-module.exports = async function (deployer, _network, addresses) {
+module.exports = async function (deployer, _network, addresses, IpTokenDai) {
     const asset = await func.get_value(keys.DAI);
 
     await deployer.deploy(IpTokenDai, "IP DAI", "ipDAI", asset);

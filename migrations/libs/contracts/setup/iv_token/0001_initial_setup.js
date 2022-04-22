@@ -5,7 +5,7 @@ const IvTokenUsdt = artifacts.require("IvTokenUsdt");
 const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 const IvTokenDai = artifacts.require("IvTokenDai");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network,addresses) {
     const stanleyUsdt = await func.get_value(keys.StanleyProxyUsdt);
     const stanleyUsdc = await func.get_value(keys.StanleyProxyUsdc);
     const stanleyDai = await func.get_value(keys.StanleyProxyDai);

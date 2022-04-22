@@ -3,18 +3,14 @@ const func = require("../../../../json_func.js");
 
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
-
-module.exports = async function (deployer, _network, addresses) {
+module.exports = async function (deployer, _network, addresses, MiltonStorageUsdc) {
     const miltonStorageProxy = await deployProxy(MiltonStorageUsdc, {
         deployer: deployer,
         initializer: "initialize",
         kind: "uups",
     });
 
-    const miltonStorageImpl = await erc1967.getImplementationAddress(
-        miltonStorageProxy.address
-    );
+    const miltonStorageImpl = await erc1967.getImplementationAddress(miltonStorageProxy.address);
 
     await func.update(keys.MiltonStorageProxyUsdc, miltonStorageProxy.address);
     await func.update(keys.MiltonStorageImplUsdc, miltonStorageImpl);

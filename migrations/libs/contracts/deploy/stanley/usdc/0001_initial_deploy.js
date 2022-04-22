@@ -3,9 +3,7 @@ const func = require("../../../../json_func.js");
 
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-const StanleyUsdc = artifacts.require("StanleyUsdc");
-
-module.exports = async function (deployer, _network, addresses) {
+module.exports = async function (deployer, _network, addresses, StanleyUsdc) {
     const asset = await func.get_value(keys.USDC);
     const ivToken = await func.get_value(keys.ivUSDC);
     const strategyAave = await func.get_value(keys.AaveStrategyProxyUsdc);

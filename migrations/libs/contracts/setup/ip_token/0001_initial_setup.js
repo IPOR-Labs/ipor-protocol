@@ -5,7 +5,7 @@ const IpTokenUsdt = artifacts.require("IpTokenUsdt");
 const IpTokenUsdc = artifacts.require("IpTokenUsdc");
 const IpTokenDai = artifacts.require("IpTokenDai");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const josephUsdt = await func.get_value(keys.JosephProxyUsdt);
     const josephUsdc = await func.get_value(keys.JosephProxyUsdc);
     const josephDai = await func.get_value(keys.JosephProxyDai);

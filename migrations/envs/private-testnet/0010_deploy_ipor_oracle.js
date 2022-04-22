@@ -5,8 +5,10 @@ const itfScript = require("../../libs/itf/deploy/ipor_oracle/0001_initial_deploy
 
 module.exports = async function (deployer, _network, addresses) {
     if (process.env.ITF_ENABLED === "true") {
-        await itfScript(deployer, _network, addresses);
+        const ItfIporOracle = artifacts.require("ItfIporOracle");
+        await itfScript(deployer, _network, addresses, ItfIporOracle);
     } else {
-        await script(deployer, _network, addresses);
+        const IporOracle = artifacts.require("IporOracle");
+        await script(deployer, _network, addresses, IporOracle);
     }
 };
