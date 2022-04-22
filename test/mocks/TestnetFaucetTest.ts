@@ -21,6 +21,7 @@ describe("TestnetFaucet", () => {
     let tokenUsdc: UsdcMockedToken;
     let testnetFaucet: TestnetFaucet;
     const N100_000 = BigNumber.from("100000");
+    const N50_000 = BigNumber.from("50000");
     const N10_000 = BigNumber.from("10000");
 
     before(async () => {
@@ -47,7 +48,7 @@ describe("TestnetFaucet", () => {
         tokenUsdt.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
     });
 
-    it("Should claim 100 000", async () => {
+    it("Should claim 50 000", async () => {
         // Given
         const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
@@ -70,9 +71,9 @@ describe("TestnetFaucet", () => {
         expect(usdcBalanceBefore).to.be.equal(ZERO);
         expect(usdtBalanceBefore).to.be.equal(ZERO);
 
-        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N100_000));
-        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N100_000));
-        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N100_000));
+        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N50_000));
+        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
+        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
     });
 
     it("Should not be able to claim twice", async () => {
@@ -98,13 +99,13 @@ describe("TestnetFaucet", () => {
         expect(usdcBalanceBefore).to.be.equal(ZERO);
         expect(usdtBalanceBefore).to.be.equal(ZERO);
 
-        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N100_000));
-        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N100_000));
-        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N100_000));
+        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N50_000));
+        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
+        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
         expect(timeToNextClaim.gt(ZERO), "timeToNextClaim").to.be.true;
     });
 
-    it("Should claim 110 000", async () => {
+    it("Should claim 60 000", async () => {
         // Given
         const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
@@ -129,13 +130,13 @@ describe("TestnetFaucet", () => {
         expect(usdtBalanceBefore).to.be.equal(ZERO);
 
         expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(
-            N1__0_18DEC.mul(N100_000.add(N10_000))
+            N1__0_18DEC.mul(N50_000.add(N10_000))
         );
         expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(
-            N1__0_6DEC.mul(N100_000.add(N10_000))
+            N1__0_6DEC.mul(N50_000.add(N10_000))
         );
         expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(
-            N1__0_6DEC.mul(N100_000.add(N10_000))
+            N1__0_6DEC.mul(N50_000.add(N10_000))
         );
         expect(timeToNextClaim, "timeToNextClaim").to.be.equal(ZERO);
     });
