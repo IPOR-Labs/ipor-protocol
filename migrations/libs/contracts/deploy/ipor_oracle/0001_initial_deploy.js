@@ -3,7 +3,7 @@ const func = require("../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 const IporOracle = artifacts.require("IporOracle");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const iporOracleProxy = await deployProxy(IporOracle, {
         deployer: deployer,
         initializer: "initialize",
@@ -13,5 +13,5 @@ module.exports = async function (deployer, _network) {
     const iporOracleImpl = await erc1967.getImplementationAddress(iporOracleProxy.address);
 
     await func.update(keys.IporOracleProxy, iporOracleProxy.address);
-    await func.update(keys.IporOracleImpl, iporOracleImpl.address);
+    await func.update(keys.IporOracleImpl, iporOracleImpl);
 };

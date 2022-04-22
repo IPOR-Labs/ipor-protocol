@@ -3,7 +3,7 @@ const func = require("../../../json_func.js");
 
 const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
 
     await deployer.deploy(MiltonSpreadModel);
     const miltonSpreadModel = await MiltonSpreadModel.deployed();

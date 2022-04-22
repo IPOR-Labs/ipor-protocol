@@ -5,7 +5,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const JosephUsdt = artifacts.require("JosephUsdt");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const asset = await func.get_value(keys.USDT);
     const ipToken = await func.get_value(keys.ipUSDT);
     const stanley = await func.get_value(keys.StanleyProxyUsdt);
@@ -25,5 +25,5 @@ module.exports = async function (deployer, _network) {
     const josephImpl = await erc1967.getImplementationAddress(josephProxy.address);
 
     await func.update(keys.JosephProxyUsdt, josephProxy.address);
-    await func.update(keys.JosephImplUsdt, josephImpl.address);
+    await func.update(keys.JosephImplUsdt, josephImpl);
 };

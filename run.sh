@@ -314,8 +314,8 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
 
-#   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-#   truffle compile --all
+  echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
+  truffle compile --all
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none
 
 fi
@@ -323,10 +323,10 @@ fi
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   cd "${DIR}"
 
-#   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
-#   rm -rf app/src/contracts/
-#   rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
-#   truffle compile --all
+  echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
+  rm -rf app/src/contracts/
+  rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
+  truffle compile --all
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
 fi
 

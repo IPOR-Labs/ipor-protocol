@@ -88,4 +88,10 @@ module.exports = {
     ItfStanleyImplUsdc: "ItfStanleyImplUsdc",
     ItfStanleyProxyDai: "ItfStanleyProxyDai",
     ItfStanleyImplDai: "ItfStanleyImplDai",
+    ItfIporOracleFacadeDataProviderProxy: "ItfIporOracleFacadeDataProviderProxy",
+    ItfIporOracleFacadeDataProviderImpl: "ItfIporOracleFacadeDataProviderImpl",
+    ItfMiltonFacadeDataProviderProxy: "ItfMiltonFacadeDataProviderProxy",
+    ItfMiltonFacadeDataProviderImpl: "ItfMiltonFacadeDataProviderImpl",
+    ItfCockpitDataProviderProxy: "ItfCockpitDataProviderProxy",
+    ItfCockpitDataProviderImpl: "ItfCockpitDataProviderImpl",
 };

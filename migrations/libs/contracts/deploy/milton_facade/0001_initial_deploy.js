@@ -4,7 +4,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonFacadeDataProvider = artifacts.require("MiltonFacadeDataProvider");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const iporOracle = await func.get_value(keys.IporOracleProxy);
 
     const usdt = await func.get_value(keys.USDT);
@@ -44,5 +44,5 @@ module.exports = async function (deployer, _network) {
     );
 
     await func.update(keys.MiltonFacadeDataProviderProxy, miltonFacadeDataProviderProxy.address);
-    await func.update(keys.MiltonFacadeDataProviderImpl, miltonFacadeDataProviderImpl.address);
+    await func.update(keys.MiltonFacadeDataProviderImpl, miltonFacadeDataProviderImpl);
 };

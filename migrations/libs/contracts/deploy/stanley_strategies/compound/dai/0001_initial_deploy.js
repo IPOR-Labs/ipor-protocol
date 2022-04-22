@@ -5,7 +5,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const asset = await func.get_value(keys.DAI);
     const cToken = await func.get_value(keys.cDAI);
 
@@ -27,5 +27,5 @@ module.exports = async function (deployer, _network) {
     );
 
     await func.update(keys.CompoundStrategyProxyDai, compoundStrategyProxy.address);
-    await func.update(keys.CompoundStrategyImplDai, compoundStrategyImpl.address);
+    await func.update(keys.CompoundStrategyImplDai, compoundStrategyImpl);
 };

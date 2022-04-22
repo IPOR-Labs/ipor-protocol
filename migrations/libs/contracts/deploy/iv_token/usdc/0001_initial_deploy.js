@@ -3,7 +3,7 @@ const func = require("../../../../json_func.js");
 
 const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const asset = await func.get_value(keys.USDC);
 
     await deployer.deploy(IvTokenUsdc, "IV USDC", "ivUSDC", asset);

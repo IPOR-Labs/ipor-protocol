@@ -4,7 +4,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const CockpitDataProvider = artifacts.require("CockpitDataProvider");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const iporOracle = await func.get_value(keys.IporOracleProxy);
 
     const usdt = await func.get_value(keys.USDT);
@@ -54,5 +54,5 @@ module.exports = async function (deployer, _network) {
     );
 
     await func.update(keys.CockpitDataProviderProxy, cockpitDataProviderProxy.address);
-    await func.update(keys.CockpitDataProviderImpl, cockpitDataProviderImpl.address);
+    await func.update(keys.CockpitDataProviderImpl, cockpitDataProviderImpl);
 };

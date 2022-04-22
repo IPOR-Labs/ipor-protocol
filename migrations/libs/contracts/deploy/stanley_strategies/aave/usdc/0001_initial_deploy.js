@@ -5,7 +5,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const StrategyAaveUsdc = artifacts.require("StrategyAaveUsdc");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const aave = await func.get_value(keys.AAVE);
     const asset = await func.get_value(keys.USDC);
     const aToken = await func.get_value(keys.aUSDC);
@@ -13,7 +13,7 @@ module.exports = async function (deployer, _network) {
     const stakedAave = await func.get_value(keys.AaveStaked);
     const aaveIncentivesController = await func.get_value(keys.AaveIncentivesController);
 
-    const aaveStrategyProxyUsdc = await deployProxy(
+    const aaveStrategyProxy = await deployProxy(
         StrategyAaveUsdc,
         [asset, aToken, aaveProvider, stakedAave, aaveIncentivesController, aave],
         {
@@ -23,10 +23,10 @@ module.exports = async function (deployer, _network) {
         }
     );
 
-    const aaveStrategyImplUsdc = await erc1967.getImplementationAddress(
-        aaveStrategyProxyUsdc.address
+    const aaveStrategyImpl = await erc1967.getImplementationAddress(
+        aaveStrategyProxy.address
     );
 
-    await func.update(keys.AaveStrategyProxyUsdc, aaveStrategyProxyUsdc.address);
-    await func.update(keys.AaveStrategyImplUsdc, aaveStrategyImplUsdc.address);
+    await func.update(keys.AaveStrategyProxyUsdc, aaveStrategyProxy.address);
+    await func.update(keys.AaveStrategyImplUsdc, aaveStrategyImpl);
 };

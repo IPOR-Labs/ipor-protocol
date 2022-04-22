@@ -4,7 +4,7 @@ const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const IporOracleFacadeDataProvider = artifacts.require("IporOracleFacadeDataProvider");
 
-module.exports = async function (deployer, _network) {
+module.exports = async function (deployer, _network, addresses) {
     const usdt = await func.get_value(keys.USDT);
     const usdc = await func.get_value(keys.USDC);
     const dai = await func.get_value(keys.DAI);
@@ -31,6 +31,6 @@ module.exports = async function (deployer, _network) {
     );
     await func.update(
         keys.IporOracleFacadeDataProviderImpl,
-        iporOracleFacadeDataProviderImpl.address
+        iporOracleFacadeDataProviderImpl
     );
 };
