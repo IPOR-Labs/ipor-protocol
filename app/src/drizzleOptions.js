@@ -52,8 +52,8 @@ require("dotenv").config({ path: "../../.env" });
 
 let options = null;
 
-if (process.env.ITF_ENABLED === "true") {
-    const options = {
+if (process.env.REACT_APP_ITF_ENABLED === "true") {
+    options = {
         web3: {
             fallback: {
                 type: "ws",
@@ -64,11 +64,7 @@ if (process.env.ITF_ENABLED === "true") {
         contracts: [
             CockpitDataProvider,
             MiltonFacadeDataProvider,
-            IporOracle,
             ItfIporOracle,
-            MiltonUsdt,
-            MiltonUsdc,
-            MiltonDai,
             ItfMiltonUsdt,
             ItfMiltonUsdc,
             ItfMiltonDai,
@@ -90,15 +86,9 @@ if (process.env.ITF_ENABLED === "true") {
             MockCUSDC,
             MockCUSDT,
             MockCDai,
-            JosephUsdt,
-            JosephUsdc,
-            JosephDai,
             ItfJosephUsdt,
             ItfJosephUsdc,
             ItfJosephDai,
-            StanleyUsdt,
-            StanleyUsdc,
-            StanleyDai,
             ItfStanleyUsdt,
             ItfStanleyUsdc,
             ItfStanleyDai,
