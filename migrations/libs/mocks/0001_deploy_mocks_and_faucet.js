@@ -25,6 +25,9 @@ module.exports = async function (
         MockCDai,
         MockCUSDT,
         MockCUSDC,
+        MockStrategyTestnetUsdt,
+        MockStrategyTestnetUsdc,
+        MockStrategyTestnetDai,
     ]
 ) {
     let stableTotalSupply6Decimals = "1000000000000000000";
@@ -142,4 +145,55 @@ module.exports = async function (
 
     await func.update(keys.TestnetFaucetProxy, testnetFaucetProxy.address);
     await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl);
+
+    const mockedStrategyTestnetUsdtProxy = await deployProxy(
+        MockStrategyTestnetUsdt,
+        [mockedUsdt.address, mockedAUsdt.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const mockedStrategyTestnetUsdtImpl = await erc1967.getImplementationAddress(
+        mockedStrategyTestnetUsdtProxy.address
+    );
+
+    await func.update(keys.StrategyTestnetUsdtProxy, mockedStrategyTestnetUsdtProxy.address);
+    await func.update(keys.StrategyTestnetUsdtImpl, mockedStrategyTestnetUsdtImpl);
+
+    const mockedStrategyTestnetUsdcProxy = await deployProxy(
+        MockStrategyTestnetUsdc,
+        [mockedUsdc.address, mockedAUsdc.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const mockedStrategyTestnetUsdcImpl = await erc1967.getImplementationAddress(
+        mockedStrategyTestnetUsdcProxy.address
+    );
+
+    await func.update(keys.StrategyTestnetUsdcProxy, mockedStrategyTestnetUsdcProxy.address);
+    await func.update(keys.StrategyTestnetUsdcImpl, mockedStrategyTestnetUsdcImpl);
+
+    const mockedStrategyTestnetDaiProxy = await deployProxy(
+        MockStrategyTestnetDai,
+        [mockedDai.address, mockedADai.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+
+    const mockedStrategyTestnetDaiImpl = await erc1967.getImplementationAddress(
+        mockedStrategyTestnetDaiProxy.address
+    );
+
+    await func.update(keys.StrategyTestnetDaiProxy, mockedStrategyTestnetDaiProxy.address);
+    await func.update(keys.StrategyTestnetDaiImpl, mockedStrategyTestnetDaiImpl);
 };

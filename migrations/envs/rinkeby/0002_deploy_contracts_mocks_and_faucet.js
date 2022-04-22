@@ -22,6 +22,10 @@ const MockCDai = artifacts.require("MockCDai");
 const MockCUSDT = artifacts.require("MockCUSDT");
 const MockCUSDC = artifacts.require("MockCUSDC");
 
+const MockStrategyTestnetUsdt = artifacts.require("MockStrategyTestnetUsdt");
+const MockStrategyTestnetUsdc = artifacts.require("MockStrategyTestnetUsdc");
+const MockStrategyTestnetDai = artifacts.require("MockStrategyTestnetDai");
+
 module.exports = async function (deployer, _network, addresses) {
     await script(deployer, _network, addresses, [
         TestnetFaucet,
@@ -42,5 +46,8 @@ module.exports = async function (deployer, _network, addresses) {
         MockCDai,
         MockCUSDT,
         MockCUSDC,
+        MockStrategyTestnetUsdt,
+        MockStrategyTestnetUsdc,
+        MockStrategyTestnetDai,
     ]);
 };

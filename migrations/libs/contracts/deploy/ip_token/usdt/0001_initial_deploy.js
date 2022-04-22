@@ -7,5 +7,5 @@ module.exports = async function (deployer, _network, addresses, IpTokenUsdt) {
     await deployer.deploy(IpTokenUsdt, "IP USDT", "ipUSDT", asset);
     const ipTokenUsdt = await IpTokenUsdt.deployed();
 
-    func.update_sync(keys.ipUSDT, ipTokenUsdt.address);
+    await func.update(keys.ipUSDT, ipTokenUsdt.address);
 };

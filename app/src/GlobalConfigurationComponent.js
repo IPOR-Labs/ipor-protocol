@@ -12,11 +12,16 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
                 <td>{drizzle.contracts.IporOracle.address}</td>
             </tr>
+
             <tr>
                 <td>
                     <strong>ItfIporOracle</strong>
                 </td>
-                <td>{drizzle.contracts.ItfIporOracle.address}</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfIporOracle.address
+                        : "NONE"}
+                </td>
             </tr>
             <tr>
                 <td>
@@ -44,9 +49,21 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>ItfMilton</strong>
                 </td>
-                <td>{drizzle.contracts.ItfMiltonUsdt.address}</td>
-                <td>{drizzle.contracts.ItfMiltonUsdc.address}</td>
-                <td>{drizzle.contracts.ItfMiltonDai.address}</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfMiltonUsdt.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfMiltonUsdc.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfMiltonDai.address
+                        : "NONE"}
+                </td>
             </tr>
             <tr>
                 <td>
@@ -68,9 +85,21 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>ItfJoseph</strong>
                 </td>
-                <td>{drizzle.contracts.ItfJosephUsdt.address}</td>
-                <td>{drizzle.contracts.ItfJosephUsdc.address}</td>
-                <td>{drizzle.contracts.ItfJosephDai.address}</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfJosephUsdt.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfJosephUsdc.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfJosephDai.address
+                        : "NONE"}
+                </td>
             </tr>
             <tr>
                 <td>
@@ -84,9 +113,21 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>ItfStanley</strong>
                 </td>
-                <td>{drizzle.contracts.ItfStanleyUsdt.address}</td>
-                <td>{drizzle.contracts.ItfStanleyUsdc.address}</td>
-                <td>{drizzle.contracts.ItfStanleyDai.address}</td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfStanleyUsdt.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfStanleyUsdc.address
+                        : "NONE"}
+                </td>
+                <td>
+                    {process.env.REACT_APP_ITF_ENABLED === "true"
+                        ? drizzle.contracts.ItfStanleyDai.address
+                        : "NONE"}
+                </td>
             </tr>
             <tr>
                 <td>

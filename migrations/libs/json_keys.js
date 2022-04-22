@@ -94,4 +94,10 @@ module.exports = {
     ItfMiltonFacadeDataProviderImpl: "ItfMiltonFacadeDataProviderImpl",
     ItfCockpitDataProviderProxy: "ItfCockpitDataProviderProxy",
     ItfCockpitDataProviderImpl: "ItfCockpitDataProviderImpl",
+    StrategyTestnetUsdtProxy: "StrategyTestnetUsdtProxy",
+    StrategyTestnetUsdtImpl: "StrategyTestnetUsdtImpl",
+    StrategyTestnetUsdcProxy: "StrategyTestnetUsdcProxy",
+    StrategyTestnetUsdcImpl: "StrategyTestnetUsdcImpl",
+    StrategyTestnetDaiProxy: "StrategyTestnetDaiProxy",
+    StrategyTestnetDaiImpl: "StrategyTestnetDaiImpl",
 };
