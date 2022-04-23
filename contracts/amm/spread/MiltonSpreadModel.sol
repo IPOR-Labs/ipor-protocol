@@ -15,7 +15,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external view override returns (uint256 quoteValue) {
+    ) external pure override returns (uint256 quoteValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
@@ -34,7 +34,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external view override returns (uint256 quoteValue) {
+    ) external pure override returns (uint256 quoteValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
@@ -53,7 +53,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external view override returns (int256 spreadValue) {
+    ) external pure override returns (int256 spreadValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksPayFixed(
             soap,
             accruedIpor,
@@ -68,7 +68,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external view override returns (int256 spreadValue) {
+    ) external pure override returns (int256 spreadValue) {
         (int256 spreadPremiums, uint256 refLeg) = _calculateQuoteChunksReceiveFixed(
             soap,
             accruedIpor,
@@ -82,7 +82,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal view returns (int256 spreadPremiums, uint256 refLeg) {
+    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
 
         refLeg = _calculateReferenceLegPayFixed(
@@ -95,7 +95,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal view returns (int256 spreadPremiums, uint256 refLeg) {
+    ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, accruedBalance);
 
         refLeg = _calculateReferenceLegReceiveFixed(
@@ -108,7 +108,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal view returns (int256 spreadPremiums) {
+    ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
@@ -138,7 +138,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal view returns (int256 spreadPremiums) {
+    ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
