@@ -153,13 +153,13 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
         </table>
         <div className="row">
-            <div className="col-md-6">
+            <div className="col-md-4">
                 <strong>Transfer ETH to specific address</strong>
                 <br />
                 <small>Value represented in WEI</small>
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="transferEth" />
             </div>
-            <div className="col-md-6">
+            <div className="col-md-4">
                 <strong>Transfer TOKENS to your wallet</strong>
                 <br />
                 <label>Max allowed value $1 000 000 USD</label>
@@ -169,6 +169,17 @@ export default ({ drizzle, drizzleState }) => (
                 <small>Max in 18 decimals: 1000000000000000000000000</small>
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="transfer" />
             </div>
+            <div className="col-md-4">
+                <small>Claim stable</small>
+                <br />
+                <label>First time  $50 000 USD</label>
+                <br />
+                <small>Next  $10 000 USD</small>
+                <br />
+                <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
+                <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
+            </div>
         </div>
+
     </div>
 );

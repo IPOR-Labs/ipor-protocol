@@ -182,33 +182,33 @@ describe("MiltonSpreadModel - Core", () => {
         expect(dCLambdaValue).to.be.equal(N0__01_18DEC);
         expect(dCKOmegaValue).to.be.equal(BigNumber.from("5").mul(N0__000_01_18DEC));
         expect(dcMaxLiquidityRedemptionValue).to.be.equal(N1__0_18DEC);
-        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("157019226449085840"));
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("1570169440701153"));
         expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
-            BigNumber.from("19995379670799840000")
+            BigNumber.from("198788881093494850")
         );
         expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-3841736186289212000")
+            BigNumber.from("-38331366057144010")
         );
-        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("595866254143749400"));
+        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("5957385912947852"));
         expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(
-            BigNumber.from("42133363586198140000")
+            BigNumber.from("422085481190794900")
         );
         expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-104460848714451840000")
+            BigNumber.from("-1044585377149331200")
         );
-        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("23984087324369713"));
+        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("237699618248428"));
         expect(receiveFixedRegionOneSlopeForVolatility).to.be.equal(
-            BigNumber.from("3528665170882902700")
+            BigNumber.from("35927957683456455")
         );
         expect(receiveFixedRegionOneSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("1018371437526577500")
+            BigNumber.from("10158530403206013")
         );
-        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-49374213950104766"));
+        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-493406136001736"));
         expect(receiveFixedRegionTwoSlopeForVolatility).to.be.equal(
-            BigNumber.from("-269622133795293730000")
+            BigNumber.from("-2696690872084165600")
         );
         expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-92391136608777590000")
+            BigNumber.from("-923865786926514900")
         );
     });
 });

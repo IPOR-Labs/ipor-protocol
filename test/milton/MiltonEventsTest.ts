@@ -153,7 +153,7 @@ describe("Milton Events", () => {
                     BigNumber.from("3").mul(N0__01_18DEC),
                     BigNumber.from("1").mul(N1__0_18DEC),
                     BigNumber.from("99670098970308907327800"),
-                    BigNumber.from("47821595806636782"),
+                    BigNumber.from("2").mul(N0__01_18DEC),
                 ]
             );
     });
@@ -271,7 +271,7 @@ describe("Milton Events", () => {
                     BigNumber.from("3").mul(N0__01_18DEC),
                     N1__0_18DEC,
                     BigNumber.from("99670098970308907327800"),
-                    BigNumber.from("47821595806636782"),
+                    BigNumber.from("2").mul(N0__01_18DEC),
                 ]
             );
     });

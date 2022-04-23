@@ -18,7 +18,7 @@
         "chai": "^4.3.6",
         "dotenv": "^10.0.0",
         "ethereum-waffle": "^3.4.0",
-        "ethers": "^5.5.4",
+        "ethers": "5.6.1",
         "hardhat": "^2.7.0",
         "hardhat-abi-exporter": "^2.8.0",
         "hardhat-contract-sizer": "^2.5.0",
@@ -52,7 +52,7 @@
         "mainnet-test:vault": "npx hardhat test test/endToEnd/vault.ts",
         "mainnet-test:josephRebalanceTest": "npx hardhat test test/endToEnd/josephRebalance.ts",
         "mainnet-test:openCloseSwapsTest": " npx hardhat test test/endToEnd/openCloseSwaps.ts",
-        "test:unit": "export FORK_ENABLED=false; npx hardhat test",
+        "test:unit": "export FORK_ENABLED=false; npx hardhat test --parallel",
         "test:mainnet": "export FORK_ENABLED=true; npm-run-all mainnet-test:*",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol"
