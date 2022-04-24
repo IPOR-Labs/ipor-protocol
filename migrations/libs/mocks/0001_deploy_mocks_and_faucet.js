@@ -133,7 +133,7 @@ module.exports = async function (
 
     const testnetFaucetProxy = await deployProxy(
         TestnetFaucet,
-        [mockedADai.address, mockedUsdc.address, mockedUsdt.address],
+        [mockedDai.address, mockedUsdc.address, mockedUsdt.address],
         {
             deployer: deployer,
             initializer: "initialize",
