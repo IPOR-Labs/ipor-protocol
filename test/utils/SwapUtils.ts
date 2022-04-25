@@ -295,7 +295,7 @@ export const exetuceCloseSwapTestCase = async function (
 ) {
     //given
     let localOpenTimestamp = ZERO;
-	
+
     if (openTimestamp != ZERO) {
         localOpenTimestamp = openTimestamp;
     } else {
@@ -569,6 +569,7 @@ export const executeCloseSwapsTestCase = async function (
         if (pauseMilton) {
             await testData.miltonDai.connect(admin).pause();
         }
+        console.log("closerUser=", await closerUser.getAddress());
         await closeCallback(testData.miltonDai.connect(closerUser));
     }
 };

@@ -105,7 +105,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

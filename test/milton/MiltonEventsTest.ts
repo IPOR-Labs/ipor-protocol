@@ -45,7 +45,7 @@ describe("Milton Events", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
@@ -104,7 +104,7 @@ describe("Milton Events", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
 
@@ -280,7 +280,7 @@ describe("Milton Events", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;

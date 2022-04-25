@@ -43,7 +43,7 @@ describe("Stanley - Asset Management Vault", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -127,7 +127,7 @@ describe("Stanley - Asset Management Vault", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -217,7 +217,7 @@ describe("Stanley - Asset Management Vault", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -307,7 +307,7 @@ describe("Stanley - Asset Management Vault", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -371,7 +371,7 @@ describe("Stanley - Asset Management Vault", () => {
         //given
         const testData = await prepareTestData(
             [admin],
-            ["DAI", "USDT", "USDC"],
+            ["DAI", "USDT", "USDC"],[],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

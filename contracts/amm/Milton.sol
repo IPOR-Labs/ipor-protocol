@@ -660,6 +660,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         if (absPayoff < minPayoffToCloseBeforeMaturity) {
+			
             //verify if sender is an owner of swap. If not then check if maturity has been reached - if not then reject, if yes then close even if not an owner
             if (_msgSender() != derivativeItem.buyer) {
                 require(

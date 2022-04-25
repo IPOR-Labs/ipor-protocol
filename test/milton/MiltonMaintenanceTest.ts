@@ -46,7 +46,7 @@ describe("Milton Maintenance", () => {
         const { tokenDai, iporOracle, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel, PERCENTAGE_3_18DEC
             );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
@@ -85,7 +85,7 @@ describe("Milton Maintenance", () => {
         const { tokenDai, iporOracle, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel, PERCENTAGE_3_18DEC
             );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
@@ -172,7 +172,8 @@ describe("Milton Maintenance", () => {
         const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (
@@ -246,7 +247,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -267,7 +268,7 @@ describe("Milton Maintenance", () => {
         const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel, PERCENTAGE_3_18DEC
             );
 
         if (
@@ -324,7 +325,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         if (miltonDai === undefined) {
             expect(true).to.be.false;
@@ -345,7 +346,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -367,7 +368,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -387,7 +388,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -408,7 +409,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -430,7 +431,7 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -453,7 +454,8 @@ describe("Milton Maintenance", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -475,6 +477,7 @@ describe("Milton Maintenance", () => {
         const { miltonDai, miltonUsdt, miltonUsdc } = await prepareTestData(
             [admin],
             ["DAI", "USDT", "USDC"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -526,6 +529,7 @@ describe("Milton Maintenance", () => {
         const { miltonStorageDai, miltonStorageUsdt, miltonStorageUsdc } = await prepareTestData(
             [admin],
             ["DAI", "USDT", "USDC"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

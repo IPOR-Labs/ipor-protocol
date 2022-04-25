@@ -2141,7 +2141,7 @@ describe("Milton SOAP", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -2246,7 +2246,7 @@ describe("Milton SOAP", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_6_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -2351,7 +2351,7 @@ describe("Milton SOAP", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -2458,7 +2458,7 @@ describe("Milton SOAP", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

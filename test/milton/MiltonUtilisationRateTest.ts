@@ -45,7 +45,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -97,7 +97,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -150,7 +150,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -203,7 +203,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -255,7 +255,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -312,7 +312,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -369,7 +369,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -426,7 +426,7 @@ describe("Milton Utilisation Rate", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,

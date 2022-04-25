@@ -932,7 +932,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -972,7 +972,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -1034,7 +1034,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -1074,7 +1074,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

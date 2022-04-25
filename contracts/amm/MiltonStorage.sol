@@ -12,6 +12,7 @@ import "../interfaces/IMiltonStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmMiltonStorageTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
+import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is
@@ -681,7 +682,10 @@ contract MiltonStorage is
             swap.collateral,
             cfgMinLiquidationThresholdToCloseBeforeMaturity
         );
-
+        console.log("[_updateBalancesWhenCloseSwap] liquidator=", liquidator);
+        console.log("[_updateBalancesWhenCloseSwap] swap.buyer=", swap.buyer);
+		console.log("[_updateBalancesWhenCloseSwap] absPayoff=", absPayoff);
+		console.log("[_updateBalancesWhenCloseSwap] minPayoffToCloseBeforeMaturity=", minPayoffToCloseBeforeMaturity);
         if (absPayoff < minPayoffToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner

@@ -64,7 +64,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -97,7 +97,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -126,7 +126,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -158,7 +158,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -192,7 +192,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -227,7 +227,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -262,7 +262,7 @@ describe("MiltonStorage", () => {
         //given
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -301,7 +301,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -333,7 +333,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -360,7 +360,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -387,7 +387,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -414,7 +414,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -443,7 +443,7 @@ describe("MiltonStorage", () => {
         //given
         const { miltonStorageDai, miltonDai } = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -471,7 +471,7 @@ describe("MiltonStorage", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -556,7 +556,7 @@ describe("MiltonStorage", () => {
         //given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["USDT"],
+            ["USDT"],[PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -637,7 +637,7 @@ describe("MiltonStorage", () => {
         // given
         let testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
-            ["DAI"],
+            ["DAI"],[PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

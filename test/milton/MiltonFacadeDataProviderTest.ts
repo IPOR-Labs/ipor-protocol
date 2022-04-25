@@ -56,6 +56,7 @@ describe("MiltonFacadeDataProvider", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
+			[PERCENTAGE_5_18DEC,PERCENTAGE_5_18DEC,PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -233,6 +234,7 @@ describe("MiltonFacadeDataProvider", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
+            [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

@@ -64,7 +64,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -109,7 +110,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -154,7 +156,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -200,7 +203,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -246,7 +250,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -292,7 +297,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -337,7 +343,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -385,7 +392,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -448,7 +456,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -511,7 +520,8 @@ describe("Milton - not close position", () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -535,6 +545,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -591,6 +602,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -647,6 +659,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -703,6 +716,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -759,6 +773,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -815,6 +830,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -871,6 +887,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -926,6 +943,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -982,6 +1000,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1038,6 +1057,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1094,6 +1114,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1150,6 +1171,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1206,6 +1228,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1261,6 +1284,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1317,6 +1341,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1373,6 +1398,7 @@ describe("Milton - not close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1429,7 +1455,8 @@ describe("Milton - not close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;

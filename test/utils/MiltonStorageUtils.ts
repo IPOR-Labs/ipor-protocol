@@ -381,6 +381,7 @@ const preparePayFixedState = async (
     const testData = await prepareTestData(
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT"],
+        [PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
@@ -442,6 +443,7 @@ const prepareReceiveFixedState = async (
     const testData = await prepareTestData(
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
+        [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
@@ -504,6 +506,7 @@ const prepareState = async (
     const testData = await prepareTestData(
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
+        [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
