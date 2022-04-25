@@ -34,8 +34,17 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         _;
     }
 
-    function initialize() public initializer {
+    function initialize(
+        address asset,
+        uint32 lastUpdateTimestamp,
+        uint128 exponentialMovingAverage,
+        uint128 exponentialWeightedMovingVariance
+    ) public initializer {
         __Ownable_init();
+        IporOracleTypes.IPOR storage ipor = _indexes[asset];
+        ipor.lastUpdateTimestamp = lastUpdateTimestamp;
+        ipor.exponentialMovingAverage = exponentialMovingAverage;
+        ipor.exponentialWeightedMovingVariance = exponentialWeightedMovingVariance;
     }
 
     function getVersion() external pure virtual override returns (uint256) {
@@ -193,28 +202,23 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
 
-        uint256 newQuasiIbtPrice;
-        uint256 newExponentialMovingAverage;
-        uint256 newExponentialWeightedMovingVariance;
+        uint256 newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+            ipor.exponentialMovingAverage,
+            indexValue,
+            _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
+        );
 
-        if (ipor.indexValue == 0) {
-            newQuasiIbtPrice = Constants.WAD_YEAR_IN_SECONDS;
-            newExponentialMovingAverage = indexValue;
-        } else {
-            newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
-            newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
-                ipor.exponentialMovingAverage,
+        uint256 newExponentialWeightedMovingVariance = IporLogic
+            .calculateExponentialWeightedMovingVariance(
+                ipor.exponentialWeightedMovingVariance,
+                newExponentialMovingAverage,
                 indexValue,
                 _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
-            newExponentialWeightedMovingVariance = IporLogic
-                .calculateExponentialWeightedMovingVariance(
-                    ipor.exponentialWeightedMovingVariance,
-                    newExponentialMovingAverage,
-                    indexValue,
-                    _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-                );
-        }
+
+        uint256 newQuasiIbtPrice = ipor.indexValue == 0
+            ? Constants.WAD_YEAR_IN_SECONDS
+            : ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
             updateTimestamp.toUint32(),
