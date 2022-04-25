@@ -316,10 +316,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
   truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none
-  DATE=`date +%Y-%m-%d--%H:%M:%S`  
-  cp ${DIR}/.ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json ${DIR}/.ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-ipor-addresses-${DATE}.json 
-
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none  
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
@@ -329,9 +326,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   rm -rf app/src/contracts/
   rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
   truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
-  DATE=`date +%Y-%m-%d--%H:%M:%S`  
-  cp ${DIR}/.ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json ${DIR}/.ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-ipor-addresses-${DATE}.json 
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none  
 fi
 
 
