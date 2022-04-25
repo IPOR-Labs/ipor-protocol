@@ -39,7 +39,7 @@ contract TestnetFaucet is
         _usdt = usdt;
     }
 
-	//solhint-disable no-empty-blocks
+    //solhint-disable no-empty-blocks
     fallback() external payable {}
 
     //solhint-disable no-empty-blocks
@@ -102,7 +102,7 @@ contract TestnetFaucet is
         ERC20Upgradeable token = ERC20Upgradeable(asset);
         uint256 value;
         if (_lastClaim[_msgSender()] == 0) {
-            value = 100_000 * 10**token.decimals();
+            value = 50_000 * 10**token.decimals();
         } else {
             value = 10_000 * 10**token.decimals();
         }

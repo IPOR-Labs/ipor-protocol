@@ -141,7 +141,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigNumber.from("1000886318050552869");
+        const expectedExchangeRate = BigNumber.from("1009368340867602731");
 
         //when
         const actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
@@ -155,7 +155,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
@@ -256,7 +256,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
         const balance = await miltonDai.getAccruedBalance();
 
-        const expectedExchangeRate = BigNumber.from("979341411659456500");
+        const expectedExchangeRate = BigNumber.from("987823434476506362");
 
         //when
         const actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
@@ -267,7 +267,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
@@ -394,7 +394,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigNumber.from("9003770174655274718530");
+        const expectedSoap = BigNumber.from("8494848805632282973266");
         const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
 
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
@@ -410,7 +410,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         );
 
         //then
-        expect(actualSoap).to.be.eql(expectedSoap);
+        expect(actualSoap).to.be.equal(expectedSoap);
         expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
@@ -537,10 +537,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         const calculateTimestamp = params.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         let actualExchangeRate = await josephDai.itfCalculateExchangeRate(calculateTimestamp);
-        const expectedExchangeRate = BigNumber.from("222722621040934293");
+        const expectedExchangeRate = BigNumber.from("231204643857984155");
 
         //Notice! |SOAP| > Liquidity Pool Balance
-        const expectedSoap = BigNumber.from("-8355268689028085967576");
+        const expectedSoap = BigNumber.from("-8864190058051077712840");
         const expectedLiquidityPoolBalance = BigNumber.from("5008088573427971608517");
 
         const soap = await miltonDai.itfCalculateSoap(calculateTimestamp);
@@ -553,8 +553,8 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
-        expect(actualSoap).to.be.eql(expectedSoap);
+        ).to.be.equal(actualExchangeRate);
+        expect(actualSoap).to.be.equal(expectedSoap);
         expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
     });
 
