@@ -51,6 +51,7 @@ IS_NGINX_ETH_BC_RESTART="NO"
 IS_MOCK_ASSET_MANAGEMENT="NO"
 IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
 IS_UPDATE_DEV_TOOL="NO"
+COMMIT_MIGRATION_LOGS="NO"
 
 
 if [ $# -eq 0 ]; then
@@ -65,6 +66,9 @@ do
         ;;
         migrateclean|mc)
             IS_MIGRATE_WITH_CLEAN_SC="YES"
+        ;;
+        migrationlogs|mlogs)
+            COMMIT_MIGRATION_LOGS"YES"
         ;;
         build|b)
             IS_BUILD_DOCKER="YES"
@@ -313,10 +317,17 @@ fi
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
-
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none  
+  date_now=$(date "+%F-%H-%M-%S")
+  mkdir .logs/
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/compile/
+  touch .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/migration/
+  touch .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  truffle compile --all >> .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none  >> .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
@@ -325,10 +336,31 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
   rm -rf app/src/contracts/
   rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
-  truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none  
+  date_now=$(date "+%F-%H-%M-%S")
+  mkdir .logs/
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/compile/
+  touch .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
+  mkdir .logs/${ETH_BC_NETWORK_NAME}/migration/
+  touch .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  truffle compile --all >> .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
+  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none >> .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+    
 fi
 
+if [$COMMIT_MIGRATION_LOGS = "YES"];  then
+  date_now=$(date "+%F-%H-%M-%S")
+  cp -R .ipor/ ../ipor-migration-state/ipor
+  cp -R .openzeppelin/ ../ipor-migration-state/openzeppelin  
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/compile/ ../ipor-migration-state/compile/${ETH_BC_NETWORK_NAME}
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/migration/ ../ipor-migration-state/migration/${ETH_BC_NETWORK_NAME} 
+  cp -R ./app/src/contracts ../ipor-migration-state/contracts/${ETH_BC_NETWORK_NAME}/date_now
+  cd ../ipor-migration-state/
+  git add .
+  git commit -m "Migration - ${date_now}"
+  git push
+  cd "${DIR}"
+fi
 
 if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   cd "${DIR}"
