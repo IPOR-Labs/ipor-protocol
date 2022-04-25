@@ -40,8 +40,6 @@
     "scripts": {
         "preinstall": "npx npm-force-resolutions",
         "coverage": "npx hardhat coverage",
-        "truffle-compile": "truffle compile --all",
-        "truffle-migrate": "truffle migrate --network docker  --reset --compile-none",
         "mainnet-test:aave-startaegy-dai": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-dai.ts",
         "mainnet-test:aave-startaegy-usdc": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-usdc.ts",
         "mainnet-test:aave-startaegy-usdt": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-usdt.ts",
@@ -71,6 +69,5 @@
     },
     "resolutions": {
         "minimist": "^1.2.5"
-
     }
 }
