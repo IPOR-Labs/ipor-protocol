@@ -11,11 +11,6 @@ module.exports = {
     migrations_directory: process.env.SC_MIGRATION_DIRECTORY,
     contracts_build_directory: path.join(__dirname, "app/src/contracts"),
     networks: {
-        dev: {
-            host: "sc.ipor.info",
-            port: 8545,
-            network_id: "*",
-        },
         docker: {
             provider: () => {
                 return new HDWalletProvider(
@@ -26,27 +21,11 @@ module.exports = {
             network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
         },
-        docker_debug: {
-            host: "127.0.0.1",
-            port: 9545,
-            network_id: process.env.ETH_BC_NETWORK_ID,
-            skipDryRun: true,
-        },
         develop: {
             host: "127.0.0.1",
             port: 8545,
             network_id: "*",
             gasLimit: 12500000,
-        },
-        rinkeby: {
-            networkCheckTimeout: 10000,
-            provider: () => {
-                return new HDWalletProvider(
-                    [process.env.ADMIN_PRIV_KEY, process.env.IPOR_INDEX_ADMIN_PRIV_KEY],
-                    `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
-                );
-            },
-            network_id: "4",
         },
     },
     mocha: {
