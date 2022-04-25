@@ -93,7 +93,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
@@ -158,7 +159,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_365_18DEC
         );
 
         const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
@@ -199,6 +201,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_365_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -256,7 +259,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -297,6 +301,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_160_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -354,7 +359,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -395,6 +401,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_120_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -452,7 +459,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -492,7 +500,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -535,6 +544,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -593,7 +603,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -637,6 +648,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -696,7 +708,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -738,7 +751,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -781,7 +795,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -824,7 +839,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -867,7 +883,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -909,7 +926,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -951,7 +969,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -993,7 +1012,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1034,7 +1054,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_150_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1075,7 +1096,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1116,7 +1138,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, 5 hours before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1157,7 +1180,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1198,7 +1222,8 @@ describe("Milton - close position", () => {
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1238,7 +1263,8 @@ describe("Milton - close position", () => {
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_365_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1278,7 +1304,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1320,7 +1347,8 @@ describe("Milton - close position", () => {
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1361,7 +1389,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1401,7 +1430,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1442,7 +1472,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1484,7 +1515,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1526,7 +1558,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1567,7 +1600,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
         const { tokenDai } = testData;
         if (tokenDai === undefined) {
@@ -1605,7 +1639,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
         const { tokenDai } = testData;
         if (tokenDai === undefined) {
@@ -1646,7 +1681,8 @@ describe("Milton - close position", () => {
     it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_151_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1689,7 +1725,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1730,7 +1767,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1771,7 +1809,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1814,7 +1853,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1857,7 +1897,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1899,7 +1940,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai } = testData;
@@ -1940,7 +1982,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_160_18DEC
         );
         const { tokenDai } = testData;
         if (tokenDai === undefined) {
@@ -1981,7 +2024,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
@@ -2028,6 +2072,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2084,6 +2129,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2137,6 +2183,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2190,6 +2237,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2246,6 +2294,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2299,6 +2348,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2352,6 +2402,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2405,6 +2456,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2458,6 +2510,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2511,6 +2564,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2563,7 +2617,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
@@ -2646,7 +2701,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
@@ -2729,7 +2785,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
         if (
@@ -2876,6 +2933,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2929,6 +2987,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -2982,6 +3041,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3035,6 +3095,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3088,6 +3149,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3141,6 +3203,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3194,6 +3257,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3247,6 +3311,7 @@ describe("Milton - close position", () => {
         const testData = await prepareTestData(
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -3300,7 +3365,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
@@ -3359,7 +3425,8 @@ describe("Milton - close position", () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;

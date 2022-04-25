@@ -594,7 +594,7 @@ describe("Milton - Should Not Open Position", () => {
 
         const MockItfIporOracle = await hre.ethers.getContractFactory("MockItfIporOracle");
         const mockIporOracle = (await MockItfIporOracle.deploy()) as ItfIporOracle;
-        await mockIporOracle.initialize();
+        await mockIporOracle.initialize([],[],[],[]);
         await mockIporOracle.addUpdater(await admin.getAddress());
 
         const testData = await prepareComplexTestDataDaiCase000(

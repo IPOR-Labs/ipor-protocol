@@ -3,6 +3,7 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import {
     N0__01_18DEC,
+    PERCENTAGE_3_18DEC,
     PERCENTAGE_100_18DEC,
     TC_IBT_PRICE_DAI_18DEC,
     YEAR_IN_SECONDS,
@@ -17,6 +18,8 @@ import {
     PERCENTAGE_50_18DEC,
     PERCENTAGE_7_6DEC,
     PERCENTAGE_50_6DEC,
+    PERIOD_1_DAY_IN_SECONDS,
+    PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
     ZERO,
 } from "./utils/Constants";
@@ -59,6 +62,7 @@ describe("IporOracle", () => {
         testData = (await prepareTestData(
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -345,15 +349,37 @@ describe("IporOracle", () => {
 
     it("should update IPOR Index", async () => {
         //given
-        const asset = _tokenDai.address;
         const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
-        await _iporOracle.addUpdater(await userOne.getAddress());
+        testData = (await prepareTestData(
+            [admin, userOne, userTwo, userThree],
+            ["DAI"],
+            [expectedIndexValue],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        )) as TestData;
+
+        const { iporOracle, tokenDai } = testData;
+
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const asset = tokenDai.address;
+
+        await iporOracle.addUpdater(await userOne.getAddress());
 
         //when
-        await _iporOracle.connect(userOne).updateIndex(asset, expectedIndexValue);
+        await iporOracle.connect(userOne).updateIndex(asset, expectedIndexValue);
 
         //then
-        const iporIndex = await _iporOracle.getIndex(asset);
+        const iporIndex = await iporOracle.getIndex(asset);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
         const actualIbtPrice = BigNumber.from(iporIndex.ibtPrice);
 
@@ -443,7 +469,9 @@ describe("IporOracle", () => {
         const iporIndexValue = BigNumber.from("50000").mul(N0__01_18DEC);
 
         //when
-        await _iporOracle.connect(userOne).updateIndex(asset, iporIndexValue);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(asset, iporIndexValue, testData.executionTimestamp);
 
         //then
         const iporIndex = await _iporOracle.getIndex(asset);
@@ -700,13 +728,42 @@ describe("IporOracle", () => {
 
     it("should calculate initial Exponential Moving Average - simple case 1", async () => {
         //given
-        const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
         await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenDai.address, _tokenUsdc.address, _tokenUsdt.address];
         const indexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
-        const expectedExpoMovingAverage = PERCENTAGE_7_18DEC;
+
+        //based on prepared test data
+        const expectedExpoMovingAverage = PERCENTAGE_3_18DEC;
+
         //when
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, indexValues, updateDate);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, indexValues, testData.executionTimestamp);
+
+        //then
+        const iporIndex = await _iporOracle.getIndex(assets[0]);
+        const actualExponentialMovingAverage = BigNumber.from(
+            await iporIndex.exponentialMovingAverage
+        );
+        expect(
+            actualExponentialMovingAverage,
+            `Actual exponential moving average is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
+        ).to.be.eql(expectedExpoMovingAverage);
+    });
+
+    it("should calculate initial Exponential Moving Average - simple case 2", async () => {
+        //given
+        await _iporOracle.addUpdater(await userOne.getAddress());
+        const assets = [_tokenDai.address, _tokenUsdc.address, _tokenUsdt.address];
+        const indexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
+
+        const expectedExpoMovingAverage = BigNumber.from("67754799242793888");
+
+        const executionTimestamp = testData.executionTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        //when
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, indexValues, executionTimestamp);
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
@@ -721,21 +778,28 @@ describe("IporOracle", () => {
 
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 18 decimals", async () => {
         //given
-        const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
+
         await _iporOracle.addUpdater(await userOne.getAddress());
         const assets = [_tokenDai.address, _tokenUsdt.address, _tokenUsdc.address];
         const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
-        const expectedExpoMovingAverage = BigNumber.from("7").mul(N0__01_18DEC);
+        const expectedExpoMovingAverage = BigNumber.from("34122000077192064");
+
+        const executionTimestamp1 = testData.executionTimestamp.add(PERIOD_1_DAY_IN_SECONDS);
+        const executionTimestamp2 = testData.executionTimestamp.add(PERIOD_1_DAY_IN_SECONDS);
 
         //when
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, secondIndexValues, updateDate);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, firstIndexValues, executionTimestamp1);
+        await _iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(assets, secondIndexValues, executionTimestamp2);
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = await iporIndex.exponentialMovingAverage;
-        console.log("actualExponentialMovingAverage: ", actualExponentialMovingAverage.toString());
+
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
@@ -744,27 +808,49 @@ describe("IporOracle", () => {
 
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals", async () => {
         //given
-        const updateDate = BigNumber.from(Math.floor(Date.now() / 1000));
-        await _iporOracle.addUpdater(await userOne.getAddress());
-        const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
+        testData = (await prepareTestData(
+            [admin, userOne, userTwo, userThree],
+            ["USDC", "USDT", "DAI"],
+            [PERCENTAGE_7_6DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        )) as TestData;
+
+        const { iporOracle, tokenUsdt, tokenUsdc, tokenDai } = testData;
+
+        if (tokenUsdt === undefined || tokenUsdc === undefined || tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await iporOracle.addUpdater(await userOne.getAddress());
+        const assets = [tokenUsdc.address, tokenDai.address, tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
         const expectedExpoMovingAverage = BigNumber.from("71846");
 
         //when
-        await _iporOracle.connect(userOne).itfUpdateIndexes(assets, firstIndexValues, updateDate);
-        await _iporOracle
+        await iporOracle
             .connect(userOne)
-            .itfUpdateIndexes(assets, secondIndexValues, updateDate.add(BigNumber.from("3600")));
+            .itfUpdateIndexes(assets, firstIndexValues, testData.executionTimestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndexes(
+                assets,
+                secondIndexValues,
+                testData.executionTimestamp.add(BigNumber.from("3600"))
+            );
 
         //then
-        const iporIndex = await _iporOracle.getIndex(assets[0]);
+        const iporIndex = await iporOracle.getIndex(assets[0]);
         const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
 
-        console.log(
-            "actualExponentialMovingAverage 6 decimal: ",
-            actualExponentialMovingAverage.toString()
-        );
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`

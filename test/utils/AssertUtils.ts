@@ -86,6 +86,7 @@ export const testCasePagination = async (
     const testData = await prepareTestData(
         users,
         ["DAI", "USDC", "USDT"],
+		[],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,

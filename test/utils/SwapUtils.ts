@@ -295,10 +295,11 @@ export const exetuceCloseSwapTestCase = async function (
 ) {
     //given
     let localOpenTimestamp = ZERO;
-    if (openTimestamp != null) {
+	
+    if (openTimestamp != ZERO) {
         localOpenTimestamp = openTimestamp;
     } else {
-        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        localOpenTimestamp = testData.executionTimestamp;
     }
 
     let totalAmount = ZERO;
@@ -472,10 +473,10 @@ export const executeCloseSwapsTestCase = async function (
 ) {
     //given
     let localOpenTimestamp = ZERO;
-    if (openTimestamp != null) {
+    if (openTimestamp != ZERO) {
         localOpenTimestamp = openTimestamp;
     } else {
-        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        localOpenTimestamp = testData.executionTimestamp;
     }
 
     let totalAmount = ZERO;

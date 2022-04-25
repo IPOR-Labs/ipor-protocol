@@ -16,6 +16,8 @@ import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -35,16 +37,26 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     }
 
     function initialize(
-        address asset,
-        uint32 lastUpdateTimestamp,
-        uint128 exponentialMovingAverage,
-        uint128 exponentialWeightedMovingVariance
+        address[] memory assets,
+        uint32[] memory updateTimestamps,
+        uint128[] memory exponentialMovingAverages,
+        uint128[] memory exponentialWeightedMovingVariances
     ) public initializer {
         __Ownable_init();
-        IporOracleTypes.IPOR storage ipor = _indexes[asset];
-        ipor.lastUpdateTimestamp = lastUpdateTimestamp;
-        ipor.exponentialMovingAverage = exponentialMovingAverage;
-        ipor.exponentialWeightedMovingVariance = exponentialWeightedMovingVariance;
+
+        uint256 assetsLength = assets.length;
+
+        for (uint256 i = 0; i != assetsLength; i++) {
+            require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
+
+            _indexes[assets[i]] = IporOracleTypes.IPOR(
+                updateTimestamps[i],
+                0,
+                Constants.WAD_YEAR_IN_SECONDS.toUint128(),
+                exponentialMovingAverages[i],
+                exponentialWeightedMovingVariances[i]
+            );
+        }
     }
 
     function getVersion() external pure virtual override returns (uint256) {
@@ -216,9 +228,11 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
                 _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
 
-        uint256 newQuasiIbtPrice = ipor.indexValue == 0
-            ? Constants.WAD_YEAR_IN_SECONDS
-            : ipor.accrueQuasiIbtPrice(updateTimestamp);
+        uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
+        
+        // uint256 newQuasiIbtPrice = ipor.indexValue == 0
+        //     ? Constants.WAD_YEAR_IN_SECONDS
+        //     : ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
             updateTimestamp.toUint32(),
