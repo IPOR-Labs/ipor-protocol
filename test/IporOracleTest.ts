@@ -60,6 +60,7 @@ describe("IporOracle", () => {
 
     beforeEach(async () => {
         testData = (await prepareTestData(
+			BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             [],
@@ -351,6 +352,7 @@ describe("IporOracle", () => {
         //given
         const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
         testData = (await prepareTestData(
+			BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["DAI"],
             [expectedIndexValue],
@@ -809,6 +811,7 @@ describe("IporOracle", () => {
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals", async () => {
         //given
         testData = (await prepareTestData(
+			BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             [PERCENTAGE_7_6DEC],

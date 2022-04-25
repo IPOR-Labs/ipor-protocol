@@ -53,7 +53,7 @@ describe("MiltonFacadeDataProvider", () => {
 
     it("should list configuration DAI, USDC, USDT", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
 			[PERCENTAGE_5_18DEC,PERCENTAGE_5_18DEC,PERCENTAGE_5_18DEC],
@@ -231,7 +231,7 @@ describe("MiltonFacadeDataProvider", () => {
 
     it("should list correct number DAI, USDC, USDT items", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI", "USDC", "USDT"],
             [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],

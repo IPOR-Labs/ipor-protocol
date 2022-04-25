@@ -91,7 +91,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
@@ -157,7 +157,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_365_18DEC
@@ -198,7 +198,7 @@ describe("Milton - close position", () => {
     });
 
     it.skip("should close position, USDT, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, USDT 6 decimals", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             [PERCENTAGE_365_18DEC],
@@ -257,7 +257,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -298,7 +298,7 @@ describe("Milton - close position", () => {
     });
 
     it.skip("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             [PERCENTAGE_160_18DEC],
@@ -357,7 +357,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -398,7 +398,7 @@ describe("Milton - close position", () => {
 
     it.skip("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             [PERCENTAGE_120_18DEC],
@@ -457,7 +457,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -498,7 +498,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -541,7 +541,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             [PERCENTAGE_5_18DEC],
@@ -601,7 +601,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -645,7 +645,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
             [PERCENTAGE_5_18DEC],
@@ -706,7 +706,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -749,7 +749,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -793,7 +793,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -837,7 +837,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -881,7 +881,7 @@ describe("Milton - close position", () => {
     // todo fix it
     it.skip("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, 5 hours before maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -924,7 +924,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -967,7 +967,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1010,7 +1010,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1052,7 +1052,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_150_18DEC
@@ -1094,7 +1094,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -1136,7 +1136,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, 5 hours before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -1178,7 +1178,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1220,7 +1220,7 @@ describe("Milton - close position", () => {
     });
 
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
@@ -1261,7 +1261,7 @@ describe("Milton - close position", () => {
     });
 
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_365_18DEC
@@ -1302,7 +1302,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1345,7 +1345,7 @@ describe("Milton - close position", () => {
     });
 
     it.skip("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -1387,7 +1387,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1428,7 +1428,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1470,7 +1470,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1513,7 +1513,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -1556,7 +1556,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1598,7 +1598,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1637,7 +1637,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1679,7 +1679,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_151_18DEC
@@ -1723,7 +1723,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1765,7 +1765,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1807,7 +1807,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -1851,7 +1851,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_120_18DEC
@@ -1895,7 +1895,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1938,7 +1938,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -1980,7 +1980,7 @@ describe("Milton - close position", () => {
 
     it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_160_18DEC
@@ -2022,7 +2022,7 @@ describe("Milton - close position", () => {
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
@@ -2069,7 +2069,7 @@ describe("Milton - close position", () => {
     });
 
     it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2126,7 +2126,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close single pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2180,7 +2180,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close two pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2234,7 +2234,7 @@ describe("Milton - close position", () => {
     });
 
     it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2291,7 +2291,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close single receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2345,7 +2345,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close two receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2399,7 +2399,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2453,7 +2453,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position by owner, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2507,7 +2507,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position by owner, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2561,7 +2561,7 @@ describe("Milton - close position", () => {
     });
     it("should close only one position - close first position", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
@@ -2645,7 +2645,7 @@ describe("Milton - close position", () => {
 
     it("should close only one position - close last position", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
@@ -2729,7 +2729,7 @@ describe("Milton - close position", () => {
 
     it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -2876,7 +2876,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close single pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2930,7 +2930,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close two pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -2984,7 +2984,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close single receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -3038,7 +3038,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close two receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -3092,7 +3092,7 @@ describe("Milton - close position", () => {
     });
 
     it("should close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        const testData = await prepareTestData(
+        const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
             [PERCENTAGE_5_18DEC],
@@ -3147,7 +3147,7 @@ describe("Milton - close position", () => {
 
     it("should transfer all liquidation deposits in single transfer to liquidator - pay fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC
@@ -3207,7 +3207,7 @@ describe("Milton - close position", () => {
 
     it("should transfer all liquidation deposits in single transfer to liquidator - receive fixed", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase000(
+        const testData = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
             PERCENTAGE_5_18DEC

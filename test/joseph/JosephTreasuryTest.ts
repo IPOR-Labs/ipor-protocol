@@ -37,9 +37,9 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - caller not publication fee transferer", async () => {
         //given
-        const { josephDai } = await prepareComplexTestDataDaiCase000(
+        const { josephDai } = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -58,9 +58,9 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Charlie Treasury address incorrect", async () => {
         //given
-        const { josephDai } = await prepareComplexTestDataDaiCase000(
+        const { josephDai } = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -82,9 +82,9 @@ describe("Joseph Treasury", () => {
     it("should transfer Publication Fee to Charlie Treasury - simple case 1", async () => {
         //given
         const { josephDai, tokenDai, iporOracle, miltonDai, miltonStorageDai } =
-            await prepareComplexTestDataDaiCase000(
+            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel, PERCENTAGE_3_18DEC
             );
 
         if (
@@ -162,9 +162,9 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Treasure - caller not treasure transferer", async () => {
         //given
-        const { josephDai } = await prepareComplexTestDataDaiCase000(
+        const { josephDai } = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -183,9 +183,9 @@ describe("Joseph Treasury", () => {
 
     it("should NOT transfer Publication Fee to Charlie Treasury - Treasury Transferer address incorrect", async () => {
         //given
-        const { josephDai } = await prepareComplexTestDataDaiCase000(
+        const { josephDai } = await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -206,7 +206,7 @@ describe("Joseph Treasury", () => {
 
     it("should transfer Treasury to Treasury Treasurer - simple case 1", async () => {
         //given
-        const testData = await prepareComplexTestDataDaiCase400(
+        const testData = await prepareComplexTestDataDaiCase400(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );

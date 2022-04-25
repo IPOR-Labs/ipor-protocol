@@ -44,8 +44,10 @@ describe("Milton Events", () => {
     it("should emit event when open Pay Fixed Swap - 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel, PERCENTAGE_3_18DEC
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
@@ -103,8 +105,10 @@ describe("Milton Events", () => {
     it("should emit event when open Receive Fixed Swap - 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel, PERCENTAGE_3_18DEC
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
 
@@ -161,6 +165,7 @@ describe("Milton Events", () => {
     it("should emit event when open Pay Fixed Swap - 6 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataUsdtCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -221,6 +226,7 @@ describe("Milton Events", () => {
     it("should emit event when open Receive Fixed Swap - 6 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataUsdtCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -279,8 +285,10 @@ describe("Milton Events", () => {
     it("should emit event when close Pay Fixed Swap - 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel, PERCENTAGE_5_18DEC
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle } = testData;
@@ -332,6 +340,7 @@ describe("Milton Events", () => {
     it("should emit event when close Pay Fixed Swap - 6 decimals - taker closed swap", async () => {
         //given
         const testData = await prepareComplexTestDataUsdtCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -385,6 +394,7 @@ describe("Milton Events", () => {
     it("should emit event when close Pay Fixed Swap - 6 decimals - NOT taker closed swap", async () => {
         //given
         const testData = await prepareComplexTestDataUsdtCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );

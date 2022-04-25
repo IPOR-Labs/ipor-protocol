@@ -792,8 +792,10 @@ describe("MiltonSpreadRecFixed", () => {
     it("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],[],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -833,8 +835,10 @@ describe("MiltonSpreadRecFixed", () => {
     it("should calculate Spread Receive Fixed - spread premiums higher than IPOR Index", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],[PERCENTAGE_3_18DEC],
+            ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

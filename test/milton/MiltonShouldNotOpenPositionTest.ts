@@ -58,8 +58,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because totalAmount amount too low", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -86,8 +88,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because totalAmount > asset balance", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -115,8 +119,10 @@ describe("Milton - Should Not Open Position", () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         const totalAmount = BigNumber.from("30000000000000000001");
@@ -152,8 +158,10 @@ describe("Milton - Should Not Open Position", () => {
         //given
         const { iporOracle, tokenDai, josephDai, miltonDai } =
             await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
@@ -188,8 +196,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because acceptable fixed interest rate  exceeded - pay fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -244,8 +254,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because acceptable fixed interest rate  exceeded - receive fixed 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -302,8 +314,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because totalAmount amount too high", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -332,8 +346,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because totalAmount amount too high - case 2", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         if (miltonDai === undefined) {
             expect(true).to.be.false;
@@ -361,8 +377,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open position because Liquidity Pool balance is to low", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            N0__01_18DEC
         );
 
         const { tokenDai, josephDai, miltonDai, iporOracle, miltonStorageDai } = testData;
@@ -433,8 +451,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open pay fixed position, DAI, leverage too low", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, iporOracle, miltonDai } = testData;
@@ -474,8 +494,10 @@ describe("Milton - Should Not Open Position", () => {
     it("should NOT open pay fixed position, DAI, leverage too high", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, iporOracle, miltonDai } = testData;
@@ -515,6 +537,7 @@ describe("Milton - Should Not Open Position", () => {
     it("Should not open position when utilization exceeded", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase700(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -545,6 +568,7 @@ describe("Milton - Should Not Open Position", () => {
     it("Should not open position when total amount lower than fee", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase800(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -575,6 +599,7 @@ describe("Milton - Should Not Open Position", () => {
     it("Should not open position when total amount lower than fee", async () => {
         //given
         const { miltonDai } = await prepareComplexTestDataDaiCase800(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -594,12 +619,14 @@ describe("Milton - Should Not Open Position", () => {
 
         const MockItfIporOracle = await hre.ethers.getContractFactory("MockItfIporOracle");
         const mockIporOracle = (await MockItfIporOracle.deploy()) as ItfIporOracle;
-        await mockIporOracle.initialize([],[],[],[]);
+        await mockIporOracle.initialize([], [], [], []);
         await mockIporOracle.addUpdater(await admin.getAddress());
 
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel,
+            PERCENTAGE_3_18DEC,
             mockIporOracle
         );
 

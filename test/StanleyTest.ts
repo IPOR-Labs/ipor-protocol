@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
-import { Signer } from "ethers";
+import { Signer, BigNumber } from "ethers";
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
@@ -42,8 +42,10 @@ describe("Stanley - Asset Management Vault", () => {
     it("should rebalance - AM Vault ratio > Optimal - deposit to Vault", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],[],
+            ["DAI"],
+            [],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -126,8 +128,10 @@ describe("Stanley - Asset Management Vault", () => {
     it("should rebalance - AM Vault ratio < Optimal - withdraw from Vault part amount", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],[],
+            ["DAI"],
+            [],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -216,8 +220,10 @@ describe("Stanley - Asset Management Vault", () => {
     it("should rebalance - AM Vault ratio < Optimal - withdraw from Vault part amount", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],[],
+            ["DAI"],
+            [],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -306,8 +312,10 @@ describe("Stanley - Asset Management Vault", () => {
     it("should withdraw All FromStanley", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],[],
+            ["DAI"],
+            [],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -370,8 +378,10 @@ describe("Stanley - Asset Management Vault", () => {
     it("should not sent ETH to Stanley DAI, USDT, USDC", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin],
-            ["DAI", "USDT", "USDC"],[],
+            ["DAI", "USDT", "USDC"],
+            [],
             mockMiltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
