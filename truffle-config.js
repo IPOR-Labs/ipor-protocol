@@ -38,32 +38,15 @@ module.exports = {
             network_id: "*",
             gasLimit: 12500000,
         },
-        develop2: {
-            host: "127.0.0.1",
-            port: 7545,
-            network_id: process.env.ETH_BC_NETWORK_ID,
-        },
-        kovan: {
+        rinkeby: {
             networkCheckTimeout: 10000,
             provider: () => {
                 return new HDWalletProvider(
-                    process.env.MNEMONIC,
-                    `wss://kovan.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
+                    [process.env.ADMIN_PRIV_KEY, process.env.IPOR_INDEX_ADMIN_PRIV_KEY],
+                    `wss://rinkeby.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
                 );
             },
-            network_id: "42",
-            gasPrice: "10000000000",
-        },
-
-        ropsten: {
-            networkCheckTimeout: 10000,
-            provider: () => {
-                return new HDWalletProvider(
-                    process.env.MNEMONIC,
-                    `wss://ropsten.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`
-                );
-            },
-            network_id: "3",
+            network_id: "4",
         },
     },
     mocha: {
