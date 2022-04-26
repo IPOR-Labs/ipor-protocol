@@ -9,6 +9,9 @@ const mnemonic = process.env.MNEMONIC;
 const fork_enabled = process.env.FORK_ENABLED;
 
 const networks: HardhatUserConfig["networks"] = {
+    docker: {
+        url: process.env.ETH_BC_URL,
+    },
     coverage: {
         url: "http://127.0.0.1:8555",
         blockGasLimit: 200000000,

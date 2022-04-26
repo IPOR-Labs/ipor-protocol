@@ -2,7 +2,7 @@ const keys = require("../../../../json_keys.js");
 const func = require("../../../../json_func.js");
 
 module.exports = async function (deployer, _network, addresses, IvTokenDai) {
-    const asset = await func.get_value(keys.DAI);
+    const asset = await func.getValue(keys.DAI);
 
     await deployer.deploy(IvTokenDai, "IV DAI", "ivDAI", asset);
     const ivTokenDai = await IvTokenDai.deployed();
