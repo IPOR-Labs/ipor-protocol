@@ -181,14 +181,14 @@ export const deploy = async (): Promise<DeployType> => {
     ];
 
     const exponentialMovingAverages = [
-        BigNumber.from("3113262689469792600"),
-        BigNumber.from("3010951254902251200"),
-        BigNumber.from("3270666966425632700"),
+        BigNumber.from("31132626894697926"),
+        BigNumber.from("30109512549022512"),
+        BigNumber.from("32706669664256327"),
     ];
     const exponentialWeightedMovingVariances = [
-        BigNumber.from("182812974565671780"),
-        BigNumber.from("5327374080104115"),
-        BigNumber.from("4981198606849136"),
+        BigNumber.from("1828129745656718"),
+        BigNumber.from("53273740801041"),
+        BigNumber.from("49811986068491"),
     ];
 
     const initialParams = {
