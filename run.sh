@@ -248,10 +248,10 @@ function create_migration_logs_dir_files(){
   local date_now="${1}"
   local network_name="${2}"
   mkdir -p .ipor/
-  mkdir -p .logs/${network_name}/compile/
-  mkdir -p .logs/${network_name}/migration/ 
-  touch .logs/${network_name}/compile/${date_now}.txt
-  touch .logs/${network_name}/migration/${date_now}.txt
+  mkdir -p ".logs/${network_name}/compile/"
+  mkdir -p ".logs/${network_name}/migration/ "
+  touch ".logs/${network_name}/compile/${date_now}.txt"
+  touch ".logs/${network_name}/migration/${date_now}.txt"
 }
 
 ################################### COMMANDS ###################################
