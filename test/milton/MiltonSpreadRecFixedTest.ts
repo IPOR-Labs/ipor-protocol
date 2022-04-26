@@ -788,7 +788,7 @@ describe("MiltonSpreadRecFixed", () => {
                     totalCollateralReceiveFixedBalance.add(swapCollateral)
                 ),
             //then
-            "IPOR_322"
+            "IPOR_321"
         );
     });
     it("should calculate Spread Receive Fixed, DAI - simple case 1 - initial state with Liquidity Pool", async () => {

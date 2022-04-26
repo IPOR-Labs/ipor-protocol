@@ -370,7 +370,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.addLiquidity(ZERO),
             //then
-            "IPOR_327"
+            "IPOR_326"
         );
     });
 
@@ -399,7 +399,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.updateStorageWhenTransferToTreasury(N1__0_18DEC.mul(N1__0_18DEC)),
             //then
-            "IPOR_329"
+            "IPOR_328"
         );
     });
 
@@ -428,7 +428,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.updateStorageWhenDepositToStanley(N1__0_18DEC, ZERO),
             //then
-            "IPOR_328"
+            "IPOR_327"
         );
     });
 
@@ -459,7 +459,7 @@ describe("MiltonStorage", () => {
                 N1__0_18DEC.mul(N1__0_18DEC)
             ),
             //then
-            "IPOR_325"
+            "IPOR_324"
         );
     });
 

@@ -2167,7 +2167,7 @@ describe("Milton - close position", () => {
                 userOne,
                 liquidityProvider
             ),
-            "IPOR_315"
+            "IPOR_314"
         );
     });
 
@@ -2335,7 +2335,7 @@ describe("Milton - close position", () => {
                 userOne,
                 liquidityProvider
             ),
-            "IPOR_315"
+            "IPOR_314"
         );
     });
 

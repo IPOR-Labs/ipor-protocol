@@ -60,7 +60,7 @@ describe("IporOracle", () => {
 
     beforeEach(async () => {
         testData = (await prepareTestData(
-			BigNumber.from(Math.floor(Date.now() / 1000)),
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             [],
@@ -137,7 +137,7 @@ describe("IporOracle", () => {
         );
 
         await assertError(
-            _iporOracle.connect(admin).addAsset(await userThree.getAddress()),
+            _iporOracle.connect(admin).addAsset(await userThree.getAddress(), 0, 0, 0),
             "Pausable: paused"
         );
 
@@ -352,7 +352,7 @@ describe("IporOracle", () => {
         //given
         const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
         testData = (await prepareTestData(
-			BigNumber.from(Math.floor(Date.now() / 1000)),
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["DAI"],
             [expectedIndexValue],
@@ -811,7 +811,7 @@ describe("IporOracle", () => {
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals", async () => {
         //given
         testData = (await prepareTestData(
-			BigNumber.from(Math.floor(Date.now() / 1000)),
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
             ["USDC", "USDT", "DAI"],
             [PERCENTAGE_7_6DEC],
@@ -876,6 +876,8 @@ describe("IporOracle", () => {
 
     it("Should throw error when add asset twice", async () => {
         //when
-        await expect(_iporOracle.addAsset(_tokenUsdc.address)).to.be.revertedWith("IPOR_201");
+        await expect(_iporOracle.addAsset(_tokenUsdc.address, 0, 0, 0)).to.be.revertedWith(
+            "IPOR_201"
+        );
     });
 });

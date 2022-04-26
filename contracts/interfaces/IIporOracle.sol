@@ -50,7 +50,7 @@ interface IIporOracle {
     /// @dev Emmits {IporIndexUpdate} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     /// @param indexValue new IPOR Index value represented in 18 decimals
-function updateIndex(address asset, uint256 indexValue) external;
+    function updateIndex(address asset, uint256 indexValue) external;
 
     /// @notice Updates IPOR indexes for a given assets. Function available only for Updater
     /// @dev Emmits {IporIndexUpdate} event.
@@ -72,8 +72,16 @@ function updateIndex(address asset, uint256 indexValue) external;
     function isUpdater(address account) external view returns (uint256);
 
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
-    /// @param newAsset new asset address.
-    function addAsset(address newAsset) external;
+    /// @param newAsset new asset address
+    /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated
+    /// @param exponentialMovingAverage initial Exponential Moving Average for this asset
+    /// @param exponentialWeightedMovingVariance initial Exponential Weighted Moving Variance for asset.
+    function addAsset(
+        address newAsset,
+        uint256 updateTimestamp,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
     /// @param asset  underlying / stablecoin address which currenlty is supported by IPOR Protocol.
@@ -113,7 +121,15 @@ function updateIndex(address asset, uint256 indexValue) external;
 
     /// @notice event emitted when new asset is added by Owner to list of assets supported in IPOR Protocol.
     /// @param newAsset new asset address
-    event IporIndexAddAsset(address newAsset);
+    /// @param updateTimestamp update timestamp
+    /// @param exponentialMovingAverage Exponential Moving Average for asset
+    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance for asset
+    event IporIndexAddAsset(
+        address newAsset,
+        uint256 updateTimestamp,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    );
 
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
     /// @param asset asset address

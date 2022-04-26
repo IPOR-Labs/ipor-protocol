@@ -74,10 +74,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         )
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(
-            ipor.quasiIbtPrice != 0,
-            IporOracleErrors.ASSET_NOT_SUPPORTED
-        );
+        require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         return (
             indexValue = ipor.indexValue,
             ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
@@ -95,10 +92,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(
-            ipor.quasiIbtPrice != 0,
-            IporOracleErrors.ASSET_NOT_SUPPORTED
-        );
+        require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
@@ -154,28 +148,35 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         return _updaters[updater];
     }
 
-    function addAsset(address asset) external override onlyOwner whenNotPaused {
+    function addAsset(
+        address asset,
+        uint256 updateTimestamp,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    ) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            _indexes[asset].quasiIbtPrice < Constants.WAD_YEAR_IN_SECONDS,
+            _indexes[asset].quasiIbtPrice == 0,
             IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
         _indexes[asset] = IporOracleTypes.IPOR(
-            0,
+            updateTimestamp.toUint32(),
             0,
             Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            0,
-            0
+            exponentialMovingAverage.toUint128(),
+            exponentialWeightedMovingVariance.toUint128()
         );
-        emit IporIndexAddAsset(asset);
+        emit IporIndexAddAsset(
+            asset,
+            exponentialMovingAverage,
+            exponentialWeightedMovingVariance,
+            updateTimestamp
+        );
     }
 
     function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _indexes[asset].quasiIbtPrice != 0,
-            IporOracleErrors.ASSET_NOT_SUPPORTED
-        );
+        require(_indexes[asset].quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
     }
@@ -227,10 +228,6 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             );
 
         uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
-        
-        // uint256 newQuasiIbtPrice = ipor.indexValue == 0
-        //     ? Constants.WAD_YEAR_IN_SECONDS
-        //     : ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
             updateTimestamp.toUint32(),
