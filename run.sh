@@ -249,9 +249,9 @@ function create_migration_logs_dir_files(){
   local env_name="${2}"
   mkdir -p .ipor/
   mkdir -p ".logs/${env_name}/compile/"
-  mkdir -p ".logs/${env_name}/migration/"
+  mkdir -p ".logs/${env_name}/migrate/"
   touch ".logs/${env_name}/compile/${date_now}_compile.log"
-  touch ".logs/${env_name}/migration/${date_now}_compile.log"
+  touch ".logs/${env_name}/migrate/${date_now}_migrate.log"
 }
 
 ################################### COMMANDS ###################################
@@ -312,7 +312,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 
   npm run compile:truffle  2>&1| tee ".logs/${ENV_PROFILE}/compile/${date_now}_compile.log"
   export ETH_BC_NETWORK_NAME
-  npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
+  npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${date_now}_migrate.log"
   
   migration_commit_hash_file=".ipor/migration_commit.txt" 
   touch ".ipor/migration_commit.txt" 
@@ -341,7 +341,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   create_migration_logs_dir_files "${now}" "${ENV_PROFILE}"
   npm run compile:truffle  2>&1| tee ".logs/${ENV_PROFILE}/compile/${date_now}_compile.log"
   export ETH_BC_NETWORK_NAME
-  npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
+  npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${date_now}_migrate.log"
 
   touch ".ipor/migration_commit.txt" 
   git rev-parse HEAD >> ".ipor/migration_commit.txt" 
@@ -364,7 +364,7 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ];  then
   cp -R .openzeppelin/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin"
   cp -R .openzeppelin/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/actual_state/openzeppelin"
   cp -R ".logs/${ENV_PROFILE}/compile/" "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
-  cp -R ".logs/${ENV_PROFILE}/migration/" "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
+  cp -R ".logs/${ENV_PROFILE}/migrate/" "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
   cp -R ./app/src/contracts/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/contracts"
   cd "../${MIGRATION_STATE_REPO}/"
   git add .
