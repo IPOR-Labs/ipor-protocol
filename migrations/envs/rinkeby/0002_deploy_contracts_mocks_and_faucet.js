@@ -1,5 +1,8 @@
+const { exit } = require("process");
+const func = require("../../libs/json_func.js");
 const script = require("../../libs/mocks/0001_deploy_mocks_and_faucet.js");
 
+const Migrations = artifacts.require("Migrations");
 const TestnetFaucet = artifacts.require("TestnetFaucet");
 
 const UsdtMockedToken = artifacts.require("UsdtMockedToken");
@@ -50,4 +53,5 @@ module.exports = async function (deployer, _network, addresses) {
         MockStrategyTestnetUsdc,
         MockStrategyTestnetDai,
     ]);
+    await func.updateLastCompletedMigration();
 };
