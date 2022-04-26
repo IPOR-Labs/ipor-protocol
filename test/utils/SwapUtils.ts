@@ -573,7 +573,6 @@ export const executeCloseSwapsTestCase = async function (
         if (pauseMilton) {
             await testData.miltonDai.connect(admin).pause();
         }
-        console.log("closerUser=", await closerUser.getAddress());
         await closeCallback(testData.miltonDai.connect(closerUser));
     }
 };
