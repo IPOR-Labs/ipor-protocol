@@ -30,6 +30,7 @@
         "prettier-plugin-solidity": "1.0.0-beta.19",
         "solhint": "3.3.7",
         "solidity-coverage": "0.7.20",
+        "truffle": "5.5.11",
         "ts-node": "10.7.0",
         "typechain": "7.0.1",
         "typescript": "4.6.3",
@@ -37,6 +38,9 @@
     },
     "scripts": {
         "coverage": "npx hardhat coverage",
+        "compile:hardhat": "npx hardhat compile",
+        "compile:truffle": "truffle compile --all",
+        "migrate:truffle": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
         "mainnet-test:aave-startaegy-dai": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-dai.ts",
         "mainnet-test:aave-startaegy-usdc": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-usdc.ts",
         "mainnet-test:aave-startaegy-usdt": "npx hardhat test test/vault/mainnet-fork/aave-startaegy-usdt.ts",
