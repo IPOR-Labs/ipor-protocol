@@ -324,7 +324,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   date_now=$(date "+%F-%H-%M-%S")
   create_migration_logs_dir_files "${now}" "${ETH_BC_NETWORK_NAME}"
   npm run compile:truffle  2>&1| tee .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
-  ETH_BC_NETWORK_NAME=${ETH_BC_NETWORK_NAME} npm run migrate:truffle 2>&1| tee .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  ETH_BC_NETWORK_NAME=${ETH_BC_NETWORK_NAME} npm run migrate:truffle-reset 2>&1| tee .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
 fi
 
 if [ $COMMIT_MIGRATION_LOGS = "YES" ];  then
