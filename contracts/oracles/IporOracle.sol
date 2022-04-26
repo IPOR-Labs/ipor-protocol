@@ -16,8 +16,6 @@ import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
 
-import "hardhat/console.sol";
-
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -77,7 +75,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(
-            ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            ipor.quasiIbtPrice != 0,
             IporOracleErrors.ASSET_NOT_SUPPORTED
         );
         return (
@@ -98,7 +96,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(
-            ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            ipor.quasiIbtPrice != 0,
             IporOracleErrors.ASSET_NOT_SUPPORTED
         );
 
@@ -175,7 +173,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            _indexes[asset].quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            _indexes[asset].quasiIbtPrice != 0,
             IporOracleErrors.ASSET_NOT_SUPPORTED
         );
         delete _indexes[asset];

@@ -137,7 +137,7 @@ export const prepareTestData = async (
             await tokenUsdt.deployed();
             assetsAddr.push(tokenUsdt.address);
             lastUpdateTimestamps.push(executionTimestamp);
-            exponentialWeightedMovingVariances.push(BigNumber.from("0"));
+            exponentialWeightedMovingVariances.push(ZERO);
         }
         if (assets[k] === "USDC") {
             tokenUsdc = (await UsdcMockedToken.deploy(
@@ -147,7 +147,7 @@ export const prepareTestData = async (
             await tokenUsdc.deployed();
             assetsAddr.push(tokenUsdc.address);
             lastUpdateTimestamps.push(executionTimestamp);
-            exponentialWeightedMovingVariances.push(BigNumber.from("0"));
+            exponentialWeightedMovingVariances.push(ZERO);
         }
 
         if (assets[k] === "DAI") {

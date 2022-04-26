@@ -550,6 +550,10 @@ export const executeCloseSwapsTestCase = async function (
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
+    // used for these smart contracts' methods which not use timestamp and precise time is not required so much for test purposes,
+    // where only more or less movement in time is required for tests Example: Milton.emergencyCloseSwapsPayFixed.
+    await hre.network.provider.send("evm_increaseTime", [Number(periodOfTimeElapsedInSeconds)]);
+
     //when
     if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
         if (pauseMilton) {
