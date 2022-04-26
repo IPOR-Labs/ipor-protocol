@@ -75,6 +75,7 @@ export const TOTAL_SUPPLY_18_DECIMALS = BigNumber.from("10000000000000000").mul(
 export const USER_SUPPLY_10MLN_18DEC = BigNumber.from("10000000").mul(N1__0_18DEC);
 
 export const LEVERAGE_18DEC = BigNumber.from("10").mul(N1__0_18DEC);
+export const LEVERAGE_1000_18DEC = BigNumber.from("1000").mul(N1__0_18DEC);
 
 export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("600751281464875607313");
 export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6007512814648756073133");
@@ -96,10 +97,12 @@ export const USD_28_000_6DEC = BigNumber.from("28000").mul(N1__0_6DEC);
 export const USD_50_000_6DEC = BigNumber.from("50000").mul(N1__0_6DEC);
 export const USD_10_000_000_6DEC = BigNumber.from("10000000").mul(N1__0_6DEC);
 
+export const PERCENTAGE_3_6DEC = BigNumber.from("3").mul(N0__01_6DEC);
 export const PERCENTAGE_6_6DEC = BigNumber.from("6").mul(N0__01_6DEC);
 export const PERCENTAGE_7_6DEC = BigNumber.from("7").mul(N0__01_6DEC);
 export const PERCENTAGE_50_6DEC = BigNumber.from("50").mul(N0__01_6DEC);
 
+export const TC_DEFAULT_EMA_18DEC = BigNumber.from("3").mul(N0__01_18DEC);
 export const TOTAL_SUPPLY_6_DECIMALS = BigNumber.from("100000000000000").mul(N1__0_6DEC);
 export const TC_IBT_PRICE_DAI_6DEC = N1__0_6DEC;
 export const TC_TOTAL_AMOUNT_100_6DEC = BigNumber.from("100").mul(N1__0_6DEC);

@@ -338,7 +338,7 @@ describe("IporLogic", () => {
                 alfa
             ),
             //then
-            "IPOR_323"
+            "IPOR_322"
         );
     });
 
@@ -360,7 +360,7 @@ describe("IporLogic", () => {
                 alfa
             ),
             //then
-            "IPOR_324"
+            "IPOR_323"
         );
     });
 });

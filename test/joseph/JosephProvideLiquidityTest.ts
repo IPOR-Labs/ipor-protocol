@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { N1__0_18DEC, ZERO, USD_14_000_18DEC, USD_14_000_6DEC } from "../utils/Constants";
+import { N1__0_18DEC, ZERO, PERCENTAGE_3_18DEC, USD_14_000_18DEC, USD_14_000_6DEC } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
     MockMiltonSpreadModel,
@@ -44,9 +44,9 @@ describe("Joseph - provide liquidity", () => {
 
     it("should setup init value for Redeem LP Max Utilization Percentage", async () => {
         //given
-        const { josephUsdt, josephUsdc, josephDai } = await prepareTestData(
+        const { josephUsdt, josephUsdc, josephDai } = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI", "USDT", "USDC"],
+            ["DAI", "USDT", "USDC"],[],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -76,9 +76,9 @@ describe("Joseph - provide liquidity", () => {
     it("should provide liquidity and take ipToken - simple case 1 - 18 decimals", async () => {
         //given
         const { ipTokenDai, tokenDai, josephDai, miltonDai } =
-            await prepareComplexTestDataDaiCase000(
+            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel, PERCENTAGE_3_18DEC
             );
 
         if (
@@ -137,7 +137,7 @@ describe("Joseph - provide liquidity", () => {
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
-        const testData = await prepareTestDataUsdtCase000(
+        const testData = await prepareTestDataUsdtCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
@@ -209,9 +209,9 @@ describe("Joseph - provide liquidity", () => {
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
         //given
-        const testData = await prepareTestDataDaiCase000(
+        const testData = await prepareTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel, PERCENTAGE_3_18DEC
         );
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -257,7 +257,7 @@ describe("Joseph - provide liquidity", () => {
 
     it("Should throw error when stanley balance is zero", async () => {
         //given
-        const { josephDai } = await prepareTestDataDaiCase001(
+        const { josephDai } = await prepareTestDataDaiCase001(BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );

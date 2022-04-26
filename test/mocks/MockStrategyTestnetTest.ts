@@ -130,7 +130,7 @@ describe("MockStrategyTestnet", () => {
         expect(strategyBalanceBefore.lt(strategyBalanceAfter)).to.be.true;
     });
 
-    it("Should balance incrise in time", async () => {
+    it("Should balance increase in time", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyDai.deposit(depositAmount);
@@ -145,7 +145,7 @@ describe("MockStrategyTestnet", () => {
 
         expect(strategyBalanceBefore.lt(strategyBalanceAfter));
     });
-    it("Should withdarw 18 dec", async () => {
+    it("Should withdraw 18 dec", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyDai.deposit(depositAmount);
@@ -162,7 +162,7 @@ describe("MockStrategyTestnet", () => {
         expect(strategyBalanceBefore.gt(strategyBalanceAfter)).to.be.true;
         expect(tokenBalanceBefore.lt(tokenBalanceAfter)).to.be.true;
     });
-    it("Should withdarw 6 dec", async () => {
+    it("Should withdraw 6 dec", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyUsdc.deposit(depositAmount);
@@ -179,7 +179,7 @@ describe("MockStrategyTestnet", () => {
         expect(strategyBalanceBefore.gt(strategyBalanceAfter)).to.be.true;
         expect(tokenBalanceBefore.lt(tokenBalanceAfter)).to.be.true;
     });
-    it("Should withdarw more then deposit 6 dec when intrest was added", async () => {
+    it("Should withdraw more then deposit 6 dec when intrest was added", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyUsdc.deposit(depositAmount);
@@ -196,7 +196,7 @@ describe("MockStrategyTestnet", () => {
         expect(strategyBalanceBefore.gt(strategyBalanceAfter)).to.be.true;
         expect(tokenBalanceBefore.lt(tokenBalanceAfter)).to.be.true;
     });
-    it("Should withdarw more then deposit 18 dec when intrest was added", async () => {
+    it("Should withdraw more then deposit 18 dec when intrest was added", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyDai.deposit(depositAmount);
@@ -213,7 +213,7 @@ describe("MockStrategyTestnet", () => {
         expect(strategyBalanceBefore.gt(strategyBalanceAfter)).to.be.true;
         expect(tokenBalanceBefore.lt(tokenBalanceAfter)).to.be.true;
     });
-    it("Should not withdarw 6 dec when not stanley", async () => {
+    it("Should not withdraw 6 dec when not stanley", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyUsdc.deposit(depositAmount);
@@ -222,7 +222,7 @@ describe("MockStrategyTestnet", () => {
             "IPOR_501"
         );
     });
-    it("Should not withdarw 18 dec when not stanley", async () => {
+    it("Should not withdraw 18 dec when not stanley", async () => {
         // given
         const depositAmount = N10_000.mul(N1__0_18DEC);
         await strategyDai.deposit(depositAmount);

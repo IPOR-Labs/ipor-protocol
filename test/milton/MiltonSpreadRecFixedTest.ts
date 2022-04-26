@@ -11,6 +11,7 @@ import {
     USD_15_000_18DEC,
     USD_13_000_18DEC,
     USD_20_18DEC,
+    USD_10_000_000_6DEC,
     USD_10_000_000_18DEC,
     ZERO,
     N0__01_18DEC,
@@ -36,6 +37,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     setupTokenUsdtInitialValuesForUsers,
+    setupTokenUsdcInitialValuesForUsers,
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
@@ -786,14 +788,17 @@ describe("MiltonSpreadRecFixed", () => {
                     totalCollateralReceiveFixedBalance.add(swapCollateral)
                 ),
             //then
-            "IPOR_322"
+            "IPOR_321"
         );
     });
-    it("should calculate Spread Receive Fixed - simple case 1 - initial state with Liquidity Pool", async () => {
+    it("should calculate Spread Receive Fixed, DAI - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
+        const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const testData = await prepareTestData(
+            calculateTimestamp,
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [BigNumber.from("0")],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -808,10 +813,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-
-        const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const expectedSpreadReceiveFixed = BigNumber.from("-433406136001736");
-        const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
 
@@ -819,7 +821,7 @@ describe("MiltonSpreadRecFixed", () => {
 
         await josephDai
             .connect(liquidityProvider)
-            .itfProvideLiquidity(USD_10_000_000_18DEC, timestamp);
+            .itfProvideLiquidity(USD_10_000_000_18DEC, calculateTimestamp);
 
         //when
         let actualSpreadValue = await miltonDai
@@ -830,11 +832,95 @@ describe("MiltonSpreadRecFixed", () => {
         expect(actualSpreadValue.spreadReceiveFixed).to.be.eq(expectedSpreadReceiveFixed);
     });
 
+    it("should calculate Spread Receive Fixed, DAI - simple case 2 - initial state with Liquidity Pool", async () => {
+        //given
+        const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        const testData = await prepareTestData(
+            calculateTimestamp,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const { josephDai, miltonDai } = testData;
+        if (josephDai === undefined || miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+
+        await prepareApproveForUsers([liquidityProvider], "DAI", testData);
+
+        await setupTokenDaiInitialValuesForUsers([liquidityProvider], testData);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_10_000_000_18DEC, calculateTimestamp);
+
+        //when
+        let actualSpreadValue = await miltonDai
+            .connect(userOne)
+            .callStatic.itfCalculateSpread(calculateTimestamp);
+
+        //then
+        expect(actualSpreadValue.spreadReceiveFixed).to.be.eq(expectedSpreadReceiveFixed);
+    });
+
+    it("should calculate Spread Receive Fixed, USDC - simple case 1 - initial state with Liquidity Pool", async () => {
+        //given
+        const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        const testData = await prepareTestData(
+            calculateTimestamp,
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["USDC"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+        const { josephUsdc, miltonUsdc, tokenUsdc } = testData;
+        if (josephUsdc === undefined || miltonUsdc === undefined || tokenUsdc === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+
+        await prepareApproveForUsers([liquidityProvider], "USDC", testData);
+
+        await setupTokenUsdcInitialValuesForUsers([liquidityProvider], tokenUsdc);
+
+        await josephUsdc
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_10_000_000_6DEC, calculateTimestamp);
+
+        //when
+        let actualSpreadValue = await miltonUsdc
+            .connect(userOne)
+            .callStatic.itfCalculateSpread(calculateTimestamp);
+
+        //then
+        expect(actualSpreadValue.spreadReceiveFixed).to.be.eq(expectedSpreadReceiveFixed);
+    });
+
     it("should calculate Spread Receive Fixed - spread premiums higher than IPOR Index", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

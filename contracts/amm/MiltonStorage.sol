@@ -681,7 +681,6 @@ contract MiltonStorage is
             swap.collateral,
             cfgMinLiquidationThresholdToCloseBeforeMaturity
         );
-
         if (absPayoff < minPayoffToCloseBeforeMaturity) {
             //verify if sender is an owner of swap if not then check if maturity - if not then reject,
             //if yes then close even if not an owner

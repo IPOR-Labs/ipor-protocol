@@ -84,8 +84,10 @@ export const testCasePagination = async (
 ) => {
     //given
     const testData = await prepareTestData(
+        BigNumber.from(Math.floor(Date.now() / 1000)),
         users,
         ["DAI", "USDC", "USDT"],
+        [],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,

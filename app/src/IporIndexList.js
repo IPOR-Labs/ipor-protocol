@@ -11,8 +11,8 @@ export default (indexes) =>
                     <th scope="col">IPOR Value</th>
                     <th scope="col">Interest Bearing Token Price</th>
                     <th scope="col">Exponential Moving Average</th>
-					<th scope="col">Exponential Weighted Moving Variance</th>
-                    <th scope="col">Block Timestamp</th>
+                    <th scope="col">Exponential Weighted Moving Variance</th>
+                    <th scope="col">Last Update Timestamp</th>
                 </tr>
             </thead>
             <tbody>
@@ -31,14 +31,12 @@ export default (indexes) =>
                             <small>{index.ibtPrice}</small>
                         </td>
                         <td>
-                            {index.exponentialMovingAverage /
-                                1000000000000000000}
+                            {index.exponentialMovingAverage / 1000000000000000000}
                             <br />
                             <small>{index.exponentialMovingAverage}</small>
                         </td>
-						<td>
-                            {index.exponentialWeightedMovingVariance /
-                                1000000000000000000}
+                        <td>
+                            {index.exponentialWeightedMovingVariance / 1000000000000000000}
                             <br />
                             <small>{index.exponentialWeightedMovingVariance}</small>
                         </td>
