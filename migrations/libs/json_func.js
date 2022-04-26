@@ -33,7 +33,7 @@ const updateLastCompletedMigration = async function updateLastCompletedMigration
     const lastCompletedMigration = await migrationInstance.last_completed_migration.call();
 
     //additional +1 because truffle current script is still in progress
-    file.set("lastCompletedMigration", Number(lastCompletedMigration + 1));
+    file.set("lastCompletedMigration", Number(lastCompletedMigration) + Number(1));
     file.save();
     file = editJsonFile(lastCompletedMigrationFilePath, {
         autosave: true,

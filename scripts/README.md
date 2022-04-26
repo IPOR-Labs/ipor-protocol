@@ -1,6 +1,6 @@
 ### How to run script?
 
-`npx hardhat run scripts/validation.js --network docker`
+`npx hardhat run scripts/validation.js --network localhost`
 
 ### How to export ABI?
 
