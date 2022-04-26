@@ -13,8 +13,6 @@ if [ -f "${ENV_FILE}" ]; then
   echo -e "\n\e[32m${ENV_FILE} file was read\e[0m\n"
 fi
 
-
-
 ENV_CONFIG_BUCKET="ipor-env"
 
 ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
@@ -351,22 +349,22 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
 fi
 
 if [ $COMMIT_MIGRATION_LOGS = "YES" ];  then
-  cd ../ipor-migration-state/
+  cd ../${MIGRATION_HISTORY_REPO}/
   git pull
   cd ../ipor-protocol/
   date_now=$(date "+%F-%H-%M-%S")
-  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/compile
-  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/migration
-  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
-  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
-  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
+  mkdir -p ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/compile
+  mkdir -p ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/migration
+  mkdir -p ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
+  mkdir -p ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
+  mkdir -p ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
 
-  cp -R .ipor/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
-  cp -R .openzeppelin/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
-  cp -R .logs/${ETH_BC_NETWORK_NAME}/compile/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/compile
-  cp -R .logs/${ETH_BC_NETWORK_NAME}/migration/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/migration
-  cp -R ./app/src/contracts/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
-  cd ../ipor-migration-state/
+  cp -R .ipor/ ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
+  cp -R .openzeppelin/ ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/compile/ ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/compile
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/migration/ ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/migration
+  cp -R ./app/src/contracts/ ../${MIGRATION_HISTORY_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
+  cd ../${MIGRATION_HISTORY_REPO}/
   git add .
   git commit -m "Migration - ${date_now}"
   git push
