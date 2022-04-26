@@ -644,6 +644,56 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
+                        <strong>Mock Strategy Testnet Asset Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetUsdt"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetUsdc"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetDai"
+                            method="balanceOf"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <strong>Strategy Aave Asset Balance</strong>
                     </td>
                     <td>
@@ -750,6 +800,57 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">USDT</th>
                     <th scope="col">USDC</th>
                     <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Testnet Strategy APR</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetUsdt"
+                            method="getApr"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetUsdc"
+                            method="getApr"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockStrategyTestnetDai"
+                            method="getApr"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
                 </tr>
 
                 <tr>
@@ -994,6 +1095,39 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">USDT</th>
                     <th scope="col">USDC</th>
                     <th scope="col">DAI</th>
+                </tr>
+
+				<tr>
+                    <td>
+                        <strong>Mock Testnet Strategy</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockStrategyTestnetUsdt"
+                                method="doClaim"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockStrategyTestnetUsdc"
+                                method="doClaim"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockStrategyTestnetDai"
+                                method="doClaim"
+                            />
+                        </div>
+                    </td>
                 </tr>
 
                 <tr>

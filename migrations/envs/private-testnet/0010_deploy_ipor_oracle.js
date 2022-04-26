@@ -13,14 +13,14 @@ module.exports = async function (deployer, _network, addresses) {
 
     const updateTimestamps = [BigInt("1650886888"), BigInt("1650886630"), BigInt("1650886104")];
     const exponentialMovingAverages = [
-        BigInt("3113262689469792600"),
-        BigInt("3010951254902251200"),
-        BigInt("3270666966425632700"),
+        BigInt("31132626894697926"),
+        BigInt("30109512549022512"),
+        BigInt("32706669664256327"),
     ];
     const exponentialWeightedMovingVariances = [
-        BigInt("182812974565671780"),
-        BigInt("5327374080104115"),
-        BigInt("4981198606849136"),
+        BigInt("1828129745656718"),
+        BigInt("53273740801041"),
+        BigInt("49811986068491"),
     ];
 
     const initialParams = {

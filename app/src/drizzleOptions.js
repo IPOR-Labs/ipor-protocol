@@ -48,6 +48,10 @@ import StrategyCompoundUsdt from "./contracts/StrategyCompoundUsdt.json";
 import StrategyCompoundUsdc from "./contracts/StrategyCompoundUsdc.json";
 import StrategyCompoundDai from "./contracts/StrategyCompoundDai.json";
 
+import MockStrategyTestnetUsdt from "./contracts/MockStrategyTestnetUsdt.json";
+import MockStrategyTestnetUsdc from "./contracts/MockStrategyTestnetUsdc.json";
+import MockStrategyTestnetDai from "./contracts/MockStrategyTestnetDai.json";
+
 require("dotenv").config({ path: "../../.env" });
 
 let options = null;
@@ -136,6 +140,9 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             MockCUSDC,
             MockCUSDT,
             MockCDai,
+            MockStrategyTestnetUsdt,
+            MockStrategyTestnetUsdc,
+            MockStrategyTestnetDai,
             JosephUsdt,
             JosephUsdc,
             JosephDai,
