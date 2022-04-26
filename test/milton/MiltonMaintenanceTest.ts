@@ -44,9 +44,10 @@ describe("Milton Maintenance", () => {
     it("should pause Smart Contract, sender is an admin", async () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai } =
-            await prepareComplexTestDataDaiCase000(
+            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
@@ -83,9 +84,10 @@ describe("Milton Maintenance", () => {
     it("should pause Smart Contract specific methods", async () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai } =
-            await prepareComplexTestDataDaiCase000(
+            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
@@ -171,8 +173,10 @@ describe("Milton Maintenance", () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (
@@ -245,8 +249,10 @@ describe("Milton Maintenance", () => {
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -266,8 +272,10 @@ describe("Milton Maintenance", () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai, miltonStorageDai } =
             await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
-                miltonSpreadModel
+                miltonSpreadModel,
+                PERCENTAGE_3_18DEC
             );
 
         if (
@@ -323,8 +331,10 @@ describe("Milton Maintenance", () => {
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         if (miltonDai === undefined) {
             expect(true).to.be.false;
@@ -344,8 +354,10 @@ describe("Milton Maintenance", () => {
     it("should transfer ownership - simple case 1", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -366,8 +378,10 @@ describe("Milton Maintenance", () => {
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -386,8 +400,10 @@ describe("Milton Maintenance", () => {
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -407,8 +423,10 @@ describe("Milton Maintenance", () => {
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -429,8 +447,10 @@ describe("Milton Maintenance", () => {
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -452,8 +472,10 @@ describe("Milton Maintenance", () => {
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const expectedNewOwner = userTwo;
         if (miltonDai === undefined) {
@@ -473,8 +495,10 @@ describe("Milton Maintenance", () => {
     it("should not sent ETH to Milton DAI, USDT, USDC", async () => {
         //given
         const { miltonDai, miltonUsdt, miltonUsdc } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin],
             ["DAI", "USDT", "USDC"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -524,8 +548,10 @@ describe("Milton Maintenance", () => {
     it("should not sent ETH to MiltonStorage DAI, USDT, USDC", async () => {
         //given
         const { miltonStorageDai, miltonStorageUsdt, miltonStorageUsdc } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin],
             ["DAI", "USDT", "USDC"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

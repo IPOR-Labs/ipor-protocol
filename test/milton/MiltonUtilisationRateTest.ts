@@ -44,8 +44,10 @@ describe("Milton Utilisation Rate", () => {
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -96,8 +98,10 @@ describe("Milton Utilisation Rate", () => {
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -149,8 +153,10 @@ describe("Milton Utilisation Rate", () => {
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -202,8 +208,10 @@ describe("Milton Utilisation Rate", () => {
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -254,8 +262,10 @@ describe("Milton Utilisation Rate", () => {
     it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -311,8 +321,10 @@ describe("Milton Utilisation Rate", () => {
     it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,
@@ -368,8 +380,10 @@ describe("Milton Utilisation Rate", () => {
     it("should NOT open receive fixed position - liquidity pool utilization per leg exceeded, default utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -425,8 +439,10 @@ describe("Milton Utilisation Rate", () => {
     it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE6,
             MiltonUsdtCase.CASE6,

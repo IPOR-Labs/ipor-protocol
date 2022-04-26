@@ -12,7 +12,7 @@ contract MockItfIporOracle is ItfIporOracle {
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(
-            ipor.quasiIbtPrice >= Constants.WAD_YEAR_IN_SECONDS,
+            ipor.quasiIbtPrice != 0,
             IporOracleErrors.ASSET_NOT_SUPPORTED
         );
 

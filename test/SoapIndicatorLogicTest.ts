@@ -95,7 +95,7 @@ describe("SoapIndicatorLogic", () => {
                 swapFixedInterestRate
             ),
             //then
-            "IPOR_313"
+            "IPOR_312"
         );
     });
 
@@ -135,7 +135,7 @@ describe("SoapIndicatorLogic", () => {
                 ZERO,
                 ZERO
             )
-        ).to.be.revertedWith("IPOR_316");
+        ).to.be.revertedWith("IPOR_315");
     });
 
     it("should revert when calculateTimestamp >= derivativeOpenTimestamp", async () => {
@@ -147,7 +147,7 @@ describe("SoapIndicatorLogic", () => {
                 ZERO,
                 ZERO
             )
-        ).to.be.revertedWith("IPOR_317");
+        ).to.be.revertedWith("IPOR_316");
     });
 
     it("should calculate hypothetical interest delta - simple case 1 - 18 decimals", async () => {
