@@ -249,7 +249,7 @@ function create_migration_logs_dir_files(){
   local env_name="${2}"
   mkdir -p .ipor/
   mkdir -p ".logs/${env_name}/compile/"
-  mkdir -p ".logs/${env_name}/migration/ "
+  mkdir -p ".logs/${env_name}/migration/"
   touch ".logs/${env_name}/compile/${date_now}_compile.log"
   touch ".logs/${env_name}/migration/${date_now}_compile.log"
 }
@@ -307,7 +307,7 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  localdate_now=$(date "+%F-%H-%M-%S")
+  date_now=$(date "+%F-%H-%M-%S")
   create_migration_logs_dir_files "${now}" "${ENV_PROFILE}"
 
   npm run compile:truffle  2>&1| tee ".logs/${ENV_PROFILE}/compile/${date_now}_compile.log"
