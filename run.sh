@@ -49,7 +49,7 @@ IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
 IS_UPDATE_DEV_TOOL="NO"
-COMMIT_MIGRATION_LOGS="NO"
+COMMIT_MIGRATION_STATE="NO"
 
 
 if [ $# -eq 0 ]; then
@@ -66,7 +66,7 @@ do
             IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
         migrationlogs|mlogs)
-            COMMIT_MIGRATION_LOGS="YES"
+            COMMIT_MIGRATION_STATE="YES"
         ;;
         build|b)
             IS_BUILD_DOCKER="YES"
@@ -246,12 +246,12 @@ function remove_volume(){
 
 function create_migration_logs_dir_files(){
   local date_now="${1}"
-  local network_name="${2}"
+  local env_name="${2}"
   mkdir -p .ipor/
-  mkdir -p ".logs/${network_name}/compile/"
-  mkdir -p ".logs/${network_name}/migration/ "
-  touch ".logs/${network_name}/compile/${date_now}.txt"
-  touch ".logs/${network_name}/migration/${date_now}.txt"
+  mkdir -p ".logs/${env_name}/compile/"
+  mkdir -p ".logs/${env_name}/migration/ "
+  touch ".logs/${env_name}/compile/${date_now}_compile.log"
+  touch ".logs/${env_name}/migration/${date_now}_compile.log"
 }
 
 ################################### COMMANDS ###################################
@@ -307,12 +307,16 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  date_now=$(date "+%F-%H-%M-%S")
+  localdate_now=$(date "+%F-%H-%M-%S")
   create_migration_logs_dir_files "${now}" "${ENV_PROFILE}"
 
   npm run compile:truffle  2>&1| tee ".logs/${ENV_PROFILE}/compile/${date_now}_compile.log"
-  ETH_BC_NETWORK_NAME=$ETH_BC_NETWORK_NAME npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
   
+  migration_commit_hash_file=".ipor/migration_commit.txt" 
+  touch ".ipor/migration_commit.txt" 
+  git rev-parse HEAD >> ".ipor/migration_commit.txt" 
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
@@ -336,25 +340,32 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   date_now=$(date "+%F-%H-%M-%S")
   create_migration_logs_dir_files "${now}" "${ENV_PROFILE}"
   npm run compile:truffle  2>&1| tee ".logs/${ENV_PROFILE}/compile/${date_now}_compile.log"
-  ETH_BC_NETWORK_NAME=$ETH_BC_NETWORK_NAME npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migration/${date_now}_migration.log"
+
+  touch ".ipor/migration_commit.txt" 
+  git rev-parse HEAD >> ".ipor/migration_commit.txt" 
 fi
 
-if [ $COMMIT_MIGRATION_LOGS = "YES" ];  then
+if [ $COMMIT_MIGRATION_STATE = "YES" ];  then
   cd "../${MIGRATION_STATE_REPO}/"
   git pull
   cd "../ipor-protocol/"
   date_now=$(date "+%F-%H-%M-%S")
-  mkdir -p "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/compile"
-  mkdir -p "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/migration"
-  mkdir -p "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/contracts"
-  mkdir -p "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/openzeppelin"
-  mkdir -p "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/ipor"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/contracts"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/ipor"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/actual_state/ipor"
+  mkdir -p "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/actual_state/openzeppelin"
 
-  cp -R .ipor/ "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/ipor"
-  cp -R .openzeppelin/ "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/openzeppelin"
-  cp -R ".logs/${ENV_PROFILE}/compile/" "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/compile"
-  cp -R ".logs/${ENV_PROFILE}/migration/" "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/migration"
-  cp -R ./app/src/contracts/ "../${MIGRATION_STATE_REPO}/${ENV_PROFILE}/${date_now}/contracts"
+  cp -R .ipor/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/ipor"
+  cp -R .ipor/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/actual_state/ipor"
+  cp -R .openzeppelin/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin"
+  cp -R .openzeppelin/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/actual_state/openzeppelin"
+  cp -R ".logs/${ENV_PROFILE}/compile/" "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
+  cp -R ".logs/${ENV_PROFILE}/migration/" "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/logs"
+  cp -R ./app/src/contracts/ "../${MIGRATION_STATE_REPO}/${ETH_BC_NETWORK_NAME}/${date_now}/contracts"
   cd "../${MIGRATION_STATE_REPO}/"
   git add .
   git commit -m "Migration - ${ENV_PROFILE} - ${date_now}"
