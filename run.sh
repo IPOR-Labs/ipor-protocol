@@ -13,6 +13,8 @@ if [ -f "${ENV_FILE}" ]; then
   echo -e "\n\e[32m${ENV_FILE} file was read\e[0m\n"
 fi
 
+
+
 ENV_CONFIG_BUCKET="ipor-env"
 
 ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
@@ -68,7 +70,7 @@ do
             IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
         migrationlogs|mlogs)
-            COMMIT_MIGRATION_LOGS"YES"
+            COMMIT_MIGRATION_LOGS="YES"
         ;;
         build|b)
             IS_BUILD_DOCKER="YES"
@@ -252,6 +254,15 @@ function remove_volume(){
   fi
 }
 
+function create_migration_logs_dir_files(){
+  local date_now="${1}"
+  local network_name="${2}"
+  mkdir -p .ipor/
+  mkdir -p .logs/${network_name}/compile/
+  mkdir -p .logs/${network_name}/migration/ 
+  touch .logs/${network_name}/compile/${date_now}.txt
+  touch .logs/${network_name}/migration/${date_now}.txt
+}
 
 ################################### COMMANDS ###################################
 
@@ -318,13 +329,9 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  date_now=$(date "+%F-%H-%M-%S")
-  mkdir .logs/
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/compile/
-  touch .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/migration/
-  touch .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  now=$(date "+%F-%H-%M-%S")
+  create_migration_logs_dir_files "${now}" "${ETH_BC_NETWORK_NAME}"
+
   truffle compile --all >> .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none  >> .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
   
@@ -336,25 +343,29 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
   rm -rf app/src/contracts/
   rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
-  date_now=$(date "+%F-%H-%M-%S")
-  mkdir .logs/
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/compile/
-  touch .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
-  mkdir .logs/${ETH_BC_NETWORK_NAME}/migration/
-  touch .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
+  now=$(date "+%F-%H-%M-%S")
+  create_migration_logs_dir_files "${now}" "${ETH_BC_NETWORK_NAME}"
   truffle compile --all >> .logs/${ETH_BC_NETWORK_NAME}/compile/${date_now}.txt
   truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none >> .logs/${ETH_BC_NETWORK_NAME}/migration/${date_now}.txt
     
 fi
 
-if [$COMMIT_MIGRATION_LOGS = "YES"];  then
+if [ $COMMIT_MIGRATION_LOGS = "YES" ];  then
+  cd ../ipor-migration-state/
+  git pull
+  cd ../ipor-protocol/
   date_now=$(date "+%F-%H-%M-%S")
-  cp -R .ipor/ ../ipor-migration-state/ipor
-  cp -R .openzeppelin/ ../ipor-migration-state/openzeppelin  
-  cp -R .logs/${ETH_BC_NETWORK_NAME}/compile/ ../ipor-migration-state/compile/${ETH_BC_NETWORK_NAME}
-  cp -R .logs/${ETH_BC_NETWORK_NAME}/migration/ ../ipor-migration-state/migration/${ETH_BC_NETWORK_NAME} 
-  cp -R ./app/src/contracts ../ipor-migration-state/contracts/${ETH_BC_NETWORK_NAME}/date_now
+  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/compile
+  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/migration
+  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
+  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
+  mkdir -p ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
+
+  cp -R .ipor/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/ipor
+  cp -R .openzeppelin/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/openzeppelin
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/compile/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/compile
+  cp -R .logs/${ETH_BC_NETWORK_NAME}/migration/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/migration
+  cp -R ./app/src/contracts/ ../ipor-migration-state/${ETH_BC_NETWORK_NAME}/${date_now}/contracts
   cd ../ipor-migration-state/
   git add .
   git commit -m "Migration - ${date_now}"
@@ -415,6 +426,7 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mmockassetstop\e[0m|\e[36mmams\e[0m  Stop Asset Managment mock"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
+    echo -e "   \e[36mmigrate\e[0mlogs|\e[36mm\e[0m       Commit logs after migration"
     echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"

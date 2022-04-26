@@ -55,3 +55,7 @@ app/.env
 /types/
 /ipor-abi/
 /abi/
+
+### Smart Contracts migration artifacts ###
+.ipor/
+.logs/
