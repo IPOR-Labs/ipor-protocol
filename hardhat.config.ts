@@ -58,11 +58,11 @@ export default {
     },
     abiExporter: [
         {
-            path: "./abi/pretty",
+            path: "./.ipor/abis/pretty",
             pretty: true,
         },
         {
-            path: "./abi/ugly",
+            path: "./.ipor/abis/ugly",
             pretty: false,
         },
     ],
