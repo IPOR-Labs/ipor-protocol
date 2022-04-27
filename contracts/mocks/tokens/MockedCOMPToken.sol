@@ -2,11 +2,11 @@
 pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "./MockedToken.sol";
+import "./TestnetMockedToken.sol";
 
 //solhint-disable no-empty-blocks
-contract MockedCOMPToken is MockedToken {
+contract MockedCOMPToken is TestnetMockedToken {
     constructor(uint256 initialSupply, uint8 decimals)
-        MockedToken("Mocked COMP", "COMP", initialSupply, decimals)
+        TestnetMockedToken("Mocked COMP", "COMP", initialSupply, decimals)
     {}
 }

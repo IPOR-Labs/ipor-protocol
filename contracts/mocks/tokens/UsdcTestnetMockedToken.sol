@@ -5,8 +5,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./TestnetMockedToken.sol";
 
 //solhint-disable no-empty-blocks
-contract AAVEMockedToken is TestnetMockedToken {
+contract UsdcTestnetMockedToken is TestnetMockedToken {
     constructor(uint256 initialSupply, uint8 decimals)
-        TestnetMockedToken("Mocked AAVE", "AAVE", initialSupply, decimals)
+        TestnetMockedToken("Mocked USDC", "USDC", initialSupply, decimals)
     {}
 }

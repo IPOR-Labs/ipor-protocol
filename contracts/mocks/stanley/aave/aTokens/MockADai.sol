@@ -3,16 +3,17 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./MockIAToken.sol";
+import "../../../../security/IporOwnable.sol";
 
-contract MockADai is ERC20, MockIAToken {
+contract MockADai is ERC20, MockIAToken, IporOwnable {
     //solhint-disable no-empty-blocks
     constructor() ERC20("aDAI", "aDAI") {}
 
-    function burn(address user, uint256 amount) external {
+    function burn(address user, uint256 amount) external onlyOwner {
         _burn(user, amount);
     }
 
-    function mint(address account, uint256 amount) external {
+    function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
 

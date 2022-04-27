@@ -2,8 +2,9 @@
 pragma solidity 0.8.9;
 
 import "../../../vault/interfaces/compound/WhitePaperInterestRateModel.sol";
+import "../../../security/IporOwnable.sol";
 
-contract MockWhitePaper is WhitePaperInterestRateModel {
+contract MockWhitePaper is WhitePaperInterestRateModel, IporOwnable {
     uint256 private _borrowRate;
     uint256 private _supplyRate;
     uint256 public blocksPerYear;
@@ -12,7 +13,7 @@ contract MockWhitePaper is WhitePaperInterestRateModel {
         blocksPerYear = 2102400;
     }
 
-    function setSupplyRate(uint256 rate) external {
+    function setSupplyRate(uint256 rate) external onlyOwner {
         _supplyRate = rate;
     }
 
