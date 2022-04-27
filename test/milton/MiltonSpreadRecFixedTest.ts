@@ -83,7 +83,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("217899151046690308");
+        const expectedQuoteValue = BigNumber.from("37000000000000000");
 
         //when
         let actualQuotedValue = BigNumber.from(
@@ -813,7 +813,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-433406136001736");
+        const expectedSpreadReceiveFixed = BigNumber.from("553406136001736");
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
 
@@ -854,7 +854,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+        const expectedSpreadReceiveFixed = BigNumber.from("127056293847751");
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
 
@@ -895,7 +895,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+        const expectedSpreadReceiveFixed = BigNumber.from("127056293847751");
 
         await prepareApproveForUsers([liquidityProvider], "USDC", testData);
 

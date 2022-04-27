@@ -159,7 +159,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         );
 
         int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
-        int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+        int256 result = demandComponent.toInt256() - volatilityAndMeanReversion;
 
         spreadPremiums = result < maxValue ? result : maxValue;
     }
