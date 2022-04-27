@@ -9,7 +9,7 @@ services:
     image: io.ipor/ipor-protocol-milton-tool:latest
     profiles:
       - dev-tool
-      - eth-bc-provider
+      - dev-tool-provider
       - developer
       - all
     restart: always
@@ -72,7 +72,7 @@ services:
     image: nginx:1.21.1
     profiles:
       - ssl-eth-bc
-      - eth-bc-provider
+      - dev-tool-provider
       - all
     restart: always
     ports:

@@ -54,6 +54,7 @@ IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
 IS_UPDATE_DEV_TOOL="NO"
 COMMIT_MIGRATION_STATE="NO"
+IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="NO"
 
 LAST_MIGRATION_DATE=""
 LAST_COMMIT_HASH=""
@@ -97,6 +98,9 @@ do
         ;;
         update-dev-tool|udt)
             IS_UPDATE_DEV_TOOL="YES"
+        ;;
+        download-deployed-smart-contracts|ddsc)
+            IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="YES"
         ;;
         help|h|?)
             IS_HELP="YES"
@@ -318,7 +322,7 @@ function clean_openzeppelin_migration_file(){
   rm -f ".openzeppelin/${file_name}.json"
 }
 
-function create_migration_state_files(){
+function prepare_migration_state_files_structure(){
   update_global_state_vars
   create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
   create_commit_file "${LAST_COMMIT_HASH}"
@@ -377,7 +381,7 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
 
-  create_migration_state_files
+  prepare_migration_state_files_structure
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
@@ -391,7 +395,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   clean_openzeppelin_migration_file
   rm -rf app/src/contracts/
 
-  create_migration_state_files
+  prepare_migration_state_files_structure
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
@@ -481,6 +485,21 @@ if [ $IS_UPDATE_DEV_TOOL = "YES" ]; then
 fi
 
 
+if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
+  cd "${DIR}"
+
+  echo -e "\n\e[32mDownload deployed smart contracts zip archive..\e[0m\n"
+
+  IPOR_ENV_USER_AWS_ACCESS_KEY_ID="${IPOR_ENV_USER_AWS_ACCESS_KEY_ID:-$IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
+  IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY="${IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
+  export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$IPOR_ENV_USER_AWS_ACCESS_KEY_ID}"
+  export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY}"
+
+  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}"
+
+  unzip -o "${ENV_CONTRACTS_ZIP_DEST}" -d "${ENV_CONTRACTS_DIR}"
+fi
+
 
 if [ $IS_HELP = "YES" ]; then
     echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
@@ -496,6 +515,7 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
     echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
     echo -e "   \e[36mupdate-dev-tool\e[0m|\e[36mudt\e[0m Update dev-tool container"
+    echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
     echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
