@@ -37,7 +37,6 @@ NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
 AWS_REGION="eu-central-1"
 
-ETH_BC_URL="http://localhost:9545"
 GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
 MIGRATION_STATE_REPO_DIR="${DIR}/../${MIGRATION_STATE_REPO}"
