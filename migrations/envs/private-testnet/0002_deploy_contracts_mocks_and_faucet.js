@@ -2,9 +2,9 @@ const script = require("../../libs/mocks/0001_deploy_mocks_and_faucet.js");
 const func = require("../../libs/json_func.js");
 const TestnetFaucet = artifacts.require("TestnetFaucet");
 
-const UsdtMockedToken = artifacts.require("UsdtMockedToken");
-const UsdcMockedToken = artifacts.require("UsdcMockedToken");
-const DaiMockedToken = artifacts.require("DaiMockedToken");
+const UsdtTestnetMockedToken = artifacts.require("UsdtTestnetMockedToken");
+const UsdcTestnetMockedToken = artifacts.require("UsdcTestnetMockedToken");
+const DaiTestnetMockedToken = artifacts.require("DaiTestnetMockedToken");
 
 const MockAUsdc = artifacts.require("MockAUsdc");
 const MockAUsdt = artifacts.require("MockAUsdt");
@@ -29,9 +29,9 @@ const MockStrategyTestnetDai = artifacts.require("MockStrategyTestnetDai");
 module.exports = async function (deployer, _network, addresses) {
     await script(deployer, _network, addresses, [
         TestnetFaucet,
-        UsdtMockedToken,
-        UsdcMockedToken,
-        DaiMockedToken,
+        UsdtTestnetMockedToken,
+        UsdcTestnetMockedToken,
+        DaiTestnetMockedToken,
         MockAUsdc,
         MockAUsdt,
         MockADai,

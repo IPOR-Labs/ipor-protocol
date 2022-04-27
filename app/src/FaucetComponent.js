@@ -12,17 +12,17 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">
                     USDT
                     <br />
-                    {drizzle.contracts.UsdtMockedToken.address}
+                    {drizzle.contracts.UsdtTestnetMockedToken.address}
                 </th>
                 <th scope="col">
                     USDC
                     <br />
-                    {drizzle.contracts.UsdcMockedToken.address}
+                    {drizzle.contracts.UsdcTestnetMockedToken.address}
                 </th>
                 <th scope="col">
                     DAI
                     <br />
-                    {drizzle.contracts.DaiMockedToken.address}
+                    {drizzle.contracts.DaiTestnetMockedToken.address}
                 </th>
             </tr>
             <tr>
@@ -52,7 +52,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdtTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -68,7 +68,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdcTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -84,7 +84,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.DaiTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -108,7 +108,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdtTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -124,7 +124,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.UsdcTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -140,7 +140,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.DaiTestnetMockedToken.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}

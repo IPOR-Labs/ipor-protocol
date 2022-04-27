@@ -196,10 +196,12 @@
                         <argument>${contracts.sources}/mocks/spread/MockCase7MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/mocks/spread/MockCase8MiltonSpreadModel.sol</argument>
                         <argument>${contracts.sources}/mocks/spread/MockCase9MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/DaiMockedToken.sol</argument>
                         <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>                        
-                        <argument>${contracts.sources}/mocks/tokens/UsdcMockedToken.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/UsdtMockedToken.sol</argument>
+
+						<argument>${contracts.sources}/mocks/tokens/UsdtTestnetMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/UsdcTestnetMockedToken.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/DaiTestnetMockedToken.sol</argument>
+						
                         <argument>${contracts.sources}/oracles/IporOracle.sol</argument>
                         <argument>${contracts.sources}/security/IporOwnable.sol</argument>
                         <argument>${contracts.sources}/security/IporOwnableUpgradeable.sol</argument>

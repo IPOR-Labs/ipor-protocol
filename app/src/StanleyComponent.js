@@ -133,7 +133,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="CockpitDataProvider"
                             method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdtTestnetMockedToken.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -149,7 +149,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="CockpitDataProvider"
                             method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                            methodArgs={[drizzle.contracts.UsdcTestnetMockedToken.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -165,7 +165,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="CockpitDataProvider"
                             method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                            methodArgs={[drizzle.contracts.DaiTestnetMockedToken.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -973,7 +973,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="UsdtMockedToken"
+                                contract="UsdtTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.ItfStanleyUsdt.address,
@@ -991,7 +991,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="UsdtMockedToken"
+                                contract="UsdtTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.StanleyUsdt.address,
@@ -1012,7 +1012,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="UsdcMockedToken"
+                                contract="UsdcTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.ItfStanleyUsdc.address,
@@ -1030,7 +1030,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="UsdcMockedToken"
+                                contract="UsdcTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.StanleyUsdc.address,
@@ -1051,7 +1051,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DaiMockedToken"
+                                contract="DaiTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.ItfStanleyDai.address,
@@ -1069,7 +1069,7 @@ export default ({ drizzle, drizzleState }) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DaiMockedToken"
+                                contract="DaiTestnetMockedToken"
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.StanleyDai.address,

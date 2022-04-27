@@ -58,9 +58,9 @@ export default ({ drizzle, drizzleState }) => {
                         <td>
                             <strong>ERC20 Token Address</strong>
                         </td>
-                        <td>{drizzle.contracts.UsdtMockedToken.address}</td>
-                        <td>{drizzle.contracts.UsdcMockedToken.address}</td>
-                        <td>{drizzle.contracts.DaiMockedToken.address}</td>
+                        <td>{drizzle.contracts.UsdtTestnetMockedToken.address}</td>
+                        <td>{drizzle.contracts.UsdcTestnetMockedToken.address}</td>
+                        <td>{drizzle.contracts.DaiTestnetMockedToken.address}</td>
                     </tr>
                 </table>
             </div>

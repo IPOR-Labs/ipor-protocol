@@ -8,9 +8,9 @@ module.exports = async function (
     addresses,
     [
         TestnetFaucet,
-        UsdtMockedToken,
-        UsdcMockedToken,
-        DaiMockedToken,
+        UsdtTestnetMockedToken,
+        UsdcTestnetMockedToken,
+        DaiTestnetMockedToken,
         MockAUsdc,
         MockAUsdt,
         MockADai,
@@ -33,18 +33,18 @@ module.exports = async function (
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
-    await deployer.deploy(UsdtMockedToken, stableTotalSupply6Decimals, 6);
-    const mockedUsdt = await UsdtMockedToken.deployed();
+    await deployer.deploy(UsdtTestnetMockedToken, stableTotalSupply6Decimals, 6);
+    const mockedUsdt = await UsdtTestnetMockedToken.deployed();
 
     await func.update(keys.USDT, mockedUsdt.address);
 
-    await deployer.deploy(UsdcMockedToken, stableTotalSupply6Decimals, 6);
-    const mockedUsdc = await UsdcMockedToken.deployed();
+    await deployer.deploy(UsdcTestnetMockedToken, stableTotalSupply6Decimals, 6);
+    const mockedUsdc = await UsdcTestnetMockedToken.deployed();
 
     await func.update(keys.USDC, mockedUsdc.address);
 
-    await deployer.deploy(DaiMockedToken, stableTotalSupply18Decimals, 18);
-    const mockedDai = await DaiMockedToken.deployed();
+    await deployer.deploy(DaiTestnetMockedToken, stableTotalSupply18Decimals, 18);
+    const mockedDai = await DaiTestnetMockedToken.deployed();
 
     await func.update(keys.DAI, mockedDai.address);
 

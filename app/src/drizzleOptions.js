@@ -10,9 +10,9 @@ import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
 import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
 import TestnetFaucet from "./contracts/TestnetFaucet.json";
-import DaiMockedToken from "./contracts/DaiMockedToken.json";
-import UsdcMockedToken from "./contracts/UsdcMockedToken.json";
-import UsdtMockedToken from "./contracts/UsdtMockedToken.json";
+import DaiTestnetMockedToken from "./contracts/DaiTestnetMockedToken.json";
+import UsdcTestnetMockedToken from "./contracts/UsdcTestnetMockedToken.json";
+import UsdtTestnetMockedToken from "./contracts/UsdtTestnetMockedToken.json";
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
 import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
 import IpTokenDai from "./contracts/IpTokenDai.json";
@@ -75,9 +75,9 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             MiltonStorageUsdt,
             MiltonStorageUsdc,
             MiltonStorageDai,
-            DaiMockedToken,
-            UsdtMockedToken,
-            UsdcMockedToken,
+            DaiTestnetMockedToken,
+            UsdtTestnetMockedToken,
+            UsdcTestnetMockedToken,
             IpTokenUsdt,
             IpTokenUsdc,
             IpTokenDai,
@@ -125,9 +125,9 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             MiltonStorageUsdt,
             MiltonStorageUsdc,
             MiltonStorageDai,
-            DaiMockedToken,
-            UsdtMockedToken,
-            UsdcMockedToken,
+            DaiTestnetMockedToken,
+            UsdtTestnetMockedToken,
+            UsdcTestnetMockedToken,
             IpTokenUsdt,
             IpTokenUsdc,
             IpTokenDai,
