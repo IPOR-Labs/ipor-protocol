@@ -50,8 +50,12 @@ app/.env
 /cache/
 
 # OpenZeppelin
-.openzeppelin/unknown-*.json
+.openzeppelin/*.json
 /coverage.json
 /types/
 /ipor-abi/
 /abi/
+
+### Smart Contracts migration artifacts ###
+.ipor/
+.logs/

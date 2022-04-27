@@ -6,17 +6,17 @@ const MiltonStorageUsdc = artifacts.require("MiltonStorageUsdc");
 const MiltonStorageDai = artifacts.require("MiltonStorageDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const josephUsdt = await func.get_value(keys.JosephProxyUsdt);
-    const josephUsdc = await func.get_value(keys.JosephProxyUsdc);
-    const josephDai = await func.get_value(keys.JosephProxyDai);
+    const josephUsdt = await func.getValue(keys.JosephProxyUsdt);
+    const josephUsdc = await func.getValue(keys.JosephProxyUsdc);
+    const josephDai = await func.getValue(keys.JosephProxyDai);
 
-    const miltonStorageUsdt = await func.get_value(keys.MiltonStorageProxyUsdt);
-    const miltonStorageUsdc = await func.get_value(keys.MiltonStorageProxyUsdc);
-    const miltonStorageDai = await func.get_value(keys.MiltonStorageProxyDai);
+    const miltonStorageUsdt = await func.getValue(keys.MiltonStorageProxyUsdt);
+    const miltonStorageUsdc = await func.getValue(keys.MiltonStorageProxyUsdc);
+    const miltonStorageDai = await func.getValue(keys.MiltonStorageProxyDai);
 
-    const miltonUsdt = await func.get_value(keys.MiltonProxyUsdt);
-    const miltonUsdc = await func.get_value(keys.MiltonProxyUsdc);
-    const miltonDai = await func.get_value(keys.MiltonProxyDai);
+    const miltonUsdt = await func.getValue(keys.MiltonProxyUsdt);
+    const miltonUsdc = await func.getValue(keys.MiltonProxyUsdc);
+    const miltonDai = await func.getValue(keys.MiltonProxyDai);
 
     const miltonStorageUsdtInstance = await MiltonStorageUsdt.at(miltonStorageUsdt);
     const miltonStorageUsdcInstance = await MiltonStorageUsdc.at(miltonStorageUsdc);

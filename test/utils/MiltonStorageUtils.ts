@@ -378,9 +378,10 @@ const preparePayFixedState = async (
     miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT"],
+        [PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
@@ -439,9 +440,10 @@ const prepareReceiveFixedState = async (
     miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
+        [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,
@@ -501,9 +503,10 @@ const prepareState = async (
     miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
+        [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
         miltonSpreadModel,
         MiltonUsdcCase.CASE0,
         MiltonUsdtCase.CASE0,

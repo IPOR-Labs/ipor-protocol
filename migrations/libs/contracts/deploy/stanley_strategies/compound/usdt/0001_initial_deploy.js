@@ -4,11 +4,11 @@ const func = require("../../../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, StrategyCompoundUsdt) {
-    const asset = await func.get_value(keys.USDT);
-    const cToken = await func.get_value(keys.cUSDT);
+    const asset = await func.getValue(keys.USDT);
+    const cToken = await func.getValue(keys.cUSDT);
 
-    const comptroller = await func.get_value(keys.Comptroller);
-    const compToken = await func.get_value(keys.COMP);
+    const comptroller = await func.getValue(keys.Comptroller);
+    const compToken = await func.getValue(keys.COMP);
 
     const compoundStrategyProxy = await deployProxy(
         StrategyCompoundUsdt,

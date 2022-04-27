@@ -26,7 +26,7 @@ import {
     prepareApproveForUsers,
     setupTokenDaiInitialValuesForUsers,
     getStandardDerivativeParamsDAI,
-	getReceiveFixedSwapParamsDAI,
+    getReceiveFixedSwapParamsDAI,
     setupTokenUsdtInitialValuesForUsers,
     getStandardDerivativeParamsUSDT,
 } from "../utils/DataUtils";
@@ -52,8 +52,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipToken - simple case 1 - DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -132,8 +134,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipToken - simple case 1 - USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -229,8 +233,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipTokens because NO validation for cool off period", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -311,8 +317,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipTokens, two times provided liquidity", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, ipTokenDai, miltonDai } = testData;
@@ -392,8 +400,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipDAI, should redeem ipUSDT - simple case 1", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -548,8 +558,10 @@ describe("Joseph Redeem", () => {
     it("should redeem ipDAI, should redeem ipUSDT, two users - simple case 1", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -703,8 +715,10 @@ describe("Joseph Redeem", () => {
     it("should redeem - Liquidity Provider can transfer tokens to other user, user can redeem tokens", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -791,8 +805,10 @@ describe("Joseph Redeem", () => {
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -861,8 +877,10 @@ describe("Joseph Redeem", () => {
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -931,8 +949,10 @@ describe("Joseph Redeem", () => {
     it("should redeem - Liquidity Pool Utilization exceeded, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
@@ -1008,8 +1028,10 @@ describe("Joseph Redeem", () => {
     it("should redeem - Liquidity Pool Utilization exceeded, Redeem Liquidity Pool Utilization not exceeded, Receive Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],

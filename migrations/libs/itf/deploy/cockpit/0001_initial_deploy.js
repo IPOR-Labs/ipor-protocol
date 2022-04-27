@@ -3,31 +3,31 @@ const func = require("../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, CockpitDataProvider) {
-    const iporOracle = await func.get_value(keys.ItfIporOracleProxy);
+    const iporOracle = await func.getValue(keys.ItfIporOracleProxy);
 
-    const usdt = await func.get_value(keys.USDT);
-    const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
 
-    const miltonUsdt = await func.get_value(keys.ItfMiltonProxyUsdt);
-    const miltonUsdc = await func.get_value(keys.ItfMiltonProxyUsdc);
-    const miltonDai = await func.get_value(keys.ItfMiltonProxyDai);
+    const miltonUsdt = await func.getValue(keys.ItfMiltonProxyUsdt);
+    const miltonUsdc = await func.getValue(keys.ItfMiltonProxyUsdc);
+    const miltonDai = await func.getValue(keys.ItfMiltonProxyDai);
 
-    const miltonStorageUsdt = await func.get_value(keys.MiltonStorageProxyUsdt);
-    const miltonStorageUsdc = await func.get_value(keys.MiltonStorageProxyUsdc);
-    const miltonStorageDai = await func.get_value(keys.MiltonStorageProxyDai);
+    const miltonStorageUsdt = await func.getValue(keys.MiltonStorageProxyUsdt);
+    const miltonStorageUsdc = await func.getValue(keys.MiltonStorageProxyUsdc);
+    const miltonStorageDai = await func.getValue(keys.MiltonStorageProxyDai);
 
-    const josephUsdt = await func.get_value(keys.ItfJosephProxyUsdt);
-    const josephUsdc = await func.get_value(keys.ItfJosephProxyUsdc);
-    const josephDai = await func.get_value(keys.ItfJosephProxyDai);
+    const josephUsdt = await func.getValue(keys.ItfJosephProxyUsdt);
+    const josephUsdc = await func.getValue(keys.ItfJosephProxyUsdc);
+    const josephDai = await func.getValue(keys.ItfJosephProxyDai);
 
-    const ipUSDT = await func.get_value(keys.ipUSDT);
-    const ipUSDC = await func.get_value(keys.ipUSDC);
-    const ipDAI = await func.get_value(keys.ipDAI);
+    const ipUSDT = await func.getValue(keys.ipUSDT);
+    const ipUSDC = await func.getValue(keys.ipUSDC);
+    const ipDAI = await func.getValue(keys.ipDAI);
 
-    const ivUSDT = await func.get_value(keys.ivUSDT);
-    const ivUSDC = await func.get_value(keys.ivUSDC);
-    const ivDAI = await func.get_value(keys.ivDAI);
+    const ivUSDT = await func.getValue(keys.ivUSDT);
+    const ivUSDC = await func.getValue(keys.ivUSDC);
+    const ivDAI = await func.getValue(keys.ivDAI);
 
     const cockpitDataProviderProxy = await deployProxy(
         CockpitDataProvider,

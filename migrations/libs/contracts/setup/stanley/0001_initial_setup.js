@@ -6,13 +6,13 @@ const StanleyUsdc = artifacts.require("StanleyUsdc");
 const StanleyDai = artifacts.require("StanleyDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const stanleyUsdt = await func.get_value(keys.StanleyProxyUsdt);
-    const stanleyUsdc = await func.get_value(keys.StanleyProxyUsdc);
-    const stanleyDai = await func.get_value(keys.StanleyProxyDai);
+    const stanleyUsdt = await func.getValue(keys.StanleyProxyUsdt);
+    const stanleyUsdc = await func.getValue(keys.StanleyProxyUsdc);
+    const stanleyDai = await func.getValue(keys.StanleyProxyDai);
 
-    const miltonUsdt = await func.get_value(keys.MiltonProxyUsdt);
-    const miltonUsdc = await func.get_value(keys.MiltonProxyUsdc);
-    const miltonDai = await func.get_value(keys.MiltonProxyDai);
+    const miltonUsdt = await func.getValue(keys.MiltonProxyUsdt);
+    const miltonUsdc = await func.getValue(keys.MiltonProxyUsdc);
+    const miltonDai = await func.getValue(keys.MiltonProxyDai);
 
     const stanleyUsdtInstance = await StanleyUsdt.at(stanleyUsdt);
     const stanleyUsdcInstance = await StanleyUsdc.at(stanleyUsdc);

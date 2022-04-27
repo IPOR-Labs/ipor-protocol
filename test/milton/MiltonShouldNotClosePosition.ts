@@ -63,8 +63,10 @@ describe("Milton - not close position", () => {
     it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -101,15 +103,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -146,15 +150,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -192,15 +198,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -238,15 +246,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_120_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -284,15 +294,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -329,15 +341,17 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_320"
+            "IPOR_319"
         );
     });
 
     it("should NOT close position, because incorrect swap Id", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -384,8 +398,10 @@ describe("Milton - not close position", () => {
     it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -447,8 +463,10 @@ describe("Milton - not close position", () => {
     it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;
@@ -510,8 +528,10 @@ describe("Milton - not close position", () => {
     it("should NOT close position, because swap not exists", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (miltonDai === undefined) {
@@ -533,8 +553,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, pay fixed, single id function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -589,8 +611,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, pay fixed, multiple ids function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -645,8 +669,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, receive fixed, single id function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -701,8 +727,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, receive fixed, multiple ids function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -757,8 +785,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -813,8 +843,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -869,8 +901,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -924,8 +958,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -980,8 +1016,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1036,8 +1074,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position by owner, pay fixed, single id emergency function, DAI, when contract is not paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1092,8 +1132,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1148,8 +1190,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position by owner, receive fixed, single id emergency function, DAI, when contract is not paused", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1204,8 +1248,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1259,8 +1305,10 @@ describe("Milton - not close position", () => {
 
     it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1315,8 +1363,10 @@ describe("Milton - not close position", () => {
 
     it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1365,14 +1415,16 @@ describe("Milton - not close position", () => {
                 userOne,
                 liquidityProvider
             ),
-            "IPOR_315"
+            "IPOR_314"
         );
     });
 
     it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -1421,15 +1473,17 @@ describe("Milton - not close position", () => {
                 userOne,
                 liquidityProvider
             ),
-            "IPOR_315"
+            "IPOR_314"
         );
     });
 
     it("should NOT close position, DAI, when ERC20: amount exceeds balance milton on DAI token", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai } = testData;

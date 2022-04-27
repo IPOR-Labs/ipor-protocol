@@ -63,7 +63,7 @@ describe("Open/Close Swap", function () {
     before(async () => {
         [admin] = await hre.ethers.getSigners();
 
-        const deployd: DeployType = await deploy();
+        const deployed: DeployType = await deploy();
         ({
             testnetFaucet,
             usdc,
@@ -84,13 +84,13 @@ describe("Open/Close Swap", function () {
             ipTokenUsdt,
             ivTokenUsdt,
             miltonFacadeDataProvider,
-        } = deployd);
+        } = deployed);
 
         // #####################################################################
         // ##################          Setup            ########################
         // #####################################################################
 
-        await setup(deployd);
+        await setup(deployed);
     });
 
     describe("Dai", function () {

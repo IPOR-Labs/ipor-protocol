@@ -39,6 +39,10 @@ AWS_REGION="eu-central-1"
 ETH_BC_URL="http://localhost:9545"
 GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
+MIGRATION_STATE_REPO_DIR="${DIR}/../${MIGRATION_STATE_REPO}"
+MIGRATION_COMMIT_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
+LAST_COMPLETED_MIGRATION_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
+
 IS_MIGRATE_SC="NO"
 IS_MIGRATE_WITH_CLEAN_SC="NO"
 IS_BUILD_DOCKER="NO"
@@ -48,11 +52,14 @@ IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
-IS_MOCK_ASSET_MANAGEMENT="NO"
-IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
 IS_UPDATE_DEV_TOOL="NO"
+COMMIT_MIGRATION_STATE="NO"
 IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="NO"
 
+LAST_MIGRATION_DATE=""
+LAST_COMMIT_HASH=""
+LAST_COMMIT_SHORT_HASH=""
+LAST_MIGRATION_NUMBER=""
 
 if [ $# -eq 0 ]; then
     IS_RUN="YES"
@@ -67,18 +74,15 @@ do
         migrateclean|mc)
             IS_MIGRATE_WITH_CLEAN_SC="YES"
         ;;
+        migrationlogs|mlogs)
+            COMMIT_MIGRATION_STATE="YES"
+        ;;
         build|b)
             IS_BUILD_DOCKER="YES"
         ;;
         run|r)
             IS_RUN="YES"
             IS_STOP="YES"
-        ;;
-        mockasset|mam)
-            IS_MOCK_ASSET_MANAGEMENT="YES"
-        ;;
-        mockassetstop|mams)
-            IS_MOCK_ASSET_MANAGEMENT_STOP="YES"
         ;;
         stop|s)
             IS_STOP="YES"
@@ -252,6 +256,77 @@ function remove_volume(){
   fi
 }
 
+function create_migration_logs_dir_files(){
+  local date_now="${1}"
+  local env_name="${2}"
+
+  cd "${DIR}"
+  mkdir -p .ipor/
+  mkdir -p ".logs/${env_name}/compile/"
+  mkdir -p ".logs/${env_name}/migrate/"
+
+  touch ".logs/${env_name}/compile/${date_now}_compile.log"
+  touch ".logs/${env_name}/migrate/${date_now}_migrate.log"
+}
+
+function get_commit_hash(){
+  cd "${DIR}"
+  local commit_hash=$(git rev-parse HEAD)
+  echo "${commit_hash}"
+}
+
+function create_commit_file(){
+  local commit_hash="${1}"
+
+  rm -f "${MIGRATION_COMMIT_FILE_PATH}"
+  touch "${MIGRATION_COMMIT_FILE_PATH}"
+
+  echo "${commit_hash}" >> "${MIGRATION_COMMIT_FILE_PATH}"
+  echo -e "Migration commit hash: ${commit_hash}"
+}
+
+function get_date_and_time(){
+  local date_now=$(date "+%F_%H-%M-%S")
+  echo "${date_now}"
+}
+
+function read_last_migration(){
+  local date_now=$(date "+%F_%H-%M-%S")
+  echo "${date_now}"
+}
+
+function update_global_state_vars(){
+  LAST_MIGRATION_DATE=$(get_date_and_time)
+  LAST_COMMIT_HASH=$(get_commit_hash)
+  LAST_COMMIT_SHORT_HASH="${LAST_COMMIT_HASH:0:7}"
+}
+
+function get_last_migration_number(){
+  local last_migration_number=$(printf "%04d" $(jq -r ".lastCompletedMigration" "${LAST_COMPLETED_MIGRATION_FILE_PATH}"))
+  echo "${last_migration_number}"
+}
+
+function clean_openzeppelin_migration_file(){
+  local file_name=""
+  case ${ETH_BC_NETWORK_ID} in
+    1)
+      file_name="mainnet"
+      ;;
+    4)
+      file_name="rinkeby"
+      ;;
+    *)
+      file_name="unknown-${ETH_BC_NETWORK_ID}"
+      ;;
+  esac
+  rm -f ".openzeppelin/${file_name}.json"
+}
+
+function create_migration_state_files(){
+  update_global_state_vars
+  create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
+  create_commit_file "${LAST_COMMIT_HASH}"
+}
 
 ################################### COMMANDS ###################################
 
@@ -276,18 +351,6 @@ if [ $IS_STOP = "YES" ]; then
   cd "${DIR}"
   echo -e "\n\e[32mStopping ipor protocol containers with \e[33m${COMPOSE_PROFILE} \e[32mprofile..\e[0m\n"
   docker-compose -f docker-compose.yml --profile ${COMPOSE_PROFILE} rm -s -v -f
-fi
-
-if [ $IS_MOCK_ASSET_MANAGEMENT = "YES" ]; then
-  cd "${DIR}"
-  echo -e "\n\e[32mStart assetManagment Mock for network name \e[33m${ETH_BC_NETWORK_NAME} \e[32mprofile..\e[0m\n"
-  nohup truffle exec scripts/mock-asset-management.js --network ${ETH_BC_NETWORK_NAME} &
-fi
-
-if [ $IS_MOCK_ASSET_MANAGEMENT_STOP = "YES" ]; then
-  cd "${DIR}"
-  echo -e "\n\e[32mStopping mock asset process\e[0m\n"
-  pkill -f  scripts/mock-asset-management.js
 fi
 
 if [ $IS_RUN = "YES" ]; then
@@ -316,24 +379,69 @@ if [ $IS_CLEAN_BC = "YES" ]; then
 fi
 
 if [ $IS_MIGRATE_SC = "YES" ]; then
-  cd "${DIR}"
-
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
-  truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --compile-none
 
+  create_migration_state_files
+
+  cd "${DIR}"
+  npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
-  cd "${DIR}"
-
   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
+
+  clean_openzeppelin_migration_file
   rm -rf app/src/contracts/
-  rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
-  truffle compile --all
-  truffle migrate --network ${ETH_BC_NETWORK_NAME} --reset --compile-none
+
+  create_migration_state_files
+
+  cd "${DIR}"
+  npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 fi
 
+if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
+
+  cd "${DIR}"
+  LAST_MIGRATION_NUMBER=$(get_last_migration_number)
+
+  profile_dir="${MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}"
+  migration_date_dir="${MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
+  actual_state_dir="${profile_dir}/actual_state"
+
+  echo "Copy migration state to: ${migration_date_dir}"
+
+  cd "${MIGRATION_STATE_REPO_DIR}"
+  echo "Git pull: ${MIGRATION_STATE_REPO}"
+  git pull
+
+  cd "${DIR}"
+  mkdir -p "${actual_state_dir}"
+  mkdir -p "${migration_date_dir}/logs"
+
+  cp -R ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log" "${migration_date_dir}/logs"
+  cp -R ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log" "${migration_date_dir}/logs"
+  cp -R .ipor/ "${migration_date_dir}"
+  cp -R .ipor/ "${actual_state_dir}"
+  cp -R .openzeppelin/ "${migration_date_dir}"
+  cp -R .openzeppelin/ "${actual_state_dir}"
+  cp -R ./app/src/contracts/ "${migration_date_dir}"
+  cp -R ./app/src/contracts/ "${actual_state_dir}"
+
+  cd "${MIGRATION_STATE_REPO_DIR}"
+  echo "Git add: ${MIGRATION_STATE_REPO}"
+  git add .
+
+  echo "Git commit: ${MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
+  git commit -m "Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
+
+  echo "Git push: ${MIGRATION_STATE_REPO}"
+  git push
+  cd "${DIR}"
+fi
 
 if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   cd "${DIR}"
@@ -399,10 +507,9 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
     echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
     echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
-    echo -e "   \e[36mmockasset\e[0m|\e[36mmam\e[0m       Start Asset Managment mock"
-    echo -e "   \e[36mmockassetstop\e[0m|\e[36mmams\e[0m  Stop Asset Managment mock"
     echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
     echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
+    echo -e "   \e[36mmigrationlogs|\e[36mmlogs\e[0m Commit logs after migration"
     echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
     echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"

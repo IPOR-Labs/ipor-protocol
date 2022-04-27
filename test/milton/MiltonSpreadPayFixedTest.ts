@@ -931,8 +931,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it.skip("should calculate Spread Pay Fixed - initial state with Liquidity Pool", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -971,8 +973,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it.skip("should calculate Spread Pay Fixed - spread premiums higher than IPOR Index", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -1033,8 +1037,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it.skip("should calculate Spread Pay Fixed - initial state with Liquidity Pool", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -1073,8 +1079,10 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
     it.skip("should calculate Spread Pay Fixed - spread premiums higher than IPOR Index", async () => {
         //given
         let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

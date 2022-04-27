@@ -57,8 +57,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_120_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE2,
             MiltonUsdtCase.CASE2,
@@ -117,8 +119,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 5%, Milton loses, user earns, |I| > D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE2,
             MiltonUsdtCase.CASE2,
@@ -178,8 +182,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 5%, Milton earns, user loses, |I| < D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_120_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE2,
             MiltonUsdtCase.CASE2,
@@ -237,8 +243,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 5%, Milton earns, user loses, |I| > D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE2,
             MiltonUsdtCase.CASE2,
@@ -295,8 +303,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 100%, Milton loses, user earns, |I| < D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_120_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -353,8 +363,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 100%, Milton loses, user earns, |I| > D", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -413,8 +425,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_120_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -472,8 +486,10 @@ describe("Milton should calculate income - Core", () => {
 
     it("should calculate income fee, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_5_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE3,
             MiltonUsdtCase.CASE3,
@@ -532,8 +548,10 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;

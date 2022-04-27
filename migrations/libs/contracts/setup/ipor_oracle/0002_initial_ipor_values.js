@@ -6,11 +6,11 @@ const IporOracle = artifacts.require("IporOracle");
 module.exports = async function (deployer, _network, addresses) {
     const [admin, iporIndexAdmin, _] = addresses;
 
-    const usdt = await func.get_value(keys.USDT);
-    const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
 
-    const iporOracle = await func.get_value(keys.IporOracleProxy);
+    const iporOracle = await func.getValue(keys.IporOracleProxy);
 
     const iporOracleInstance = await IporOracle.at(iporOracle);
 
