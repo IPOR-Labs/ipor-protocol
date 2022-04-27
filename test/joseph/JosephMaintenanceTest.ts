@@ -2,7 +2,7 @@ import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import { JosephDai, JosephUsdc, JosephUsdt, TestERC20, IpToken } from "../../types";
-import { TC_TOTAL_AMOUNT_10_000_18DEC } from "../utils/Constants";
+import { PERCENTAGE_3_18DEC, TC_TOTAL_AMOUNT_10_000_18DEC } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
     MockMiltonSpreadModel,
@@ -38,8 +38,10 @@ describe("Joseph Maintenance", () => {
     it("should pause Smart Contract, sender is an admin", async () => {
         //when
         const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -64,8 +66,10 @@ describe("Joseph Maintenance", () => {
     it("should pause Smart Contract specific methods", async () => {
         //given
         const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -125,8 +129,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
         const { josephDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -159,8 +165,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -179,8 +187,10 @@ describe("Joseph Maintenance", () => {
     it("should unpause Smart Contract, sender is an admin", async () => {
         //given
         const { josephDai, ipTokenDai } = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined || ipTokenDai === undefined) {
@@ -208,8 +218,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -230,8 +242,10 @@ describe("Joseph Maintenance", () => {
     it("should transfer ownership - simple case 1", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         if (josephDai === undefined) {
             expect(true).to.be.false;
@@ -252,8 +266,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -273,8 +289,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -296,8 +314,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -320,8 +340,10 @@ describe("Joseph Maintenance", () => {
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -345,8 +367,10 @@ describe("Joseph Maintenance", () => {
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
         const { josephDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         if (josephDai === undefined) {
@@ -368,8 +392,10 @@ describe("Joseph Maintenance", () => {
     it("should not sent ETH to Joseph DAI, USDT, USDC", async () => {
         //given
         const { josephDai, josephUsdt, josephUsdc } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin],
             ["DAI", "USDT", "USDC"],
+            [],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

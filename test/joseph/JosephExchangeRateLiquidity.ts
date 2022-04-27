@@ -47,8 +47,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
         const { josephDai } = testData;
         if (josephDai === undefined) {
@@ -73,8 +75,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai } = testData;
@@ -104,8 +108,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -150,8 +156,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonStorageDai } = testData;
@@ -187,8 +195,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonStorageDai, iporOracle, miltonDai } = testData;
@@ -237,8 +247,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonStorageDai, ipTokenDai, miltonDai } = testData;
@@ -291,8 +303,10 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,

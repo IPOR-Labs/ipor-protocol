@@ -6,13 +6,13 @@ const IpTokenUsdc = artifacts.require("IpTokenUsdc");
 const IpTokenDai = artifacts.require("IpTokenDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const josephUsdt = await func.get_value(keys.ItfJosephProxyUsdt);
-    const josephUsdc = await func.get_value(keys.ItfJosephProxyUsdc);
-    const josephDai = await func.get_value(keys.ItfJosephProxyDai);
+    const josephUsdt = await func.getValue(keys.ItfJosephProxyUsdt);
+    const josephUsdc = await func.getValue(keys.ItfJosephProxyUsdc);
+    const josephDai = await func.getValue(keys.ItfJosephProxyDai);
 
-    const ipUSDT = await func.get_value(keys.ipUSDT);
-    const ipUSDC = await func.get_value(keys.ipUSDC);
-    const ipDAI = await func.get_value(keys.ipDAI);
+    const ipUSDT = await func.getValue(keys.ipUSDT);
+    const ipUSDC = await func.getValue(keys.ipUSDC);
+    const ipDAI = await func.getValue(keys.ipDAI);
 
     const ipUsdtInstance = await IpTokenUsdt.at(ipUSDT);
     const ipUsdcInstance = await IpTokenUsdc.at(ipUSDC);

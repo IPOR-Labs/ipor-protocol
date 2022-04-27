@@ -171,7 +171,34 @@ export const deploy = async (): Promise<DeployType> => {
     const miltonStorageUsdt = await miltonStorageUsdtFactory();
     const miltonSpreadModel = await miltonSpreadModelFactory();
 
-    const iporOracle = await iporOracleFactory();
+    const assets = [usdt.address, usdc.address, dai.address];
+
+    //update timestamp examples only
+    const updateTimestamps = [
+        BigNumber.from("1640000000"),
+        BigNumber.from("1640000000"),
+        BigNumber.from("1640000000"),
+    ];
+
+    const exponentialMovingAverages = [
+        BigNumber.from("31132626894697926"),
+        BigNumber.from("30109512549022512"),
+        BigNumber.from("32706669664256327"),
+    ];
+    const exponentialWeightedMovingVariances = [
+        BigNumber.from("1828129745656718"),
+        BigNumber.from("53273740801041"),
+        BigNumber.from("49811986068491"),
+    ];
+
+    const initialParams = {
+        assets,
+        updateTimestamps,
+        exponentialMovingAverages,
+        exponentialWeightedMovingVariances,
+    };
+
+    const iporOracle = await iporOracleFactory(initialParams);
 
     const miltonDai = await miltonDaiFactory(
         iporOracle.address,

@@ -323,7 +323,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
+        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -399,7 +399,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapdicators(
+        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -498,7 +498,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _calculateSwapdicators(
+    function _calculateSwapIndicators(
         uint256 calculateTimestamp,
         uint256 notional,
         uint256 quoteValue
@@ -507,8 +507,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             calculateTimestamp,
             _asset
         );
-
-        require(accruedIpor.ibtPrice != 0, MiltonErrors.IBT_PRICE_CANNOT_BE_ZERO);
 
         indicator = MiltonTypes.IporSwapIndicator(
             accruedIpor.indexValue,

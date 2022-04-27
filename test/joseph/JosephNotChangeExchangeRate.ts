@@ -39,8 +39,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -130,8 +132,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, DAI 18 decimals", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -227,8 +231,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 1", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -322,8 +328,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 2", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,
@@ -421,8 +429,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 3", async () => {
         //given
         const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],
+            [PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,

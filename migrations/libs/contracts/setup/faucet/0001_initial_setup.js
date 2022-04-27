@@ -11,11 +11,11 @@ const DaiMockedToken = artifacts.require("DaiMockedToken");
 module.exports = async function (deployer, _network, addresses) {
     const [admin, iporIndexAdmin, _] = addresses;
 
-    const usdt = await func.get_value(keys.USDT);
-    const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
 
-    const testnetFaucet = await func.get_value(keys.TestnetFaucetProxy);
+    const testnetFaucet = await func.getValue(keys.TestnetFaucetProxy);
 
     const testnetFaucetInstance = await TestnetFaucet.at(testnetFaucet);
 

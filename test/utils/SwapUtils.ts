@@ -5,6 +5,7 @@ import {
     N1__0_6DEC,
     N1__0_18DEC,
     N0__01_18DEC,
+	N0__001_18DEC,
     TC_50_000_18DEC,
     ZERO,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -295,10 +296,11 @@ export const exetuceCloseSwapTestCase = async function (
 ) {
     //given
     let localOpenTimestamp = ZERO;
-    if (openTimestamp != null) {
+
+    if (openTimestamp != ZERO) {
         localOpenTimestamp = openTimestamp;
     } else {
-        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        localOpenTimestamp = testData.executionTimestamp;
     }
 
     let totalAmount = ZERO;
@@ -472,10 +474,10 @@ export const executeCloseSwapsTestCase = async function (
 ) {
     //given
     let localOpenTimestamp = ZERO;
-    if (openTimestamp != null) {
+    if (openTimestamp != ZERO) {
         localOpenTimestamp = openTimestamp;
     } else {
-        localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        localOpenTimestamp = testData.executionTimestamp;
     }
 
     let totalAmount = ZERO;
@@ -491,7 +493,7 @@ export const executeCloseSwapsTestCase = async function (
     let acceptableFixedInterestRate = null;
 
     if (direction == 1) {
-        acceptableFixedInterestRate = N0__01_18DEC;
+        acceptableFixedInterestRate = ZERO;
     } else {
         acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
     }
@@ -548,6 +550,10 @@ export const executeCloseSwapsTestCase = async function (
     await testData.iporOracle
         .connect(userOne)
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
+
+    // used for these smart contracts' methods which not use timestamp and precise time is not required so much for test purposes,
+    // where only more or less movement in time is required for tests Example: Milton.emergencyCloseSwapsPayFixed.
+    await hre.network.provider.send("evm_increaseTime", [Number(periodOfTimeElapsedInSeconds)]);
 
     //when
     if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {

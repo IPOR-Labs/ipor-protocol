@@ -50,8 +50,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai } = testData;
@@ -102,8 +104,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai } = testData;
@@ -161,8 +165,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle } = testData;
@@ -218,8 +224,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_8_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle } = testData;
@@ -273,8 +281,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
@@ -333,7 +343,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             //when
             josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_314"
+            "IPOR_313"
         );
 
         //then
@@ -346,8 +356,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_50_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
@@ -406,7 +418,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             //when
             josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_314"
+            "IPOR_313"
         );
 
         //then
@@ -417,8 +429,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_50_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
@@ -489,8 +503,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
@@ -561,8 +577,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
     it("[!!!] should calculate Exchange Rate, position values and SOAP when 2 swaps closed after 60 days, Pay Fixed", async () => {
         //given
         const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
         );
 
         const { josephDai, tokenDai, miltonDai, iporOracle, miltonStorageDai } = testData;
