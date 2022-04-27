@@ -515,6 +515,7 @@ if [ $IS_HELP = "YES" ]; then
     echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
     echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
     echo -e "   \e[36mupdate-dev-tool\e[0m|\e[36mudt\e[0m Update dev-tool container"
+    echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
     echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
     echo -e "   \e[34mwithout any command\e[0m - the same as Run"
     echo -e ""
