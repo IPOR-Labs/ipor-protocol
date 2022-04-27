@@ -15,8 +15,8 @@ const networks: HardhatUserConfig["networks"] = {
         allowUnlimitedContractSize: true,
     },
     localhost: {
-        chainId: 1,
-        url: "http://127.0.0.1:8545",
+        chainId: 5777,
+        url: "http://localhost:9545",
         allowUnlimitedContractSize: true,
     },
 };

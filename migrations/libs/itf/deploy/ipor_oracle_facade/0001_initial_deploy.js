@@ -3,11 +3,11 @@ const func = require("../../../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, IporOracleFacadeDataProvider) {
-    const usdt = await func.get_value(keys.USDT);
-    const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
 
-    const iporOracle = await func.get_value(keys.ItfIporOracleProxy);
+    const iporOracle = await func.getValue(keys.ItfIporOracleProxy);
 
     const iporOracleFacadeDataProviderProxy = await deployProxy(
         IporOracleFacadeDataProvider,
@@ -27,8 +27,5 @@ module.exports = async function (deployer, _network, addresses, IporOracleFacade
         keys.ItfIporOracleFacadeDataProviderProxy,
         iporOracleFacadeDataProviderProxy.address
     );
-    await func.update(
-        keys.ItfIporOracleFacadeDataProviderImpl,
-        iporOracleFacadeDataProviderImpl
-    );
+    await func.update(keys.ItfIporOracleFacadeDataProviderImpl, iporOracleFacadeDataProviderImpl);
 };

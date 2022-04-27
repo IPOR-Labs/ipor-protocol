@@ -5,9 +5,9 @@ const script = require("../../libs/contracts/deploy/ipor_oracle/0001_initial_dep
 const itfScript = require("../../libs/itf/deploy/ipor_oracle/0001_initial_deploy.js");
 
 module.exports = async function (deployer, _network, addresses) {
-    const usdt = await func.get_value(keys.USDT);
-    const usdc = await func.get_value(keys.USDC);
-    const dai = await func.get_value(keys.DAI);
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
 
     const assets = [usdt, usdc, dai];
 
@@ -37,5 +37,5 @@ module.exports = async function (deployer, _network, addresses) {
         const IporOracle = artifacts.require("IporOracle");
         await script(deployer, _network, addresses, IporOracle, initialParams);
     }
-	await func.updateLastCompletedMigration();
+    await func.updateLastCompletedMigration();
 };

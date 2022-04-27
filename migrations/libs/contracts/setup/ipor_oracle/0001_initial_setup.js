@@ -6,7 +6,7 @@ const IporOracle = artifacts.require("IporOracle");
 module.exports = async function (deployer, _network, addresses) {
     const [admin, iporIndexAdmin, _] = addresses;
 
-    const iporOracle = await func.get_value(keys.IporOracleProxy);
+    const iporOracle = await func.getValue(keys.IporOracleProxy);
 
     const iporOracleInstance = await IporOracle.at(iporOracle);
 

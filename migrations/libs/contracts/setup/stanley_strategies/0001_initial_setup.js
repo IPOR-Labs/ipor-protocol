@@ -9,17 +9,17 @@ const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
 const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const strategyAaveUsdt = await func.get_value(keys.AaveStrategyProxyUsdt);
-    const strategyAaveUsdc = await func.get_value(keys.AaveStrategyProxyUsdc);
-    const strategyAaveDai = await func.get_value(keys.AaveStrategyProxyDai);
+    const strategyAaveUsdt = await func.getValue(keys.AaveStrategyProxyUsdt);
+    const strategyAaveUsdc = await func.getValue(keys.AaveStrategyProxyUsdc);
+    const strategyAaveDai = await func.getValue(keys.AaveStrategyProxyDai);
 
-    const strategyCompoundUsdt = await func.get_value(keys.CompoundStrategyProxyUsdt);
-    const strategyCompoundUsdc = await func.get_value(keys.CompoundStrategyProxyUsdc);
-    const strategyCompoundDai = await func.get_value(keys.CompoundStrategyProxyDai);
+    const strategyCompoundUsdt = await func.getValue(keys.CompoundStrategyProxyUsdt);
+    const strategyCompoundUsdc = await func.getValue(keys.CompoundStrategyProxyUsdc);
+    const strategyCompoundDai = await func.getValue(keys.CompoundStrategyProxyDai);
 
-    const stanleyUsdt = await func.get_value(keys.StanleyProxyUsdt);
-    const stanleyUsdc = await func.get_value(keys.StanleyProxyUsdc);
-    const stanleyDai = await func.get_value(keys.StanleyProxyDai);
+    const stanleyUsdt = await func.getValue(keys.StanleyProxyUsdt);
+    const stanleyUsdc = await func.getValue(keys.StanleyProxyUsdc);
+    const stanleyDai = await func.getValue(keys.StanleyProxyDai);
 
     const strategyAaveUsdtInstance = await StrategyAaveUsdt.at(strategyAaveUsdt);
     const strategyAaveUsdcInstance = await StrategyAaveUsdc.at(strategyAaveUsdc);

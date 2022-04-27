@@ -1,5 +1,3 @@
-#!/usr/bin/node
-
 require("dotenv").config({ path: "../../.env" });
 const Migrations = artifacts.require("Migrations");
 
@@ -20,22 +18,22 @@ const update = async function update(name, value) {
     });
 };
 
-const get_value = async function get_value(name) {
+const getValue = async function getValue(name) {
     let file = editJsonFile(iporAddressesFilePath);
     const value = file.get(name);
-    console.log(`[get_value] Name: ${name}, value: ${value}`);
+    console.log(`[getValue] Name: ${name}, value: ${value}`);
     return value;
 };
 
 const updateLastCompletedMigration = async function updateLastCompletedMigration() {
     let file = editJsonFile(lastCompletedMigrationFilePath);
 
-    const migrationAddress = await get_value(keys.Migration);
+    const migrationAddress = await getValue(keys.Migration);
     const migrationInstance = await Migrations.at(migrationAddress);
     const lastCompletedMigration = await migrationInstance.last_completed_migration.call();
-    console.log("lastCompletedMigration=", lastCompletedMigration);
 
-    file.set("lastCompletedMigration", BigInt(lastCompletedMigration).toString());
+    //additional +1 because truffle current script is still in progress
+    file.set("lastCompletedMigration", Number(lastCompletedMigration) + Number(1));
     file.save();
     file = editJsonFile(lastCompletedMigrationFilePath, {
         autosave: true,
@@ -44,6 +42,6 @@ const updateLastCompletedMigration = async function updateLastCompletedMigration
 
 module.exports = {
     update: update,
-    get_value: get_value,
+    getValue: getValue,
     updateLastCompletedMigration: updateLastCompletedMigration,
 };
