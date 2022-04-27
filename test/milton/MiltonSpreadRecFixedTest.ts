@@ -974,7 +974,7 @@ describe("MiltonSpreadRecFixed", () => {
             .itfCalculateSpread(params.openTimestamp.add(BigNumber.from("1")));
 
         //then
-        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("-433406136001736"))).to.be
+        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("553406136001736"))).to.be
             .true;
     });
 });
