@@ -381,6 +381,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  yarn run hardhat export-abi
   export ETH_BC_NETWORK_NAME
   npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 fi
@@ -395,6 +396,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  yarn run hardhat export-abi
   export ETH_BC_NETWORK_NAME
   npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 fi
