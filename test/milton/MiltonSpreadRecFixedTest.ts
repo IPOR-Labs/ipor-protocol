@@ -83,7 +83,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("217899151046690308");
+        const expectedQuoteValue = BigNumber.from("37000000000000000");
 
         //when
         let actualQuotedValue = BigNumber.from(
@@ -544,7 +544,7 @@ describe("MiltonSpreadRecFixed", () => {
     it.skip("should calculate Spread Premiums Rec Fixed = Spread Max Value - Kf part very high, KOmega part normal, KVol part normal, KHist part normal", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase9();
-        const spreadPremiumsMaxValue = BigNumber.from("30").mul(N0__01_18DEC);
+        const spreadPremiumsMaxValue = BigNumber.from("10").mul(N0__01_18DEC);
         const liquidityPoolBalance = BigNumber.from("100").mul(N1__0_18DEC);
         const swapCollateral = BigNumber.from("1000000000000000");
         const swapOpeningFee = ZERO;
@@ -813,7 +813,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-433406136001736");
+        const expectedSpreadReceiveFixed = BigNumber.from("553406136001736");
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
 
@@ -854,7 +854,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+        const expectedSpreadReceiveFixed = BigNumber.from("127056293847751");
 
         await prepareApproveForUsers([liquidityProvider], "DAI", testData);
 
@@ -895,7 +895,7 @@ describe("MiltonSpreadRecFixed", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedSpreadReceiveFixed = BigNumber.from("-7056293847751");
+        const expectedSpreadReceiveFixed = BigNumber.from("127056293847751");
 
         await prepareApproveForUsers([liquidityProvider], "USDC", testData);
 
@@ -974,7 +974,7 @@ describe("MiltonSpreadRecFixed", () => {
             .itfCalculateSpread(params.openTimestamp.add(BigNumber.from("1")));
 
         //then
-        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("-433406136001736"))).to.be
+        expect(actualSpreadValue.spreadReceiveFixed.eq(BigNumber.from("553406136001736"))).to.be
             .true;
     });
 });
