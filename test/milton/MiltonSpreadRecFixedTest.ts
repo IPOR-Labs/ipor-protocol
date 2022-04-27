@@ -544,7 +544,7 @@ describe("MiltonSpreadRecFixed", () => {
     it.skip("should calculate Spread Premiums Rec Fixed = Spread Max Value - Kf part very high, KOmega part normal, KVol part normal, KHist part normal", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase9();
-        const spreadPremiumsMaxValue = BigNumber.from("30").mul(N0__01_18DEC);
+        const spreadPremiumsMaxValue = BigNumber.from("10").mul(N0__01_18DEC);
         const liquidityPoolBalance = BigNumber.from("100").mul(N1__0_18DEC);
         const swapCollateral = BigNumber.from("1000000000000000");
         const swapOpeningFee = ZERO;

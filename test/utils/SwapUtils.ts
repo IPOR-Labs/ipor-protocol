@@ -5,6 +5,7 @@ import {
     N1__0_6DEC,
     N1__0_18DEC,
     N0__01_18DEC,
+	N0__001_18DEC,
     TC_50_000_18DEC,
     ZERO,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -492,7 +493,7 @@ export const executeCloseSwapsTestCase = async function (
     let acceptableFixedInterestRate = null;
 
     if (direction == 1) {
-        acceptableFixedInterestRate = N0__01_18DEC;
+        acceptableFixedInterestRate = ZERO;
     } else {
         acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
     }
