@@ -19,10 +19,11 @@ ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
 ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
 ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/${ENV_CONFIG_FILE_DEST}"
 
+ENV_CONTRACTS_FILE_NAME="contracts.zip"
 ENV_CONTRACTS_ROOT_DIR="app/src"
 ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
-ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/contracts.zip"
-ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/contracts.zip"
+ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/${ENV_CONTRACTS_FILE_NAME}"
+ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
 
 ETH_BC_CONTAINER="ipor-protocol-eth-bc"
 ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
@@ -424,14 +425,15 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
   mkdir -p "${actual_state_dir}"
   mkdir -p "${migration_date_dir}/logs"
 
+  create_contracts_zip
+
   cp -R ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log" "${migration_date_dir}/logs"
   cp -R ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log" "${migration_date_dir}/logs"
   cp -R .ipor/ "${migration_date_dir}"
   cp -R .ipor/ "${actual_state_dir}"
   cp -R .openzeppelin/ "${migration_date_dir}"
   cp -R .openzeppelin/ "${actual_state_dir}"
-  cp -R ./app/src/contracts/ "${migration_date_dir}"
-  cp -R ./app/src/contracts/ "${actual_state_dir}"
+  cp "${ENV_CONTRACTS_ZIP_DEST}" "${migration_date_dir}/${ENV_CONTRACTS_FILE_NAME}"
 
   cd "${MIGRATION_STATE_REPO_DIR}"
   echo "Git add: ${MIGRATION_STATE_REPO}"
