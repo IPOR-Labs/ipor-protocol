@@ -322,7 +322,7 @@ function clean_openzeppelin_migration_file(){
   rm -f ".openzeppelin/${file_name}.json"
 }
 
-function create_migration_state_files(){
+function prepare_migration_state_files_structure(){
   update_global_state_vars
   create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
   create_commit_file "${LAST_COMMIT_HASH}"
@@ -381,7 +381,7 @@ fi
 if [ $IS_MIGRATE_SC = "YES" ]; then
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
 
-  create_migration_state_files
+  prepare_migration_state_files_structure
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
@@ -395,7 +395,7 @@ if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
   clean_openzeppelin_migration_file
   rm -rf app/src/contracts/
 
-  create_migration_state_files
+  prepare_migration_state_files_structure
 
   cd "${DIR}"
   npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
