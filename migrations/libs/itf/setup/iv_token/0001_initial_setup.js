@@ -6,13 +6,13 @@ const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 const IvTokenDai = artifacts.require("IvTokenDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const stanleyUsdt = await func.get_value(keys.ItfStanleyProxyUsdt);
-    const stanleyUsdc = await func.get_value(keys.ItfStanleyProxyUsdc);
-    const stanleyDai = await func.get_value(keys.ItfStanleyProxyDai);
+    const stanleyUsdt = await func.getValue(keys.ItfStanleyProxyUsdt);
+    const stanleyUsdc = await func.getValue(keys.ItfStanleyProxyUsdc);
+    const stanleyDai = await func.getValue(keys.ItfStanleyProxyDai);
 
-    const ivUSDT = await func.get_value(keys.ivUSDT);
-    const ivUSDC = await func.get_value(keys.ivUSDC);
-    const ivDAI = await func.get_value(keys.ivDAI);
+    const ivUSDT = await func.getValue(keys.ivUSDT);
+    const ivUSDC = await func.getValue(keys.ivUSDC);
+    const ivDAI = await func.getValue(keys.ivDAI);
 
     const ivUsdtInstance = await IvTokenUsdt.at(ivUSDT);
     const ivUsdcInstance = await IvTokenUsdc.at(ivUSDC);

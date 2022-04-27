@@ -10,13 +10,13 @@ const StrategyTestnetUsdc = artifacts.require("MockStrategyTestnetUsdc");
 const StrategyTestnetDai = artifacts.require("MockStrategyTestnetDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const stanleyUsdt = await func.get_value(keys.ItfStanleyProxyUsdt);
-    const stanleyUsdc = await func.get_value(keys.ItfStanleyProxyUsdc);
-    const stanleyDai = await func.get_value(keys.ItfStanleyProxyDai);
+    const stanleyUsdt = await func.getValue(keys.ItfStanleyProxyUsdt);
+    const stanleyUsdc = await func.getValue(keys.ItfStanleyProxyUsdc);
+    const stanleyDai = await func.getValue(keys.ItfStanleyProxyDai);
 
-    const strategyTestnetUsdt = await func.get_value(keys.StrategyTestnetUsdtProxy);
-    const strategyTestnetUsdc = await func.get_value(keys.StrategyTestnetUsdcProxy);
-    const strategyTestnetDai = await func.get_value(keys.StrategyTestnetDaiProxy);
+    const strategyTestnetUsdt = await func.getValue(keys.StrategyTestnetUsdtProxy);
+    const strategyTestnetUsdc = await func.getValue(keys.StrategyTestnetUsdcProxy);
+    const strategyTestnetDai = await func.getValue(keys.StrategyTestnetDaiProxy);
 
     const stanleyUsdtInstance = await StanleyUsdt.at(stanleyUsdt);
     const stanleyUsdcInstance = await StanleyUsdc.at(stanleyUsdc);

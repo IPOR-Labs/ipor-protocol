@@ -50,7 +50,7 @@ app/.env
 /cache/
 
 # OpenZeppelin
-.openzeppelin/unknown-*.json
+.openzeppelin/*.json
 /coverage.json
 /types/
 /ipor-abi/
