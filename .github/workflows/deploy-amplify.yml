@@ -1,0 +1,73 @@
+name: Deploy on Amplify
+
+on:
+  workflow_call:
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
+
+    inputs:
+      aws-region:
+        description: 'AWS region in which the application is already configured'
+        type: string
+        default: eu-central-1
+
+      app-name:
+        description: 'The name of the web application in AWS Amplify'
+        type: string
+
+      branch:
+        description: 'Git repository branch name from which application will be built'
+        type: string
+        default: main
+
+      extra-args:
+        description: 'Extra arguments to AWS Amplify CLI commands'
+        type: string
+        default: ""
+
+jobs:
+  amplify:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-on-amplify-${{ inputs.app-name }}-branch-${{ inputs.branch }}
+    steps:
+
+      - name: Set up AWS credentials
+        # from tag: v1.6.1
+        uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Deploy on Amplify
+        env:
+          APP_NAME: ${{ inputs.app-name }}
+          BRANCH: ${{ inputs.branch }}
+          EXTRA_ARGS: ${{ inputs.extra-args }}
+          COMMIT_ID:  ${{ github.sha }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
+        run: |
+          echo "Deploy app: ${APP_NAME} from branch: ${BRANCH}"
+          APP_ID=$(aws amplify list-apps --query "apps[?name==\`${APP_NAME}\`].appId" --output text ${EXTRA_ARGS})
+          echo "App id: ${APP_ID}"
+          JOB_ID=$(aws amplify start-job --app-id "${APP_ID}" --branch-name "${BRANCH}" --job-type RELEASE --commit-id "${COMMIT_ID}" --commit-message "${COMMIT_MESSAGE}" --commit-time "${COMMIT_TIME}" --query jobSummary.jobId --output text ${EXTRA_ARGS})
+          echo "Job number: ${JOB_ID}"
+
+          STATUS=RUNNING
+          while [[ "${STATUS}" =~ ^(PENDING|RUNNING)$ ]];
+          do
+            echo "Wait 10 seconds..."
+            sleep 10
+            STATUS=$(aws amplify get-job --app-id "${APP_ID}" --branch-name "${BRANCH}" --job-id "${JOB_ID}" --query job.summary.status --output text ${EXTRA_ARGS})
+            echo "Job status: ${STATUS}"
+          done
+
+          echo "Amplify job number: ${JOB_ID} on app: ${APP_NAME} from branch: ${BRANCH} finished with status: ${STATUS}. Go to AWS Amplify dashboard for more details."
+          if [ "${STATUS}" != "SUCCEED" ]; then
+            exit 1
+          fi
