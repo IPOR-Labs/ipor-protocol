@@ -802,6 +802,84 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
+                <td>Ipor Oracle Facade Data Provider</td>
+                <td>{drizzle.contracts.IporOracleFacadeDataProvider.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IporOracleFacadeDataProvider"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="IporOracleFacadeDataProvider"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="IporOracleFacadeDataProvider"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>Milton Facade Data Provider</td>
+                <td>{drizzle.contracts.MiltonFacadeDataProvider.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonFacadeDataProvider"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonFacadeDataProvider"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>Testnet Faucet</td>
+                <td>{drizzle.contracts.TestnetFaucet.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="TestnetFaucet"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="TestnetFaucet"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="TestnetFaucet"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>Mock Testnet Strategy Aave Usdt</td>
                 <td>{drizzle.contracts.MockTestnetStrategyAaveUsdt.address}</td>
                 <td>
@@ -958,85 +1036,6 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="MockTestnetStrategyCompoundDai"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
-            </tr>
-
-            <tr>
-                <td>Ipor Oracle Facade Data Provider</td>
-                <td>{drizzle.contracts.IporOracleFacadeDataProvider.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="IporOracleFacadeDataProvider"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="IporOracleFacadeDataProvider"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="IporOracleFacadeDataProvider"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>Milton Facade Data Provider</td>
-                <td>{drizzle.contracts.MiltonFacadeDataProvider.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MiltonFacadeDataProvider"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MiltonFacadeDataProvider"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MiltonFacadeDataProvider"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>Testnet Faucet</td>
-                <td>{drizzle.contracts.TestnetFaucet.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="TestnetFaucet"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
                         method="confirmTransferOwnership"
                     />
                 </td>
