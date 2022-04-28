@@ -35,7 +35,7 @@ contract MockCDAI is ERC20, CErc20Mock {
         return 16;
     }
 
-    function setSupplyRate(uint128 v) {
+    function setSupplyRate(uint128 v) public {
         _supplyRate = v;
     }
 
