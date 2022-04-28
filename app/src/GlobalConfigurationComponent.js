@@ -187,35 +187,19 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>
-                    <strong>aToken (Aave Share Token)</strong>
-                </td>
-                <td>{drizzle.contracts.MockAUsdt.address}</td>
-                <td>{drizzle.contracts.MockAUsdc.address}</td>
-                <td>{drizzle.contracts.MockADai.address}</td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>cToken (Compound Share Token)</strong>
-                </td>
-                <td>{drizzle.contracts.MockCUSDT.address}</td>
-                <td>{drizzle.contracts.MockCUSDC.address}</td>
-                <td>{drizzle.contracts.MockCDai.address}</td>
-            </tr>
-            <tr>
-                <td>
                     <strong>Aave Strategy</strong>
                 </td>
-                <td>{drizzle.contracts.StrategyAaveUsdt.address}</td>
-                <td>{drizzle.contracts.StrategyAaveUsdc.address}</td>
-                <td>{drizzle.contracts.StrategyAaveDai.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdt.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdc.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyAaveDai.address}</td>
             </tr>
             <tr>
                 <td>
                     <strong>Compound Strategy</strong>
                 </td>
-                <td>{drizzle.contracts.StrategyCompoundUsdt.address}</td>
-                <td>{drizzle.contracts.StrategyCompoundUsdc.address}</td>
-                <td>{drizzle.contracts.StrategyCompoundDai.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdt.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdc.address}</td>
+                <td>{drizzle.contracts.MockTestnetStrategyCompoundDai.address}</td>
             </tr>
         </table>
     </div>

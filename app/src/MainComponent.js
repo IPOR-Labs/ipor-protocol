@@ -58,14 +58,14 @@ export default ({ drizzle, drizzleState }) => {
                         <td>
                             <strong>ERC20 Token Address</strong>
                         </td>
-                        <td>{drizzle.contracts.UsdtTestnetMockedToken.address}</td>
-                        <td>{drizzle.contracts.UsdcTestnetMockedToken.address}</td>
-                        <td>{drizzle.contracts.DaiTestnetMockedToken.address}</td>
+                        <td>{drizzle.contracts.MockTestnetTokenUsdt.address}</td>
+                        <td>{drizzle.contracts.MockTestnetTokenUsdc.address}</td>
+                        <td>{drizzle.contracts.MockTestnetTokenDai.address}</td>
                     </tr>
                 </table>
             </div>
             <Tabs defaultActiveKey="profile" id="uncontrolled-tab-example">
-                <Tab eventKey="iporIndex" title="IporOracle">
+                 <Tab eventKey="iporIndex" title="IporOracle">
                     <IporOracleComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="miltonOverview" title="Milton">
@@ -76,7 +76,7 @@ export default ({ drizzle, drizzleState }) => {
                 </Tab>
                 <Tab eventKey="stanley" title="Stanley">
                     <StanleyComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> 
                 <Tab eventKey="globalConfig" title="Global Config">
                     <GlobalConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>

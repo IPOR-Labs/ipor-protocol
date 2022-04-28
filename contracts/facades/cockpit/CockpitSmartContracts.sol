@@ -12,7 +12,7 @@ import "../../vault/strategies/StrategyAave.sol";
 import "../../vault/strategies/StrategyCompound.sol";
 import "../../itf/ItfMilton.sol";
 import "../../itf/ItfJoseph.sol";
-import "../../mocks/stanley/MockStrategyTestnet.sol";
+import "../../mocks/stanley/MockTestnetStrategy.sol";
 import "../../mocks/stanley/compound/MockCToken.sol";
 import "../../mocks/stanley/compound/MockComptroller.sol";
 
@@ -82,11 +82,17 @@ contract StrategyCompoundUsdc is StrategyCompound {}
 
 contract StrategyCompoundDai is StrategyCompound {}
 
-contract MockStrategyTestnetUsdt is MockStrategyTestnet {}
+contract MockTestnetStrategyCompoundUsdt is MockTestnetStrategy {}
 
-contract MockStrategyTestnetUsdc is MockStrategyTestnet {}
+contract MockTestnetStrategyCompoundUsdc is MockTestnetStrategy {}
 
-contract MockStrategyTestnetDai is MockStrategyTestnet {}
+contract MockTestnetStrategyCompoundDai is MockTestnetStrategy {}
+
+contract MockTestnetStrategyAaveUsdt is MockTestnetStrategy {}
+
+contract MockTestnetStrategyAaveUsdc is MockTestnetStrategy {}
+
+contract MockTestnetStrategyAaveDai is MockTestnetStrategy {}
 
 contract MockCDai is MockCToken {
     constructor(address asset, address interestRateModel)

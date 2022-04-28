@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../../libraries/math/IporMath.sol";
 import "../../../vault/interfaces/compound/CErc20Mock.sol";
+import "../../../security/IporOwnable.sol";
 
-contract MockCDAI is ERC20, CErc20Mock {
+contract MockCDAI is ERC20, CErc20Mock, IporOwnable {
     address private _dai;
     uint256 private _toTransfer;
     uint256 private _toMint;
@@ -34,7 +35,7 @@ contract MockCDAI is ERC20, CErc20Mock {
         return 16;
     }
 
-    function setSupplyRate(uint128 v) public {
+    function setSupplyRate(uint128 v) public onlyOwner {
         _supplyRate = v;
     }
 
@@ -57,7 +58,7 @@ contract MockCDAI is ERC20, CErc20Mock {
         return 0;
     }
 
-    function setParams(uint256[] memory params) external {
+    function setParams(uint256[] memory params) external onlyOwner {
         _totalBorrows = params[2];
         _totalReserves = params[4];
         _reserveFactorMantissa = 50000000000000000;
@@ -70,11 +71,11 @@ contract MockCDAI is ERC20, CErc20Mock {
         return _exchangeRate;
     }
 
-    function setExchangeRateStored(uint256 rate) external returns (uint256) {
+    function setExchangeRateStored(uint256 rate) external onlyOwner returns (uint256) {
         _exchangeRate = rate;
     }
 
-    function setComptroller(address comp) external {
+    function setComptroller(address comp) external onlyOwner {
         _comptroller = comp;
     }
 

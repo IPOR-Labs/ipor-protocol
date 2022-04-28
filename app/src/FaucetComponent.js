@@ -12,17 +12,17 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">
                     USDT
                     <br />
-                    {drizzle.contracts.UsdtTestnetMockedToken.address}
+                    {drizzle.contracts.MockTestnetTokenUsdt.address}
                 </th>
                 <th scope="col">
                     USDC
                     <br />
-                    {drizzle.contracts.UsdcTestnetMockedToken.address}
+                    {drizzle.contracts.MockTestnetTokenUsdc.address}
                 </th>
                 <th scope="col">
                     DAI
                     <br />
-                    {drizzle.contracts.DaiTestnetMockedToken.address}
+                    {drizzle.contracts.MockTestnetTokenDai.address}
                 </th>
             </tr>
             <tr>
@@ -52,7 +52,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.UsdtTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -68,7 +68,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.UsdcTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -84,7 +84,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="TestnetFaucet"
                         method="balanceOf"
-                        methodArgs={[drizzle.contracts.DaiTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -108,7 +108,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.UsdtTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -124,7 +124,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.UsdcTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000}
@@ -140,7 +140,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="getMyTotalSupply"
-                        methodArgs={[drizzle.contracts.DaiTestnetMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -172,14 +172,13 @@ export default ({ drizzle, drizzleState }) => (
             <div className="col-md-4">
                 <small>Claim stable</small>
                 <br />
-                <label>First time  $50 000 USD</label>
+                <label>First time $50 000 USD</label>
                 <br />
-                <small>Next  $10 000 USD</small>
+                <small>Next $10 000 USD</small>
                 <br />
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
             </div>
         </div>
-
     </div>
 );

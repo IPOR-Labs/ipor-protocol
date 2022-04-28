@@ -8,128 +8,61 @@ module.exports = async function (
     addresses,
     [
         TestnetFaucet,
-        UsdtTestnetMockedToken,
-        UsdcTestnetMockedToken,
-        DaiTestnetMockedToken,
-        MockAUsdc,
-        MockAUsdt,
-        MockADai,
-        MockLendingPoolAave,
-        MockProviderAave,
-        MockStakedAave,
-        AAVEMockedToken,
-        MockAaveIncentivesController,
-        MockWhitePaper,
-        MockedCOMPToken,
-        MockComptroller,
-        MockCDai,
-        MockCUSDT,
-        MockCUSDC,
-        MockStrategyTestnetUsdt,
-        MockStrategyTestnetUsdc,
-        MockStrategyTestnetDai,
+        MockTestnetTokenUsdt,
+        MockTestnetTokenUsdc,
+        MockTestnetTokenDai,
+        MockTestnetShareTokenAaveUsdt,
+        MockTestnetShareTokenAaveUsdc,
+        MockTestnetShareTokenAaveDai,
+        MockTestnetShareTokenCompoundUsdt,
+        MockTestnetShareTokenCompoundUsdc,
+        MockTestnetShareTokenCompoundDai,
+        MockTestnetStrategyAaveUsdt,
+        MockTestnetStrategyAaveUsdc,
+        MockTestnetStrategyAaveDai,
+        MockTestnetStrategyCompoundUsdt,
+        MockTestnetStrategyCompoundUsdc,
+        MockTestnetStrategyCompoundDai,
     ]
 ) {
     let stableTotalSupply6Decimals = "1000000000000000000";
     let stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
-    await deployer.deploy(UsdtTestnetMockedToken, stableTotalSupply6Decimals, 6);
-    const mockedUsdt = await UsdtTestnetMockedToken.deployed();
-
+    await deployer.deploy(MockTestnetTokenUsdt, stableTotalSupply6Decimals);
+    const mockedUsdt = await MockTestnetTokenUsdt.deployed();
     await func.update(keys.USDT, mockedUsdt.address);
 
-    await deployer.deploy(UsdcTestnetMockedToken, stableTotalSupply6Decimals, 6);
-    const mockedUsdc = await UsdcTestnetMockedToken.deployed();
-
+    await deployer.deploy(MockTestnetTokenUsdc, stableTotalSupply6Decimals);
+    const mockedUsdc = await MockTestnetTokenUsdc.deployed();
     await func.update(keys.USDC, mockedUsdc.address);
 
-    await deployer.deploy(DaiTestnetMockedToken, stableTotalSupply18Decimals, 18);
-    const mockedDai = await DaiTestnetMockedToken.deployed();
-
+    await deployer.deploy(MockTestnetTokenDai, stableTotalSupply18Decimals);
+    const mockedDai = await MockTestnetTokenDai.deployed();
     await func.update(keys.DAI, mockedDai.address);
 
-    await deployer.deploy(MockAUsdt);
-    const mockedAUsdt = await MockAUsdt.deployed();
+    await deployer.deploy(MockTestnetShareTokenAaveUsdt, 0);
+    const mockTestnetShareTokenAaveUsdt = await MockTestnetShareTokenAaveUsdt.deployed();
+    await func.update(keys.aUSDT, mockTestnetShareTokenAaveUsdt.address);
 
-    await func.update(keys.aUSDT, mockedAUsdt.address);
+    await deployer.deploy(MockTestnetShareTokenAaveUsdc, 0);
+    const mockTestnetShareTokenAaveUsdc = await MockTestnetShareTokenAaveUsdc.deployed();
+    await func.update(keys.aUSDC, mockTestnetShareTokenAaveUsdc.address);
 
-    await deployer.deploy(MockAUsdc);
-    const mockedAUsdc = await MockAUsdc.deployed();
+    await deployer.deploy(MockTestnetShareTokenAaveDai, 0);
+    const mockTestnetShareTokenAaveDai = await MockTestnetShareTokenAaveDai.deployed();
+    await func.update(keys.aDAI, mockTestnetShareTokenAaveDai.address);
 
-    await func.update(keys.aUSDC, mockedAUsdc.address);
+    await deployer.deploy(MockTestnetShareTokenCompoundUsdt, 0);
+    const mockTestnetShareTokenCompoundUsdt = await MockTestnetShareTokenCompoundUsdt.deployed();
+    await func.update(keys.cUSDT, mockTestnetShareTokenCompoundUsdt.address);
 
-    await deployer.deploy(MockADai);
-    const mockedADai = await MockADai.deployed();
+    await deployer.deploy(MockTestnetShareTokenCompoundUsdc, 0);
+    const mockTestnetShareTokenCompoundUsdc = await MockTestnetShareTokenCompoundUsdc.deployed();
+    await func.update(keys.cUSDC, mockTestnetShareTokenCompoundUsdc.address);
 
-    await func.update(keys.aDAI, mockedADai.address);
-
-    await deployer.deploy(AAVEMockedToken, stableTotalSupply18Decimals, 18);
-    const mockedAAVE = await AAVEMockedToken.deployed();
-
-    await func.update(keys.AAVE, mockedAAVE.address);
-
-    await deployer.deploy(
-        MockLendingPoolAave,
-        mockedDai.address,
-        mockedADai.address,
-        BigInt("1000000000000000000"),
-        mockedUsdc.address,
-        mockedAUsdc.address,
-        BigInt("2000000"),
-        mockedUsdt.address,
-        mockedAUsdt.address,
-        BigInt("2000000")
-    );
-    const mockedLendingPool = await MockLendingPoolAave.deployed();
-
-    await deployer.deploy(MockProviderAave, mockedLendingPool.address);
-    const mockedAaveProvider = await MockProviderAave.deployed();
-
-    await func.update(keys.AaveProvider, mockedAaveProvider.address);
-
-    await deployer.deploy(MockStakedAave, mockedAAVE.address);
-    const mockedStakedAave = await MockStakedAave.deployed();
-
-    await func.update(keys.AaveStaked, mockedStakedAave.address);
-
-    await deployer.deploy(MockAaveIncentivesController, mockedStakedAave.address);
-    const mockedAaveIncentivesController = await MockAaveIncentivesController.deployed();
-
-    await func.update(keys.AaveIncentivesController, mockedAaveIncentivesController.address);
-
-    await deployer.deploy(MockWhitePaper);
-    const mockedWhitePaperInstance = await MockWhitePaper.deployed();
-
-    await deployer.deploy(MockCUSDT, mockedUsdt.address, mockedWhitePaperInstance.address);
-    const mockedCUsdt = await MockCUSDT.deployed();
-
-    await func.update(keys.cUSDT, mockedCUsdt.address);
-
-    await deployer.deploy(MockCUSDC, mockedUsdc.address, mockedWhitePaperInstance.address);
-    const mockedCUsdc = await MockCUSDC.deployed();
-
-    await func.update(keys.cUSDC, mockedCUsdc.address);
-
-    await deployer.deploy(MockCDai, mockedDai.address, mockedWhitePaperInstance.address);
-    const mockedCDai = await MockCDai.deployed();
-
-    await func.update(keys.cDAI, mockedCDai.address);
-
-    await deployer.deploy(MockedCOMPToken, stableTotalSupply18Decimals, 18);
-    const mockedCOMP = await MockedCOMPToken.deployed();
-
-    await func.update(keys.COMP, mockedCOMP.address);
-
-    await deployer.deploy(
-        MockComptroller,
-        mockedCOMP.address,
-        mockedCUsdt.address,
-        mockedCUsdc.address,
-        mockedCDai.address
-    );
-    const mockedComptroller = await MockComptroller.deployed();
-
-    await func.update(keys.Comptroller, mockedComptroller.address);
+    await deployer.deploy(MockTestnetShareTokenCompoundDai, 0);
+    const mockTestnetShareTokenCompoundDai = await MockTestnetShareTokenCompoundDai.deployed();
+    await func.update(keys.cDAI, mockTestnetShareTokenCompoundDai.address);
 
     const testnetFaucetProxy = await deployProxy(
         TestnetFaucet,
@@ -140,15 +73,13 @@ module.exports = async function (
             kind: "uups",
         }
     );
-
     const testnetFaucetImpl = await erc1967.getImplementationAddress(testnetFaucetProxy.address);
-
     await func.update(keys.TestnetFaucetProxy, testnetFaucetProxy.address);
     await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl);
 
-    const mockedStrategyTestnetUsdtProxy = await deployProxy(
-        MockStrategyTestnetUsdt,
-        [mockedUsdt.address, mockedAUsdt.address],
+    const mockTestnetStrategyAaveUsdtProxy = await deployProxy(
+        MockTestnetStrategyAaveUsdt,
+        [mockedUsdt.address, mockTestnetShareTokenAaveUsdt.address],
         {
             deployer: deployer,
             initializer: "initialize",
@@ -156,44 +87,87 @@ module.exports = async function (
         }
     );
 
-    const mockedStrategyTestnetUsdtImpl = await erc1967.getImplementationAddress(
-        mockedStrategyTestnetUsdtProxy.address
+    const mockTestnetStrategyAaveUsdtImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyAaveUsdtProxy.address
     );
+    await func.update(keys.AaveStrategyProxyUsdt, mockTestnetStrategyAaveUsdtProxy.address);
+    await func.update(keys.AaveStrategyImplUsdt, mockTestnetStrategyAaveUsdtImpl);
 
-    await func.update(keys.StrategyTestnetUsdtProxy, mockedStrategyTestnetUsdtProxy.address);
-    await func.update(keys.StrategyTestnetUsdtImpl, mockedStrategyTestnetUsdtImpl);
-
-    const mockedStrategyTestnetUsdcProxy = await deployProxy(
-        MockStrategyTestnetUsdc,
-        [mockedUsdc.address, mockedAUsdc.address],
+    const mockTestnetStrategyAaveUsdcProxy = await deployProxy(
+        MockTestnetStrategyAaveUsdc,
+        [mockedUsdc.address, mockTestnetShareTokenAaveUsdc.address],
         {
             deployer: deployer,
             initializer: "initialize",
             kind: "uups",
         }
     );
-
-    const mockedStrategyTestnetUsdcImpl = await erc1967.getImplementationAddress(
-        mockedStrategyTestnetUsdcProxy.address
+    const mockTestnetStrategyAaveUsdcImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyAaveUsdcProxy.address
     );
+    await func.update(keys.AaveStrategyProxyUsdc, mockTestnetStrategyAaveUsdcProxy.address);
+    await func.update(keys.AaveStrategyImplUsdc, mockTestnetStrategyAaveUsdcImpl);
 
-    await func.update(keys.StrategyTestnetUsdcProxy, mockedStrategyTestnetUsdcProxy.address);
-    await func.update(keys.StrategyTestnetUsdcImpl, mockedStrategyTestnetUsdcImpl);
-
-    const mockedStrategyTestnetDaiProxy = await deployProxy(
-        MockStrategyTestnetDai,
-        [mockedDai.address, mockedADai.address],
+    const mockTestnetStrategyAaveDaiProxy = await deployProxy(
+        MockTestnetStrategyAaveDai,
+        [mockedDai.address, mockTestnetShareTokenAaveDai.address],
         {
             deployer: deployer,
             initializer: "initialize",
             kind: "uups",
         }
     );
-
-    const mockedStrategyTestnetDaiImpl = await erc1967.getImplementationAddress(
-        mockedStrategyTestnetDaiProxy.address
+    const mockTestnetStrategyAaveDaiImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyAaveDaiProxy.address
     );
 
-    await func.update(keys.StrategyTestnetDaiProxy, mockedStrategyTestnetDaiProxy.address);
-    await func.update(keys.StrategyTestnetDaiImpl, mockedStrategyTestnetDaiImpl);
+    await func.update(keys.AaveStrategyProxyDai, mockTestnetStrategyAaveDaiProxy.address);
+    await func.update(keys.AaveStrategyImplDai, mockTestnetStrategyAaveDaiImpl);
+
+    const mockTestnetStrategyCompoundUsdtProxy = await deployProxy(
+        MockTestnetStrategyCompoundUsdt,
+        [mockedUsdt.address, mockTestnetShareTokenCompoundUsdt.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+    const mockTestnetStrategyCompoundUsdtImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyCompoundUsdtProxy.address
+    );
+
+    await func.update(keys.CompoundStrategyProxyUsdt, mockTestnetStrategyCompoundUsdtProxy.address);
+    await func.update(keys.CompoundStrategyImplUsdt, mockTestnetStrategyCompoundUsdtImpl);
+
+    const mockTestnetStrategyCompoundUsdcProxy = await deployProxy(
+        MockTestnetStrategyCompoundUsdc,
+        [mockedUsdc.address, mockTestnetShareTokenCompoundUsdc.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+    const mockTestnetStrategyCompoundUsdcImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyCompoundUsdcProxy.address
+    );
+    await func.update(keys.CompoundStrategyProxyUsdc, mockTestnetStrategyCompoundUsdcProxy.address);
+    await func.update(keys.CompoundStrategyImplUsdc, mockTestnetStrategyCompoundUsdcImpl);
+
+    const mockTestnetStrategyCompoundDaiProxy = await deployProxy(
+        MockTestnetStrategyCompoundDai,
+        [mockedDai.address, mockTestnetShareTokenCompoundDai.address],
+        {
+            deployer: deployer,
+            initializer: "initialize",
+            kind: "uups",
+        }
+    );
+    const mockTestnetStrategyCompoundDaiImpl = await erc1967.getImplementationAddress(
+        mockTestnetStrategyCompoundDaiProxy.address
+    );
+
+    await func.update(keys.CompoundStrategyProxyDai, mockTestnetStrategyCompoundDaiProxy.address);
+    await func.update(keys.CompoundStrategyImplDai, mockTestnetStrategyCompoundDaiImpl);
 };

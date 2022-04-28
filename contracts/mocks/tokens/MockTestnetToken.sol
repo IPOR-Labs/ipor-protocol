@@ -3,7 +3,7 @@ pragma solidity 0.8.9;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../../security/IporOwnable.sol";
 
-contract TestnetMockedToken is ERC20, IporOwnable {
+contract MockTestnetToken is ERC20, IporOwnable {
     uint8 private _customDecimals;
 
     constructor(

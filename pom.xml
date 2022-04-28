@@ -176,32 +176,11 @@
                         <argument>${contracts.sources}/mocks/MockAmmMath.sol</argument>
                         <argument>${contracts.sources}/mocks/MockIporSwapLogic.sol</argument>
                         <argument>${contracts.sources}/mocks/MockIporLogic.sol</argument>
-                        <argument>${contracts.sources}/mocks/MockSoapIndicatorLogic.sol</argument>
-                        <argument>${contracts.sources}/mocks/MockTimelockController.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase1Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase2Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase3Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase4Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase5Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/milton/MockCase6Milton.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockBaseMiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase10MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase11MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase1MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase2MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase3MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase4MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase5MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase6MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase7MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase8MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/mocks/spread/MockCase9MiltonSpreadModel.sol</argument>
+                        <argument>${contracts.sources}/mocks/MockSoapIndicatorLogic.sol</argument>                        
                         <argument>${contracts.sources}/mocks/tokens/MockedToken.sol</argument>                        
-
-						<argument>${contracts.sources}/mocks/tokens/UsdtTestnetMockedToken.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/UsdcTestnetMockedToken.sol</argument>
-                        <argument>${contracts.sources}/mocks/tokens/DaiTestnetMockedToken.sol</argument>
-						
+						<argument>${contracts.sources}/mocks/tokens/MockTestnetTokenUsdt.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/MockTestnetTokenUsdc.sol</argument>
+                        <argument>${contracts.sources}/mocks/tokens/MockTestnetTokenDai.sol</argument>						
                         <argument>${contracts.sources}/oracles/IporOracle.sol</argument>
                         <argument>${contracts.sources}/security/IporOwnable.sol</argument>
                         <argument>${contracts.sources}/security/IporOwnableUpgradeable.sol</argument>

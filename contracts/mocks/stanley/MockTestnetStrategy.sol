@@ -13,7 +13,7 @@ import "../../libraries/math/IporMath.sol";
 import "../../libraries/Constants.sol";
 
 // simple mock for total _balance tests
-contract MockStrategyTestnet is StrategyCore {
+contract MockTestnetStrategy is StrategyCore {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // in wad
@@ -25,11 +25,11 @@ contract MockStrategyTestnet is StrategyCore {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
+		require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
         _treasuryManager = _msgSender();
-        _shareToken = shareToken;
+		_shareToken = shareToken;
     }
 
     function getApr() external pure override returns (uint256) {
