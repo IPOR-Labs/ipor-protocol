@@ -1,36 +1,69 @@
 const keys = require("../../../json_keys.js");
 const func = require("../../../json_func.js");
 
-const StanleyUsdt = artifacts.require("StanleyUsdt");
-const StanleyUsdc = artifacts.require("StanleyUsdc");
-const StanleyDai = artifacts.require("StanleyDai");
+const MockTestnetTokenUsdt = artifacts.require("MockTestnetTokenUsdt");
+const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
+const MockTestnetTokenDai = artifacts.require("MockTestnetTokenDai");
 
-const StrategyTestnetUsdt = artifacts.require("MockStrategyTestnetUsdt");
-const StrategyTestnetUsdc = artifacts.require("MockStrategyTestnetUsdc");
-const StrategyTestnetDai = artifacts.require("MockStrategyTestnetDai");
+const MockTestnetStrategyAaveUsdt = artifacts.require("MockTestnetStrategyAaveUsdt");
+const MockTestnetStrategyAaveUsdc = artifacts.require("MockTestnetStrategyAaveUsdc");
+const MockTestnetStrategyAaveDai = artifacts.require("MockTestnetStrategyAaveDai");
+
+const MockTestnetStrategyCompoundUsdt = artifacts.require("MockTestnetStrategyCompoundUsdt");
+const MockTestnetStrategyCompoundUsdc = artifacts.require("MockTestnetStrategyCompoundUsdc");
+const MockTestnetStrategyCompoundDai = artifacts.require("MockTestnetStrategyCompoundDai");
 
 module.exports = async function (deployer, _network, addresses) {
     const stanleyUsdt = await func.getValue(keys.ItfStanleyProxyUsdt);
     const stanleyUsdc = await func.getValue(keys.ItfStanleyProxyUsdc);
     const stanleyDai = await func.getValue(keys.ItfStanleyProxyDai);
 
-    const strategyTestnetUsdt = await func.getValue(keys.StrategyTestnetUsdtProxy);
-    const strategyTestnetUsdc = await func.getValue(keys.StrategyTestnetUsdcProxy);
-    const strategyTestnetDai = await func.getValue(keys.StrategyTestnetDaiProxy);
+    const strategyAaveUsdt = await func.getValue(keys.AaveStrategyProxyUsdt);
+    const strategyAaveUsdc = await func.getValue(keys.AaveStrategyProxyUsdc);
+    const strategyAaveDai = await func.getValue(keys.AaveStrategyProxyDai);
 
-    const stanleyUsdtInstance = await StanleyUsdt.at(stanleyUsdt);
-    const stanleyUsdcInstance = await StanleyUsdc.at(stanleyUsdc);
-    const stanleyDaiInstance = await StanleyDai.at(stanleyDai);
+    const strategyCompoundUsdt = await func.getValue(keys.CompoundStrategyProxyUsdt);
+    const strategyCompoundUsdc = await func.getValue(keys.CompoundStrategyProxyUsdc);
+    const strategyCompoundDai = await func.getValue(keys.CompoundStrategyProxyDai);
 
-    await stanleyUsdtInstance.setStrategyCompound(strategyTestnetUsdt);
-    await stanleyUsdcInstance.setStrategyCompound(strategyTestnetUsdc);
-    await stanleyDaiInstance.setStrategyCompound(strategyTestnetDai);
+    const strategyAaveUsdtInstance = await MockTestnetStrategyAaveUsdt.at(strategyAaveUsdt);
+    const strategyAaveUsdcInstance = await MockTestnetStrategyAaveUsdc.at(strategyAaveUsdc);
+    const strategyAaveDaiInstance = await MockTestnetStrategyAaveDai.at(strategyAaveDai);
 
-    const strategyTestnetUsdtInstance = await StrategyTestnetUsdt.at(strategyTestnetUsdt);
-    const strategyTestnetUsdcInstance = await StrategyTestnetUsdc.at(strategyTestnetUsdc);
-    const strategyTestnetDaiInstance = await StrategyTestnetDai.at(strategyTestnetDai);
+    await strategyAaveUsdtInstance.setStanley(stanleyUsdt);
+    await strategyAaveUsdcInstance.setStanley(stanleyUsdc);
+    await strategyAaveDaiInstance.setStanley(stanleyDai);
 
-    await strategyTestnetUsdtInstance.setStanley(stanleyUsdt);
-    await strategyTestnetUsdcInstance.setStanley(stanleyUsdc);
-    await strategyTestnetDaiInstance.setStanley(stanleyDai);
+    const strategyCompoundUsdtInstance = await MockTestnetStrategyCompoundUsdt.at(
+        strategyCompoundUsdt
+    );
+    const strategyCompoundUsdcInstance = await MockTestnetStrategyCompoundUsdc.at(
+        strategyCompoundUsdc
+    );
+    const strategyCompoundDaiInstance = await MockTestnetStrategyCompoundDai.at(
+        strategyCompoundDai
+    );
+
+    await strategyCompoundUsdtInstance.setStanley(stanleyUsdt);
+    await strategyCompoundUsdcInstance.setStanley(stanleyUsdc);
+    await strategyCompoundDaiInstance.setStanley(stanleyDai);
+
+    const usdt = await func.getValue(keys.USDT);
+    const usdc = await func.getValue(keys.USDC);
+    const dai = await func.getValue(keys.DAI);
+
+    const usdtInstance = await MockTestnetTokenUsdt.at(usdt);
+    const usdcInstance = await MockTestnetTokenUsdc.at(usdc);
+    const daiInstance = await MockTestnetTokenDai.at(dai);
+
+    const initialValue6dec = BigInt("1000000000000");
+    const initialValue18dec = BigInt("1000000000000000000000000");
+
+    await usdtInstance.transfer(strategyAaveUsdt, initialValue6dec);
+    await usdcInstance.transfer(strategyAaveUsdc, initialValue6dec);
+    await daiInstance.transfer(strategyAaveDai, initialValue18dec);
+
+    await usdtInstance.transfer(strategyCompoundUsdt, initialValue6dec);
+    await usdcInstance.transfer(strategyCompoundUsdc, initialValue6dec);
+    await daiInstance.transfer(strategyCompoundDai, initialValue18dec);
 };

@@ -1529,6 +1529,157 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
+
+            <h4>Stanley</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyUsdt"
+                                    method="transferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyUsdt"
+                                    method="transferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyUsdc"
+                                    method="transferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyUsdc"
+                                    method="transferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyDai"
+                                    method="transferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyDai"
+                                    method="transferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h4>Aave Strategy</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveUsdt"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveUsdc"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveDai"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h4>Compound Strategy</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundUsdt"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundUsdc"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundDai"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 );

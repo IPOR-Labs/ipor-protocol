@@ -282,7 +282,7 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Transfer Ownership</td>
+                <td>Milton Transfer Ownership</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm
@@ -331,7 +331,7 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Confirm Transfer Ownership</td>
+                <td>Milton Confirm Transfer Ownership</td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm
@@ -376,6 +376,55 @@ export default ({ drizzle, drizzleState }) => (
                             method="confirmTransferOwnership"
                         />
                     )}
+                </td>
+            </tr>
+            <tr>
+                <td>Milton Storage Transfer Ownership</td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageUsdt"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageUsdc"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageDai"
+                        method="transferOwnership"
+                    />
+                </td>
+            </tr>
+
+            <tr>
+                <td>Milton Storage Confirm Transfer Ownership</td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageUsdt"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageUsdc"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageDai"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
         </table>
