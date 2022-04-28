@@ -25,11 +25,11 @@ contract MockTestnetStrategy is StrategyCore {
         __Ownable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-		require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
+        require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
 
         _asset = asset;
         _treasuryManager = _msgSender();
-		_shareToken = shareToken;
+        _shareToken = shareToken;
     }
 
     function getApr() external pure override returns (uint256) {

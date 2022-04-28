@@ -9,7 +9,7 @@ import "../../../libraries/math/IporMath.sol";
 import "../../../vault/interfaces/compound/CErc20Mock.sol";
 import "../../../security/IporOwnable.sol";
 
-contract MockCDAI is ERC20, CErc20Mock, IporOwnable {
+contract MockCDAI is ERC20, CErc20Mock {
     address private _dai;
     uint256 private _toTransfer;
     uint256 private _toMint;
@@ -35,7 +35,7 @@ contract MockCDAI is ERC20, CErc20Mock, IporOwnable {
         return 16;
     }
 
-    function setSupplyRate(uint128 v) public onlyOwner {
+    function setSupplyRate(uint128 v) {
         _supplyRate = v;
     }
 
@@ -58,7 +58,7 @@ contract MockCDAI is ERC20, CErc20Mock, IporOwnable {
         return 0;
     }
 
-    function setParams(uint256[] memory params) external onlyOwner {
+    function setParams(uint256[] memory params) external {
         _totalBorrows = params[2];
         _totalReserves = params[4];
         _reserveFactorMantissa = 50000000000000000;
@@ -71,11 +71,11 @@ contract MockCDAI is ERC20, CErc20Mock, IporOwnable {
         return _exchangeRate;
     }
 
-    function setExchangeRateStored(uint256 rate) external onlyOwner returns (uint256) {
+    function setExchangeRateStored(uint256 rate) external returns (uint256) {
         _exchangeRate = rate;
     }
 
-    function setComptroller(address comp) external onlyOwner {
+    function setComptroller(address comp) external {
         _comptroller = comp;
     }
 

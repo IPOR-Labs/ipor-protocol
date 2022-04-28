@@ -20,8 +20,8 @@ contract MockTestnetToken is ERC20, IporOwnable {
         return _customDecimals;
     }
 
-    function burn(address user, uint256 amount) external onlyOwner {
-        _burn(user, amount);
+    function burn(address account, uint256 amount) external onlyOwner {
+        _burn(account, amount);
     }
 
     function mint(address account, uint256 amount) external onlyOwner {

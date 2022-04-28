@@ -743,6 +743,113 @@ export default ({ drizzle, drizzleState }) => (
                         />
                     </td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <strong>Strategy Aave ERC20 Token Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenUsdt"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyAaveUsdt.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenUsdc"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyAaveUsdc.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenDai"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyAaveDai.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Strategy Compound ERC20 Token Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenUsdt"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyCompoundUsdt.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenUsdc"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyCompoundUsdc.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="MockTestnetTokenDai"
+                            method="balanceOf"
+                            methodArgs={[drizzle.contracts.MockTestnetStrategyCompoundDai.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
             </table>
 
             <table className="table" align="center">

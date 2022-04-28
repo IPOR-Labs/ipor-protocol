@@ -4,9 +4,8 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../../../security/IporOwnable.sol";
 
-contract MockStakedAave is ERC20, IporOwnable {
+contract MockStakedAave is ERC20 {
     address private _aaveMock;
     uint256 private _cooldownStartTimestamp;
 
@@ -28,7 +27,7 @@ contract MockStakedAave is ERC20, IporOwnable {
         cooldownMapping[msg.sender] = true;
     }
 
-    function setCooldowns() external onlyOwner {
+    function setCooldowns() external {
         _cooldownStartTimestamp = block.timestamp - (10 * 24 * 60 * 60);
     }
 
