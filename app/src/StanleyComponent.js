@@ -1530,6 +1530,81 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
             </table>
 
+			<h4>IvToken</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenUsdt"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenUsdc"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenDai"
+                                method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Confirm Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenUsdt"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenUsdc"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="IvTokenDai"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
             <h4>Stanley</h4>
             <table className="table" align="center">
                 <tr>
@@ -1595,6 +1670,62 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <strong>Confirm Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyUsdt"
+                                    method="confirmTransferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyUsdt"
+                                    method="confirmTransferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyUsdc"
+                                    method="confirmTransferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyUsdc"
+                                    method="confirmTransferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="ItfStanleyDai"
+                                    method="confirmTransferOwnership"
+                                />
+                            ) : (
+                                <ContractForm
+                                    drizzle={drizzle}
+                                    contract="StanleyDai"
+                                    method="confirmTransferOwnership"
+                                />
+                            )}
+                        </div>
+                    </td>
+                </tr>
             </table>
             <h4>Aave Strategy</h4>
             <table className="table" align="center">
@@ -1637,6 +1768,38 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <strong>Confirm Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveUsdt"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveUsdc"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyAaveDai"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
             </table>
             <h4>Compound Strategy</h4>
             <table className="table" align="center">
@@ -1675,6 +1838,39 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 contract="MockTestnetStrategyCompoundDai"
                                 method="transferOwnership"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Confirm Transfer Ownership</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundUsdt"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundUsdc"
+                                method="confirmTransferOwnership"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="MockTestnetStrategyCompoundDai"
+                                method="confirmTransferOwnership"
                             />
                         </div>
                     </td>

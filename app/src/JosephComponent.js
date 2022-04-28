@@ -1029,7 +1029,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
                 <tr>
-                    <td>Transfer Ownership</td>
+                    <td>Joseph Transfer Ownership</td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                             <ContractForm
@@ -1078,7 +1078,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
 
                 <tr>
-                    <td>Confirm Transfer Ownership</td>
+                    <td>Joseph Confirm Transfer Ownership</td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                             <ContractForm
@@ -1123,6 +1123,56 @@ export default ({ drizzle, drizzleState }) => (
                                 method="confirmTransferOwnership"
                             />
                         )}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>IpToken Transfer Ownership</td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenUsdt"
+                            method="transferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenUsdc"
+                            method="transferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenDai"
+                            method="transferOwnership"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>IpToken Confirm Transfer Ownership</td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenUsdt"
+                            method="confirmTransferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenUsdc"
+                            method="confirmTransferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="IpTokenDai"
+                            method="confirmTransferOwnership"
+                        />
                     </td>
                 </tr>
             </table>

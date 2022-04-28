@@ -232,7 +232,9 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Pause</td>
+                <td>
+                    <strong>Milton</strong> Pause
+                </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="pause" />
@@ -257,7 +259,9 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Unpause</td>
+                <td>
+                    <strong>Milton</strong> Unpause
+                </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="unpause" />
@@ -282,7 +286,9 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Milton Transfer Ownership</td>
+                <td>
+                    <strong>Milton</strong> Transfer Ownership
+                </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm
@@ -331,7 +337,9 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Milton Confirm Transfer Ownership</td>
+                <td>
+                    <strong>Milton</strong> Confirm Transfer Ownership
+                </td>
                 <td>
                     {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractForm
@@ -378,8 +386,41 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
             </tr>
+
             <tr>
-                <td>Milton Storage Transfer Ownership</td>
+                <td>
+                    <strong>Milton Storage</strong> Pause
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageUsdt" method="pause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageUsdc" method="pause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageDai" method="pause" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <strong>Milton Storage</strong> Unpause
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageUsdt" method="unpause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageUsdc" method="unpause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageDai" method="unpause" />
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <strong>Milton Storage</strong> Transfer Ownership
+                </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
@@ -404,7 +445,9 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
 
             <tr>
-                <td>Milton Storage Confirm Transfer Ownership</td>
+                <td>
+                    <strong>Milton Storage</strong> Confirm Transfer Ownership
+                </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}

@@ -202,5 +202,28 @@ export default ({ drizzle, drizzleState }) => (
                 <td>{drizzle.contracts.MockTestnetStrategyCompoundDai.address}</td>
             </tr>
         </table>
+
+        <hr />
+        <h5>Cockpit Data Provider</h5>
+        <div className="row">
+            <div className="col-md-6">
+                <label>Transfer Ownership</label>
+
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="CockpitDataProvider"
+                    method="transferOwnership"
+                />
+            </div>
+            <div className="col-md-6">
+                <label>Confirm Transfer Ownership</label>
+
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="CockpitDataProvider"
+                    method="confirmTransferOwnership"
+                />
+            </div>
+        </div>
     </div>
 );

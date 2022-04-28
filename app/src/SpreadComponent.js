@@ -115,6 +115,7 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
         </table>
+
         <hr />
     </div>
 );

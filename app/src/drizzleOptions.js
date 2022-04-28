@@ -15,6 +15,7 @@ import IvTokenDai from "./contracts/IvTokenDai.json";
 import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
 import CockpitDataProvider from "./contracts/CockpitDataProvider.json";
 import MiltonFacadeDataProvider from "./contracts/MiltonFacadeDataProvider.json";
+import IporOracleFacadeDataProvider from "./contracts/IporOracleFacadeDataProvider.json";
 import JosephUsdt from "./contracts/JosephUsdt.json";
 import JosephUsdc from "./contracts/JosephUsdc.json";
 import JosephDai from "./contracts/JosephDai.json";
@@ -71,6 +72,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         contracts: [
             CockpitDataProvider,
             MiltonFacadeDataProvider,
+            IporOracleFacadeDataProvider,
             MiltonStorageUsdt,
             MiltonStorageUsdc,
             MiltonStorageDai,
@@ -92,6 +94,9 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             ItfStanleyUsdc,
             ItfStanleyDai,
             TestnetFaucet,
+            MockTestnetTokenDai,
+            MockTestnetTokenUsdt,
+            MockTestnetTokenUsdc,
             MockTestnetShareTokenAaveUsdt,
             MockTestnetShareTokenAaveUsdc,
             MockTestnetShareTokenAaveDai,
@@ -118,6 +123,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         contracts: [
             CockpitDataProvider,
             MiltonFacadeDataProvider,
+            IporOracleFacadeDataProvider,
             IporOracle,
             MiltonUsdt,
             MiltonUsdc,

@@ -5,6 +5,29 @@ const { ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
     <div>
+        <hr />
+        <h5>Milton Spread Model</h5>
+        <div className="row">
+            <div className="col-md-6">
+                <label>Transfer Ownership</label>
+
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonSpreadModel"
+                    method="transferOwnership"
+                />
+            </div>
+            <div className="col-md-6">
+                <label>Confirm Transfer Ownership</label>
+
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="MiltonSpreadModel"
+                    method="confirmTransferOwnership"
+                />
+            </div>
+        </div>
+        <hr />
         <div className="row">
             <table className="table" align="center">
                 <tr>
