@@ -3,17 +3,16 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "./MockIAToken.sol";
-import "../../../../security/IporOwnable.sol";
 
-contract MockAUsdt is ERC20, MockIAToken, IporOwnable {
+contract MockAUsdt is ERC20, MockIAToken {
     //solhint-disable no-empty-blocks
     constructor() ERC20("aUsdt", "aUsdt") {}
 
-    function burn(address user, uint256 amount) external onlyOwner {
+    function burn(address user, uint256 amount) external {
         _burn(user, amount);
     }
 
-    function mint(address account, uint256 amount) external onlyOwner {
+    function mint(address account, uint256 amount) external {
         _mint(account, amount);
     }
 

@@ -333,51 +333,6 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
         </table>
-        <hr />
-        <h5>Milton Facade Data Provider</h5>
-        <div className="row">
-            <div className="col-md-6">
-                <label>Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonFacadeDataProvider"
-                    method="transferOwnership"
-                />
-            </div>
-            <div className="col-md-6">
-                <label>Confirm Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="MiltonFacadeDataProvider"
-                    method="confirmTransferOwnership"
-                />
-            </div>
-        </div>
-
-        <hr />
-        <h5>Ipor Oracle Facade Data Provider</h5>
-        <div className="row">
-            <div className="col-md-6">
-                <label>Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporOracleFacadeDataProvider"
-                    method="transferOwnership"
-                />
-            </div>
-            <div className="col-md-6">
-                <label>Confirm Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="IporOracleFacadeDataProvider"
-                    method="confirmTransferOwnership"
-                />
-            </div>
-        </div>
 
         <hr />
         <h5>Frontend Configuration</h5>

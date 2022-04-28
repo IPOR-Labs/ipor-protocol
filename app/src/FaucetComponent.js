@@ -170,114 +170,14 @@ export default ({ drizzle, drizzleState }) => (
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="transfer" />
             </div>
             <div className="col-md-4">
-                <small>Claim stable</small>
+                <strong>Claim all stables at once (USDT, USDC, DAI)</strong>
                 <br />
                 <label>First time $50 000 USD</label>
                 <br />
                 <small>Next $10 000 USD</small>
                 <br />
                 <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
-                <ContractForm drizzle={drizzle} contract="TestnetFaucet" method="claim" />
             </div>
         </div>
-
-        <hr />
-        <h5>Testnet Faucet</h5>
-        <div className="row">
-            <div className="col-md-6">
-                <label>Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="TestnetFaucet"
-                    method="transferOwnership"
-                />
-            </div>
-            <div className="col-md-6">
-                <label>Confirm Transfer Ownership</label>
-
-                <ContractForm
-                    drizzle={drizzle}
-                    contract="TestnetFaucet"
-                    method="confirmTransferOwnership"
-                />
-            </div>
-        </div>
-
-        <hr />
-        <h5>Mocked Testnet Stable</h5>
-        <table className="table" align="center">
-            <tr>
-                <th scope="col">Action</th>
-                <th scope="col">USDT</th>
-                <th scope="col">USDC</th>
-                <th scope="col">DAI</th>
-            </tr>
-
-            <tr>
-                <td>
-                    <strong>Transfer Ownership</strong>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenUsdt"
-                            method="transferOwnership"
-                        />
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenUsdc"
-                            method="transferOwnership"
-                        />
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenDai"
-                            method="transferOwnership"
-                        />
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <strong>Confirm Transfer Ownership</strong>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    </div>
-                </td>
-                <td>
-                    <div>
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MockTestnetTokenDai"
-                            method="confirmTransferOwnership"
-                        />
-                    </div>
-                </td>
-            </tr>
-        </table>
     </div>
 );

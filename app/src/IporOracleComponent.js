@@ -54,61 +54,6 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </p>
             <hr />
-        </div>
-        <div className="row">
-            <div className="col-md-3">
-                <label>Pause</label>
-
-                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="pause" />
-                ) : (
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="pause" />
-                )}
-            </div>
-            <div className="col-md-3">
-                <label>Unpause</label>
-
-                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="unpause" />
-                ) : (
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="unpause" />
-                )}
-            </div>
-            <div className="col-md-3">
-                <label>Transfer Ownership</label>
-
-                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfIporOracle"
-                        method="transferOwnership"
-                    />
-                ) : (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="IporOracle"
-                        method="transferOwnership"
-                    />
-                )}
-            </div>
-
-            <div className="col-md-3">
-                <label>Confirm Transfer Ownership</label>
-
-                {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfIporOracle"
-                        method="confirmTransferOwnership"
-                    />
-                ) : (
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="IporOracle"
-                        method="confirmTransferOwnership"
-                    />
-                )}
-            </div>
-        </div>
+        </div>        
     </div>
 );
