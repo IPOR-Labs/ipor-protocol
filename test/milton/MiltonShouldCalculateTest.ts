@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
 import {
     ZERO,
     N0__01_18DEC,
@@ -21,12 +20,13 @@ import {
 } from "../utils/Constants";
 import {
     MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    prepareMockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
     testCaseWhenMiltonEarnAndUserLost,
     testCaseWhenMiltonLostAndUserEarn,
-    prepareMockSpreadModel,
 } from "../utils/MiltonUtils";
 import { openSwapPayFixed } from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
@@ -43,7 +43,7 @@ import {
 const { expect } = chai;
 
 describe("Milton should calculate income - Core", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -52,16 +52,10 @@ describe("Milton should calculate income - Core", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(
-            BigNumber.from(4).mul(N0__01_18DEC),
-            BigNumber.from("2").mul(N0__01_18DEC),
-            ZERO,
-            ZERO
-        );
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate income fee, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -124,7 +118,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 5%, Milton loses, user earns, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -188,7 +181,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 5%, Milton earns, user loses, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -250,7 +242,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 5%, Milton earns, user loses, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -311,7 +302,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 100%, Milton loses, user earns, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -372,7 +362,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 100%, Milton loses, user earns, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -435,7 +424,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -497,7 +485,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -559,7 +546,6 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),

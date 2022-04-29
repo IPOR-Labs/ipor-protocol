@@ -1,21 +1,30 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
 import {
     N1__0_18DEC,
-    N0__01_18DEC,
     ZERO,
+    PERCENTAGE_2_5_18DEC,
     PERCENTAGE_3_18DEC,
     PERCENTAGE_4_5_18DEC,
     PERCENTAGE_5_18DEC,
+    PERCENTAGE_5_2222_18DEC,
+    PERCENTAGE_6_18DEC,
+    PERCENTAGE_120_18DEC,
+    PERCENTAGE_150_18DEC,
     PERCENTAGE_8_18DEC,
     PERCENTAGE_50_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
+    PERIOD_50_DAYS_IN_SECONDS,
     PERIOD_56_DAYS_IN_SECONDS,
+    PERIOD_60_DAYS_IN_SECONDS,
 } from "../utils/Constants";
-import { prepareMockSpreadModel } from "../utils/MiltonUtils";
+import {
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    prepareMockMiltonSpreadModel,
+} from "../utils/MiltonUtils";
 import {
     prepareComplexTestDataDaiCase000,
     getStandardDerivativeParamsDAI,
@@ -26,7 +35,7 @@ import { assertError } from "../utils/AssertUtils";
 const { expect } = chai;
 
 describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -35,12 +44,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -95,7 +103,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -157,7 +164,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -217,7 +223,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("7").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -275,7 +280,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -351,7 +355,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should NOT calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("49").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -425,7 +428,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("51").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -500,7 +502,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -575,7 +576,6 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     it("[!!!] should calculate Exchange Rate, position values and SOAP when 2 swaps closed after 60 days, Pay Fixed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

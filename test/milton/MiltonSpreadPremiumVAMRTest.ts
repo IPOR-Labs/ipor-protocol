@@ -22,7 +22,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate spread - Volatility And Mean Reversion - Pay Fixed - Simple Case 1", async () => {

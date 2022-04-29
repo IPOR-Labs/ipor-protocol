@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
 import {
     ZERO,
     N0__001_18DEC,
@@ -19,7 +18,7 @@ import {
 import {
     MockMiltonSpreadModel,
     MiltonSpreadModels,
-    prepareMockSpreadModel,
+    prepareMockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -44,7 +43,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("MiltonSpreadModel - Pay Fixed", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -53,7 +52,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -174,7 +173,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Base Case 1, Spread negative", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("130041797900449030"));
         const miltonSpread = await prepareMiltonSpreadBase();
 
         const soap = BigNumber.from("500").mul(N1__0_18DEC);

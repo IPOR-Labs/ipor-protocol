@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
 import {
     PERCENTAGE_3_18DEC,
     USD_28_000_18DEC,
@@ -13,7 +12,11 @@ import {
     PERCENTAGE_160_18DEC,
     PERCENTAGE_5_18DEC,
 } from "../utils/Constants";
-import { prepareMockSpreadModel } from "../utils/MiltonUtils";
+import {
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    prepareMockMiltonSpreadModel,
+} from "../utils/MiltonUtils";
 import {
     prepareComplexTestDataDaiCase000,
     getPayFixedDerivativeParamsDAICase1,
@@ -26,7 +29,7 @@ import {
 const { expect } = chai;
 
 describe("Milton Events", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -35,12 +38,11 @@ describe("Milton Events", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should emit event when open Pay Fixed Swap - 18 decimals", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(4).mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -102,7 +104,6 @@ describe("Milton Events", () => {
 
     it("should emit event when open Receive Fixed Swap - 18 decimals", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -163,7 +164,6 @@ describe("Milton Events", () => {
 
     it("should emit event when open Pay Fixed Swap - 6 decimals", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from(2).mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataUsdtCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -284,7 +284,6 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 18 decimals", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -340,7 +339,6 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 6 decimals - taker closed swap", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataUsdtCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -395,7 +393,6 @@ describe("Milton Events", () => {
 
     it("should emit event when close Pay Fixed Swap - 6 decimals - NOT taker closed swap", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataUsdtCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

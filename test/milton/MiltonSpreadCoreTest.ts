@@ -21,7 +21,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate Adjusted Utilization Rate - simple case 1", async () => {

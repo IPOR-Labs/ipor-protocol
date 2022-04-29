@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
 import {
     N1__0_18DEC,
     ZERO,
@@ -10,13 +9,14 @@ import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     PERCENTAGE_3_18DEC,
     N1__0_6DEC,
-    N0__01_18DEC,
 } from "../utils/Constants";
 import {
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockSpreadModel,
+    prepareMockMiltonSpreadModel,
 } from "../utils/MiltonUtils";
 import {
     prepareTestData,
@@ -32,7 +32,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -41,12 +41,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(
-            BigNumber.from(4).mul(N0__01_18DEC),
-            ZERO,
-            ZERO,
-            ZERO
-        );
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should calculate Exchange Rate when Liquidity Pool Balance and ipToken Total Supply is zero", async () => {

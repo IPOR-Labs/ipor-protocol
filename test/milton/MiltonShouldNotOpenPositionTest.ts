@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { ItfIporOracle, MockCase8MiltonDai, MockSpreadModel } from "../../types";
+import { ItfIporOracle, MockCase8MiltonDai } from "../../types";
 import {
     N1__0_18DEC,
     N0__01_18DEC,
@@ -24,7 +24,7 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockSpreadModel,
+    prepareMockMiltonSpreadModel,
 } from "../utils/MiltonUtils";
 import { openSwapPayFixed } from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
@@ -43,7 +43,7 @@ import { assertError } from "../utils/AssertUtils";
 const { expect } = chai;
 
 describe("Milton - Should Not Open Position", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -52,12 +52,7 @@ describe("Milton - Should Not Open Position", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(
-            BigNumber.from("4").mul(N0__01_18DEC),
-            BigNumber.from("2").mul(N0__01_18DEC),
-            ZERO,
-            ZERO
-        );
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     it("should NOT open position because totalAmount amount too low", async () => {
@@ -381,7 +376,6 @@ describe("Milton - Should Not Open Position", () => {
 
     it("should NOT open position because Liquidity Pool balance is to low", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

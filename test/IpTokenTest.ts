@@ -1,13 +1,15 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { IpToken, DaiMockedToken, MockSpreadModel } from "../types";
+import { IpToken, DaiMockedToken } from "../types";
 import { PERCENTAGE_3_18DEC, TC_TOTAL_AMOUNT_10_000_18DEC, ZERO } from "./utils/Constants";
 
 import { assertError } from "./utils/AssertUtils";
 import { prepareTestData } from "./utils/DataUtils";
 import {
-    prepareMockSpreadModel,
+    prepareMockMiltonSpreadModel,
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -28,11 +30,11 @@ describe("IpToken", () => {
         userTwo: Signer,
         userThree: Signer,
         liquidityProvider: Signer;
-    let miltonSpreadModel: MockSpreadModel; //data
+    let miltonSpreadModel: MockMiltonSpreadModel; //data
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     const preperateIpTokenCase010 = async (): Promise<{
@@ -41,10 +43,9 @@ describe("IpToken", () => {
         tokenDai: DaiMockedToken;
     }> => {
         const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
+			BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_3_18DEC],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE0,
             MiltonUsdtCase.CASE0,
@@ -67,10 +68,9 @@ describe("IpToken", () => {
         josephDai: JosephDaiMocks;
     }> => {
         const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
+			BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_3_18DEC],
+            ["DAI"],[PERCENTAGE_3_18DEC],
             miltonSpreadModel,
             MiltonUsdcCase.CASE1,
             MiltonUsdtCase.CASE1,

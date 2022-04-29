@@ -1,6 +1,6 @@
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
-import { UsdcMockedToken, UsdtMockedToken, DaiMockedToken, MockSpreadModel } from "../../types";
+import { UsdcMockedToken, UsdtMockedToken, DaiMockedToken } from "../../types";
 import { assertError } from "./AssertUtils";
 import {
     TestData,
@@ -48,7 +48,7 @@ export const testCasePaginationPayFixed = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     // given
     const { miltonStorageUsdt } = await preparePayFixedState(
@@ -90,7 +90,7 @@ export const testCasePaginationReceiveFixed = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     // given
     const { miltonStorageUsdt } = await prepareReceiveFixedState(
@@ -133,7 +133,7 @@ export const testCaseIdsPaginationPayFixed = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     // given
     const { miltonStorageUsdt } = await preparePayFixedState(
@@ -175,7 +175,7 @@ export const testCaseIdsPaginationReceiveFixed = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     // given
     const { miltonStorageUsdt } = await prepareReceiveFixedState(
@@ -218,7 +218,7 @@ export const testCaseIdsPagination = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ) => {
     // given
     const { miltonStorageUsdt } = await prepareState(
@@ -375,11 +375,10 @@ export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer
 const preparePayFixedState = async (
     users: Signer[],
     numberOfSwapsToCreate: BigNumber,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
-        BigNumber.from(Math.floor(Date.now() / 1000)),
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT"],
         [PERCENTAGE_5_18DEC],
@@ -438,11 +437,10 @@ const preparePayFixedState = async (
 const prepareReceiveFixedState = async (
     users: Signer[],
     numberOfSwapsToCreate: BigNumber,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
-        BigNumber.from(Math.floor(Date.now() / 1000)),
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
         [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
@@ -502,11 +500,10 @@ const prepareState = async (
     users: Signer[],
     numberOfPayFixedSwapsToCreate: BigNumber,
     numberOfReceiveFixedSwapsToCreate: BigNumber,
-    miltonSpreadModel: MockSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel
 ): Promise<TestData> => {
     const [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] = users;
-    const testData = await prepareTestData(
-        BigNumber.from(Math.floor(Date.now() / 1000)),
+    const testData = await prepareTestData(BigNumber.from(Math.floor(Date.now() / 1000)),
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
         ["USDT", "USDC", "DAI"],
         [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],

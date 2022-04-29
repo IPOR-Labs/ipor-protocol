@@ -1,7 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../types";
 import {
     N0__01_18DEC,
     PERCENTAGE_3_18DEC,
@@ -21,10 +20,13 @@ import {
     PERCENTAGE_50_6DEC,
     PERIOD_1_DAY_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
+    N0__1_18DEC,
     ZERO,
 } from "./utils/Constants";
 import {
-    prepareMockSpreadModel,
+    MockMiltonSpreadModel,
+    MiltonSpreadModels,
+    prepareMockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -39,7 +41,7 @@ import { ItfIporOracle, DaiMockedToken, UsdtMockedToken, UsdcMockedToken } from 
 const { expect } = chai;
 
 describe("IporOracle", () => {
-    let miltonSpreadModel: MockSpreadModel;
+    let miltonSpreadModel: MockMiltonSpreadModel;
     let testData: TestData;
     let _iporOracle: ItfIporOracle;
     let _tokenDai: DaiMockedToken;
@@ -53,12 +55,7 @@ describe("IporOracle", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = (await prepareMockSpreadModel(
-            ZERO,
-            ZERO,
-            ZERO,
-            ZERO
-        )) as MockSpreadModel;
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
     });
 
     beforeEach(async () => {
