@@ -2,6 +2,9 @@ name: Deploy cockpit
 
 on:
   workflow_dispatch:
+    branches:
+      - develop
+      - main
     inputs:
       cockpit-app-name:
         description: 'IPOR cockpit Amplify application name'

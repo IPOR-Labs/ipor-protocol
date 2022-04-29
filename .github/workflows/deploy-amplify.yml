@@ -35,6 +35,11 @@ jobs:
       group: deploy-on-amplify-${{ inputs.app-name }}-branch-${{ inputs.branch }}
     steps:
 
+      - name: Checkout
+        if: "${{ github.event.head_commit.message == '' || github.event.head_commit.timestamp == '' }}"
+        # from tag: v3.0.0
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+
       - name: Set up AWS credentials
         # from tag: v1.6.1
         uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
@@ -52,6 +57,10 @@ jobs:
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
           COMMIT_TIME: ${{ github.event.head_commit.timestamp }}
         run: |
+
+          COMMIT_MESSAGE="${COMMIT_MESSAGE:-$(git log -1 --pretty=format:"%s")}"
+          COMMIT_TIME="${COMMIT_TIME:-$(git show -s --format=%ct)}"
+
           echo "Deploy app: ${APP_NAME} from branch: ${BRANCH}"
           APP_ID=$(aws amplify list-apps --query "apps[?name==\`${APP_NAME}\`].appId" --output text ${EXTRA_ARGS})
           echo "App id: ${APP_ID}"
