@@ -1,14 +1,20 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { N1__0_18DEC, PERCENTAGE_3_18DEC, N1__0_6DEC, N0__000_1_18DEC } from "../utils/Constants";
+import { MockSpreadModel } from "../../types";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
+    N1__0_18DEC,
+    PERCENTAGE_3_18DEC,
+    N1__0_6DEC,
+    N0__000_1_18DEC,
+    ZERO,
+    N0__01_18DEC,
+} from "../utils/Constants";
+import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
 } from "../utils/MiltonUtils";
 import {
     prepareTestData,
@@ -24,7 +30,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -33,7 +39,12 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(
+            BigNumber.from(4).mul(N0__01_18DEC),
+            ZERO,
+            ZERO,
+            ZERO
+        );
     });
 
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity, DAI 18 decimals", async () => {

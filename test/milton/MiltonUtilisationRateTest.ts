@@ -1,11 +1,14 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { MockSpreadModel } from "../../types";
 import {
     USD_28_000_18DEC,
     PERCENTAGE_3_18DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
     USD_14_000_18DEC,
+    ZERO,
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
@@ -14,7 +17,7 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
 } from "../utils/MiltonUtils";
 import {
     prepareTestData,
@@ -29,7 +32,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("Milton Utilisation Rate", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -38,11 +41,12 @@ describe("Milton Utilisation Rate", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -97,6 +101,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -152,6 +157,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -207,6 +213,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { MockSpreadModel } from "../../types";
 import {
     N1__0_18DEC,
     N0__001_18DEC,
@@ -23,7 +24,7 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
     prepareMiltonSpreadBase,
     prepareMiltonSpreadCase6,
     prepareMiltonSpreadCase8,
@@ -45,7 +46,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("MiltonSpreadRecFixed", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -54,13 +55,14 @@ describe("MiltonSpreadRecFixed", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premium < Spread Premium Max Value, Base Case 1, Spread negative", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
 
+        // const miltonSpread = await prepareMiltonSpreadBase();
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("37").mul(N0__001_18DEC));
         const soap = BigNumber.from("500").mul(N1__0_18DEC);
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -87,7 +89,7 @@ describe("MiltonSpreadRecFixed", () => {
 
         //when
         let actualQuotedValue = BigNumber.from(
-            await miltonSpread
+            await miltonSpreadModel
                 .connect(userOne)
                 .callStatic.calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
         );
@@ -756,43 +758,10 @@ describe("MiltonSpreadRecFixed", () => {
         ).to.be.eq(expectedSpreadValue);
     });
 
-    it("should NOT calculate Spread Premiums Rec Fixed - Liquidity Pool + Opening Fee = 0", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadCase6();
-
-        const liquidityPoolBalance = ZERO;
-        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
-        const swapOpeningFee = ZERO;
-
-        const totalCollateralPayFixedBalance = USD_13_000_18DEC;
-        const totalCollateralReceiveFixedBalance = BigNumber.from("1000").mul(N1__0_18DEC);
-
-        const soap = BigNumber.from("500").mul(N1__0_18DEC);
-
-        const accruedIpor = {
-            indexValue: BigNumber.from("3").mul(N0__01_18DEC),
-            ibtPrice: BigNumber.from("1").mul(N1__0_18DEC),
-            exponentialMovingAverage: BigNumber.from("4").mul(N0__01_18DEC),
-            exponentialWeightedMovingVariance: BigNumber.from("35").mul(N0__001_18DEC),
-        };
-        //when
-        await assertError(
-            //when
-            miltonSpread
-                .connect(userOne)
-                .testCalculateSpreadPremiumsRecFixed(
-                    soap,
-                    accruedIpor,
-                    liquidityPoolBalance.add(swapOpeningFee),
-                    totalCollateralPayFixedBalance,
-                    totalCollateralReceiveFixedBalance.add(swapCollateral)
-                ),
-            //then
-            "IPOR_321"
-        );
-    });
     it("should calculate Spread Receive Fixed, DAI - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
+        miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from("553406136001736"));
+        miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from("3").mul(N0__001_18DEC));
         const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const testData = await prepareTestData(
             calculateTimestamp,
@@ -834,6 +803,8 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("should calculate Spread Receive Fixed, DAI - simple case 2 - initial state with Liquidity Pool", async () => {
         //given
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from("33").mul(N0__001_18DEC));
+        await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from("127056293847751"));
         const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const testData = await prepareTestData(
             calculateTimestamp,
@@ -875,6 +846,11 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("should calculate Spread Receive Fixed, USDC - simple case 1 - initial state with Liquidity Pool", async () => {
         //given
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(ZERO);
+        await miltonSpreadModel.setCalculateQuotePayFixed(ZERO);
+
+        await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from("127056293847751"));
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from("33").mul(N0__001_18DEC));
         const calculateTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const testData = await prepareTestData(
             calculateTimestamp,
@@ -916,7 +892,10 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("should calculate Spread Receive Fixed - spread premiums higher than IPOR Index", async () => {
         //given
-        let testData = await prepareTestData(
+        await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from("553406136001736"));
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from("3").mul(N0__001_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("33").mul(N0__001_18DEC));
+        const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["USDT"],

@@ -37,6 +37,8 @@ import {
     MockCase6MiltonDai,
     MockCase8MiltonDai,
     UsdtMockedToken,
+    MockSpreadModel,
+    MiltonSpreadModel,
 } from "../../types";
 
 import { exetuceCloseSwapTestCase } from "./SwapUtils";
@@ -159,6 +161,22 @@ export const prepareMockMiltonSpreadModel = async (
 ): Promise<MockMiltonSpreadModel> => {
     const MockMiltonSpreadModel = await ethers.getContractFactory(spreadmiltonCase);
     const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockMiltonSpreadModel;
+    return miltonSpread;
+};
+
+export const prepareMockSpreadModel = async (
+    calculateQuotePayFixedValue: BigNumber,
+    calculateQuoteReceiveFixedValue: BigNumber,
+    calculateSpreadPayFixedValue: BigNumber,
+    calculateSpreadReceiveFixedVaule: BigNumber
+): Promise<MockSpreadModel> => {
+    const MockSpreadModel = await ethers.getContractFactory("MockSpreadModel");
+    const miltonSpread = (await MockSpreadModel.deploy(
+        calculateQuotePayFixedValue,
+        calculateQuoteReceiveFixedValue,
+        calculateSpreadPayFixedValue,
+        calculateSpreadReceiveFixedVaule
+    )) as MockSpreadModel;
     return miltonSpread;
 };
 

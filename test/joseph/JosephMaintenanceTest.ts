@@ -1,16 +1,21 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { JosephDai, JosephUsdc, JosephUsdt, TestERC20, IpToken } from "../../types";
-import { PERCENTAGE_3_18DEC, TC_TOTAL_AMOUNT_10_000_18DEC } from "../utils/Constants";
+import {
+    JosephDai,
+    JosephUsdc,
+    JosephUsdt,
+    TestERC20,
+    IpToken,
+    MockSpreadModel,
+} from "../../types";
+import { PERCENTAGE_3_18DEC, TC_TOTAL_AMOUNT_10_000_18DEC, ZERO } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
 } from "../utils/MiltonUtils";
 import {
     prepareTestData,
@@ -23,7 +28,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("Joseph Maintenance", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -32,7 +37,7 @@ describe("Joseph Maintenance", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {

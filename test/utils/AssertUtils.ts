@@ -1,6 +1,6 @@
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
-
+import { MockSpreadModel } from "../../types";
 import {
     prepareTestData,
     prepareApproveForUsers,
@@ -80,7 +80,7 @@ export const testCasePagination = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockMiltonSpreadModel
+    miltonSpreadModel: MockMiltonSpreadModel | MockSpreadModel
 ) => {
     //given
     const testData = await prepareTestData(
