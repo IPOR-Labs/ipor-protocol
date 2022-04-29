@@ -920,3 +920,9 @@ contract MiltonStorage is
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }
+
+contract MiltonStorageUsdt is MiltonStorage {}
+
+contract MiltonStorageUsdc is MiltonStorage {}
+
+contract MiltonStorageDai is MiltonStorage {}
