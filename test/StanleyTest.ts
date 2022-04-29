@@ -1,13 +1,12 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { MockSpreadModel } from "../types";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
 } from "./utils/MiltonUtils";
 import { assertError } from "./utils/AssertUtils";
 import { MockStanleyCase } from "./utils/StanleyUtils";
@@ -23,11 +22,12 @@ import {
     USD_1_000_18DEC,
     USD_19_997_18DEC,
     USD_20_000_18DEC,
+    ZERO,
 } from "./utils/Constants";
 const { expect } = chai;
 
 describe("Stanley - Asset Management Vault", () => {
-    let mockMiltonSpreadModel: MockMiltonSpreadModel;
+    let mockMiltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -36,7 +36,7 @@ describe("Stanley - Asset Management Vault", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        mockMiltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        mockMiltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should rebalance - AM Vault ratio > Optimal - deposit to Vault", async () => {
