@@ -20,21 +20,36 @@ on:
         description: "Slack status message id"
         value: ${{ jobs.slack.outputs.slack-status-msg-id }}
 
+      branch-name:
+        description: "Slack status message id"
+        value: ${{ jobs.slack.outputs.branch-name }}
+
 jobs:
 
   slack:
     runs-on: ubuntu-latest
     outputs:
       slack-status-msg-id: ${{ steps.slack-status.outputs.message_id }}
+      branch-name: ${{ steps.branch.outputs.branch-name }}
     steps:
 
-      - name: Slack status start
-        id: slack-status
-        # from tag: v1.5.0-ipor-v2
-        uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
-        with:
-          channel: ${{ inputs.status-slack-channel-name }}
-          status: STARTING
-          color: warning
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    - name: Get branch
+      id: branch
+      shell: bash
+      run: |
+        if [ ${{ github.event_name }} = "pull_request" ]; then
+          echo "::set-output name=branch-name::${GITHUB_HEAD_REF}"
+        else
+          echo "::set-output name=branch-name::${GITHUB_REF#refs/heads/}"
+        fi
+
+    - name: Slack status start
+      id: slack-status
+      # from tag: v1.5.0-ipor-v2
+      uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+      with:
+        channel: ${{ inputs.status-slack-channel-name }}
+        status: STARTING
+        color: warning
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
