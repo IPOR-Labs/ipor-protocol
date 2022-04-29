@@ -59,28 +59,28 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
         _burn(account, amount);
         emit Burn(account, amount);
     }
+}
 
-	contract IpTokenUsdt is IpToken {
-		constructor(
-			string memory name,
-			string memory symbol,
-			address asset
-		) IpToken(name, symbol, asset) {}
-	}
-	
-	contract IpTokenUsdc is IpToken {
-		constructor(
-			string memory name,
-			string memory symbol,
-			address asset
-		) IpToken(name, symbol, asset) {}
-	}
-	
-	contract IpTokenDai is IpToken {
-		constructor(
-			string memory name,
-			string memory symbol,
-			address asset
-		) IpToken(name, symbol, asset) {}
-	}
+contract IpTokenUsdt is IpToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
+}
+
+contract IpTokenUsdc is IpToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
+}
+
+contract IpTokenDai is IpToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IpToken(name, symbol, asset) {}
 }
