@@ -4,9 +4,9 @@ const func = require("../../../json_func.js");
 
 const TestnetFaucet = artifacts.require("TestnetFaucet");
 
-const UsdtMockedToken = artifacts.require("UsdtMockedToken");
-const UsdcMockedToken = artifacts.require("UsdcMockedToken");
-const DaiMockedToken = artifacts.require("DaiMockedToken");
+const MockTestnetTokenUsdt = artifacts.require("MockTestnetTokenUsdt");
+const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
+const MockTestnetTokenDai = artifacts.require("MockTestnetTokenDai");
 
 module.exports = async function (deployer, _network, addresses) {
     const [admin, iporIndexAdmin, _] = addresses;
@@ -19,9 +19,9 @@ module.exports = async function (deployer, _network, addresses) {
 
     const testnetFaucetInstance = await TestnetFaucet.at(testnetFaucet);
 
-    const usdtInstance = await UsdtMockedToken.at(usdt);
-    const usdcInstance = await UsdcMockedToken.at(usdc);
-    const daiInstance = await DaiMockedToken.at(dai);
+    const usdtInstance = await MockTestnetTokenUsdt.at(usdt);
+    const usdcInstance = await MockTestnetTokenUsdc.at(usdc);
+    const daiInstance = await MockTestnetTokenDai.at(dai);
 
     await testnetFaucetInstance.sendTransaction({
         from: admin,
