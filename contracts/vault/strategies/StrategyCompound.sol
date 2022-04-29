@@ -138,3 +138,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         emit BlocksPerYearChanged(_msgSender(), oldBlocksPerYear, newBlocksPerYear);
     }
 }
+
+contract StrategyCompoundUsdt is StrategyCompound {}
+
+contract StrategyCompoundUsdc is StrategyCompound {}
+
+contract StrategyCompoundDai is StrategyCompound {}

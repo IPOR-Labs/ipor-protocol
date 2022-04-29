@@ -13,17 +13,17 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">
                     USDT
                     <br />
-                    <small>{drizzle.contracts.UsdtMockedToken.address}</small>
+                    <small>{drizzle.contracts.MockTestnetTokenUsdt.address}</small>
                 </th>
                 <th scope="col">
                     USDC
                     <br />
-                    <small>{drizzle.contracts.UsdcMockedToken.address}</small>
+                    <small>{drizzle.contracts.MockTestnetTokenUsdc.address}</small>
                 </th>
                 <th scope="col">
                     DAI
                     <br />
-                    <small>{drizzle.contracts.DaiMockedToken.address}</small>
+                    <small>{drizzle.contracts.MockTestnetTokenDai.address}</small>
                 </th>
             </tr>
             <tr>
@@ -34,7 +34,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
@@ -50,7 +50,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
@@ -66,7 +66,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
@@ -85,7 +85,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalPayFixed / 1000000000000000000}
@@ -101,7 +101,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalPayFixed / 1000000000000000000}
@@ -117,7 +117,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalPayFixed / 1000000000000000000}
@@ -136,7 +136,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalReceiveFixed / 1000000000000000000}
@@ -152,7 +152,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalReceiveFixed / 1000000000000000000}
@@ -168,7 +168,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalReceiveFixed / 1000000000000000000}
@@ -187,7 +187,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
@@ -203,7 +203,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
@@ -219,7 +219,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
@@ -238,7 +238,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
@@ -254,7 +254,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
@@ -270,7 +270,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
@@ -289,7 +289,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
-                        methodArgs={[drizzle.contracts.UsdtMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -305,7 +305,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
-                        methodArgs={[drizzle.contracts.UsdcMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -321,7 +321,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="MiltonFacadeDataProvider"
                         method="getIpTokenExchangeRate"
-                        methodArgs={[drizzle.contracts.DaiMockedToken.address]}
+                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
                         render={(value) => (
                             <div>
                                 {value / 1000000000000000000}
@@ -333,6 +333,7 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
         </table>
+
         <hr />
         <h5>Frontend Configuration</h5>
         <ContractData
@@ -349,7 +350,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFacadeDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address, 0, 50]}
             render={FrontendPositions}
         />
         <h5>My Positions - USDC</h5>
@@ -358,7 +359,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFacadeDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address, 0, 50]}
             render={FrontendPositions}
         />
         <h5>My Positions - DAI</h5>
@@ -367,7 +368,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="MiltonFacadeDataProvider"
             method="getMySwaps"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenDai.address, 0, 50]}
             render={FrontendPositions}
         />
     </div>

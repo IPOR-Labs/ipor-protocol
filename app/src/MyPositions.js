@@ -12,7 +12,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Pay Fixed USDC</h5>
@@ -21,7 +21,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Pay Fixed DAI</h5>
@@ -30,7 +30,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsPayFixed"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenDai.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed USDT</h5>
@@ -39,7 +39,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.UsdtMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed USDC</h5>
@@ -48,7 +48,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.UsdcMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address, 0, 50]}
             render={DerivativeList}
         />
         <h5>Swaps Receive Fixed DAI</h5>
@@ -57,7 +57,7 @@ export default ({ drizzle, drizzleState }) => (
             drizzleState={drizzleState}
             contract="CockpitDataProvider"
             method="getMySwapsReceiveFixed"
-            methodArgs={[drizzle.contracts.DaiMockedToken.address, 0, 50]}
+            methodArgs={[drizzle.contracts.MockTestnetTokenDai.address, 0, 50]}
             render={DerivativeList}
         />
         <br />

@@ -13,7 +13,7 @@ import "../../libraries/math/IporMath.sol";
 import "../../libraries/Constants.sol";
 
 // simple mock for total _balance tests
-contract MockStrategyTestnet is StrategyCore {
+contract MockTestnetStrategy is StrategyCore {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     // in wad

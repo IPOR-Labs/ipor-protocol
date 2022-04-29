@@ -1,7 +1,14 @@
 import hre from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
-import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, MockStrategyTestnet } from "../../types";
+import {
+    UsdtMockedToken,
+    DaiMockedToken,
+    UsdcMockedToken,
+    MockTestnetStrategyAaveDai,
+    MockTestnetStrategyAaveUsdt,
+    MockTestnetStrategyAaveUsdc,
+} from "../../types";
 import {
     N1__0_18DEC,
     N1__0_6DEC,
@@ -15,14 +22,14 @@ import {
 
 const { expect } = chai;
 
-describe("MockStrategyTestnet", () => {
+describe("MockStrategyTestnet Aave / Compound", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer, userThree: Signer;
     let tokenDai: DaiMockedToken;
     let tokenUsdt: UsdtMockedToken;
     let tokenUsdc: UsdcMockedToken;
-    let strategyDai: MockStrategyTestnet;
-    let strategyUsdc: MockStrategyTestnet;
-    let strategyUsdt: MockStrategyTestnet;
+    let strategyDai: MockTestnetStrategyAaveDai;
+    let strategyUsdc: MockTestnetStrategyAaveUsdc;
+    let strategyUsdt: MockTestnetStrategyAaveUsdt;
     const N100_000 = BigNumber.from("100000");
     const N10_000 = BigNumber.from("10000");
     const yearInSeconds = 31536000;
@@ -49,7 +56,7 @@ describe("MockStrategyTestnet", () => {
         )) as UsdcMockedToken;
 
         const MockStrategyTestnetFactory = await hre.ethers.getContractFactory(
-            "MockStrategyTestnet"
+            "MockTestnetStrategyAaveDai"
         );
         strategyDai = await upgrades.deployProxy(MockStrategyTestnetFactory, [
             tokenDai.address,

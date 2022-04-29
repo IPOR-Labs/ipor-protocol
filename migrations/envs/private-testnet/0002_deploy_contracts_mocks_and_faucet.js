@@ -1,54 +1,47 @@
-const script = require("../../libs/mocks/0001_deploy_mocks_and_faucet.js");
+const { exit } = require("process");
 const func = require("../../libs/json_func.js");
+const script = require("../../libs/mocks/0001_deploy_mocks_and_faucet.js");
+
 const TestnetFaucet = artifacts.require("TestnetFaucet");
 
-const UsdtMockedToken = artifacts.require("UsdtMockedToken");
-const UsdcMockedToken = artifacts.require("UsdcMockedToken");
-const DaiMockedToken = artifacts.require("DaiMockedToken");
+const MockTestnetTokenUsdt = artifacts.require("MockTestnetTokenUsdt");
+const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
+const MockTestnetTokenDai = artifacts.require("MockTestnetTokenDai");
 
-const MockAUsdc = artifacts.require("MockAUsdc");
-const MockAUsdt = artifacts.require("MockAUsdt");
-const MockADai = artifacts.require("MockADai");
+const MockTestnetShareTokenAaveUsdt = artifacts.require("MockTestnetShareTokenAaveUsdt");
+const MockTestnetShareTokenAaveUsdc = artifacts.require("MockTestnetShareTokenAaveUsdc");
+const MockTestnetShareTokenAaveDai = artifacts.require("MockTestnetShareTokenAaveDai");
 
-const MockLendingPoolAave = artifacts.require("MockLendingPoolAave");
-const MockProviderAave = artifacts.require("MockProviderAave");
-const MockStakedAave = artifacts.require("MockStakedAave");
-const AAVEMockedToken = artifacts.require("AAVEMockedToken");
-const MockAaveIncentivesController = artifacts.require("MockAaveIncentivesController");
-const MockWhitePaper = artifacts.require("MockWhitePaper");
-const MockedCOMPToken = artifacts.require("MockedCOMPToken");
-const MockComptroller = artifacts.require("MockComptroller");
-const MockCDai = artifacts.require("MockCDai");
-const MockCUSDT = artifacts.require("MockCUSDT");
-const MockCUSDC = artifacts.require("MockCUSDC");
+const MockTestnetShareTokenCompoundUsdt = artifacts.require("MockTestnetShareTokenCompoundUsdt");
+const MockTestnetShareTokenCompoundUsdc = artifacts.require("MockTestnetShareTokenCompoundUsdc");
+const MockTestnetShareTokenCompoundDai = artifacts.require("MockTestnetShareTokenCompoundDai");
 
-const MockStrategyTestnetUsdt = artifacts.require("MockStrategyTestnetUsdt");
-const MockStrategyTestnetUsdc = artifacts.require("MockStrategyTestnetUsdc");
-const MockStrategyTestnetDai = artifacts.require("MockStrategyTestnetDai");
+const MockTestnetStrategyAaveUsdt = artifacts.require("MockTestnetStrategyAaveUsdt");
+const MockTestnetStrategyAaveUsdc = artifacts.require("MockTestnetStrategyAaveUsdc");
+const MockTestnetStrategyAaveDai = artifacts.require("MockTestnetStrategyAaveDai");
+
+const MockTestnetStrategyCompoundUsdt = artifacts.require("MockTestnetStrategyCompoundUsdt");
+const MockTestnetStrategyCompoundUsdc = artifacts.require("MockTestnetStrategyCompoundUsdc");
+const MockTestnetStrategyCompoundDai = artifacts.require("MockTestnetStrategyCompoundDai");
 
 module.exports = async function (deployer, _network, addresses) {
     await script(deployer, _network, addresses, [
         TestnetFaucet,
-        UsdtMockedToken,
-        UsdcMockedToken,
-        DaiMockedToken,
-        MockAUsdc,
-        MockAUsdt,
-        MockADai,
-        MockLendingPoolAave,
-        MockProviderAave,
-        MockStakedAave,
-        AAVEMockedToken,
-        MockAaveIncentivesController,
-        MockWhitePaper,
-        MockedCOMPToken,
-        MockComptroller,
-        MockCDai,
-        MockCUSDT,
-        MockCUSDC,
-		MockStrategyTestnetUsdt,
-		MockStrategyTestnetUsdc,
-		MockStrategyTestnetDai
+        MockTestnetTokenUsdt,
+        MockTestnetTokenUsdc,
+        MockTestnetTokenDai,
+        MockTestnetShareTokenAaveUsdt,
+        MockTestnetShareTokenAaveUsdc,
+        MockTestnetShareTokenAaveDai,
+        MockTestnetShareTokenCompoundUsdt,
+        MockTestnetShareTokenCompoundUsdc,
+        MockTestnetShareTokenCompoundDai,
+        MockTestnetStrategyAaveUsdt,
+        MockTestnetStrategyAaveUsdc,
+        MockTestnetStrategyAaveDai,
+        MockTestnetStrategyCompoundUsdt,
+        MockTestnetStrategyCompoundUsdc,
+        MockTestnetStrategyCompoundDai,
     ]);
-	await func.updateLastCompletedMigration();
+    await func.updateLastCompletedMigration();
 };
