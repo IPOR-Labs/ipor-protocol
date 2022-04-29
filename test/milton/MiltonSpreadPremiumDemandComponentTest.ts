@@ -1,14 +1,18 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { assertError } from "../utils/AssertUtils";
 import {
     N1__0_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     N0__1_18DEC,
+    N0__01_18DEC,
+    N0__001_18DEC,
     USD_1_000_18DEC,
     USD_2_000_18DEC,
     USD_14_000_18DEC,
     USD_20_18DEC,
+    USD_13_000_18DEC,
     ZERO,
 } from "../utils/Constants";
 import {
@@ -19,6 +23,7 @@ import {
     prepareMiltonSpreadCase3,
     prepareMiltonSpreadCase4,
     prepareMiltonSpreadCase5,
+    prepareMiltonSpreadCase6,
 } from "../utils/MiltonUtils";
 
 const { expect } = chai;
@@ -35,7 +40,43 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+    });
+
+    it("should NOT calculate Spread Premiums Rec Fixed - Liquidity Pool + Opening Fee = 0", async () => {
+        //given
+        const miltonSpread = await prepareMiltonSpreadCase6();
+
+        const liquidityPoolBalance = ZERO;
+        const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
+        const swapOpeningFee = ZERO;
+
+        const totalCollateralPayFixedBalance = USD_13_000_18DEC;
+        const totalCollateralReceiveFixedBalance = BigNumber.from("1000").mul(N1__0_18DEC);
+
+        const soap = BigNumber.from("500").mul(N1__0_18DEC);
+
+        const accruedIpor = {
+            indexValue: BigNumber.from("3").mul(N0__01_18DEC),
+            ibtPrice: BigNumber.from("1").mul(N1__0_18DEC),
+            exponentialMovingAverage: BigNumber.from("4").mul(N0__01_18DEC),
+            exponentialWeightedMovingVariance: BigNumber.from("35").mul(N0__001_18DEC),
+        };
+        //when
+        await assertError(
+            //when
+            miltonSpread
+                .connect(userOne)
+                .testCalculateSpreadPremiumsRecFixed(
+                    soap,
+                    accruedIpor,
+                    liquidityPoolBalance.add(swapOpeningFee),
+                    totalCollateralPayFixedBalance,
+                    totalCollateralReceiveFixedBalance.add(swapCollateral)
+                ),
+            //then
+            "IPOR_321"
+        );
     });
 
     it("should calculate spread - demand component - Pay Fixed Swap, PayFix Balance > RecFix Balance, SOAP+=0", async () => {

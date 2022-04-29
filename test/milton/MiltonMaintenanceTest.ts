@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { MockSpreadModel } from "../../types";
 import {
     N0__01_18DEC,
     PERCENTAGE_3_18DEC,
@@ -8,9 +9,7 @@ import {
     USD_50_000_18DEC,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -24,12 +23,11 @@ import {
 } from "../utils/DataUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
-import { zeroPad } from "ethers/lib/utils";
 
 const { expect } = chai;
 
 describe("Milton Maintenance", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -38,13 +36,19 @@ describe("Milton Maintenance", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(
+            BigNumber.from(4).mul(N0__01_18DEC),
+            BigNumber.from("2").mul(N0__01_18DEC),
+            BigNumber.from("1").mul(N0__01_18DEC),
+            BigNumber.from("1").mul(N0__01_18DEC)
+        );
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai } =
-            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
+            await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel,
                 PERCENTAGE_3_18DEC
@@ -84,7 +88,8 @@ describe("Milton Maintenance", () => {
     it("should pause Smart Contract specific methods", async () => {
         //given
         const { tokenDai, iporOracle, josephDai, miltonDai } =
-            await prepareComplexTestDataDaiCase000(BigNumber.from(Math.floor(Date.now() / 1000)),
+            await prepareComplexTestDataDaiCase000(
+                BigNumber.from(Math.floor(Date.now() / 1000)),
                 [admin, userOne, userTwo, userThree, liquidityProvider],
                 miltonSpreadModel,
                 PERCENTAGE_3_18DEC

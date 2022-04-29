@@ -1,6 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
+import { MockSpreadModel } from "../../types";
 import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_400_18DEC,
@@ -8,14 +9,13 @@ import {
     PERCENTAGE_3_18DEC,
     USD_14_000_6DEC,
     N1__0_18DEC,
+    N0__01_18DEC,
     N1__0_6DEC,
     ZERO,
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
-    prepareMockMiltonSpreadModel,
+    prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -37,7 +37,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 const { expect } = chai;
 
 describe("Joseph Redeem", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -46,7 +46,12 @@ describe("Joseph Redeem", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(
+            BigNumber.from(4).mul(N0__01_18DEC),
+            BigNumber.from("2").mul(N0__01_18DEC),
+            ZERO,
+            ZERO
+        );
     });
 
     it("should redeem ipToken - simple case 1 - DAI 18 decimals", async () => {

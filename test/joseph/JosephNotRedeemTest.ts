@@ -1,13 +1,10 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { PERCENTAGE_3_18DEC, N1__0_18DEC, ZERO } from "../utils/Constants";
+import { MockSpreadModel } from "../../types";
+import { PERCENTAGE_3_18DEC, N1__0_18DEC, N0__01_18DEC, ZERO } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
-import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
-    prepareMockMiltonSpreadModel,
-} from "../utils/MiltonUtils";
+import { prepareMockSpreadModel } from "../utils/MiltonUtils";
 import {
     prepareTestDataDaiCase000,
     prepareTestDataDaiCase001,
@@ -20,7 +17,7 @@ import {
 const { expect } = chai;
 
 describe("Joseph Treasury", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -29,7 +26,12 @@ describe("Joseph Treasury", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.CASE1);
+        miltonSpreadModel = await prepareMockSpreadModel(
+            BigNumber.from(4).mul(N0__01_18DEC),
+            BigNumber.from("2").mul(N0__01_18DEC),
+            ZERO,
+            ZERO
+        );
     });
 
     it("should NOT redeem - Redeem Liquidity Pool Utilization already exceeded, Pay Fixed", async () => {
