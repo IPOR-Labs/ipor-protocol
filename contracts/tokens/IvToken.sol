@@ -60,3 +60,26 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         return _decimals;
     }
 }
+contract IvTokenUsdt is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
+}
+
+contract IvTokenUsdc is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
+}
+
+contract IvTokenDai is IvToken {
+    constructor(
+        string memory name,
+        string memory symbol,
+        address asset
+    ) IvToken(name, symbol, asset) {}
+}

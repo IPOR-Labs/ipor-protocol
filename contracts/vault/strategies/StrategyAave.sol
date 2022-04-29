@@ -179,3 +179,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         emit StkAaveChanged(_msgSender(), oldStkAave, newStkAave);
     }
 }
+
+contract StrategyAaveUsdt is StrategyAave {}
+
+contract StrategyAaveUsdc is StrategyAave {}
+
+contract StrategyAaveDai is StrategyAave {}
