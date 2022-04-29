@@ -146,8 +146,7 @@
                         <!-- INFO: wildcards not working here :( -->
                         <argument>${contracts.sources}/amm/Milton.sol</argument>                        
                         <argument>${contracts.sources}/amm/spread/MiltonSpreadModel.sol</argument>
-                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                                                                               
-                        <argument>${contracts.sources}/facades/cockpit/CockpitSmartContracts.sol</argument>
+                        <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                                                                                                       
                         <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
                         <argument>${contracts.sources}/facades/MiltonFacadeDataProvider.sol</argument>                        
                         <argument>${contracts.sources}/facades/IporOracleFacadeDataProvider.sol</argument>
