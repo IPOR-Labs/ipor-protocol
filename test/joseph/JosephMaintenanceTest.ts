@@ -522,7 +522,7 @@ describe("Joseph Maintenance", () => {
         expect(await josephUsdt.getAsset()).to.be.equal(usdt.address);
     });
 
-    it.only("should return default milton Stanley Balance Ratio", async () => {
+    it("should return default milton Stanley Balance Ratio", async () => {
         //given
         const { josephDai } = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -551,7 +551,7 @@ describe("Joseph Maintenance", () => {
         expect(ratio).to.be.equal(BigNumber.from("85").mul(N0__01_18DEC));
     });
 
-    it.only("should change milton Stanley Balance Ratio", async () => {
+    it("should change milton Stanley Balance Ratio", async () => {
         //given
         const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
 
@@ -584,7 +584,7 @@ describe("Joseph Maintenance", () => {
         expect(newRatioFromContract).to.be.equal(newRatio);
     });
 
-    it.only("should not change milton Stanley Balance Ratio when new ratio = 0", async () => {
+    it("should not change milton Stanley Balance Ratio when new ratio = 0", async () => {
         //given
         const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
 
@@ -614,7 +614,7 @@ describe("Joseph Maintenance", () => {
         ).to.be.revertedWith("IPOR_409");
     });
 
-    it.only("should not change milton Stanley Balance Ratio when new ratio >= 1", async () => {
+    it("should not change milton Stanley Balance Ratio when new ratio >= 1", async () => {
         //given
         const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
 
