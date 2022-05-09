@@ -41,6 +41,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         _milton = IMiltonInternal(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
+        _miltonStanleyBalanceRatio = 85e16;
     }
 
     function calculateExchangeRate() external view override returns (uint256) {

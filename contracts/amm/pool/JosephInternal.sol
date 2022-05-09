@@ -31,7 +31,7 @@ abstract contract JosephInternal is
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
 
-    uint256 internal _miltonStanleyBalanceRatio = 85e16;
+    uint256 internal _miltonStanleyBalanceRatio;
     address internal _asset;
     IIpToken internal _ipToken;
     IMiltonInternal internal _milton;
