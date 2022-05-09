@@ -25,4 +25,6 @@ library JosephErrors {
     string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
 
     string public constant STANLEY_BALANCE_IS_EMPTY = "IPOR_408";
+
+    string public constant MILTON_STANLEY_RATIO = "IPOR_409";
 }
