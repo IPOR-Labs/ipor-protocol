@@ -10,7 +10,7 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
 
-contract TestnetFaucet is
+contract TestnetFaucetV2 is
     UUPSUpgradeable,
     IporOwnableUpgradeable,
     ReentrancyGuardUpgradeable,
@@ -46,7 +46,7 @@ contract TestnetFaucet is
     receive() external payable {}
 
     function getVersion() external pure virtual returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function claim() external override nonReentrant {
@@ -101,11 +101,7 @@ contract TestnetFaucet is
     function _transfer(address asset) internal {
         ERC20Upgradeable token = ERC20Upgradeable(asset);
         uint256 value;
-        if (_lastClaim[_msgSender()] == 0) {
-            value = 50_000 * 10**token.decimals();
-        } else {
         value = 10_000 * 10**token.decimals();
-        }
         IERC20Upgradeable(asset).safeTransfer(msg.sender, value);
         emit Claim(_msgSender(), address(asset), value);
     }
