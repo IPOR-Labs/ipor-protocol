@@ -46,7 +46,7 @@ ITestnetFaucet
     receive() external payable {}
 
     function getVersion() external pure virtual returns (uint256) {
-        return 2;
+        return 1;
     }
 
     function claim() external override nonReentrant {
