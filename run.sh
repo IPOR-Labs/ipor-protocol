@@ -35,7 +35,6 @@ ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
 ETH_BC_CONTAINER="ipor-protocol-eth-bc"
 ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
 ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
-DEV_TOOL_CONTAINER="ipor-protocol-milton-tool"
 
 ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
 ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
@@ -53,9 +52,7 @@ ETH_BC_ITF_TAG_NAME="itf"
 AWS_REGION="eu-central-1"
 AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
 
-
 ETH_BC_URL="http://localhost:9545"
-GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
 MIGRATION_STATE_REPO_DIR="${DIR}/../${MIGRATION_STATE_REPO}"
 MIGRATION_COMMIT_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
@@ -94,9 +91,6 @@ IS_STOP="NO"
 IS_HELP="NO"
 IS_PUBLISH_ARTIFACTS="NO"
 IS_NGINX_ETH_BC_RESTART="NO"
-IS_UPDATE_DEV_TOOL="NO" #TODO
-IS_MOCK_ASSET_MANAGEMENT="NO"
-IS_MOCK_ASSET_MANAGEMENT_STOP="NO"
 COMMIT_MIGRATION_STATE="NO"
 IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="NO"
 IS_UPDATE_COCKPIT="NO"
@@ -114,59 +108,57 @@ if [ $# -eq 0 ]; then
   IS_RUN="YES"
 fi
 
-while test $# -gt 0
-do
-    case "$1" in
-        migrate|m)
-            IS_MIGRATE_SC="YES"
-        ;;
-        migrateclean|mc)
-            IS_MIGRATE_WITH_CLEAN_SC="YES"
-        ;;
-        migrationlogs|mlogs)
-            COMMIT_MIGRATION_STATE="YES"
-        ;;
-        build|b)
-            IS_BUILD_DOCKER="YES"
-        ;;
-        run|r)
-            IS_RUN="YES"
-            IS_STOP="YES"
-        ;;
-        stop|s)
-            IS_STOP="YES"
-        ;;
-        publish|p)
-            IS_PUBLISH_ARTIFACTS="YES"
-        ;;
-        clean|c)
-            IS_CLEAN_BC="YES"
-        ;;
-        nginx|n)
-            IS_NGINX_ETH_BC_RESTART="YES"
-        ;;
+while test $# -gt 0; do
+  case "$1" in
+  migrate | m)
+    IS_MIGRATE_SC="YES"
+    ;;
+  migrateclean | mc)
+    IS_MIGRATE_WITH_CLEAN_SC="YES"
+    ;;
+  migrationlogs | mlogs)
+    COMMIT_MIGRATION_STATE="YES"
+    ;;
+  build | b)
+    IS_BUILD_DOCKER="YES"
+    ;;
+  run | r)
+    IS_RUN="YES"
+    IS_STOP="YES"
+    ;;
+  stop | s)
+    IS_STOP="YES"
+    ;;
+  publish | p)
+    IS_PUBLISH_ARTIFACTS="YES"
+    ;;
+  clean | c)
+    IS_CLEAN_BC="YES"
+    ;;
+  nginx | n)
+    IS_NGINX_ETH_BC_RESTART="YES"
+    ;;
   update-cockpit | uc)
     IS_UPDATE_COCKPIT="YES"
     ;;
-        download-deployed-smart-contracts|ddsc)
-            IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="YES"
-        ;;
+  download-deployed-smart-contracts | ddsc)
+    IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="YES"
+    ;;
   dump-eth-blockchain | deb)
     IS_DUMP_ETH_BLOCKCHAIN="YES"
     ;;
   create-geth-image | cgi)
     IS_CREATE_GETH_IMAGE="YES"
     ;;
-        help|h|?)
-            IS_HELP="YES"
-        ;;
-        *)
-            echo -e "\e[33mWARNING!\e[0m ${1} - command not found"
-        ;;
-    esac
-    shift
+  help | h | ?)
+    IS_HELP="YES"
+    ;;
+  *)
+    echo -e "\e[33mWARNING!\e[0m ${1} - command not found"
+    ;;
+  esac
+  shift
 done
-
 
 ################################### FUNCTIONS ###################################
 
@@ -269,7 +261,6 @@ function create_env_config_file() {
   RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdt.json" "stanley_usdt_address")
   RESULT=$(set_smart_contract_address_from_json_file "StanleyDai.json" "stanley_dai_address")
 
-
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
 
@@ -311,7 +302,7 @@ function remove_volume() {
   fi
 }
 
-function create_migration_logs_dir_files(){
+function create_migration_logs_dir_files() {
   local date_now="${1}"
   local env_name="${2}"
 
@@ -324,60 +315,60 @@ function create_migration_logs_dir_files(){
   touch ".logs/${env_name}/migrate/${date_now}_migrate.log"
 }
 
-function get_commit_hash(){
+function get_commit_hash() {
   cd "${DIR}"
   local commit_hash=$(git rev-parse HEAD)
   echo "${commit_hash}"
 }
 
-function create_commit_file(){
+function create_commit_file() {
   local commit_hash="${1}"
 
   rm -f "${MIGRATION_COMMIT_FILE_PATH}"
   touch "${MIGRATION_COMMIT_FILE_PATH}"
 
-  echo "${commit_hash}" >> "${MIGRATION_COMMIT_FILE_PATH}"
+  echo "${commit_hash}" >>"${MIGRATION_COMMIT_FILE_PATH}"
   echo -e "Migration commit hash: ${commit_hash}"
 }
 
-function get_date_and_time(){
+function get_date_and_time() {
   local date_now=$(date "+%F_%H-%M-%S")
   echo "${date_now}"
 }
 
-function read_last_migration(){
+function read_last_migration() {
   local date_now=$(date "+%F_%H-%M-%S")
   echo "${date_now}"
 }
 
-function update_global_state_vars(){
+function update_global_state_vars() {
   LAST_MIGRATION_DATE=$(get_date_and_time)
   LAST_COMMIT_HASH=$(get_commit_hash)
   LAST_COMMIT_SHORT_HASH="${LAST_COMMIT_HASH:0:7}"
 }
 
-function get_last_migration_number(){
+function get_last_migration_number() {
   local last_migration_number=$(printf "%04d" $(jq -r ".lastCompletedMigration" "${LAST_COMPLETED_MIGRATION_FILE_PATH}"))
   echo "${last_migration_number}"
 }
 
-function clean_openzeppelin_migration_file(){
+function clean_openzeppelin_migration_file() {
   local file_name=""
   case ${ETH_BC_NETWORK_ID} in
-    1)
-      file_name="mainnet"
-      ;;
-    4)
-      file_name="rinkeby"
-      ;;
-    *)
-      file_name="unknown-${ETH_BC_NETWORK_ID}"
-      ;;
+  1)
+    file_name="mainnet"
+    ;;
+  4)
+    file_name="rinkeby"
+    ;;
+  *)
+    file_name="unknown-${ETH_BC_NETWORK_ID}"
+    ;;
   esac
   rm -f ".openzeppelin/${file_name}.json"
 }
 
-function prepare_migration_state_files_structure(){
+function prepare_migration_state_files_structure() {
   update_global_state_vars
   create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
   create_commit_file "${LAST_COMMIT_HASH}"
@@ -512,15 +503,14 @@ function create_env_j2_variables_file() {
   local NAME=""
 
   rm -f "${TARGET_VARIABLES_FILE}"
-  < "${SOURCE_ENV_FILE}" grep -E -v "(^#.*|^$)" |
-  while IFS= read -r LINE
-  do
-    VALUE=${LINE#*=}
-    NAME=${LINE%%=*}
-    echo "${NAME,,}=${VALUE}" >> "${TARGET_VARIABLES_FILE}"
-  done
+  grep <"${SOURCE_ENV_FILE}" -E -v "(^#.*|^$)" |
+    while IFS= read -r LINE; do
+      VALUE=${LINE#*=}
+      NAME=${LINE%%=*}
+      echo "${NAME,,}=${VALUE}" >>"${TARGET_VARIABLES_FILE}"
+    done
 
-  cat "${EXTRA_VARIABLES_FILE}" >> "${TARGET_VARIABLES_FILE}"
+  cat "${EXTRA_VARIABLES_FILE}" >>"${TARGET_VARIABLES_FILE}"
 }
 
 function fill_j2_template() {
@@ -528,7 +518,7 @@ function fill_j2_template() {
   local VARIABLES_FILE="${2}"
   local OUTPUT_FILE="${3}"
 
-  j2 -f env "${TEMPLATE_FILE}" "${VARIABLES_FILE}" > "${OUTPUT_FILE}"
+  j2 -f env "${TEMPLATE_FILE}" "${VARIABLES_FILE}" >"${OUTPUT_FILE}"
 }
 
 function set_value_in_env_config_file() {
@@ -538,20 +528,19 @@ function set_value_in_env_config_file() {
   sed -i "s/${VAR_NAME}.*/${VAR_NAME}=${VAR_VALUE}/" "${TARGET_ENV_FILE}"
 }
 
-function replace_values_in_env_config_file(){
+function replace_values_in_env_config_file() {
   local SOURCE_ENV_FILE="${1}"
   local TARGET_ENV_FILE="${2}"
   local LINE=""
   local VALUE=""
   local NAME=""
 
-  < "${SOURCE_ENV_FILE}" grep -E -v "(^#.*|^$)" |
-  while IFS= read -r LINE
-  do
-    VALUE=${LINE#*=}
-    NAME=${LINE%%=*}
-    set_value_in_env_config_file "${NAME}" "${VALUE}" "${TARGET_ENV_FILE}"
-  done
+  grep <"${SOURCE_ENV_FILE}" -E -v "(^#.*|^$)" |
+    while IFS= read -r LINE; do
+      VALUE=${LINE#*=}
+      NAME=${LINE%%=*}
+      set_value_in_env_config_file "${NAME}" "${VALUE}" "${TARGET_ENV_FILE}"
+    done
 }
 
 function prepare_env_config_file() {
@@ -576,7 +565,7 @@ function fill_j2_templates() {
   fill_j2_template "${ETH_BC_MINER_KEY_J2_PATH}" "${VARIABLES_PATH}" "$(get_path_with_env "${ETH_BC_GEN_MINER_KEY_PATH}" "${ENV_NAME}")"
 }
 
-function push_docker_image(){
+function push_docker_image() {
   local CONTAINER_NAME="${1}"
   local TAG="${2}"
   docker push "${CONTAINER_NAME}:${TAG}"
@@ -625,8 +614,7 @@ function build_docker_image() {
   docker build --no-cache -t "${CONTAINER_NAME}:${TAG}" .
 }
 
-
-function create_env_config(){
+function create_env_config() {
   local ENV_NAME="${1}"
   local ALL_VARIABLES_FILE_PATH=$(get_path_with_env "${ETH_BC_GEN_VARIABLES_PATH}" "${ENV_NAME}")
 
@@ -640,7 +628,7 @@ function create_env_config(){
   fill_j2_templates "${ENV_NAME}"
 }
 
-function migrate_and_dump(){
+function migrate_and_dump() {
   local ENV_NAME="${1}"
 
   # Remove current docker and volumes
@@ -659,7 +647,7 @@ function migrate_and_dump(){
   dump_eth_blockchain_from_docker "${ENV_NAME}"
 }
 
-function build_and_push_docker_images(){
+function build_and_push_docker_images() {
   local ENV_NAME="${1}"
   local BRANCH_NAME="${2}"
 
@@ -735,7 +723,7 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
-#TODO: check
+  #TODO: check
 
   run_clean_smart_contract_migrations
 fi
@@ -846,24 +834,24 @@ if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
 fi
 
 if [ $IS_HELP = "YES" ]; then
-    echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
-    echo -e ""
-    echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
-    echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
-    echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
-    echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
-    echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
-    echo -e "   \e[36mmigrationlogs|\e[36mmlogs\e[0m Commit logs after migration"
-    echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
-    echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
-    echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
-    echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
+  echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
+  echo -e ""
+  echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
+  echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
+  echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
+  echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"
+  echo -e "   \e[36mmigrate\e[0m|\e[36mm\e[0m           Compile and migrate Smart Contracts to blockchain"
+  echo -e "   \e[36mmigrationlogs|\e[36mmlogs\e[0m Commit logs after migration"
+  echo -e "   \e[36mmigrateclean\e[0m|\e[36mmc\e[0m     Compile and migrate with clean Smart Contracts to blockchain"
+  echo -e "   \e[36mpublish\e[0m|\e[36mp\e[0m           Publish build artifacts to S3 bucket"
+  echo -e "   \e[36mclean\e[0m|\e[36mc\e[0m             Clean Ethereum blockchain"
+  echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
   echo -e "   \e[36mupdate-cockpit\e[0m|\e[36muc\e[0m        Update IPOR cockpit container"
   echo -e "   \e[36mdump-eth-blockchain\e[0m|\e[36mdeb\e[0m  Dump Ethereum blockchain"
   echo -e "   \e[36mcreate-geth-image\e[0m|\e[36mcgi\e[0m    Create geth docker image"
-    echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
-    echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
-    echo -e "   \e[34mwithout any command\e[0m - the same as Run"
-    echo -e ""
-    exit 0
+  echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
+  echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
+  echo -e "   \e[34mwithout any command\e[0m - the same as Run"
+  echo -e ""
+  exit 0
 fi
