@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
-import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet } from "../../types";
+import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucetV2 } from "../../types";
 import {
     N1__0_18DEC,
     N1__0_6DEC,
@@ -19,9 +19,7 @@ describe("TestnetFaucet", () => {
     let tokenDai: DaiMockedToken;
     let tokenUsdt: UsdtMockedToken;
     let tokenUsdc: UsdcMockedToken;
-    let testnetFaucet: TestnetFaucet;
-    const N100_000 = BigNumber.from("100000");
-    const N50_000 = BigNumber.from("50000");
+    let testnetFaucet: TestnetFaucetV2;
     const N10_000 = BigNumber.from("10000");
 
     before(async () => {
@@ -36,7 +34,7 @@ describe("TestnetFaucet", () => {
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
         tokenUsdc = (await UsdcMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6)) as UsdcMockedToken;
 
-        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
+        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucetV2");
         testnetFaucet = await upgrades.deployProxy(TestnetFaucetFactory, [
             tokenDai.address,
             tokenUsdc.address,
@@ -46,34 +44,6 @@ describe("TestnetFaucet", () => {
         tokenDai.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_10MLN_18DEC);
         tokenUsdc.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
         tokenUsdt.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
-    });
-
-    it("Should claim 50 000", async () => {
-        // Given
-        const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
-        const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
-        const usdtBalanceBefore = await tokenUsdt.balanceOf(await userOne.getAddress());
-        const hasClaimBefore = await testnetFaucet.connect(userOne).hasClaimBefore();
-
-        // When
-        await testnetFaucet.connect(userOne).claim();
-
-        // Then
-        const hasClaimAfter = await testnetFaucet.connect(userOne).hasClaimBefore();
-        const daiBalanceAfter = await tokenDai.balanceOf(await userOne.getAddress());
-        const usdcBalanceAfter = await tokenUsdc.balanceOf(await userOne.getAddress());
-        const usdtBalanceAfter = await tokenUsdt.balanceOf(await userOne.getAddress());
-
-        expect(hasClaimBefore).to.be.false;
-        expect(hasClaimAfter).to.be.true;
-
-        expect(daiBalanceBefore).to.be.equal(ZERO);
-        expect(usdcBalanceBefore).to.be.equal(ZERO);
-        expect(usdtBalanceBefore).to.be.equal(ZERO);
-
-        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N50_000));
-        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
-        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
     });
 
     it("Should not be able to claim twice", async () => {
@@ -99,9 +69,9 @@ describe("TestnetFaucet", () => {
         expect(usdcBalanceBefore).to.be.equal(ZERO);
         expect(usdtBalanceBefore).to.be.equal(ZERO);
 
-        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N50_000));
-        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
-        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N50_000));
+        expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(N1__0_18DEC.mul(N10_000));
+        expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(N1__0_6DEC.mul(N10_000));
+        expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(N1__0_6DEC.mul(N10_000));
         expect(timeToNextClaim.gt(ZERO), "timeToNextClaim").to.be.true;
     });
 
@@ -130,13 +100,13 @@ describe("TestnetFaucet", () => {
         expect(usdtBalanceBefore).to.be.equal(ZERO);
 
         expect(daiBalanceAfter, "daiBalanceAfter").to.be.equal(
-            N1__0_18DEC.mul(N50_000.add(N10_000))
+            N1__0_18DEC.mul(N10_000.add(N10_000))
         );
         expect(usdcBalanceAfter, "usdcBalanceAfter").to.be.equal(
-            N1__0_6DEC.mul(N50_000.add(N10_000))
+            N1__0_6DEC.mul(N10_000.add(N10_000))
         );
         expect(usdtBalanceAfter, "usdtBalanceAfter").to.be.equal(
-            N1__0_6DEC.mul(N50_000.add(N10_000))
+            N1__0_6DEC.mul(N10_000.add(N10_000))
         );
         expect(timeToNextClaim, "timeToNextClaim").to.be.equal(ZERO);
     });

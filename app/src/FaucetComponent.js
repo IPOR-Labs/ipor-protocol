@@ -5,6 +5,21 @@ const { ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
     <div align="left">
+        <hr />
+        <div className="row">
+            <div className="col-md-6">
+                <strong>Testnet Faucet Version</strong>
+            </div>
+            <div className="col-md-6">
+                <ContractData
+                    drizzle={drizzle}
+                    drizzleState={drizzleState}
+                    contract="TestnetFaucet"
+                    method="getVersion"
+                />
+            </div>
+        </div>
+        <hr />
         <table className="table" align="center">
             <tr>
                 <th scope="col"></th>
@@ -152,6 +167,7 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
         </table>
+        <hr />
         <div className="row">
             <div className="col-md-4">
                 <strong>Transfer ETH to specific address</strong>
@@ -172,7 +188,7 @@ export default ({ drizzle, drizzleState }) => (
             <div className="col-md-4">
                 <strong>Claim all stables at once (USDT, USDC, DAI)</strong>
                 <br />
-                <label>First time $50 000 USD</label>
+                <label>First time $10 000 USD</label>
                 <br />
                 <small>Next $10 000 USD</small>
                 <br />
