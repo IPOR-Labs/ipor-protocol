@@ -10,7 +10,7 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
 
-contract TestnetFaucetV2 is
+contract TestnetFaucet is
 UUPSUpgradeable,
 IporOwnableUpgradeable,
 ReentrancyGuardUpgradeable,
