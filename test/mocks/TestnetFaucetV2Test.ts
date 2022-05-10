@@ -34,7 +34,7 @@ describe("TestnetFaucet", () => {
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
         tokenUsdc = (await UsdcMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6)) as UsdcMockedToken;
 
-        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
+        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucetV2");
         testnetFaucet = await upgrades.deployProxy(TestnetFaucetFactory, [
             tokenDai.address,
             tokenUsdc.address,
