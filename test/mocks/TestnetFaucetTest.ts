@@ -19,7 +19,7 @@ describe("TestnetFaucet", () => {
     let tokenDai: DaiMockedToken;
     let tokenUsdt: UsdtMockedToken;
     let tokenUsdc: UsdcMockedToken;
-    let testnetFaucet: TestnetFaucetV2;
+    let testnetFaucet: TestnetFaucet;
     const N10_000 = BigNumber.from("10000");
 
     before(async () => {
