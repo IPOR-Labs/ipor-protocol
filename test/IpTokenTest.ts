@@ -238,17 +238,17 @@ describe("IpToken", () => {
     it("should contain 18 decimals", async () => {
         //given
         const { ipToken, josephDai } = await preperateIpTokenCase010();
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
 
         await ipToken.setJoseph(await admin.getAddress());
         //when
-        const actualDecimals = BigInt(await ipToken.decimals());
+        const actualDecimals = await ipToken.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
 
         await ipToken.setJoseph(josephDai.address);
     });

@@ -29,12 +29,12 @@ describe("IporSwapLogic calculatePayoffPayFixed", () => {
         //when
         const swapValue = await iporSwapLogic.calculatePayoffPayFixed(
             swap,
-            BigInt(Date.now() + 60 * 60 * 24 * 28),
+            BigNumber.from(Date.now() + 60 * 60 * 24 * 28),
             N1__0_18DEC
         );
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            BigInt("-50000000000000000000000")
+            BigNumber.from("-50000000000000000000000")
         );
     });
 
