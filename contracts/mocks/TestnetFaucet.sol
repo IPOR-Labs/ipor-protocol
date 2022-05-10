@@ -11,10 +11,10 @@ import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
 
 contract TestnetFaucet is
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    ReentrancyGuardUpgradeable,
-    ITestnetFaucet
+UUPSUpgradeable,
+IporOwnableUpgradeable,
+ReentrancyGuardUpgradeable,
+ITestnetFaucet
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -101,11 +101,7 @@ contract TestnetFaucet is
     function _transfer(address asset) internal {
         ERC20Upgradeable token = ERC20Upgradeable(asset);
         uint256 value;
-        if (_lastClaim[_msgSender()] == 0) {
-            value = 50_000 * 10**token.decimals();
-        } else {
-            value = 10_000 * 10**token.decimals();
-        }
+        value = 10_000 * 10**token.decimals();
         IERC20Upgradeable(asset).safeTransfer(msg.sender, value);
         emit Claim(_msgSender(), address(asset), value);
     }
