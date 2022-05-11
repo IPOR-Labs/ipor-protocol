@@ -117,7 +117,7 @@ contract MiltonStorage is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                swap.liquidationDepositAmount * Constants.D18,
                 uint256(swap.state)
             );
     }
@@ -141,7 +141,7 @@ contract MiltonStorage is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                swap.liquidationDepositAmount * Constants.D18,
                 uint256(swap.state)
             );
     }
@@ -509,7 +509,7 @@ contract MiltonStorage is
                 swap.notional,
                 swap.ibtQuantity,
                 swap.fixedInterestRate,
-                uint256(swap.liquidationDepositAmount) * 1e18,
+                swap.liquidationDepositAmount * Constants.D18,
                 uint256(swaps[id].state)
             );
         }

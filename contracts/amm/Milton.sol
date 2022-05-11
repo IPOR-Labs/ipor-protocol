@@ -232,7 +232,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         require(leverage <= _getMaxLeverage(), MiltonErrors.LEVERAGE_TOO_HIGH);
 
         uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
-        uint256 wadLiquidationDepositAmount = uint256(liquidationDepositAmount) * 1e18;
+        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
 
         require(
             wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee(),
@@ -493,7 +493,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee,
-                uint256(newSwap.liquidationDepositAmount) * 1e18
+                newSwap.liquidationDepositAmount * Constants.D18
             ),
             newSwap.openTimestamp,
             newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,

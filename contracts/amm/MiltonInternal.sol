@@ -116,7 +116,7 @@ abstract contract MiltonInternal is
     }
 
     function getWadLiquidationDepositAmount() external pure override returns (uint256) {
-        return uint256(_getLiquidationDepositAmount()) * 1e18;
+        return uint256(_getLiquidationDepositAmount()) * Constants.D18;
     }
 
     function getMaxLeverage() external pure override returns (uint256) {
