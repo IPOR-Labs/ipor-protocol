@@ -18,7 +18,7 @@ export const prepareIporOracle = async (
 ): Promise<ItfIporOracle> => {
     const ItfIporOracle = await ethers.getContractFactory("ItfIporOracle");
     const iporOracle = (await ItfIporOracle.deploy()) as ItfIporOracle;
-	
+
     await iporOracle.initialize(
         assets,
         lastUpdateTimestamps,
