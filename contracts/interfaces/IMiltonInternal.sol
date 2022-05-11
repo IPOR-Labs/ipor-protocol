@@ -59,6 +59,8 @@ interface IMiltonInternal {
     /// @return liquidation deposit is represented in 18 decimals
     function getLiquidationDepositAmount() external pure returns (uint256);
 
+    function getWadLiquidationDepositAmount() external pure returns (uint256);
+
     /// @notice Gets max leverage value.
     /// @dev Param used in swap validation.
     /// @return max leverage value represented in 18 decimals
