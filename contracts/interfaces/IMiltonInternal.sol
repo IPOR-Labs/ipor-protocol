@@ -56,9 +56,12 @@ interface IMiltonInternal {
 
     /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap.
     /// Deposit is refunded to whoever closes the swap: either the buyer or the liquidator.
-    /// @return liquidation deposit is represented in 18 decimals
+    /// @return liquidation deposit is represented without decimals
     function getLiquidationDepositAmount() external pure returns (uint256);
 
+    /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap.
+    /// Deposit is refunded to whoever closes the swap: either the buyer or the liquidator.
+    /// @return liquidation deposit is represented in 18 decimals
     function getWadLiquidationDepositAmount() external pure returns (uint256);
 
     /// @notice Gets max leverage value.
