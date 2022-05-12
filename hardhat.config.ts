@@ -86,4 +86,9 @@ export default {
             "contracts/vault/strategies/StrategyAave.sol",
         ],
     },
+    mocha: {
+        timeout: 40000,
+        parallel: true,
+        jobs: 2,
+    },
 };
