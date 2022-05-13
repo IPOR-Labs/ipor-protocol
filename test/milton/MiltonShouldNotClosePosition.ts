@@ -1266,7 +1266,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+    it("should close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1298,33 +1298,30 @@ describe("Milton - not close position", () => {
             return;
         }
 
-        await assertError(
-            executeCloseSwapsTestCase(
-                testData,
-                tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                BigNumber.from("2"),
-                (contract) => {
-                    return contract.closeSwapsReceiveFixed([1, 300]);
-                },
-                ZERO,
-                false,
-                admin,
-                userOne,
-                liquidityProvider
-            ),
-            "IPOR_305"
+        executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            BigNumber.from("2"),
+            (contract) => {
+                return contract.closeSwapsReceiveFixed([1, 300]);
+            },
+            ZERO,
+            false,
+            admin,
+            userOne,
+            liquidityProvider
         );
     });
 
-    it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+    it("should close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1357,29 +1354,26 @@ describe("Milton - not close position", () => {
             return;
         }
 
-        await assertError(
-            executeCloseSwapsTestCase(
-                testData,
-                tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                BigNumber.from("2"),
-                (contract) => {
-                    return contract.closeSwapsPayFixed([1, 300]);
-                },
-                ZERO,
-                false,
-                admin,
-                userOne,
-                liquidityProvider
-            ),
-            "IPOR_305"
+        executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            BigNumber.from("2"),
+            (contract) => {
+                return contract.closeSwapsPayFixed([1, 300]);
+            },
+            ZERO,
+            false,
+            admin,
+            userOne,
+            liquidityProvider
         );
     });
 
