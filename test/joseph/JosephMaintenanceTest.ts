@@ -9,7 +9,13 @@ import {
     IpToken,
     MockSpreadModel,
 } from "../../types";
-import { PERCENTAGE_3_18DEC, TC_TOTAL_AMOUNT_10_000_18DEC, ZERO } from "../utils/Constants";
+import {
+    N0__01_18DEC,
+    N1__0_18DEC,
+    PERCENTAGE_3_18DEC,
+    TC_TOTAL_AMOUNT_10_000_18DEC,
+    ZERO,
+} from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
     MiltonUsdcCase,
@@ -514,5 +520,127 @@ describe("Joseph Maintenance", () => {
         // then
         expect(josephUsdt.address).to.be.not.empty;
         expect(await josephUsdt.getAsset()).to.be.equal(usdt.address);
+    });
+
+    it("should return default milton Stanley Balance Ratio", async () => {
+        //given
+        const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE1,
+            MiltonUsdtCase.CASE1,
+            MiltonDaiCase.CASE1,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        const ratio = await josephDai.connect(admin).getMiltonStanleyBalanceRatio();
+
+        //then
+        expect(ratio).to.be.equal(BigNumber.from("85").mul(N0__01_18DEC));
+    });
+
+    it("should change milton Stanley Balance Ratio", async () => {
+        //given
+        const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
+
+        const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE1,
+            MiltonUsdtCase.CASE1,
+            MiltonDaiCase.CASE1,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await josephDai.connect(admin).setMiltonStanleyBalanceRatio(newRatio);
+
+        //then
+        const newRatioFromContract = await josephDai.connect(admin).getMiltonStanleyBalanceRatio();
+
+        expect(newRatioFromContract).to.be.equal(newRatio);
+    });
+
+    it("should not change milton Stanley Balance Ratio when new ratio = 0", async () => {
+        //given
+        const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
+
+        const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE1,
+            MiltonUsdtCase.CASE1,
+            MiltonDaiCase.CASE1,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await expect(
+            josephDai.connect(admin).setMiltonStanleyBalanceRatio(ZERO)
+        ).to.be.revertedWith("IPOR_409");
+    });
+
+    it("should not change milton Stanley Balance Ratio when new ratio >= 1", async () => {
+        //given
+        const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
+
+        const { josephDai } = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_3_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE1,
+            MiltonUsdtCase.CASE1,
+            MiltonDaiCase.CASE1,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        if (josephDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        //when
+        await expect(
+            josephDai.connect(admin).setMiltonStanleyBalanceRatio(N1__0_18DEC)
+        ).to.be.revertedWith("IPOR_409");
     });
 });
