@@ -27,4 +27,12 @@ library MiltonTypes {
         /// it is quote from spread documentation
         uint256 fixedInterestRate;
     }
+
+    /// @notice Contains set of successfully closed swap ids
+    struct IporSwapClosingResult {
+        /// @notice ids of closed pay fixed swaps
+        uint256[] closedPayFixedSwapIds;
+        /// @notice ids of closed receive fixed swaps
+        uint256[] closedReceiveFixedSwapIds;
+    }
 }

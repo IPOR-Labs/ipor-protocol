@@ -138,12 +138,14 @@ interface IMiltonInternal {
     /// @notice Closes Pay-Fixed swaps for a given list of IDs in emergency mode. Action available only to the Owner.
     /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
     /// @param swapIds List of Pay Fixed swaps.
-    function emergencyCloseSwapsPayFixed(uint256[] memory swapIds) external;
+    /// @return ids of closed pay fixed swaps
+    function emergencyCloseSwapsPayFixed(uint256[] memory swapIds) external returns (uint256[] memory);
 
     /// @notice Closes Receive-Fixed swaps for given list of IDs in emergency mode. Action available only to the Owner.
     /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
     /// @param swapIds List of Receive-Fixed swap IDs.
-    function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds) external;
+    /// @return ids of closed receive fixed swaps
+    function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds) external returns (uint256[] memory);
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from Milton.
