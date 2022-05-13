@@ -29,10 +29,15 @@ library MiltonTypes {
     }
 
     /// @notice Contains set of successfully closed swap ids
-    struct IporSwapClosingResult {
+    struct IporSwapClosingResultContainer {
         /// @notice ids of closed pay fixed swaps
-        uint256[] closedPayFixedSwapIds;
+        IporSwapClosingResult[] payFixedSwaps;
         /// @notice ids of closed receive fixed swaps
-        uint256[] closedReceiveFixedSwapIds;
+        IporSwapClosingResult[] receiveFixedSwaps;
+    }
+
+    struct IporSwapClosingResult {
+        uint256 swapId;
+        bool isClosed;
     }
 }
