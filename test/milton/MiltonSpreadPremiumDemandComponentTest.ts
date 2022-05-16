@@ -75,7 +75,7 @@ describe("MiltonSpreadModel - Spread Premium Demand Component", () => {
                     totalCollateralReceiveFixedBalance.add(swapCollateral)
                 ),
             //then
-            "IPOR_321"
+            "IPOR_320"
         );
     });
 

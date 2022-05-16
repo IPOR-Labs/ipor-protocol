@@ -3932,7 +3932,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -4015,7 +4015,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_329"
+            "IPOR_328"
         );
     });
 
@@ -4098,11 +4098,10 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_329"
+            "IPOR_328"
         );
     });
 
-    //TODO:
     it("should close 10 pay fixed, 10 receive fixed positions in one transaction - verify balances", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));

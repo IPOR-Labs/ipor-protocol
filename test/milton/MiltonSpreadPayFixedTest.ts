@@ -926,7 +926,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
                     totalCollateralReceiveFixedBalance
                 ),
             //then
-            "IPOR_322"
+            "IPOR_321"
         );
     });
 

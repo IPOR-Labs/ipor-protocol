@@ -42,42 +42,42 @@ library MiltonErrors {
     //@notice Summary SOAP and Miltion Liquidity Pool Balance is less than zero. SOAP can be negative, Sum of SOAM and Liquidity Pool Balance can be negative, but this is undesirable
     string public constant SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW = "IPOR_313";
 
-    string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_315";
+    string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_314";
 
-    string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_316";
+    string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_315";
 
-    string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_317";
+    string public constant CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_316";
 
     //@notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen. Liquidity Pool is insolvent
-    string public constant CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW = "IPOR_318";
+    string public constant CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW = "IPOR_317";
 
     //@notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved
-    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_319";
+    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_318";
 
-    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_320";
+    string public constant INTREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_319";
 
     //@notice Liquiditiy
-    string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_321";
+    string public constant SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO = "IPOR_320";
 
     //@notice During spread calculation - Exponential Weighted Moving Variance cannot be higher than 1
-    string public constant SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_322";
+    string public constant SPREAD_EMVAR_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_321";
 
     //@notice During spread calculation - Alpha param which  cannot be higher than 1
-    string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_323";
+    string public constant SPREAD_ALPHA_CANNOT_BE_HIGHER_THAN_ONE = "IPOR_322";
 
     //@notice Opening Fee Balance is too low
-    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_324";
+    string public constant PUBLICATION_FEE_BALANCE_TOO_LOW = "IPOR_323";
 
     //@notice The caller must be the Ipor Liquidity Pool - Joseph
-    string public constant CALLER_NOT_JOSEPH = "IPOR_325";
+    string public constant CALLER_NOT_JOSEPH = "IPOR_324";
 
     //@notice Liquidity provider can deposit amount of stable, errors appeared when amount is to low
-    string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_326";
+    string public constant DEPOSIT_AMOUNT_TOO_LOW = "IPOR_325";
 
-    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_327";
+    string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_326";
 
-    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_328";
+    string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_327";
 
     /// @notice Number of swaps per leg which are going to be liquidated is too high.
-    string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_329";
+    string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_328";
 }

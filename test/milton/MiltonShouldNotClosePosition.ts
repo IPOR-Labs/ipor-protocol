@@ -103,7 +103,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -151,7 +151,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -200,7 +200,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapPayFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -249,7 +249,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -298,7 +298,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
@@ -346,7 +346,7 @@ describe("Milton - not close position", () => {
             //when
             miltonDai.connect(userThree).itfCloseSwapReceiveFixed(1, endTimestamp),
             //then
-            "IPOR_319"
+            "IPOR_318"
         );
     });
 
