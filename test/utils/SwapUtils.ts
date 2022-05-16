@@ -1,11 +1,12 @@
 import chai from "chai";
+import hre from "hardhat";
 import { DaiMockedToken, UsdtMockedToken, MiltonUsdt, MiltonUsdc, MiltonDai } from "../../types";
 import { BigNumber, Signer } from "ethers";
 import {
     N1__0_6DEC,
     N1__0_18DEC,
     N0__01_18DEC,
-	N0__001_18DEC,
+    N0__001_18DEC,
     TC_50_000_18DEC,
     ZERO,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -86,6 +87,10 @@ export const prepareSwapDaiCase1 = async (
     };
     return swap;
 };
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export const prepareSwapUsdtCase1 = async (
     fixedInterestRate: BigNumber,

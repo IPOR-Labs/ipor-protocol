@@ -1,5 +1,5 @@
 import { BigNumber } from "ethers";
-const { expect } = require("chai");
+import { expect } from "chai";
 import {
     ERC20,
     TestnetFaucet,
@@ -92,10 +92,10 @@ describe("End to End tests on mainnet fork", function () {
             testnetFaucet,
             dai,
             miltonDai.address,
-            BigNumber.from("10000000000000000000")
+            BigNumber.from("1000000000000000000")
         );
         //when
-        await josephDai.depositToStanley(BigNumber.from("1000000000000000000"));
+        await josephDai.depositToStanley(BigNumber.from("100000000000000000"));
 
         //then
         const stanleyDaiBalanceAfter = await stanleyDai.totalBalance(miltonDai.address);

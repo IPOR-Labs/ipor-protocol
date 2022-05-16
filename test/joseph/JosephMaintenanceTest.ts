@@ -221,7 +221,7 @@ describe("Joseph Maintenance", () => {
 
         //then
         const actualIpTokenBalance = await ipTokenDai.balanceOf(await userOne.getAddress());
-        expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.eql(
+        expect(actualIpTokenBalance, "Incorrect IpToken balance.").to.be.equal(
             expectedIpTokenBalance
         );
     });
@@ -271,7 +271,7 @@ describe("Joseph Maintenance", () => {
 
         //then
         const actualNewOwner = await josephDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -397,7 +397,7 @@ describe("Joseph Maintenance", () => {
 
         //then
         const actualNewOwner = await josephDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should not sent ETH to Joseph DAI, USDT, USDC", async () => {

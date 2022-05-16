@@ -605,7 +605,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwapPayFixed(1);
                 },
                 ZERO,
@@ -664,7 +664,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwaps([1], []);
                 },
                 ZERO,
@@ -723,7 +723,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwapReceiveFixed(1);
                 },
                 ZERO,
@@ -782,7 +782,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwaps([], [1]);
                 },
                 ZERO,
@@ -841,7 +841,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapsPayFixed([1]);
                 },
                 ZERO,
@@ -900,7 +900,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapPayFixed(1);
                 },
                 ZERO,
@@ -958,7 +958,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapsReceiveFixed([1]);
                 },
                 ZERO,
@@ -1017,7 +1017,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapReceiveFixed(1);
                 },
                 ZERO,
@@ -1076,7 +1076,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapsPayFixed([1]);
                 },
                 ZERO,
@@ -1135,7 +1135,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapPayFixed(1);
                 },
                 ZERO,
@@ -1194,7 +1194,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapsReceiveFixed([1]);
                 },
                 ZERO,
@@ -1253,7 +1253,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                (contract) => {
+                async (contract) => {
                     return contract.emergencyCloseSwapReceiveFixed(1);
                 },
                 ZERO,

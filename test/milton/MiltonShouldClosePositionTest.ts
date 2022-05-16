@@ -2155,7 +2155,7 @@ describe("Milton - close position", () => {
             expectedPayoff,
             `Incorrect position value, actual: ${actualPayoff}, expected: ${expectedPayoff}`
         ).to.be.eq(actualPayoff);
-    });    
+    });
 
     it("should close single pay fixed position using multicall function, DAI", async () => {
         const testData = await prepareTestData(
@@ -2201,7 +2201,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([1],[]);
             },
             ZERO,
@@ -2256,7 +2256,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([1, 2],[]);
             },
             ZERO,
@@ -2311,7 +2311,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([],[1]);
             },
             ZERO,
@@ -2366,7 +2366,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([],[1, 2]);
             },
             ZERO,
@@ -2421,7 +2421,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsPayFixed([1]);
             },
             ZERO,
@@ -2476,7 +2476,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapPayFixed(1);
             },
             ZERO,
@@ -2532,7 +2532,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapReceiveFixed(1);
             },
             ZERO,
@@ -2908,7 +2908,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([1],[]);
             },
             ZERO,
@@ -2963,7 +2963,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([1, 2],[]);
             },
             ZERO,
@@ -3018,7 +3018,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([],[1]);
             },
             ZERO,
@@ -3073,7 +3073,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwaps([],[1, 2]);
             },
             ZERO,
@@ -3129,7 +3129,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsReceiveFixed([1]);
             },
             ZERO,
