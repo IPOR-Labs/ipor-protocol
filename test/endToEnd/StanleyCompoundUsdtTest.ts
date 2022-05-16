@@ -14,7 +14,7 @@ import { StrategyCompound, StanleyUsdt, IvToken, ERC20, MockStrategy } from "../
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222087,
-describe("Deposit -> deployed Contract on Mainnet fork", function () {
+describe("Deposit -> deployed Contract on Mainnet fork Compound Usdt", function () {
     let accounts: Signer[];
     let accountToImpersonate: string;
     let usdtAddress: string;
@@ -123,7 +123,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         await strategyCompoundContract_Instance.setStanley(stanley.address);
         await strategyCompoundContract_Instance.setTreasury(await signer.getAddress());
 
-        await usdtContract.approve(await signer.getAddress(), maxValue);
         await usdtContract.approve(stanley.address, maxValue);
         await ivToken.setStanley(stanley.address);
     });
