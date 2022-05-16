@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 
 import { daiAddress, usdcAddress, usdtAddress } from "./tokens";
 
@@ -17,7 +17,7 @@ export const stanleyDaiFactory = async (
         {
             kind: "uups",
         }
-    )) as Promise<StanleyDai>;
+    )) as StanleyDai;
 };
 
 export const stanleyUsdcFactory = async (
@@ -33,7 +33,7 @@ export const stanleyUsdcFactory = async (
         {
             kind: "uups",
         }
-    )) as Promise<StanleyUsdc>;
+    )) as StanleyUsdc;
 };
 
 export const stanleyUsdtFactory = async (
@@ -49,7 +49,7 @@ export const stanleyUsdtFactory = async (
         {
             kind: "uups",
         }
-    )) as Promise<StanleyUsdt>;
+    )) as StanleyUsdt;
 };
 
 export const stanleySetup = async (

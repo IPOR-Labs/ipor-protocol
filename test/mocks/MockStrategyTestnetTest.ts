@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import {
@@ -58,21 +58,21 @@ describe("MockStrategyTestnet Aave / Compound", () => {
         const MockStrategyTestnetFactory = await hre.ethers.getContractFactory(
             "MockTestnetStrategyAaveDai"
         );
-        strategyDai = await upgrades.deployProxy(MockStrategyTestnetFactory, [
+        strategyDai = (await upgrades.deployProxy(MockStrategyTestnetFactory, [
             tokenDai.address,
             shareToken18DEC.address,
-        ]);
+        ])) as MockTestnetStrategyAaveDai;
 
         strategyDai.setStanley(adminAddress);
-        strategyUsdc = await upgrades.deployProxy(MockStrategyTestnetFactory, [
+        strategyUsdc = (await upgrades.deployProxy(MockStrategyTestnetFactory, [
             tokenUsdc.address,
             shareToken6DEC.address,
-        ]);
+        ])) as MockTestnetStrategyAaveUsdc;
         strategyUsdc.setStanley(adminAddress);
-        strategyUsdt = await upgrades.deployProxy(MockStrategyTestnetFactory, [
+        strategyUsdt = (await upgrades.deployProxy(MockStrategyTestnetFactory, [
             tokenUsdt.address,
             shareToken18DEC.address,
-        ]);
+        ])) as MockTestnetStrategyAaveUsdt;
         strategyUsdt.setStanley(adminAddress);
 
         await tokenDai.approve(strategyDai.address, TOTAL_SUPPLY_18_DECIMALS);

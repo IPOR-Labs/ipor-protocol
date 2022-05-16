@@ -1,9 +1,9 @@
 import { BigNumber, Signer } from "ethers";
 import hre, { upgrades } from "hardhat";
-const { expect } = require("chai");
-const daiAbi = require("../../../abis/daiAbi.json");
-const comptrollerAbi = require("../../../abis/comptroller.json");
-const aaveIncentiveContractAbi = require("../../../abis/aaveIncentiveContract.json");
+import { expect } from "chai";
+const daiAbi = require("../../abis/daiAbi.json");
+const comptrollerAbi = require("../../abis/comptroller.json");
+const aaveIncentiveContractAbi = require("../../abis/aaveIncentiveContract.json");
 
 const zero = BigNumber.from("0");
 const one = BigNumber.from("1000000000000000000");
@@ -18,7 +18,7 @@ import {
     IvToken,
     ERC20,
     IAaveIncentivesController,
-} from "../../../types";
+} from "../../types";
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222087,
@@ -48,7 +48,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let ivToken: IvToken;
     let stanley: StanleyDai;
 
-    if (process.env.FORK_ENABLED != "true") {
+    if (process.env.FORK_ENABLED != "true" || process.env.TEST_OPTI != "true") {
         return;
     }
 
@@ -102,7 +102,6 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             aaveIncentiveAddress,
             AAVE,
         ])) as StrategyAave;
-        // getUserUnclaimedRewards
         aaveIncentiveContract = new hre.ethers.Contract(
             aaveIncentiveAddress,
             aaveIncentiveContractAbi,
@@ -173,6 +172,9 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
         const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+        const strategyATokenContractBefore = await aTokenContract.balanceOf(
+            strategyAaveContract_Instance.address
+        );
 
         expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
         expect(strategyAaveBalanceBefore, "strategyAaveBalanceBefore = 0").to.be.equal(zero);
@@ -188,18 +190,19 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             strategyAaveContract_Instance.address
         );
 
-        expect(userIvTokenAfter, "userIvTokenAfter = 10 * 10^18").to.be.equal(depositAmount);
-        expect(strategyAaveBalanceAfter, "strategyAaveBalanceAfter = 10 * 10^18").to.be.equal(
-            depositAmount
-        );
+        expect(userIvTokenAfter.gte(depositAmount), "userIvTokenAfter >= 10 * 10^18").to.be.true;
+        expect(
+            strategyAaveBalanceAfter.gte(depositAmount),
+            "strategyAaveBalanceAfter >= 10 * 10^18"
+        ).to.be.true;
         expect(
             userDaiBalanceAfter,
             "userDaiBalanceAfter = userDaiBalanceBefore - depositAmount"
         ).to.be.equal(userDaiBalanceBefore.sub(depositAmount));
         expect(
-            strategyATokenContractAfter,
-            "strategyATokenContractAfter = depositAmount"
-        ).to.be.equal(depositAmount);
+            strategyATokenContractAfter.sub(strategyATokenContractBefore).gte(depositAmount),
+            "strategyATokenContractAfter >= depositAmount"
+        ).to.be.true;
     });
 
     it("Should accept deposit twice and transfer tokens into AAVE", async () => {
@@ -304,32 +307,5 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             userDaiBalanceAfter.gt(userDaiBalanceBefore),
             "userDaiBalanceAfter > userDaiBalanceBefore"
         ).to.be.true;
-    });
-    it("Should Claim from AAVE", async () => {
-        //given
-        const userOneAddres = await accounts[1].getAddress();
-        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
-
-        await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
-        await hre.network.provider.send("evm_mine");
-
-        const claimable = await aaveIncentiveContract.getUserUnclaimedRewards(
-            strategyAaveContract_Instance.address
-        );
-        const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
-
-        expect(claimable, "Aave Claimable Amount").to.be.equal(BigNumber.from("64932860"));
-        expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(zero);
-
-        // when
-        await strategyAaveContract_Instance.beforeClaim();
-        await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp + 865000]);
-        await hre.network.provider.send("evm_mine");
-        await strategyAaveContract_Instance.doClaim();
-
-        // then
-        const userOneBalance = await aaveContract.balanceOf(await signer.getAddress());
-
-        expect(userOneBalance.gt(zero), "Cliamed Aave Balance > 0").to.be.true;
     });
 });

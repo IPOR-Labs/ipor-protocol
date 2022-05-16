@@ -1,5 +1,6 @@
+import hre from "hardhat";
+import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
-const { expect } = require("chai");
 import {
     ERC20,
     TestnetFaucet,
@@ -94,7 +95,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         await transferDaiToAddress(
             testnetFaucet.address,
             await admin.getAddress(),
-            BigNumber.from("100000000000000000000")
+            BigNumber.from("1000000000000000000")
         );
         await dai
             .connect(admin)

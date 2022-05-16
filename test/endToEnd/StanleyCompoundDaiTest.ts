@@ -1,9 +1,8 @@
-const { expect } = require("chai");
+import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
-const daiAbi = require("../../../abis/daiAbi.json");
-const comptrollerAbi = require("../../../abis/comptroller.json");
 import hre, { upgrades } from "hardhat";
-const aaveIncentiveContractAbi = require("../../../abis/aaveIncentiveContract.json");
+const daiAbi = require("../../abis/daiAbi.json");
+const comptrollerAbi = require("../../abis/comptroller.json");
 
 const zero = BigNumber.from("0");
 const one = BigNumber.from("1000000000000000000");
@@ -11,14 +10,7 @@ const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
 
-import {
-    StrategyCompound,
-    StanleyDai,
-    IvToken,
-    ERC20,
-    IAaveIncentivesController,
-    MockStrategy,
-} from "../../../types";
+import { StrategyCompound, StanleyDai, IvToken, ERC20, MockStrategy } from "../../types";
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222087,
@@ -39,7 +31,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let ivToken: IvToken;
     let stanley: StanleyDai;
 
-    if (process.env.FORK_ENABLED != "true") {
+    if (process.env.FORK_ENABLED != "true" || process.env.TEST_OPTI != "true") {
         return;
     }
 
@@ -295,29 +287,5 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
         ).to.be.equal(zero);
-    });
-
-    it("Should Clame from COMPOUND", async () => {
-        //given
-        const treasurAddres = await accounts[0].getAddress();
-        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
-
-        await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
-        await hre.network.provider.send("evm_mine");
-
-        const compoundBalanceBefore = await compContract.balanceOf(treasurAddres);
-
-        expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(zero);
-
-        // when
-        await strategyCompoundContract_Instance.doClaim();
-
-        // then
-        const userOneBalanceAfter = await compContract.balanceOf(treasurAddres);
-
-        expect(
-            userOneBalanceAfter.gt(compoundBalanceBefore),
-            "userOneBalanceAfter >= compoundBalanceBefore"
-        ).to.be.true;
     });
 });

@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { constants, Signer } from "ethers";
 
@@ -34,13 +34,13 @@ describe("AAVE strategy", () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
         const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");
-        DAI = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        DAI = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await DAI.deployed();
-        aDAI = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        aDAI = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await aDAI.deployed();
-        stkAAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        stkAAVE = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await stkAAVE.deployed();
-        AAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        AAVE = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await AAVE.deployed();
         const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolProvider"
@@ -64,14 +64,14 @@ describe("AAVE strategy", () => {
         )) as MockAaveIncentivesController;
 
         StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
-        strategyAaveInstance = await upgrades.deployProxy(StrategyAaveInstance, [
+        strategyAaveInstance = (await upgrades.deployProxy(StrategyAaveInstance, [
             DAI.address,
             aDAI.address,
             addressProvider.address,
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ]);
+        ])) as StrategyAave;
         await strategyAaveInstance.setTreasury(await userTwo.getAddress());
     });
 
