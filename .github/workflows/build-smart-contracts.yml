@@ -22,7 +22,7 @@ jobs:
               run: npm install
 
             - name: Hardhat compile
-              run: npm run compile:hardhat
+              run: npx hardhat compile
 
             - name: Tests
               run: npm run test

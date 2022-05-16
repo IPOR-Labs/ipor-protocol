@@ -75,6 +75,12 @@ import { assertError, assertExpectedValues } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
+const DEF_DELAY = 1000;
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms || DEF_DELAY));
+}
+
 describe("Milton - close position", () => {
     let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
@@ -2201,7 +2207,7 @@ describe("Milton - close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 ZERO,
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwapsPayFixed([]);
                 },
                 ZERO,
@@ -2258,7 +2264,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsPayFixed([1]);
             },
             ZERO,
@@ -2313,7 +2319,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsPayFixed([1, 2]);
             },
             ZERO,
@@ -2369,7 +2375,7 @@ describe("Milton - close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 ZERO,
-                (contract) => {
+                async (contract) => {
                     return contract.closeSwapsReceiveFixed([]);
                 },
                 ZERO,
@@ -2426,7 +2432,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsReceiveFixed([1]);
             },
             ZERO,
@@ -2481,7 +2487,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsReceiveFixed([1, 2]);
             },
             ZERO,
@@ -2536,7 +2542,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsPayFixed([1]);
             },
             ZERO,
@@ -2591,7 +2597,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapPayFixed(1);
             },
             ZERO,
@@ -2647,7 +2653,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapReceiveFixed(1);
             },
             ZERO,
@@ -2656,6 +2662,8 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        await sleep(1000);
     });
     it("should close only one position - close first position", async () => {
         //given
@@ -3023,7 +3031,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsPayFixed([1]);
             },
             ZERO,
@@ -3078,7 +3086,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsPayFixed([1, 2]);
             },
             ZERO,
@@ -3133,7 +3141,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsReceiveFixed([1]);
             },
             ZERO,
@@ -3188,7 +3196,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
+            async (contract) => {
                 return contract.closeSwapsReceiveFixed([1, 2]);
             },
             ZERO,
@@ -3244,7 +3252,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsReceiveFixed([1]);
             },
             ZERO,
@@ -3253,6 +3261,7 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        await sleep(1000);
     });
 
     it("should transfer all liquidation deposits in single transfer to liquidator - pay fixed", async () => {
