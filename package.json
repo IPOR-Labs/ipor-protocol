@@ -38,7 +38,7 @@
     },
     "scripts": {
         "coverage": "npx hardhat coverage",
-        "compile:hardhat": "npx hardhat compile",
+        "compile:hardhat": "npx hardhat compile --force",
         "compile:truffle": "truffle compile --all",
         "migrate:truffle": "truffle migrate --network $ETH_BC_NETWORK_NAME  --compile-none",
         "migrate:truffle-reset": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
