@@ -129,7 +129,8 @@ abstract contract Milton is MiltonInternal, IMilton {
     {
         (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
             payFixedSwapIds,
-            receiveFixedSwapIds
+            receiveFixedSwapIds,
+            block.timestamp
         );
     }
 
@@ -187,18 +188,27 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _closeSwaps(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
+    function _closeSwaps(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds,
+        uint256 closeTimestamp
+    )
         internal
         returns (
             MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
             MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         )
     {
-        uint256 closeTimestamp = block.timestamp;
+        require(
+            payFixedSwapIds.length <= _getLiquidationLegLimit() &&
+                receiveFixedSwapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );
+
         (
             uint256 payoutForLiquidatorPayFixed,
             MiltonTypes.IporSwapClosingResult[] memory _closedPayFixedSwaps
-        ) = _closeSwapsReceiveFixed(payFixedSwapIds, closeTimestamp);
+        ) = _closeSwapsPayFixed(payFixedSwapIds, closeTimestamp);
 
         (
             uint256 payoutForLiquidatorReceiveFixed,

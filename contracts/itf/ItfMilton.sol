@@ -28,6 +28,26 @@ abstract contract ItfMilton is Milton {
             );
     }
 
+    function itfCloseSwaps(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds,
+        uint256 closeTimestamp
+    )
+        external
+        nonReentrant
+        whenNotPaused
+        returns (
+            MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        )
+    {
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
+            payFixedSwapIds,
+            receiveFixedSwapIds,
+            closeTimestamp
+        );
+    }
+
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
         _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
     }

@@ -79,4 +79,7 @@ library MiltonErrors {
     string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_327";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_328";
+
+    /// @notice Number of swaps per leg which are going to be liquidated is too high.
+    string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_329";
 }
