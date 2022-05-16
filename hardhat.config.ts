@@ -16,8 +16,14 @@ import "@hardhat-docgen/core";
 import "@hardhat-docgen/markdown";
 require("hardhat-contract-sizer");
 
+let jobs = 2;
+
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
+}
+
+if (process.env.FORK_ENABLED === "true") {
+    jobs = 1;
 }
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -89,6 +95,6 @@ export default {
     mocha: {
         timeout: 40000,
         parallel: true,
-        jobs: 2,
+        jobs,
     },
 };

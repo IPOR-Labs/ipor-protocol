@@ -125,19 +125,19 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedIpTokenBalanceForUserThree,
             `Incorrect ipToken Balance for asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
              expected: ${expectedIpTokenBalanceForUserThree}`
-        ).to.be.eql(actualIpTokenBalanceForUserThree);
+        ).to.be.equal(actualIpTokenBalanceForUserThree);
 
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
             expected: ${expectedExchangeRate}`
-        ).to.be.eql(exchangeRateBeforeProvideLiquidity);
+        ).to.be.equal(exchangeRateBeforeProvideLiquidity);
 
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, DAI 18 decimals", async () => {
@@ -224,19 +224,19 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedIpTokenBalanceForUserThree,
             `Incorrect ipToken Balance for DAI asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
              expected: ${expectedIpTokenBalanceForUserThree}`
-        ).to.be.eql(actualIpTokenBalanceForUserThree);
+        ).to.be.equal(actualIpTokenBalanceForUserThree);
 
         expect(
             expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for DAI, actual:  ${exchangeRateBeforeProvideLiquidity},
             expected: ${expectedExchangeRateBeforeRedeem}`
-        ).to.be.eql(exchangeRateBeforeProvideLiquidity);
+        ).to.be.equal(exchangeRateBeforeProvideLiquidity);
 
         expect(
             expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for DAI, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRateAfterRedeem}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should NOT change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 1", async () => {
@@ -321,19 +321,19 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedIpTokenBalanceForUserThree,
             `Incorrect ipToken Balance for USDT asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
              expected: ${expectedIpTokenBalanceForUserThree}`
-        ).to.be.eql(actualIpTokenBalanceForUserThree);
+        ).to.be.equal(actualIpTokenBalanceForUserThree);
 
         expect(
             expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
             expected: ${expectedExchangeRateBeforeRedeem}`
-        ).to.be.eql(exchangeRateBeforeProvideLiquidity);
+        ).to.be.equal(exchangeRateBeforeProvideLiquidity);
 
         expect(
             expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRateAfterRedeem}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 2", async () => {
@@ -422,19 +422,19 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedIpTokenBalanceForUserThree,
             `Incorrect ipToken Balance for USDT asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
              expected: ${expectedIpTokenBalanceForUserThree}`
-        ).to.be.eql(actualIpTokenBalanceForUserThree);
+        ).to.be.equal(actualIpTokenBalanceForUserThree);
 
         expect(
             expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
             expected: ${expectedExchangeRateBeforeRedeem}`
-        ).to.be.eql(exchangeRateBeforeProvideLiquidity);
+        ).to.be.equal(exchangeRateBeforeProvideLiquidity);
 
         expect(
             expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRateAfterRedeem}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 3", async () => {
@@ -523,18 +523,18 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedIpTokenBalanceForUserThree,
             `Incorrect ipToken Balance for USDT asset ${params.asset} for user ${userThree}, actual:  ${actualIpTokenBalanceForUserThree},
              expected: ${expectedIpTokenBalanceForUserThree}`
-        ).to.be.eql(actualIpTokenBalanceForUserThree);
+        ).to.be.equal(actualIpTokenBalanceForUserThree);
 
         expect(
             expectedExchangeRateBeforeRedeem,
             `Incorrect exchange rate before providing liquidity for USDT, actual:  ${exchangeRateBeforeProvideLiquidity},
             expected: ${expectedExchangeRateBeforeRedeem}`
-        ).to.be.eql(exchangeRateBeforeProvideLiquidity);
+        ).to.be.equal(exchangeRateBeforeProvideLiquidity);
 
         expect(
             expectedExchangeRateAfterRedeem,
             `Incorrect exchange rate after providing liquidity for USDT, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRateAfterRedeem}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 });

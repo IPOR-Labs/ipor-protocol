@@ -74,7 +74,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, DAI 18 decimals", async () => {
@@ -107,7 +107,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
@@ -155,7 +155,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for USDT, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is zero and ipToken Total Supply is NOT zero", async () => {
@@ -194,7 +194,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
       expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, DAI 18 decimals", async () => {
@@ -246,7 +246,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is zero", async () => {
@@ -295,14 +295,14 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         //when
         let actualExchangeRate = await josephDai.itfCalculateExchangeRate(params.openTimestamp);
         //then
-        expect(expectedIpTokenDaiBalance).to.be.eql(actualIpTokenDaiBalance);
+        expect(expectedIpTokenDaiBalance).to.be.equal(actualIpTokenDaiBalance);
         expect(actualLiquidityPoolBalance).to.be.gte(ZERO);
 
         expect(
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate, Exchange Rate greater than 1, USDT 6 decimals", async () => {
@@ -365,6 +365,6 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for USDT, actual:  ${actualExchangeRate},
             expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 });

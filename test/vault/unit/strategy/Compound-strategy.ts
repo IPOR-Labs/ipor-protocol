@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
@@ -56,29 +56,29 @@ describe("Compound strategy", () => {
         // #################################################################################
 
         const MockedCToken = await hre.ethers.getContractFactory("UsdcMockedToken");
-        USDC = await MockedCToken.deploy(totalSupply6Decimals, 6);
+        USDC = (await MockedCToken.deploy(totalSupply6Decimals, 6)) as UsdcMockedToken;
         const cTokenFactory = await hre.ethers.getContractFactory("MockCToken");
-        cUSDC = await cTokenFactory.deploy(
+        cUSDC = (await cTokenFactory.deploy(
             USDC.address,
             MockWhitePaperInstance.address,
             BigNumber.from("6"),
             "cUSDC",
             "cUSDC"
-        );
+        )) as MockCToken;
 
         // #################################################################################
         // #####################        USDT / aUSDT     ###################################
         // #################################################################################
 
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
-        USDT = await UsdtMockedToken.deploy(totalSupply6Decimals, 6);
-        cUSDT = await cTokenFactory.deploy(
+        USDT = (await UsdtMockedToken.deploy(totalSupply6Decimals, 6)) as UsdtMockedToken;
+        cUSDT = (await cTokenFactory.deploy(
             USDT.address,
             MockWhitePaperInstance.address,
             BigNumber.from("6"),
             "cUSDT",
             "cUSDT"
-        );
+        )) as MockCToken;
 
         // #################################################################################
         // #####################         DAI / aDAI      ###################################
@@ -86,15 +86,15 @@ describe("Compound strategy", () => {
 
         const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");
         DAI = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as DaiMockedToken;
-        cDAI = await cTokenFactory.deploy(
+        cDAI = (await cTokenFactory.deploy(
             DAI.address,
             MockWhitePaperInstance.address,
             BigNumber.from("18"),
             "cDAI",
             "cDAI"
-        );
+        )) as MockCToken;
 
-        COMP = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        COMP = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
 
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
         comptroller = (await MockComptroller.deploy(
@@ -105,26 +105,26 @@ describe("Compound strategy", () => {
         )) as MockComptroller;
 
         const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
-        strategyCompoundInstanceDAI = await upgrades.deployProxy(compoundNewStartegy, [
+        strategyCompoundInstanceDAI = (await upgrades.deployProxy(compoundNewStartegy, [
             DAI.address,
             cDAI.address,
             comptroller.address,
             COMP.address,
-        ]);
+        ])) as StrategyCompound;
         await strategyCompoundInstanceDAI.setTreasury(await admin.getAddress());
-        strategyCompoundInstanceUSDT = await upgrades.deployProxy(compoundNewStartegy, [
+        strategyCompoundInstanceUSDT = (await upgrades.deployProxy(compoundNewStartegy, [
             USDT.address,
             cUSDT.address,
             comptroller.address,
             COMP.address,
-        ]);
+        ])) as StrategyCompound;
         await strategyCompoundInstanceUSDT.setTreasury(await admin.getAddress());
-        strategyCompoundInstanceUSDC = await upgrades.deployProxy(compoundNewStartegy, [
+        strategyCompoundInstanceUSDC = (await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
             comptroller.address,
             COMP.address,
-        ]);
+        ])) as StrategyCompound;
         await strategyCompoundInstanceUSDC.setTreasury(await admin.getAddress());
     });
 

@@ -330,7 +330,7 @@ describe("Milton Maintenance", () => {
         const swapPayFixed = await miltonStorageDai.connect(userTwo).getSwapPayFixed(1);
         const actualCollateral = swapPayFixed.collateral;
 
-        expect(actualCollateral, "Incorrect collateral").to.be.eql(expectedCollateral);
+        expect(actualCollateral, "Incorrect collateral").to.be.equal(expectedCollateral);
     });
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
@@ -377,7 +377,7 @@ describe("Milton Maintenance", () => {
 
         //then
         const actualNewOwner = await miltonDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -494,7 +494,7 @@ describe("Milton Maintenance", () => {
 
         //then
         const actualNewOwner = await miltonDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should not sent ETH to Milton DAI, USDT, USDC", async () => {

@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 
 import { ERC20, StrategyAave } from "../../types";
 import {
@@ -34,7 +34,7 @@ export const aaveDaiStrategyFactory = async (): Promise<StrategyAave> => {
         {
             kind: "uups",
         }
-    )) as Promise<StrategyAave>;
+    )) as StrategyAave;
 };
 
 export const aaveUsdcStrategyFactory = async (): Promise<StrategyAave> => {
@@ -46,7 +46,7 @@ export const aaveUsdcStrategyFactory = async (): Promise<StrategyAave> => {
         {
             kind: "uups",
         }
-    )) as Promise<StrategyAave>;
+    )) as StrategyAave;
 };
 
 export const aaveUsdtStrategyFactory = async (): Promise<StrategyAave> => {
@@ -58,7 +58,7 @@ export const aaveUsdtStrategyFactory = async (): Promise<StrategyAave> => {
         {
             kind: "uups",
         }
-    )) as Promise<StrategyAave>;
+    )) as StrategyAave;
 };
 
 export const strategyAaveSetup = async (strategy: StrategyAave, stanleyAddress: string) => {
