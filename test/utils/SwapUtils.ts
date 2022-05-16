@@ -566,7 +566,6 @@ export const executeCloseSwapsTestCase = async function (
             await testData.miltonUsdt.connect(admin).pause();
         }
         await closeCallback(testData.miltonUsdt.connect(closerUser));
-        // await sleep(1000);
     }
 
     if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
@@ -574,7 +573,6 @@ export const executeCloseSwapsTestCase = async function (
             await testData.miltonUsdc.connect(admin).pause();
         }
         await closeCallback(testData.miltonUsdc.connect(closerUser));
-        // await sleep(1000);
     }
 
     if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
@@ -582,6 +580,5 @@ export const executeCloseSwapsTestCase = async function (
             await testData.miltonDai.connect(admin).pause();
         }
         await closeCallback(testData.miltonDai.connect(closerUser));
-        // await sleep(1000);
     }
 };

@@ -75,12 +75,6 @@ import { assertError, assertExpectedValues } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
-const DEF_DELAY = 1000;
-
-function sleep(ms: number) {
-    return new Promise((resolve) => setTimeout(resolve, ms || DEF_DELAY));
-}
-
 describe("Milton - close position", () => {
     let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
@@ -2662,8 +2656,6 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
-
-        await sleep(1000);
     });
     it("should close only one position - close first position", async () => {
         //given
@@ -3261,7 +3253,6 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
-        await sleep(1000);
     });
 
     it("should transfer all liquidation deposits in single transfer to liquidator - pay fixed", async () => {
