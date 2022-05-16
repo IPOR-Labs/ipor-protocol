@@ -134,29 +134,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function closeSwapsPayFixed(uint256[] memory swapIds)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, block.timestamp);
-    }
-
-    function closeSwapsReceiveFixed(uint256[] memory swapIds)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
-            swapIds,
-            block.timestamp
-        );
-    }
-
     function emergencyCloseSwapPayFixed(uint256 swapId) external override onlyOwner whenPaused {
         _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
@@ -696,7 +673,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonTypes.IporSwapClosingResult[] memory closedSwaps
         )
     {
-        require(swapIds.length > 0, MiltonErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+		require(
+            swapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );        
 
         closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIds.length);
 
@@ -722,7 +702,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonTypes.IporSwapClosingResult[] memory closedSwaps
         )
     {
-        require(swapIds.length > 0, MiltonErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+        require(
+            swapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );
 
         closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIds.length);
 
