@@ -16,7 +16,7 @@ import "@hardhat-docgen/core";
 import "@hardhat-docgen/markdown";
 require("hardhat-contract-sizer");
 
-let jobs = 2;
+let jobs = 1;
 
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
