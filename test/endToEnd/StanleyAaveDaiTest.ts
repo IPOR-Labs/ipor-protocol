@@ -190,7 +190,10 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             strategyAaveContract_Instance.address
         );
 
-        expect(userIvTokenAfter.gte(depositAmount), "userIvTokenAfter >= 10 * 10^18").to.be.true;
+        expect(
+            userIvTokenAfter.gte(BigNumber.from("9999999999999999999")),
+            "userIvTokenAfter >= 9999999999999999999"
+        ).to.be.true;
         expect(
             strategyAaveBalanceAfter.gte(depositAmount),
             "strategyAaveBalanceAfter >= 10 * 10^18"
