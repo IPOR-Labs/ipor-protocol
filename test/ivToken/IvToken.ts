@@ -64,7 +64,7 @@ describe("IvToken", () => {
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -135,7 +135,7 @@ describe("IvToken", () => {
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should contain 18 decimals", async () => {
@@ -162,7 +162,7 @@ describe("IvToken", () => {
         expect(
             expectedUnderlyingTokenAddress,
             `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`
-        ).to.be.eql(actualUnderlyingTokenAddress);
+        ).to.be.equal(actualUnderlyingTokenAddress);
     });
 
     it("should not sent ETH to IvToken DAI", async () => {

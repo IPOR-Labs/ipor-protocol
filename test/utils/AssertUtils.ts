@@ -386,7 +386,7 @@ export const assertExpectedValues = async function (
     expect(
         expectedSumOfBalancesBeforePayout,
         `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`
-    ).to.be.eql(actualSumOfBalances);
+    ).to.be.equal(actualSumOfBalances);
 };
 
 const assertBalances = async (

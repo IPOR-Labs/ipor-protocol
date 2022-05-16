@@ -118,22 +118,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpTokenBalanceSender,
             `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`
-        ).to.be.eql(actualIpTokenBalanceSender);
+        ).to.be.equal(actualIpTokenBalanceSender);
 
         expect(
             expectedStableBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect DAI balance on Liquidity Provider for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should redeem ipToken - simple case 1 - USDT 6 decimals", async () => {
@@ -217,22 +217,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpTokenBalanceSender,
             `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`
-        ).to.be.eql(actualIpTokenBalanceSender);
+        ).to.be.equal(actualIpTokenBalanceSender);
 
         expect(
             expectedStableBalanceMilton,
             `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect USDT Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect USDT balance on Liquidity Provider for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should redeem ipTokens because NO validation for cool off period", async () => {
@@ -301,22 +301,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpTokenBalanceSender,
             `Incorrect ipToken balance on user for asset ${tokenDai.address} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`
-        ).to.be.eql(actualIpTokenBalanceSender);
+        ).to.be.equal(actualIpTokenBalanceSender);
 
         expect(
             expectedStableBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should redeem ipTokens, two times provided liquidity", async () => {
@@ -384,22 +384,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpTokenBalanceSender,
             `Incorrect ipToken balance on user for asset ${tokenDai.address} actual: ${actualIpTokenBalanceSender}, expected: ${expectedIpTokenBalanceSender}`
-        ).to.be.eql(actualIpTokenBalanceSender);
+        ).to.be.equal(actualIpTokenBalanceSender);
 
         expect(
             expectedStableBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualUnderlyingBalanceMilton}, expected: ${expectedStableBalanceMilton}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should redeem ipDAI, should redeem ipUSDT - simple case 1", async () => {
@@ -512,22 +512,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpDAIBalanceSender,
             `Incorrect ipToken DAI balance on user for asset ${tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedIpDAIBalanceSender}`
-        ).to.be.eql(actualIpDAIBalanceSender);
+        ).to.be.equal(actualIpDAIBalanceSender);
 
         expect(
             expectedDAIBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`
-        ).to.be.eql(actualDAIBalanceMilton);
+        ).to.be.equal(actualDAIBalanceMilton);
 
         expect(
             expectedLiquidityPoolDAIBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualLiquidityPoolDAIBalanceMilton}, expected: ${expectedLiquidityPoolDAIBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolDAIBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolDAIBalanceMilton);
 
         expect(
             expectedLiquidityProviderDAIBalance,
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualDAIBalanceSender}, expected: ${expectedLiquidityProviderDAIBalance}`
-        ).to.be.eql(actualDAIBalanceSender);
+        ).to.be.equal(actualDAIBalanceSender);
 
         const actualIpUSDTBalanceSender = await ipTokenUsdt.balanceOf(
             await liquidityProvider.getAddress()
@@ -542,22 +542,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpUSDTBalanceSender,
             `Incorrect ipToken USDT balance on user for asset ${tokenUsdt.address} actual: ${actualIpUSDTBalanceSender}, expected: ${expectedIpUSDTBalanceSender}`
-        ).to.be.eql(actualIpUSDTBalanceSender);
+        ).to.be.equal(actualIpUSDTBalanceSender);
 
         expect(
             expectedUSDTBalanceMilton,
             `Incorrect USDT balance on Milton for asset ${tokenUsdt.address} actual: ${actualUSDTBalanceMilton}, expected: ${expectedUSDTBalanceMilton}`
-        ).to.be.eql(actualUSDTBalanceMilton);
+        ).to.be.equal(actualUSDTBalanceMilton);
 
         expect(
             expectedLiquidityPoolUSDTBalanceMilton,
             `Incorrect USDT Liquidity Pool Balance on Milton for asset ${tokenUsdt.address} actual: ${actualLiquidityPoolUSDTBalanceMilton}, expected: ${expectedLiquidityPoolUSDTBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolUSDTBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolUSDTBalanceMilton);
 
         expect(
             expectedLiquidityProviderUSDTBalance,
             `Incorrect USDT balance on Liquidity Provider for asset ${tokenUsdt.address} actual: ${actualUSDTBalanceSender}, expected: ${expectedLiquidityProviderUSDTBalance}`
-        ).to.be.eql(actualUSDTBalanceSender);
+        ).to.be.equal(actualUSDTBalanceSender);
     });
 
     it("should redeem ipDAI, should redeem ipUSDT, two users - simple case 1", async () => {
@@ -669,22 +669,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpDAIBalanceSender,
             `Incorrect ipToken DAI balance on user for asset ${tokenDai.address} actual: ${actualIpDAIBalanceSender}, expected: ${expectedIpDAIBalanceSender}`
-        ).to.be.eql(actualIpDAIBalanceSender);
+        ).to.be.equal(actualIpDAIBalanceSender);
 
         expect(
             expectedDAIBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`
-        ).to.be.eql(actualDAIBalanceMilton);
+        ).to.be.equal(actualDAIBalanceMilton);
 
         expect(
             expectedLiquidityPoolDAIBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualLiquidityPoolDAIBalanceMilton}, expected: ${expectedLiquidityPoolDAIBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolDAIBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolDAIBalanceMilton);
 
         expect(
             expectedLiquidityProviderDAIBalance,
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualDAIBalanceSender}, expected: ${expectedLiquidityProviderDAIBalance}`
-        ).to.be.eql(actualDAIBalanceSender);
+        ).to.be.equal(actualDAIBalanceSender);
 
         const actualIpUSDTBalanceSender = await ipTokenUsdt.balanceOf(await usdtUser.getAddress());
         const actualUSDTBalanceMilton = BigNumber.from(
@@ -699,22 +699,22 @@ describe("Joseph Redeem", () => {
         expect(
             expectedIpUSDTBalanceSender,
             `Incorrect ipToken USDT balance on user for asset ${tokenUsdt.address} actual: ${actualIpUSDTBalanceSender}, expected: ${expectedIpUSDTBalanceSender}`
-        ).to.be.eql(actualIpUSDTBalanceSender);
+        ).to.be.equal(actualIpUSDTBalanceSender);
 
         expect(
             expectedUSDTBalanceMilton,
             `Incorrect USDT balance on Milton for asset ${tokenUsdt.address} actual: ${actualUSDTBalanceMilton}, expected: ${expectedUSDTBalanceMilton}`
-        ).to.be.eql(actualUSDTBalanceMilton);
+        ).to.be.equal(actualUSDTBalanceMilton);
 
         expect(
             expectedLiquidityPoolUSDTBalanceMilton,
             `Incorrect USDT Liquidity Pool Balance on Milton for asset ${tokenUsdt.address} actual: ${actualLiquidityPoolUSDTBalanceMilton}, expected: ${expectedLiquidityPoolUSDTBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolUSDTBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolUSDTBalanceMilton);
 
         expect(
             expectedLiquidityProviderUSDTBalance,
             `Incorrect USDT balance on Liquidity Provider for asset ${tokenUsdt.address} actual: ${actualUSDTBalanceSender}, expected: ${expectedLiquidityProviderUSDTBalance}`
-        ).to.be.eql(actualUSDTBalanceSender);
+        ).to.be.equal(actualUSDTBalanceSender);
     });
 
     it("should redeem - Liquidity Provider can transfer tokens to other user, user can redeem tokens", async () => {
@@ -782,29 +782,29 @@ describe("Joseph Redeem", () => {
         expect(
             expectedDAIBalanceMilton,
             `Incorrect DAI balance on Milton for asset ${tokenDai.address} actual: ${actualDAIBalanceMilton}, expected: ${expectedDAIBalanceMilton}`
-        ).to.be.eql(actualDAIBalanceMilton);
+        ).to.be.equal(actualDAIBalanceMilton);
         expect(
             expectedDAIBalanceMiltonLiquidityPool,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${tokenDai.address} actual: ${actualDAIBalanceMiltonLiquidityPool}, expected: ${expectedDAIBalanceMiltonLiquidityPool}`
-        ).to.be.eql(actualDAIBalanceMiltonLiquidityPool);
+        ).to.be.equal(actualDAIBalanceMiltonLiquidityPool);
 
         expect(
             expectedIpDAIBalanceLiquidityProvider,
             `Incorrect ipToken DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualIpDAIBalanceLiquidityProvider}, expected: ${expectedIpDAIBalanceLiquidityProvider}`
-        ).to.be.eql(actualIpDAIBalanceLiquidityProvider);
+        ).to.be.equal(actualIpDAIBalanceLiquidityProvider);
         expect(
             expectedDAIBalanceLiquidityProvider,
             `Incorrect DAI balance on Liquidity Provider for asset ${tokenDai.address} actual: ${actualDAIBalanceLiquidityProvider}, expected: ${expectedDAIBalanceLiquidityProvider}`
-        ).to.be.eql(actualDAIBalanceLiquidityProvider);
+        ).to.be.equal(actualDAIBalanceLiquidityProvider);
 
         expect(
             expectedIpDAIBalanceUserThree,
             `Incorrect ipToken DAI balance on user for asset ${tokenDai.address} actual: ${actualIpDAIBalanceUserThree}, expected: ${expectedIpDAIBalanceUserThree}`
-        ).to.be.eql(actualIpDAIBalanceUserThree);
+        ).to.be.equal(actualIpDAIBalanceUserThree);
         expect(
             expectedDAIBalanceUserThree,
             `Incorrect DAI balance on user for asset ${tokenDai.address} actual: ${actualDAIBalanceUserThree}, expected: ${expectedDAIBalanceUserThree}`
-        ).to.be.eql(actualDAIBalanceUserThree);
+        ).to.be.equal(actualDAIBalanceUserThree);
     });
 
     it("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
