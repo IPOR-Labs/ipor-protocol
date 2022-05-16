@@ -38,7 +38,7 @@ describe("Deposit -> deployed Contract on Mainnet fork", function () {
     let ivToken: IvToken;
     let stanley: StanleyUsdc;
 
-    if (process.env.FORK_ENABLED != "true" || process.env.TEST_OPTI != "true") {
+    if (process.env.FORK_ENABLED != "true") {
         return;
     }
 

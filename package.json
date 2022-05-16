@@ -42,11 +42,8 @@
         "compile:truffle": "truffle compile --all",
         "migrate:truffle": "truffle migrate --network $ETH_BC_NETWORK_NAME  --compile-none",
         "migrate:truffle-reset": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
-        "mainnet-test:vault": "export TEST_OPTI=false; npx hardhat test test/endToEnd/vault.ts",
-        "mainnet-test:josephRebalanceTest": "export TEST_OPTI=false; npx hardhat test test/endToEnd/josephRebalance.ts",
-        "mainnet-test:openCloseSwapsTest": "export TEST_OPTI=false; npx hardhat test test/endToEnd/openCloseSwaps.ts",
         "test:unit": "export FORK_ENABLED=false; npx hardhat test",
-        "test:mainnet": "export FORK_ENABLED=true; export TEST_OPTI=true ; npx hardhat test test/endToEnd/*.ts",
+        "test:mainnet": "export FORK_ENABLED=true; npx hardhat test test/endToEnd/*.ts",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
         "export-abi": "npx hardhat export-abi"
