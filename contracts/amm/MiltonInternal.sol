@@ -61,6 +61,8 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
+    uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
+
     address internal _asset;
     address internal _joseph;
     IIporOracle internal _iporOracle;
@@ -289,6 +291,10 @@ abstract contract MiltonInternal is
         returns (uint256)
     {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
+    }
+
+    function _getLiquidationLegLimit() internal pure virtual returns (uint256) {
+        return _LIQUIDATION_LEG_LIMIT;
     }
 
     function _getJoseph() internal view virtual returns (address) {

@@ -54,6 +54,7 @@ import {
 } from "../utils/MiltonUtils";
 import {
     openSwapPayFixed,
+    openSwapReceiveFixed,
     exetuceCloseSwapTestCase,
     executeCloseSwapsTestCase,
     countOpenSwaps,
@@ -2156,64 +2157,6 @@ describe("Milton - close position", () => {
         ).to.be.eq(actualPayoff);
     });
 
-    it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        await assertError(
-            executeCloseSwapsTestCase(
-                testData,
-                tokenDai.address,
-                USD_10_18DEC,
-                0,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                ZERO,
-                (contract) => {
-                    return contract.closeSwapsPayFixed([]);
-                },
-                ZERO,
-                false,
-                admin,
-                userOne,
-                liquidityProvider
-            ),
-            "IPOR_314"
-        );
-    });
-
     it("should close single pay fixed position using multicall function, DAI", async () => {
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -2258,8 +2201,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
-                return contract.closeSwapsPayFixed([1]);
+            async (contract) => {
+                return contract.closeSwaps([1], []);
             },
             ZERO,
             false,
@@ -2313,72 +2256,14 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
-                return contract.closeSwapsPayFixed([1, 2]);
+            async (contract) => {
+                return contract.closeSwaps([1, 2], []);
             },
             ZERO,
             false,
             admin,
             userOne,
             liquidityProvider
-        );
-    });
-
-    it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await assertError(
-            executeCloseSwapsTestCase(
-                testData,
-                tokenDai.address,
-                USD_10_18DEC,
-                1,
-                userTwo,
-                userTwo,
-                PERCENTAGE_5_18DEC,
-                PERCENTAGE_160_18DEC,
-                PERIOD_25_DAYS_IN_SECONDS,
-                USD_10_000_000_18DEC,
-                ZERO,
-                (contract) => {
-                    return contract.closeSwapsReceiveFixed([]);
-                },
-                ZERO,
-                false,
-                admin,
-                userOne,
-                liquidityProvider
-            ),
-            "IPOR_314"
         );
     });
 
@@ -2426,8 +2311,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
-                return contract.closeSwapsReceiveFixed([1]);
+            async (contract) => {
+                return contract.closeSwaps([], [1]);
             },
             ZERO,
             false,
@@ -2481,8 +2366,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
-                return contract.closeSwapsReceiveFixed([1, 2]);
+            async (contract) => {
+                return contract.closeSwaps([], [1, 2]);
             },
             ZERO,
             false,
@@ -2536,7 +2421,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsPayFixed([1]);
             },
             ZERO,
@@ -2591,7 +2476,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapPayFixed(1);
             },
             ZERO,
@@ -2647,7 +2532,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapReceiveFixed(1);
             },
             ZERO,
@@ -3023,8 +2908,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
-                return contract.closeSwapsPayFixed([1]);
+            async (contract) => {
+                return contract.closeSwaps([1], []);
             },
             ZERO,
             false,
@@ -3078,8 +2963,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
-                return contract.closeSwapsPayFixed([1, 2]);
+            async (contract) => {
+                return contract.closeSwaps([1, 2], []);
             },
             ZERO,
             false,
@@ -3133,8 +3018,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
-                return contract.closeSwapsReceiveFixed([1]);
+            async (contract) => {
+                return contract.closeSwaps([], [1]);
             },
             ZERO,
             false,
@@ -3188,8 +3073,8 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
-            (contract) => {
-                return contract.closeSwapsReceiveFixed([1, 2]);
+            async (contract) => {
+                return contract.closeSwaps([], [1, 2]);
             },
             ZERO,
             false,
@@ -3244,7 +3129,7 @@ describe("Milton - close position", () => {
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
-            (contract) => {
+            async (contract) => {
                 return contract.emergencyCloseSwapsReceiveFixed([1]);
             },
             ZERO,
@@ -3378,5 +3263,941 @@ describe("Milton - close position", () => {
                 await userThree.getAddress(),
                 BigNumber.from("40").mul(N1__0_18DEC)
             );
+    });
+
+    it("should close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            USD_10_18DEC,
+            1,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            BigNumber.from("2"),
+            (contract) => {
+                return contract.closeSwaps([], [1, 300]);
+            },
+            ZERO,
+            false,
+            admin,
+            userOne,
+            liquidityProvider
+        );
+    });
+
+    it("should close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            USD_10_18DEC,
+            0,
+            userTwo,
+            userTwo,
+            PERCENTAGE_5_18DEC,
+            PERCENTAGE_160_18DEC,
+            PERIOD_25_DAYS_IN_SECONDS,
+            USD_10_000_000_18DEC,
+            BigNumber.from("2"),
+            (contract) => {
+                return contract.closeSwaps([1, 300], []);
+            },
+            ZERO,
+            false,
+            admin,
+            userOne,
+            liquidityProvider
+        );
+    });
+
+    it("should close 10 pay fixed, 10 receive fixed positions in one transaction - case 1, all are opened", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 10;
+        const volumeReceiveFixed = 10;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const expectedSwapStatus = 0;
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        //when
+        await miltonDai
+            .connect(paramsPayFixed.from)
+            .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        for (let i = 0; i < volumePayFixed; i++) {
+            let swapPayFixed = await miltonStorageDai.getSwapPayFixed(i + 1);
+            expect(expectedSwapStatus, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
+                swapPayFixed.state
+            );
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            let swapReceiveFixed = await miltonStorageDai.getSwapReceiveFixed(i + 1);
+            expect(expectedSwapStatus, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
+                swapReceiveFixed.state
+            );
+        }
+    });
+
+    it("should close 5 pay fixed, 5 receive fixed positions in one transaction - case 2, some of them are already closed", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 5;
+        const volumeReceiveFixed = 5;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const expectedSwapStatus = 0;
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(paramsPayFixed.from).itfCloseSwapPayFixed(3, closeTimestamp);
+        await miltonDai.connect(paramsPayFixed.from).itfCloseSwapReceiveFixed(8, closeTimestamp);
+
+        //when
+        await miltonDai
+            .connect(paramsPayFixed.from)
+            .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        for (let i = 0; i < volumePayFixed; i++) {
+            let swapPayFixed = await miltonStorageDai.getSwapPayFixed(i + 1);
+            expect(expectedSwapStatus, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
+                swapPayFixed.state
+            );
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            let swapReceiveFixed = await miltonStorageDai.getSwapReceiveFixed(i + 1);
+            expect(expectedSwapStatus, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
+                swapReceiveFixed.state
+            );
+        }
+    });
+
+    it("should close 5 pay fixed, 5 receive fixed positions in one transaction - case 3, some of them are already closed, call static", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 5;
+        const volumeReceiveFixed = 5;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        await miltonDai.connect(paramsPayFixed.from).itfCloseSwapPayFixed(3, closeTimestamp);
+        await miltonDai.connect(paramsPayFixed.from).itfCloseSwapReceiveFixed(8, closeTimestamp);
+
+        //when
+        const results = await miltonDai
+            .connect(paramsPayFixed.from)
+            .callStatic.itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[0].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[1].closed);
+        expect(false, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[2].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[3].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[4].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[0].closed
+        );
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[1].closed
+        );
+        expect(false, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[2].closed
+        );
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[3].closed
+        );
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[4].closed
+        );
+    });
+
+    it("should close 2 pay fixed, 2 receive fixed positions in one transaction - case 4, mixed liquidators, owner and not an owner", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(4);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        paramsPayFixed.from = userThree;
+        paramsReceiveFixed.from = userThree;
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        let swapIdsPayFixed = [1, 3];
+        let swapIdsReceiveFixed = [2, 4];
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        const expectedBalanceUserTwo = BigNumber.from("9999704642032047919907479");
+        const expectedBalanceUserThree = BigNumber.from("9999784642032047919907479");
+
+        //when
+        await miltonDai
+            .connect(paramsPayFixed.from)
+            .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        let swapPayFixedOne = await miltonStorageDai.getSwapPayFixed(1);
+        let swapReceiveFixedTwo = await miltonStorageDai.getSwapReceiveFixed(2);
+        let swapPayFixedThree = await miltonStorageDai.getSwapPayFixed(3);
+        let swapReceiveFixedFour = await miltonStorageDai.getSwapReceiveFixed(4);
+
+        expect(0, `Incorrect is closed status`).to.be.eq(swapPayFixedOne.state);
+        expect(0, `Incorrect is closed status`).to.be.eq(swapReceiveFixedTwo.state);
+        expect(0, `Incorrect is closed status`).to.be.eq(swapPayFixedThree.state);
+        expect(0, `Incorrect is closed status`).to.be.eq(swapReceiveFixedFour.state);
+
+        const actualBalanceUserTwo = await tokenDai.balanceOf(await userTwo.getAddress());
+        expect(expectedBalanceUserTwo, `Incorrect UserTwo balance`).to.be.eq(actualBalanceUserTwo);
+
+        const actualBalanceUserThree = await tokenDai.balanceOf(await userThree.getAddress());
+        expect(expectedBalanceUserThree, `Incorrect UserThree balance`).to.be.eq(
+            actualBalanceUserThree
+        );
+    });
+
+    it("should close 2 pay fixed, 2 receive fixed positions in one transaction - case 5, mixed liquidators, owner and not an owner, call static", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(4);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        paramsPayFixed.from = userThree;
+        paramsReceiveFixed.from = userThree;
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        let swapIdsPayFixed = [1, 3];
+        let swapIdsReceiveFixed = [2, 4];
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        //when
+        const results = await miltonDai
+            .connect(paramsPayFixed.from)
+            .callStatic.itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[0].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(results.closedPayFixedSwaps[1].closed);
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[0].closed
+        );
+        expect(true, `Incorrect is closed status`).to.be.eq(
+            results.closedReceiveFixedSwaps[1].closed
+        );
+    });
+
+    it("should close 2 pay fixed, 2 receive fixed positions in one transaction - case 5, mixed liquidators, owner and not an owner, less than 28 days", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(4);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        paramsPayFixed.from = userThree;
+        paramsReceiveFixed.from = userThree;
+
+        await openSwapPayFixed(testData, paramsPayFixed);
+        await openSwapReceiveFixed(testData, paramsReceiveFixed);
+
+        let swapIdsPayFixed = [1, 3];
+        let swapIdsReceiveFixed = [2, 4];
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        //when
+        await assertError(
+            miltonDai
+                .connect(paramsPayFixed.from)
+                .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
+            "IPOR_319"
+        );
+    });
+
+    it("should NOT close 12 pay fixed, 2 receive fixed positions in one transaction - Liquidation Leg Limit exceeded", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 12;
+        const volumeReceiveFixed = 2;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        //when
+        await assertError(
+            miltonDai
+                .connect(paramsPayFixed.from)
+                .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
+            "IPOR_313"
+        );
+    });
+
+    it("should NOT close 2 pay fixed, 12 receive fixed positions in one transaction - Liquidation Leg Limit exceeded", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 2;
+        const volumeReceiveFixed = 12;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        //when
+        await assertError(
+            miltonDai
+                .connect(paramsPayFixed.from)
+                .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
+            "IPOR_313"
+        );
+    });
+
+    it("should close 10 pay fixed, 10 receive fixed positions in one transaction - verify balances", async () => {
+        //given
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        const paramsPayFixed = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        const paramsReceiveFixed = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
+        paramsReceiveFixed.from = paramsPayFixed.from;
+        paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(paramsPayFixed.asset, PERCENTAGE_3_18DEC, paramsPayFixed.openTimestamp);
+
+        const volumePayFixed = 10;
+        const volumeReceiveFixed = 10;
+
+        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC.mul(
+            volumePayFixed + volumeReceiveFixed
+        );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
+
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
+
+        for (let i = 0; i < volumePayFixed; i++) {
+            await openSwapPayFixed(testData, paramsPayFixed);
+            swapIdsPayFixed.push(i + 1);
+        }
+
+        for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+            await openSwapReceiveFixed(testData, paramsReceiveFixed);
+            swapIdsReceiveFixed.push(i + 1);
+        }
+
+        const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
+
+        const totalLiquidationDepositAmount = N1__0_18DEC.mul(
+            20 * (volumePayFixed + volumeReceiveFixed)
+        );
+
+        const expectedBalanceTrader = BigNumber.from("9997046420320479199074790");
+        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC.add(
+            totalLiquidationDepositAmount
+        );
+
+        //when
+        await miltonDai
+            .connect(userThree)
+            .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+
+        //then
+        const actualBalanceLiquidator = await tokenDai.balanceOf(await userThree.getAddress());
+        expect(expectedBalanceLiquidator, `Incorrect liquidator balance`).to.be.eq(
+            actualBalanceLiquidator
+        );
+
+        const actualBalanceTrader = await tokenDai.balanceOf(
+            await paramsPayFixed.from.getAddress()
+        );
+        expect(expectedBalanceTrader, `Incorrect trader balance`).to.be.eq(actualBalanceTrader);
     });
 });
