@@ -1,6 +1,6 @@
-require("dotenv").config({ path: "../../../../.env" });
-const keys = require("../../../json_keys.js");
-const func = require("../../../json_func.js");
+require("dotenv").config({ path: "../../../../../.env" });
+const keys = require("../../../../json_keys.js");
+const func = require("../../../../json_func.js");
 const { erc1967, upgradeProxy } = require("@openzeppelin/truffle-upgrades");
 
 const MiltonUsdcV2 = artifacts.require("MiltonUsdcV2");
