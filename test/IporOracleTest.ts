@@ -351,9 +351,9 @@ describe("IporOracle", () => {
         );
     });
 
-    it("should update IPOR Index", async () => {
+    it("should update IPOR Index, DAI", async () => {
         //given
-        const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
+        const expectedIndexValue = BigNumber.from("5").mul(N1__0_18DEC);
         testData = (await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
@@ -471,7 +471,7 @@ describe("IporOracle", () => {
         //given
         const asset = _tokenUsdt.address;
         await _iporOracle.addUpdater(await userOne.getAddress());
-        const iporIndexValue = BigNumber.from("50000").mul(N0__01_18DEC);
+        const iporIndexValue = BigNumber.from("5").mul(N0__01_18DEC);
 
         //when
         await _iporOracle
