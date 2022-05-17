@@ -99,7 +99,7 @@ describe("MiltonStorage", () => {
 
         //then
         const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -274,7 +274,7 @@ describe("MiltonStorage", () => {
 
         //then
         const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {

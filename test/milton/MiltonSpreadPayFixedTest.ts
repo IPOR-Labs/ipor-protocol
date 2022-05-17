@@ -72,7 +72,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //then
         const actualNewOwner = await miltonSpread.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -169,7 +169,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
         //then
         const actualNewOwner = await miltonSpread.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should calculate Quote Value Pay Fixed Value - Spread Premium < Spread Premium Max Value, Base Case 1, Spread negative", async () => {
