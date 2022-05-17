@@ -363,7 +363,7 @@ export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer
         endTimestamp: closeSwapTimestamp,
         id: BigNumber.from("1"),
         collateral: BigNumber.from("1000").mul(N1__0_18DEC),
-        liquidationDepositAmount: BigNumber.from("20").mul(N1__0_18DEC),
+        liquidationDepositAmount: BigNumber.from("20"),
         notional: BigNumber.from("50000").mul(N1__0_18DEC),
         fixedInterestRate: BigNumber.from("234"),
         ibtQuantity: BigNumber.from("123"),

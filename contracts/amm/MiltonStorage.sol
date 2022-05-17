@@ -23,7 +23,7 @@ contract MiltonStorage is
     using SafeCast for uint256;
     using SoapIndicatorLogic for AmmMiltonStorageTypes.SoapIndicatorsMemory;
 
-    uint64 private _lastSwapId;
+    uint32 private _lastSwapId;
     address private _milton;
     address private _joseph;
 
@@ -104,21 +104,21 @@ contract MiltonStorage is
         override
         returns (IporTypes.IporSwapMemory memory)
     {
-        uint64 id = swapId.toUint64();
+        uint32 id = swapId.toUint32();
         AmmMiltonStorageTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
         return
             IporTypes.IporSwapMemory(
-                uint256(swap.state),
+                swap.id,
                 swap.buyer,
                 swap.openTimestamp,
                 swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                swap.id,
                 swap.idsIndex,
                 swap.collateral,
-                swap.liquidationDepositAmount,
                 swap.notional,
+                swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.ibtQuantity
+                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swap.state)
             );
     }
 
@@ -128,21 +128,21 @@ contract MiltonStorage is
         override
         returns (IporTypes.IporSwapMemory memory)
     {
-        uint64 id = swapId.toUint64();
+        uint32 id = swapId.toUint32();
         AmmMiltonStorageTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
         return
             IporTypes.IporSwapMemory(
-                uint256(swap.state),
+                swap.id,
                 swap.buyer,
                 swap.openTimestamp,
                 swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                swap.id,
                 swap.idsIndex,
                 swap.collateral,
-                swap.liquidationDepositAmount,
                 swap.notional,
+                swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.ibtQuantity
+                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swap.state)
             );
     }
 
@@ -151,7 +151,7 @@ contract MiltonStorage is
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        uint128[] storage ids = _swapsPayFixed.ids[account];
+        uint32[] storage ids = _swapsPayFixed.ids[account];
         return (ids.length, _getPositions(_swapsPayFixed.swaps, ids, offset, chunkSize));
     }
 
@@ -160,7 +160,7 @@ contract MiltonStorage is
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        uint128[] storage ids = _swapsReceiveFixed.ids[account];
+        uint32[] storage ids = _swapsReceiveFixed.ids[account];
         return (ids.length, _getPositions(_swapsReceiveFixed.swaps, ids, offset, chunkSize));
     }
 
@@ -168,17 +168,17 @@ contract MiltonStorage is
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, uint128[] memory ids) {
+    ) external view override returns (uint256 totalCount, uint256[] memory ids) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        uint128[] storage idsRef = _swapsPayFixed.ids[account];
+        uint32[] storage idsRef = _swapsPayFixed.ids[account];
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
             idsRef.length,
             offset,
             chunkSize
         );
-        uint128[] memory ids = new uint128[](resultSetSize);
+        uint256[] memory ids = new uint256[](resultSetSize);
         for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
         }
@@ -189,17 +189,17 @@ contract MiltonStorage is
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view override returns (uint256 totalCount, uint128[] memory ids) {
+    ) external view override returns (uint256 totalCount, uint256[] memory ids) {
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        uint128[] storage idsRef = _swapsReceiveFixed.ids[account];
+        uint32[] storage idsRef = _swapsReceiveFixed.ids[account];
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
             idsRef.length,
             offset,
             chunkSize
         );
-        uint128[] memory ids = new uint128[](resultSetSize);
+        uint256[] memory ids = new uint256[](resultSetSize);
         for (uint256 i = 0; i != resultSetSize; i++) {
             ids[i] = idsRef[offset + i];
         }
@@ -219,10 +219,10 @@ contract MiltonStorage is
         require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
-        uint128[] storage payFixedIdsRef = _swapsPayFixed.ids[account];
+        uint32[] storage payFixedIdsRef = _swapsPayFixed.ids[account];
         uint256 payFixedLength = payFixedIdsRef.length;
 
-        uint128[] storage receiveFixedIdsRef = _swapsReceiveFixed.ids[account];
+        uint32[] storage receiveFixedIdsRef = _swapsReceiveFixed.ids[account];
         uint256 receiveFixedLength = receiveFixedIdsRef.length;
 
         uint256 resultSetSize = PaginationUtils.resolveResultSetSize(
@@ -479,8 +479,8 @@ contract MiltonStorage is
     }
 
     function _getPositions(
-        mapping(uint128 => AmmMiltonStorageTypes.IporSwap) storage swaps,
-        uint128[] storage ids,
+        mapping(uint32 => AmmMiltonStorageTypes.IporSwap) storage swaps,
+        uint32[] storage ids,
         uint256 offset,
         uint256 chunkSize
     ) internal view returns (IporTypes.IporSwapMemory[] memory) {
@@ -497,20 +497,20 @@ contract MiltonStorage is
         );
 
         for (uint256 i = 0; i != swapsIdsLength; i++) {
-            uint128 id = ids[i + offset];
+            uint32 id = ids[i + offset];
             AmmMiltonStorageTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = IporTypes.IporSwapMemory(
-                uint256(swaps[id].state),
+                swap.id,
                 swap.buyer,
                 swap.openTimestamp,
                 swap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
-                swap.id,
                 swap.idsIndex,
                 swap.collateral,
-                swap.liquidationDepositAmount,
                 swap.notional,
+                swap.ibtQuantity,
                 swap.fixedInterestRate,
-                swap.ibtQuantity
+                swap.liquidationDepositAmount * Constants.D18,
+                uint256(swaps[id].state)
             );
         }
         return derivatives;
@@ -714,22 +714,21 @@ contract MiltonStorage is
         returns (uint256)
     {
         _lastSwapId++;
-        uint64 id = _lastSwapId;
+        uint32 id = _lastSwapId;
 
         AmmMiltonStorageTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
 
-        swap.state = AmmTypes.SwapState.ACTIVE;
+        swap.id = id;
         swap.buyer = newSwap.buyer;
         swap.openTimestamp = newSwap.openTimestamp.toUint32();
-
-        swap.id = id;
+        swap.idsIndex = _swapsPayFixed.ids[newSwap.buyer].length.toUint32();
         swap.collateral = newSwap.collateral.toUint128();
-        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint128();
         swap.notional = newSwap.notional.toUint128();
-        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
+        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
+        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
+        swap.state = AmmTypes.SwapState.ACTIVE;
 
-        swap.idsIndex = _swapsPayFixed.ids[newSwap.buyer].length.toUint64();
         _swapsPayFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;
 
@@ -741,22 +740,21 @@ contract MiltonStorage is
         returns (uint256)
     {
         _lastSwapId++;
-        uint64 id = _lastSwapId;
+        uint32 id = _lastSwapId;
 
         AmmMiltonStorageTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
 
-        swap.state = AmmTypes.SwapState.ACTIVE;
+        swap.id = id;
         swap.buyer = newSwap.buyer;
         swap.openTimestamp = newSwap.openTimestamp.toUint32();
-
-        swap.id = id;
+        swap.idsIndex = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint32();
         swap.collateral = newSwap.collateral.toUint128();
-        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint128();
         swap.notional = newSwap.notional.toUint128();
-        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint128();
         swap.ibtQuantity = newSwap.ibtQuantity.toUint128();
+        swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
+        swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
+        swap.state = AmmTypes.SwapState.ACTIVE;
 
-        swap.idsIndex = _swapsReceiveFixed.ids[newSwap.buyer].length.toUint64();
         _swapsReceiveFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;
 
@@ -770,18 +768,18 @@ contract MiltonStorage is
             MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
-        uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
+        uint32 idsIndexToDelete = iporSwap.idsIndex.toUint32();
         address buyer = iporSwap.buyer;
         uint256 idsLength = _swapsPayFixed.ids[buyer].length - 1;
         if (idsIndexToDelete < idsLength) {
-            uint128 accountDerivativeIdToMove = _swapsPayFixed.ids[buyer][idsLength];
+            uint32 accountDerivativeIdToMove = _swapsPayFixed.ids[buyer][idsLength];
 
             _swapsPayFixed.swaps[accountDerivativeIdToMove].idsIndex = idsIndexToDelete;
 
             _swapsPayFixed.ids[buyer][idsIndexToDelete] = accountDerivativeIdToMove;
         }
 
-        _swapsPayFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
+        _swapsPayFixed.swaps[iporSwap.id.toUint32()].state = AmmTypes.SwapState.INACTIVE;
         _swapsPayFixed.ids[buyer].pop();
     }
 
@@ -792,19 +790,19 @@ contract MiltonStorage is
             MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
-        uint64 idsIndexToDelete = iporSwap.idsIndex.toUint64();
+        uint32 idsIndexToDelete = iporSwap.idsIndex.toUint32();
         address buyer = iporSwap.buyer;
         uint256 idsLength = _swapsReceiveFixed.ids[buyer].length - 1;
 
         if (idsIndexToDelete < idsLength) {
-            uint128 accountDerivativeIdToMove = _swapsReceiveFixed.ids[buyer][idsLength];
+            uint32 accountDerivativeIdToMove = _swapsReceiveFixed.ids[buyer][idsLength];
 
             _swapsReceiveFixed.swaps[accountDerivativeIdToMove].idsIndex = idsIndexToDelete;
 
             _swapsReceiveFixed.ids[buyer][idsIndexToDelete] = accountDerivativeIdToMove;
         }
 
-        _swapsReceiveFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
+        _swapsReceiveFixed.swaps[iporSwap.id.toUint32()].state = AmmTypes.SwapState.INACTIVE;
         _swapsReceiveFixed.ids[buyer].pop();
     }
 

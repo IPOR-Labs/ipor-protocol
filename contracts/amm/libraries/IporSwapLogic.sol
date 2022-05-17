@@ -10,6 +10,11 @@ import "../../libraries/math/IporMath.sol";
 library IporSwapLogic {
     using SafeCast for uint256;
 
+	/// @param totalAmount total amount represented in 18 decimals
+	/// @param leverage swap leverage, represented in 18 decimals
+	/// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
+	/// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
+	/// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
         uint256 totalAmount,
         uint256 leverage,

@@ -6,43 +6,43 @@ import "../../../interfaces/types/AmmTypes.sol";
 /// @notice Structs used in the MiltonStorage interface
 library AmmMiltonStorageTypes {
     struct IporSwap {
-        /// @notice State of the swap
-        /// @dev 0 - INACTIVE, 1 - ACTIVE
-        AmmTypes.SwapState state;
-        /// @notice Starting EPOCH timestamp of this swap.
-        uint32 openTimestamp;
+        /// @notice Swap's ID
+        uint32 id;
         /// @notice Address of swap's Buyer
         address buyer;
-        /// @notice Swap's ID
-        uint64 id;
+        /// @notice Starting EPOCH timestamp of this swap.
+        uint32 openTimestamp;
         /// @notice Index position of this Swap in an array of swaps' identification associated to swap's buyer
         /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
         /// During removal the last item in the array is switched with the one that just has been removed.
-        uint64 idsIndex;
+        uint32 idsIndex;
         /// @notice Swap's collateral
         /// @dev value represented in 18 decimals
         uint128 collateral;
-        /// @notice Liquidation deposit amount
-        /// @dev value represented in 18 decimals
-        uint128 liquidationDepositAmount;
         /// @notice Swap's notional amount
         /// @dev value represented in 18 decimals
         uint128 notional;
-        /// @notice Fixed interest rate at which the position has been opened
-        /// @dev value represented in 18 decimals
-        uint128 fixedInterestRate;
         /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
         /// @dev value represented in 18 decimals
         uint128 ibtQuantity;
+        /// @notice Fixed interest rate at which the position has been opened
+        /// @dev value represented in 18 decimals
+        uint64 fixedInterestRate;
+        /// @notice Liquidation deposit amount
+        /// @dev value represented WITHOUT decimals
+        uint32 liquidationDepositAmount;
+        /// @notice State of the swap
+        /// @dev 0 - INACTIVE, 1 - ACTIVE
+        AmmTypes.SwapState state;
     }
 
     /// @notice All active swaps available in Milton with information on swaps belong to the account.
     /// It describes swaps for a given leg.
     struct IporSwapContainer {
         /// @notice Swap details, key in the map is a swapId
-        mapping(uint128 => IporSwap) swaps;
+        mapping(uint32 => IporSwap) swaps;
         /// @notice List of swap IDs for every account, key in the list is the account's address, and the value is a list of swap IDs
-        mapping(address => uint128[]) ids;
+        mapping(address => uint32[]) ids;
     }
 
     /// @notice A struct containing balances that Milton keeps track of. It acts as a Milton's accounting book.

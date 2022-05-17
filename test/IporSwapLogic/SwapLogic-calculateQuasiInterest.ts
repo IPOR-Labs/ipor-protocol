@@ -16,7 +16,7 @@ import {
 
 const { expect } = chai;
 
-describe("IporSwapLogic calculatePayoffPayFixed", () => {
+describe("IporSwapLogic calculateQuasiInterest", () => {
     let iporSwapLogic: MockIporSwapLogic;
     let admin: Signer;
 
