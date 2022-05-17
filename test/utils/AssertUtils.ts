@@ -545,7 +545,7 @@ export const assertMiltonDerivativeItem = async (
     }
 
     expect(
-        BigInt(expectedUserDerivativeIdsIndex),
+        expectedUserDerivativeIdsIndex,
         `Incorrect idsIndex for swap id ${actualDerivativeItem?.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
     ).to.be.eq(actualDerivativeItem.idsIndex);
 };

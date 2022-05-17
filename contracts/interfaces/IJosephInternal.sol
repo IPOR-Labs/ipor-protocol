@@ -22,7 +22,7 @@ interface IJosephInternal {
 
     /// @notice Gets balance ratio config param presented ratio in 18 decimals between Milton and Stanley
     /// @return gets balance ratio config param between Milton and Stanley
-    function getMiltonStanleyBalanceRatio() external pure returns (uint256);
+    function getMiltonStanleyBalanceRatio() external view returns (uint256);
 
     /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
     /// `_MILTON_STANLEY_BALANCE_RATIO` part of Milton balance is transferred to Stanley or vice versa.
