@@ -8,25 +8,25 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
-import "../libraries/Constants.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IMiltonInternal.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IStanley.sol";
-import "./libraries/IporSwapLogic.sol";
-import "../security/IporOwnableUpgradeable.sol";
+import "../../libraries/errors/IporErrors.sol";
+import "../../libraries/errors/MiltonErrorsV2.sol";
+import "../../libraries/Constants.sol";
+import "../../interfaces/types/IporTypes.sol";
+import "../../interfaces/IIpToken.sol";
+import "../../interfaces/IIporOracle.sol";
+import "../../interfaces/IMiltonInternalV2.sol";
+import "../../interfaces/IMiltonStorage.sol";
+import "../../interfaces/IMiltonSpreadModel.sol";
+import "../../interfaces/IStanley.sol";
+import "../libraries/IporSwapLogic.sol";
+import "../../security/IporOwnableUpgradeable.sol";
 
-abstract contract MiltonInternal is
+abstract contract MiltonInternalV2 is
     UUPSUpgradeable,
     ReentrancyGuardUpgradeable,
     PausableUpgradeable,
     IporOwnableUpgradeable,
-    IMiltonInternal
+    IMiltonInternalV2
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
@@ -61,6 +61,8 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
+    uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
+
     address internal _asset;
     address internal _joseph;
     IIporOracle internal _iporOracle;
@@ -69,12 +71,12 @@ abstract contract MiltonInternal is
     IStanley internal _stanley;
 
     modifier onlyJoseph() {
-        require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
+        require(_msgSender() == _getJoseph(), MiltonErrorsV2.CALLER_NOT_JOSEPH);
         _;
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getAsset() external view override returns (address) {
@@ -285,6 +287,10 @@ abstract contract MiltonInternal is
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 
+    function _getLiquidationLegLimit() internal pure virtual returns (uint256) {
+        return _LIQUIDATION_LEG_LIMIT;
+    }
+
     function _getJoseph() internal view virtual returns (address) {
         return _joseph;
     }
@@ -313,7 +319,7 @@ abstract contract MiltonInternal is
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
-        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+        require(liquidityPool >= 0, MiltonErrorsV2.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
 
         accruedBalance.vault = actualVaultBalance;

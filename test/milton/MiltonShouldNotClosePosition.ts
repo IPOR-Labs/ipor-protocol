@@ -605,7 +605,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.closeSwapPayFixed(1);
                 },
                 ZERO,
@@ -664,8 +664,8 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
-                    return contract.closeSwaps([1], []);
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1]);
                 },
                 ZERO,
                 true,
@@ -723,7 +723,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.closeSwapReceiveFixed(1);
                 },
                 ZERO,
@@ -782,8 +782,8 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
-                    return contract.closeSwaps([], [1]);
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1]);
                 },
                 ZERO,
                 true,
@@ -841,7 +841,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapsPayFixed([1]);
                 },
                 ZERO,
@@ -900,7 +900,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapPayFixed(1);
                 },
                 ZERO,
@@ -958,7 +958,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapsReceiveFixed([1]);
                 },
                 ZERO,
@@ -1017,7 +1017,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapReceiveFixed(1);
                 },
                 ZERO,
@@ -1076,7 +1076,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapsPayFixed([1]);
                 },
                 ZERO,
@@ -1135,7 +1135,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapPayFixed(1);
                 },
                 ZERO,
@@ -1194,7 +1194,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapsReceiveFixed([1]);
                 },
                 ZERO,
@@ -1253,7 +1253,7 @@ describe("Milton - not close position", () => {
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
                 BigNumber.from("1"),
-                async (contract) => {
+                (contract) => {
                     return contract.emergencyCloseSwapReceiveFixed(1);
                 },
                 ZERO,
@@ -1263,6 +1263,239 @@ describe("Milton - not close position", () => {
                 liquidityProvider
             ),
             "Pausable: not paused"
+        );
+    });
+
+    it("should NOT close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await assertError(
+            executeCloseSwapsTestCase(
+                testData,
+                tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                BigNumber.from("2"),
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([1, 300]);
+                },
+                ZERO,
+                false,
+                admin,
+                userOne,
+                liquidityProvider
+            ),
+            "IPOR_305"
+        );
+    });
+
+    it("should NOT close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await assertError(
+            executeCloseSwapsTestCase(
+                testData,
+                tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                BigNumber.from("2"),
+                (contract) => {
+                    return contract.closeSwapsPayFixed([1, 300]);
+                },
+                ZERO,
+                false,
+                admin,
+                userOne,
+                liquidityProvider
+            ),
+            "IPOR_305"
+        );
+    });
+
+    it("should fail to close pay fixed positions using multicall function when list of swaps is empty, DAI", async () => {
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        await assertError(
+            executeCloseSwapsTestCase(
+                testData,
+                tokenDai.address,
+                USD_10_18DEC,
+                0,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                ZERO,
+                (contract) => {
+                    return contract.closeSwapsPayFixed([]);
+                },
+                ZERO,
+                false,
+                admin,
+                userOne,
+                liquidityProvider
+            ),
+            "IPOR_314"
+        );
+    });
+
+    it("should fail to close receive fixed positions using multicall function when list of swaps is empty, DAI", async () => {
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await assertError(
+            executeCloseSwapsTestCase(
+                testData,
+                tokenDai.address,
+                USD_10_18DEC,
+                1,
+                userTwo,
+                userTwo,
+                PERCENTAGE_5_18DEC,
+                PERCENTAGE_160_18DEC,
+                PERIOD_25_DAYS_IN_SECONDS,
+                USD_10_000_000_18DEC,
+                ZERO,
+                (contract) => {
+                    return contract.closeSwapsReceiveFixed([]);
+                },
+                ZERO,
+                false,
+                admin,
+                userOne,
+                liquidityProvider
+            ),
+            "IPOR_314"
         );
     });
 

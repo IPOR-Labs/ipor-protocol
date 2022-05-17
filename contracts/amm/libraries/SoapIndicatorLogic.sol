@@ -150,7 +150,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= lastRebalanceTimestamp,
-            MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP
+            MiltonErrors.CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP
         );
         return
             totalNotional *

@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "./IporTypes.sol";
 
 /// @title Structs used in Milton smart contract
-library MiltonTypes {
+library MiltonTypesV2 {
     /// @notice Swap direction (long = Pay Fixed and Receive a Floating or short = receive fixed and pay a floating)
     enum SwapDirection {
         /// @notice When taking the "long" position the trader will pay a fixed rate and receive a floating rate.
@@ -26,5 +26,13 @@ library MiltonTypes {
         /// @notice Fixed interest rate at which the position has been opened,
         /// it is quote from spread documentation
         uint256 fixedInterestRate;
+    }
+
+    /// @notice Structure describes one swap processed by closeSwaps method, information about swap ID and flag if this swap was closed during execution closeSwaps method.
+    struct IporSwapClosingResult {
+        /// @notice Swap ID
+        uint256 swapId;
+        /// @notice Flag describe if swap was closed during this execution
+        bool closed;
     }
 }

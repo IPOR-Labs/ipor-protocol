@@ -28,48 +28,25 @@ abstract contract ItfMilton is Milton {
             );
     }
 
-    function itfCloseSwaps(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds,
-        uint256 closeTimestamp
-    )
-        external
-        nonReentrant
-        whenNotPaused
-        returns (
-            MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
-            MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        )
-    {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
-            payFixedSwapIds,
-            receiveFixedSwapIds,
-            closeTimestamp
-        );
-    }
-
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
+        _transferLiquidationDepositAmount(_msgSender(), _closeSwapPayFixed(swapId, closeTimestamp));
     }
 
     function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapReceiveFixed(swapId, closeTimestamp)
+        );
     }
 
-    function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-        external
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, closeTimestamp);
+    function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
+        _transferLiquidationDepositAmount(_msgSender(), _closeSwapsPayFixed(swapIds, closeTimestamp));
     }
 
-    function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-        external
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
-            swapIds,
-            closeTimestamp
+    function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapsReceiveFixed(swapIds, closeTimestamp)
         );
     }
 
@@ -77,12 +54,12 @@ abstract contract ItfMilton is Milton {
         external
         view
         returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
+            int256 soapPf,
+            int256 soapRf,
             int256 soap
         )
     {
-        (soapPayFixed, soapReceiveFixed, soap) = _calculateSoap(calculateTimestamp);
+        (soapPf, soapRf, soap) = _calculateSoap(calculateTimestamp);
     }
 
     function itfCalculateSpread(uint256 calculateTimestamp)

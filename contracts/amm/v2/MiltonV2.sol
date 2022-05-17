@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
-import "../interfaces/types/AmmTypes.sol";
-import "../libraries/math/IporMath.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IMilton.sol";
-import "../interfaces/IJoseph.sol";
-import "../interfaces/IStanley.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
-import "./MiltonInternal.sol";
-import "./libraries/types/AmmMiltonTypes.sol";
-import "./MiltonStorage.sol";
+import "../../interfaces/types/AmmTypes.sol";
+import "../../libraries/math/IporMath.sol";
+import "../../interfaces/IIporOracle.sol";
+import "../../interfaces/IMiltonV2.sol";
+import "../../interfaces/IJoseph.sol";
+import "../../interfaces/IStanley.sol";
+import "../../interfaces/IMiltonSpreadModel.sol";
+import "./MiltonInternalV2.sol";
+import "../libraries/types/AmmMiltonTypes.sol";
+import "../MiltonStorage.sol";
 
 /**
  * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
@@ -22,7 +22,7 @@ import "./MiltonStorage.sol";
  *  # calculate spread
  * @author IPOR Labs
  */
-abstract contract Milton is MiltonInternal, IMilton {
+abstract contract MiltonV2 is MiltonInternalV2, IMiltonV2 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
@@ -110,55 +110,36 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     function closeSwapPayFixed(uint256 swapId) external override nonReentrant whenNotPaused {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapPayFixed(swapId, block.timestamp)
-        );
+        _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
     function closeSwapReceiveFixed(uint256 swapId) external override nonReentrant whenNotPaused {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapReceiveFixed(swapId, block.timestamp)
-        );
+        _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
-    function closeSwapsPayFixed(uint256[] memory swapIds)
+    function closeSwaps(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         override
         nonReentrant
         whenNotPaused
+        returns (
+            MiltonTypesV2.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypesV2.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        )
     {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsPayFixed(swapIds, block.timestamp)
-        );
-    }
-
-    function closeSwapsReceiveFixed(uint256[] memory swapIds)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-    {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsReceiveFixed(swapIds, block.timestamp)
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
+            payFixedSwapIds,
+            receiveFixedSwapIds,
+            block.timestamp
         );
     }
 
     function emergencyCloseSwapPayFixed(uint256 swapId) external override onlyOwner whenPaused {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapPayFixed(swapId, block.timestamp)
-        );
+        _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
     function emergencyCloseSwapReceiveFixed(uint256 swapId) external override onlyOwner whenPaused {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapReceiveFixed(swapId, block.timestamp)
-        );
+        _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
     function emergencyCloseSwapsPayFixed(uint256[] memory swapIds)
@@ -166,11 +147,9 @@ abstract contract Milton is MiltonInternal, IMilton {
         override
         onlyOwner
         whenPaused
+        returns (MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps)
     {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsPayFixed(swapIds, block.timestamp)
-        );
+        closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, block.timestamp);
     }
 
     function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds)
@@ -178,11 +157,94 @@ abstract contract Milton is MiltonInternal, IMilton {
         override
         onlyOwner
         whenPaused
+        returns (MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps)
     {
+        closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
+            swapIds,
+            block.timestamp
+        );
+    }
+
+    function _closeSwaps(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds,
+        uint256 closeTimestamp
+    )
+        internal
+        returns (
+            MiltonTypesV2.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypesV2.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        )
+    {
+        require(
+            payFixedSwapIds.length <= _getLiquidationLegLimit() &&
+                receiveFixedSwapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrorsV2.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );
+
+        uint256 payoutForLiquidatorPayFixed;
+        uint256 payoutForLiquidatorReceiveFixed;
+
+        (payoutForLiquidatorPayFixed, closedPayFixedSwaps) = _closeSwapsPayFixed(
+            payFixedSwapIds,
+            closeTimestamp
+        );
+
+        (payoutForLiquidatorReceiveFixed, closedReceiveFixedSwaps) = _closeSwapsReceiveFixed(
+            receiveFixedSwapIds,
+            closeTimestamp
+        );
+
         _transferLiquidationDepositAmount(
             _msgSender(),
-            _closeSwapsReceiveFixed(swapIds, block.timestamp)
+            payoutForLiquidatorPayFixed + payoutForLiquidatorReceiveFixed
         );
+    }
+
+    function _closeSwapPayFixedWithTransferLiquidationDeposit(
+        uint256 swapId,
+        uint256 closeTimestamp
+    ) internal {
+        require(swapId != 0, MiltonErrorsV2.INCORRECT_SWAP_ID);
+
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
+
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapPayFixed(iporSwap, closeTimestamp)
+        );
+    }
+
+    function _closeSwapReceiveFixedWithTransferLiquidationDeposit(
+        uint256 swapId,
+        uint256 closeTimestamp
+    ) internal {
+        require(swapId != 0, MiltonErrorsV2.INCORRECT_SWAP_ID);
+
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
+
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapReceiveFixed(iporSwap, closeTimestamp)
+        );
+    }
+
+    function _closeSwapsPayFixedWithTransferLiquidationDeposit(
+        uint256[] memory swapIds,
+        uint256 closeTimestamp
+    ) internal returns (MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps) {
+        uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(swapIds, closeTimestamp);
+        _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
+    }
+
+    function _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
+        uint256[] memory swapIds,
+        uint256 closeTimestamp
+    ) internal returns (MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps) {
+        uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
     }
 
     function _calculateIncomeFeeValue(int256 payoff) internal pure returns (uint256) {
@@ -219,7 +281,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 totalAmount,
         uint256 leverage
     ) internal view returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(totalAmount != 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
+        require(totalAmount != 0, MiltonErrorsV2.TOTAL_AMOUNT_TOO_LOW);
 
         require(
             IERC20Upgradeable(_asset).balanceOf(_msgSender()) >= totalAmount,
@@ -228,12 +290,12 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
-        require(leverage >= _getMinLeverage(), MiltonErrors.LEVERAGE_TOO_LOW);
-        require(leverage <= _getMaxLeverage(), MiltonErrors.LEVERAGE_TOO_HIGH);
+        require(leverage >= _getMinLeverage(), MiltonErrorsV2.LEVERAGE_TOO_LOW);
+        require(leverage <= _getMaxLeverage(), MiltonErrorsV2.LEVERAGE_TOO_HIGH);
 
         require(
             wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFee(),
-            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
+            MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic
@@ -252,13 +314,13 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         require(
             collateral <= _getMaxSwapCollateralAmount(),
-            MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH
+            MiltonErrorsV2.COLLATERAL_AMOUNT_TOO_HIGH
         );
 
         require(
             wadTotalAmount >
                 _getLiquidationDepositAmount() + _getIporPublicationFee() + openingFeeAmount,
-            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
+            MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
         return
@@ -320,10 +382,10 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         require(
             acceptableFixedInterestRate != 0 && quoteValue <= acceptableFixedInterestRate,
-            MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
+            MiltonErrorsV2.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
+        MiltonTypesV2.IporSwapIndicator memory indicator = _calculateSwapIndicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -396,10 +458,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
         require(
             acceptableFixedInterestRate <= quoteValue,
-            MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
+            MiltonErrorsV2.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
+        MiltonTypesV2.IporSwapIndicator memory indicator = _calculateSwapIndicators(
             openTimestamp,
             bosStruct.notional,
             quoteValue
@@ -461,12 +523,12 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         require(
             utilizationRate <= _getMaxLpUtilizationRate(),
-            MiltonErrors.LP_UTILIZATION_EXCEEDED
+            MiltonErrorsV2.LP_UTILIZATION_EXCEEDED
         );
 
         require(
             utilizationRatePerLeg <= _getMaxLpUtilizationPerLegRate(),
-            MiltonErrors.LP_UTILIZATION_PER_LEG_EXCEEDED
+            MiltonErrorsV2.LP_UTILIZATION_PER_LEG_EXCEEDED
         );
     }
 
@@ -474,7 +536,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 newSwapId,
         uint256 wadTotalAmount,
         AmmTypes.NewSwap memory newSwap,
-        MiltonTypes.IporSwapIndicator memory indicator,
+        MiltonTypesV2.IporSwapIndicator memory indicator,
         uint256 direction,
         uint256 iporPublicationFee
     ) internal {
@@ -482,7 +544,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             newSwapId,
             newSwap.buyer,
             _asset,
-            MiltonTypes.SwapDirection(direction),
+            MiltonTypesV2.SwapDirection(direction),
             AmmTypes.OpenSwapMoney(
                 wadTotalAmount,
                 newSwap.collateral,
@@ -502,13 +564,13 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 calculateTimestamp,
         uint256 notional,
         uint256 quoteValue
-    ) internal view returns (MiltonTypes.IporSwapIndicator memory indicator) {
+    ) internal view returns (MiltonTypesV2.IporSwapIndicator memory indicator) {
         IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
         );
 
-        indicator = MiltonTypes.IporSwapIndicator(
+        indicator = MiltonTypesV2.IporSwapIndicator(
             accruedIpor.indexValue,
             accruedIpor.ibtPrice,
             IporMath.division(notional * Constants.D18, accruedIpor.ibtPrice),
@@ -516,17 +578,13 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _closeSwapPayFixed(uint256 swapId, uint256 closeTimestamp)
+    function _closeSwapPayFixed(IporTypes.IporSwapMemory memory iporSwap, uint256 closeTimestamp)
         internal
         returns (uint256 payoutForLiquidator)
     {
-        require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
-
-        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
-
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
-            MiltonErrors.INCORRECT_SWAP_STATUS
+            MiltonErrorsV2.INCORRECT_SWAP_STATUS
         );
 
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
@@ -552,7 +610,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         emit CloseSwap(
-            swapId,
+            iporSwap.id,
             _asset,
             closeTimestamp,
             _msgSender(),
@@ -561,17 +619,13 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _closeSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp)
-        internal
-        returns (uint256 payoutForLiquidator)
-    {
-        require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
-
-        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
-
+    function _closeSwapReceiveFixed(
+        IporTypes.IporSwapMemory memory iporSwap,
+        uint256 closeTimestamp
+    ) internal returns (uint256 payoutForLiquidator) {
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
-            MiltonErrors.INCORRECT_SWAP_STATUS
+            MiltonErrorsV2.INCORRECT_SWAP_STATUS
         );
 
         int256 payoff = _calculatePayoffReceiveFixed(closeTimestamp, iporSwap);
@@ -597,7 +651,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         emit CloseSwap(
-            swapId,
+            iporSwap.id,
             _asset,
             closeTimestamp,
             _msgSender(),
@@ -608,23 +662,61 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
         internal
-        returns (uint256 payoutForLiquidator)
+        returns (
+            uint256 payoutForLiquidator,
+            MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps
+        )
     {
-        require(swapIds.length > 0, MiltonErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+        require(
+            swapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrorsV2.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );
+
+        closedSwaps = new MiltonTypesV2.IporSwapClosingResult[](swapIds.length);
 
         for (uint256 i = 0; i < swapIds.length; i++) {
-            payoutForLiquidator += _closeSwapPayFixed(swapIds[i], closeTimestamp);
+            uint256 swapId = swapIds[i];
+            require(swapId != 0, MiltonErrorsV2.INCORRECT_SWAP_ID);
+
+            IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
+
+            if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+                payoutForLiquidator += _closeSwapPayFixed(iporSwap, closeTimestamp);
+                closedSwaps[i] = MiltonTypesV2.IporSwapClosingResult(swapId, true);
+            } else {
+                closedSwaps[i] = MiltonTypesV2.IporSwapClosingResult(swapId, false);
+            }
         }
     }
 
     function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
         internal
-        returns (uint256 payoutForLiquidator)
+        returns (
+            uint256 payoutForLiquidator,
+            MiltonTypesV2.IporSwapClosingResult[] memory closedSwaps
+        )
     {
-        require(swapIds.length > 0, MiltonErrors.SWAP_IDS_ARRAY_IS_EMPTY);
+        require(
+            swapIds.length <= _getLiquidationLegLimit(),
+            MiltonErrorsV2.LIQUIDATION_LEG_LIMIT_EXCEEDED
+        );
+
+        closedSwaps = new MiltonTypesV2.IporSwapClosingResult[](swapIds.length);
 
         for (uint256 i = 0; i < swapIds.length; i++) {
-            payoutForLiquidator += _closeSwapReceiveFixed(swapIds[i], closeTimestamp);
+            uint256 swapId = swapIds[i];
+            require(swapId != 0, MiltonErrorsV2.INCORRECT_SWAP_ID);
+
+            IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(
+                swapId
+            );
+
+            if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+                payoutForLiquidator += _closeSwapReceiveFixed(iporSwap, closeTimestamp);
+                closedSwaps[i] = MiltonTypesV2.IporSwapClosingResult(swapId, true);
+            } else {
+                closedSwaps[i] = MiltonTypesV2.IporSwapClosingResult(swapId, false);
+            }
         }
     }
 
@@ -664,7 +756,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                     _calculationTimestamp >=
                         derivativeItem.endTimestamp -
                             cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
-                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
+                    MiltonErrorsV2.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
         }
