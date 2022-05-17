@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
-import { Signer } from "ethers";
+import { Signer, BigNumber } from "ethers";
 import { IvToken, DaiMockedToken } from "../../types";
 import { TOTAL_SUPPLY_18_DECIMALS } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
@@ -42,15 +42,15 @@ describe("IvToken", () => {
     it("should contain 18 decimals", async () => {
         //given
         await ivTokenDai.setStanley(await admin.getAddress());
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
         //when
-        let actualDecimals = BigInt(await ivTokenDai.decimals());
+        const actualDecimals = await ivTokenDai.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -64,7 +64,7 @@ describe("IvToken", () => {
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -135,34 +135,34 @@ describe("IvToken", () => {
 
         //then
         const actualNewOwner = await ivTokenDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should contain 18 decimals", async () => {
         //given
         await ivTokenDai.setStanley(await admin.getAddress());
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
         //when
-        let actualDecimals = BigInt(await ivTokenDai.decimals());
+        const actualDecimals = await ivTokenDai.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
     });
 
     it("should contain correct underlying token address", async () => {
         //given
         const expectedUnderlyingTokenAddress = tokenDai.address;
         //when
-        let actualUnderlyingTokenAddress = await ivTokenDai.getAsset();
+        const actualUnderlyingTokenAddress = await ivTokenDai.getAsset();
 
         //then
         expect(
             expectedUnderlyingTokenAddress,
             `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`
-        ).to.be.eql(actualUnderlyingTokenAddress);
+        ).to.be.equal(actualUnderlyingTokenAddress);
     });
 
     it("should not sent ETH to IvToken DAI", async () => {

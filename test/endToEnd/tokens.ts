@@ -116,7 +116,10 @@ export const transferDaiToAddress = async (from: string, to: string, amoung: Big
     });
     const signer = await hre.ethers.provider.getSigner(accountToImpersonate);
     const daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
-    await daiContract.connect(signer).transfer(to, amoung);
+    const fromBalance = await daiContract.balanceOf(from);
+    if (fromBalance.gte(amoung)) {
+        await daiContract.connect(signer).transfer(to, amoung);
+    }
 };
 
 // #####################################################################

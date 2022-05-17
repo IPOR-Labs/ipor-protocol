@@ -99,7 +99,7 @@ describe("MiltonStorage", () => {
 
         //then
         const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -274,7 +274,7 @@ describe("MiltonStorage", () => {
 
         //then
         const actualNewOwner = await miltonStorageDai.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should update Milton Storage when open position, caller has rights to update", async () => {
@@ -377,7 +377,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.addLiquidity(ZERO),
             //then
-            "IPOR_326"
+            "IPOR_325"
         );
     });
 
@@ -406,7 +406,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.updateStorageWhenTransferToTreasury(N1__0_18DEC.mul(N1__0_18DEC)),
             //then
-            "IPOR_328"
+            "IPOR_327"
         );
     });
 
@@ -435,7 +435,7 @@ describe("MiltonStorage", () => {
             //when
             miltonStorageDai.updateStorageWhenDepositToStanley(N1__0_18DEC, ZERO),
             //then
-            "IPOR_327"
+            "IPOR_326"
         );
     });
 
@@ -466,7 +466,7 @@ describe("MiltonStorage", () => {
                 N1__0_18DEC.mul(N1__0_18DEC)
             ),
             //then
-            "IPOR_324"
+            "IPOR_323"
         );
     });
 

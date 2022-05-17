@@ -782,6 +782,7 @@ contract MiltonStorage is
         }
 
         _swapsPayFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
+
         _swapsPayFixed.ids[buyer].pop();
     }
 
@@ -805,6 +806,7 @@ contract MiltonStorage is
         }
 
         _swapsReceiveFixed.swaps[iporSwap.id.toUint64()].state = AmmTypes.SwapState.INACTIVE;
+
         _swapsReceiveFixed.ids[buyer].pop();
     }
 

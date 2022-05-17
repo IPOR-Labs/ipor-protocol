@@ -1,5 +1,6 @@
+import hre from "hardhat";
+import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
-const { expect } = require("chai");
 import {
     ERC20,
     TestnetFaucet,
@@ -19,6 +20,7 @@ import {
 import { deploy, DeployType, setup } from "./deploy";
 
 import { transferUsdtToAddress, transferUsdcToAddress, transferDaiToAddress } from "./tokens";
+import { N0__01_18DEC, N0__1_18DEC, N1__0_18DEC, N1__0_6DEC } from "../utils/Constants";
 
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
@@ -90,15 +92,11 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("ProvideLiquidity for dai", async () => {
         //given
 
-        const deposit = BigNumber.from("10000000000000000000");
-        await transferDaiToAddress(
-            testnetFaucet.address,
-            await admin.getAddress(),
-            BigNumber.from("100000000000000000000")
-        );
+        const deposit = BigNumber.from("10").mul(N1__0_18DEC);
+        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), N1__0_18DEC);
         await dai
             .connect(admin)
-            .approve(josephDai.address, BigNumber.from("1000000000000000000000"));
+            .approve(josephDai.address, BigNumber.from("1000").mul(N1__0_18DEC));
         //when
         await josephDai.connect(admin).provideLiquidity(deposit);
 
@@ -121,7 +119,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("Redeem tokens from Joseph(dai)", async () => {
         //given
         const ipTokenDaiBalansBefore = await ipTokenDai.balanceOf(await admin.getAddress());
-        const toRedeem = BigNumber.from("100000000000000000");
+        const toRedeem = N0__01_18DEC;
         //when
         await josephDai.redeem(toRedeem);
         //then
@@ -146,13 +144,15 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("ProvideLiquidity for usdc", async () => {
         //given
 
-        const deposit = BigNumber.from("1000000000");
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
         await transferUsdcToAddress(
             testnetFaucet.address,
             await admin.getAddress(),
-            BigNumber.from("10000000000")
+            BigNumber.from("10000").mul(N1__0_6DEC)
         );
-        await usdc.connect(admin).approve(josephUsdc.address, BigNumber.from("100000000000"));
+        await usdc
+            .connect(admin)
+            .approve(josephUsdc.address, BigNumber.from("100000").mul(N1__0_6DEC));
         //when
         await josephUsdc.connect(admin).provideLiquidity(deposit);
 
@@ -175,7 +175,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("Redeem tokens from Joseph(usdc)", async () => {
         //given
         const ipTokenUsdcBalansBefore = await ipTokenUsdc.balanceOf(await admin.getAddress());
-        const toRedeem = BigNumber.from("100000000000000000");
+        const toRedeem = N0__1_18DEC;
         //when
         await josephUsdc.redeem(toRedeem);
         //then
@@ -200,13 +200,15 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("ProvideLiquidity for usdt", async () => {
         //given
 
-        const deposit = BigNumber.from("1000000000");
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
         await transferUsdtToAddress(
             testnetFaucet.address,
             await admin.getAddress(),
-            BigNumber.from("10000000000")
+            BigNumber.from("10000").mul(N1__0_6DEC)
         );
-        await usdt.connect(admin).approve(josephUsdt.address, BigNumber.from("100000000000"));
+        await usdt
+            .connect(admin)
+            .approve(josephUsdt.address, BigNumber.from("100000").mul(N1__0_6DEC));
         //when
         await josephUsdt.connect(admin).provideLiquidity(deposit);
 
@@ -231,7 +233,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("Redeem tokens from Joseph(usdt)", async () => {
         //given
         const ipTokenUsdtBalansBefore = await ipTokenUsdt.balanceOf(await admin.getAddress());
-        const toRedeem = BigNumber.from("1000000");
+        const toRedeem = N1__0_6DEC;
         //when
         await josephUsdt.redeem(toRedeem);
         //then
@@ -246,7 +248,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         //given
         const strategyCompoundBalance = await strategyCompoundUsdt.balanceOf();
         //when
-        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_320");
+        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_319");
         //then
         const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
         expect(
@@ -258,9 +260,11 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     it("Should rebalanse and withdraw(usdt) from vault (compound)", async () => {
         //given
         // this set of acttion generate change on compound balance
-        await usdt.connect(admin).approve(stanleyUsdt.address, BigNumber.from("100000000000"));
+        await usdt
+            .connect(admin)
+            .approve(stanleyUsdt.address, BigNumber.from("100000").mul(N1__0_6DEC));
         await stanleyUsdt.setMilton(await admin.getAddress());
-        await stanleyUsdt.deposit(BigNumber.from("1000000"));
+        await stanleyUsdt.deposit(N1__0_6DEC);
         await stanleyUsdt.setMilton(miltonUsdt.address);
         // END this set of acttion generate change on compound balance
         const ivTokenUsdtBalanceBefore = await ivTokenUsdt.balanceOf(miltonUsdt.address);

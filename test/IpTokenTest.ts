@@ -99,7 +99,7 @@ describe("IpToken", () => {
 
         //then
         const actualNewOwner = await ipToken.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -169,7 +169,7 @@ describe("IpToken", () => {
         //then
         const actualNewOwner = await ipToken.connect(userOne).owner();
 
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT mint ipToken if not a Joseph", async () => {
@@ -181,7 +181,7 @@ describe("IpToken", () => {
             //when
             ipToken.connect(userTwo).mint(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_325"
+            "IPOR_324"
         );
     });
 
@@ -219,7 +219,7 @@ describe("IpToken", () => {
             //when
             ipToken.connect(userTwo).burn(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_325"
+            "IPOR_324"
         );
     });
 
@@ -238,17 +238,17 @@ describe("IpToken", () => {
     it("should contain 18 decimals", async () => {
         //given
         const { ipToken, josephDai } = await preperateIpTokenCase010();
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
 
         await ipToken.setJoseph(await admin.getAddress());
         //when
-        const actualDecimals = BigInt(await ipToken.decimals());
+        const actualDecimals = await ipToken.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
 
         await ipToken.setJoseph(josephDai.address);
     });
@@ -265,7 +265,7 @@ describe("IpToken", () => {
         expect(
             expectedUnderlyingTokenAddress,
             `Incorrect underlying token address actual: ${actualUnderlyingTokenAddress}, expected: ${expectedUnderlyingTokenAddress}`
-        ).to.be.eql(actualUnderlyingTokenAddress);
+        ).to.be.equal(actualUnderlyingTokenAddress);
     });
 
     it("should not sent ETH to IpToken DAI", async () => {

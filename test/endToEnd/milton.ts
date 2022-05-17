@@ -33,8 +33,8 @@ import {
     transferUsdtToAddress,
 } from "./tokens";
 
-const faucetSupply6Decimals = BigNumber.from("1000000000000000");
-const faucetSupply18Decimals = BigNumber.from("1000000000000000000000000000");
+const faucetSupply6Decimals = BigNumber.from("10000000000000");
+const faucetSupply18Decimals = BigNumber.from("100000000000000000000000");
 export const testnetFaucetFactory = async (): Promise<TestnetFaucet> => {
     const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
     return TestnetFaucetFactory.deploy() as Promise<TestnetFaucet>;
@@ -55,27 +55,15 @@ export const testnetFaucetSetup = async (
         testnetFaucet.address,
         faucetSupply18Decimals
     );
-    console.log(
-        "daiAddress -> balanseOf -> testnetFaucet",
-        await dai.balanceOf(testnetFaucet.address)
-    );
     await transferUsdcToAddress(
         "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
         testnetFaucet.address,
         faucetSupply6Decimals
     );
-    console.log(
-        "usdcAddress -> balanseOf -> testnetFaucet",
-        await usdc.balanceOf(testnetFaucet.address)
-    );
     await transferUsdtToAddress(
         "0x5754284f345afc66a98fbb0a0afe71e0f007b949",
         testnetFaucet.address,
         faucetSupply6Decimals
-    );
-    console.log(
-        "usdtAddress -> balanseOf -> testnetFaucet",
-        await usdt.balanceOf(testnetFaucet.address)
     );
 };
 

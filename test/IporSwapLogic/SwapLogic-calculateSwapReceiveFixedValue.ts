@@ -35,7 +35,7 @@ describe("IporSwapLogic calculatePayoffReceiveFixed", () => {
         );
         //then
         expect(swapValue, "Wrong interest difference amount").to.be.equal(
-            BigInt("50000000000000000000000")
+            BigNumber.from("50000000000000000000000")
         );
     });
 

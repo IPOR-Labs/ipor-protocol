@@ -127,22 +127,22 @@ describe("Joseph - provide liquidity", () => {
         expect(
             assetAmount,
             `Incorrect ipToken balance on user for asset ${params.asset} actual: ${actualIpTokenBalanceSender}, expected: ${assetAmount}`
-        ).to.be.eql(actualIpTokenBalanceSender);
+        ).to.be.equal(actualIpTokenBalanceSender);
 
         expect(
             assetAmount,
             `Incorrect DAI balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${assetAmount}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect DAI Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect DAI balance on user for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should provide liquidity and take ipToken - simple case 1 - USDT 6 decimals", async () => {
@@ -200,22 +200,22 @@ describe("Joseph - provide liquidity", () => {
             `Incorrect ipToken balance on user for asset ${
                 params.asset
             } actual: ${actualIpTokenBalanceSender}, expected: ${wadLiquidityAmount.toString()}`
-        ).to.be.eql(actualIpTokenBalanceSender.toString());
+        ).to.be.equal(actualIpTokenBalanceSender.toString());
 
         expect(
             assetAmount,
             `Incorrect USDT balance on Milton for asset ${params.asset} actual: ${actualUnderlyingBalanceMilton}, expected: ${assetAmount}`
-        ).to.be.eql(actualUnderlyingBalanceMilton);
+        ).to.be.equal(actualUnderlyingBalanceMilton);
 
         expect(
             expectedLiquidityPoolBalanceMilton,
             `Incorrect USDT Liquidity Pool Balance on Milton for asset ${params.asset} actual: ${actualLiquidityPoolBalanceMilton}, expected: ${expectedLiquidityPoolBalanceMilton}`
-        ).to.be.eql(actualLiquidityPoolBalanceMilton);
+        ).to.be.equal(actualLiquidityPoolBalanceMilton);
 
         expect(
             expectedLiquidityProviderStableBalance,
             `Incorrect USDT balance on user for asset ${params.asset} actual: ${actualUnderlyingBalanceSender}, expected: ${expectedLiquidityProviderStableBalance}`
-        ).to.be.eql(actualUnderlyingBalanceSender);
+        ).to.be.equal(actualUnderlyingBalanceSender);
     });
 
     it("should NOT provide liquidity because of empty Liquidity Pool", async () => {
