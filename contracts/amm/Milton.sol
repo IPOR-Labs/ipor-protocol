@@ -182,23 +182,23 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
         );
 
-        (
-            uint256 payoutForLiquidatorPayFixed,
-            MiltonTypes.IporSwapClosingResult[] memory _closedPayFixedSwaps
-        ) = _closeSwapsPayFixed(payFixedSwapIds, closeTimestamp);
+        uint256 payoutForLiquidatorPayFixed;
+        uint256 payoutForLiquidatorReceiveFixed;
 
-        (
-            uint256 payoutForLiquidatorReceiveFixed,
-            MiltonTypes.IporSwapClosingResult[] memory _closedReceiveFixedSwaps
-        ) = _closeSwapsReceiveFixed(receiveFixedSwapIds, closeTimestamp);
+        (payoutForLiquidatorPayFixed, closedPayFixedSwaps) = _closeSwapsPayFixed(
+            payFixedSwapIds,
+            closeTimestamp
+        );
+
+        (payoutForLiquidatorReceiveFixed, closedReceiveFixedSwaps) = _closeSwapsReceiveFixed(
+            receiveFixedSwapIds,
+            closeTimestamp
+        );
 
         _transferLiquidationDepositAmount(
             _msgSender(),
             payoutForLiquidatorPayFixed + payoutForLiquidatorReceiveFixed
         );
-
-        closedPayFixedSwaps = _closedPayFixedSwaps;
-        closedReceiveFixedSwaps = _closedReceiveFixedSwaps;
     }
 
     function _closeSwapPayFixedWithTransferLiquidationDeposit(
@@ -233,24 +233,18 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256[] memory swapIds,
         uint256 closeTimestamp
     ) internal returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps) {
-        (
-            uint256 payoutForLiquidator,
-            MiltonTypes.IporSwapClosingResult[] memory _closedSwaps
-        ) = _closeSwapsPayFixed(swapIds, closeTimestamp);
+        uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(swapIds, closeTimestamp);
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
-        closedSwaps = _closedSwaps;
     }
 
     function _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
         uint256[] memory swapIds,
         uint256 closeTimestamp
     ) internal returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps) {
-        (
-            uint256 payoutForLiquidator,
-            MiltonTypes.IporSwapClosingResult[] memory _closedSwaps
-        ) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
-        closedSwaps = _closedSwaps;
     }
 
     function _calculateIncomeFeeValue(int256 payoff) internal pure returns (uint256) {
@@ -673,10 +667,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonTypes.IporSwapClosingResult[] memory closedSwaps
         )
     {
-		require(
+        require(
             swapIds.length <= _getLiquidationLegLimit(),
             MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
-        );        
+        );
 
         closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIds.length);
 
