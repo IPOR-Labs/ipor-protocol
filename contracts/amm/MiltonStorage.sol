@@ -527,21 +527,21 @@ contract MiltonStorage is
     {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.averageInterestRate,
                 _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.rebalanceTimestamp
             );
         int256 _soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
 
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsReceiveFixed.totalNotional,
-                _soapIndicatorsReceiveFixed.averageInterestRate,
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
-                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp
             );
         int256 _soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
 
@@ -559,11 +559,11 @@ contract MiltonStorage is
     {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory spf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.averageInterestRate,
                 _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.rebalanceTimestamp
             );
         soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
     }
@@ -575,11 +575,11 @@ contract MiltonStorage is
     {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory srf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsReceiveFixed.totalNotional,
-                _soapIndicatorsReceiveFixed.averageInterestRate,
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
-                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp
             );
         soapReceiveFixed = srf.calculateQuasiSoapReceiveFixed(calculateTimestamp, ibtPrice);
     }
@@ -816,18 +816,18 @@ contract MiltonStorage is
     ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.averageInterestRate,
                 _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.rebalanceTimestamp
             );
 
         pf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsPayFixed.rebalanceTimestamp = pf.rebalanceTimestamp.toUint32();
         _soapIndicatorsPayFixed.totalNotional = pf.totalNotional.toUint128();
-        _soapIndicatorsPayFixed.averageInterestRate = pf.averageInterestRate.toUint128();
+        _soapIndicatorsPayFixed.averageInterestRate = pf.averageInterestRate.toUint64();
         _soapIndicatorsPayFixed.totalIbtQuantity = pf.totalIbtQuantity.toUint128();
         _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative = pf
             .quasiHypotheticalInterestCumulative;
@@ -841,17 +841,17 @@ contract MiltonStorage is
     ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory rf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsReceiveFixed.totalNotional,
-                _soapIndicatorsReceiveFixed.averageInterestRate,
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
-                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp
             );
         rf.rebalanceWhenOpenSwap(openTimestamp, notional, fixedInterestRate, ibtQuantity);
 
         _soapIndicatorsReceiveFixed.rebalanceTimestamp = rf.rebalanceTimestamp.toUint32();
         _soapIndicatorsReceiveFixed.totalNotional = rf.totalNotional.toUint128();
-        _soapIndicatorsReceiveFixed.averageInterestRate = rf.averageInterestRate.toUint128();
+        _soapIndicatorsReceiveFixed.averageInterestRate = rf.averageInterestRate.toUint64();
         _soapIndicatorsReceiveFixed.totalIbtQuantity = rf.totalIbtQuantity.toUint128();
         _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative = rf
             .quasiHypotheticalInterestCumulative;
@@ -863,11 +863,11 @@ contract MiltonStorage is
     ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory pf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsPayFixed.rebalanceTimestamp,
+                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsPayFixed.totalNotional,
-                _soapIndicatorsPayFixed.averageInterestRate,
                 _soapIndicatorsPayFixed.totalIbtQuantity,
-                _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsPayFixed.averageInterestRate,
+                _soapIndicatorsPayFixed.rebalanceTimestamp
             );
 
         pf.rebalanceWhenCloseSwap(
@@ -879,11 +879,11 @@ contract MiltonStorage is
         );
 
         _soapIndicatorsPayFixed = AmmMiltonStorageTypes.SoapIndicators(
-            pf.rebalanceTimestamp.toUint32(),
-            pf.totalNotional.toUint128(),
-            pf.averageInterestRate.toUint128(),
+            pf.quasiHypotheticalInterestCumulative,			
+            pf.totalNotional.toUint128(),            
             pf.totalIbtQuantity.toUint128(),
-            pf.quasiHypotheticalInterestCumulative
+			pf.averageInterestRate.toUint64(),
+			pf.rebalanceTimestamp.toUint32()            
         );
     }
 
@@ -893,11 +893,11 @@ contract MiltonStorage is
     ) internal {
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory rf = AmmMiltonStorageTypes
             .SoapIndicatorsMemory(
-                _soapIndicatorsReceiveFixed.rebalanceTimestamp,
+                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
                 _soapIndicatorsReceiveFixed.totalNotional,
-                _soapIndicatorsReceiveFixed.averageInterestRate,
                 _soapIndicatorsReceiveFixed.totalIbtQuantity,
-                _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative
+                _soapIndicatorsReceiveFixed.averageInterestRate,
+                _soapIndicatorsReceiveFixed.rebalanceTimestamp
             );
 
         rf.rebalanceWhenCloseSwap(
@@ -909,11 +909,11 @@ contract MiltonStorage is
         );
 
         _soapIndicatorsReceiveFixed = AmmMiltonStorageTypes.SoapIndicators(
-            rf.rebalanceTimestamp.toUint32(),
-            rf.totalNotional.toUint128(),
-            rf.averageInterestRate.toUint128(),
+            rf.quasiHypotheticalInterestCumulative,
+			rf.totalNotional.toUint128(),
             rf.totalIbtQuantity.toUint128(),
-            rf.quasiHypotheticalInterestCumulative
+            rf.averageInterestRate.toUint64(),
+            rf.rebalanceTimestamp.toUint32()
         );
     }
 
