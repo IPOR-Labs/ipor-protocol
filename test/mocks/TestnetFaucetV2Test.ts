@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
-import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet } from "../../types";
+import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucetV2 } from "../../types";
 import {
     N1__0_18DEC,
     N1__0_6DEC,
@@ -19,7 +19,7 @@ describe("TestnetFaucet", () => {
     let tokenDai: DaiMockedToken;
     let tokenUsdt: UsdtMockedToken;
     let tokenUsdc: UsdcMockedToken;
-    let testnetFaucet: TestnetFaucet;
+    let testnetFaucet: TestnetFaucetV2;
     const N10_000 = BigNumber.from("10000");
 
     before(async () => {
@@ -34,7 +34,7 @@ describe("TestnetFaucet", () => {
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
         tokenUsdc = (await UsdcMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6)) as UsdcMockedToken;
 
-        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
+        const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucetV2");
         testnetFaucet = await upgrades.deployProxy(TestnetFaucetFactory, [
             tokenDai.address,
             tokenUsdc.address,
@@ -51,13 +51,13 @@ describe("TestnetFaucet", () => {
         const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
         const usdtBalanceBefore = await tokenUsdt.balanceOf(await userOne.getAddress());
-
-        // When
-        await testnetFaucet.connect(userOne).claim();
         const changeTime = 1000;
+        await testnetFaucet.connect(userOne).claim();
         await hre.network.provider.send("evm_increaseTime", [changeTime]);
         await hre.network.provider.send("evm_mine");
         const timeToNextClaim = await testnetFaucet.connect(userOne).couldClaimInSeconds();
+
+        // When
         await expect(testnetFaucet.connect(userOne).claim()).to.be.revertedWith("IPOR_600");
 
         // Then
@@ -81,13 +81,13 @@ describe("TestnetFaucet", () => {
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());
         const usdtBalanceBefore = await tokenUsdt.balanceOf(await userOne.getAddress());
 
-        // When
         await testnetFaucet.connect(userOne).claim();
         const changeTime = 60 * 60 * 24 + 100;
-
         await hre.network.provider.send("evm_increaseTime", [changeTime]);
         await hre.network.provider.send("evm_mine");
         const timeToNextClaim = await testnetFaucet.connect(userOne).couldClaimInSeconds();
+
+        // When
         await testnetFaucet.connect(userOne).claim();
 
         // Then

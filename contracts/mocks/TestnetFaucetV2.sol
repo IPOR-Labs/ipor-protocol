@@ -10,11 +10,11 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
 
-contract TestnetFaucet is
-UUPSUpgradeable,
-IporOwnableUpgradeable,
-ReentrancyGuardUpgradeable,
-ITestnetFaucet
+contract TestnetFaucetV2 is
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    ITestnetFaucet
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -46,7 +46,7 @@ ITestnetFaucet
     receive() external payable {}
 
     function getVersion() external pure virtual returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function claim() external override nonReentrant {

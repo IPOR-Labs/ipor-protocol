@@ -69,38 +69,38 @@ library AmmMiltonStorageTypes {
     /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs.
     /// @dev Saved to the databse.
     struct SoapIndicators {
-        /// @notice EPOCH timestamp of when the most recent rebalancing took place
-        uint32 rebalanceTimestamp;
-        /// @notice Sum of all swaps' notional amounts for a given leg.
-        /// @dev Is represented in 18 decimals.
-        uint128 totalNotional;
-        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.
-        /// @dev Is represented in 18 decimals.
-        uint128 averageInterestRate;
-        /// @notice Sum of all IBTs on a given leg.
-        /// @dev Is represented in 18 decimals.
-        uint128 totalIbtQuantity;
         /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
         /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
         uint256 quasiHypotheticalInterestCumulative;
+        /// @notice Sum of all swaps' notional amounts for a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint128 totalNotional;
+        /// @notice Sum of all IBTs on a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint128 totalIbtQuantity;
+        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.
+        /// @dev Is represented in 18 decimals.
+        uint64 averageInterestRate;
+        /// @notice EPOCH timestamp of when the most recent rebalancing took place
+        uint32 rebalanceTimestamp;
     }
 
     /// @notice A struct with parameters required to calculate SOAP for pay fixed and receive fixed legs.
     /// @dev Committed to the memory.
     struct SoapIndicatorsMemory {
-        /// @notice EPOCH timestamp of when the most recent rebalancing took place
-        uint256 rebalanceTimestamp;
-        /// @notice Sum of all swaps' notional amounts for a given leg.
-        /// @dev Is represented in 18 decimals.
-        uint256 totalNotional;
-        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.
-        /// @dev Is represented in 18 decimals.
-        uint256 averageInterestRate;
-        /// @notice Sum of all IBTs on a given leg.
-        /// @dev Is represented in 18 decimals.
-        uint256 totalIbtQuantity;
         /// @notice Value of interest accrued on a fixed leg of all derivatives for this particular type of swap.
         /// @dev  Value without division by D36 * Constants.YEAR_IN_SECONDS. Is represented in 18 decimals.
         uint256 quasiHypotheticalInterestCumulative;
+        /// @notice Sum of all swaps' notional amounts for a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint256 totalNotional;
+        /// @notice Sum of all IBTs on a given leg.
+        /// @dev Is represented in 18 decimals.
+        uint256 totalIbtQuantity;
+        /// @notice The notional-weighted average interest rate of all swaps on a given leg combined.
+        /// @dev Is represented in 18 decimals.
+        uint256 averageInterestRate;
+        /// @notice EPOCH timestamp of when the most recent rebalancing took place
+        uint256 rebalanceTimestamp;
     }
 }

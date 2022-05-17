@@ -1,6 +1,6 @@
 import hre from "hardhat";
 import chai from "chai";
-import { Signer } from "ethers";
+import { Signer, BigNumber } from "ethers";
 import { IvToken, DaiMockedToken } from "../../types";
 import { TOTAL_SUPPLY_18_DECIMALS } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
@@ -42,15 +42,15 @@ describe("IvToken", () => {
     it("should contain 18 decimals", async () => {
         //given
         await ivTokenDai.setStanley(await admin.getAddress());
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
         //when
-        let actualDecimals = BigInt(await ivTokenDai.decimals());
+        const actualDecimals = await ivTokenDai.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
     });
 
     it("should transfer ownership - simple case 1", async () => {
@@ -141,22 +141,22 @@ describe("IvToken", () => {
     it("should contain 18 decimals", async () => {
         //given
         await ivTokenDai.setStanley(await admin.getAddress());
-        const expectedDecimals = BigInt("18");
+        const expectedDecimals = BigNumber.from("18");
         //when
-        let actualDecimals = BigInt(await ivTokenDai.decimals());
+        const actualDecimals = await ivTokenDai.decimals();
 
         //then
         expect(
             expectedDecimals,
             `Incorrect decimals actual: ${actualDecimals}, expected: ${expectedDecimals}`
-        ).to.be.eql(actualDecimals);
+        ).to.be.equal(actualDecimals);
     });
 
     it("should contain correct underlying token address", async () => {
         //given
         const expectedUnderlyingTokenAddress = tokenDai.address;
         //when
-        let actualUnderlyingTokenAddress = await ivTokenDai.getAsset();
+        const actualUnderlyingTokenAddress = await ivTokenDai.getAsset();
 
         //then
         expect(

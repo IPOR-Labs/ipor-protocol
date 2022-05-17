@@ -90,11 +90,11 @@ describe("Stanley - Asset Management Vault", () => {
         //Force deposit to simulate that IporVault earn money for Milton $3
         await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
 
-        const expectedMiltonStableBalance = BigInt("1700255000000000000000");
+        const expectedMiltonStableBalance = BigNumber.from("17002550000000000000000");
         //collateral + opening fee + ipor vault interest
-        const expectedMiltonLiquidityPoolBalance = BigInt("20003000000000000000000");
+        const expectedMiltonLiquidityPoolBalance = BigNumber.from("20003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt("18302745000000000000000");
+        const expectedIporVaultStableBalance = BigNumber.from("3000450000000000000000");
 
         //when
         await josephDai.connect(admin).rebalance();
@@ -105,7 +105,7 @@ describe("Stanley - Asset Management Vault", () => {
         const actualMiltonBalance = await miltonStorageDai.getBalance();
         const actualMiltonAccruedBalance = await miltonDai.getAccruedBalance();
 
-        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.equal(
             actualMiltonStableBalance
         );
 
@@ -180,11 +180,11 @@ describe("Stanley - Asset Management Vault", () => {
         //Force deposit to simulate that IporVault earn money for Milton $3
         await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
 
-        const expectedMiltonStableBalance = BigInt("1785000000000000000000");
+        const expectedMiltonStableBalance = BigNumber.from("17850000000000000000000");
 
-        const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
+        const expectedMiltonLiquidityPoolBalance = BigNumber.from("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt("19215000000000000000000");
+        const expectedIporVaultStableBalance = BigNumber.from("3150000000000000000000");
 
         //when
         await josephDai.connect(admin).rebalance();
@@ -197,11 +197,11 @@ describe("Stanley - Asset Management Vault", () => {
 
         const actualMiltonAccruedBalance = await miltonDai.getAccruedBalance();
 
-        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.equal(
             actualMiltonStableBalance
         );
 
-        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.eq(
+        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.equal(
             actualIporVaultStableBalance
         );
 
@@ -272,11 +272,11 @@ describe("Stanley - Asset Management Vault", () => {
         //Force deposit to simulate that IporVault earn money for Milton $3
         await stanleyDai.connect(liquidityProvider).testDeposit(miltonDai.address, USD_3_18DEC);
 
-        const expectedMiltonStableBalance = BigInt("1628000000000000000000");
+        const expectedMiltonStableBalance = BigNumber.from("14480000000000000000000");
 
-        const expectedMiltonLiquidityPoolBalance = BigInt("1003000000000000000000");
+        const expectedMiltonLiquidityPoolBalance = BigNumber.from("1003000000000000000000");
 
-        const expectedIporVaultStableBalance = BigInt("19372000000000000000000");
+        const expectedIporVaultStableBalance = BigNumber.from("6520000000000000000000");
 
         //when
         await josephDai.connect(admin).rebalance();
@@ -289,11 +289,11 @@ describe("Stanley - Asset Management Vault", () => {
 
         const actualMiltonAccruedBalance = await miltonDai.getAccruedBalance();
 
-        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.eq(
+        expect(expectedMiltonStableBalance, `Incorrect Milton stables balance`).to.be.equal(
             actualMiltonStableBalance
         );
 
-        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.eq(
+        expect(expectedIporVaultStableBalance, `Incorrect Ipor Vault stables balance`).to.be.equal(
             actualIporVaultStableBalance
         );
 
