@@ -42,7 +42,7 @@ library MiltonErrors {
     //@notice Summary SOAP and Miltion Liquidity Pool Balance is less than zero. SOAP can be negative, Sum of SOAM and Liquidity Pool Balance can be negative, but this is undesirable
     string public constant SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW = "IPOR_313";
 
-    string public constant CALC_TIMESTAMP_LTHAN_SI_REBALANCE_TIMESTAMP = "IPOR_314";
+    string public constant CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP = "IPOR_314";
 
     string public constant CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP = "IPOR_315";
 

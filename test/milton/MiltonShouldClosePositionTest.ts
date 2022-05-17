@@ -2202,7 +2202,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
-                return contract.closeSwaps([1],[]);
+                return contract.closeSwaps([1], []);
             },
             ZERO,
             false,
@@ -2257,7 +2257,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
-                return contract.closeSwaps([1, 2],[]);
+                return contract.closeSwaps([1, 2], []);
             },
             ZERO,
             false,
@@ -2312,7 +2312,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
-                return contract.closeSwaps([],[1]);
+                return contract.closeSwaps([], [1]);
             },
             ZERO,
             false,
@@ -2367,7 +2367,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
-                return contract.closeSwaps([],[1, 2]);
+                return contract.closeSwaps([], [1, 2]);
             },
             ZERO,
             false,
@@ -2909,7 +2909,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
-                return contract.closeSwaps([1],[]);
+                return contract.closeSwaps([1], []);
             },
             ZERO,
             false,
@@ -2964,7 +2964,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
-                return contract.closeSwaps([1, 2],[]);
+                return contract.closeSwaps([1, 2], []);
             },
             ZERO,
             false,
@@ -3019,7 +3019,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
-                return contract.closeSwaps([],[1]);
+                return contract.closeSwaps([], [1]);
             },
             ZERO,
             false,
@@ -3074,7 +3074,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
-                return contract.closeSwaps([],[1, 2]);
+                return contract.closeSwaps([], [1, 2]);
             },
             ZERO,
             false,
@@ -3310,7 +3310,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwaps([],[1, 300]);
+                return contract.closeSwaps([], [1, 300]);
             },
             ZERO,
             false,
@@ -3366,7 +3366,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwaps([1, 300],[]);
+                return contract.closeSwaps([1, 300], []);
             },
             ZERO,
             false,
@@ -3435,8 +3435,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
@@ -3449,12 +3449,11 @@ describe("Milton - close position", () => {
         }
 
         const expectedSwapStatus = 0;
-        const expectedIsClosed = true;
 
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
         //when
-        const results = await miltonDai
+        await miltonDai
             .connect(paramsPayFixed.from)
             .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
@@ -3533,8 +3532,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
@@ -3554,7 +3553,7 @@ describe("Milton - close position", () => {
         await miltonDai.connect(paramsPayFixed.from).itfCloseSwapReceiveFixed(8, closeTimestamp);
 
         //when
-        const results = await miltonDai
+        await miltonDai
             .connect(paramsPayFixed.from)
             .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
@@ -3633,8 +3632,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
@@ -3751,7 +3750,7 @@ describe("Milton - close position", () => {
         const expectedBalanceUserThree = BigNumber.from("9999784642032047919907479");
 
         //when
-        const results = await miltonDai
+        await miltonDai
             .connect(paramsPayFixed.from)
             .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
@@ -3995,8 +3994,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
@@ -4078,8 +4077,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
@@ -4161,8 +4160,8 @@ describe("Milton - close position", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, paramsPayFixed.openTimestamp);
 
-        let swapIdsPayFixed = [];
-        let swapIdsReceiveFixed = [];
+        const swapIdsPayFixed = [];
+        const swapIdsReceiveFixed = [];
 
         for (let i = 0; i < volumePayFixed; i++) {
             await openSwapPayFixed(testData, paramsPayFixed);
