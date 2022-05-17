@@ -46,7 +46,8 @@
         "test:mainnet": "export FORK_ENABLED=true; npx hardhat test test/endToEnd/*.ts",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
-        "export-abi": "npx hardhat export-abi"
+        "export-abi": "npx hardhat export-abi",
+        "export-errorCodes": "node utiles/ExtractErrorCodeToJson.js"
     },
     "dependencies": {
         "@openzeppelin/contracts": "4.5.0",
