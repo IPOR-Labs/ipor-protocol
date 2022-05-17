@@ -64,15 +64,18 @@ interface IMilton {
     /// @param swapId Receive-Fixed swap ID.
     function closeSwapReceiveFixed(uint256 swapId) external;
 
-    /// @notice Closes Pay-Fixed swaps for given list of IDs.
-    /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
-    /// @param swapIds List of Pay-Fixed swaps IDs.
-    function closeSwapsPayFixed(uint256[] memory swapIds) external;
-
-    /// @notice Closes Receive-Fixed swaps for given list of IDs.
-    /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset.
-    /// @param swapIds List of Receive-Fixed swaps.
-    function closeSwapsReceiveFixed(uint256[] memory swapIds) external;
+    /// @notice Closes list of pay fixed and receive fixed swaps in one transaction.
+	/// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset for every swap which was closed within this transaction.
+    /// @param payFixedSwapIds list of pay fixed swap ids
+    /// @param receiveFixedSwapIds list of receive fixed swap ids
+    /// @return closedPayFixedSwaps list of pay fixed swaps with information which one was closed during this particular transaction.
+    /// @return closedReceiveFixedSwaps list of receive fixed swaps with information which one was closed during this particular transaction.
+    function closeSwaps(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
+        external
+        returns (
+            MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 
     /// @notice Emmited when trader opens new swap.
     event OpenSwap(
