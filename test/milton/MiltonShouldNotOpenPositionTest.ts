@@ -450,7 +450,7 @@ describe("Milton - Should Not Open Position", () => {
             //when
             miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
             //then
-            "IPOR_317"
+            "IPOR_318"
         );
     });
 

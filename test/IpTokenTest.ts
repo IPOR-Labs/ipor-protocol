@@ -181,7 +181,7 @@ describe("IpToken", () => {
             //when
             ipToken.connect(userTwo).mint(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_324"
+            "IPOR_325"
         );
     });
 
@@ -219,7 +219,7 @@ describe("IpToken", () => {
             //when
             ipToken.connect(userTwo).burn(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC),
             //then
-            "IPOR_324"
+            "IPOR_325"
         );
     });
 
