@@ -64,6 +64,10 @@ Notice! `npx hardhat coverage` not includes coverage from tests in mainnet fork,
 
 `npx hardhat test --logs`
 
+### How to extract all error codes from solidity codes to json file?
+
+`npm run export-errorCodes`
+
 #### How to check contract size?
 
 Run in command line: `truffle run contract-size`

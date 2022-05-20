@@ -1,4 +1,5 @@
 import chai from "chai";
+import hre from "hardhat";
 import { BigNumber, Signer } from "ethers";
 import { MockSpreadModel } from "../../types";
 import {
@@ -385,7 +386,7 @@ export const assertExpectedValues = async function (
     expect(
         expectedSumOfBalancesBeforePayout,
         `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`
-    ).to.be.eql(actualSumOfBalances);
+    ).to.be.equal(actualSumOfBalances);
 };
 
 const assertBalances = async (
@@ -545,7 +546,7 @@ export const assertMiltonDerivativeItem = async (
     }
 
     expect(
-        BigInt(expectedUserDerivativeIdsIndex),
+        expectedUserDerivativeIdsIndex,
         `Incorrect idsIndex for swap id ${actualDerivativeItem?.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
     ).to.be.eq(actualDerivativeItem.idsIndex);
 };

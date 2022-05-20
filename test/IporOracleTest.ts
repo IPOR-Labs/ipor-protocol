@@ -219,7 +219,7 @@ describe("IporOracle", () => {
         const iporIndex = await _iporOracle.connect(userOne).getIndex(_tokenDai.address);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
-        expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
+        expect(actualIndexValue).to.be.equal(expectedIporIndexValue);
     });
 
     it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
@@ -245,7 +245,7 @@ describe("IporOracle", () => {
 
         //then
         const actualNewOwner = await _iporOracle.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.eql(actualNewOwner);
+        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should NOT transfer ownership - sender not current owner", async () => {
@@ -316,7 +316,7 @@ describe("IporOracle", () => {
 
         //then
         const actualNewOwner = await _iporOracle.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.eql(actualNewOwner);
+        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
     });
 
     it("should Decay Factor be lower than 100%", async () => {
@@ -351,9 +351,9 @@ describe("IporOracle", () => {
         );
     });
 
-    it("should update IPOR Index", async () => {
+    it("should update IPOR Index, DAI", async () => {
         //given
-        const expectedIndexValue = BigNumber.from("100").mul(N1__0_18DEC);
+        const expectedIndexValue = BigNumber.from("5").mul(N1__0_18DEC);
         testData = (await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],
@@ -391,11 +391,11 @@ describe("IporOracle", () => {
         expect(
             expectedIndexValue,
             `Incorrect IPOR index value ${actualIndexValue}, expected ${expectedIndexValue}`
-        ).to.be.eql(actualIndexValue);
+        ).to.be.equal(actualIndexValue);
         expect(
             TC_IBT_PRICE_DAI_18DEC,
             `Incorrect Interest Bearing Token Price ${actualIbtPrice}, expected ${TC_IBT_PRICE_DAI_18DEC.toString()}`
-        ).to.be.eql(actualIbtPrice);
+        ).to.be.equal(actualIbtPrice);
     });
 
     it("should add IPOR Index Updater", async () => {
@@ -417,7 +417,7 @@ describe("IporOracle", () => {
         const iporIndex = await _iporOracle.connect(userOne).getIndex(_tokenDai.address);
         const actualIndexValue = BigNumber.from(iporIndex.indexValue);
 
-        expect(actualIndexValue).to.be.eql(expectedIporIndexValue);
+        expect(actualIndexValue).to.be.equal(expectedIporIndexValue);
     });
 
     it("should NOT add IPOR Index Updater", async () => {
@@ -464,14 +464,14 @@ describe("IporOracle", () => {
         expect(
             actualIndexValue,
             `Incorrect IPOR index value ${actualIndexValue}, expected ${expectedIndexValueOne}`
-        ).to.be.eql(expectedIndexValueTwo);
+        ).to.be.equal(expectedIndexValueTwo);
     });
 
     it("should calculate initial Interest Bearing Token Price", async () => {
         //given
         const asset = _tokenUsdt.address;
         await _iporOracle.addUpdater(await userOne.getAddress());
-        const iporIndexValue = BigNumber.from("50000").mul(N0__01_18DEC);
+        const iporIndexValue = BigNumber.from("5").mul(N0__01_18DEC);
 
         //when
         await _iporOracle
@@ -486,11 +486,11 @@ describe("IporOracle", () => {
         expect(
             actualIbtPrice,
             `Actual Interest Bearing Token Price is incorrect ${actualIbtPrice}, expected ${TC_IBT_PRICE_DAI_6DEC}`
-        ).to.be.eql(TC_IBT_PRICE_DAI_18DEC);
+        ).to.be.equal(TC_IBT_PRICE_DAI_18DEC);
         expect(
             actualIndexValue,
             `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${iporIndexValue}`
-        ).to.be.eql(iporIndexValue);
+        ).to.be.equal(iporIndexValue);
     });
 
     it("should calculate next Interest Bearing Token Price - one year period", async () => {
@@ -517,11 +517,11 @@ describe("IporOracle", () => {
         expect(
             actualIbtPrice,
             `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`
-        ).to.be.eql(expectedIbtPrice);
+        ).to.be.equal(expectedIbtPrice);
         expect(
             actualIndexValue,
             `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexSecondValue}`
-        ).to.be.eql(iporIndexSecondValue);
+        ).to.be.equal(iporIndexSecondValue);
     });
 
     it("should calculate next Interest Bearing Token Price - one month period", async () => {
@@ -546,12 +546,12 @@ describe("IporOracle", () => {
         expect(
             actualIbtPrice,
             `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`
-        ).to.be.eql(expectedIbtPrice);
+        ).to.be.equal(expectedIbtPrice);
 
         expect(
             actualIndexValue,
             `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexSecondValue}`
-        ).to.be.eql(iporIndexSecondValue);
+        ).to.be.equal(iporIndexSecondValue);
     });
 
     it("should calculate DIFFERENT Interest Bearing Token Price  - ONE SECOND period, same IPOR Index value, 6 decimals asset", async () => {
@@ -648,11 +648,11 @@ describe("IporOracle", () => {
         expect(
             actualIbtPrice,
             `Actual Interest Bearing Token Price is incorrect, actual: ${actualIbtPrice}, expected: ${expectedIbtPrice}`
-        ).to.be.eql(expectedIbtPrice);
+        ).to.be.equal(expectedIbtPrice);
         expect(
             actualIndexValue,
             `Actual IPOR Index Value is incorrect, actual: ${actualIndexValue}, expected: ${iporIndexThirdValue}`
-        ).to.be.eql(iporIndexThirdValue);
+        ).to.be.equal(iporIndexThirdValue);
     });
 
     it("should NOT update IPOR Index - asset not supported", async () => {
@@ -727,7 +727,7 @@ describe("IporOracle", () => {
             expect(
                 actualIndexValue,
                 `Actual IPOR Index Value is incorrect ${actualIndexValue}, expected ${indexValues[i]}`
-            ).to.be.eql(indexValues[i]);
+            ).to.be.equal(indexValues[i]);
         }
     });
 
@@ -753,7 +753,7 @@ describe("IporOracle", () => {
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
-        ).to.be.eql(expectedExpoMovingAverage);
+        ).to.be.equal(expectedExpoMovingAverage);
     });
 
     it("should calculate initial Exponential Moving Average - simple case 2", async () => {
@@ -778,7 +778,7 @@ describe("IporOracle", () => {
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
-        ).to.be.eql(expectedExpoMovingAverage);
+        ).to.be.equal(expectedExpoMovingAverage);
     });
 
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 18 decimals", async () => {
@@ -803,12 +803,12 @@ describe("IporOracle", () => {
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
-        const actualExponentialMovingAverage = await iporIndex.exponentialMovingAverage;
+        const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
 
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
-        ).to.be.eql(expectedExpoMovingAverage);
+        ).to.be.equal(expectedExpoMovingAverage);
     });
 
     it("should calculate initial Exponential Moving Average - 2x IPOR Index updates - 6 decimals", async () => {
@@ -860,7 +860,7 @@ describe("IporOracle", () => {
         expect(
             actualExponentialMovingAverage,
             `Actual exponential moving average for asset ${assets[0]} is incorrect ${actualExponentialMovingAverage}, expected ${expectedExpoMovingAverage}`
-        ).to.be.eql(expectedExpoMovingAverage);
+        ).to.be.equal(expectedExpoMovingAverage);
     });
 
     it("should not sent ETH to _iporOracle", async () => {

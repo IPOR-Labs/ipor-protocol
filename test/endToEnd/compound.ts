@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 
 const daiComp = require("../../abis/compTokenAbi.json");
 import {
@@ -29,7 +29,7 @@ export const compoundDaiStrategyFactory = async (): Promise<StrategyCompound> =>
         {
             kind: "uups",
         }
-    )) as Promise<StrategyCompound>;
+    )) as StrategyCompound;
 };
 
 export const compoundUsdcStrategyFactory = async (): Promise<StrategyCompound> => {
@@ -41,7 +41,7 @@ export const compoundUsdcStrategyFactory = async (): Promise<StrategyCompound> =
         {
             kind: "uups",
         }
-    )) as Promise<StrategyCompound>;
+    )) as StrategyCompound;
 };
 
 export const compoundUsdtStrategyFactory = async (): Promise<StrategyCompound> => {
@@ -53,7 +53,7 @@ export const compoundUsdtStrategyFactory = async (): Promise<StrategyCompound> =
         {
             kind: "uups",
         }
-    )) as Promise<StrategyCompound>;
+    )) as StrategyCompound;
 };
 
 export const strategyCompoundSetup = async (strategy: StrategyCompound, stanleyAddress: string) => {

@@ -187,7 +187,7 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            josephDai.connect(userThree).transferToTreasury(BigInt("100")),
+            josephDai.connect(userThree).transferToTreasury(BigNumber.from("100")),
             //then
             "IPOR_404"
         );
@@ -212,7 +212,7 @@ describe("Joseph Treasury", () => {
         //when
         await assertError(
             //when
-            josephDai.connect(userThree).transferToTreasury(BigInt("100")),
+            josephDai.connect(userThree).transferToTreasury(BigNumber.from("100")),
             //then
             "IPOR_405"
         );

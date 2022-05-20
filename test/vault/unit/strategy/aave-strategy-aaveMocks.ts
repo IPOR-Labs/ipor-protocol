@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 const keccak256 = require("keccak256");
 import { constants, BigNumber, Signer } from "ethers";
@@ -9,6 +9,8 @@ import {
     StrategyAave,
     ERC20,
     DaiMockedToken,
+    UsdcMockedToken,
+    UsdtMockedToken,
     MockStakedAave,
     MockAaveIncentivesController,
 } from "../../../../types";
@@ -32,8 +34,8 @@ describe("AAVE strategy", () => {
     let strategyAaveInstanceUSDC: StrategyAave;
     let strategyAaveInstanceUSDT: StrategyAave;
     let DAI: DaiMockedToken;
-    let USDC: DaiMockedToken;
-    let USDT: DaiMockedToken;
+    let USDC: UsdcMockedToken;
+    let USDT: UsdtMockedToken;
     let aDAI: ERC20;
     let aUSDC: ERC20;
     let aUSDT: ERC20;
@@ -50,18 +52,18 @@ describe("AAVE strategy", () => {
         // #################################################################################
 
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
-        USDC = await UsdcMockedToken.deploy(totalSupply6Decimals, 6);
+        USDC = (await UsdcMockedToken.deploy(totalSupply6Decimals, 6)) as UsdcMockedToken;
         const AUSDCFactory = await hre.ethers.getContractFactory("MockAUsdc");
-        aUSDC = await AUSDCFactory.deploy();
+        aUSDC = (await AUSDCFactory.deploy()) as ERC20;
 
         // #################################################################################
         // #####################        USDT / aUSDT     ###################################
         // #################################################################################
 
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
-        USDT = await UsdtMockedToken.deploy(totalSupply6Decimals, 6);
+        USDT = (await UsdtMockedToken.deploy(totalSupply6Decimals, 6)) as UsdtMockedToken;
         const AUSDTFactory = await hre.ethers.getContractFactory("MockAUsdt");
-        aUSDT = await AUSDTFactory.deploy();
+        aUSDT = (await AUSDTFactory.deploy()) as ERC20;
 
         // #################################################################################
         // #####################         DAI / aDAI      ###################################
@@ -71,12 +73,12 @@ describe("AAVE strategy", () => {
         DAI = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as DaiMockedToken;
 
         const ADAIFactory = await hre.ethers.getContractFactory("MockADai");
-        aDAI = await ADAIFactory.deploy();
+        aDAI = (await ADAIFactory.deploy()) as ERC20;
 
-        stkAAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        stkAAVE = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await stkAAVE.deployed();
 
-        AAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        AAVE = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await AAVE.deployed();
 
         // #################################################################################
@@ -114,32 +116,32 @@ describe("AAVE strategy", () => {
         // #################################################################################
 
         const StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
-        strategyAaveInstanceDAI = await upgrades.deployProxy(StrategyAaveInstance, [
+        strategyAaveInstanceDAI = (await upgrades.deployProxy(StrategyAaveInstance, [
             DAI.address,
             aDAI.address,
             addressProvider.address,
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ]);
+        ])) as StrategyAave;
 
-        strategyAaveInstanceUSDC = await upgrades.deployProxy(StrategyAaveInstance, [
+        strategyAaveInstanceUSDC = (await upgrades.deployProxy(StrategyAaveInstance, [
             USDC.address,
             aUSDC.address,
             addressProvider.address,
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ]);
+        ])) as StrategyAave;
 
-        strategyAaveInstanceUSDT = await upgrades.deployProxy(StrategyAaveInstance, [
+        strategyAaveInstanceUSDT = (await upgrades.deployProxy(StrategyAaveInstance, [
             USDT.address,
             aUSDT.address,
             addressProvider.address,
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ]);
+        ])) as StrategyAave;
     });
 
     it("Should be able to setup Stanley and interact with DAI", async () => {

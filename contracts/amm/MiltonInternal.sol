@@ -51,7 +51,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
-    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50 * 1e18;
+    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50;
 
     uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
 
@@ -60,6 +60,8 @@ abstract contract MiltonInternal is
     uint256 internal constant _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY = 99 * 1e16;
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
+
+    uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
 
     address internal _asset;
     address internal _joseph;
@@ -109,8 +111,14 @@ abstract contract MiltonInternal is
         return _getIporPublicationFee();
     }
 
+    /// @notice Returns configured liquidation deposit amount
+    /// @return liquidation deposit amount, value represented WITHOUT decimals
     function getLiquidationDepositAmount() external pure override returns (uint256) {
         return _getLiquidationDepositAmount();
+    }
+
+    function getWadLiquidationDepositAmount() external pure override returns (uint256) {
+        return _getLiquidationDepositAmount() * Constants.D18;
     }
 
     function getMaxLeverage() external pure override returns (uint256) {
@@ -283,6 +291,10 @@ abstract contract MiltonInternal is
         returns (uint256)
     {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
+    }
+
+    function _getLiquidationLegLimit() internal pure virtual returns (uint256) {
+        return _LIQUIDATION_LEG_LIMIT;
     }
 
     function _getJoseph() internal view virtual returns (address) {

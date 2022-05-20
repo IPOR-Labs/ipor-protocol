@@ -89,7 +89,7 @@ interface IMiltonStorage {
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, uint128[] memory ids);
+    ) external view returns (uint256 totalCount, uint256[] memory ids);
 
     /// @notice Gets active Receive-Fixed swaps IDs for a given account address.
     /// @param account account address
@@ -101,7 +101,7 @@ interface IMiltonStorage {
         address account,
         uint256 offset,
         uint256 chunkSize
-    ) external view returns (uint256 totalCount, uint128[] memory ids);
+    ) external view returns (uint256 totalCount, uint256[] memory ids);
 
     /// @notice Gets active Pay-Fixed and Receive-Fixed swaps IDs for a given account address.
     /// @param account account address

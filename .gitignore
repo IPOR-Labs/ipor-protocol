@@ -59,3 +59,6 @@ app/.env
 ### Smart Contracts migration artifacts ###
 .ipor/
 .logs/
+
+### Utiles results ###
+iporErrorList.json
