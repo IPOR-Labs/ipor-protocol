@@ -15,8 +15,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SOAP Pay Fixed</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -24,9 +23,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
@@ -38,17 +37,16 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -56,9 +54,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
@@ -70,17 +68,16 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -88,9 +85,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
@@ -102,9 +99,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapPf / 1000000000000000000}
+                                    {soap.soapPayFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapPf}</small>
+                                    <small>{soap.soapPayFixed}</small>
                                 </div>
                             )}
                         />
@@ -114,8 +111,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SOAP Receive Fixed</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -123,9 +119,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
@@ -137,17 +133,16 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -155,9 +150,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
@@ -169,17 +164,16 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -187,9 +181,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
@@ -201,9 +195,9 @@ export default ({ drizzle, drizzleState }) => (
                             method="calculateSoap"
                             render={(soap) => (
                                 <div>
-                                    {soap.soapRf / 1000000000000000000}
+                                    {soap.soapReceiveFixed / 1000000000000000000}
                                     <br />
-                                    <small>{soap.soapRf}</small>
+                                    <small>{soap.soapReceiveFixed}</small>
                                 </div>
                             )}
                         />
@@ -213,8 +207,7 @@ export default ({ drizzle, drizzleState }) => (
             <tr>
                 <td>SOAP Total</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -245,8 +238,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
@@ -277,8 +269,7 @@ export default ({ drizzle, drizzleState }) => (
                     )}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED ===
-                    "true" ? (
+                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
