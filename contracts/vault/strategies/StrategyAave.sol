@@ -72,7 +72,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     function getApr() external view override returns (uint256 apr) {
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
         DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
-        apr = IporMath.division(uint256(reserveData.currentLiquidityRate), (10**9));
+        apr = IporMath.division(reserveData.currentLiquidityRate, (10**9));
     }
 
     /**

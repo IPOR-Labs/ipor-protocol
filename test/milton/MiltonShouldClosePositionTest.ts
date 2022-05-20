@@ -3191,7 +3191,7 @@ describe("Milton - close position", () => {
         await expect(
             miltonDai
                 .connect(userThree)
-                .itfCloseSwapsPayFixed([1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
+                .itfCloseSwaps([1, 2], [], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
         )
             .to.emit(tokenDai, "Transfer")
             .withArgs(
@@ -3252,10 +3252,7 @@ describe("Milton - close position", () => {
         await expect(
             miltonDai
                 .connect(userThree)
-                .itfCloseSwapsReceiveFixed(
-                    [1, 2],
-                    params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS)
-                )
+                .itfCloseSwaps([], [1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
         )
             .to.emit(tokenDai, "Transfer")
             .withArgs(

@@ -37,8 +37,8 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     function initialize(
         address[] memory assets,
         uint32[] memory updateTimestamps,
-        uint128[] memory exponentialMovingAverages,
-        uint128[] memory exponentialWeightedMovingVariances
+        uint64[] memory exponentialMovingAverages,
+        uint64[] memory exponentialWeightedMovingVariances
     ) public initializer {
         __Ownable_init();
 
@@ -48,11 +48,11 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
-                updateTimestamps[i],
-                0,
                 Constants.WAD_YEAR_IN_SECONDS.toUint128(),
                 exponentialMovingAverages[i],
-                exponentialWeightedMovingVariances[i]
+                exponentialWeightedMovingVariances[i],
+                0,
+                updateTimestamps[i]
             );
         }
     }
@@ -160,11 +160,11 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
             IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
         _indexes[asset] = IporOracleTypes.IPOR(
-            updateTimestamp.toUint32(),
-            0,
             Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            exponentialMovingAverage.toUint128(),
-            exponentialWeightedMovingVariance.toUint128()
+            exponentialMovingAverage.toUint64(),
+            exponentialWeightedMovingVariance.toUint64(),
+            0,
+            updateTimestamp.toUint32()
         );
         emit IporIndexAddAsset(
             asset,
@@ -230,11 +230,11 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
-            updateTimestamp.toUint32(),
-            indexValue.toUint128(),
             newQuasiIbtPrice.toUint128(),
-            newExponentialMovingAverage.toUint128(),
-            newExponentialWeightedMovingVariance.toUint128()
+            newExponentialMovingAverage.toUint64(),
+            newExponentialWeightedMovingVariance.toUint64(),
+            indexValue.toUint64(),
+            updateTimestamp.toUint32()
         );
 
         emit IporIndexUpdate(
