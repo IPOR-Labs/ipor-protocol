@@ -1,5 +1,5 @@
-const keys = require("../../json_keys.js");
-const func = require("../../json_func.js");
+const func = require("../../libs/json_keys.js");
+const func = require("../../libs/json_func.js");
 
 module.exports = async function (deployer, _network, addresses) {
     const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
