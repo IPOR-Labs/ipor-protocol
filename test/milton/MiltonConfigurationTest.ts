@@ -191,9 +191,15 @@ describe("MiltonConfiguration", () => {
         //then
         expect(actualValue).to.be.eq(BigNumber.from("10").mul(N1__0_18DEC));
     });
-    it("should setup init value for Liquidation Deposit Amount", async () => {
+    it("should setup init value for Liquidation Deposit Amount - method 1", async () => {
         //when
         const actualValue = await miltonConfiguration.getLiquidationDepositAmount();
+        //then
+        expect(actualValue).to.be.eq(BigNumber.from("50"));
+    });
+	it("should setup init value for Liquidation Deposit Amount - method 2", async () => {
+        //when
+        const actualValue = await miltonConfiguration.getWadLiquidationDepositAmount();
         //then
         expect(actualValue).to.be.eq(BigNumber.from("50").mul(N1__0_18DEC));
     });

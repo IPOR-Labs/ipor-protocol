@@ -75,7 +75,7 @@ describe("TestnetFaucet", () => {
         expect(timeToNextClaim.gt(ZERO), "timeToNextClaim").to.be.true;
     });
 
-    it("Should claim 60 000", async () => {
+    it("Should claim 20 000", async () => {
         // Given
         const daiBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
         const usdcBalanceBefore = await tokenUsdc.balanceOf(await userOne.getAddress());

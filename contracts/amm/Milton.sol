@@ -293,8 +293,11 @@ abstract contract Milton is MiltonInternal, IMilton {
         require(leverage >= _getMinLeverage(), MiltonErrors.LEVERAGE_TOO_LOW);
         require(leverage <= _getMaxLeverage(), MiltonErrors.LEVERAGE_TOO_HIGH);
 
+        uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
+        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
+
         require(
-            wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFee(),
+            wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee(),
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -302,7 +305,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             .calculateSwapAmount(
                 wadTotalAmount,
                 leverage,
-                _getLiquidationDepositAmount(),
+                wadLiquidationDepositAmount,
                 _getIporPublicationFee(),
                 _getOpeningFeeRate()
             );
@@ -319,7 +322,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         require(
             wadTotalAmount >
-                _getLiquidationDepositAmount() + _getIporPublicationFee() + openingFeeAmount,
+                wadLiquidationDepositAmount + _getIporPublicationFee() + openingFeeAmount,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -331,7 +334,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 _getIporPublicationFee(),
-                _getLiquidationDepositAmount(),
+                liquidationDepositAmount,
                 _iporOracle.getAccruedIndex(openTimestamp, _asset)
             );
     }
@@ -395,10 +398,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.liquidationDepositAmount,
             bosStruct.notional,
-            indicator.fixedInterestRate,
             indicator.ibtQuantity,
+            indicator.fixedInterestRate,
+            bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -471,10 +474,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.liquidationDepositAmount,
             bosStruct.notional,
-            indicator.fixedInterestRate,
             indicator.ibtQuantity,
+            indicator.fixedInterestRate,
+            bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -552,7 +555,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee,
-                newSwap.liquidationDepositAmount
+                newSwap.liquidationDepositAmount * Constants.D18
             ),
             newSwap.openTimestamp,
             newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
@@ -785,7 +788,7 @@ abstract contract Milton is MiltonInternal, IMilton {
      * @dev It trasfers the asset to the swap buyer and the liquidator.
      * Should buyer and the liquidator are the same entity it performs only one transfer.
      * @param buyer - address that opened the swap
-     * @param liquidationDepositAmount - amount of asset transfered to the liquidator
+     * @param liquidationDepositAmount - amount of asset transfered to the liquidator, value represented in 18 decimals
      * @param transferAmount - amount of asset transfered to the swap owner
      **/
     function _transferDerivativeAmount(
@@ -816,16 +819,16 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     //Transfer sum of all liquidation deposits to liquidator
+    /// @param liquidator address of liquidator
+    /// @param liquidationDepositAmount liquidation deposit amount, value represented in 18 decimals
     function _transferLiquidationDepositAmount(address liquidator, uint256 liquidationDepositAmount)
         internal
     {
         if (liquidationDepositAmount != 0) {
-            uint256 decimals = _getDecimals();
-            uint256 liqDepositAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-                liquidationDepositAmount,
-                decimals
+            IERC20Upgradeable(_asset).safeTransfer(
+                liquidator,
+                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, _getDecimals())
             );
-            IERC20Upgradeable(_asset).safeTransfer(liquidator, liqDepositAmountAssetDecimals);
         }
     }
 

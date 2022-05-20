@@ -35,7 +35,7 @@ contract MockCase8MiltonDai is ItfMilton {
     }
 
     function _getLiquidationDepositAmount() internal pure virtual override returns (uint256) {
-        return 20 * 1e18;
+        return 20;
     }
 
     function _getMaxLeverage() internal pure virtual override returns (uint256) {
