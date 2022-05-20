@@ -51,7 +51,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
-    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50 * 1e18;
+    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50;
 
     uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
 
@@ -111,8 +111,14 @@ abstract contract MiltonInternal is
         return _getIporPublicationFee();
     }
 
+    /// @notice Returns configured liquidation deposit amount
+    /// @return liquidation deposit amount, value represented WITHOUT decimals
     function getLiquidationDepositAmount() external pure override returns (uint256) {
         return _getLiquidationDepositAmount();
+    }
+
+    function getWadLiquidationDepositAmount() external pure override returns (uint256) {
+        return _getLiquidationDepositAmount() * Constants.D18;
     }
 
     function getMaxLeverage() external pure override returns (uint256) {
