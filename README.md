@@ -11,13 +11,15 @@ IPOR smart contracts
 
 ### Pre-run steps
 
--   Install `python3-pip`.
--   Install `solc-select` using pip: `pip3 install solc-select`
--   Install docker and docker-compose
--   Install `node` and `npm`.
--   Install `truffle` : `npm install -g truffle`
--   Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.
--   Run `sudo apt-get install build-essential`
+- Install `python3-pip`.
+- Install `solc-select` using pip: `pip3 install solc-select`
+- Install docker and docker-compose
+- Install `node` and `npm`.
+- Install `truffle` : `npm install -g truffle`
+- Install `j2cli` : `pip3 install j2cli`
+- Install `curl`, `jq`
+- Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.
+- Run `sudo apt-get install build-essential`
 
 ### How to run as developer?
 
@@ -68,7 +70,7 @@ Do following steps:
 
 #### How to run all tests?
 
-`npm run test`
+`npx hardhat test`
 
 #### How to run all tests with coverage?
 
