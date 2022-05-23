@@ -1,0 +1,6 @@
+### Ignore everything ###
+*
+
+### But not .gitignore ###
+!.gitignore
+!variables.env
