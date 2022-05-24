@@ -12,21 +12,21 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">
                         USDT
                         <br />
-                        {drizzle.contracts.MockTestnetTokenUsdt.address}
+                        {drizzle.contracts.DrizzleUsdt.address}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         USDC
                         <br />
-                        {drizzle.contracts.MockTestnetTokenUsdc.address}
+                        {drizzle.contracts.DrizzleUsdc.address}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         DAI
                         <br />
-                        {drizzle.contracts.MockTestnetTokenDai.address}
+                        {drizzle.contracts.DrizzleDai.address}
                         <br />
                         <br />
                     </th>
@@ -138,41 +138,41 @@ export default ({ drizzle, drizzleState }) => (
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                             <>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephUsdt"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfJosephUsdt"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdt"
                                     method="setMiltonStanleyBalanceRatio"
                                 />
-                                </>
+                            </>
                         ) : (
                             <>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephUsdt"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="JosephUsdt"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdt"
                                     method="setMiltonStanleyBalanceRatio"
@@ -183,41 +183,41 @@ export default ({ drizzle, drizzleState }) => (
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
                             <>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephUsdc"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfJosephUsdc"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephUsdc"
                                     method="setMiltonStanleyBalanceRatio"
                                 />
-                                </>
+                            </>
                         ) : (
                             <>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephUsdc"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="JosephUsdc"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephUsdc"
                                     method="setMiltonStanleyBalanceRatio"
@@ -227,21 +227,21 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <>                            
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephDai"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                            <>
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="ItfJosephDai"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="ItfJosephDai"
                                     method="setMiltonStanleyBalanceRatio"
@@ -249,20 +249,20 @@ export default ({ drizzle, drizzleState }) => (
                             </>
                         ) : (
                             <>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephDai"
-                                method="getMiltonStanleyBalanceRatio"
-                                render={(value) => (
-                                    <div>
-                                        {value / 1000000000000000000}
-                                        <br />
-                                        <small>{value}</small>
-                                    </div>
-                                )}
-                            />
-                            <ContractForm
+                                <ContractData
+                                    drizzle={drizzle}
+                                    drizzleState={drizzleState}
+                                    contract="JosephDai"
+                                    method="getMiltonStanleyBalanceRatio"
+                                    render={(value) => (
+                                        <div>
+                                            {value / 1000000000000000000}
+                                            <br />
+                                            <small>{value}</small>
+                                        </div>
+                                    )}
+                                />
+                                <ContractForm
                                     drizzle={drizzle}
                                     contract="JosephDai"
                                     method="setMiltonStanleyBalanceRatio"

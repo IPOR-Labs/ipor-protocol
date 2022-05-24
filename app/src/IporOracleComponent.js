@@ -10,34 +10,30 @@ export default ({ drizzle, drizzleState }) => (
             <div>
                 <div>
                     <strong>Add IPOR Index (ItfIporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracleLocal" method="updateIndex" />
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="updateIndex" />
                 </div>
                 <div>
                     <strong>Add updater (ItfIporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracleLocal" method="addUpdater" />
+                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="addUpdater" />
                 </div>
                 <div>
                     <strong>Remove updater (ItfIporOracle)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="IporOracleLocal"
-                        method="removeUpdater"
-                    />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater" />
                 </div>
             </div>
         ) : (
             <div>
                 <div>
                     <strong>Add IPOR Index (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracleLocal" method="updateIndex" />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="updateIndex" />
                 </div>
                 <div>
                     <strong>Add updater (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracleLocal" method="addUpdater" />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="addUpdater" />
                 </div>
                 <div>
                     <strong>Remove updater (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracleLocal" method="removeUpdater" />
+                    <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater" />
                 </div>
             </div>
         )}
@@ -54,6 +50,6 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </p>
             <hr />
-        </div>        
+        </div>
     </div>
 );

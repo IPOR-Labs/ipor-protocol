@@ -58,9 +58,9 @@ export default ({ drizzle, drizzleState }) => {
                         <td>
                             <strong>ERC20 Token Address</strong>
                         </td>
-                        <td>{drizzle.contracts.StableUsdt.address}</td>
-                        <td>{drizzle.contracts.StableUsdc.address}</td>
-                        <td>{drizzle.contracts.StableDai.address}</td>
+                        <td>{drizzle.contracts.DrizzleUsdt.address}</td>
+                        <td>{drizzle.contracts.DrizzleUsdc.address}</td>
+                        <td>{drizzle.contracts.DrizzleDai.address}</td>
                     </tr>
                 </table>
             </div>
@@ -68,15 +68,15 @@ export default ({ drizzle, drizzleState }) => {
                 <Tab eventKey="iporIndex" title="IporOracle">
                     <IporOracleComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
-                {/* <Tab eventKey="miltonOverview" title="Milton">
+                <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
-                 <Tab eventKey="joseph" title="Joseph">
+                <Tab eventKey="joseph" title="Joseph">
                     <JosephComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
                 <Tab eventKey="stanley" title="Stanley">
                     <StanleyComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab> 
+                </Tab>
                 <Tab eventKey="globalConfig" title="Global Config">
                     <GlobalConfigurationComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
@@ -95,12 +95,12 @@ export default ({ drizzle, drizzleState }) => {
                 <Tab eventKey="myPositions" title="My positions">
                     <MyPositions drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
-                <Tab eventKey="faucet" title="Faucet">
+                {/* <Tab eventKey="faucet" title="Faucet">
                     <FaucetComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> */}
                 <Tab eventKey="frontend" title="Frontend Data Provider">
                     <FrontendComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>  */}
+                </Tab>
             </Tabs>
         </div>
     );

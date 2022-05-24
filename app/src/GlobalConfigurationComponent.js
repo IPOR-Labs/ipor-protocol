@@ -16,81 +16,24 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>USDT</td>
-                <td>{drizzle.contracts.MockTestnetTokenUsdt.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenUsdt"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdt"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdt"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleUsdt.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>USDC</td>
-                <td>{drizzle.contracts.MockTestnetTokenUsdc.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenUsdc"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdc"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdc"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleUsdc.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>DAI</td>
-                <td>{drizzle.contracts.MockTestnetTokenDai.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenDai"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenDai"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenDai"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleDai.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>ipUSDT</td>
@@ -853,54 +796,59 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </td>
             </tr>
-            <tr>
-                <td>Testnet Faucet</td>
-                <td>{drizzle.contracts.TestnetFaucet.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="TestnetFaucet"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
-            </tr>
+            {/* {process.env.REACT_APP_BS_NETWORK_NAME !== "localhost" ? (
+                <tr>
+                    <td>Testnet Faucet</td>
+                    <td>{drizzle.contracts.TestnetFaucet.address}</td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="TestnetFaucet"
+                            method="owner"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="TestnetFaucet"
+                            method="transferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="TestnetFaucet"
+                            method="confirmTransferOwnership"
+                        />
+                    </td>
+                </tr>
+            ) : (
+                <tr></tr>
+            )} */}
+
             <tr>
                 <td>Mock Testnet Strategy Aave Usdt</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdt.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveUsdt.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -908,26 +856,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Aave Usdc</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdc.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveUsdc.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -935,26 +883,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Aave Dai</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveDai.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveDai.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -962,26 +910,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Usdt</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdt.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundUsdt.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -989,26 +937,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Usdc</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdc.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundUsdc.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -1016,26 +964,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Dai</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundDai.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundDai.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -1873,26 +1821,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Aave Usdt</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdt.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveUsdt.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdt"
+                        contract="DrizzleStrategyAaveUsdt"
                         method="unpause"
                     />
                 </td>
@@ -1900,26 +1848,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Aave Usdc</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveUsdc.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveUsdc.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveUsdc"
+                        contract="DrizzleStrategyAaveUsdc"
                         method="unpause"
                     />
                 </td>
@@ -1927,26 +1875,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Aave Dai</td>
-                <td>{drizzle.contracts.MockTestnetStrategyAaveDai.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyAaveDai.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyAaveDai"
+                        contract="DrizzleStrategyAaveDai"
                         method="unpause"
                     />
                 </td>
@@ -1954,26 +1902,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Usdt</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdt.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundUsdt.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdt"
+                        contract="DrizzleStrategyCompoundUsdt"
                         method="unpause"
                     />
                 </td>
@@ -1981,26 +1929,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Usdc</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundUsdc.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundUsdc.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundUsdc"
+                        contract="DrizzleStrategyCompoundUsdc"
                         method="unpause"
                     />
                 </td>
@@ -2008,26 +1956,26 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>Mock Testnet Strategy Compound Dai</td>
-                <td>{drizzle.contracts.MockTestnetStrategyCompoundDai.address}</td>
+                <td>{drizzle.contracts.DrizzleStrategyCompoundDai.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="paused"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="pause"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MockTestnetStrategyCompoundDai"
+                        contract="DrizzleStrategyCompoundDai"
                         method="unpause"
                     />
                 </td>
