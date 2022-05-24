@@ -1,5 +1,9 @@
 {
     "name": "hardhat-project",
+    "engines": {
+        "npm": "8.5.5",
+        "node": "16.15.0"
+    },
     "devDependencies": {
         "@hardhat-docgen/core": "1.2.3",
         "@hardhat-docgen/markdown": "1.2.4",

@@ -15,6 +15,7 @@ jobs:
               # from tag: v2.1.7
               uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
               with:
+                  node-version: 16.15.0
                   path: "**/node_modules"
                   key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
