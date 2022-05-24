@@ -1,4 +1,4 @@
-const func = require("../../libs/json_keys.js");
+const keys = require("../../libs/json_keys.js");
 const func = require("../../libs/json_func.js");
 
 module.exports = async function (deployer, _network, addresses) {
@@ -27,8 +27,8 @@ module.exports = async function (deployer, _network, addresses) {
     const aaveProvider = "0xb53c1a33016b2dc2ff3653530bff1848a515c8c5";
     await func.update(keys.AaveProvider, aaveProvider);
 
-    const stakedAave = "0x4da27a545c0c5B758a6BA100e3a049001de870f5";
-    await func.update(keys.StakedAave, stakedAave);
+    const aaveStaked = "0x4da27a545c0c5B758a6BA100e3a049001de870f5";
+    await func.update(keys.AaveStaked, aaveStaked);
 
     const aaveIncentivesController = "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5";
     await func.update(keys.AaveIncentivesController, aaveIncentivesController);

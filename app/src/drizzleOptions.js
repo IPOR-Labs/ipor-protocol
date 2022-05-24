@@ -60,6 +60,28 @@ require("dotenv").config({ path: "../../.env" });
 
 let options = null;
 
+const Web3 = require("web3");
+const web3 = new Web3(Web3.givenProvider || "ws://127.0.0.1:7545");
+
+const StableUsdt = ;
+const StableUsdc = ;
+const StableDai = 
+
+const IporOracleLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfIporOracle : IporOracle;
+IporOracleLocal.contractName = "IporOracleLocal";
+
+const MiltonUsdtLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfMiltonUsdt : MiltonUsdt;
+const MiltonUsdcLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfMiltonUsdc : MiltonUsdc;
+const MiltonDaiLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfMiltonDai : MiltonDai;
+const JosephUsdtLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfJosephUsdt : JosephUsdt;
+const JosephUsdcLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfJosephUsdc : JosephUsdc;
+const JosephDaiLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfJosephDai : JosephDai;
+const StanleyUsdtLocal =
+    process.env.REACT_APP_ITF_ENABLED === "true" ? ItfStanleyUsdt : StanleyUsdt;
+const StanleyUsdcLocal =
+    process.env.REACT_APP_ITF_ENABLED === "true" ? ItfStanleyUsdc : StanleyUsdc;
+const StanleyDaiLocal = process.env.REACT_APP_ITF_ENABLED === "true" ? ItfStanleyDai : StanleyDai;
+
 if (process.env.REACT_APP_ITF_ENABLED === "true") {
     options = {
         web3: {
@@ -83,7 +105,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             IvTokenUsdc,
             IvTokenDai,
             MiltonSpreadModel,
-            ItfIporOracle,
+            IporOracleLocal,
             ItfMiltonUsdt,
             ItfMiltonUsdc,
             ItfMiltonDai,
@@ -112,6 +134,10 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         ],
     };
 } else {
+    const abiERC20 = require("./contracts/ERC20.json");
+
+    const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+
     options = {
         web3: {
             fallback: {
@@ -124,16 +150,28 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             CockpitDataProvider,
             MiltonFacadeDataProvider,
             IporOracleFacadeDataProvider,
-            IporOracle,
+            IporOracleLocal,
             MiltonUsdt,
             MiltonUsdc,
             MiltonDai,
             MiltonStorageUsdt,
             MiltonStorageUsdc,
             MiltonStorageDai,
-            MockTestnetTokenDai,
-            MockTestnetTokenUsdt,
-            MockTestnetTokenUsdc,
+            {
+                contractName: "StableUsdt",
+                web3Contract: new web3.eth.Contract(abiERC20.abi, usdt),
+            },
+            {
+                contractName: "StableUsdc",
+                web3Contract: new web3.eth.Contract(abiERC20.abi, usdt),
+            },
+            {
+                contractName: "StableDai",
+                web3Contract: new web3.eth.Contract(abiERC20.abi, usdt),
+            },
+            // MockTestnetTokenDai,
+            // MockTestnetTokenUsdt,
+            // MockTestnetTokenUsdc,
             IpTokenUsdt,
             IpTokenUsdc,
             IpTokenDai,
@@ -147,19 +185,19 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             StanleyUsdc,
             StanleyDai,
             MiltonSpreadModel,
-            TestnetFaucet,
-            MockTestnetShareTokenAaveUsdt,
-            MockTestnetShareTokenAaveUsdc,
-            MockTestnetShareTokenAaveDai,
-            MockTestnetShareTokenCompoundUsdt,
-            MockTestnetShareTokenCompoundUsdc,
-            MockTestnetShareTokenCompoundDai,
-            MockTestnetStrategyAaveUsdt,
-            MockTestnetStrategyAaveUsdc,
-            MockTestnetStrategyAaveDai,
-            MockTestnetStrategyCompoundUsdt,
-            MockTestnetStrategyCompoundUsdc,
-            MockTestnetStrategyCompoundDai,
+            // TestnetFaucet,
+            // MockTestnetShareTokenAaveUsdt,
+            // MockTestnetShareTokenAaveUsdc,
+            // MockTestnetShareTokenAaveDai,
+            // MockTestnetShareTokenCompoundUsdt,
+            // MockTestnetShareTokenCompoundUsdc,
+            // MockTestnetShareTokenCompoundDai,
+            // MockTestnetStrategyAaveUsdt,
+            // MockTestnetStrategyAaveUsdc,
+            // MockTestnetStrategyAaveDai,
+            // MockTestnetStrategyCompoundUsdt,
+            // MockTestnetStrategyCompoundUsdc,
+            // MockTestnetStrategyCompoundDai,
         ],
     };
 }

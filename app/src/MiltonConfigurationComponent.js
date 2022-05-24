@@ -12,21 +12,21 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">
                         USDT
                         <br />
-                        {drizzle.contracts.MockTestnetTokenUsdt.address}
+                        {/* {drizzle.contracts.MockTestnetTokenUsdt.address} */}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         USDC
                         <br />
-                        {drizzle.contracts.MockTestnetTokenUsdc.address}
+                        {/* {drizzle.contracts.MockTestnetTokenUsdc.address} */}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         DAI
                         <br />
-                        {drizzle.contracts.MockTestnetTokenDai.address}
+                        {/* {drizzle.contracts.MockTestnetTokenDai.address} */}
                         <br />
                         <br />
                     </th>
