@@ -69,7 +69,12 @@ require("dotenv").config({ path: "../../.env" });
 let options;
 
 const Web3 = require("web3");
-const web3 = new Web3(Web3.givenProvider || "ws://127.0.0.1:7545");
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545') );//Web3.givenProvider || "ws://127.0.0.1:8545");
+
+web3.fallback = {
+    type: "ws",
+    url: "ws://127.0.0.1:8545",
+};
 
 const abiERC20 = require("./contracts/ERC20.json");
 const abiShareTokenAaveUsdt = require("./contracts/ERC20.json");
@@ -98,7 +103,7 @@ const MainnetStableUsdt = {
 
 const MainnetStableUsdc = {
     contractName: "DrizzleUsdc",
-    web3Contract: new web3.eth.Contract(abiERC20.abi, usdc),
+    web3Contract: new web3.eth.Contract(abiERC20.abi, usdc, {}),
 };
 
 const MainnetStableDai = {
@@ -235,7 +240,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         web3: {
             fallback: {
                 type: "ws",
-                url: "ws://127.0.0.1:7545",
+                url: "ws://127.0.0.1:8545",
             },
         },
 
@@ -283,12 +288,13 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
     };
 } else {
     options = {
-        web3: {
-            fallback: {
-                type: "ws",
-                url: "ws://127.0.0.1:7545",
-            },
-        },
+        web3: web3,
+        //  {
+        //     fallback: {
+        //         type: "ws",
+        //         url: "ws://127.0.0.1:7545",
+        //     },
+        // },
 
         contracts: [
             CockpitDataProvider,
