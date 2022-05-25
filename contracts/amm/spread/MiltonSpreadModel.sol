@@ -22,7 +22,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance
         );
 
-        int256 intQuoteValue = refLeg.toInt256() + spreadPremiums;
+        // int256 intQuoteValue = refLeg.toInt256() + spreadPremiums;
+        int256 intQuoteValue = accruedIpor.indexValue.toInt256() + spreadPremiums;
 
         if (intQuoteValue > 0) {
             return intQuoteValue.toUint256();
@@ -41,7 +42,8 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance
         );
 
-        int256 intQuoteValue = refLeg.toInt256() - spreadPremiums;
+        // int256 intQuoteValue = refLeg.toInt256() - spreadPremiums;
+        int256 intQuoteValue = accruedIpor.indexValue.toInt256() - spreadPremiums;
 
         if (intQuoteValue > 0) {
             quoteValue = intQuoteValue.toUint256();
@@ -60,7 +62,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance
         );
 
-        spreadValue = spreadPremiums + refLeg.toInt256() - accruedIpor.indexValue.toInt256();
+        spreadValue = spreadPremiums; // + refLeg.toInt256() - accruedIpor.indexValue.toInt256();
     }
 
     //@dev Spread = SpreadPremiums + IPOR - RefLeg
@@ -75,7 +77,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance
         );
 
-        spreadValue = spreadPremiums + accruedIpor.indexValue.toInt256() - refLeg.toInt256();
+        spreadValue = spreadPremiums; // + accruedIpor.indexValue.toInt256() - refLeg.toInt256();
     }
 
     function _calculateQuoteChunksPayFixed(
@@ -85,10 +87,10 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsPayFixed(soap, accruedIpor, accruedBalance);
 
-        refLeg = _calculateReferenceLegPayFixed(
-            accruedIpor.indexValue,
-            accruedIpor.exponentialMovingAverage
-        );
+        // refLeg = _calculateReferenceLegPayFixed(
+        //     accruedIpor.indexValue,
+        //     accruedIpor.exponentialMovingAverage
+        // );
     }
 
     function _calculateQuoteChunksReceiveFixed(
@@ -98,10 +100,10 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     ) internal pure returns (int256 spreadPremiums, uint256 refLeg) {
         spreadPremiums = _calculateSpreadPremiumsReceiveFixed(soap, accruedIpor, accruedBalance);
 
-        refLeg = _calculateReferenceLegReceiveFixed(
-            accruedIpor.indexValue,
-            accruedIpor.exponentialMovingAverage
-        );
+        // refLeg = _calculateReferenceLegReceiveFixed(
+        //     accruedIpor.indexValue,
+        //     accruedIpor.exponentialMovingAverage
+        // );
     }
 
     function _calculateSpreadPremiumsPayFixed(
@@ -113,12 +115,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
-        uint256 demandComponent = _calculateDemandComponentPayFixed(
-            accruedBalance.liquidityPool,
-            accruedBalance.totalCollateralPayFixed,
-            accruedBalance.totalCollateralReceiveFixed,
-            soap
-        );
+        // uint256 demandComponent = _calculateDemandComponentPayFixed(
+        //     accruedBalance.liquidityPool,
+        //     accruedBalance.totalCollateralPayFixed,
+        //     accruedBalance.totalCollateralReceiveFixed,
+        //     soap
+        // );
 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
             accruedIpor.exponentialMovingAverage.toInt256();
@@ -128,10 +130,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             diffIporIndexEma
         );
 
-        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
-        int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+        // int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+        // int256 result = demandComponent.toInt256() + volatilityAndMeanReversion;
+        int256 result = volatilityAndMeanReversion;
 
-        spreadPremiums = result < maxValue ? result : maxValue;
+        // spreadPremiums = result < maxValue ? result : maxValue;
+        spreadPremiums = result;
     }
 
     function _calculateSpreadPremiumsReceiveFixed(
@@ -143,12 +147,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             accruedBalance.liquidityPool != 0,
             MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
-        uint256 demandComponent = _calculateDemandComponentReceiveFixed(
-            accruedBalance.liquidityPool,
-            accruedBalance.totalCollateralPayFixed,
-            accruedBalance.totalCollateralReceiveFixed,
-            soap
-        );
+        // uint256 demandComponent = _calculateDemandComponentReceiveFixed(
+        //     accruedBalance.liquidityPool,
+        //     accruedBalance.totalCollateralPayFixed,
+        //     accruedBalance.totalCollateralReceiveFixed,
+        //     soap
+        // );
 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
             accruedIpor.exponentialMovingAverage.toInt256();
@@ -158,10 +162,12 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             diffIporIndexEma
         );
 
-        int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
-        int256 result = demandComponent.toInt256() - volatilityAndMeanReversion;
+        // int256 maxValue = _getSpreadPremiumsMaxValue().toInt256();
+        // int256 result = demandComponent.toInt256() - volatilityAndMeanReversion;
+        int256 result = volatilityAndMeanReversion;
 
-        spreadPremiums = result < maxValue ? result : maxValue;
+        // spreadPremiums = result < maxValue ? result : maxValue;
+        spreadPremiums = result;
     }
 
     function _calculateDemandComponentPayFixed(
