@@ -20,6 +20,7 @@ let jobs = 2;
 
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
+	jobs = 1;
 }
 
 if (process.env.FORK_ENABLED === "true") {
