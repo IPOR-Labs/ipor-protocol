@@ -18,6 +18,7 @@ require("hardhat-contract-sizer");
 
 if (process.env.REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
+	jobs = 1;
 }
 
 // This is a sample Hardhat task. To learn how to create your own go to
