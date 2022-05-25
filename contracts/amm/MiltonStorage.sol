@@ -611,6 +611,7 @@ contract MiltonStorage is
         _balances.totalCollateralReceiveFixed =
             _balances.totalCollateralReceiveFixed +
             collateral.toUint128();
+			
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFee.toUint128();
