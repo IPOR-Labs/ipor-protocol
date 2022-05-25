@@ -27,7 +27,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
-        int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view override returns (uint256 quoteValue) {
@@ -40,7 +39,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
     function calculateQuoteReceiveFixed(
-        int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view override returns (uint256 quoteValue) {
@@ -53,7 +51,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     //@dev Spread = SpreadPremiums + RefLeg - IPOR
     function calculateSpreadPayFixed(
-        int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view override returns (int256 spreadValue) {
@@ -66,7 +63,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     //@dev Spread = SpreadPremiums + IPOR - RefLeg
     function calculateSpreadReceiveFixed(
-        int256 soap,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
