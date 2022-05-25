@@ -186,7 +186,6 @@ contract MiltonFacadeDataProvider is
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         address miltonAddr = config.milton;
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
@@ -199,17 +198,9 @@ contract MiltonFacadeDataProvider is
         IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
             .getAccruedBalance();
 
-        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
-            miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),
-            accruedIpor,
-            balance
-        );
+        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(accruedIpor, balance);
 
-        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(
-            miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, timestamp),
-            accruedIpor,
-            balance
-        );
+        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
