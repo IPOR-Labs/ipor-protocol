@@ -60,7 +60,8 @@ COPY "envs/${ENV_PROFILE}/geth-config.toml" /geth-config.toml
 COPY "envs/${ENV_PROFILE}/miner.key" /miner.key
 COPY "envs/${ENV_PROFILE}/key-password.txt" /key-password.txt
 
-COPY eth-bc-dump/.ethereum /root/.ethereum
-
 ENTRYPOINT ["/geth-entrypoint.sh"]
 CMD ["run-geth"]
+
+COPY eth-bc-dump/.ethereum /root/.ethereum
+VOLUME /root/.ethereum
