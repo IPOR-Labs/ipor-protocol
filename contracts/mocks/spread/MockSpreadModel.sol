@@ -8,10 +8,10 @@ import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 
 contract MockSpreadModel is IMiltonSpreadModel {
-    uint256 _calculateQuotePayFixed;
-    uint256 _calculateQuoteReceiveFixed;
-    int256 _calculateSpreadPayFixed;
-    int256 _calculateSpreadReceiveFixed;
+    uint256 private _calculateQuotePayFixed;
+    uint256 private _calculateQuoteReceiveFixed;
+    int256 private _calculateSpreadPayFixed;
+    int256 private _calculateSpreadReceiveFixed;
 
     constructor(
         uint256 calculateQuotePayFixedValue,
@@ -25,7 +25,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
         _calculateSpreadReceiveFixed = calculateSpreadReceiveFixedVaule;
     }
 
-    //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
@@ -37,7 +36,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
         _calculateQuotePayFixed = value;
     }
 
-    //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
@@ -49,7 +47,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
         _calculateQuoteReceiveFixed = value;
     }
 
-    //@dev Spread = SpreadPremiums + RefLeg - IPOR
     function calculateSpreadPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
@@ -61,7 +58,6 @@ contract MockSpreadModel is IMiltonSpreadModel {
         _calculateSpreadPayFixed = value;
     }
 
-    //@dev Spread = SpreadPremiums + IPOR - RefLeg
     function calculateSpreadReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
