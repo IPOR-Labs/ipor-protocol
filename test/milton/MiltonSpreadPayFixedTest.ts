@@ -17,8 +17,6 @@ import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
@@ -58,11 +56,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
         const expectedNewOwner = userTwo;
 
         //when
@@ -77,11 +71,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
         const expectedNewOwner = userTwo;
 
         //when
@@ -94,11 +84,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
         const expectedNewOwner = userTwo;
 
         //when
@@ -113,11 +99,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
         const expectedNewOwner = userTwo;
 
         //when
@@ -133,11 +115,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
         const expectedNewOwner = userTwo;
 
         await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -154,11 +132,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
-        const MockCase1MiltonSpreadModel = await hre.ethers.getContractFactory(
-            "MockCase1MiltonSpreadModel"
-        );
-        const miltonSpread = await MockCase1MiltonSpreadModel.deploy();
-        await miltonSpread.deployed();
+        const miltonSpread = await prepareMiltonSpreadBase();
 
         const expectedNewOwner = userTwo;
 

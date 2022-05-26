@@ -88,55 +88,6 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
         );
     }
 
-    //URlambda_leg(M0)
-    function _calculateAdjustedUtilizationRatePayFixed(
-        uint256 liquidityPoolBalance,
-        uint256 totalCollateralPayFixedBalance,
-        uint256 totalCollateralReceiveFixedBalance,
-        uint256 lambda
-    ) internal pure returns (uint256) {
-        uint256 utilizationRateRecFixed = _calculateUtilizationRateWithoutSwap(
-            liquidityPoolBalance,
-            totalCollateralReceiveFixedBalance
-        );
-
-        uint256 utilizationRatePayFixedWithPosition = _calculateUtilizationRateWithPosition(
-            liquidityPoolBalance,
-            totalCollateralPayFixedBalance
-        );
-
-        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
-            utilizationRatePayFixedWithPosition,
-            utilizationRateRecFixed,
-            lambda
-        );
-        return adjustedUtilizationRate;
-    }
-
-    function _calculateAdjustedUtilizationRateRecFixed(
-        uint256 liquidityPoolBalance,
-        uint256 totalCollateralPayFixedBalance,
-        uint256 totalCollateralReceiveFixedBalance,
-        uint256 lambda
-    ) internal pure returns (uint256) {
-        uint256 utilizationRatePayFixed = _calculateUtilizationRateWithoutSwap(
-            liquidityPoolBalance,
-            totalCollateralPayFixedBalance
-        );
-
-        uint256 utilizationRateRecFixedWithPosition = _calculateUtilizationRateWithPosition(
-            liquidityPoolBalance,
-            totalCollateralReceiveFixedBalance
-        );
-
-        uint256 adjustedUtilizationRate = _calculateAdjustedUtilizationRate(
-            utilizationRateRecFixedWithPosition,
-            utilizationRatePayFixed,
-            lambda
-        );
-        return adjustedUtilizationRate;
-    }
-
     /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.
     function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 diffIporIndexEma)
         internal
