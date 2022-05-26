@@ -177,7 +177,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("130041797900449030"));
         const miltonSpread = await prepareMiltonSpreadBase();
 
-        const soap = BigNumber.from("500").mul(N1__0_18DEC);
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
@@ -200,12 +199,12 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("130041797900449030");
+        const expectedQuoteValue = BigNumber.from("129952238730246296");
 
         //when
         const actualQuotedValue = await miltonSpread
             .connect(userOne)
-            .calculateQuotePayFixed(soap, accruedIpor, accruedBalance);
+            .calculateQuotePayFixed(accruedIpor, accruedBalance);
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
     });
@@ -214,7 +213,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase10();
 
-        const soap = BigNumber.from("500000000000000000000"); //.mul(N1__0_18DEC);
         const swapCollateral = BigNumber.from("10000000000000000000000"); //.mul(N1__0_18DEC);
         const openingFee = BigNumber.from("20000000000000000000");
         const accruedIpor = {
@@ -239,7 +237,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //when
         const actualQuotedValue = await miltonSpread
             .connect(userOne)
-            .calculateQuotePayFixed(soap, accruedIpor, accruedBalance);
+            .calculateQuotePayFixed(accruedIpor, accruedBalance);
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
     });
@@ -248,7 +246,6 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase10();
 
-        const soap = BigNumber.from("500000000000000000000"); //.mul(N1__0_18DEC);
         const swapCollateral = BigNumber.from("10000000000000000000000"); //.mul(N1__0_18DEC);
         const openingFee = BigNumber.from("20000000000000000000");
         const accruedIpor = {
@@ -273,7 +270,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //when
         let actualQuotedValue = await miltonSpread
             .connect(userOne)
-            .calculateQuotePayFixed(soap, accruedIpor, accruedBalance);
+            .calculateQuotePayFixed(accruedIpor, accruedBalance);
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
     });
