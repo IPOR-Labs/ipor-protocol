@@ -2,44 +2,44 @@ version: "3.9"
 
 services:
 
-  ipor-itf:
-    container_name: ipor-itf
-    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:itf-develop
-    profiles:
-      - developer
-    ports:
-      - "29545:8545"   # HTTP-RPC server
-      - "29546:8546"   # WS-RPC server
-      - "29547:8547"   # GraphQL
-      - "29505:40505"  # Network
-
-  ipor-s0:
-    container_name: ipor-s0
-    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s0-develop
-    profiles:
-      - developer
-    ports:
-      - "39545:8545"   # HTTP-RPC server
-      - "39546:8546"   # WS-RPC server
-      - "39547:8547"   # GraphQL
-      - "39505:40505"  # Network
-
-  ipor-s12:
-    container_name: ipor-s12
-    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s12-develop
-    profiles:
-      - developer
-    ports:
-      - "49545:8545"   # HTTP-RPC server
-      - "49546:8546"   # WS-RPC server
-      - "49547:8547"   # GraphQL
-      - "49505:40505"  # Network
+#  ipor-itf:
+#    container_name: ipor-itf
+#    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:itf-develop
+#    profiles:
+#      - developer
+#    ports:
+#      - "29545:8545"   # HTTP-RPC server
+#      - "29546:8546"   # WS-RPC server
+#      - "29547:8547"   # GraphQL
+#      - "29505:40505"  # Network
+#
+#  ipor-s0:
+#    container_name: ipor-s0
+#    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s0-develop
+#    profiles:
+#      - developer
+#    ports:
+#      - "39545:8545"   # HTTP-RPC server
+#      - "39546:8546"   # WS-RPC server
+#      - "39547:8547"   # GraphQL
+#      - "39505:40505"  # Network
+#
+#  ipor-s12:
+#    container_name: ipor-s12
+#    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:s12-develop
+#    profiles:
+#      - developer
+#    ports:
+#      - "49545:8545"   # HTTP-RPC server
+#      - "49546:8546"   # WS-RPC server
+#      - "49547:8547"   # GraphQL
+#      - "49505:40505"  # Network
 
 ############################################ COCKPIT ############################################
 
   ipor-cockpit:
     container_name: ipor-cockpit
-    image: io.ipor/ipor-cockpit:latest
+    image: ipor-cockpit:latest
     profiles:
       - dev-tool
       - dev-tool-provider
@@ -56,7 +56,8 @@ services:
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
     # FROM TAG: alltools-v1.10.15
-    image: ethereum/client-go@sha256:bf38e772f2cc68565241a8f3ddb12d857d4e0e422f36018f84681608285e269c
+    #image: ethereum/client-go@sha256:bf38e772f2cc68565241a8f3ddb12d857d4e0e422f36018f84681608285e269c
+    image: modified-geth-poc:1.0.0
     #image: ethereum/client-go:alltools-v1.10.12
     profiles:
       - eth-bc-and-explorer
@@ -129,7 +130,7 @@ services:
 
   ipor-protocol-nginx-eth-bc:
     container_name: ipor-protocol-nginx-eth-bc
-    image: io.ipor/nginx-eth-bc:latest
+    image: ipor-nginx-eth-bc:latest
     profiles:
       - ssl-eth-bc
       - eth-bc-provider

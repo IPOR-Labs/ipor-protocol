@@ -41,7 +41,6 @@ ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
 
 NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
-DOCKER_REGISTRY="io.ipor"
 ETH_BC_IMAGE_NAME="ipor-geth"
 ETH_BC_DOCKERFILE_PATH="${DIR}/containers/eth-bc"
 
@@ -51,6 +50,7 @@ ETH_BC_ITF_TAG_NAME="itf"
 
 AWS_REGION="eu-central-1"
 AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
+AWS_PROFILE="ipor-dev"
 
 ETH_BC_URL="http://localhost:9545"
 
@@ -280,7 +280,7 @@ function put_file_to_bucket() {
   export AWS_ACCESS_KEY_ID="${IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
 
-  aws s3api put-object --bucket "${ENV_CONFIG_BUCKET}" --key "${FILE_KEY}" --body "${FILE_NAME}" --region "${AWS_REGION}"
+  aws s3api put-object --bucket "${ENV_CONFIG_BUCKET}" --key "${FILE_KEY}" --body "${FILE_NAME}" --region "${AWS_REGION}" --profile "${AWS_PROFILE}"
   echo -e "${FILE_KEY} file was published"
 }
 
@@ -409,8 +409,12 @@ function run_smart_contract_migrations() {
   cd "${DIR}"
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
+
+    echo "truffle migrate --network "${ETH_BC_NETWORK_NAME}" --compile-none"
+
   truffle compile --all
   truffle migrate --network "${ETH_BC_NETWORK_NAME}" --compile-none
+
 }
 
 function wait_for_eth_bc() {
@@ -566,6 +570,10 @@ function fill_j2_templates() {
   fill_j2_template "${ETH_BC_MINER_KEY_J2_PATH}" "${VARIABLES_PATH}" "$(get_path_with_env "${ETH_BC_GEN_MINER_KEY_PATH}" "${ENV_NAME}")"
 }
 
+function login_ecr() {
+  aws ecr get-login-password --region eu-central-1 --profile "${AWS_PROFILE}" | docker login --username AWS --password-stdin "${AWS_DOCKER_REGISTRY}"
+}
+
 function push_docker_image() {
   local CONTAINER_NAME="${1}"
   local TAG="${2}"
@@ -652,17 +660,20 @@ function build_and_push_docker_images() {
   local ENV_NAME="${1}"
   local BRANCH_NAME="${2}"
 
+  # Login into ECR
+  login_ecr
+
   # Build docker image
   build_geth_docker_image "${ETH_BC_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Push docker image
-  push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  #push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Build cockpit docker image
   build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Push cockpit docker image
-  push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  #push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 }
 
 function create_geth_image() {
@@ -692,13 +703,11 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
   npm install
 
   echo -e "\n\e[32mBuild IPOR cockpit docker...\e[0m\n"
-  build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "latest"
-
-  docker build -t io.ipor/ipor-protocol-milton-tool .
+  build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${IPOR_COCKPIT_IMAGE_NAME}" "latest"
 
   cd "${DIR}/containers/nginx-eth-bc"
   echo -e "\n\e[32mBuild nginx-eth-bc docker...\e[0m\n"
-  build_docker_image "${DIR}/containers/nginx-eth-bc" "${DOCKER_REGISTRY}/nginx-eth-bc" "latest"
+  build_docker_image "${DIR}/containers/nginx-eth-bc" "ipor-nginx-eth-bc" "latest"
 fi
 
 if [ $IS_STOP = "YES" ]; then
@@ -823,14 +832,14 @@ if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
   export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$IPOR_ENV_USER_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY}"
 
-  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}"
+  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}" --profile "${AWS_PROFILE}"
 
   unzip -o "${ENV_CONTRACTS_ZIP_DEST}" -d "${ENV_CONTRACTS_DIR}"
 fi
 
 if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
-  create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "develop"
-  create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "develop"
+  #create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "develop"
+  #create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "develop"
   create_geth_image "${ETH_BC_ITF_TAG_NAME}" "develop"
 fi
 
