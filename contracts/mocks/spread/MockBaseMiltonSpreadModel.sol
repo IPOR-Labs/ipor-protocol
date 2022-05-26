@@ -34,49 +34,6 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         return _calculateSpreadPremiumsReceiveFixed(accruedIpor, balance);
     }
 
-    function testCalculateAdjustedUtilizationRate(
-        uint256 utilizationRateLegWithSwap,
-        uint256 utilizationRateLegWithoutSwap,
-        uint256 lambda
-    ) public pure returns (uint256) {
-        return
-            _calculateAdjustedUtilizationRate(
-                utilizationRateLegWithSwap,
-                utilizationRateLegWithoutSwap,
-                lambda
-            );
-    }
-
-    function testCalculateAdjustedUtilizationRatePayFixed(
-        uint256 liquidityPoolBalance,
-        uint256 totalCollateralPayFixedBalance,
-        uint256 totalCollateralReceiveFixedBalance,
-        uint256 lambda
-    ) public pure returns (uint256) {
-        return
-            _calculateAdjustedUtilizationRatePayFixed(
-                liquidityPoolBalance,
-                totalCollateralPayFixedBalance,
-                totalCollateralReceiveFixedBalance,
-                lambda
-            );
-    }
-
-    function testCalculateAdjustedUtilizationRateRecFixed(
-        uint256 liquidityPoolBalance,
-        uint256 totalCollateralPayFixedBalance,
-        uint256 totalCollateralReceiveFixedBalance,
-        uint256 lambda
-    ) public pure returns (uint256) {
-        return
-            _calculateAdjustedUtilizationRateRecFixed(
-                liquidityPoolBalance,
-                totalCollateralPayFixedBalance,
-                totalCollateralReceiveFixedBalance,
-                lambda
-            );
-    }
-
     function testCalculateVolatilityAndMeanReversionPayFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
