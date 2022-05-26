@@ -63,7 +63,6 @@ describe("MiltonSpreadRecFixed", () => {
 
         // const miltonSpread = await prepareMiltonSpreadBase();
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("37").mul(N0__001_18DEC));
-        const soap = BigNumber.from("500").mul(N1__0_18DEC);
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
@@ -91,7 +90,7 @@ describe("MiltonSpreadRecFixed", () => {
         let actualQuotedValue = BigNumber.from(
             await miltonSpreadModel
                 .connect(userOne)
-                .callStatic.calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
+                .callStatic.calculateQuoteReceiveFixed(accruedIpor, accruedBalance)
         );
 
         //then
@@ -102,7 +101,6 @@ describe("MiltonSpreadRecFixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase10();
 
-        const soap = BigNumber.from("500").mul(N1__0_18DEC);
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
@@ -129,7 +127,7 @@ describe("MiltonSpreadRecFixed", () => {
         let actualQuotedValue = BigNumber.from(
             await miltonSpread
                 .connect(userOne)
-                .callStatic.calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
+                .callStatic.calculateQuoteReceiveFixed(accruedIpor, accruedBalance)
         );
 
         //then
@@ -140,7 +138,6 @@ describe("MiltonSpreadRecFixed", () => {
         //given
         const miltonSpread = await prepareMiltonSpreadCase10();
 
-        const soap = USD_500_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
         const openingFee = USD_20_18DEC;
         const accruedIpor = {
@@ -167,7 +164,7 @@ describe("MiltonSpreadRecFixed", () => {
         let actualQuotedValue = BigNumber.from(
             await miltonSpread
                 .connect(userOne)
-                .calculateQuoteReceiveFixed(soap, accruedIpor, accruedBalance)
+                .calculateQuoteReceiveFixed(accruedIpor, accruedBalance)
         );
 
         //then
