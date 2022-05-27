@@ -21,8 +21,6 @@ if (process.env.HARDHAT_MOCHA_JOBS) {
     jobs = Number(process.env.HARDHAT_MOCHA_JOBS);
 }
 
-console.log("Hardhat Mocha Jobs =", jobs);
-
 if (process.env.HARDHAT_REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
     jobs = 1;
@@ -32,8 +30,7 @@ if (process.env.FORK_ENABLED === "true") {
     jobs = 1;
 }
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
+console.log("Hardhat Mocha Jobs =", jobs);
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
