@@ -6,8 +6,6 @@ import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
 
-import "hardhat/console.sol";
-
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
     using SafeCast for int256;
