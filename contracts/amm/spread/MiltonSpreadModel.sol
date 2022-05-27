@@ -9,8 +9,7 @@ import "./MiltonSpreadInternal.sol";
 contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
     using SafeCast for int256;
-
-    //@dev Quote = RefLeg + SpreadPremiums, RefLeg = max(IPOR, EMAi), Spread = RefLeg + SpreadPremiums - IPOR
+    
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
@@ -23,8 +22,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
             return intQuoteValue.toUint256();
         }
     }
-
-    //@dev Quote = RefLeg - SpreadPremiums, RefLeg = min(IPOR, EMAi), Spread = IPOR - RefLeg + SpreadPremiums
+    
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
