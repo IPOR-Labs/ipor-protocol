@@ -1,3 +1,7 @@
+require("dotenv").config();
+require("hardhat-docgen");
+require("hardhat-contract-sizer");
+import "dotenv";
 import "@openzeppelin/hardhat-upgrades";
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
@@ -8,19 +12,20 @@ import "solidity-coverage";
 import "@typechain/hardhat";
 import "hardhat-abi-exporter";
 import networks from "./hardhat.network";
-import "dotenv";
-
-require("dotenv").config();
-require("hardhat-docgen");
 import "@hardhat-docgen/core";
 import "@hardhat-docgen/markdown";
-require("hardhat-contract-sizer");
 
 let jobs = 2;
 
-if (process.env.REPORT_GAS === "true") {
+if (process.env.HARDHAT_MOCHA_JOBS) {
+    jobs = Number(process.env.HARDHAT_MOCHA_JOBS);
+}
+
+console.log("Hardhat Mocha Jobs =", jobs);
+
+if (process.env.HARDHAT_REPORT_GAS === "true") {
     require("hardhat-gas-reporter");
-	jobs = 1;
+    jobs = 1;
 }
 
 if (process.env.FORK_ENABLED === "true") {
