@@ -150,11 +150,6 @@ describe("MiltonSpreadModel - Core", () => {
         const miltonSpread = await prepareMiltonSpreadBase();
 
         // when
-        const spreadPremiumsMaxValue = await miltonSpread.getSpreadPremiumsMaxValue();
-        const dCKfValue = await miltonSpread.getDCKfValue();
-        const dCLambdaValue = await miltonSpread.getDCLambdaValue();
-        const dCKOmegaValue = await miltonSpread.getDCKOmegaValue();
-        const dcMaxLiquidityRedemptionValue = await miltonSpread.getDCMaxLiquidityRedemptionValue();
         const payFixedRegionOneBase = await miltonSpread.getPayFixedRegionOneBase();
         const payFixedRegionOneSlopeForVolatility =
             await miltonSpread.getPayFixedRegionOneSlopeForVolatility();
@@ -177,11 +172,6 @@ describe("MiltonSpreadModel - Core", () => {
             await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         // then
-        expect(spreadPremiumsMaxValue).to.be.equal(BigNumber.from("3").mul(N0__001_18DEC));
-        expect(dCKfValue).to.be.equal(N0__000_01_18DEC);
-        expect(dCLambdaValue).to.be.equal(N0__01_18DEC);
-        expect(dCKOmegaValue).to.be.equal(BigNumber.from("5").mul(N0__000_01_18DEC));
-        expect(dcMaxLiquidityRedemptionValue).to.be.equal(N1__0_18DEC);
         expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("1570169440701153"));
         expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
             BigNumber.from("198788881093494850")
