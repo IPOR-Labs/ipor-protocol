@@ -27,7 +27,6 @@ import {
     MockCase8MiltonDai,
     UsdtMockedToken,
     MockSpreadModel,
-    MiltonSpreadModel,
 } from "../../types";
 
 import { exetuceCloseSwapTestCase } from "./SwapUtils";
@@ -55,10 +54,6 @@ const { ethers } = hre;
 // ########################################################################################################
 //                                           Milton
 // ########################################################################################################
-
-export enum MiltonSpreadModels {
-    BASE = "MockBaseMiltonSpreadModel",
-}
 
 export enum MiltonUsdcCase {
     CASE0 = "MockCase0MiltonUsdc",
@@ -92,8 +87,6 @@ export enum MiltonDaiCase {
     CASE8 = "MockCase8MiltonDai",
 }
 
-export type MockMiltonSpreadModel = MockBaseMiltonSpreadModel;
-
 export type MiltonUsdcMockCase =
     | MockCase0MiltonUsdc
     | MockCase1MiltonUsdc
@@ -123,10 +116,10 @@ export type MiltonDaiMockCase =
     | MockCase8MiltonDai;
 
 export const prepareMockMiltonSpreadModel = async (
-    spreadmiltonCase: MiltonSpreadModels
-): Promise<MockMiltonSpreadModel> => {
-    const MockMiltonSpreadModel = await ethers.getContractFactory(spreadmiltonCase);
-    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockMiltonSpreadModel;
+    spreadmiltonCase: MockBaseMiltonSpreadModel
+): Promise<MockBaseMiltonSpreadModel> => {
+    const MockMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
+    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockBaseMiltonSpreadModel;
     return miltonSpread;
 };
 
