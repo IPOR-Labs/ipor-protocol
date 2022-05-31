@@ -103,8 +103,6 @@ describe("MiltonSpreadModel - Core", () => {
 
         const expectedNewOwner = userTwo;
 
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
-
         //when
         await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
 
