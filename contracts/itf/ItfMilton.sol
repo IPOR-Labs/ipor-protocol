@@ -40,17 +40,17 @@ abstract contract ItfMilton is MiltonV3 {
     }
 
     function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsPayFixed(swapIds, closeTimestamp)
-        );
+        (uint256 payoutForLiquidatorPayFixed, ) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidatorPayFixed);
     }
 
     function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsReceiveFixed(swapIds, closeTimestamp)
+        (uint256 payoutForLiquidatorReceiveFixed, ) = _closeSwapsReceiveFixed(
+            swapIds,
+            closeTimestamp
         );
+
+        _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidatorReceiveFixed);
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
