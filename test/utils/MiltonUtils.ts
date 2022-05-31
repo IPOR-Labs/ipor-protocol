@@ -115,9 +115,7 @@ export type MiltonDaiMockCase =
     | MockCase6MiltonDai
     | MockCase8MiltonDai;
 
-export const prepareMockMiltonSpreadModel = async (
-    spreadmiltonCase: MockBaseMiltonSpreadModel
-): Promise<MockBaseMiltonSpreadModel> => {
+export const prepareMockMiltonSpreadModel = async (): Promise<MockBaseMiltonSpreadModel> => {
     const MockMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
     const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockBaseMiltonSpreadModel;
     return miltonSpread;

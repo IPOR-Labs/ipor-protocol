@@ -1,19 +1,15 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
-    prepareMockMiltonSpreadModel,
-    prepareMiltonSpreadBase,
-} from "../utils/MiltonUtils";
+import { MockBaseMiltonSpreadModel } from "../../types";
+import { prepareMockMiltonSpreadModel, prepareMiltonSpreadBase } from "../utils/MiltonUtils";
 
 import { assertError } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
 describe("MiltonSpreadModel - Core", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockBaseMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -22,7 +18,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel();
     });
 
     it("should transfer ownership - simple case 1", async () => {
