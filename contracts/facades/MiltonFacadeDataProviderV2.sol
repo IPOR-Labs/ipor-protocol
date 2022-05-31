@@ -9,7 +9,7 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IMiltonSpreadModelV2.sol";
 import "../interfaces/IMiltonFacadeDataProvider.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../amm/MiltonStorage.sol";
@@ -56,7 +56,7 @@ contract MiltonFacadeDataProviderV2 is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 2;
+        return 1;
     }
 
     function getConfiguration()
@@ -186,11 +186,10 @@ contract MiltonFacadeDataProviderV2 is
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
         address miltonAddr = config.milton;
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
+        IMiltonSpreadModelV2 spreadModel = IMiltonSpreadModelV2(milton.getMiltonSpreadModel());
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(
             timestamp,
             asset
@@ -199,17 +198,9 @@ contract MiltonFacadeDataProviderV2 is
         IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
             .getAccruedBalance();
 
-        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
-            miltonStorage.calculateSoapPayFixed(accruedIpor.ibtPrice, timestamp),
-            accruedIpor,
-            balance
-        );
+        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(accruedIpor, balance);
 
-        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(
-            miltonStorage.calculateSoapReceiveFixed(accruedIpor.ibtPrice, timestamp),
-            accruedIpor,
-            balance
-        );
+        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,

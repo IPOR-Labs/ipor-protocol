@@ -4,10 +4,10 @@ pragma solidity 0.8.9;
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IMiltonV3.sol";
+import "../../interfaces/IMiltonV2.sol";
 import "../../interfaces/IJoseph.sol";
 import "../../interfaces/IStanley.sol";
-import "../../interfaces/IMiltonSpreadModel.sol";
+import "../../interfaces/IMiltonSpreadModelV2.sol";
 import "./MiltonInternalV3.sol";
 import "../libraries/types/AmmMiltonTypes.sol";
 import "../MiltonStorage.sol";
@@ -22,7 +22,7 @@ import "../MiltonStorage.sol";
  *  # calculate spread
  * @author IPOR Labs
  */
-abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
+abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
@@ -55,7 +55,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         _miltonStorage = IMiltonStorage(miltonStorage);
-        _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
+        _miltonSpreadModel = IMiltonSpreadModelV2(miltonSpreadModel);
         _iporOracle = IIporOracle(iporOracle);
         _asset = asset;
         _stanley = IStanley(stanley);
@@ -264,13 +264,9 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(
-            _getMiltonStorage().calculateSoapPayFixed(accruedIpor.ibtPrice, calculateTimestamp),
-            accruedIpor,
-            balance
-        );
+        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(accruedIpor, balance);
+
         spreadReceiveFixed = _getMiltonSpreadModel().calculateSpreadReceiveFixed(
-            _getMiltonStorage().calculateSoapReceiveFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
         );
@@ -293,16 +289,19 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
         require(leverage >= _getMinLeverage(), MiltonErrorsV2.LEVERAGE_TOO_LOW);
         require(leverage <= _getMaxLeverage(), MiltonErrorsV2.LEVERAGE_TOO_HIGH);
 
+        uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
+        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
+
         require(
-            wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFee(),
-            MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
+            wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee(),
+            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic
             .calculateSwapAmount(
                 wadTotalAmount,
                 leverage,
-                _getLiquidationDepositAmount(),
+                wadLiquidationDepositAmount,
                 _getIporPublicationFee(),
                 _getOpeningFeeRate()
             );
@@ -319,7 +318,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
 
         require(
             wadTotalAmount >
-                _getLiquidationDepositAmount() + _getIporPublicationFee() + openingFeeAmount,
+                wadLiquidationDepositAmount + _getIporPublicationFee() + openingFeeAmount,
             MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -331,7 +330,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 _getIporPublicationFee(),
-                _getLiquidationDepositAmount(),
+                liquidationDepositAmount,
                 _iporOracle.getAccruedIndex(openTimestamp, _asset)
             );
     }
@@ -372,10 +371,6 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
         );
 
         uint256 quoteValue = _getMiltonSpreadModel().calculateQuotePayFixed(
-            _getMiltonStorage().calculateSoapPayFixed(
-                bosStruct.accruedIpor.ibtPrice,
-                openTimestamp
-            ),
             bosStruct.accruedIpor,
             balance
         );
@@ -395,10 +390,10 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.liquidationDepositAmount,
             bosStruct.notional,
-            indicator.fixedInterestRate,
             indicator.ibtQuantity,
+            indicator.fixedInterestRate,
+            bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -449,10 +444,6 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
         );
 
         uint256 quoteValue = _getMiltonSpreadModel().calculateQuoteReceiveFixed(
-            _getMiltonStorage().calculateSoapReceiveFixed(
-                bosStruct.accruedIpor.ibtPrice,
-                openTimestamp
-            ),
             bosStruct.accruedIpor,
             balance
         );
@@ -471,10 +462,10 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.liquidationDepositAmount,
             bosStruct.notional,
-            indicator.fixedInterestRate,
             indicator.ibtQuantity,
+            indicator.fixedInterestRate,
+            bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -552,7 +543,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee,
-                newSwap.liquidationDepositAmount
+                newSwap.liquidationDepositAmount * Constants.D18
             ),
             newSwap.openTimestamp,
             newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
@@ -785,7 +776,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
      * @dev It trasfers the asset to the swap buyer and the liquidator.
      * Should buyer and the liquidator are the same entity it performs only one transfer.
      * @param buyer - address that opened the swap
-     * @param liquidationDepositAmount - amount of asset transfered to the liquidator
+     * @param liquidationDepositAmount - amount of asset transfered to the liquidator, value represented in 18 decimals
      * @param transferAmount - amount of asset transfered to the swap owner
      **/
     function _transferDerivativeAmount(
@@ -816,16 +807,16 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
     }
 
     //Transfer sum of all liquidation deposits to liquidator
+    /// @param liquidator address of liquidator
+    /// @param liquidationDepositAmount liquidation deposit amount, value represented in 18 decimals
     function _transferLiquidationDepositAmount(address liquidator, uint256 liquidationDepositAmount)
         internal
     {
         if (liquidationDepositAmount != 0) {
-            uint256 decimals = _getDecimals();
-            uint256 liqDepositAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-                liquidationDepositAmount,
-                decimals
+            IERC20Upgradeable(_asset).safeTransfer(
+                liquidator,
+                IporMath.convertWadToAssetDecimals(liquidationDepositAmount, _getDecimals())
             );
-            IERC20Upgradeable(_asset).safeTransfer(liquidator, liqDepositAmountAssetDecimals);
         }
     }
 

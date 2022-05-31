@@ -20,11 +20,8 @@ import {
     PERIOD_50_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_1_DAY_IN_SECONDS,
-    PERCENTAGE_50_18DEC,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,

@@ -14,9 +14,9 @@ import "../../libraries/Constants.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IIpToken.sol";
 import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IMiltonInternalV3.sol";
+import "../../interfaces/IMiltonInternalV2.sol";
 import "../../interfaces/IMiltonStorage.sol";
-import "../../interfaces/IMiltonSpreadModel.sol";
+import "../../interfaces/IMiltonSpreadModelV2.sol";
 import "../../interfaces/IStanley.sol";
 import "../libraries/IporSwapLogic.sol";
 import "../../security/IporOwnableUpgradeable.sol";
@@ -26,7 +26,7 @@ abstract contract MiltonInternalV3 is
     ReentrancyGuardUpgradeable,
     PausableUpgradeable,
     IporOwnableUpgradeable,
-    IMiltonInternalV3
+    IMiltonInternalV2
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
@@ -67,7 +67,7 @@ abstract contract MiltonInternalV3 is
     address internal _joseph;
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
-    IMiltonSpreadModel internal _miltonSpreadModel;
+    IMiltonSpreadModelV2 internal _miltonSpreadModel;
     IStanley internal _stanley;
 
     modifier onlyJoseph() {
@@ -219,7 +219,7 @@ abstract contract MiltonInternalV3 is
     {
         require(newMiltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         address oldMiltonSpreadModel = _getJoseph();
-        _miltonSpreadModel = IMiltonSpreadModel(newMiltonSpreadModel);
+        _miltonSpreadModel = IMiltonSpreadModelV2(newMiltonSpreadModel);
         emit MiltonSpreadModelChanged(_msgSender(), oldMiltonSpreadModel, newMiltonSpreadModel);
     }
 
@@ -303,7 +303,7 @@ abstract contract MiltonInternalV3 is
         return _miltonStorage;
     }
 
-    function _getMiltonSpreadModel() internal view virtual returns (IMiltonSpreadModel) {
+    function _getMiltonSpreadModel() internal view virtual returns (IMiltonSpreadModelV2) {
         return _miltonSpreadModel;
     }
 

@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
-import "../amm/Milton.sol";
+import "../amm/v3/MiltonV3.sol";
 
-abstract contract ItfMilton is Milton {
+abstract contract ItfMilton is MiltonV3 {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -40,7 +40,10 @@ abstract contract ItfMilton is Milton {
     }
 
     function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(_msgSender(), _closeSwapsPayFixed(swapIds, closeTimestamp));
+        _transferLiquidationDepositAmount(
+            _msgSender(),
+            _closeSwapsPayFixed(swapIds, closeTimestamp)
+        );
     }
 
     function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {

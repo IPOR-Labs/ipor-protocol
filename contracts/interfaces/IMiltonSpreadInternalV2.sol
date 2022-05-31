@@ -3,27 +3,6 @@ pragma solidity 0.8.9;
 
 /// @title Interface for interacting with Milton Spread - for internal use.
 interface IMiltonSpreadInternalV2 {
-    /// @notice Gets Spread Premiums Max Value param which is used in spread equations.
-    /// @return Spread Premiums Max Value param represented in 18 decimals.
-    function getSpreadPremiumsMaxValue() external pure returns (uint256);
-
-    /// @notice Gets the "Demand Component Kf" constant - parameter used in spread calculations.
-    /// @return Demand Component Kf" value represented in 18 decimals.
-    function getDCKfValue() external pure returns (uint256);
-
-    /// @notice Gets the "Demand Component Lambda" constant - parameter used in spread calculations.
-    /// @return "Demand Component Lambda" represented in 18 decimals.
-    function getDCLambdaValue() external pure returns (uint256);
-
-    /// @notice Gets the "Demand Component KOmega" constant - parameter used in spread calculations.
-    /// @return "Demand Component KOmega" represented in 18 decimals.
-    function getDCKOmegaValue() external pure returns (uint256);
-
-    /// @notice Gets the "Demand Component Liquidity Redemption Value" parameter used in spread calculations.
-    /// This param controls maximum return or loss on the swap.
-    /// @return "Demand Component Liquidity Redemption Value" represented in 18 decimals.
-    function getDCMaxLiquidityRedemptionValue() external pure returns (uint256);
-
     /// @notice Gets Base in Region 1 for Pay Fixed - Receive Floating leg
     /// @return base in region 1 for pay fixed - receive floating leg represented in 18 decimals
     function getPayFixedRegionOneBase() external pure returns (int256);

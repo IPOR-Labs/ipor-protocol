@@ -20,7 +20,6 @@ import {
     PERIOD_14_DAYS_IN_SECONDS,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
