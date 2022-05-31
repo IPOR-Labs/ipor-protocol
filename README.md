@@ -42,11 +42,14 @@ IPOR smart contracts
 
 ### How to execute migrations locally?
 
+-   Migration is executed with the use of Truffle
 -   In `.env` file setup migration folder `SC_MIGRATION_DIRECTORY` which should point to one of subfolder in folder `./ipor-protocol/migrations/envs`
+-   In `.env` file setup network name `ETH_BC_NETWORK_NAME` which should correspond to one of network names defined in `truffle-config.js`
 -   In command line execute `./run.sh m` for incremental migration or `./run.sh mc` if you want to migrate all new smart contracts from scratch
 
 ### How to execute smart contracts migrations remotely?
 
+-   On remote server all parameters in `.env` are already prepared, you should not modify them without consultation with IT Team.
 -   For `dev` in command line execute: `ssh ipor-dev-warren`, for `Rinkeby` in command line execute: `ssh ipor-rinkeby-sc-deploy`
 -   `cd repos/ipor-protocol`
 -   `git pull`
