@@ -40,6 +40,29 @@ IPOR smart contracts
     - Enter Chain ID: `5777`
     - Click `Save`
 
+### How to execute migrations locally?
+
+-   In `.env` file setup migration folder `SC_MIGRATION_DIRECTORY` which should point to one of subfolder in folder `./ipor-protocol/migrations/envs`
+-   In command line execute `./run.sh m` for incremental migration or `./run.sh mc` if you want to migrate all new smart contracts from scratch
+
+### How to execute smart contracts migrations remotely?
+
+-   For `dev` in command line execute: `ssh ipor-dev-warren`, for `Rinkeby` in command line execute: `ssh ipor-rinkeby-sc-deploy`
+-   `cd repos/ipor-protocol`
+-   `git pull`
+-   `./run.sh m mlogs`
+-   `./run.sh p`
+-   `exit`
+
+### How to deploy new version of `Cockpit` on `Rinkeby` environment?
+
+Do following steps:
+
+-   Go to Github Actions in `ipor-protocol` repository
+-   Select `Deploy Cockpit` -> Run workflow:
+-   Select branch: `env/rinkeby`
+-   IPOR cockpit Amplify application name: `ipor-rinkeby-cockpit`
+
 #### How to run all tests?
 
 `npm run test`
