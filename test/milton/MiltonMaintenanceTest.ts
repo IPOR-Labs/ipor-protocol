@@ -145,12 +145,7 @@ describe("Milton Maintenance", () => {
         await assertError(miltonDai.connect(userOne).closeSwapReceiveFixed(1), "Pausable: paused");
 
         await assertError(
-            miltonDai.connect(userOne).closeSwapsPayFixed([1, 2]),
-            "Pausable: paused"
-        );
-
-        await assertError(
-            miltonDai.connect(userOne).closeSwapsReceiveFixed([1, 2]),
+            miltonDai.connect(userOne).closeSwaps([1, 2], [1, 2]),
             "Pausable: paused"
         );
 

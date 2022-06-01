@@ -289,19 +289,16 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
         require(leverage >= _getMinLeverage(), MiltonErrorsV2.LEVERAGE_TOO_LOW);
         require(leverage <= _getMaxLeverage(), MiltonErrorsV2.LEVERAGE_TOO_HIGH);
 
-        uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
-        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
-
         require(
-            wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee(),
-            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
+            wadTotalAmount > _getLiquidationDepositAmount() + _getIporPublicationFee(),
+            MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic
             .calculateSwapAmount(
                 wadTotalAmount,
                 leverage,
-                wadLiquidationDepositAmount,
+                _getLiquidationDepositAmount(),
                 _getIporPublicationFee(),
                 _getOpeningFeeRate()
             );
@@ -318,7 +315,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
 
         require(
             wadTotalAmount >
-                wadLiquidationDepositAmount + _getIporPublicationFee() + openingFeeAmount,
+			_getLiquidationDepositAmount() + _getIporPublicationFee() + openingFeeAmount,
             MiltonErrorsV2.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
@@ -330,7 +327,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
                 _getIporPublicationFee(),
-                liquidationDepositAmount,
+                _getLiquidationDepositAmount(),
                 _iporOracle.getAccruedIndex(openTimestamp, _asset)
             );
     }
@@ -390,10 +387,10 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.notional,
-            indicator.ibtQuantity,
+			bosStruct.liquidationDepositAmount,
+            bosStruct.notional,            
             indicator.fixedInterestRate,
-            bosStruct.liquidationDepositAmount,
+            indicator.ibtQuantity,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -462,10 +459,10 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
             _msgSender(),
             openTimestamp,
             bosStruct.collateral,
-            bosStruct.notional,
-            indicator.ibtQuantity,
+			bosStruct.liquidationDepositAmount,
+            bosStruct.notional,            
             indicator.fixedInterestRate,
-            bosStruct.liquidationDepositAmount,
+            indicator.ibtQuantity,
             bosStruct.openingFeeLPAmount,
             bosStruct.openingFeeTreasuryAmount
         );
@@ -543,7 +540,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
                 newSwap.openingFeeLPAmount,
                 newSwap.openingFeeTreasuryAmount,
                 iporPublicationFee,
-                newSwap.liquidationDepositAmount * Constants.D18
+                newSwap.liquidationDepositAmount
             ),
             newSwap.openTimestamp,
             newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
@@ -776,7 +773,7 @@ abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
      * @dev It trasfers the asset to the swap buyer and the liquidator.
      * Should buyer and the liquidator are the same entity it performs only one transfer.
      * @param buyer - address that opened the swap
-     * @param liquidationDepositAmount - amount of asset transfered to the liquidator, value represented in 18 decimals
+     * @param liquidationDepositAmount - amount of asset transfered to the liquidator
      * @param transferAmount - amount of asset transfered to the swap owner
      **/
     function _transferDerivativeAmount(

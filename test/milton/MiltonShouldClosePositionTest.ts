@@ -2202,7 +2202,7 @@ describe("Milton - close position", () => {
                 USD_10_000_000_18DEC,
                 ZERO,
                 (contract) => {
-                    return contract.closeSwapsPayFixed([]);
+                    return contract.closeSwaps([],[]);
                 },
                 ZERO,
                 false,
@@ -2259,7 +2259,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             (contract) => {
-                return contract.closeSwapsPayFixed([1]);
+                return contract.closeSwaps([1],[]);
             },
             ZERO,
             false,
@@ -2314,7 +2314,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwapsPayFixed([1, 2]);
+                return contract.closeSwaps([1, 2],[]);
             },
             ZERO,
             false,
@@ -2370,7 +2370,7 @@ describe("Milton - close position", () => {
                 USD_10_000_000_18DEC,
                 ZERO,
                 (contract) => {
-                    return contract.closeSwapsReceiveFixed([]);
+                    return contract.closeSwaps([],[]);
                 },
                 ZERO,
                 false,
@@ -2427,7 +2427,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             (contract) => {
-                return contract.closeSwapsReceiveFixed([1]);
+                return contract.closeSwaps([],[1]);
             },
             ZERO,
             false,
@@ -2482,7 +2482,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwapsReceiveFixed([1, 2]);
+                return contract.closeSwaps([],[1, 2]);
             },
             ZERO,
             false,
@@ -3024,7 +3024,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             (contract) => {
-                return contract.closeSwapsPayFixed([1]);
+                return contract.closeSwaps([1],[]);
             },
             ZERO,
             false,
@@ -3079,7 +3079,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwapsPayFixed([1, 2]);
+                return contract.closeSwaps([1, 2],[]);
             },
             ZERO,
             false,
@@ -3134,7 +3134,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
             (contract) => {
-                return contract.closeSwapsReceiveFixed([1]);
+                return contract.closeSwaps([],[1]);
             },
             ZERO,
             false,
@@ -3189,7 +3189,7 @@ describe("Milton - close position", () => {
             USD_10_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
-                return contract.closeSwapsReceiveFixed([1, 2]);
+                return contract.closeSwaps([],[1, 2]);
             },
             ZERO,
             false,
