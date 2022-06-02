@@ -14,7 +14,7 @@ import "../../libraries/Constants.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IIpToken.sol";
 import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IMiltonInternalV2.sol";
+import "../../interfaces/IMiltonInternalV3.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IMiltonSpreadModelV2.sol";
 import "../../interfaces/IStanley.sol";
@@ -26,7 +26,7 @@ abstract contract MiltonInternalV3 is
     ReentrancyGuardUpgradeable,
     PausableUpgradeable,
     IporOwnableUpgradeable,
-    IMiltonInternalV2
+    IMiltonInternalV3
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;

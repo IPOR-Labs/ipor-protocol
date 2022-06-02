@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../../interfaces/types/AmmTypes.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IIporOracle.sol";
-import "../../interfaces/IMiltonV2.sol";
+import "../../interfaces/IMiltonV3.sol";
 import "../../interfaces/IJoseph.sol";
 import "../../interfaces/IStanley.sol";
 import "../../interfaces/IMiltonSpreadModelV2.sol";
@@ -22,7 +22,7 @@ import "../MiltonStorage.sol";
  *  # calculate spread
  * @author IPOR Labs
  */
-abstract contract MiltonV3 is MiltonInternalV3, IMiltonV2 {
+abstract contract MiltonV3 is MiltonInternalV3, IMiltonV3 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
     using SafeCast for uint128;
