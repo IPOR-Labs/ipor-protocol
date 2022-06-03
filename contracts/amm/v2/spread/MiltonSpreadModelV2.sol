@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.9;
 
-import "../../../libraries/errors/MiltonErrors.sol";
+import "../../../libraries/errors/MiltonErrorsV2.sol";
 import "../../../interfaces/types/IporTypes.sol";
 import "../../../interfaces/IMiltonSpreadModelV2.sol";
 import "./MiltonSpreadInternalV2.sol";
@@ -56,7 +56,7 @@ contract MiltonSpreadModelV2 is MiltonSpreadInternalV2, IMiltonSpreadModelV2 {
     ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
-            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            MiltonErrorsV2.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
@@ -74,7 +74,7 @@ contract MiltonSpreadModelV2 is MiltonSpreadInternalV2, IMiltonSpreadModelV2 {
     ) internal pure returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
-            MiltonErrors.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
+            MiltonErrorsV2.SPREAD_LP_PLUS_OPENING_FEE_IS_EQUAL_ZERO
         );
 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
