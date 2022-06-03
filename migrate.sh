@@ -2,26 +2,24 @@
 
 set -e -o pipefail
 
-echo "-----------------------------------------------------------"
-echo "--------------------- migration-0 -------------------------"
+MIGRATION_PREFIX="migration-"
+
+BEGIN_MIGRATION=0
+
+CURRENT_MIGRATION_NUMBER=${BEGIN_MIGRATION}
+
+MIGRATION_TAG_NAME="${MIGRATION_PREFIX}${CURRENT_MIGRATION_NUMBER}"
+
+git log --oneline -n 5
+
 echo "-----------------------------------------------------------"
 
 git checkout migration-0
 
-git status
 git log --oneline -n 5
-./run.sh migrate
 
-echo "-----------------------------------------------------------"
-echo "--------------------- migration-1 -------------------------"
 echo "-----------------------------------------------------------"
 
 git checkout migration-1
 
-git status
 git log --oneline -n 5
-./run.sh migrate
-
-echo "-----------------------------------------------------------"
-echo "------------------------- END -----------------------------"
-echo "-----------------------------------------------------------"
