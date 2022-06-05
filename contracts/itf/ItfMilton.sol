@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.9;
 
-import "../amm/Milton.sol";
+import "../amm/v3/MiltonV3.sol";
 
-abstract contract ItfMilton is Milton {
+abstract contract ItfMilton is MiltonV3 {
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -28,38 +28,44 @@ abstract contract ItfMilton is Milton {
             );
     }
 
+    function itfCloseSwaps(
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds,
+        uint256 closeTimestamp
+    )
+        external
+        nonReentrant
+        whenNotPaused
+        returns (
+            MiltonTypesV2.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypesV2.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        )
+    {
+        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
+            payFixedSwapIds,
+            receiveFixedSwapIds,
+            closeTimestamp
+        );
+    }
+
     function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(_msgSender(), _closeSwapPayFixed(swapId, closeTimestamp));
+        _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
     }
 
     function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapReceiveFixed(swapId, closeTimestamp)
-        );
-    }
-
-    function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(_msgSender(), _closeSwapsPayFixed(swapIds, closeTimestamp));
-    }
-
-    function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp) external {
-        _transferLiquidationDepositAmount(
-            _msgSender(),
-            _closeSwapsReceiveFixed(swapIds, closeTimestamp)
-        );
+        _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
         external
         view
         returns (
-            int256 soapPf,
-            int256 soapRf,
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
             int256 soap
         )
     {
-        (soapPf, soapRf, soap) = _calculateSoap(calculateTimestamp);
+        (soapPayFixed, soapReceiveFixed, soap) = _calculateSoap(calculateTimestamp);
     }
 
     function itfCalculateSpread(uint256 calculateTimestamp)

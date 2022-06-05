@@ -90,7 +90,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
@@ -212,7 +212,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP > 0 and |SOAP| < Liquidity Pool Balance, Receive Fixed", async () => {
@@ -420,7 +420,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
 
         //then
         expect(actualSoap).to.be.equal(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
+        expect(actualLiquidityPoolBalance).to.be.equal(expectedLiquidityPoolBalance);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Pay Fixed", async () => {
@@ -492,10 +492,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             expectedExchangeRate,
             `Incorrect exchange rate for DAI, actual:  ${actualExchangeRate},
         expected: ${expectedExchangeRate}`
-        ).to.be.eql(actualExchangeRate);
+        ).to.be.equal(actualExchangeRate);
 
-        expect(actualSoap).to.be.eql(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
+        expect(actualSoap).to.be.equal(expectedSoap);
+        expect(actualLiquidityPoolBalance).to.be.equal(expectedLiquidityPoolBalance);
     });
 
     it("should calculate Exchange Rate when SOAP changed, SOAP < 0 and |SOAP| > Liquidity Pool Balance, Receive Fixed", async () => {
@@ -570,7 +570,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         expected: ${expectedExchangeRate}`
         ).to.be.equal(actualExchangeRate);
         expect(actualSoap).to.be.equal(expectedSoap);
-        expect(actualLiquidityPoolBalance).to.be.eql(expectedLiquidityPoolBalance);
+        expect(actualLiquidityPoolBalance).to.be.equal(expectedLiquidityPoolBalance);
     });
 
     it("[!!!] should calculate Exchange Rate, position values and SOAP when 2 swaps closed after 60 days, Pay Fixed", async () => {
@@ -709,36 +709,36 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             timestamp56DaysLater
         );
 
-        expect(expectedInitialSOAP).to.be.eql(actualInitialSOAP.soap);
-        expect(expectedInitialExchangeRate).to.be.eql(actualInitialExchangeRate);
-        expect(expectedSOAPAfter28Days).to.be.eql(actualSOAPAfter28Days.soap);
-        expect(expectedExchangeRateAfter28Days).to.be.eql(actualExchangeRateAfter28Days);
-        expect(expectedPayoff1After28Days).to.be.eql(actualPayoff1After28days);
-        expect(expectedPayoff2After28Days).to.be.eql(actualPayoff2After28days);
-        expect(expectedSOAPAfter56DaysBeforeClose).to.be.eql(actualSOAPAfter56DaysBeforeClose.soap);
-        expect(expectedExchangeRateAfter56DaysBeforeClose).to.be.eql(
+        expect(expectedInitialSOAP).to.be.equal(actualInitialSOAP.soap);
+        expect(expectedInitialExchangeRate).to.be.equal(actualInitialExchangeRate);
+        expect(expectedSOAPAfter28Days).to.be.equal(actualSOAPAfter28Days.soap);
+        expect(expectedExchangeRateAfter28Days).to.be.equal(actualExchangeRateAfter28Days);
+        expect(expectedPayoff1After28Days).to.be.equal(actualPayoff1After28days);
+        expect(expectedPayoff2After28Days).to.be.equal(actualPayoff2After28days);
+        expect(expectedSOAPAfter56DaysBeforeClose).to.be.equal(actualSOAPAfter56DaysBeforeClose.soap);
+        expect(expectedExchangeRateAfter56DaysBeforeClose).to.be.equal(
             actualExchangeRateAfter56DaysBeforeClose
         );
-        expect(expectedPayoff1After56Days).to.be.eql(actualPayoff1After56days);
-        expect(expectedPayoff2After56Days).to.be.eql(actualPayoff2After56days);
-        expect(expectedSOAPAfter56DaysAfterClose).to.be.eql(actualSOAPAfter56DaysAfterClose.soap);
-        expect(expectedExchangeRateAfter56DaysAfterClose).to.be.eql(
+        expect(expectedPayoff1After56Days).to.be.equal(actualPayoff1After56days);
+        expect(expectedPayoff2After56Days).to.be.equal(actualPayoff2After56days);
+        expect(expectedSOAPAfter56DaysAfterClose).to.be.equal(actualSOAPAfter56DaysAfterClose.soap);
+        expect(expectedExchangeRateAfter56DaysAfterClose).to.be.equal(
             actualExchangeRateAfter56DaysAfterClose
         );
 
-        expect(expectedMiltonLiquidityPoolBalanceAfterClose).to.be.eql(
+        expect(expectedMiltonLiquidityPoolBalanceAfterClose).to.be.equal(
             actualMiltonLiquidityPoolBalanceAfterClose
         );
 
-        expect(expectedLiquidityPoolBalanceBeforeClose).to.be.eql(
+        expect(expectedLiquidityPoolBalanceBeforeClose).to.be.equal(
             actualLiquidityPoolBalanceBeforeClose
         );
-        expect(expectedSOAPPlusLiquidityPoolBalanceBeforeClose).to.be.eql(
+        expect(expectedSOAPPlusLiquidityPoolBalanceBeforeClose).to.be.equal(
             actualSOAPPlusLiquidityPoolBalanceBeforeClose
         );
 
         /// SOAP + Liquidity Pool balance before close should be equal to Liquidity Pool balance after close swaps
-        expect(expectedSOAPPlusLiquidityPoolBalanceBeforeClose).to.be.eql(
+        expect(expectedSOAPPlusLiquidityPoolBalanceBeforeClose).to.be.equal(
             actualMiltonLiquidityPoolBalanceAfterClose
         );
     });

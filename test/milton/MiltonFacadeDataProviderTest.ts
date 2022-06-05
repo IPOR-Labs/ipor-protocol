@@ -184,10 +184,10 @@ describe("MiltonFacadeDataProvider", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_6DEC, paramsUsdt.openTimestamp);
 
-        const MiltonFacadeDataProvider = await hre.ethers.getContractFactory(
-            "MiltonFacadeDataProvider"
+        const MiltonFacadeDataProviderV2 = await hre.ethers.getContractFactory(
+            "MiltonFacadeDataProviderV2"
         );
-        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
+        const miltonFacadeDataProvider = await MiltonFacadeDataProviderV2.deploy();
         await miltonFacadeDataProvider.deployed();
         await miltonFacadeDataProvider.initialize(
             iporOracle.address,

@@ -7,12 +7,9 @@ import {
     setupTokenDaiInitialValuesForUsers,
     TestData,
 } from "./DataUtils";
-import {
-    MockMiltonSpreadModel,
-    MiltonUsdcCase,
-    MiltonUsdtCase,
-    MiltonDaiCase,
-} from "./MiltonUtils";
+import { MiltonUsdcCase, MiltonUsdtCase, MiltonDaiCase } from "./MiltonUtils";
+
+import { MockBaseMiltonSpreadModel } from "../../types";
 
 import { Derivatives, countOpenSwaps } from "./SwapUtils";
 
@@ -80,7 +77,7 @@ export const testCasePagination = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
 ) => {
     //given
     const testData = await prepareTestData(
@@ -385,7 +382,7 @@ export const assertExpectedValues = async function (
     expect(
         expectedSumOfBalancesBeforePayout,
         `Incorrect balance between AMM Balance and Users Balance for asset ${asset}, actual: ${actualSumOfBalances}, expected ${expectedSumOfBalancesBeforePayout}`
-    ).to.be.eql(actualSumOfBalances);
+    ).to.be.equal(actualSumOfBalances);
 };
 
 const assertBalances = async (
@@ -545,7 +542,7 @@ export const assertMiltonDerivativeItem = async (
     }
 
     expect(
-        BigInt(expectedUserDerivativeIdsIndex),
+        expectedUserDerivativeIdsIndex,
         `Incorrect idsIndex for swap id ${actualDerivativeItem?.id} actual: ${actualDerivativeItem.idsIndex}, expected: ${expectedUserDerivativeIdsIndex}`
     ).to.be.eq(actualDerivativeItem.idsIndex);
 };
