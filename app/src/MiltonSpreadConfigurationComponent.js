@@ -4,7 +4,7 @@ import { newContextComponents } from "@drizzle/react-components";
 const { ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
-    <div>        
+    <div>
         <hr />
         <div className="row">
             <table className="table" align="center">
@@ -18,114 +18,11 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <br />
-                        {drizzle.contracts.MiltonSpreadModel.address}
+                        {drizzle.contracts.MiltonSpreadModelV2.address}
                         <br />
                         <br />
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <strong>Spread Premiums Max Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getSpreadPremiumsMaxValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Demand Component Kf Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCKfValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Demand Component Lambda Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCLambdaValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Demand Component KOmega Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCKOmegaValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Demand Component Max Liquidity Redemption Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCMaxLiquidityRedemptionValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
                 <tr>
                     <td>
                         <strong>Pay Fixed Region One Base</strong>
@@ -134,7 +31,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionOneBase"
                             render={(value) => (
                                 <div>
@@ -155,7 +52,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionOneSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -176,7 +73,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionOneSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -197,7 +94,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionTwoBase"
                             render={(value) => (
                                 <div>
@@ -218,7 +115,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionTwoSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -239,7 +136,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getPayFixedRegionTwoSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -260,7 +157,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionOneBase"
                             render={(value) => (
                                 <div>
@@ -281,7 +178,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionOneSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -302,7 +199,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionOneSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -323,7 +220,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionTwoBase"
                             render={(value) => (
                                 <div>
@@ -344,7 +241,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionTwoSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -365,7 +262,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
+                            contract="MiltonSpreadModelV2"
                             method="getReceiveFixedRegionTwoSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
