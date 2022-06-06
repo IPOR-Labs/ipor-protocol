@@ -6,6 +6,19 @@ BEGIN_FROM_MIGRATION=0
 MIGRATION_PREFIX="migration-"
 DRY_RUN=false
 
+function show_how_to_use() {
+    echo -e "usage: \e[32m./migrate.sh\e[0m [cmd1] [cmd2] [cmd3]"
+    echo -e ""
+    echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
+    echo -e "   \e[36m-b | --begin-from-migration\e[0m   from which migration should start"
+    echo -e "   \e[36m-m | --migrate-to\e[0m             which migration is the end"
+    echo -e "   \e[36m-t | --tag-prefix\e[0m             tag prefix for migration"
+    echo -e "   \e[36m-d | --dry-run\e[0m                run without real migration"
+    echo -e "   \e[34mwithout any parameters\e[0m        run with defaults"
+    echo -e ""
+    exit 0
+}
+
 while [[ $# -gt 0 ]]; do
   case $1 in
   -b | --begin-from-migration)
@@ -13,7 +26,7 @@ while [[ $# -gt 0 ]]; do
     shift
     shift
     ;;
-  -e | --migrate-to)
+  -m | --migrate-to)
     MIGRATE_TO="$2"
     shift
     shift
@@ -27,8 +40,13 @@ while [[ $# -gt 0 ]]; do
     DRY_RUN="true"
     shift
     ;;
+  -h | --help)
+    show_how_to_use
+    shift
+    ;;
   *)
     echo "Unexpected option: $1"
+    show_how_to_use
     exit 1
     ;;
   esac
