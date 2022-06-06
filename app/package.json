@@ -1,38 +1,38 @@
 {
-  "name": "app",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@drizzle/react-components": "^1.5.1",
-    "@drizzle/react-plugin": "^1.5.1",
-    "@drizzle/store": "^1.5.1",
-    "bootstrap": "^5.0.2",
-    "dotenv": "^10.0.0",
-    "env-cmd": "^10.1.0",
-    "react": "^16.11.0",
-    "react-bootstrap": "^1.6.1",
-    "react-dom": "^16.11.0",
-    "react-scripts": "3.2.0"
-  },
-  "scripts": {
-    "start": "env-cmd -x -f ../.env react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+    "name": "app",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@drizzle/react-components": "^1.5.1",
+        "@drizzle/react-plugin": "^1.5.1",
+        "@drizzle/store": "^1.5.1",
+        "bootstrap": "^5.0.2",
+        "dotenv": "^10.0.0",
+        "env-cmd": "^10.1.0",
+        "react": "^16.11.0",
+        "react-bootstrap": "^1.6.1",
+        "react-dom": "^16.11.0",
+        "react-scripts": "3.2.0"
+    },
+    "scripts": {
+        "start": "env-cmd -x -f ../.env react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
 }
