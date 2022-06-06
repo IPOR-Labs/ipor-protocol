@@ -18,7 +18,7 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <br />
-                        {drizzle.contracts.MiltonSpreadModelV2.address}
+                        {drizzle.contracts.MiltonSpreadModelV3.address}
                         <br />
                         <br />
                     </td>
@@ -31,7 +31,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionOneBase"
                             render={(value) => (
                                 <div>
@@ -52,7 +52,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionOneSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -73,7 +73,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionOneSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -94,7 +94,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionTwoBase"
                             render={(value) => (
                                 <div>
@@ -115,7 +115,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionTwoSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -136,7 +136,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getPayFixedRegionTwoSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -157,7 +157,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionOneBase"
                             render={(value) => (
                                 <div>
@@ -178,7 +178,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionOneSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -199,7 +199,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionOneSlopeForMeanReversion"
                             render={(value) => (
                                 <div>
@@ -220,7 +220,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionTwoBase"
                             render={(value) => (
                                 <div>
@@ -241,7 +241,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionTwoSlopeForVolatility"
                             render={(value) => (
                                 <div>
@@ -262,7 +262,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="MiltonSpreadModelV2"
+                            contract="MiltonSpreadModelV3"
                             method="getReceiveFixedRegionTwoSlopeForMeanReversion"
                             render={(value) => (
                                 <div>

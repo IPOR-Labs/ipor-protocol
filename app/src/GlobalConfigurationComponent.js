@@ -292,26 +292,26 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>Milton Spread Model</td>
-                <td>{drizzle.contracts.MiltonSpreadModelV2.address}</td>
+                <td>{drizzle.contracts.MiltonSpreadModelV3.address}</td>
                 <td>
                     <ContractData
                         drizzle={drizzle}
                         drizzleState={drizzleState}
-                        contract="MiltonSpreadModelV2"
+                        contract="MiltonSpreadModelV3"
                         method="owner"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MiltonSpreadModelV2"
+                        contract="MiltonSpreadModelV3"
                         method="transferOwnership"
                     />
                 </td>
                 <td>
                     <ContractForm
                         drizzle={drizzle}
-                        contract="MiltonSpreadModelV2"
+                        contract="MiltonSpreadModelV3"
                         method="confirmTransferOwnership"
                     />
                 </td>
