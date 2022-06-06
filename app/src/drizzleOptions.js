@@ -12,7 +12,7 @@ import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
 import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
 import IvTokenDai from "./contracts/IvTokenDai.json";
 
-import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
+import MiltonSpreadModelV2 from "./contracts/MiltonSpreadModelV2.json";
 import CockpitDataProvider from "./contracts/CockpitDataProvider.json";
 import MiltonFacadeDataProvider from "./contracts/MiltonFacadeDataProvider.json";
 import IporOracleFacadeDataProvider from "./contracts/IporOracleFacadeDataProvider.json";
@@ -82,7 +82,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             IvTokenUsdt,
             IvTokenUsdc,
             IvTokenDai,
-            MiltonSpreadModel,
+            MiltonSpreadModelV2,
             ItfIporOracle,
             ItfMiltonUsdt,
             ItfMiltonUsdc,
@@ -146,7 +146,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
             StanleyUsdt,
             StanleyUsdc,
             StanleyDai,
-            MiltonSpreadModel,
+            MiltonSpreadModelV2,
             TestnetFaucet,
             MockTestnetShareTokenAaveUsdt,
             MockTestnetShareTokenAaveUsdc,
