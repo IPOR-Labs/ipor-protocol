@@ -46,10 +46,6 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         );
     }
 
-    /**
-     * @notice Function run at the time of the contract upgrade via proxy. Available only to the contract's owner.
-     **/
-
     function collectMiltonData(uint256 timestamp, address asset)
         public
         view
