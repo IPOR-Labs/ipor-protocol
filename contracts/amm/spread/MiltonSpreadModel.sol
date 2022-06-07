@@ -29,7 +29,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     ) external pure override returns (uint256 quoteValue) {
         int256 spreadPremiums = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
 
-        int256 intQuoteValue = accruedIpor.indexValue.toInt256() - spreadPremiums;
+        int256 intQuoteValue = accruedIpor.indexValue.toInt256() + spreadPremiums;
 
         if (intQuoteValue > 0) {
             quoteValue = intQuoteValue.toUint256();

@@ -29,7 +29,7 @@ describe("MiltonSpreadRecFixed", () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
-    it("should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium > IPOR Index", async () => {
+    it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium > IPOR Index", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBase();
 
@@ -55,7 +55,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("89421084955794517");
+        const expectedQuoteValue = ZERO;
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -65,8 +65,8 @@ describe("MiltonSpreadRecFixed", () => {
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
 
-        //Actual Quote Value cannot be lower than 2xIndex Value for this particular test case.
-        expect(accruedIpor.indexValue.mul(BigNumber.from(2))).to.be.lte(actualQuotedValue);
+        //Actual Quote Value cannot be higher then Index Value for this particular test case.
+        expect(accruedIpor.indexValue).to.be.gte(actualQuotedValue);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium < IPOR Index", async () => {
@@ -95,7 +95,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("52428754877351050");
+        const expectedQuoteValue = BigNumber.from("27571245122648950");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -135,7 +135,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("29929543032132235");
+        const expectedQuoteValue = BigNumber.from("30070456967867765");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -145,7 +145,7 @@ describe("MiltonSpreadRecFixed", () => {
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
 
-        //Actual Quote Value cannot be higher than Index Value for this particular test case.
-        expect(accruedIpor.indexValue).to.be.gte(actualQuotedValue);
+        //Actual Quote Value cannot be lower than Index Value for this particular test case.
+        expect(accruedIpor.indexValue).to.be.lte(actualQuotedValue);
     });
 });
