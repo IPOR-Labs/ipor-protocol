@@ -76,6 +76,7 @@ let DrizzleStrategyCompoundUsdc;
 let DrizzleStrategyCompoundDai;
 
 if (process.env.REACT_APP_ENV_PROFILE === "ipor.io") {
+	//Mainnet
     DrizzleStrategyAaveUsdt = StrategyAaveUsdt;
     DrizzleStrategyAaveUsdc = StrategyAaveUsdc;
     DrizzleStrategyAaveDai = StrategyAaveDai;
@@ -84,6 +85,7 @@ if (process.env.REACT_APP_ENV_PROFILE === "ipor.io") {
     DrizzleStrategyCompoundUsdc = StrategyCompoundUsdc;
     DrizzleStrategyCompoundDai = StrategyCompoundDai;
 } else {
+	//Other than Mainnet
     DrizzleStrategyAaveUsdt = MockTestnetStrategyAaveUsdt;
     DrizzleStrategyAaveUsdc = MockTestnetStrategyAaveUsdc;
     DrizzleStrategyAaveDai = MockTestnetStrategyAaveDai;

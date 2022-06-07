@@ -24,7 +24,7 @@ services:
 
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
-    image: ethereum/client-go:alltools-v1.10.12
+    image: 964341344241.dkr.ecr.eu-central-1.amazonaws.com/ipor-geth:v1.10.18-modified
     profiles:
       - eth-bc
       - eth-bc-provider
