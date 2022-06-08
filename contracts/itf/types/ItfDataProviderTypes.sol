@@ -67,7 +67,7 @@ library ItfDataProviderTypes {
     }
 
     struct ItfAmmData {
-        uint256 blockNumbe;
+        uint256 blockNumber;
         uint256 timestamp;
         address asset;
         ItfMiltonData itfMiltonData;
