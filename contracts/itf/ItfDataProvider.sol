@@ -136,11 +136,6 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         returns (ItfDataProviderTypes.ItfMiltonSpreadModelData memory miltonSpreadModelData)
     {
         miltonSpreadModelData = ItfDataProviderTypes.ItfMiltonSpreadModelData(
-            _miltonSpreadModel.getSpreadPremiumsMaxValue(),
-            _miltonSpreadModel.getDCKfValue(),
-            _miltonSpreadModel.getDCLambdaValue(),
-            _miltonSpreadModel.getDCKOmegaValue(),
-            _miltonSpreadModel.getDCMaxLiquidityRedemptionValue(),
             _miltonSpreadModel.getPayFixedRegionOneBase(),
             _miltonSpreadModel.getPayFixedRegionOneSlopeForVolatility(),
             _miltonSpreadModel.getPayFixedRegionOneSlopeForMeanReversion(),

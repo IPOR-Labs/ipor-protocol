@@ -8,12 +8,9 @@ import {
     setupTokenDaiInitialValuesForUsers,
     TestData,
 } from "./DataUtils";
-import {
-    MockMiltonSpreadModel,
-    MiltonUsdcCase,
-    MiltonUsdtCase,
-    MiltonDaiCase,
-} from "./MiltonUtils";
+import { MiltonUsdcCase, MiltonUsdtCase, MiltonDaiCase } from "./MiltonUtils";
+
+import { MockBaseMiltonSpreadModel } from "../../types";
 
 import { Derivatives, countOpenSwaps } from "./SwapUtils";
 
@@ -81,7 +78,7 @@ export const testCasePagination = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
 ) => {
     //given
     const testData = await prepareTestData(

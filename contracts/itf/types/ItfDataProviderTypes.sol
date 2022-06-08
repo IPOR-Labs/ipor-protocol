@@ -47,11 +47,6 @@ library ItfDataProviderTypes {
     }
 
     struct ItfMiltonSpreadModelData {
-        uint256 spreadPremiumsMaxValue;
-        uint256 dCKfValue;
-        uint256 dCLambdaValue;
-        uint256 dCKOmegaValue;
-        uint256 dCMaxLiquidityRedemptionValue;
         int256 payFixedRegionOneBase;
         int256 payFixedRegionOneSlopeForVolatility;
         int256 payFixedRegionOneSlopeForMeanReversion;
