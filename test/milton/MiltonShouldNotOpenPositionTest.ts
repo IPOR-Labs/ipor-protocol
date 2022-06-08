@@ -18,9 +18,7 @@ import {
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USER_SUPPLY_10MLN_18DEC,
 } from "../utils/Constants";
-import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
+import {    
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,

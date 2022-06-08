@@ -21,8 +21,7 @@ import {
 import {
     MiltonUsdcCase,
     MiltonUsdtCase,
-    MiltonDaiCase,
-    MockMiltonSpreadModel,
+    MiltonDaiCase
 } from "./MiltonUtils";
 
 import { MockStanleyCase } from "./StanleyUtils";
