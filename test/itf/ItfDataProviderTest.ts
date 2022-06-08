@@ -6,14 +6,12 @@ import { PERCENTAGE_5_18DEC, N1__0_6DEC } from "../utils/Constants";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
-import { ItfDataProvider } from "../../types";
+import { ItfDataProvider, MockBaseMiltonSpreadModel } from "../../types";
 import {
     prepareMockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    MiltonSpreadModels,
-    MockMiltonSpreadModel,
 } from "../utils/MiltonUtils";
 
 import { TestData, prepareTestData } from "../utils/DataUtils";
@@ -21,7 +19,7 @@ import { TestData, prepareTestData } from "../utils/DataUtils";
 const { expect } = chai;
 
 describe("ItfDataProvider - smoke tests", () => {
-    let miltonSpreadModel: MockMiltonSpreadModel;
+    let miltonSpreadModel: MockBaseMiltonSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -34,7 +32,7 @@ describe("ItfDataProvider - smoke tests", () => {
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel(MiltonSpreadModels.BASE);
+        miltonSpreadModel = await prepareMockMiltonSpreadModel();
         testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
@@ -108,7 +106,7 @@ describe("ItfDataProvider - smoke tests", () => {
         expect(iporOracleData.length).to.be.equal(10);
         expect(miltonData.length).to.be.equal(16);
         expect(miltonStorageData.length).to.be.equal(8);
-        expect(miltonSpreadModelData.length).to.be.equal(17);
+        expect(miltonSpreadModelData.length).to.be.equal(12);
         expect(ammData.length).to.be.equal(7);
     });
 });
