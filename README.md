@@ -47,6 +47,19 @@ IPOR smart contracts
 -   In `.env` file setup network name `ETH_BC_NETWORK_NAME` which should correspond to one of network names defined in `truffle-config.js`
 -   In command line execute `./run.sh m` for incremental migration or `./run.sh mc` if you want to migrate all new smart contracts from scratch
 
+### How to execute migrations using git tags?
+
+-   You can start migration as default. Start from last completed migration to latest:
+-   ./migrate.sh
+-   Start from 5th migration to latest
+-   ./migrate.sh --start-from-migration 5
+-   Start from 5th migration to 10th migration 
+-   ./migrate.sh --start-from-migration 5 --migrate-to 10
+-   Start migration in dry run mode - you will see only migration logs without running migration commands
+-   ./migration.sh --dry-run
+-   Change default tag name "migration-" to "audit-"
+-   ./migration.sh --tag-prefix "audit-"
+
 ### How to execute smart contracts migrations remotely?
 
 -   On remote server all parameters in `.env` are already prepared, you should not modify them without consultation with IT Team.
