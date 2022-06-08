@@ -213,6 +213,7 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdc.json" "stanley_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdt.json" "stanley_usdt_address")
   RESULT=$(set_smart_contract_address_from_json_file "StanleyDai.json" "stanley_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProvider.json" "itf_data_provider")
 
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
