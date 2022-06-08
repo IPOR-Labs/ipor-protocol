@@ -7,14 +7,14 @@ import "./types/ItfDataProviderTypes.sol";
 import "./ItfMilton.sol";
 import "../amm/MiltonStorage.sol";
 import "./ItfIporOracle.sol";
-import "../amm/spread/MiltonSpreadModel.sol";
+import "../interfaces/IMiltonSpreadInternal.sol";
 
 contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
     // asset => milton addres for asset
-    mapping(address => ItfMilton) _miltons;
-    mapping(address => MiltonStorage) _miltonStorages;
-    ItfIporOracle _iporOracle;
-    MiltonSpreadModel _miltonSpreadModel;
+    mapping(address => ItfMilton) private _miltons;
+    mapping(address => MiltonStorage) private _miltonStorages;
+    ItfIporOracle private _iporOracle;
+    IMiltonSpreadInternal private _miltonSpreadModel;
 
     // all arrary contains adresses for 1) usdt, 2) usdc, 3) dai
     function initialize(
@@ -30,23 +30,23 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
             _miltonStorages[assets[i]] = MiltonStorage(miltonStorages[i]);
         }
         _iporOracle = ItfIporOracle(iporOracle);
-        _miltonSpreadModel = MiltonSpreadModel(miltonSpreadModel);
+        _miltonSpreadModel = IMiltonSpreadInternal(miltonSpreadModel);
     }
 
-    function itfAmmData(uint256 timestamp, address asset)
+    function getAmmData(uint256 timestamp, address asset)
         public
         view
         returns (ItfDataProviderTypes.ItfAmmData memory ammData)
     {
         ammData = ItfDataProviderTypes.ItfAmmData(
-            collectMiltonData(timestamp, asset),
-            collectIporOracleData(timestamp, asset),
-            collectMiltonStorageData(asset),
-            collectMiltonSpreadModelData()
+            getMiltonData(timestamp, asset),
+            getIporOracleData(timestamp, asset),
+            getMiltonStorageData(asset),
+            getMiltonSpreadModelData()
         );
     }
 
-    function collectMiltonData(uint256 timestamp, address asset)
+    function getMiltonData(uint256 timestamp, address asset)
         public
         view
         returns (ItfDataProviderTypes.ItfMiltonData memory miltonData)
@@ -77,7 +77,7 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         );
     }
 
-    function collectIporOracleData(uint256 timestamp, address asset)
+    function getIporOracleData(uint256 timestamp, address asset)
         public
         view
         returns (ItfDataProviderTypes.ItfIporOracleData memory iporOracleData)
@@ -105,7 +105,7 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         );
     }
 
-    function collectMiltonStorageData(address asset)
+    function getMiltonStorageData(address asset)
         public
         view
         returns (ItfDataProviderTypes.ItfMiltonStorageData memory miltonStorageData)
@@ -127,7 +127,7 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         );
     }
 
-    function collectMiltonSpreadModelData()
+    function getMiltonSpreadModelData()
         public
         view
         returns (ItfDataProviderTypes.ItfMiltonSpreadModelData memory miltonSpreadModelData)

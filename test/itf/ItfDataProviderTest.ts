@@ -87,19 +87,19 @@ describe("ItfDataProvider - smoke tests", () => {
         const calculateTimestamp = Math.floor(Date.now() / 1000);
 
         // when
-        const iporOracleData = await itfDataProvider.collectIporOracleData(
+        const iporOracleData = await itfDataProvider.getIporOracleData(
             calculateTimestamp,
             tokenUsdc.address
         );
-        const miltonData = await itfDataProvider.collectMiltonData(
+        const miltonData = await itfDataProvider.getMiltonData(
             calculateTimestamp,
             tokenUsdc.address
         );
-        const miltonStorageData = await itfDataProvider.collectMiltonStorageData(tokenUsdc.address);
+        const miltonStorageData = await itfDataProvider.getMiltonStorageData(tokenUsdc.address);
 
-        const miltonSpreadModelData = await itfDataProvider.collectMiltonSpreadModelData();
+        const miltonSpreadModelData = await itfDataProvider.getMiltonSpreadModelData();
 
-        const ammData = await itfDataProvider.itfAmmData(
+        const ammData = await itfDataProvider.getAmmData(
             Math.floor(Date.now() / 1000),
             tokenUsdc.address
         );
