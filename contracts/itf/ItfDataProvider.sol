@@ -39,6 +39,9 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         returns (ItfDataProviderTypes.ItfAmmData memory ammData)
     {
         ammData = ItfDataProviderTypes.ItfAmmData(
+            block.number,
+            timestamp,
+            asset,
             getMiltonData(timestamp, asset),
             getIporOracleData(timestamp, asset),
             getMiltonStorageData(asset),

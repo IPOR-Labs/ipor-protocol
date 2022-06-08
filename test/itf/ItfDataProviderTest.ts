@@ -109,6 +109,6 @@ describe("ItfDataProvider - smoke tests", () => {
         expect(miltonData.length).to.be.equal(16);
         expect(miltonStorageData.length).to.be.equal(8);
         expect(miltonSpreadModelData.length).to.be.equal(17);
-        expect(ammData.length).to.be.equal(4);
+        expect(ammData.length).to.be.equal(7);
     });
 });
