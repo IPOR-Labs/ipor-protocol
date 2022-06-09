@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -611,7 +611,7 @@ contract MiltonStorage is
         _balances.totalCollateralReceiveFixed =
             _balances.totalCollateralReceiveFixed +
             collateral.toUint128();
-			
+
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFee.toUint128();
@@ -878,11 +878,11 @@ contract MiltonStorage is
         );
 
         _soapIndicatorsPayFixed = AmmMiltonStorageTypes.SoapIndicators(
-            pf.quasiHypotheticalInterestCumulative,			
-            pf.totalNotional.toUint128(),            
+            pf.quasiHypotheticalInterestCumulative,
+            pf.totalNotional.toUint128(),
             pf.totalIbtQuantity.toUint128(),
-			pf.averageInterestRate.toUint64(),
-			pf.rebalanceTimestamp.toUint32()            
+            pf.averageInterestRate.toUint64(),
+            pf.rebalanceTimestamp.toUint32()
         );
     }
 
@@ -909,7 +909,7 @@ contract MiltonStorage is
 
         _soapIndicatorsReceiveFixed = AmmMiltonStorageTypes.SoapIndicators(
             rf.quasiHypotheticalInterestCumulative,
-			rf.totalNotional.toUint128(),
+            rf.totalNotional.toUint128(),
             rf.totalIbtQuantity.toUint128(),
             rf.averageInterestRate.toUint64(),
             rf.rebalanceTimestamp.toUint32()

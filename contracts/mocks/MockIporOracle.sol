@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.9;
+pragma solidity 0.8.13;
 
 import "../itf/ItfIporOracle.sol";
 
@@ -11,10 +11,7 @@ contract MockItfIporOracle is ItfIporOracle {
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(
-            ipor.quasiIbtPrice != 0,
-            IporOracleErrors.ASSET_NOT_SUPPORTED
-        );
+        require(ipor.quasiIbtPrice != 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,

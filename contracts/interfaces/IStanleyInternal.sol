@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.13;
 
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.
 interface IStanleyInternal {
-	/// @notice Returns current version of Stanley
+    /// @notice Returns current version of Stanley
     /// @return current Stanley's version
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets asset / underlying token / stablecoin which is assocciated with this Stanley instance
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
-	
+
     /// @notice Transfers all asset in current strategy to strategy with the highest APR. Function available only for the Owner.
     /// @dev Emits {Deposit} or {Withdraw} event from Stanley depending on current asset balance on Milton and Stanley. Emits {Transfer} from ERC20 asset.
     function migrateAssetToStrategyWithMaxApr() external;

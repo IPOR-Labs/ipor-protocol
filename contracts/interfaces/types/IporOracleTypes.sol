@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.9;
+pragma solidity 0.8.13;
 
 /// @title Structs used in IporOracle smart contract
 library IporOracleTypes {
@@ -11,10 +11,10 @@ library IporOracleTypes {
         /// @dev used in calculating spread in MiltonSpreadModel smart contract
         uint64 exponentialMovingAverage;
         //@notice exponential weighted moving variance - required for calculating spread in Milton
-        uint64 exponentialWeightedMovingVariance;		
-		//@notice IPOR Index value.
+        uint64 exponentialWeightedMovingVariance;
+        //@notice IPOR Index value.
         uint64 indexValue;
-		//@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)
-        uint32 lastUpdateTimestamp;                
+        //@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)
+        uint32 lastUpdateTimestamp;
     }
 }
