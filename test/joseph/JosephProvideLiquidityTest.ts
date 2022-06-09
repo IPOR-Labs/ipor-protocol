@@ -10,8 +10,7 @@ import {
     USD_14_000_6DEC,
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
-import {
-    MockMiltonSpreadModel,
+import {    
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,

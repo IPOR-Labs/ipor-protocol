@@ -264,13 +264,9 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(
-            _getMiltonStorage().calculateSoapPayFixed(accruedIpor.ibtPrice, calculateTimestamp),
-            accruedIpor,
-            balance
-        );
+        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(accruedIpor, balance);
+
         spreadReceiveFixed = _getMiltonSpreadModel().calculateSpreadReceiveFixed(
-            _getMiltonStorage().calculateSoapReceiveFixed(accruedIpor.ibtPrice, calculateTimestamp),
             accruedIpor,
             balance
         );
@@ -375,10 +371,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         uint256 quoteValue = _getMiltonSpreadModel().calculateQuotePayFixed(
-            _getMiltonStorage().calculateSoapPayFixed(
-                bosStruct.accruedIpor.ibtPrice,
-                openTimestamp
-            ),
             bosStruct.accruedIpor,
             balance
         );
@@ -452,10 +444,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         uint256 quoteValue = _getMiltonSpreadModel().calculateQuoteReceiveFixed(
-            _getMiltonStorage().calculateSoapReceiveFixed(
-                bosStruct.accruedIpor.ibtPrice,
-                openTimestamp
-            ),
             bosStruct.accruedIpor,
             balance
         );

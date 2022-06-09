@@ -4,7 +4,7 @@ import { newContextComponents } from "@drizzle/react-components";
 const { ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
-    <div>        
+    <div>
         <hr />
         <div className="row">
             <table className="table" align="center">
@@ -21,108 +21,6 @@ export default ({ drizzle, drizzleState }) => (
                         {drizzle.contracts.MiltonSpreadModel.address}
                         <br />
                         <br />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Spread Premiums Max Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getSpreadPremiumsMaxValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Demand Component Kf Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCKfValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong>Demand Component Lambda Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCLambdaValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Demand Component KOmega Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCKOmegaValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Demand Component Max Liquidity Redemption Value</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonSpreadModel"
-                            method="getDCMaxLiquidityRedemptionValue"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
-                        />
                     </td>
                 </tr>
 
