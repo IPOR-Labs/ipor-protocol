@@ -12,6 +12,8 @@ import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
 
+import "hardhat/console.sol";
+
 /**
  * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
  * @dev Milton is scoped per asset (USDT, USDC, DAI or other type of ERC20 asset included by the DAO)
@@ -305,7 +307,8 @@ abstract contract Milton is MiltonInternal, IMilton {
                 _getIporPublicationFee(),
                 _getOpeningFeeRate()
             );
-
+        console.log("openingFeeAmount=", openingFeeAmount);
+        console.log("_getIporPublicationFee()=", _getIporPublicationFee());
         (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = _splitOpeningFeeAmount(
             openingFeeAmount,
             _getOpeningFeeTreasuryPortionRate()
@@ -579,6 +582,12 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
+		if (payoff > 0) {
+			console.log("PF PLUS payoff=", uint256(payoff));
+		} else {
+			console.log("PF MINUS payoff=", uint256(-payoff));
+		}
+        
 
         _getMiltonStorage().updateStorageWhenCloseSwapPayFixed(
             _msgSender(),
@@ -620,6 +629,11 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         int256 payoff = _calculatePayoffReceiveFixed(closeTimestamp, iporSwap);
+		if (payoff > 0) {
+			console.log("RF PLUS payoff=", uint256(payoff));
+		} else {
+			console.log("RF MINUS payoff=", uint256(-payoff));
+		}
 
         _getMiltonStorage().updateStorageWhenCloseSwapReceiveFixed(
             _msgSender(),
