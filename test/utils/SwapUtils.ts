@@ -357,12 +357,6 @@ export const executeCloseSwapTestCase = async function (
         }
     }
 
-    //read index
-    const actIndex = await testData.iporOracle
-        .connect(userOne)
-        .getAccruedIndex(params.openTimestamp, params.asset);
-    console.log("actIndexBefore=", actIndex);
-
     if (params.direction == LEG_PAY_FIXED) {
         await openSwapPayFixed(testData, params);
     } else if (params.direction == LEG_RECEIVE_FIXED) {
@@ -374,11 +368,6 @@ export const executeCloseSwapTestCase = async function (
         .itfUpdateIndex(params.asset, iporValueAfterOpenSwap, params.openTimestamp);
 
     let endTimestamp = params.openTimestamp.add(periodOfTimeElapsedInSeconds);
-
-    const actIndexAfter = await testData.iporOracle
-        .connect(userOne)
-        .getAccruedIndex(endTimestamp, params.asset);
-    console.log("actIndexAfter=", actIndexAfter);
 
     let actualPayoff = ZERO;
     let actualIncomeFeeValue = null;
