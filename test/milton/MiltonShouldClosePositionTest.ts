@@ -11,8 +11,6 @@ import {
     USD_28_000_18DEC,
     USD_50_000_18DEC,
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_365_18DEC,
-    PERCENTAGE_366_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
     N1__0_18DEC,
@@ -20,17 +18,12 @@ import {
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
-    PERCENTAGE_4_18DEC,
-    USD_20_18DEC,
     USER_SUPPLY_10MLN_18DEC,
     TC_INCOME_TAX_18DEC,
-    PERCENTAGE_152_18DEC,
     PERCENTAGE_160_18DEC,
-    PERCENTAGE_161_18DEC,
     PERCENTAGE_5_18DEC,
     TC_COLLATERAL_6DEC,
     PERCENTAGE_120_18DEC,
-    PERCENTAGE_121_18DEC,
     PERIOD_50_DAYS_IN_SECONDS,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_50_18DEC,
@@ -57,7 +50,6 @@ import {
 import {
     openSwapPayFixed,
     openSwapReceiveFixed,
-    executeCloseSwapTestCase,
     executeCloseSwapsTestCase,
     countOpenSwaps,
     assertSoap,
@@ -96,7 +88,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, DAI 18 decimals", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -143,7 +135,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, USDT 6 decimals", async () => {
         const quote = BigNumber.from("400").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -208,7 +200,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Collateral, before maturity, DAI 18 decimals", async () => {
         const quote = BigNumber.from("121").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -255,7 +247,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Collateral, before maturity, USDT 6 decimals", async () => {
         //given
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -321,7 +313,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -369,7 +361,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Collateral, before maturity, DAI 18 decimals", async () => {
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -419,7 +411,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Collateral, before maturity, USDT 6 decimals", async () => {
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -485,7 +477,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Collateral, before maturity, DAI 18 decimals", async () => {
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -535,7 +527,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Collateral, before maturity, USDT 6 decimals", async () => {
         const quote = BigNumber.from("3").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -602,7 +594,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Collateral, after maturity", async () => {
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -651,7 +643,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Collateral, after maturity", async () => {
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -700,7 +692,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -750,7 +742,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -800,7 +792,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, 5 hours before maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, 5 hours before maturity", async () => {
         //given
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -850,7 +842,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Collateral, after maturity", async () => {
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -898,7 +890,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, after maturity", async () => {
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -946,7 +938,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Collateral, before maturity", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -993,7 +985,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
         const quote = BigNumber.from("151").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -1040,7 +1032,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -1087,7 +1079,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, 5 hours before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, 5 hours before maturity", async () => {
         const quote = BigNumber.from("121").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -1134,7 +1126,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuotePayFixed(quote);
@@ -1181,7 +1173,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1230,7 +1222,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("1").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1248,7 +1240,7 @@ describe("Milton - close position", () => {
             expect(true).to.be.false;
             return;
         }
-		
+
         const expectedIncomeFeeValueWad = BigNumber.from("34133595537777018961");
         const expectedPayoff = BigNumber.from("-341335955377770189613");
         const expectedPayoffWad = BigNumber.from("-341335955377770189613");
@@ -1278,7 +1270,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Collateral, before maturity", async () => {
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1325,7 +1317,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1372,7 +1364,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Collateral, after maturity", async () => {
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1421,7 +1413,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Collateral, after maturity", async () => {
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1469,7 +1461,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1516,7 +1508,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         const quote = BigNumber.from("3").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1561,7 +1553,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1608,7 +1600,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         const quote = BigNumber.from("150").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1656,7 +1648,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1703,7 +1695,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("[!] should close position, DAI, not owner, receive fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
+    it("[!] should close position, DAI, not owner, receive fixed, Milton earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1750,7 +1742,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1799,7 +1791,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1848,7 +1840,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1895,7 +1887,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -1942,7 +1934,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -2594,7 +2586,7 @@ describe("Milton - close position", () => {
         ).to.be.eq(BigNumber.from(oneDerivative.id));
     });
 
-    it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
+    it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Collateral, after maturity, IPOR index calculated before close", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(

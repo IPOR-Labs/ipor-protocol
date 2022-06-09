@@ -20,6 +20,8 @@ import {
     PERCENTAGE_6_18DEC,
     PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
     USD_10_000_000_18DEC,
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -59,7 +61,7 @@ describe("Milton - not close position", () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
-    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -107,7 +109,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, pay fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
+    it("should NOT close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, 7 hours before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -155,7 +157,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -204,7 +206,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -253,7 +255,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool lost, User earned < Deposit, 7 hours before maturity", async () => {
+    it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, 7 hours before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -302,7 +304,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it("should NOT close position, DAI, not owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         //given
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -597,10 +599,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -656,10 +657,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -715,10 +715,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -774,10 +773,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -833,10 +831,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -892,10 +889,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -950,10 +946,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -1009,10 +1004,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 userTwo,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -1068,10 +1062,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 admin,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -1127,10 +1120,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                0,
+                LEG_PAY_FIXED,
                 userTwo,
                 admin,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -1186,10 +1178,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 admin,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
@@ -1245,10 +1236,9 @@ describe("Milton - not close position", () => {
                 testData,
                 tokenDai.address,
                 USD_10_18DEC,
-                1,
+                LEG_RECEIVE_FIXED,
                 userTwo,
                 admin,
-                PERCENTAGE_5_18DEC,
                 PERCENTAGE_160_18DEC,
                 PERIOD_25_DAYS_IN_SECONDS,
                 USD_10_000_000_18DEC,
