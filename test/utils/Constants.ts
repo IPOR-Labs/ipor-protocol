@@ -97,6 +97,7 @@ export const USD_10_000_6DEC = BigNumber.from("10000").mul(N1__0_6DEC);
 export const USD_14_000_6DEC = BigNumber.from("14000").mul(N1__0_6DEC);
 export const USD_28_000_6DEC = BigNumber.from("28000").mul(N1__0_6DEC);
 export const USD_50_000_6DEC = BigNumber.from("50000").mul(N1__0_6DEC);
+export const USD_100_000_6DEC = BigNumber.from("50000").mul(N1__0_6DEC);
 export const USD_10_000_000_6DEC = BigNumber.from("10000000").mul(N1__0_6DEC);
 
 export const PERCENTAGE_3_6DEC = BigNumber.from("3").mul(N0__01_6DEC);

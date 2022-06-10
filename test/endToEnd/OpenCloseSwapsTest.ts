@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
-import { N0__01_18DEC } from "../utils/Constants";
+import { N0__1_18DEC, N0__01_18DEC, USD_10_000_6DEC, USD_100_000_6DEC } from "../utils/Constants";
 import {
     ERC20,
     TestnetFaucet,
@@ -134,7 +134,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonDai.openSwapPayFixed(
                 ONE_18.mul("100"),
-                BigNumber.from("90000000000000000"),
+                BigNumber.from("9").mul(N0__1_18DEC),
                 ONE_18.mul("10")
             );
             //then
@@ -203,11 +203,11 @@ describe("Open/Close Swap", function () {
         it("ProvideLiquidity for usdc", async () => {
             //given
 
-            const deposit = BigNumber.from("10000000000");
+            const deposit = USD_10_000_6DEC;
             await transferUsdcToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("100000000000")
+                USD_100_000_6DEC
             );
             await usdc.connect(admin).approve(josephUsdc.address, N0__01_18DEC);
             await usdc.connect(admin).approve(miltonUsdc.address, N0__01_18DEC);
