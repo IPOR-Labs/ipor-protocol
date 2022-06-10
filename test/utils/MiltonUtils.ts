@@ -29,7 +29,7 @@ import {
     MockSpreadModel,
 } from "../../types";
 
-import { exetuceCloseSwapTestCase } from "./SwapUtils";
+import { executeCloseSwapTestCase } from "./SwapUtils";
 
 import {
     USD_10_000_6DEC,
@@ -196,10 +196,9 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
@@ -265,7 +264,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
         miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_6DEC;
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
-        openerUserLost = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+        openerUserLost = TC_OPENING_FEE_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
             .add(expectedPayoffAbs);
 
@@ -281,6 +280,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             USER_SUPPLY_6_DECIMALS.add(openerUserEarned).sub(openerUserLost);
         expectedCloserUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
+
         expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_6DEC.add(
             TC_OPENING_FEE_6DEC
         )
@@ -288,14 +288,13 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             .add(expectedPayoffAbs);
     }
 
-    await exetuceCloseSwapTestCase(
+    await executeCloseSwapTestCase(
         testData,
         asset,
         leverage,
         direction,
         openerUser,
-        closerUser,
-        iporValueBeforeOpenSwap,
+        closerUser,        
         iporValueAfterOpenSwap,
         acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
@@ -320,10 +319,9 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
@@ -417,14 +415,13 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
             USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
     }
     expectedPayoff = expectedPayoffWad;
-    await exetuceCloseSwapTestCase(
+    await executeCloseSwapTestCase(
         testData,
         asset,
         leverage,
         direction,
         openerUser,
         closerUser,
-        iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
         acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
