@@ -53,6 +53,8 @@ import {
     N0__01_18DEC,
     N1__0_18DEC,
     YEAR_IN_SECONDS,
+	LEG_PAY_FIXED,
+	LEG_RECEIVE_FIXED,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -626,7 +628,7 @@ export const getPayFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: DaiM
         totalAmount: USD_10_000_18DEC,
         acceptableFixedInterestRate: BigNumber.from("6").mul(N0__01_18DEC),
         leverage: LEVERAGE_18DEC,
-        direction: 0,
+        direction: LEG_PAY_FIXED,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
@@ -637,7 +639,7 @@ export const getReceiveFixedDerivativeParamsDAICase1 = (user: Signer, tokenDai: 
         totalAmount: USD_10_000_18DEC,
         acceptableFixedInterestRate: N0__01_18DEC,
         leverage: LEVERAGE_18DEC,
-        direction: 1,
+        direction: LEG_RECEIVE_FIXED,
         openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
         from: user,
     };
