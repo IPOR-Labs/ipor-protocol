@@ -1,6 +1,6 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.
 interface IStanleyInternal {

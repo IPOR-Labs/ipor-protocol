@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 library IporMath {
     //@notice Division with rounding up on last position, x, and y is with MD

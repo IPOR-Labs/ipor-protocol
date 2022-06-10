@@ -1,6 +1,6 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.13;
+pragma solidity 0.8.14;
 
 import "../mocks/stanley/compound/MockCToken.sol";
 import "../mocks/stanley/compound/MockComptroller.sol";
