@@ -9,7 +9,7 @@ const StrategyCompoundUsdc = artifacts.require("StrategyCompoundUsdc");
 const StrategyCompoundDai = artifacts.require("StrategyCompoundDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const rinkebyIporProtocolOwner = "0xa8Ff215b1127f052ad4403737FEaAb40a29740c0";
+    const rinkebyIporProtocolOwner = "0x577D979487D9dFa26ebc1206e261D86d69d3a9e3";
 
     const strategyCompoundUsdt = await func.getValue(keys.CompoundStrategyProxyUsdt);
     const strategyCompoundUsdc = await func.getValue(keys.CompoundStrategyProxyUsdc);
