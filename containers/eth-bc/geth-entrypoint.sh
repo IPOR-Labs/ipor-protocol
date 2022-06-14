@@ -37,8 +37,8 @@ if [ "${FIRST_ARG}" = "run-geth" ]; then
   assert_required_variable "${ETH_BC_WS_API}" "ETH_BC_WS_API"
   assert_required_variable "${ETH_BC_VERBOSITY}" "ETH_BC_VERBOSITY"
   assert_required_variable "${ETH_BC_VMODULE_VERBOSITY}" "ETH_BC_VMODULE_VERBOSITY"
+  assert_required_variable "${ETH_BC_INIT_GENESIS_BLOCK}" "ETH_BC_INIT_GENESIS_BLOCK"
 
-  ETH_BC_INIT_GENESIS_BLOCK="${ETH_BC_INIT_GENESIS_BLOCK:-false}"
   ETH_BC_INIT_ACCOUNT="${ETH_BC_INIT_ACCOUNT:-false}"
 
   if [ ! -d "${ETH_BC_DATA_WORK_DIR}" ]; then

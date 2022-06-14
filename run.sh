@@ -54,9 +54,8 @@ AWS_PROFILE="ipor-dev"
 
 ETH_BC_URL="http://localhost:9545"
 
+IPOR_MIGRATION_STATE_DIR=".ipor"
 MIGRATION_STATE_REPO_DIR="${DIR}/../${MIGRATION_STATE_REPO}"
-MIGRATION_COMMIT_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
-LAST_COMPLETED_MIGRATION_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
 
 ENVS_DIR="${ETH_BC_DOCKERFILE_PATH}/envs"
 ETH_BC_DUMP_DIR="${ETH_BC_DOCKERFILE_PATH}/eth-bc-dump"
@@ -78,6 +77,13 @@ ETH_BC_GEN_GENESIS_PATH="${ETH_BC_DUMP_CONFIG_DIR}/genesis.json"
 ETH_BC_GEN_CONFIG_PATH="${ETH_BC_DUMP_CONFIG_DIR}/geth-config.toml"
 ETH_BC_GEN_KEY_PASSWORD_PATH="${ETH_BC_DUMP_CONFIG_DIR}/key-password.txt"
 ETH_BC_GEN_MINER_KEY_PATH="${ETH_BC_DUMP_CONFIG_DIR}/miner.key"
+ETH_BC_GEN_ENV_CONFIG_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONFIG_FILE_DEST}"
+ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONTRACTS_FILE_NAME}"
+ETH_BC_GEN_ENV_DUMP_CONFIG_DIR="${ETH_BC_DUMP_CONFIG_DIR}/"
+
+GEN_IPOR_ADDRESSES_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json"
+GEN_MIGRATION_COMMIT_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
+GEN_LAST_COMPLETED_MIGRATION_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
 
 IPOR_COCKPIT_DOCKERFILE_PATH="${DIR}/app"
 IPOR_COCKPIT_IMAGE_NAME="ipor-cockpit"
@@ -267,7 +273,7 @@ function create_env_config_file() {
 
 function create_contracts_zip() {
   if [ -f "${ENV_CONTRACTS_ZIP_DEST}" ]; then
-    rm "${ENV_CONTRACTS_ZIP_DEST}"
+    rm -v "${ENV_CONTRACTS_ZIP_DEST}"
   fi
   zip -r -j -q "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_DIR}"
   echo -e "${ENV_CONTRACTS_ZIP_DEST} file was created"
@@ -308,7 +314,7 @@ function create_migration_logs_dir_files() {
   local env_name="${2}"
 
   cd "${DIR}"
-  mkdir -p .ipor/
+  mkdir -p "${IPOR_MIGRATION_STATE_DIR}/"
   mkdir -p ".logs/${env_name}/compile/"
   mkdir -p ".logs/${env_name}/migrate/"
 
@@ -325,10 +331,12 @@ function get_commit_hash() {
 function create_commit_file() {
   local commit_hash="${1}"
 
-  rm -f "${MIGRATION_COMMIT_FILE_PATH}"
+  local MIGRATION_COMMIT_FILE_PATH="$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${ENV_NAME}")"
+
+  rm -f -v "${MIGRATION_COMMIT_FILE_PATH}"
   touch "${MIGRATION_COMMIT_FILE_PATH}"
 
-  echo "${commit_hash}" >>"${MIGRATION_COMMIT_FILE_PATH}"
+  echo "${commit_hash}" >> "${MIGRATION_COMMIT_FILE_PATH}"
   echo -e "Migration commit hash: ${commit_hash}"
 }
 
@@ -349,6 +357,7 @@ function update_global_state_vars() {
 }
 
 function get_last_migration_number() {
+  local LAST_COMPLETED_MIGRATION_FILE_PATH="$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${ENV_NAME}")"
   local last_migration_number=$(printf "%04d" $(jq -r ".lastCompletedMigration" "${LAST_COMPLETED_MIGRATION_FILE_PATH}"))
   echo "${last_migration_number}"
 }
@@ -366,7 +375,7 @@ function clean_openzeppelin_migration_file() {
     file_name="unknown-${ETH_BC_NETWORK_ID}"
     ;;
   esac
-  rm -f ".openzeppelin/${file_name}.json"
+  rm -f -v ".openzeppelin/${file_name}.json"
 }
 
 function prepare_migration_state_files_structure() {
@@ -387,7 +396,7 @@ function stop_docker_compose() {
 }
 
 function rm_smart_contracts_migrations_state_file() {
-  rm -f ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
+  rm -f -v ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
 }
 
 function clean_eth_blockchain() {
@@ -410,11 +419,12 @@ function run_smart_contract_migrations() {
 
   echo -e "\n\e[32mMigrate Smart Contracts to Ethereum blockchain...\e[0m\n"
 
-    echo "truffle migrate --network "${ETH_BC_NETWORK_NAME}" --compile-none"
+  prepare_migration_state_files_structure
 
-  truffle compile --all
-  truffle migrate --network "${ETH_BC_NETWORK_NAME}" --compile-none
-
+  npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  npm run export-abi
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 }
 
 function wait_for_eth_bc() {
@@ -433,14 +443,29 @@ function wait_for_eth_bc() {
   done
 }
 
+function clean_migration_files(){
+  cd "${DIR}"
+
+  echo -e "Remove migration files:"
+  rm -f -v "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${ENV_NAME}")"
+}
+
 function run_clean_smart_contract_migrations() {
   cd "${DIR}"
   echo -e "\n\e[32mMigrate with clean Smart Contracts to Ethereum blockchain...\e[0m\n"
-  rm -rf app/src/contracts/
-  rm_smart_contracts_migrations_state_file
 
-  truffle compile --all
-  truffle migrate --network "${ETH_BC_NETWORK_NAME}" --reset --compile-none
+  clean_openzeppelin_migration_file
+  rm -rf -v app/src/contracts/
+  clean_migration_files
+
+  prepare_migration_state_files_structure
+
+  npm run compile:truffle 2>&1| tee ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log"
+  npm run export-abi
+  export ETH_BC_NETWORK_NAME
+  npm run migrate:truffle-reset 2>&1| tee ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log"
 }
 
 function get_docker_volume_host_path() {
@@ -470,7 +495,7 @@ function dump_eth_blockchain_from_docker() {
   echo -e "\n\e[32mDump ethereum blockchain..\e[0m\n"
 
   echo -e "Remove old dump data from: ${ETH_BC_DUMP_DIR}/${ETH_DATA_DIR}\n"
-  rm -f -R "${ETH_BC_DUMP_DIR}"
+  rm -f -v -R "${ETH_BC_DUMP_DIR}"
   mkdir -p "${ETH_BC_DUMP_DIR}"
 
   echo -e "Copy blockchain data from container: ${ETH_BC_CONTAINER}:/root\n"
@@ -507,7 +532,7 @@ function create_env_j2_variables_file() {
   local VALUE=""
   local NAME=""
 
-  rm -f "${TARGET_VARIABLES_FILE}"
+  rm -f -v "${TARGET_VARIABLES_FILE}"
   grep <"${SOURCE_ENV_FILE}" -E -v "(^#.*|^$)" |
     while IFS= read -r LINE; do
       VALUE=${LINE#*=}
@@ -528,8 +553,10 @@ function fill_j2_template() {
 
 function set_value_in_env_config_file() {
   local VAR_NAME="${1}"
-  local VAR_VALUE="${2}"
+  local VAR_VALUE="$(echo $2 | sed 's/\//\\\//g' | sed 's/\./\\\./g')"
   local TARGET_ENV_FILE="${3}"
+
+  echo "sed -i 's/${VAR_NAME}.*/${VAR_NAME}=${VAR_VALUE}/' '${TARGET_ENV_FILE}'"
   sed -i "s/${VAR_NAME}.*/${VAR_NAME}=${VAR_VALUE}/" "${TARGET_ENV_FILE}"
 }
 
@@ -577,6 +604,7 @@ function login_ecr() {
 function push_docker_image() {
   local CONTAINER_NAME="${1}"
   local TAG="${2}"
+  echo "docker push ${CONTAINER_NAME}:${TAG}"
   docker push "${CONTAINER_NAME}:${TAG}"
 }
 
@@ -610,6 +638,7 @@ function build_geth_docker_image() {
     --build-arg ETH_BC_VERBOSITY="${ETH_BC_VERBOSITY}" \
     --build-arg ETH_BC_VMODULE_VERBOSITY="${ETH_BC_VMODULE_VERBOSITY}" \
     --build-arg ETH_BC_DUMP_DIR="${ETH_BC_DUMP_DIR}" \
+    --build-arg ETH_BC_INIT_GENESIS_BLOCK="${ETH_BC_INIT_GENESIS_BLOCK}" \
     .
 }
 
@@ -656,6 +685,58 @@ function migrate_and_dump() {
   dump_eth_blockchain_from_docker "${ENV_NAME}"
 }
 
+function copy_smart_contract_addresses_file() {
+  local ENV_NAME="${1}"
+
+  cd "${DIR}"
+  create_env_config_file
+  echo "Copy: ${ENV_CONFIG_FILE_DEST} into: $(get_path_with_env "${ETH_BC_GEN_ENV_CONFIG_FILE_PATH}" "${ENV_NAME}")"
+  cp "${ENV_CONFIG_FILE_DEST}" "$(get_path_with_env "${ETH_BC_GEN_ENV_CONFIG_FILE_PATH}" "${ENV_NAME}")"
+}
+
+function copy_smart_contract_json_files() {
+  local ENV_NAME="${1}"
+
+  cd "${DIR}"
+  create_contracts_zip
+  echo "Copy: ${ENV_CONTRACTS_ZIP_DEST} into: $(get_path_with_env "${ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH}" "${ENV_NAME}")"
+  cp "${ENV_CONTRACTS_ZIP_DEST}" "$(get_path_with_env "${ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH}" "${ENV_NAME}")"
+}
+
+function copy_ipor_migrations_dir() {
+  local ENV_NAME="${1}"
+
+  cd "${DIR}"
+  echo "Copy: ${IPOR_MIGRATION_STATE_DIR} into: $(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}" "${ENV_NAME}")"
+  cp -r "${IPOR_MIGRATION_STATE_DIR}" "$(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}" "${ENV_NAME}")"
+}
+
+function clean_env_files() {
+  local ENV_NAME="${1}"
+
+  echo "Clean env files in dir: $(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}" "${ENV_NAME}")"
+
+  rm -f -v "$(get_path_with_env "${ETH_BC_DUMP_CONFIG_DIR}/${ENV_FILE_NAME}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_VARIABLES_PATH}" "${ENV_NAME}")"
+
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_GENESIS_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_CONFIG_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_KEY_PASSWORD_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_MINER_KEY_PATH}" "${ENV_NAME}")"
+
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_ENV_CONFIG_FILE_PATH}" "${ENV_NAME}")"
+  rm -f -v "$(get_path_with_env "${ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH}" "${ENV_NAME}")"
+  rm -R -f -v "$(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}${IPOR_MIGRATION_STATE_DIR}" "${ENV_NAME}")"
+}
+
+function copy_env_files() {
+  local ENV_NAME="${1}"
+
+  copy_smart_contract_addresses_file "${ENV_NAME}"
+  copy_smart_contract_json_files "${ENV_NAME}"
+  copy_ipor_migrations_dir "${ENV_NAME}"
+}
+
 function build_and_push_docker_images() {
   local ENV_NAME="${1}"
   local BRANCH_NAME="${2}"
@@ -667,22 +748,26 @@ function build_and_push_docker_images() {
   build_geth_docker_image "${ETH_BC_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Push docker image
-  #push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Build cockpit docker image
   build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 
   # Push cockpit docker image
-  #push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
 }
 
 function create_geth_image() {
   local ENV_NAME="${1}"
   local BRANCH_NAME="${2}"
 
+  clean_env_files "${ENV_NAME}"
+
   create_env_config "${ENV_NAME}"
 
   migrate_and_dump "${ENV_NAME}"
+
+  copy_env_files "${ENV_NAME}"
 
   build_and_push_docker_images "${ENV_NAME}" "${BRANCH_NAME}"
 }
@@ -691,7 +776,11 @@ function create_migrated_geth_image() {
   local ENV_NAME="${1}"
   local BRANCH_NAME="${2}"
 
+  clean_env_files "${ENV_NAME}"
+
   create_env_config "${ENV_NAME}"
+
+  copy_env_files "${ENV_NAME}"
 
   build_and_push_docker_images "${ENV_NAME}" "${BRANCH_NAME}"
 }
@@ -761,8 +850,8 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
 
   cp -R ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log" "${migration_date_dir}/logs"
   cp -R ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log" "${migration_date_dir}/logs"
-  cp -R .ipor/ "${migration_date_dir}"
-  cp -R .ipor/ "${actual_state_dir}"
+  cp -R "${IPOR_MIGRATION_STATE_DIR}/" "${migration_date_dir}"
+  cp -R "${IPOR_MIGRATION_STATE_DIR}/" "${actual_state_dir}"
   cp -R .openzeppelin/ "${migration_date_dir}"
   cp -R .openzeppelin/ "${actual_state_dir}"
   cp "${ENV_CONTRACTS_ZIP_DEST}" "${migration_date_dir}/${ENV_CONTRACTS_FILE_NAME}"
