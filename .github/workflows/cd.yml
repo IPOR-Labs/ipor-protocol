@@ -7,29 +7,29 @@ on:
 
 jobs:
 
-#   notify:
-#     uses: ./.github/workflows/notify-slack.yml
-#     secrets:
-#       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  notify:
+    uses: ./.github/workflows/notify-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-#   build-1:
-#     needs: notify
-#     uses: ./.github/workflows/build-smart-contracts.yml
-#
-#   build-2:
-#     needs: notify
-#     uses: ./.github/workflows/build-java.yml
-#     with:
-#       smart-contracts-compile-enabled: true
-#       build-enabled: true
-#       tests-enabled: true
-#       publish-jar-enabled: false
-#       push-docker-enabled: false
+  build-1:
+    needs: notify
+    uses: ./.github/workflows/build-smart-contracts.yml
+
+  build-2:
+    needs: notify
+    uses: ./.github/workflows/build-java.yml
+    with:
+      smart-contracts-compile-enabled: true
+      build-enabled: true
+      tests-enabled: true
+      publish-jar-enabled: false
+      push-docker-enabled: false
 
   smart-contracts:
-#     needs:
-#       - notify
-#       - build-1
+    needs:
+      - notify
+      - build-1
     uses: ./.github/workflows/migrations.yml
     with:
       smart-contracts-compile-enabled: true
@@ -38,31 +38,31 @@ jobs:
       publish-jar-enabled: false
       push-docker-enabled: false
 
-#   publish:
-#     needs:
-#       - notify
-#       - build-1
-#       - build-2
-#       - smart-contracts
-#     uses: ./.github/workflows/build-java.yml
-#     with:
-#       smart-contracts-compile-enabled: true
-#       build-enabled: true
-#       tests-enabled: false
-#       publish-jar-enabled: true
-#       push-docker-enabled: false
+  publish:
+    needs:
+      - notify
+      - build-1
+      - build-2
+      - smart-contracts
+    uses: ./.github/workflows/build-java.yml
+    with:
+      smart-contracts-compile-enabled: true
+      build-enabled: true
+      tests-enabled: false
+      publish-jar-enabled: true
+      push-docker-enabled: false
 
-#   report:
-#     if: ${{ always() }}
-#     needs:
-#       - notify
-#       - build-1
-#       - build-2
-#       - smart-contracts
-#       - publish
-#     uses: ./.github/workflows/report-slack.yml
-#     secrets:
-#       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-#     with:
-#       success: ${{ needs.publish.result == 'success' }}
-#       slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
+  report:
+    if: ${{ always() }}
+    needs:
+      - notify
+      - build-1
+      - build-2
+      - smart-contracts
+      - publish
+    uses: ./.github/workflows/report-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    with:
+      success: ${{ needs.publish.result == 'success' }}
+      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
