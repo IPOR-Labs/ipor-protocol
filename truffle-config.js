@@ -22,20 +22,6 @@ module.exports = {
             skipDryRun: true,
             networkCheckTimeout: 300000, //5 min
         },
-        itf: {
-            provider: () => {
-                return new HDWalletProvider(
-                    [process.env.ADMIN_PRIV_KEY, process.env.IPOR_INDEX_ADMIN_PRIV_KEY],
-                    process.env.ETH_BC_URL
-                );
-            },
-            network_id: process.env.ETH_BC_NETWORK_ID,
-            skipDryRun: true,
-            networkCheckTimeout: 300000, //5 min
-            allowUnlimitedContractSize: true,
-            gas: 27048640,
-            blockGasLimit: 0x1fffffffffffff,
-        },
         develop: {
             host: "127.0.0.1",
             port: 8545,

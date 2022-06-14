@@ -1,5 +1,5 @@
-# FROM TAG: alltools-v1.10.15
-FROM ethereum/client-go@sha256:bf38e772f2cc68565241a8f3ddb12d857d4e0e422f36018f84681608285e269c
+# FROM TAG: v1.10.18
+FROM ${ETH_BC_DOCKER_IMAGE:-ethereum/client-go@sha256:7554a545df3e71c790c94869a37184eac4fc1f99731271cf963c4f399826fed3}
 
 HEALTHCHECK --interval=1m --timeout=3s \
   CMD curl -X POST -s --data \
@@ -30,6 +30,7 @@ ARG ETH_BC_WS_API
 ARG ETH_BC_VERBOSITY
 ARG ETH_BC_VMODULE_VERBOSITY
 ARG ETH_BC_DUMP_DIR
+ARG ETH_BC_INIT_GENESIS_BLOCK
 
 ENV ENV_PROFILE=${ENV_PROFILE:-localhost} \
   TZ=${TZ:-Europe/Warsaw} \
@@ -52,7 +53,8 @@ ENV ENV_PROFILE=${ENV_PROFILE:-localhost} \
   ETH_BC_WS_API=${ETH_BC_WS_API:-eth,net,web3,debug,txpool} \
   ETH_BC_VERBOSITY=${ETH_BC_VERBOSITY:-4} \
   ETH_BC_VMODULE_VERBOSITY=${ETH_BC_VMODULE_VERBOSITY:-rpc=5} \
-  ETH_BC_DUMP_DIR=${ETH_BC_DUMP_DIR:-eth-bc-dump}
+  ETH_BC_DUMP_DIR=${ETH_BC_DUMP_DIR:-eth-bc-dump} \
+  ETH_BC_INIT_GENESIS_BLOCK=${ETH_BC_INIT_GENESIS_BLOCK:-false}
 
 COPY geth-entrypoint.sh /geth-entrypoint.sh
 COPY "envs/${ENV_PROFILE}/genesis.json" /genesis.json
@@ -65,3 +67,7 @@ CMD ["run-geth"]
 
 COPY eth-bc-dump/.ethereum /root/.ethereum
 VOLUME /root/.ethereum
+
+COPY "envs/${ENV_PROFILE}/smart-contract-addresses.yaml" /ipor/smart-contract-addresses.yaml
+COPY "envs/${ENV_PROFILE}/contracts.zip" /ipor/contracts.zip
+COPY "envs/${ENV_PROFILE}/.ipor" /ipor/.ipor
