@@ -209,6 +209,3 @@ volumes:
   ipor-protocol-eth-exp-postgres-data:
     name: ipor-protocol-eth-exp-postgres-data
     driver: local
-  ipor-itf-data:
-    name: ipor-itf-data
-    driver: local
