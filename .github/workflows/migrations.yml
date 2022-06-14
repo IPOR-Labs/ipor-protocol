@@ -8,16 +8,14 @@ on:
 
 jobs:
 
-  notify:
-    # TODO: remove if
-    if: ${{ github.ref_name == 'lol' }}
-    uses: ./.github/workflows/notify-slack.yml
-    secrets:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#  notify:
+#    uses: ./.github/workflows/notify-slack.yml
+#    secrets:
+#      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   migrations:
-    needs:
-      - notify
+#    needs:
+#      - notify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -46,16 +44,14 @@ jobs:
           ./run.sh cgi
         shell: bash
 
-  report:
-    # TODO: add if
-    #if: ${{ always() }}
-    if: ${{ github.ref_name == 'lol' }}
-    needs:
-      - notify
-      - migrations
-    uses: ./.github/workflows/report-slack.yml
-    secrets:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-    with:
-      success: ${{ needs.migrations.result == 'success' }}
-      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
+#  report:
+#    if: ${{ always() }}
+#    needs:
+#      - notify
+#      - migrations
+#    uses: ./.github/workflows/report-slack.yml
+#    secrets:
+#      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+#    with:
+#      success: ${{ needs.migrations.result == 'success' }}
+#      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
