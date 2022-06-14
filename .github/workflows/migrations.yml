@@ -1,25 +1,23 @@
 name: Run migrations
 
 on:
-  workflow_call:
-
-    secrets:
-      AWS_ACCESS_KEY_ID:
-        required: false
-      AWS_SECRET_ACCESS_KEY:
-        required: false
-      AWS_ACCOUNT_ID:
-        required: false
-
-    inputs:
-
-      ecr-repository-name:
-        description: 'AWS ECR repository name for target docker image'
-        type: string
+  push:
+    branches:
+      # TODO: change to develop
+      - feature/IL-716
 
 jobs:
 
+  notify:
+    # TODO: remove if
+    if: ${{ env.SLACK_BOT_TOKEN == '' }}
+    uses: ./.github/workflows/notify-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
   migrations:
+    needs:
+      - notify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,60 +41,21 @@ jobs:
         uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
         continue-on-error: true
 
-      - name: Prepare .env
-        # from tag: v1.2.0
-        uses: cuchi/jinja2-action@1149b92d9ea6db61d7f71c22e3d5028d8065f140
-        with:
-          template: .env.j2
-          output_file: .env
-          strict: true
-          variables: |
-            domain=TODO
-            compose_profile=eth-bc
-            eth_bc_host_address=0.0.0.0
-            eth_bc_miner_address=0x9Ba5D30c0D862cF718189CDb6B7886C7D073ee41
-            eth_bc_network_port=40505
-            eth_bc_port=34555
-            eth_bc_ws_port=34556
-            eth_bc_network_id=5777
-            eth_bc_chain_id=5777
-            eth_bc_network_name=docker
-            eth_bc_block_period=0
-            admin_priv_key=0x2db7daf9fe5948e22e334e38639560eea1fdea76ee01439a3e01ddb6acb9c23c
-            ipor_index_admin_priv_key=0x7ed5032480736bf917fc2e8aed01f3dfecba423ef1885a5855ccd8fd358e7e57
-            eth_bc_full_url=http://localhost:9545
-            ipor_env_admin_aws_access_key_id=TODO
-            ipor_env_admin_aws_secret_access_key=TODO
-            initial_ipor_migration_enabled=false
-            itf_enabled=true
-            pub_network_token_usdt_address=NOT_USED
-            pub_network_token_usdc_address=NOT_USED
-            pub_network_token_dai_address=NOT_USED
-            eth_bc_private_url=NOT_USED
-            eth_bc_private_ws_url=NOT_USED
-            eth_explorer_db_user=NOT_USED
-            eth_explorer_db_password=NOT_USED
-            eth_explorer_db_name=NOT_USED
-            eth_explorer_protocol=NOT_USED
-            eth_explorer_host=NOT_USED
-            eth_explorer_http_port=NOT_USED
-            eth_explorer_https_port=NOT_USED
-            env_profile=NOT_USED
-
-      - name: Build
+      - name: Create geth images
         run: |
-          npm install
-          ./run.sh r
-          ./run.sh mc
+          ./run.sh cgi
         shell: bash
 
-      - name: Push docker
-        # from tag: v4
-        uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
-        with:
-          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-          repo: ${{ inputs.ecr-repository-name }}
-          region: eu-central-1
-          tags: latest,${{ github.sha }}
+  report:
+    # TODO: add if
+    #if: ${{ always() }}
+    if: ${{ env.SLACK_BOT_TOKEN == '' }}
+    needs:
+      - notify
+      - migrations
+    uses: ./.github/workflows/report-slack.yml
+    secrets:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+    with:
+      success: ${{ needs.migrations.result == 'success' }}
+      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
