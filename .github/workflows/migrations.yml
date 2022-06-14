@@ -10,7 +10,7 @@ jobs:
 
   notify:
     # TODO: remove if
-    if: ${{ env.SLACK_BOT_TOKEN == '' }}
+    if: ${{ github.ref_name == 'lol' }}
     uses: ./.github/workflows/notify-slack.yml
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -49,7 +49,7 @@ jobs:
   report:
     # TODO: add if
     #if: ${{ always() }}
-    if: ${{ env.SLACK_BOT_TOKEN == '' }}
+    if: ${{ github.ref_name == 'lol' }}
     needs:
       - notify
       - migrations
