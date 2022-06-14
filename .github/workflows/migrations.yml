@@ -56,6 +56,19 @@ jobs:
           pip install -r requirements.txt
         shell: bash
 
+      - name: Set up AWS credentials
+        # from tag: v1.6.1
+        uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Login to ECR
+        id: login-ecr
+        # from tag: v1.4.0
+        uses: aws-actions/amazon-ecr-login@3d4e073ce6a6845ed27b30a0fe05b6e22c80ac6b
+
       - name: Create geth images
         run: |
           ./run.sh cgi
