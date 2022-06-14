@@ -39,6 +39,16 @@ jobs:
         uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
         continue-on-error: true
 
+      - name: Set up python
+        # from tag: v4.0.0
+        uses: actions/setup-python@d09bd5e6005b175076f227b13d9730d56e9dcfcb
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install
+        run: pip install j2cli
+
       - name: Create geth images
         run: |
           ./run.sh cgi
