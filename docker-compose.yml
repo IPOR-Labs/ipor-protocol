@@ -2,11 +2,11 @@ version: "3.9"
 
 services:
 
-############################################ COCKPIT ############################################
+  ############################################ COCKPIT ############################################
 
   ipor-cockpit:
     container_name: ipor-cockpit
-    image: ipor-cockpit:latest
+    image: "${IPOR_COCKPIT_DOCKER_IMAGE}"
     profiles:
       - dev-tool
       - dev-tool-provider
@@ -18,7 +18,7 @@ services:
     environment:
       - TZ=${TIMEZONE}
 
-############################################ BLOCKCHAIN ############################################
+  ############################################ BLOCKCHAIN ############################################
 
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
@@ -68,7 +68,7 @@ services:
       - ETH_BC_VMODULE_VERBOSITY=${ETH_BC_VMODULE_VERBOSITY}
       - ETH_BC_INIT_GENESIS_BLOCK=${ETH_BC_INIT_GENESIS_BLOCK}
 
-############################################ SSL ############################################
+  ############################################ SSL ############################################
 
   ipor-protocol-nginx:
     container_name: ipor-protocol-nginx
@@ -119,7 +119,7 @@ services:
     depends_on:
       - ipor-protocol-eth-bc
 
-############################################ EXPLORER ############################################
+  ############################################ EXPLORER ############################################
 
   ipor-protocol-eth-explorer:
     container_name: ipor-protocol-eth-explorer
