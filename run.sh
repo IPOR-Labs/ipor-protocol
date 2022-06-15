@@ -7,7 +7,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
-AWS_PROFILE="default"
+AWS_PROFILE=""
 
 function read_env_file() {
   local ENV_FILE_PATH="${1}"
