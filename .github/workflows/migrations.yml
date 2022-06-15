@@ -41,14 +41,14 @@ jobs:
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
         with:
           path: "**/node_modules"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('**/package-lock.json') }}
 
       - name: Set up truffle cache
         # from tag: v2.1.7
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
         with:
           path: "~/config/truffle"
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-truffle-config-${{ hashFiles('**/package-lock.json') }}
 
       - name: Set up docker cache
         # from tag: v0.0.11
