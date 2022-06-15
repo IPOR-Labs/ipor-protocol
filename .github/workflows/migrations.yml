@@ -47,7 +47,7 @@ jobs:
         # from tag: v2.1.7
         uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
         with:
-          path: "~/config/truffle"
+          path: "~/.config/truffle"
           key: ${{ runner.os }}-truffle-config-${{ hashFiles('**/package-lock.json') }}
 
       - name: Set up docker cache
