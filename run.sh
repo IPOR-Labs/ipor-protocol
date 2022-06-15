@@ -7,6 +7,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
+AWS_PROFILE="default"
 
 function read_env_file() {
   local ENV_FILE_PATH="${1}"
@@ -50,7 +51,6 @@ ETH_BC_ITF_TAG_NAME="itf"
 
 AWS_REGION="eu-central-1"
 AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
-AWS_PROFILE="ipor-dev"
 
 ETH_BC_URL="http://localhost:9545"
 
