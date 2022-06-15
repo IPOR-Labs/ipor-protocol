@@ -8,6 +8,7 @@ ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
 AWS_PROFILE=""
+ROOT_PASSWORD=""
 
 function read_env_file() {
   local ENV_FILE_PATH="${1}"
@@ -103,12 +104,13 @@ IS_UPDATE_COCKPIT="NO"
 IS_DUMP_ETH_BLOCKCHAIN="NO"
 IS_CREATE_GETH_IMAGE="NO"
 
-ROOT_PASSWORD="TODO"
-
 LAST_MIGRATION_DATE=""
 LAST_COMMIT_HASH=""
 LAST_COMMIT_SHORT_HASH=""
 LAST_MIGRATION_NUMBER=""
+
+CGI_IMAGE_TYPE=""
+CGI_BRANCH_NAME=""
 
 if [ $# -eq 0 ]; then
   IS_RUN="YES"
@@ -155,6 +157,10 @@ while test $# -gt 0; do
     ;;
   create-geth-image | cgi)
     IS_CREATE_GETH_IMAGE="YES"
+    CGI_IMAGE_TYPE="${2}"
+    CGI_BRANCH_NAME="${3}"
+    shift
+    shift
     ;;
   help | h | ?)
     IS_HELP="YES"
@@ -822,8 +828,6 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
-  #TODO: check
-
   run_clean_smart_contract_migrations
 fi
 
@@ -927,9 +931,23 @@ if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
 fi
 
 if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
-  #create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "develop"
-  #create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "develop"
-  create_geth_image "${ETH_BC_ITF_TAG_NAME}" "develop"
+
+  if [ -z "${CGI_BRANCH_NAME}" ]; then
+    echo "ERROR: Missing second parameter in 'create-geth-image' command: '${CGI_BRANCH_NAME}'"
+    exit 1
+  fi
+
+  if [ $CGI_IMAGE_TYPE = "${ETH_BC_ITF_TAG_NAME}" ]; then
+    create_geth_image "${ETH_BC_ITF_TAG_NAME}" "${CGI_BRANCH_NAME}"
+  elif [ $CGI_IMAGE_TYPE = "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}/${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" ]; then
+    create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${CGI_BRANCH_NAME}"
+    create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "${CGI_BRANCH_NAME}"
+  else
+    echo "ERROR: Unknown first parameter in 'create-geth-image' command: '${CGI_IMAGE_TYPE}' " \
+    "Allowed options: '${ETH_BC_ITF_TAG_NAME}' or '${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}/${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}'"
+    exit 1
+  fi
+
 fi
 
 if [ $IS_HELP = "YES" ]; then
@@ -947,7 +965,7 @@ if [ $IS_HELP = "YES" ]; then
   echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
   echo -e "   \e[36mupdate-cockpit\e[0m|\e[36muc\e[0m        Update IPOR cockpit container"
   echo -e "   \e[36mdump-eth-blockchain\e[0m|\e[36mdeb\e[0m  Dump Ethereum blockchain"
-  echo -e "   \e[36mcreate-geth-image\e[0m|\e[36mcgi\e[0m    Create geth docker image"
+  echo -e "   \e[36mcreate-geth-image\e[0m|\e[36mcgi\e[0m {image_type} {branch_name}   Create geth docker image"
   echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
   echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
   echo -e "   \e[34mwithout any command\e[0m - the same as Run"

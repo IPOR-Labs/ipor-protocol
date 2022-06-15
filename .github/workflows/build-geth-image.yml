@@ -1,21 +1,37 @@
-name: Run migrations
+name: Build geth image
 
 on:
-  push:
-    branches:
-      # TODO: change to develop
-      - feature/IL-716
+  workflow_call:
+
+    secrets:
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
+
+    inputs:
+
+      image-type:
+        description: 'The type of created image'
+        type: choice
+        options:
+          - itf
+          - s0/s12
+        default: itf
+
+      branch:
+        description: 'Git repository branch name from which image will be built'
+        type: string
+        default: main
+
+      aws-region:
+        description: 'AWS region used by ECR'
+        type: string
+        default: eu-central-1
 
 jobs:
 
-#  notify:
-#    uses: ./.github/workflows/notify-slack.yml
-#    secrets:
-#      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-
   migrations:
-#    needs:
-#      - notify
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -74,7 +90,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: ${{ inputs.aws-region }}
 
       - name: Login to ECR
         id: login-ecr
@@ -85,16 +101,4 @@ jobs:
         run: npm install
 
       - name: Create geth images
-        run: ./run.sh cgi
-
-#  report:
-#    if: ${{ always() }}
-#    needs:
-#      - notify
-#      - migrations
-#    uses: ./.github/workflows/report-slack.yml
-#    secrets:
-#      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-#    with:
-#      success: ${{ needs.migrations.result == 'success' }}
-#      slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
+        run: ./run.sh cgi "${{ inputs.image-type }}" "${{ inputs.branch }}"
