@@ -12,12 +12,9 @@ on:
     inputs:
 
       image-type:
-        description: 'The type of created image'
-        type: choice
-        options:
-          - itf
-          - s0/s12
-        default: itf
+        description: 'The type of created image, example: itf or s0/s12'
+        type: string
+        required: true
 
       branch:
         description: 'Git repository branch name from which image will be built'
