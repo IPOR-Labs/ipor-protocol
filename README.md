@@ -57,7 +57,7 @@ IPOR smart contracts
 -   ./migrate.sh --start-from-migration 5 --migrate-to 10
 -   Start migration in dry run mode - you will see only migration logs without running migration commands
 -   ./migration.sh --dry-run
--   Change default tag name "migration-" to "audit-"
+-   Change default tag name prefix "migration-" to "audit-"
 -   ./migration.sh --tag-prefix "audit-"
 
 ### How to execute smart contracts migrations remotely?

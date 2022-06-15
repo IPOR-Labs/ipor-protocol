@@ -32,6 +32,16 @@ if [ -f "${ENV_FILE}" ]; then
   echo -e "\n\e[32m${ENV_FILE} file was read\e[0m\n"
 fi
 
+if [ -z "${ENV_PROFILE}" ]; then
+  echo -e "\n\e[31mEnvironment variable ENV_PROFILE is not set\e[0m\n"
+  exit
+fi
+
+if [ -z "${ETH_BC_NETWORK_NAME}" ]; then
+  echo -e "\n\e[31mEnvironment variable ETH_BC_NETWORK_NAME is not set\e[0m\n"
+  exit
+fi
+
 LAST_COMPLETED_MIGRATION_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
 
 if [ -f "${LAST_COMPLETED_MIGRATION_FILE_PATH}" ]; then
