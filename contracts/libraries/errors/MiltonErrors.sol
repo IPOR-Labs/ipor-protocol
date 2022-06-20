@@ -80,4 +80,7 @@ library MiltonErrors {
     string public constant VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE = "IPOR_327";
 
     string public constant TREASURE_BALANCE_TOO_LOW = "IPOR_328";
+
+    /// @notice Appear during closing position in batch when all selected swaps are already closed.
+    string public constant ALL_SWAPS_ALREADY_CLOSED = "IPOR_329";
 }

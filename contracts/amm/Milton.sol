@@ -184,15 +184,24 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 payoutForLiquidatorPayFixed;
         uint256 payoutForLiquidatorReceiveFixed;
+        bool notAllSwapsAlreadyClosedPayFixed;
+        bool notAllSwapsAlreadyClosedReceiveFixed;
 
-        (payoutForLiquidatorPayFixed, closedPayFixedSwaps) = _closeSwapsPayFixed(
-            payFixedSwapIds,
-            closeTimestamp
-        );
+        (
+            payoutForLiquidatorPayFixed,
+            closedPayFixedSwaps,
+            notAllSwapsAlreadyClosedPayFixed
+        ) = _closeSwapsPayFixed(payFixedSwapIds, closeTimestamp);
 
-        (payoutForLiquidatorReceiveFixed, closedReceiveFixedSwaps) = _closeSwapsReceiveFixed(
-            receiveFixedSwapIds,
-            closeTimestamp
+        (
+            payoutForLiquidatorReceiveFixed,
+            closedReceiveFixedSwaps,
+            notAllSwapsAlreadyClosedReceiveFixed
+        ) = _closeSwapsReceiveFixed(receiveFixedSwapIds, closeTimestamp);
+
+        require(
+            notAllSwapsAlreadyClosedPayFixed || notAllSwapsAlreadyClosedReceiveFixed,
+            MiltonErrors.ALL_SWAPS_ALREADY_CLOSED
         );
 
         _transferLiquidationDepositAmount(
@@ -234,7 +243,14 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 closeTimestamp
     ) internal returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 payoutForLiquidator;
-        (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(swapIds, closeTimestamp);
+        bool notAllSwapsAlreadyClosedPayFixed;
+        (payoutForLiquidator, closedSwaps, notAllSwapsAlreadyClosedPayFixed) = _closeSwapsPayFixed(
+            swapIds,
+            closeTimestamp
+        );
+
+        require(notAllSwapsAlreadyClosedPayFixed, MiltonErrors.ALL_SWAPS_ALREADY_CLOSED);
+
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
     }
 
@@ -243,7 +259,16 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 closeTimestamp
     ) internal returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps) {
         uint256 payoutForLiquidator;
-        (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+        bool notAllSwapsAlreadyClosedReceiveFixed;
+
+        (
+            payoutForLiquidator,
+            closedSwaps,
+            notAllSwapsAlreadyClosedReceiveFixed
+        ) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
+
+        require(notAllSwapsAlreadyClosedReceiveFixed, MiltonErrors.ALL_SWAPS_ALREADY_CLOSED);
+
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
     }
 
@@ -655,17 +680,23 @@ abstract contract Milton is MiltonInternal, IMilton {
         internal
         returns (
             uint256 payoutForLiquidator,
-            MiltonTypes.IporSwapClosingResult[] memory closedSwaps
+            MiltonTypes.IporSwapClosingResult[] memory closedSwaps,
+            bool notAllSwapsAlreadyClosed
         )
     {
+        uint256 swapIdsLength = swapIds.length;
         require(
-            swapIds.length <= _getLiquidationLegLimit(),
+            swapIdsLength <= _getLiquidationLegLimit(),
             MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
         );
 
-        closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIds.length);
+        if (swapIdsLength == 0) {
+            notAllSwapsAlreadyClosed = true;
+        }
 
-        for (uint256 i = 0; i < swapIds.length; i++) {
+        closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIdsLength);
+
+        for (uint256 i = 0; i < swapIdsLength; i++) {
             uint256 swapId = swapIds[i];
             require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
 
@@ -674,6 +705,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
                 payoutForLiquidator += _closeSwapPayFixed(iporSwap, closeTimestamp);
                 closedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, true);
+                notAllSwapsAlreadyClosed = true;
             } else {
                 closedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
             }
@@ -684,17 +716,24 @@ abstract contract Milton is MiltonInternal, IMilton {
         internal
         returns (
             uint256 payoutForLiquidator,
-            MiltonTypes.IporSwapClosingResult[] memory closedSwaps
+            MiltonTypes.IporSwapClosingResult[] memory closedSwaps,
+            bool notAllSwapsAlreadyClosed
         )
     {
+        uint256 swapIdsLength = swapIds.length;
+
         require(
-            swapIds.length <= _getLiquidationLegLimit(),
+            swapIdsLength <= _getLiquidationLegLimit(),
             MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
         );
 
-        closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIds.length);
+        if (swapIdsLength == 0) {
+            notAllSwapsAlreadyClosed = true;
+        }
 
-        for (uint256 i = 0; i < swapIds.length; i++) {
+        closedSwaps = new MiltonTypes.IporSwapClosingResult[](swapIdsLength);
+
+        for (uint256 i = 0; i < swapIdsLength; i++) {
             uint256 swapId = swapIds[i];
             require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
 
@@ -705,6 +744,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
                 payoutForLiquidator += _closeSwapReceiveFixed(iporSwap, closeTimestamp);
                 closedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, true);
+                notAllSwapsAlreadyClosed = true;
             } else {
                 closedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
             }
