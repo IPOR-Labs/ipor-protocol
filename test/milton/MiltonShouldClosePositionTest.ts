@@ -4386,7 +4386,7 @@ describe("Milton - close position", () => {
             N1__0_18DEC.mul(liquidationDepositAmount * volumePayFixed)
         );
 
-        for (let i = volumePayFixed; i < volumePayFixed; i++) {
+        for (let i = 0; i < volumePayFixed; i++) {
             await miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwapPayFixed(i + 1, closeTimestamp);
