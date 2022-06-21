@@ -56,16 +56,20 @@ interface IMilton {
 
     /// @notice Closes Pay-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
+    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Pay-Fixed Swap ID.
     function closeSwapPayFixed(uint256 swapId) external;
 
     /// @notice Closes Receive-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
+    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Receive-Fixed swap ID.
     function closeSwapReceiveFixed(uint256 swapId) external;
 
     /// @notice Closes list of pay fixed and receive fixed swaps in one transaction.
-	/// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset for every swap which was closed within this transaction.
+    /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset for every swap which was closed within this transaction.
+    /// @dev Rejects transaction and returns error code IPOR_329 if all selected swap IDs in payFixedSwapIds and receiveFixedSwapIds are already closed.
+    /// @dev Rejects transaction and returns error code IPOR_330 if payFixedSwapIds or receiveFixedSwapIds lists are empty.
     /// @param payFixedSwapIds list of pay fixed swap ids
     /// @param receiveFixedSwapIds list of receive fixed swap ids
     /// @return closedPayFixedSwaps list of pay fixed swaps with information which one was closed during this particular transaction.
