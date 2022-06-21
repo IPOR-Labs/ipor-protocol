@@ -182,6 +182,11 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.LIQUIDATION_LEG_LIMIT_EXCEEDED
         );
 
+        require(
+            payFixedSwapIds.length != 0 || receiveFixedSwapIds.length != 0,
+            MiltonErrors.SWAPS_LIST_IS_EMPTY
+        );
+
         uint256 payoutForLiquidatorPayFixed;
         uint256 payoutForLiquidatorReceiveFixed;
         bool notAllSwapsAlreadyClosedPayFixed;
