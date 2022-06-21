@@ -1461,6 +1461,13 @@ describe("Milton - not close position", () => {
         const closeTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         //when
-        await miltonDai.connect(userThree).itfCloseSwaps([], [], closeTimestamp);
+        await assertError(
+            //when
+            miltonDai
+                .connect(userThree)
+                .itfCloseSwaps([], [], closeTimestamp),
+            //then
+            "IPOR_330"
+        );
     });
 });
