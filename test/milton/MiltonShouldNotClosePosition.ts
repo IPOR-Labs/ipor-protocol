@@ -1333,6 +1333,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close 2 pay fixed, 2 receive fixed positions in one transaction - all positions already closed", async () => {
         //given
+		miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1463,9 +1464,7 @@ describe("Milton - not close position", () => {
         //when
         await assertError(
             //when
-            miltonDai
-                .connect(userThree)
-                .itfCloseSwaps([], [], closeTimestamp),
+            miltonDai.connect(userThree).itfCloseSwaps([], [], closeTimestamp),
             //then
             "IPOR_330"
         );
