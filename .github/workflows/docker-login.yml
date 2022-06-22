@@ -7,6 +7,7 @@ on:
       CI_GITHUB_ACTOR:
         required: false
       CI_GITHUB_TOKEN:
+        required: false
 
 jobs:
   login:
