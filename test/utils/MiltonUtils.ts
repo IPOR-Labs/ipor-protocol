@@ -3,17 +3,6 @@ import hre from "hardhat";
 
 import {
     MockBaseMiltonSpreadModel,
-    MockCase1MiltonSpreadModel,
-    MockCase2MiltonSpreadModel,
-    MockCase3MiltonSpreadModel,
-    MockCase4MiltonSpreadModel,
-    MockCase5MiltonSpreadModel,
-    MockCase6MiltonSpreadModel,
-    MockCase7MiltonSpreadModel,
-    MockCase8MiltonSpreadModel,
-    MockCase9MiltonSpreadModel,
-    MockCase10MiltonSpreadModel,
-    MockCase11MiltonSpreadModel,
     MockCase0MiltonUsdt,
     MockCase1MiltonUsdt,
     MockCase2MiltonUsdt,
@@ -38,10 +27,9 @@ import {
     MockCase8MiltonDai,
     UsdtMockedToken,
     MockSpreadModel,
-    MiltonSpreadModel,
 } from "../../types";
 
-import { exetuceCloseSwapTestCase } from "./SwapUtils";
+import { executeCloseSwapTestCase } from "./SwapUtils";
 
 import {
     USD_10_000_6DEC,
@@ -66,21 +54,6 @@ const { ethers } = hre;
 // ########################################################################################################
 //                                           Milton
 // ########################################################################################################
-
-export enum MiltonSpreadModels {
-    BASE = "MockBaseMiltonSpreadModel",
-    CASE1 = "MockCase1MiltonSpreadModel",
-    CASE2 = "MockCase2MiltonSpreadModel",
-    CASE3 = "MockCase3MiltonSpreadModel",
-    CASE4 = "MockCase4MiltonSpreadModel",
-    CASE5 = "MockCase5MiltonSpreadModel",
-    CASE6 = "MockCase6MiltonSpreadModel",
-    CASE7 = "MockCase7MiltonSpreadModel",
-    CASE8 = "MockCase8MiltonSpreadModel",
-    CASE9 = "MockCase9MiltonSpreadModel",
-    CASE10 = "MockCase10MiltonSpreadModel",
-    CASE11 = "MockCase11MiltonSpreadModel",
-}
 
 export enum MiltonUsdcCase {
     CASE0 = "MockCase0MiltonUsdc",
@@ -114,20 +87,6 @@ export enum MiltonDaiCase {
     CASE8 = "MockCase8MiltonDai",
 }
 
-export type MockMiltonSpreadModel =
-    | MockBaseMiltonSpreadModel
-    | MockCase1MiltonSpreadModel
-    | MockCase2MiltonSpreadModel
-    | MockCase3MiltonSpreadModel
-    | MockCase4MiltonSpreadModel
-    | MockCase5MiltonSpreadModel
-    | MockCase6MiltonSpreadModel
-    | MockCase7MiltonSpreadModel
-    | MockCase8MiltonSpreadModel
-    | MockCase9MiltonSpreadModel
-    | MockCase10MiltonSpreadModel
-    | MockCase11MiltonSpreadModel;
-
 export type MiltonUsdcMockCase =
     | MockCase0MiltonUsdc
     | MockCase1MiltonUsdc
@@ -156,11 +115,9 @@ export type MiltonDaiMockCase =
     | MockCase6MiltonDai
     | MockCase8MiltonDai;
 
-export const prepareMockMiltonSpreadModel = async (
-    spreadmiltonCase: MiltonSpreadModels
-): Promise<MockMiltonSpreadModel> => {
-    const MockMiltonSpreadModel = await ethers.getContractFactory(spreadmiltonCase);
-    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockMiltonSpreadModel;
+export const prepareMockMiltonSpreadModel = async (): Promise<MockBaseMiltonSpreadModel> => {
+    const MockMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
+    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockBaseMiltonSpreadModel;
     return miltonSpread;
 };
 
@@ -202,86 +159,6 @@ export const getMockMiltonDaiCase = async (
     return (await MockCaseMilton.deploy()) as MiltonDaiMockCase;
 };
 
-export const prepareMiltonSpreadCase2 = async () => {
-    const MockCase2MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase2MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase2MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase3 = async () => {
-    const MockCase3MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase3MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase3MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase4 = async () => {
-    const MockCase4MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase4MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase4MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase5 = async () => {
-    const MockCase5MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase5MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase5MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase6 = async () => {
-    const MockCase6MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase6MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase6MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase7 = async () => {
-    const MockCase7MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase7MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase7MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase8 = async () => {
-    const MockCase8MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase8MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase8MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase9 = async () => {
-    const MockCase9MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase9MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase9MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase10 = async () => {
-    const MockCase10MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase10MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase10MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
-export const prepareMiltonSpreadCase11 = async () => {
-    const MockCase11MiltonSpreadModel = await ethers.getContractFactory(
-        "MockCase11MiltonSpreadModel"
-    );
-    const miltonSpread = await MockCase11MiltonSpreadModel.deploy();
-    return miltonSpread;
-};
-
 export const getPayFixedDerivativeParamsUSDTCase1 = (user: Signer, tokenUsdt: UsdtMockedToken) => {
     return {
         asset: tokenUsdt.address,
@@ -319,10 +196,9 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
@@ -388,7 +264,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
         miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_6DEC;
         closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC;
-        openerUserLost = TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
+        openerUserLost = TC_OPENING_FEE_6DEC.add(TC_IPOR_PUBLICATION_AMOUNT_6DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC)
             .add(expectedPayoffAbs);
 
@@ -404,6 +280,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             USER_SUPPLY_6_DECIMALS.add(openerUserEarned).sub(openerUserLost);
         expectedCloserUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
+
         expectedMiltonUnderlyingTokenBalance = TC_LP_BALANCE_BEFORE_CLOSE_6DEC.add(
             TC_OPENING_FEE_6DEC
         )
@@ -411,14 +288,13 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
             .add(expectedPayoffAbs);
     }
 
-    await exetuceCloseSwapTestCase(
+    await executeCloseSwapTestCase(
         testData,
         asset,
         leverage,
         direction,
         openerUser,
-        closerUser,
-        iporValueBeforeOpenSwap,
+        closerUser,        
         iporValueAfterOpenSwap,
         acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,
@@ -443,10 +319,9 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
@@ -540,14 +415,13 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
             USER_SUPPLY_6_DECIMALS.add(closerUserEarned).sub(closerUserLost);
     }
     expectedPayoff = expectedPayoffWad;
-    await exetuceCloseSwapTestCase(
+    await executeCloseSwapTestCase(
         testData,
         asset,
         leverage,
         direction,
         openerUser,
         closerUser,
-        iporValueBeforeOpenSwap,
         iporValueAfterOpenSwap,
         acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,

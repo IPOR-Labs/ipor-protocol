@@ -1,3 +1,4 @@
+import Migrations from "./contracts/Migrations.json";
 import IporOracle from "./contracts/IporOracle.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
@@ -47,6 +48,14 @@ import MockTestnetShareTokenCompoundDai from "./contracts/MockTestnetShareTokenC
 import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
 import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
 import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
+
+import StrategyAaveUsdt from "./contracts/StrategyAaveUsdt.json";
+import StrategyAaveUsdc from "./contracts/StrategyAaveUsdc.json";
+import StrategyAaveDai from "./contracts/StrategyAaveDai.json";
+
+import StrategyCompoundUsdt from "./contracts/StrategyCompoundUsdt.json";
+import StrategyCompoundUsdc from "./contracts/StrategyCompoundUsdc.json";
+import StrategyCompoundDai from "./contracts/StrategyCompoundDai.json";
 
 import MockTestnetStrategyAaveUsdt from "./contracts/MockTestnetStrategyAaveUsdt.json";
 import MockTestnetStrategyAaveUsdc from "./contracts/MockTestnetStrategyAaveUsdc.json";
@@ -235,6 +244,45 @@ const DrizzleStrategyCompoundDai =
         ? StrategyCompoundDai
         : MockTestnetStrategyCompoundDai;
 
+
+let DrizzleStrategyAaveUsdt;
+let DrizzleStrategyAaveUsdc;
+let DrizzleStrategyAaveDai;
+
+let DrizzleStrategyCompoundUsdt;
+let DrizzleStrategyCompoundUsdc;
+let DrizzleStrategyCompoundDai;
+
+if (process.env.REACT_APP_ENV_PROFILE === "ipor.io") {
+    //Mainnet
+    DrizzleStrategyAaveUsdt = StrategyAaveUsdt;
+    DrizzleStrategyAaveUsdc = StrategyAaveUsdc;
+    DrizzleStrategyAaveDai = StrategyAaveDai;
+
+    DrizzleStrategyCompoundUsdt = StrategyCompoundUsdt;
+    DrizzleStrategyCompoundUsdc = StrategyCompoundUsdc;
+    DrizzleStrategyCompoundDai = StrategyCompoundDai;
+} else {
+    //Other than Mainnet
+    DrizzleStrategyAaveUsdt = MockTestnetStrategyAaveUsdt;
+    DrizzleStrategyAaveUsdc = MockTestnetStrategyAaveUsdc;
+    DrizzleStrategyAaveDai = MockTestnetStrategyAaveDai;
+
+    DrizzleStrategyCompoundUsdt = MockTestnetStrategyCompoundUsdt;
+    DrizzleStrategyCompoundUsdc = MockTestnetStrategyCompoundUsdc;
+    DrizzleStrategyCompoundDai = MockTestnetStrategyCompoundDai;
+}
+
+DrizzleStrategyAaveUsdt.contractName = "DrizzleStrategyAaveUsdt";
+DrizzleStrategyAaveUsdc.contractName = "DrizzleStrategyAaveUsdc";
+DrizzleStrategyAaveDai.contractName = "DrizzleStrategyAaveDai";
+
+DrizzleStrategyCompoundUsdt.contractName = "DrizzleStrategyCompoundUsdt";
+DrizzleStrategyCompoundUsdc.contractName = "DrizzleStrategyCompoundUsdc";
+DrizzleStrategyCompoundDai.contractName = "DrizzleStrategyCompoundDai";
+
+let options = null;
+
 if (process.env.REACT_APP_ITF_ENABLED === "true") {
     options = {
         web3: {
@@ -245,6 +293,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         },
 
         contracts: [
+            Migrations,
             CockpitDataProvider,
             MiltonFacadeDataProvider,
             IporOracleFacadeDataProvider,
@@ -297,6 +346,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
         // },
 
         contracts: [
+            Migrations,
             CockpitDataProvider,
             MiltonFacadeDataProvider,
             IporOracleFacadeDataProvider,

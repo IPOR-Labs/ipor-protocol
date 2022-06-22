@@ -431,62 +431,6 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Version</strong>
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephUsdt"
-                                method="getVersion"
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephUsdt"
-                                method="getVersion"
-                            />
-                        )}
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephUsdc"
-                                method="getVersion"
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephUsdc"
-                                method="getVersion"
-                            />
-                        )}
-                    </td>
-                    <td>
-                        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="ItfJosephDai"
-                                method="getVersion"
-                            />
-                        ) : (
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="JosephDai"
-                                method="getVersion"
-                            />
-                        )}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
                         <strong>Provide Liquidity</strong>
                     </td>
                     <td>

@@ -1,9 +1,11 @@
 import { BigNumber } from "ethers";
 
 export const ZERO = BigNumber.from("0");
+export const LEG_PAY_FIXED = BigNumber.from("0");
+export const LEG_RECEIVE_FIXED = BigNumber.from("1");
 
 // #################################################################################
-//                              18 detimals
+//                              18 decimals
 // #################################################################################
 
 export const N1__0_18DEC = BigNumber.from("1000000000000000000");
@@ -81,7 +83,7 @@ export const SPECIFIC_INCOME_TAX_CASE_1 = BigNumber.from("600751281464875607313"
 export const SPECIFIC_INTEREST_AMOUNT_CASE_1 = BigNumber.from("6007512814648756073133");
 
 // #################################################################################
-//                              6 detimals
+//                              6 decimals
 // #################################################################################
 
 export const N1__0_6DEC = BigNumber.from("1000000");
@@ -106,6 +108,7 @@ export const TC_DEFAULT_EMA_18DEC = BigNumber.from("3").mul(N0__01_18DEC);
 export const TOTAL_SUPPLY_6_DECIMALS = BigNumber.from("100000000000000").mul(N1__0_6DEC);
 export const TC_IBT_PRICE_DAI_6DEC = N1__0_6DEC;
 export const TC_TOTAL_AMOUNT_100_6DEC = BigNumber.from("100").mul(N1__0_6DEC);
+export const TC_TOTAL_AMOUNT_10_000_6DEC = BigNumber.from("10000").mul(N1__0_6DEC);
 export const TC_LP_BALANCE_BEFORE_CLOSE_6DEC = BigNumber.from("28000").mul(N1__0_6DEC);
 export const TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC = BigNumber.from("20").mul(N1__0_6DEC);
 export const TC_IPOR_PUBLICATION_AMOUNT_6DEC = BigNumber.from("10").mul(N1__0_6DEC);

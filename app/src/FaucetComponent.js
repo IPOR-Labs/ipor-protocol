@@ -6,20 +6,6 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div align="left">
         <hr />
-        <div className="row">
-            <div className="col-md-6">
-                <strong>Testnet Faucet Version</strong>
-            </div>
-            <div className="col-md-6">
-                <ContractData
-                    drizzle={drizzle}
-                    drizzleState={drizzleState}
-                    contract="TestnetFaucet"
-                    method="getVersion"
-                />
-            </div>
-        </div>
-        <hr />
         <table className="table" align="center">
             <tr>
                 <th scope="col"></th>
