@@ -1,0 +1,21 @@
+name: Login to docker
+
+on:
+  workflow_call:
+
+    secrets:
+      CI_GITHUB_ACTOR:
+        required: false
+      CI_GITHUB_TOKEN:
+
+jobs:
+  login:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CI_GITHUB_TOKEN }}

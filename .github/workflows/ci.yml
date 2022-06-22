@@ -12,6 +12,14 @@ jobs:
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
+
+  login:
+    name: Login to GitHub Container Registry
+    uses: ./.github/workflows/docker-login.yml
+    secrets:
+      CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
+      CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
   build-1:
     needs: notify
     uses: ./.github/workflows/build-smart-contracts.yml
@@ -30,6 +38,7 @@ jobs:
     if: ${{ always() }}
     needs:
       - notify
+      - login
       - build-1
       - build-2
     uses: ./.github/workflows/report-slack.yml
