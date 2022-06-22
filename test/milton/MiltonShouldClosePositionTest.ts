@@ -4384,7 +4384,7 @@ describe("Milton - close position", () => {
         expect(expectedBalanceTrader, `Incorrect trader balance`).to.be.eq(actualBalanceTrader);
     });
 
-    it("should NOT close any position in one transaction, because lists are empty", async () => {
+    it("should commit transaction even if lists for closing are empty", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
@@ -4417,7 +4417,7 @@ describe("Milton - close position", () => {
         const closeTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         //when
-        await miltonDai.connect(userThree).itfCloseSwaps([], [], closeTimestamp);
+        const result = await miltonDai.connect(userThree).itfCloseSwaps([], [], closeTimestamp);
 
         //then
         // no errors during execution closeSwaps.
