@@ -186,7 +186,12 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>Milton</strong> {drizzle.contracts.DrizzleMiltonUsdt.address}
                     <br />
-                    <ContractForm drizzle={drizzle} contract="DrizzleUsdt" method="approve" />
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleUsdt"
+                        method="approve"
+                        sendArgs={{ from: drizzleState.accounts[0] }}
+                    />
                 </td>
                 <td>
                     <strong>Milton</strong> {drizzle.contracts.DrizzleMiltonUsdc.address}
@@ -201,7 +206,12 @@ export default ({ drizzle, drizzleState }) => (
                 <td>
                     <strong>Milton</strong> {drizzle.contracts.DrizzleMiltonDai.address}
                     <br />
-                    <ContractForm drizzle={drizzle} contract="DrizzleDai" method="approve" />
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleDai"
+                        method="approve"
+                        sendArgs={{ from: drizzleState.accounts[0] }}
+                    />
                 </td>
             </tr>
         </table>

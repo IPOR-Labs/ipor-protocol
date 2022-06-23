@@ -268,7 +268,12 @@ export default ({ drizzle, drizzleState }) => (
                     <td></td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephUsdt.address}
-                        <ContractForm drizzle={drizzle} contract="DrizzleUsdt" method="approve" />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="DrizzleUsdt"
+                            method="approve"
+                            sendArgs={{ from: drizzleState.accounts[0] }}
+                        />
                     </td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephUsdc.address}
@@ -281,7 +286,12 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephDai.address}
-                        <ContractForm drizzle={drizzle} contract="DrizzleDai" method="approve" />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="DrizzleDai"
+                            method="approve"
+                            sendArgs={{ from: drizzleState.accounts[0] }}
+                        />
                     </td>
                 </tr>
             </table>
@@ -314,6 +324,10 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Provide Liquidity</strong>
+                        <br />
+                        <small>
+                            Transfer from Liquidity Provider to Milton Liquidity Pool using Joseph
+                        </small>
                     </td>
                     <td>
                         <ContractForm
@@ -341,6 +355,10 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Redeem</strong>
+                        <br />
+                        <small>
+                            Transfer from Milton Liquidity Pool to Liquidity Provider using Joseph
+                        </small>
                     </td>
                     <td>
                         <ContractForm
@@ -368,6 +386,11 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Rebalance</strong>
+                        <br />
+                        <small>
+                            Rebalance cash between Milton balance and Strategies (AAVE and Compound)
+                            balance
+                        </small>
                     </td>
                     <td>
                         <div>
@@ -401,6 +424,10 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Deposit to Stanley</strong>
+                        <br />
+                        <small>
+                            Transfer from Milton via Stanley to Strategy (AAVE or Compound)
+                        </small>
                     </td>
                     <td>
                         <div>
@@ -434,6 +461,10 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Withdraw from Stanley</strong>
+                        <br />
+                        <small>
+                            Transfer from Strategy (AAVE or Compound) via Stanley to Milton
+                        </small>
                     </td>
                     <td>
                         <div>
