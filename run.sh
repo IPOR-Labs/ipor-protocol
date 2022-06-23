@@ -103,6 +103,7 @@ IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS="NO"
 IS_UPDATE_COCKPIT="NO"
 IS_DUMP_ETH_BLOCKCHAIN="NO"
 IS_CREATE_GETH_IMAGE="NO"
+IS_RETAG_GETH_IMAGE="NO"
 
 LAST_MIGRATION_DATE=""
 LAST_COMMIT_HASH=""
@@ -111,6 +112,8 @@ LAST_MIGRATION_NUMBER=""
 
 CGI_IMAGE_TYPE=""
 CGI_BRANCH_NAME=""
+CGI_COMMIT_HASH=""
+CGI_PUBLISH_ENABLED=""
 
 if [ $# -eq 0 ]; then
   IS_RUN="YES"
@@ -158,9 +161,12 @@ while test $# -gt 0; do
   create-geth-image | cgi)
     IS_CREATE_GETH_IMAGE="YES"
     CGI_IMAGE_TYPE="${2}"
-    CGI_BRANCH_NAME="${3}"
+    CGI_PUBLISH_ENABLED="${3}"
     shift
     shift
+    ;;
+  retag-geth-image | rgi)
+    IS_RETAG_GETH_IMAGE="YES"
     ;;
   help | h | ?)
     IS_HELP="YES"
@@ -332,6 +338,12 @@ function get_commit_hash() {
   cd "${DIR}"
   local commit_hash=$(git rev-parse HEAD)
   echo "${commit_hash}"
+}
+
+function get_branch_name() {
+  cd "${DIR}"
+  local branch_name=$(git branch --show-current)
+  echo "${branch_name}"
 }
 
 function create_commit_file() {
@@ -604,14 +616,37 @@ function fill_j2_templates() {
 }
 
 function login_ecr() {
+  echo "docker login: ${AWS_DOCKER_REGISTRY}"
   aws ecr get-login-password --region eu-central-1 --profile "${AWS_PROFILE}" | docker login --username AWS --password-stdin "${AWS_DOCKER_REGISTRY}"
 }
 
 function push_docker_image() {
   local CONTAINER_NAME="${1}"
   local TAG="${2}"
-  echo "docker push ${CONTAINER_NAME}:${TAG}"
-  docker push "${CONTAINER_NAME}:${TAG}"
+
+  if [ $CGI_PUBLISH_ENABLED = "true" ]; then
+    echo "docker push ${CONTAINER_NAME}:${TAG}"
+    docker push "${CONTAINER_NAME}:${TAG}"
+  else
+    echo "SKIP: docker push"
+  fi
+}
+
+function pull_docker_image() {
+  local CONTAINER_NAME="${1}"
+  local TAG="${2}"
+
+  echo "docker pull ${CONTAINER_NAME}:${TAG}"
+  docker pull "${CONTAINER_NAME}:${TAG}"
+}
+
+function retag_docker_image() {
+  local CONTAINER_NAME="${1}"
+  local OLD_TAG="${2}"
+  local NEW_TAG="${3}"
+
+  echo "docker tag ${CONTAINER_NAME}:${OLD_TAG} ${CONTAINER_NAME}:${NEW_TAG}"
+  docker tag "${CONTAINER_NAME}:${OLD_TAG}" "${CONTAINER_NAME}:${NEW_TAG}"
 }
 
 function build_geth_docker_image() {
@@ -745,27 +780,51 @@ function copy_env_files() {
 
 function build_and_push_docker_images() {
   local ENV_NAME="${1}"
-  local BRANCH_NAME="${2}"
+  local COMMIT_HASH="${2}"
 
   # Login into ECR
   login_ecr
 
-  # Build docker image
-  build_geth_docker_image "${ETH_BC_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  # Build geth docker image
+  build_geth_docker_image "${ETH_BC_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}"
 
-  # Push docker image
-  push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  # Push geth docker image
+  push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}"
 
   # Build cockpit docker image
-  build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}"
 
   # Push cockpit docker image
-  push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${BRANCH_NAME}"
+  push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}"
+}
+
+function retag_and_push_docker_image() {
+  local CONTAINER_NAME="${1}"
+  local OLD_TAG="${2}"
+  local NEW_TAG="${3}"
+
+  pull_docker_image "${CONTAINER_NAME}" "${OLD_TAG}"
+  retag_docker_image "${CONTAINER_NAME}" "${OLD_TAG}" "${NEW_TAG}"
+  push_docker_image "${CONTAINER_NAME}" "${NEW_TAG}"
+}
+
+function tag_and_push_docker_images() {
+  local ENV_NAME="${1}"
+  local COMMIT_HASH="${2}"
+  local BRANCH_NAME="${3}"
+
+  echo "Rename docker tag from: ${ENV_NAME}-${COMMIT_HASH} into: ${ENV_NAME}-${BRANCH_NAME}"
+
+  # Push docker image
+  retag_and_push_docker_image "${AWS_DOCKER_REGISTRY}/${ETH_BC_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}" "${ENV_NAME}-${BRANCH_NAME}"
+
+  # Push cockpit docker image
+  retag_and_push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}" "${ENV_NAME}-${BRANCH_NAME}"
 }
 
 function create_geth_image() {
   local ENV_NAME="${1}"
-  local BRANCH_NAME="${2}"
+  local COMMIT_HASH="${2}"
 
   clean_env_files "${ENV_NAME}"
 
@@ -775,12 +834,12 @@ function create_geth_image() {
 
   copy_env_files "${ENV_NAME}"
 
-  build_and_push_docker_images "${ENV_NAME}" "${BRANCH_NAME}"
+  build_and_push_docker_images "${ENV_NAME}" "${COMMIT_HASH}"
 }
 
 function create_migrated_geth_image() {
   local ENV_NAME="${1}"
-  local BRANCH_NAME="${2}"
+  local COMMIT_HASH="${2}"
 
   clean_env_files "${ENV_NAME}"
 
@@ -788,7 +847,7 @@ function create_migrated_geth_image() {
 
   copy_env_files "${ENV_NAME}"
 
-  build_and_push_docker_images "${ENV_NAME}" "${BRANCH_NAME}"
+  build_and_push_docker_images "${ENV_NAME}" "${COMMIT_HASH}"
 }
 
 ################################### COMMANDS ###################################
@@ -932,16 +991,15 @@ fi
 
 if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
 
-  if [ -z "${CGI_BRANCH_NAME}" ]; then
-    echo "ERROR: Missing second parameter in 'create-geth-image' command: '${CGI_BRANCH_NAME}'"
-    exit 1
-  fi
+  echo -e "\n\e[32mCreate geth docker images\e[0m\n"
+
+  CGI_COMMIT_HASH=$(get_commit_hash)
 
   if [ $CGI_IMAGE_TYPE = "${ETH_BC_ITF_TAG_NAME}" ]; then
-    create_geth_image "${ETH_BC_ITF_TAG_NAME}" "${CGI_BRANCH_NAME}"
+    create_geth_image "${ETH_BC_ITF_TAG_NAME}" "${CGI_COMMIT_HASH}"
   elif [ $CGI_IMAGE_TYPE = "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}/${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" ]; then
-    create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${CGI_BRANCH_NAME}"
-    create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "${CGI_BRANCH_NAME}"
+    create_geth_image "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${CGI_COMMIT_HASH}"
+    create_migrated_geth_image "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "${CGI_COMMIT_HASH}"
   else
     echo "ERROR: Unknown first parameter in 'create-geth-image' command: '${CGI_IMAGE_TYPE}' " \
     "Allowed options: '${ETH_BC_ITF_TAG_NAME}' or '${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}/${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}'"
@@ -949,6 +1007,22 @@ if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
   fi
 
 fi
+
+if [ $IS_RETAG_GETH_IMAGE = "YES" ]; then
+
+  echo -e "\n\e[32mRename geth docker images tags\e[0m\n"
+
+  CGI_PUBLISH_ENABLED="true"
+  CGI_COMMIT_HASH=$(get_commit_hash)
+  CGI_BRANCH_NAME=$(get_branch_name)
+
+  login_ecr
+
+  tag_and_push_docker_images "${ETH_BC_ITF_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
+  tag_and_push_docker_images "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
+  tag_and_push_docker_images "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
+fi
+
 
 if [ $IS_HELP = "YES" ]; then
   echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
@@ -965,8 +1039,9 @@ if [ $IS_HELP = "YES" ]; then
   echo -e "   \e[36mnginx\e[0m|\e[36mn\e[0m             Restart nginx Ethereum blockchain container"
   echo -e "   \e[36mupdate-cockpit\e[0m|\e[36muc\e[0m        Update IPOR cockpit container"
   echo -e "   \e[36mdump-eth-blockchain\e[0m|\e[36mdeb\e[0m  Dump Ethereum blockchain"
-  echo -e "   \e[36mcreate-geth-image\e[0m|\e[36mcgi\e[0m {image_type} {branch_name}   Create geth docker image"
-  echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m Download deployed smart contracts"
+  echo -e "   \e[36mretag-geth-image\e[0m|\e[36mrgi\e[0m   Rename geth docker images tags with tag from branch name"
+  echo -e "   \e[36mcreate-geth-image\e[0m|\e[36mcgi {image_type} {publish_enabled}\e[0m  Create geth docker image"
+  echo -e "   \e[36mdownload-deployed-smart-contracts\e[0m|\e[36mddsc\e[0m             Download deployed smart contracts"
   echo -e "   \e[36mhelp\e[0m|\e[36mh\e[0m|\e[36m?\e[0m            Show help"
   echo -e "   \e[34mwithout any command\e[0m - the same as Run"
   echo -e ""

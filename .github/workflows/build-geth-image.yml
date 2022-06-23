@@ -16,10 +16,20 @@ on:
         type: string
         required: true
 
-      branch:
-        description: 'Git repository branch name from which image will be built'
-        type: string
-        default: main
+      build-enabled:
+        description: 'Enable build'
+        type: boolean
+        default: false
+
+      push-docker-enabled:
+        description: 'Enable push docker images'
+        type: boolean
+        default: false
+
+      retag-docker-enabled:
+        description: 'Enable rename docker images tags'
+        type: boolean
+        default: false
 
       aws-region:
         description: 'AWS region used by ECR'
@@ -98,4 +108,9 @@ jobs:
         run: npm install
 
       - name: Create geth images
-        run: ./run.sh cgi "${{ inputs.image-type }}" "${{ inputs.branch }}"
+        if: inputs.build-enabled
+        run: ./run.sh cgi "${{ inputs.image-type }}" "${{ inputs.push-docker-enabled }}"
+
+      - name: Publish geth images
+        if: inputs.retag-docker-enabled
+        run: ./run.sh rgi
