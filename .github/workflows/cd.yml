@@ -77,6 +77,9 @@ jobs:
       - build-geth-itf
       - build-geth-s0-s12
     uses: ./.github/workflows/build-geth-image.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     with:
       image-type: itf/s0/s12
       build-enabled: false

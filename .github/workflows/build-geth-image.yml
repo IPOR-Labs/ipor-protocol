@@ -5,9 +5,9 @@ on:
 
     secrets:
       AWS_ACCESS_KEY_ID:
-        required: false
+        required: true
       AWS_SECRET_ACCESS_KEY:
-        required: false
+        required: true
 
     inputs:
 
