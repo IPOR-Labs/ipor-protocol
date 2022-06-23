@@ -306,9 +306,6 @@ function put_file_to_bucket() {
   local FILE_NAME="${1}"
   local FILE_KEY="${2}"
 
-  export AWS_ACCESS_KEY_ID="${IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
-  export AWS_SECRET_ACCESS_KEY="${IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
-
   local WITH_PROFILE=$(get_aws_profile)
 
   aws s3api put-object --bucket "${ENV_CONFIG_BUCKET}" --key "${FILE_KEY}" --body "${FILE_NAME}" --region "${AWS_REGION}" ${WITH_PROFILE}
@@ -1002,11 +999,6 @@ if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
   cd "${DIR}"
 
   echo -e "\n\e[32mDownload deployed smart contracts zip archive..\e[0m\n"
-
-  IPOR_ENV_USER_AWS_ACCESS_KEY_ID="${IPOR_ENV_USER_AWS_ACCESS_KEY_ID:-$IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
-  IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY="${IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
-  export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$IPOR_ENV_USER_AWS_ACCESS_KEY_ID}"
-  export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY}"
 
   WITH_PROFILE=$(get_aws_profile)
 
