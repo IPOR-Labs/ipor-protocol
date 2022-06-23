@@ -6,7 +6,7 @@ on:
       - main
       - develop
       # TODO
-      - feature/IL-716
+      - feature-IL-716
 
 jobs:
 
