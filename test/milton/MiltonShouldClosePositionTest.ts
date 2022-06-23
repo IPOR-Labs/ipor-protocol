@@ -3,14 +3,14 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import { MockSpreadModel } from "../../types";
 import {
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
     ZERO,
     USD_10_18DEC,
     LEVERAGE_1000_18DEC,
     USD_28_000_18DEC,
     USD_50_000_18DEC,
     PERCENTAGE_3_18DEC,
-    PERCENTAGE_365_18DEC,
-    PERCENTAGE_366_18DEC,
     PERIOD_25_DAYS_IN_SECONDS,
     N0__1_18DEC,
     N1__0_18DEC,
@@ -18,17 +18,12 @@ import {
     TC_OPENING_FEE_18DEC,
     TC_COLLATERAL_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
-    PERCENTAGE_4_18DEC,
-    USD_20_18DEC,
     USER_SUPPLY_10MLN_18DEC,
     TC_INCOME_TAX_18DEC,
-    PERCENTAGE_152_18DEC,
     PERCENTAGE_160_18DEC,
-    PERCENTAGE_161_18DEC,
     PERCENTAGE_5_18DEC,
     TC_COLLATERAL_6DEC,
     PERCENTAGE_120_18DEC,
-    PERCENTAGE_121_18DEC,
     PERIOD_50_DAYS_IN_SECONDS,
     PERCENTAGE_6_18DEC,
     PERCENTAGE_50_18DEC,
@@ -55,7 +50,6 @@ import {
 import {
     openSwapPayFixed,
     openSwapReceiveFixed,
-    exetuceCloseSwapTestCase,
     executeCloseSwapsTestCase,
     countOpenSwaps,
     assertSoap,
@@ -94,179 +88,11 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price not changed, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
-        const testData = await prepareComplexTestDataDaiCase000(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel,
-            PERCENTAGE_3_18DEC
-        );
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, DAI 18 decimals", async () => {
+        const quote = BigNumber.from("161").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
-        const miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
-        const liquidationDepositAmount = USD_20_18DEC;
-
-        const expectedIncomeFeeValue = ZERO;
-        const expectedIncomeFeeValueWad = ZERO;
-
-        const totalAmount = TC_TOTAL_AMOUNT_10_000_18DEC;
-        const collateral = TC_COLLATERAL_18DEC;
-        const openingFee = TC_OPENING_FEE_18DEC;
-
-        const diffAfterClose = totalAmount.sub(collateral).sub(liquidationDepositAmount);
-
-        const expectedOpenerUserUnderlyingTokenBalanceAfterPayOut =
-            USER_SUPPLY_10MLN_18DEC.sub(diffAfterClose);
-        const expectedCloserUserUnderlyingTokenBalanceAfterPayOut =
-            USER_SUPPLY_10MLN_18DEC.sub(diffAfterClose);
-
-        const expectedMiltonUnderlyingTokenBalance =
-            miltonBalanceBeforePayoutWad.add(diffAfterClose);
-        const expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
-            .add(openingFee)
-            .sub(expectedIncomeFeeValue);
-
-        const expectedPayoff = ZERO;
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await exetuceCloseSwapTestCase(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            0,
-            userTwo,
-            userTwo,
-            PERCENTAGE_3_18DEC,
-            PERCENTAGE_3_18DEC,
-            PERCENTAGE_4_18DEC,
-            ZERO,
-            miltonBalanceBeforePayoutWad,
-            expectedMiltonUnderlyingTokenBalance,
-            expectedOpenerUserUnderlyingTokenBalanceAfterPayOut,
-            expectedCloserUserUnderlyingTokenBalanceAfterPayOut,
-            expectedLiquidityPoolTotalBalanceWad,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValue,
-            ZERO,
-            ZERO,
-            expectedPayoff,
-            expectedIncomeFeeValue,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close position, DAI, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, DAI 18 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("366").mul(N0__01_18DEC));
-        const testData = await prepareComplexTestDataDaiCase000(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel,
-            PERCENTAGE_365_18DEC
-        );
-
-        const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
-        const expectedPayoff = BigNumber.from("-68267191075554046114");
-        const expectedPayoffWad = BigNumber.from("-68267191075554046114");
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await testCaseWhenMiltonEarnAndUserLost(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            0,
-            userTwo,
-            userTwo,
-            PERCENTAGE_365_18DEC,
-            PERCENTAGE_365_18DEC,
-            PERCENTAGE_366_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            expectedPayoff,
-            expectedPayoffWad,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it.skip("should close position, USDT, owner, pay fixed, IPOR not changed, IBT price increased 25%, before maturity, USDT 6 decimals", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["USDT"],
-            [PERCENTAGE_365_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE0,
-            MiltonUsdtCase.CASE0,
-            MiltonDaiCase.CASE0,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "USDT",
-            testData
-        );
-
-        const { tokenUsdt } = testData;
-        if (tokenUsdt === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await setupTokenUsdtInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            tokenUsdt
-        );
-
-        const expectedIncomeFeeValueWad = BigNumber.from("6826719107555404611");
-        const expectedPayoff = BigNumber.from("-68267191");
-        const expectedPayoffWad = BigNumber.from("-68267191075554046114");
-
-        await testCaseWhenMiltonEarnAndUserLost(
-            testData,
-            tokenUsdt.address,
-            USD_10_18DEC,
-            0,
-            userTwo,
-            userTwo,
-            PERCENTAGE_365_18DEC,
-            PERCENTAGE_365_18DEC,
-            PERCENTAGE_366_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            expectedPayoff,
-            expectedPayoffWad,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, DAI 18 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("161").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -288,12 +114,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_161_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -306,9 +131,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, USDT, owner, pay fixed, Milton earned, User lost > totalAmount, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost > Collateral, before maturity, USDT 6 decimals", async () => {
+        const quote = BigNumber.from("400").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -341,19 +172,18 @@ describe("Milton - close position", () => {
         );
 
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
-        const expectedPayoff = TC_COLLATERAL_6DEC.mul("-1");
-        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul("-1");
+        const expectedPayoff = TC_COLLATERAL_6DEC.mul(-1);
+        const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(-1);
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenUsdt.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_160_18DEC,
-            PERCENTAGE_5_18DEC,
-            PERCENTAGE_161_18DEC,
+            PERCENTAGE_3_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -366,10 +196,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, DAI 18 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Collateral, before maturity, DAI 18 decimals", async () => {
+        const quote = BigNumber.from("121").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -386,16 +221,16 @@ describe("Milton - close position", () => {
         const expectedIncomeFeeValueWad = BigNumber.from("791899416476426938347");
         const expectedPayoff = BigNumber.from("-7918994164764269383465");
         const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
+
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -408,10 +243,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, USDT, owner, pay fixed, Milton earned, User lost < Deposit, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton earned, User lost < Collateral, before maturity, USDT 6 decimals", async () => {
         //given
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -443,20 +284,19 @@ describe("Milton - close position", () => {
             tokenUsdt
         );
 
-        const expectedIncomeFeeValueWad = BigNumber.from("791899416476426938347");
-        const expectedPayoff = BigNumber.from("-7918994165");
-        const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
+        const expectedIncomeFeeValueWad = BigNumber.from("34133595537777026471");
+        const expectedPayoff = BigNumber.from("-341335955");
+        const expectedPayoffWad = BigNumber.from("-341335955377770264707");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenUsdt.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -469,10 +309,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -486,20 +331,19 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPayoff = BigNumber.from("-9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("-9967009897030890732780");
+        const expectedIncomeFeeValueWad = BigNumber.from("68267191075554042975");
+        const expectedPayoff = BigNumber.from("-682671910755540429745");
+        const expectedPayoffWad = BigNumber.from("-682671910755540429745");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -512,10 +356,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, DAI 18 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("1").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Collateral, before maturity, DAI 18 decimals", async () => {
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -538,12 +388,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -557,10 +406,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Deposit, before maturity, USDT 6 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("1").mul(N0__01_18DEC));
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned > Collateral, before maturity, USDT 6 decimals", async () => {
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -600,12 +455,11 @@ describe("Milton - close position", () => {
             testData,
             tokenUsdt.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -619,10 +473,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, DAI 18 decimals", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Collateral, before maturity, DAI 18 decimals", async () => {
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -646,12 +505,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_120_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -665,9 +523,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Deposit, before maturity, USDT 6 decimals", async () => {
+    it("should close position, USDT, owner, pay fixed, Milton lost, User earned < Collateral, before maturity, USDT 6 decimals", async () => {
+        const quote = BigNumber.from("3").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -699,21 +563,20 @@ describe("Milton - close position", () => {
             tokenUsdt
         );
 
-        const expectedIncomeFeeValue = BigNumber.from("778245978");
-        const expectedIncomeFeeValueWad = BigNumber.from("778245978261316123526");
-        const expectedPayoff = BigNumber.from("7782459782");
-        const expectedPayoffWad = BigNumber.from("7782459782613161235257");
+        const expectedIncomeFeeValue = BigNumber.from("20480157");
+        const expectedIncomeFeeValueWad = BigNumber.from("20480157322666209738");
+        const expectedPayoff = BigNumber.from("204801573");
+        const expectedPayoffWad = BigNumber.from("204801573226662097384");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenUsdt.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -727,10 +590,14 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("1").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned > Collateral, after maturity", async () => {
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -753,12 +620,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -772,11 +638,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        //Internal check if test itself is ok.
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(ZERO);
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, pay fixed, Milton lost, User earned < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -800,12 +670,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -819,11 +688,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Collateral, before maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("1").mul(N0__01_18DEC));
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -846,12 +720,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -865,12 +738,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, pay fixed, Milton lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(ZERO);
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -893,12 +770,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_151_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -912,10 +788,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
-    // todo fix it
-    it.skip("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, 5 hours before maturity", async () => {
+
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, 5 hours before maturity", async () => {
         //given
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -929,21 +811,20 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeTaxValue = BigNumber.from("865150112500496428963");
-        const expectedIncomeTaxValueWad = BigNumber.from("865150112500496428963");
-        const expectedPayoff = BigNumber.from("8862640219233518250763");
-        const expectedPayoffWad = BigNumber.from("8651501125004964289632");
+        const expectedIncomeTaxValue = BigNumber.from("37945180372828793181");
+        const expectedIncomeTaxValueWad = BigNumber.from("37945180372828793181");
+        const expectedPayoff = BigNumber.from("379451803728287931809");
+        const expectedPayoffWad = BigNumber.from("379451803728287931809");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -957,10 +838,14 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("1").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned > Collateral, after maturity", async () => {
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -983,12 +868,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1002,11 +886,14 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(ZERO);
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1029,12 +916,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1048,10 +934,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("161").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Collateral, before maturity", async () => {
+        const quote = BigNumber.from("161").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1065,7 +956,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -1074,12 +964,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_161_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1092,10 +981,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("151").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
+        const quote = BigNumber.from("151").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1109,7 +1003,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeTaxValue = BigNumber.from("989874270595533672762");
         const expectedIncomeTaxValueWad = BigNumber.from("989874270595533672762");
         const expectedPayoff = BigNumber.from("-9898742705955336727624");
         const expectedPayoffWad = BigNumber.from("-9898742705955336727624");
@@ -1118,12 +1011,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_150_18DEC,
             PERCENTAGE_6_18DEC,
-            PERCENTAGE_151_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1136,10 +1028,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1153,21 +1050,19 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
-        const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPayoff = BigNumber.from("-9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("-9967009897030890732780");
+        const expectedIncomeFeeValueWad = BigNumber.from("68267191075554042975");
+        const expectedPayoff = BigNumber.from("-682671910755540429745");
+        const expectedPayoffWad = BigNumber.from("-682671910755540429745");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1180,10 +1075,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Deposit, 5 hours before maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, 5 hours before maturity", async () => {
+        const quote = BigNumber.from("121").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1197,7 +1097,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeTaxValue = BigNumber.from("880328184649627945216");
         const expectedIncomeTaxValueWad = BigNumber.from("880328184649627945216");
         const expectedPayoff = BigNumber.from("-8803281846496279452160");
         const expectedPayoffWad = BigNumber.from("-8803281846496279452160");
@@ -1206,12 +1105,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1224,10 +1122,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("161").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, pay fixed, Milton earned, User lost > Collateral, after maturity", async () => {
+        const quote = BigNumber.from("161").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1241,7 +1144,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -1250,12 +1152,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_161_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1268,94 +1169,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price not changed, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel,
-            PERCENTAGE_3_18DEC
-        );
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
+        const quote = BigNumber.from("159").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        const expectedIncomeFeeValueWad = BigNumber.from("1487135353081146451");
-        const expectedPayoff = BigNumber.from("-14871353530811464512");
-        const expectedPayoffWad = BigNumber.from("-14871353530811464512");
-
-        await testCaseWhenMiltonEarnAndUserLost(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            1,
-            userTwo,
-            userTwo,
-            PERCENTAGE_3_18DEC,
-            PERCENTAGE_3_18DEC,
-            N0__01_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            expectedPayoff,
-            expectedPayoffWad,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it.skip("should close position, DAI, owner, receive fixed, Milton earned, IPOR not changed, IBT price changed 25%, before maturity", async () => {
-        const testData = await prepareComplexTestDataDaiCase000(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel,
-            PERCENTAGE_365_18DEC
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        const expectedIncomeFeeValueWad = BigNumber.from("12166302862029659358");
-        const expectedPayoff = BigNumber.from("121663028620296593584");
-        const expectedPayoffWad = BigNumber.from("121663028620296593584");
-
-        await testCaseWhenMiltonEarnAndUserLost(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            1,
-            userTwo,
-            userTwo,
-            PERCENTAGE_365_18DEC,
-            PERCENTAGE_365_18DEC,
-            N0__01_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            ZERO,
-            ZERO,
-            expectedIncomeFeeValueWad,
-            expectedPayoff,
-            expectedPayoffWad,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("159").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1378,12 +1200,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1397,9 +1218,16 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, before maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
+        //given
+        const quote = BigNumber.from("1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1413,21 +1241,19 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("279895483409771589481");
-        const expectedIncomeFeeValueWad = BigNumber.from("279895483409771589481");
-        const expectedPayoff = BigNumber.from("-2609024614401865255109");
-        const expectedPayoffWad = BigNumber.from("-2798954834097715894807");
+        const expectedIncomeFeeValueWad = BigNumber.from("34133595537777018961");
+        const expectedPayoff = BigNumber.from("-341335955377770189613");
+        const expectedPayoffWad = BigNumber.from("-341335955377770189613");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
-            PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1440,11 +1266,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(ZERO);
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Collateral, before maturity", async () => {
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1466,12 +1296,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1484,10 +1313,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Liquidity Pool earned, User lost < Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1501,7 +1335,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("791899416476426932749");
         const expectedIncomeFeeValueWad = BigNumber.from("791899416476426932749");
         const expectedPayoff = BigNumber.from("-7918994164764269327486");
         const expectedPayoffWad = BigNumber.from("-7918994164764269327486");
@@ -1510,12 +1343,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_120_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1528,10 +1360,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("159").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned > Collateral, after maturity", async () => {
+        const quote = BigNumber.from("159").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1554,12 +1391,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1573,10 +1409,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, receive fixed, Milton lost, User earned < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1590,21 +1431,20 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
-        const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPayoff = BigNumber.from("9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
+        const expectedIncomeFeeValue = BigNumber.from("68267191075554042975");
+        const expectedIncomeFeeValueWad = BigNumber.from("68267191075554042975");
+        const expectedPayoff = BigNumber.from("682671910755540429746");
+        const expectedPayoffWad = BigNumber.from("682671910755540429746");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1618,10 +1458,13 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost > Collateral, after maturity", async () => {
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1636,7 +1479,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -1645,12 +1487,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_120_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1663,9 +1504,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+        const quote = BigNumber.from("3").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1677,20 +1524,19 @@ describe("Milton - close position", () => {
             expect(true).to.be.false;
             return;
         }
-        const expectedIncomeFeeValueWad = BigNumber.from("628058157895097225759");
-        const expectedPayoff = BigNumber.from("-6280581578950972257591");
-        const expectedPayoffWad = BigNumber.from("-6280581578950972257591");
+        const expectedIncomeFeeValueWad = BigNumber.from("641711596110208034982");
+        const expectedPayoff = BigNumber.from("-6417115961102080349821");
+        const expectedPayoffWad = BigNumber.from("-6417115961102080349821");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1703,10 +1549,14 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("159").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
+        const quote = BigNumber.from("159").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1728,12 +1578,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1747,10 +1596,14 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Deposit > User earned > 99% Deposit, before maturity", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("150").mul(N0__01_18DEC));
+    it("should close position, DAI, not owner, receive fixed, Milton lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
+        const quote = BigNumber.from("150").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1773,12 +1626,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_151_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1792,11 +1644,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, before maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Collateral, before maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1818,12 +1674,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1836,11 +1691,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, 100% Deposit > User lost > 99% Deposit, before maturity", async () => {
+    it("[!] should close position, DAI, not owner, receive fixed, Milton earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1854,20 +1713,19 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeTaxValueWad = BigNumber.from("996700989703089073278");
-        const expectedPayoff = BigNumber.from("-9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("-9967009897030890732780");
+        const expectedIncomeTaxValueWad = BigNumber.from("996700989703089070547");
+        const expectedPayoff = BigNumber.from("-9967009897030890705472");
+        const expectedPayoffWad = BigNumber.from("-9967009897030890705472");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
-            PERCENTAGE_152_18DEC,
-            N0__01_18DEC,
+            BigNumber.from("150").mul(N0__01_18DEC),
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1880,11 +1738,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Collateral, after maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("159").mul(N0__01_18DEC));
+        const quote = BigNumber.from("159").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1907,12 +1769,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1926,11 +1787,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, after maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1944,21 +1809,20 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("996700989703089073278");
-        const expectedIncomeFeeValueWad = BigNumber.from("996700989703089073278");
-        const expectedPayoff = BigNumber.from("9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
+        const expectedIncomeFeeValue = BigNumber.from("68267191075554042975");
+        const expectedIncomeFeeValueWad = BigNumber.from("68267191075554042975");
+        const expectedPayoff = BigNumber.from("682671910755540429746");
+        const expectedPayoffWad = BigNumber.from("682671910755540429746");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -1972,11 +1836,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1990,7 +1858,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -1999,12 +1866,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -2017,11 +1883,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Deposit, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2043,12 +1913,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_50_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -2061,11 +1930,15 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Deposit, after maturity", async () => {
+    it("should close position, DAI, owner, pay fixed, Milton earned, User lost > Collateral, after maturity", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("161").mul(N0__01_18DEC));
+        const quote = BigNumber.from("161").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2078,7 +1951,6 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = TC_INCOME_TAX_18DEC;
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -2087,12 +1959,11 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_160_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_161_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -2105,6 +1976,8 @@ describe("Milton - close position", () => {
             userOne,
             liquidityProvider
         );
+
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
@@ -2193,10 +2066,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2248,10 +2120,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2303,10 +2174,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2358,10 +2228,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2413,10 +2282,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             LEVERAGE_1000_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             admin,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2468,10 +2336,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             LEVERAGE_1000_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             admin,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2488,7 +2355,10 @@ describe("Milton - close position", () => {
     });
 
     it("should close position by owner, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("-1").mul(N0__01_18DEC));
+        const quote = BigNumber.from("-1").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = ZERO;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2524,11 +2394,10 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             LEVERAGE_1000_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             admin,
-            PERCENTAGE_5_18DEC,
-            PERCENTAGE_160_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
             BigNumber.from("1"),
@@ -2544,7 +2413,10 @@ describe("Milton - close position", () => {
     });
     it("should close only one position - close first position", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2571,7 +2443,7 @@ describe("Milton - close position", () => {
         const derivativeParamsFirst = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: acceptableFixedInterestRate,
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp,
             from: openerUser,
@@ -2594,7 +2466,7 @@ describe("Milton - close position", () => {
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
-            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            acceptableFixedInterestRate: acceptableFixedInterestRate,
             leverage: USD_10_18DEC,
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
@@ -2714,7 +2586,7 @@ describe("Milton - close position", () => {
         ).to.be.eq(BigNumber.from(oneDerivative.id));
     });
 
-    it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Deposit, after maturity, IPOR index calculated before close", async () => {
+    it("should close position with appropriate balance, DAI, owner, pay fixed, Milton lost, User earned < Collateral, after maturity, IPOR index calculated before close", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
@@ -2842,7 +2714,7 @@ describe("Milton - close position", () => {
         await assertExpectedValues(
             testData,
             params.asset,
-            0,
+            LEG_PAY_FIXED,
             openerUser,
             closerUser,
             miltonBalanceBeforePayoutWad,
@@ -2900,10 +2772,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -2955,10 +2826,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -3010,10 +2880,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -3065,10 +2934,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -3121,10 +2989,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             LEVERAGE_1000_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             admin,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -3298,10 +3165,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,
@@ -3354,10 +3220,9 @@ describe("Milton - close position", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
             USD_10_000_000_18DEC,

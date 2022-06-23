@@ -94,4 +94,6 @@ module.exports = {
     ItfMiltonFacadeDataProviderImpl: "ItfMiltonFacadeDataProviderImpl",
     ItfCockpitDataProviderProxy: "ItfCockpitDataProviderProxy",
     ItfCockpitDataProviderImpl: "ItfCockpitDataProviderImpl",
+    ItfDataProviderProxy: "ItfDataProviderProxy",
+    ItfDataProviderImpl: "ItfDataProviderImpl",
 };

@@ -1,6 +1,7 @@
+import hre from "hardhat";
 import { BigNumber, Signer } from "ethers";
-const { expect } = require("chai");
-import { N0__01_18DEC } from "../utils/Constants";
+import { expect } from "chai";
+import { N0__1_18DEC, N0__01_18DEC, USD_10_000_6DEC, USD_100_000_6DEC } from "../utils/Constants";
 import {
     ERC20,
     TestnetFaucet,
@@ -100,11 +101,11 @@ describe("Open/Close Swap", function () {
         it("ProvideLiquidity for 1000000 dai", async () => {
             //given
 
-            const deposit = ONE_18.mul("10000");
+            const deposit = ONE_18.mul("100000");
             await transferDaiToAddress(
-                testnetFaucet.address,
+                "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
                 await admin.getAddress(),
-                ONE_18.mul("10000000")
+                ONE_18.mul("1000000")
             );
             await dai.connect(admin).approve(josephDai.address, ONE_18.mul("1000000000"));
             await dai.connect(admin).approve(miltonDai.address, ONE_18.mul("1000000000"));
@@ -133,7 +134,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonDai.openSwapPayFixed(
                 ONE_18.mul("100"),
-                BigNumber.from("900000000000000000"),
+                BigNumber.from("9").mul(N0__1_18DEC),
                 ONE_18.mul("10")
             );
             //then
@@ -202,11 +203,11 @@ describe("Open/Close Swap", function () {
         it("ProvideLiquidity for usdc", async () => {
             //given
 
-            const deposit = BigNumber.from("10000000000");
+            const deposit = USD_10_000_6DEC;
             await transferUsdcToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("1000000000000000")
+                USD_100_000_6DEC
             );
             await usdc.connect(admin).approve(josephUsdc.address, N0__01_18DEC);
             await usdc.connect(admin).approve(miltonUsdc.address, N0__01_18DEC);
@@ -308,7 +309,7 @@ describe("Open/Close Swap", function () {
             await transferUsdtToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("1000000000000000")
+                BigNumber.from("100000000000")
             );
             await usdt.connect(admin).approve(josephUsdt.address, BigNumber.from("100000000000"));
             await usdt.connect(admin).approve(miltonUsdt.address, BigNumber.from("100000000000"));

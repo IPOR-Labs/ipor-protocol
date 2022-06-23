@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 
@@ -39,18 +39,18 @@ describe("AAVE strategy pauseable", () => {
         // #################################################################################
 
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
-        USDC = await UsdcMockedToken.deploy(totalSupply6Decimals, 6);
+        USDC = (await UsdcMockedToken.deploy(totalSupply6Decimals, 6)) as DaiMockedToken;
         const AUSDCFactory = await hre.ethers.getContractFactory("MockAUsdc");
-        aUSDC = await AUSDCFactory.deploy();
+        aUSDC = (await AUSDCFactory.deploy()) as ERC20;
 
         // #################################################################################
         // #####################        USDT / aUSDT     ###################################
         // #################################################################################
 
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
-        USDT = await UsdtMockedToken.deploy(totalSupply6Decimals, 6);
+        USDT = (await UsdtMockedToken.deploy(totalSupply6Decimals, 6)) as DaiMockedToken;
         const AUSDTFactory = await hre.ethers.getContractFactory("MockAUsdt");
-        aUSDT = await AUSDTFactory.deploy();
+        aUSDT = (await AUSDTFactory.deploy()) as ERC20;
 
         // #################################################################################
         // #####################         DAI / aDAI      ###################################
@@ -60,9 +60,9 @@ describe("AAVE strategy pauseable", () => {
         DAI = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as DaiMockedToken;
 
         const ADAIFactory = await hre.ethers.getContractFactory("MockADai");
-        aDAI = await ADAIFactory.deploy();
+        aDAI = (await ADAIFactory.deploy()) as ERC20;
 
-        AAVE = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        AAVE = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
         await AAVE.deployed();
 
         // #################################################################################
@@ -101,14 +101,14 @@ describe("AAVE strategy pauseable", () => {
 
         const StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");
 
-        strategy = await upgrades.deployProxy(StrategyAaveInstance, [
+        strategy = (await upgrades.deployProxy(StrategyAaveInstance, [
             USDT.address,
             aUSDT.address,
             addressProvider.address,
             stakedAave.address,
             aaveIncentivesController.address,
             AAVE.address,
-        ]);
+        ])) as StrategyAave;
     });
 
     it("Should be able to pause contract when sender is owner", async () => {

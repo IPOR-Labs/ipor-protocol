@@ -803,7 +803,7 @@ describe("IporOracle", () => {
 
         //then
         const iporIndex = await _iporOracle.getIndex(assets[0]);
-        const actualExponentialMovingAverage = await iporIndex.exponentialMovingAverage;
+        const actualExponentialMovingAverage = iporIndex.exponentialMovingAverage;
 
         expect(
             actualExponentialMovingAverage,

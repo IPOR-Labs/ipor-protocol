@@ -1,4 +1,5 @@
 import chai from "chai";
+import hre from "hardhat";
 import { BigNumber, Signer } from "ethers";
 import { MockSpreadModel } from "../../types";
 import {
@@ -18,6 +19,8 @@ import { MockStanleyCase } from "./StanleyUtils";
 import { openSwapPayFixed, openSwapReceiveFixed } from "./SwapUtils";
 
 import {
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
     N0__1_18DEC,
     N0__01_18DEC,
     TC_TOTAL_AMOUNT_100_18DEC,
@@ -239,7 +242,7 @@ export const assertSoapIndicator = async (
 export const assertExpectedValues = async function (
     testData: TestData,
     asset: string,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
     miltonBalanceBeforePayout: BigNumber,
@@ -253,14 +256,14 @@ export const assertExpectedValues = async function (
 ) {
     let actualDerivatives: Derivatives | undefined;
     if (testData.miltonStorageUsdt && testData.tokenUsdt && asset === testData.tokenUsdt.address) {
-        if (direction == 0) {
+        if (direction == LEG_PAY_FIXED) {
             actualDerivatives = await testData.miltonStorageUsdt.getSwapsPayFixed(
                 await openerUser.getAddress(),
                 0,
                 50
             );
         }
-        if (direction == 1) {
+        if (direction == LEG_RECEIVE_FIXED) {
             actualDerivatives = await testData.miltonStorageUsdt.getSwapsReceiveFixed(
                 await openerUser.getAddress(),
                 0,
@@ -270,14 +273,14 @@ export const assertExpectedValues = async function (
     }
 
     if (testData.miltonStorageUsdc && testData.tokenUsdc && asset === testData.tokenUsdc.address) {
-        if (direction == 0) {
+        if (direction == LEG_PAY_FIXED) {
             actualDerivatives = await testData.miltonStorageUsdc.getSwapsPayFixed(
                 await openerUser.getAddress(),
                 0,
                 50
             );
         }
-        if (direction == 1) {
+        if (direction == LEG_RECEIVE_FIXED) {
             actualDerivatives = await testData.miltonStorageUsdc.getSwapsReceiveFixed(
                 await openerUser.getAddress(),
                 0,
@@ -287,14 +290,14 @@ export const assertExpectedValues = async function (
     }
 
     if (testData.miltonStorageDai && testData.tokenDai && asset === testData.tokenDai.address) {
-        if (direction == 0) {
+        if (direction == LEG_PAY_FIXED) {
             actualDerivatives = await testData.miltonStorageDai.getSwapsPayFixed(
                 await openerUser.getAddress(),
                 0,
                 50
             );
         }
-        if (direction == 1) {
+        if (direction == LEG_RECEIVE_FIXED) {
             actualDerivatives = await testData.miltonStorageDai.getSwapsReceiveFixed(
                 await openerUser.getAddress(),
                 0,

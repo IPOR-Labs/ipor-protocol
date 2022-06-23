@@ -1,13 +1,17 @@
 import chai from "chai";
+import hre from "hardhat";
 import { DaiMockedToken, UsdtMockedToken, MiltonUsdt, MiltonUsdc, MiltonDai } from "../../types";
 import { BigNumber, Signer } from "ethers";
 import {
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
     N1__0_6DEC,
     N1__0_18DEC,
     N0__01_18DEC,
-	N0__001_18DEC,
+    N0__001_18DEC,
     TC_50_000_18DEC,
     ZERO,
+    TC_TOTAL_AMOUNT_10_000_6DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
     N0__1_18DEC,
@@ -46,7 +50,7 @@ export type Params = {
     totalAmount?: BigNumber;
     acceptableFixedInterestRate?: BigNumber;
     leverage?: BigNumber;
-    direction?: number;
+    direction?: BigNumber;
     openTimestamp?: BigNumber;
     from: Signer;
     calculateTimestamp?: BigNumber;
@@ -86,6 +90,10 @@ export const prepareSwapDaiCase1 = async (
     };
     return swap;
 };
+
+function sleep(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export const prepareSwapUsdtCase1 = async (
     fixedInterestRate: BigNumber,
@@ -268,14 +276,13 @@ export const countOpenSwaps = (derivatives: Derivatives | undefined): number => 
     return count;
 };
 
-export const exetuceCloseSwapTestCase = async function (
+export const executeCloseSwapTestCase = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     acceptableFixedInterestRate: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
@@ -310,7 +317,7 @@ export const exetuceCloseSwapTestCase = async function (
     }
 
     if (testData.tokenUsdt && asset === testData.tokenUsdt.address) {
-        totalAmount = USD_10_000_6DEC;
+        totalAmount = TC_TOTAL_AMOUNT_10_000_6DEC;
     }
 
     const params = {
@@ -350,12 +357,9 @@ export const exetuceCloseSwapTestCase = async function (
         }
     }
 
-    await testData.iporOracle
-        .connect(userOne)
-        .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
-    if (params.direction == 0) {
+    if (params.direction == LEG_PAY_FIXED) {
         await openSwapPayFixed(testData, params);
-    } else if (params.direction == 1) {
+    } else if (params.direction == LEG_RECEIVE_FIXED) {
         await openSwapReceiveFixed(testData, params);
     }
 
@@ -370,12 +374,12 @@ export const exetuceCloseSwapTestCase = async function (
 
     //when
     if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
-        if (params.direction == 0) {
+        if (params.direction == LEG_PAY_FIXED) {
             actualPayoff = await testData.miltonUsdt
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
             await testData.miltonUsdt.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-        } else if (params.direction == 1) {
+        } else if (params.direction == LEG_RECEIVE_FIXED) {
             actualPayoff = await testData.miltonUsdt
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
@@ -388,12 +392,12 @@ export const exetuceCloseSwapTestCase = async function (
     }
 
     if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
-        if (params.direction == 0) {
+        if (params.direction == LEG_PAY_FIXED) {
             actualPayoff = await testData.miltonUsdc
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
             await testData.miltonUsdc.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-        } else if (params.direction == 1) {
+        } else if (params.direction == LEG_RECEIVE_FIXED) {
             actualPayoff = await testData.miltonUsdc
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
@@ -406,13 +410,13 @@ export const exetuceCloseSwapTestCase = async function (
     }
 
     if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
-        if (params.direction == 0) {
+        if (params.direction == LEG_PAY_FIXED) {
             actualPayoff = await testData.miltonDai
                 .connect(params.from)
                 .itfCalculateSwapPayFixedValue(endTimestamp, 1);
 
             await testData.miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
-        } else if (params.direction == 1) {
+        } else if (params.direction == LEG_RECEIVE_FIXED) {
             actualPayoff = await testData.miltonDai
                 .connect(params.from)
                 .itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
@@ -457,10 +461,9 @@ export const executeCloseSwapsTestCase = async function (
     testData: TestData,
     asset: string,
     leverage: BigNumber,
-    direction: number,
+    direction: BigNumber,
     openerUser: Signer,
     closerUser: Signer,
-    iporValueBeforeOpenSwap: BigNumber,
     iporValueAfterOpenSwap: BigNumber,
     periodOfTimeElapsedInSeconds: BigNumber,
     providedLiquidityAmount: BigNumber,
@@ -492,7 +495,7 @@ export const executeCloseSwapsTestCase = async function (
 
     let acceptableFixedInterestRate = null;
 
-    if (direction == 1) {
+    if (direction == LEG_RECEIVE_FIXED) {
         acceptableFixedInterestRate = ZERO;
     } else {
         acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
@@ -535,14 +538,10 @@ export const executeCloseSwapsTestCase = async function (
         }
     }
 
-    await testData.iporOracle
-        .connect(userOne)
-        .itfUpdateIndex(params.asset, iporValueBeforeOpenSwap, params.openTimestamp);
-
     for (let i = 0; BigNumber.from(i).lt(swapsToCreate); i++) {
-        if (params.direction === 0) {
+        if (params.direction === LEG_PAY_FIXED) {
             await openSwapPayFixed(testData, params);
-        } else if (params.direction === 1) {
+        } else if (params.direction === LEG_RECEIVE_FIXED) {
             await openSwapReceiveFixed(testData, params);
         }
     }

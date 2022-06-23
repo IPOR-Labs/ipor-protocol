@@ -1,4 +1,4 @@
-const hre = require("hardhat");
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 
@@ -48,36 +48,36 @@ describe("COMPOUND strategy pauseable", () => {
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
         const DaiMockedToken = await hre.ethers.getContractFactory("DaiMockedToken");
-        USDC = await UsdcMockedToken.deploy(totalSupply6Decimals, 6);
-        USDT = await UsdtMockedToken.deploy(totalSupply6Decimals, 6);
-        DAI = await DaiMockedToken.deploy(stableTotalSupply18Decimals, 18);
+        USDC = (await UsdcMockedToken.deploy(totalSupply6Decimals, 6)) as UsdcMockedToken;
+        USDT = (await UsdtMockedToken.deploy(totalSupply6Decimals, 6)) as UsdtMockedToken;
+        DAI = (await DaiMockedToken.deploy(stableTotalSupply18Decimals, 18)) as DaiMockedToken;
         const cTokenFactory = await hre.ethers.getContractFactory("MockCToken");
-        cUSDC = await cTokenFactory.deploy(
+        cUSDC = (await cTokenFactory.deploy(
             USDC.address,
             MockWhitePaperInstance.address,
             BigNumber.from("6"),
             "cUSDC",
             "cUSDC"
-        );
+        )) as MockCToken;
 
-        cUSDT = await cTokenFactory.deploy(
+        cUSDT = (await cTokenFactory.deploy(
             USDT.address,
             MockWhitePaperInstance.address,
             BigNumber.from("6"),
             "cUSDT",
             "cUSDT"
-        );
+        )) as MockCToken;
 
-        cDAI = await cTokenFactory.deploy(
+        cDAI = (await cTokenFactory.deploy(
             DAI.address,
             MockWhitePaperInstance.address,
             BigNumber.from("18"),
             "cDAI",
             "cDAI"
-        );
+        )) as MockCToken;
 
         const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");
-        COMP = await DAIFactory.deploy(stableTotalSupply18Decimals, 18);
+        COMP = (await DAIFactory.deploy(stableTotalSupply18Decimals, 18)) as ERC20;
 
         const MockComptroller = await hre.ethers.getContractFactory("MockComptroller");
         comptroller = (await MockComptroller.deploy(
@@ -88,12 +88,12 @@ describe("COMPOUND strategy pauseable", () => {
         )) as MockComptroller;
 
         const compoundNewStartegy = await hre.ethers.getContractFactory("StrategyCompound");
-        strategy = await upgrades.deployProxy(compoundNewStartegy, [
+        strategy = (await upgrades.deployProxy(compoundNewStartegy, [
             USDC.address,
             cUSDC.address,
             comptroller.address,
             COMP.address,
-        ]);
+        ])) as StrategyCompound;
         await strategy.setTreasuryManager(await admin.getAddress());
         await strategy.setTreasury(await admin.getAddress());
     });

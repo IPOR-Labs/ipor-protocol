@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet } from "../../types";
@@ -35,11 +35,11 @@ describe("TestnetFaucet", () => {
         tokenUsdc = (await UsdcMockedToken.deploy(TOTAL_SUPPLY_6_DECIMALS, 6)) as UsdcMockedToken;
 
         const TestnetFaucetFactory = await hre.ethers.getContractFactory("TestnetFaucet");
-        testnetFaucet = await upgrades.deployProxy(TestnetFaucetFactory, [
+        testnetFaucet = (await upgrades.deployProxy(TestnetFaucetFactory, [
             tokenDai.address,
             tokenUsdc.address,
             tokenUsdt.address,
-        ]);
+        ])) as TestnetFaucet;
 
         tokenDai.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_10MLN_18DEC);
         tokenUsdc.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
