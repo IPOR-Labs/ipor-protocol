@@ -7,8 +7,9 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
-AWS_PROFILE=""
+GLOBAL_AWS_PROFILE=""
 ROOT_PASSWORD=""
+WITH_PROFILE=""
 
 function read_env_file() {
   local ENV_FILE_PATH="${1}"
@@ -283,6 +284,16 @@ function create_env_config_file() {
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
 
+function get_aws_profile() {
+  local WITH_PROFILE=""
+  if [ -z "${GLOBAL_AWS_PROFILE}" ]; then
+    WITH_PROFILE=""
+  else
+    WITH_PROFILE="--profile ${GLOBAL_AWS_PROFILE}"
+  fi
+  echo "${WITH_PROFILE}"
+}
+
 function create_contracts_zip() {
   if [ -f "${ENV_CONTRACTS_ZIP_DEST}" ]; then
     rm -v "${ENV_CONTRACTS_ZIP_DEST}"
@@ -298,7 +309,9 @@ function put_file_to_bucket() {
   export AWS_ACCESS_KEY_ID="${IPOR_ENV_ADMIN_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${IPOR_ENV_ADMIN_AWS_SECRET_ACCESS_KEY}"
 
-  aws s3api put-object --bucket "${ENV_CONFIG_BUCKET}" --key "${FILE_KEY}" --body "${FILE_NAME}" --region "${AWS_REGION}" --profile "${AWS_PROFILE}"
+  local WITH_PROFILE=$(get_aws_profile)
+
+  aws s3api put-object --bucket "${ENV_CONFIG_BUCKET}" --key "${FILE_KEY}" --body "${FILE_NAME}" --region "${AWS_REGION}" ${WITH_PROFILE}
   echo -e "${FILE_KEY} file was published"
 }
 
@@ -617,7 +630,15 @@ function fill_j2_templates() {
 
 function login_ecr() {
   echo "docker login: ${AWS_DOCKER_REGISTRY}"
-  aws ecr get-login-password --region eu-central-1 --profile "${AWS_PROFILE}" | docker login --username AWS --password-stdin "${AWS_DOCKER_REGISTRY}"
+
+  local WITH_PROFILE=$(get_aws_profile)
+
+  aws ecr get-login-password ${WITH_PROFILE} --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${AWS_DOCKER_REGISTRY}"
+}
+
+function logout_ecr() {
+  echo "docker logout: ${AWS_DOCKER_REGISTRY}"
+  docker logout "${AWS_DOCKER_REGISTRY}"
 }
 
 function push_docker_image() {
@@ -796,6 +817,9 @@ function build_and_push_docker_images() {
 
   # Push cockpit docker image
   push_docker_image "${AWS_DOCKER_REGISTRY}/${IPOR_COCKPIT_IMAGE_NAME}" "${ENV_NAME}-${COMMIT_HASH}"
+
+  # Logout from ECR
+  logout_ecr
 }
 
 function retag_and_push_docker_image() {
@@ -984,7 +1008,9 @@ if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
   export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-$IPOR_ENV_USER_AWS_ACCESS_KEY_ID}"
   export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-$IPOR_ENV_USER_AWS_SECRET_ACCESS_KEY}"
 
-  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}" --profile "${AWS_PROFILE}"
+  WITH_PROFILE=$(get_aws_profile)
+
+  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}" ${WITH_PROFILE}
 
   unzip -o "${ENV_CONTRACTS_ZIP_DEST}" -d "${ENV_CONTRACTS_DIR}"
 fi
@@ -1021,6 +1047,8 @@ if [ $IS_RETAG_GETH_IMAGE = "YES" ]; then
   tag_and_push_docker_images "${ETH_BC_ITF_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
   tag_and_push_docker_images "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
   tag_and_push_docker_images "${ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME}" "${CGI_COMMIT_HASH}" "${CGI_BRANCH_NAME}"
+
+  logout_ecr
 fi
 
 
