@@ -18,6 +18,7 @@ import FrontendComponent from "./FrontendComponent";
 require("dotenv").config({ path: "../../.env" });
 const { AccountData, ContractData, ContractForm } = newContextComponents;
 
+
 export default ({ drizzle, drizzleState }) => {
     return (
         <div className="App">
@@ -31,7 +32,8 @@ export default ({ drizzle, drizzleState }) => {
                             height="30"
                             className="d-inline-block align-top ipor-navbar"
                         />{" "}
-                        IPOR Protocol - MILTON Dev Tool
+                        IPOR Protocol - Cockpit{" "}
+                        {process.env.REACT_APP_ITF_ENABLED === "true" ? "- [ ITF ENABLED ]" : ""}
                     </Navbar.Brand>
                 </Navbar>
             </Container>
@@ -68,9 +70,11 @@ export default ({ drizzle, drizzleState }) => {
                 <Tab eventKey="iporIndex" title="IporOracle">
                     <IporOracleComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
+
                 <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
+
                 <Tab eventKey="joseph" title="Joseph">
                     <JosephComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
@@ -95,9 +99,15 @@ export default ({ drizzle, drizzleState }) => {
                 <Tab eventKey="myPositions" title="My positions">
                     <MyPositions drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
-                {/* <Tab eventKey="faucet" title="Faucet">
-                    <FaucetComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab> */}
+
+                {process.env.REACT_APP_ENV_PROFILE !== "mainnet" ? (
+                    <Tab eventKey="faucet" title="Faucet">
+                        <FaucetComponent drizzle={drizzle} drizzleState={drizzleState} />
+                    </Tab>
+                ) : (
+                    ""
+                )}
+
                 <Tab eventKey="frontend" title="Frontend Data Provider">
                     <FrontendComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
