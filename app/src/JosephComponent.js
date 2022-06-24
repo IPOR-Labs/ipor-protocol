@@ -272,7 +272,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             contract="DrizzleUsdt"
                             method="approve"
-                            sendArgs={{ from: drizzleState.accounts[0] }}
                         />
                     </td>
                     <td>
@@ -281,7 +280,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             contract="DrizzleUsdc"
                             method="approve"
-                            sendArgs={{ from: drizzleState.accounts[0] }}
                         />
                     </td>
                     <td>
@@ -290,7 +288,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             contract="DrizzleDai"
                             method="approve"
-                            sendArgs={{ from: drizzleState.accounts[0] }}
                         />
                     </td>
                 </tr>

@@ -10,6 +10,24 @@ module.exports = async function (deployer, _network, addresses) {
 
     const assets = [usdt, usdc, dai];
 
+    process.env.INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT;
+    process.env.INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDC;
+    process.env.INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_DAI;
+
+    process.env.INITIAL_IPOR_INDEX_EMA_USDT;
+    process.env.INITIAL_IPOR_INDEX_EMA_USDC;
+    process.env.INITIAL_IPOR_INDEX_EMA_DAI;
+
+    process.env.INITIAL_IPOR_INDEX_EWMVAR_USDT;
+    process.env.INITIAL_IPOR_INDEX_EWMVAR_USDC;
+    process.env.INITIAL_IPOR_INDEX_EWMVAR_DAI;
+
+    if (!process.env.INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT) {
+        throw new Error(
+            "Transfer ownership failed! Environment parameter SC_MIGRATION_IPOR_PROTOCOL_OWNER_ADDRESS is not set!"
+        );
+    }
+
     //TODO: Setup apropriate params before deploy on mainnet
     const updateTimestamps = [BigInt("1650886888"), BigInt("1650886630"), BigInt("1650886104")];
     const exponentialMovingAverages = [
