@@ -8,13 +8,15 @@ services:
     container_name: ipor-cockpit
     image: "${IPOR_COCKPIT_DOCKER_IMAGE}"
     profiles:
-      - dev-tool
-      - dev-tool-provider
+      - cockpit
+      - cockpit-provider
       - developer
       - all
     restart: always
     ports:
       - "4000:3000"
+    volumes:
+      - ./containers/cockpit/.env:/usr/src/.env
     environment:
       - TZ=${TIMEZONE}
 
@@ -75,7 +77,7 @@ services:
     image: nginx:1.21.1
     profiles:
       - ssl-eth-bc
-      - dev-tool-provider
+      - cockpit-provider
       - all
     restart: always
     ports:

@@ -25,7 +25,7 @@ IPOR smart contracts
 
 1. Clone `ipor-protocol` repository.
 2. In directory `ipor-protocol` configure `.env` file based on `.env-local.j2`
-3. In directory `ipor-protocol/containers/dev-tool` configure `.env` file based on `.env-local.j2`
+3. In directory `ipor-protocol/containers/cockpit` configure `.env` file based on `.env-local.j2`
 4. Execute script `./run.sh` with specific commands in order like below:
     - `b` - build docker containers
     - `r` - run docker-compose
@@ -83,7 +83,7 @@ Do following steps:
 
 #### How to run all tests?
 
-`npx hardhat test`
+`npm run test`
 
 #### How to run all tests with coverage?
 
@@ -132,7 +132,7 @@ other available options:
 -   eth-bc-provider - run containers needed to serve Ethereum blockchain on remote server
 -   eth-explorer-provider - run containers needed to serve Ethereum blockchain explorer on remote server
 -   explorer - run only Ethereum blockchain explorer
--   dev-tool - run only dev-tool
+-   cockpit - run only cockpit
 -   ssl-eth-bc - run only ssl containers needed for Ethereum blockchain
 -   ssl-explorer - run only ssl containers needed for Ethereum blockchain explorer
 -   all - run all containers

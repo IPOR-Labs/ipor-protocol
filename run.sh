@@ -35,6 +35,7 @@ ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
 ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/${ENV_CONTRACTS_FILE_NAME}"
 ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
 
+CONTAINERS_DIR="${DIR}/containers"
 ETH_BC_CONTAINER="ipor-protocol-eth-bc"
 ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
 ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
@@ -45,7 +46,7 @@ ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
 NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
 
 ETH_BC_IMAGE_NAME="ipor-geth"
-ETH_BC_DOCKERFILE_PATH="${DIR}/containers/eth-bc"
+ETH_BC_DOCKERFILE_PATH="${CONTAINERS_DIR}/eth-bc"
 
 ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME="s0"
 ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME="s12"
@@ -89,7 +90,11 @@ GEN_LAST_COMPLETED_MIGRATION_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_
 
 IPOR_COCKPIT_DOCKERFILE_PATH="${DIR}/app"
 IPOR_COCKPIT_IMAGE_NAME="ipor-cockpit"
+IPOR_COCKPIT_CONTAINER_DIR="${CONTAINERS_DIR}/cockpit"
+IPOR_COCKPIT_ENV_CONFIG_J2_PATH="${IPOR_COCKPIT_CONTAINER_DIR}/.env.j2"
+IPOR_COCKPIT_GEN_ENV_CONFIG_PATH="${IPOR_COCKPIT_DOCKERFILE_PATH}/.env"
 
+IS_DOCKER_LOGIN="NO"
 IS_MIGRATE_SC="NO"
 IS_MIGRATE_WITH_CLEAN_SC="NO"
 IS_BUILD_DOCKER="NO"
@@ -168,6 +173,9 @@ while test $# -gt 0; do
     ;;
   retag-geth-image | rgi)
     IS_RETAG_GETH_IMAGE="YES"
+    ;;
+  docker-login | dl)
+    IS_DOCKER_LOGIN="YES"
     ;;
   help | h | ?)
     IS_HELP="YES"
@@ -623,6 +631,9 @@ function fill_j2_templates() {
   fill_j2_template "${ETH_BC_CONFIG_J2_PATH}" "${VARIABLES_PATH}" "$(get_path_with_env "${ETH_BC_GEN_CONFIG_PATH}" "${ENV_NAME}")"
   fill_j2_template "${ETH_BC_KEY_PASSWORD_J2_PATH}" "${VARIABLES_PATH}" "$(get_path_with_env "${ETH_BC_GEN_KEY_PASSWORD_PATH}" "${ENV_NAME}")"
   fill_j2_template "${ETH_BC_MINER_KEY_J2_PATH}" "${VARIABLES_PATH}" "$(get_path_with_env "${ETH_BC_GEN_MINER_KEY_PATH}" "${ENV_NAME}")"
+
+  # Create cockpit config file
+  fill_j2_template "${IPOR_COCKPIT_ENV_CONFIG_J2_PATH}" "${VARIABLES_PATH}" "${IPOR_COCKPIT_GEN_ENV_CONFIG_PATH}"
 }
 
 function login_ecr() {
@@ -721,7 +732,7 @@ function create_env_config() {
   # Configure env variables file
   create_env_j2_variables_file "${ENV_FILE}" "${ALL_VARIABLES_FILE_PATH}" "${ENV_CREDENTIALS_VARIABLES_FILE}"
 
-  # Create config files
+  # Create geth config files
   fill_j2_templates "${ENV_NAME}"
 }
 
@@ -873,6 +884,12 @@ function create_migrated_geth_image() {
 
 ################################### COMMANDS ###################################
 
+
+if [ $IS_DOCKER_LOGIN = "YES" ]; then
+  echo -e "\n\e[32mDocker login into AWS registry\e[0m\n"
+  login_ecr
+fi
+
 if [ $IS_BUILD_DOCKER = "YES" ]; then
   cd "${DIR}"
   npm install
@@ -880,9 +897,9 @@ if [ $IS_BUILD_DOCKER = "YES" ]; then
   echo -e "\n\e[32mBuild IPOR cockpit docker...\e[0m\n"
   build_docker_image "${IPOR_COCKPIT_DOCKERFILE_PATH}" "${IPOR_COCKPIT_IMAGE_NAME}" "latest"
 
-  cd "${DIR}/containers/nginx-eth-bc"
+  cd "${CONTAINERS_DIR}/nginx-eth-bc"
   echo -e "\n\e[32mBuild nginx-eth-bc docker...\e[0m\n"
-  build_docker_image "${DIR}/containers/nginx-eth-bc" "ipor-nginx-eth-bc" "latest"
+  build_docker_image "${CONTAINERS_DIR}/nginx-eth-bc" "ipor-nginx-eth-bc" "latest"
 fi
 
 if [ $IS_STOP = "YES" ]; then
@@ -1048,6 +1065,7 @@ if [ $IS_HELP = "YES" ]; then
   echo -e "usage: \e[32m./run.sh\e[0m [cmd1] [cmd2] [cmd3]"
   echo -e ""
   echo -e "commands can by joined together, order of commands doesn't matter, allowed commands:"
+  echo -e "   \e[36mdocker-login\e[0m|\e[36mdl\e[0m     Docker login into AWS ECR"
   echo -e "   \e[36mbuild\e[0m|\e[36mb\e[0m             Build IPOR dockers"
   echo -e "   \e[36mrun\e[0m|\e[36mr\e[0m               Run / restart IPOR dockers"
   echo -e "   \e[36mstop\e[0m|\e[36ms\e[0m              Stop IPOR dockers"

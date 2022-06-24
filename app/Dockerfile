@@ -10,4 +10,4 @@ COPY . .
 EXPOSE 3000
 CMD npm run start
 
-#COPY .env /usr/src/.env
+COPY .env /usr/src/.env
