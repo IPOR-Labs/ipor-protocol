@@ -16,7 +16,7 @@ services:
     ports:
       - "4000:3000"
     volumes:
-      - ./containers/cockpit/.env:/usr/src/.env
+      - ./app/.env:/usr/src/.env
     environment:
       - TZ=${TIMEZONE}
 
