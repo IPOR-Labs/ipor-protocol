@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
 import "./IStrategy.sol";
 
-/// @title Interface for interaction with Compound. 
+/// @title Interface for interaction with Compound.
 /// @notice It standarises the calls made by the asset management to the external DeFi protocol.
 interface IStrategyCompound is IStrategy {
     /// @notice Emmited when blocks per year changed by Owner.
