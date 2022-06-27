@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
-/// @title Interface for interaction with  Stanley's strategy. 
+/// @title Interface for interaction with  Stanley's strategy.
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
 interface IStrategy {
     /// @notice Returns current version of strategy
