@@ -71,7 +71,7 @@ module.exports = async function (deployer, _network, addresses) {
     ];
     const exponentialMovingAverages = [
         BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDT),
-        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDC)),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDC),
         BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_DAI),
     ];
     const exponentialWeightedMovingVariances = [
