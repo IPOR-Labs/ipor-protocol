@@ -39,7 +39,7 @@ AWS_REGION="eu-central-1"
 
 GET_IP_TOKEN_METHOD_SIGNATURE="0xf64de4ed"
 
-MIGRATION_STATE_REPO_DIR="${DIR}/../${MIGRATION_STATE_REPO}"
+SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
 MIGRATION_COMMIT_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
 LAST_COMPLETED_MIGRATION_FILE_PATH=".ipor/${ENV_PROFILE}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
 
@@ -213,7 +213,7 @@ function create_env_config_file(){
   RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdc.json" "stanley_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdt.json" "stanley_usdt_address")
   RESULT=$(set_smart_contract_address_from_json_file "StanleyDai.json" "stanley_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProvider.json" "itf_data_provider")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProvider.json" "itf_data_provider_address")
 
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
@@ -411,14 +411,14 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
   cd "${DIR}"
   LAST_MIGRATION_NUMBER=$(get_last_migration_number)
 
-  profile_dir="${MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}"
-  migration_date_dir="${MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
+  profile_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}"
+  migration_date_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
   actual_state_dir="${profile_dir}/actual_state"
 
   echo "Copy migration state to: ${migration_date_dir}"
 
-  cd "${MIGRATION_STATE_REPO_DIR}"
-  echo "Git pull: ${MIGRATION_STATE_REPO}"
+  cd "${SC_MIGRATION_STATE_REPO_DIR}"
+  echo "Git pull: ${SC_MIGRATION_STATE_REPO}"
   git pull
 
   cd "${DIR}"
@@ -435,14 +435,14 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
   cp -R .openzeppelin/ "${actual_state_dir}"
   cp "${ENV_CONTRACTS_ZIP_DEST}" "${migration_date_dir}/${ENV_CONTRACTS_FILE_NAME}"
 
-  cd "${MIGRATION_STATE_REPO_DIR}"
-  echo "Git add: ${MIGRATION_STATE_REPO}"
+  cd "${SC_MIGRATION_STATE_REPO_DIR}"
+  echo "Git add: ${SC_MIGRATION_STATE_REPO}"
   git add .
 
-  echo "Git commit: ${MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
+  echo "Git commit: ${SC_MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
   git commit -m "Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
 
-  echo "Git push: ${MIGRATION_STATE_REPO}"
+  echo "Git push: ${SC_MIGRATION_STATE_REPO}"
   git push
   cd "${DIR}"
 fi
