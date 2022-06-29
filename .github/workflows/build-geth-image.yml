@@ -73,11 +73,6 @@ jobs:
           path: "~/.config/truffle"
           key: ${{ runner.os }}-truffle-config-${{ hashFiles('**/package-lock.json') }}
 
-      - name: Set up docker cache
-        # from tag: v0.0.11
-        uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
-        continue-on-error: true
-
       - name: Create python requirements file
         run: echo "j2cli==0.3.10" > requirements.txt
 
