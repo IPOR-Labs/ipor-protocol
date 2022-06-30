@@ -62,5 +62,5 @@ jobs:
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     with:
-      success: ${{ needs.build-1.result == 'success' && needs.build-2.result == 'success' }}
+      success: ${{ needs.build-sc.result == 'success' && needs.build-java.result == 'success' && needs.build-geth-itf.result == 'success' && needs.build-geth-s0-s12.result == 'success' }}
       slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}

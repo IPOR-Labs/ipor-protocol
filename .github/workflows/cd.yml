@@ -100,5 +100,5 @@ jobs:
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     with:
-      success: ${{ needs.publish.result == 'success' }}
+      success: ${{ needs.publish-jar.result == 'success' && needs.publish-docker.result == 'success' }}
       slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
