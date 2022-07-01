@@ -195,7 +195,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             "userIvTokenAfter >= 9999999999999999999"
         ).to.be.true;
         expect(
-            strategyAaveBalanceAfter.gte(depositAmount),
+            strategyAaveBalanceAfter.gte(BigNumber.from("9999999999999999999")),
             "strategyAaveBalanceAfter >= 10 * 10^18"
         ).to.be.true;
         expect(
