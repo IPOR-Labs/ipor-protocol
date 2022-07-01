@@ -115,7 +115,7 @@ abstract contract ItfMilton is Milton {
         return _calculateIncomeFeeValue(payoff);
     }
 
-    function iftCalculatePnlForSwaps(
+    function itfCalculatePnlForSwaps(
         uint256 calculateTimestamp,
         uint256[] memory swapIdsPayFixed,
         uint256[] memory swapIdsReceiveFixed
