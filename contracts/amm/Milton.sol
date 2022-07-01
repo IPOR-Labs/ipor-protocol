@@ -11,7 +11,6 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
-import "hardhat/console.sol";
 
 /**
  * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
@@ -648,7 +647,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             _asset,
             closeTimestamp,
             _msgSender(),
-            incomeFeeValue,
+            transferredToBuyer,
             payoutForLiquidator,
             incomeFeeValue
         );
@@ -722,6 +721,7 @@ abstract contract Milton is MiltonInternal, IMilton {
      * # should the payout be larger than the collateral then it transfers payout to the buyer
      * @param derivativeItem - Derivative struct
      * @param payoff - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
+     * @param incomeFeeValue - amount of fee calculated based on payoff.
      * @param _calculationTimestamp - Time for which the calculations in this funciton are run
      * @param cfgMinLiquidationThresholdToCloseBeforeMaturity - Minimal profit to loss required to put the swap up for the liquidation by non-byer regardless of maturity
      * @param cfgSecondsBeforeMaturityWhenPositionCanBeClosed - Time before the appointed maturity allowing the liquidation of the swap
