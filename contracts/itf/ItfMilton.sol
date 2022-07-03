@@ -119,9 +119,10 @@ abstract contract ItfMilton is Milton {
         uint256 calculateTimestamp,
         uint256[] memory swapIdsPayFixed,
         uint256[] memory swapIdsReceiveFixed
-    ) external view returns (int256 plnValue) {
+    ) external view returns (int256 plnValue, int256 payoffGross) {
         for (uint256 i = 0; i != swapIdsPayFixed.length; i++) {
             int256 payoff = _itfCalculateSwapPayFixedValue(calculateTimestamp, swapIdsPayFixed[i]);
+            payoffGross += payoff;
             plnValue += _itfSubstractIncomeFeeValue(payoff);
         }
         for (uint256 j = 0; j != swapIdsReceiveFixed.length; j++) {
@@ -129,6 +130,7 @@ abstract contract ItfMilton is Milton {
                 calculateTimestamp,
                 swapIdsReceiveFixed[j]
             );
+            payoffGross += payoff;
             plnValue += _itfSubstractIncomeFeeValue(payoff);
         }
     }
