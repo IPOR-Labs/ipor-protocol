@@ -2,30 +2,31 @@ version: "3.9"
 
 services:
 
-############################################ DEV-TOOL ############################################
+  ############################################ COCKPIT ############################################
 
-  ipor-protocol-milton-tool:
-    container_name: ipor-protocol-milton-tool
-    image: io.ipor/ipor-protocol-milton-tool:latest
+  ipor-cockpit:
+    container_name: ipor-cockpit
+    image: "${IPOR_COCKPIT_DOCKER_IMAGE}"
     profiles:
-      - dev-tool
-      - dev-tool-provider
+      - cockpit
+      - cockpit-provider
       - developer
       - all
     restart: always
     ports:
       - "4000:3000"
     volumes:
-      - ./containers/dev-tool/.env:/usr/src/.env
+      - ./app/.env:/usr/src/.env
     environment:
       - TZ=${TIMEZONE}
 
-############################################ BLOCKCHAIN ############################################
+  ############################################ BLOCKCHAIN ############################################
 
   ipor-protocol-eth-bc:
     container_name: ipor-protocol-eth-bc
-    image: ethereum/client-go:alltools-v1.10.12
+    image: "${ETH_BC_DOCKER_IMAGE}"
     profiles:
+      - eth-bc-and-explorer
       - eth-bc
       - eth-bc-provider
       - developer
@@ -60,19 +61,23 @@ services:
       - ETH_BC_MINER_THREADS=${ETH_BC_MINER_THREADS}
       - ETH_BC_NETWORK_ID=${ETH_BC_NETWORK_ID}
       - ETH_BC_BLOCK_PERIOD=${ETH_BC_BLOCK_PERIOD}
+      - ETH_BC_BLOCK_GAS_LIMIT=${ETH_BC_BLOCK_GAS_LIMIT}
       - ETH_BC_NODE_MODE=${ETH_BC_NODE_MODE}
       - ETH_BC_NODE_NAME=${ETH_BC_NODE_NAME}
       - ETH_BC_HTTP_API=${ETH_BC_HTTP_API}
       - ETH_BC_WS_API=${ETH_BC_WS_API}
+      - ETH_BC_VERBOSITY=${ETH_BC_VERBOSITY}
+      - ETH_BC_VMODULE_VERBOSITY=${ETH_BC_VMODULE_VERBOSITY}
+      - ETH_BC_INIT_GENESIS_BLOCK=${ETH_BC_INIT_GENESIS_BLOCK}
 
-############################################ SSL ############################################
+  ############################################ SSL ############################################
 
   ipor-protocol-nginx:
     container_name: ipor-protocol-nginx
     image: nginx:1.21.1
     profiles:
       - ssl-eth-bc
-      - dev-tool-provider
+      - cockpit-provider
       - all
     restart: always
     ports:
@@ -88,11 +93,11 @@ services:
     environment:
       - TZ=${TIMEZONE}
     depends_on:
-      - ipor-protocol-milton-tool
+      - ipor-cockpit
 
   ipor-protocol-nginx-eth-bc:
     container_name: ipor-protocol-nginx-eth-bc
-    image: io.ipor/nginx-eth-bc:latest
+    image: ipor-nginx-eth-bc:latest
     profiles:
       - ssl-eth-bc
       - eth-bc-provider
@@ -116,13 +121,14 @@ services:
     depends_on:
       - ipor-protocol-eth-bc
 
-############################################ EXPLORER ############################################
+  ############################################ EXPLORER ############################################
 
   ipor-protocol-eth-explorer:
     container_name: ipor-protocol-eth-explorer
     image: blockscout/blockscout-mainnet:4.0.1-pre-16
     profiles:
       - explorer
+      - eth-bc-and-explorer
       - eth-explorer-provider
       - developer
       - all
@@ -160,6 +166,7 @@ services:
     image: postgres:12.5-alpine
     profiles:
       - explorer
+      - eth-bc-and-explorer
       - eth-explorer-provider
       - developer
       - all

@@ -345,8 +345,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
@@ -355,8 +355,8 @@ contract MiltonStorage is
             liquidator,
             iporSwap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -367,8 +367,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
@@ -377,8 +377,8 @@ contract MiltonStorage is
             liquidator,
             iporSwap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -648,8 +648,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -657,8 +657,8 @@ contract MiltonStorage is
             liquidator,
             swap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -672,8 +672,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -694,9 +694,7 @@ contract MiltonStorage is
             }
         }
 
-        uint256 incomeFee = IporMath.division(absPayoff * cfgIncomeFeeRate, Constants.D18);
-
-        _balances.treasury = _balances.treasury + incomeFee.toUint128();
+        _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
             require(
@@ -706,7 +704,9 @@ contract MiltonStorage is
 
             _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
-            _balances.liquidityPool = _balances.liquidityPool + (absPayoff - incomeFee).toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool +
+                (absPayoff - incomeFeeValue).toUint128();
         }
     }
 

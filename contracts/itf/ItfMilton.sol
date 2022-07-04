@@ -4,6 +4,8 @@ pragma solidity 0.8.14;
 import "../amm/Milton.sol";
 
 abstract contract ItfMilton is Milton {
+    using SafeCast for uint256;
+
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
@@ -98,8 +100,7 @@ abstract contract ItfMilton is Milton {
         view
         returns (int256)
     {
-        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
-        return _calculatePayoffPayFixed(calculateTimestamp, swap);
+        return _itfCalculateSwapPayFixedValue(calculateTimestamp, swapId);
     }
 
     function itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
@@ -107,11 +108,55 @@ abstract contract ItfMilton is Milton {
         view
         returns (int256)
     {
-        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
-        return _calculatePayoffReceiveFixed(calculateTimestamp, swap);
+        return _itfCalculateSwapReceiveFixedValue(calculateTimestamp, swapId);
     }
 
     function itfCalculateIncomeFeeValue(int256 payoff) external pure returns (uint256) {
         return _calculateIncomeFeeValue(payoff);
+    }
+
+    function itfCalculatePnlForSwaps(
+        uint256 calculateTimestamp,
+        uint256[] memory swapIdsPayFixed,
+        uint256[] memory swapIdsReceiveFixed
+    ) external view returns (int256 plnValue, int256 payoffGross) {
+        for (uint256 i = 0; i != swapIdsPayFixed.length; i++) {
+            int256 payoff = _itfCalculateSwapPayFixedValue(calculateTimestamp, swapIdsPayFixed[i]);
+            payoffGross += payoff;
+            plnValue += _itfSubstractIncomeFeeValue(payoff);
+        }
+        for (uint256 j = 0; j != swapIdsReceiveFixed.length; j++) {
+            int256 payoff = _itfCalculateSwapReceiveFixedValue(
+                calculateTimestamp,
+                swapIdsReceiveFixed[j]
+            );
+            payoffGross += payoff;
+            plnValue += _itfSubstractIncomeFeeValue(payoff);
+        }
+    }
+
+    function _itfSubstractIncomeFeeValue(int256 payoff) internal pure returns (int256) {
+        if (payoff <= 0) {
+            return payoff;
+        }
+        return payoff - _calculateIncomeFeeValue(payoff).toInt256();
+    }
+
+    function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId)
+        internal
+        view
+        returns (int256)
+    {
+        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
+        return _calculatePayoffPayFixed(calculateTimestamp, swap);
+    }
+
+    function _itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
+        internal
+        view
+        returns (int256)
+    {
+        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
+        return _calculatePayoffReceiveFixed(calculateTimestamp, swap);
     }
 }
