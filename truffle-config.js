@@ -20,7 +20,6 @@ module.exports = {
             },
             network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
-            allowUnlimitedContractSize: true,
             networkCheckTimeout: 300000, //5 min
         },
         develop: {
