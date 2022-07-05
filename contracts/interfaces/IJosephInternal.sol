@@ -70,10 +70,6 @@ interface IJosephInternal {
     /// @return Treasury address
     function getTreasury() external view returns (address);
 
-    /// @notice Sets Charlie Treasury address
-    /// @param newCharlieTreasury new Charlie Treasury address
-    function setCharlieTreasury(address newCharlieTreasury) external;
-
     /// @notice Sets Treasury address
     /// @param newTreasury new Treasury address
     function setTreasury(address newTreasury) external;
@@ -90,6 +86,10 @@ interface IJosephInternal {
     /// @return Charlie Treasury address
     function getCharlieTreasury() external view returns (address);
 
+    /// @notice Sets Charlie Treasury address
+    /// @param newCharlieTreasury new Charlie Treasury address
+    function setCharlieTreasury(address newCharlieTreasury) external;
+
     /// @notice Gets Treasury Manager address, external multisig address which has permission to transfer Treasury balance from Milton to external Treausry wallet.
     /// @return Treasury Manager address
     function getTreasuryManager() external view returns (address);
@@ -97,6 +97,14 @@ interface IJosephInternal {
     /// @notice Sets Treasury Manager address
     /// @param newTreasuryManager new Treasury Manager address
     function setTreasuryManager(address newTreasuryManager) external;
+
+    function getMaxLiquidityPoolAmount() external view returns (uint64);
+
+    function setMaxLiquidityPoolAmount(uint256 newMaxLiquidityPoolAmount) external;
+
+    function getMaxLpAccountContributionAmount() external view returns (uint64);
+
+    function setMaxLpAccountContributionAmount(uint256 newMaxLpAccountContributionAmount) external;
 
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
@@ -136,5 +144,25 @@ interface IJosephInternal {
         address indexed changedBy,
         address indexed oldTreasury,
         address indexed newTreasury
+    );
+
+    /// @notice Emmited after the max liquidity pool amount has changed
+    /// @param changedBy account address that changed max liquidity pool amount
+    /// @param oldMaxLiquidityPoolAmount Old max liquidity pool amount
+    /// @param newMaxLiquidityPoolAmount New max liquidity pool amount
+    event MaxLiquidityPoolAmountChanged(
+        address indexed changedBy,
+        address indexed oldMaxLiquidityPoolAmount,
+        address indexed newMaxLiquidityPoolAmount
+    );
+
+    /// @notice Emmited after the max liquidity pool account contribution amount has changed
+    /// @param changedBy account address that changed max liquidity pool account contribution amount
+    /// @param oldMaxLpAccountContributionAmount Old max liquidity pool account contribution amount
+    /// @param newMaxLpAccountContributionAmount New max liquidity pool account contribution amount
+    event MaxLpAccountContributionAmountChanged(
+        address indexed changedBy,
+        address indexed oldMaxLpAccountContributionAmount,
+        address indexed newMaxLpAccountContributionAmount
     );
 }

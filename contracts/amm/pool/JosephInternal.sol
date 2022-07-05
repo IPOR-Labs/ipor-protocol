@@ -31,7 +31,6 @@ abstract contract JosephInternal is
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
 
-    uint256 internal _miltonStanleyBalanceRatio;
     address internal _asset;
     IIpToken internal _ipToken;
     IMiltonInternal internal _milton;
@@ -42,6 +41,10 @@ abstract contract JosephInternal is
     address internal _treasuryManager;
     address internal _charlieTreasury;
     address internal _charlieTreasuryManager;
+
+    uint256 internal _miltonStanleyBalanceRatio;
+    uint32 internal _maxLiquidityPoolAmount;
+    uint32 internal _maxLpAccountContributionAmount;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -270,6 +273,44 @@ abstract contract JosephInternal is
         address oldTreasuryManager = _getTreasuryManager();
         _treasuryManager = newTreasuryManager;
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
+    }
+
+    function getMaxLiquidityPoolAmount() external view override returns (uint64) {
+        return _maxLiquidityPoolAmount;
+    }
+
+    function setMaxLiquidityPoolAmount(uint256 newMaxLiquidityPoolAmount)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        uint64 oldMaxLiquidityPoolAmount = _maxLiquidityPoolAmount;
+        _maxLiquidityPoolAmount = newMaxLiquidityPoolAmount.toUint64();
+        emit MaxLiquidityPoolAmountChanged(
+            _msgSender(),
+            oldMaxLiquidityPoolAmount,
+            newMaxLiquidityPoolAmount
+        );
+    }
+
+    function getMaxLpAccountContributionAmount() external view override returns (uint64) {
+        return _maxLpAccountContributionAmount;
+    }
+
+    function setMaxLpAccountContributionAmount(uint256 newMaxLpAccountContributionAmount)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        uint64 oldMaxLpAccountContributionAmount = _maxLpAccountContributionAmount;
+        _maxLpAccountContributionAmount = newMaxLpAccountContributionAmount.toUint64();
+        emit MaxLpAccountContributionAmountChanged(
+            _msgSender(),
+            oldMaxLpAccountContributionAmount,
+            newMaxLpAccountContributionAmount
+        );
     }
 
     function getRedeemFeeRate() external pure override returns (uint256) {

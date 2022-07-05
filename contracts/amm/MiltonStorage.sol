@@ -33,6 +33,8 @@ contract MiltonStorage is
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsPayFixed;
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsReceiveFixed;
 
+    mapping(address => uint128) private _accountLiquidityPoolBalance;
+
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
@@ -291,13 +293,24 @@ contract MiltonStorage is
         soapReceiveFixed = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
     }
 
-    function addLiquidity(uint256 assetAmount) external override onlyJoseph {
+    function addLiquidity(
+        address account,
+        uint256 assetAmount,
+        uint256 cfgMaxLiquidityPoolAmount,
+        uint256 cfgMaxLpAccountContributionAmount
+    ) external override onlyJoseph {
         require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
         _balances.liquidityPool = _balances.liquidityPool + assetAmount.toUint128();
+        _accountLiquidityPoolBalance[account] =
+            _accountLiquidityPoolBalance[account] +
+            assetAmount.toUint128();
     }
 
-    function subtractLiquidity(uint256 assetAmount) external override onlyJoseph {
+    function subtractLiquidity(address account, uint256 assetAmount) external override onlyJoseph {
         _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
+        _accountLiquidityPoolBalance[account] =
+            _accountLiquidityPoolBalance[account] -
+            assetAmount.toUint128();
     }
 
     function updateStorageWhenOpenSwapPayFixed(

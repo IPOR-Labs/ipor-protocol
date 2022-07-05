@@ -91,4 +91,10 @@ library MiltonErrors {
 
     /// @notice Treasury balance is too low.
     string public constant TREASURY_BALANCE_IS_TOO_LOW = "IPOR_328";
+
+    /// @notice Liquidity Pool Balance is too high
+    string public constant LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH = "IPOR_329";
+
+    /// @notice Liquidity Pool account contribution is too high.
+    string public constant LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH = "IPOR_330";
 }

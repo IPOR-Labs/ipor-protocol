@@ -42,6 +42,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
         _miltonStanleyBalanceRatio = 85e16;
+		_maxLiquidityPoolAmount = 2_000_000;
+		_maxLpAccountContributionAmount = 50_000;
     }
 
     function calculateExchangeRate() external view override returns (uint256) {
@@ -99,6 +101,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
         require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
+
+		//TODO: check if user achieve max
+		//TODO: check if milton achieve max  
 
         _getMiltonStorage().addLiquidity(wadAssetAmount);
 
