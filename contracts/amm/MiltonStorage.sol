@@ -295,22 +295,33 @@ contract MiltonStorage is
 
     function addLiquidity(
         address account,
-        uint256 assetAmount,
+        uint256 wadAssetAmount,
         uint256 cfgMaxLiquidityPoolAmount,
         uint256 cfgMaxLpAccountContributionAmount
     ) external override onlyJoseph {
-        require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
-        _balances.liquidityPool = _balances.liquidityPool + assetAmount.toUint128();
-        _accountLiquidityPoolBalance[account] =
-            _accountLiquidityPoolBalance[account] +
-            assetAmount.toUint128();
+        require(wadAssetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
+
+        uint128 newLiquidityPoolBalance = _balances.liquidityPool + wadAssetAmount.toUint128();
+
+        require(
+            newLiquidityPoolBalance <= cfgMaxLiquidityPoolAmount * Constants.D18,
+            MiltonErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
+        );
+
+        uint128 newAccountLiquidityPoolBalance = _accountLiquidityPoolBalance[account] +
+            wadAssetAmount.toUint128();
+
+        require(
+            newAccountLiquidityPoolBalance <= cfgMaxLpAccountContributionAmount * Constants.D18,
+            MiltonErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
+        );
+
+        _balances.liquidityPool = newLiquidityPoolBalance;
+        _accountLiquidityPoolBalance[account] = newAccountLiquidityPoolBalance;
     }
 
-    function subtractLiquidity(address account, uint256 assetAmount) external override onlyJoseph {
+    function subtractLiquidity(uint256 assetAmount) external override onlyJoseph {
         _balances.liquidityPool = _balances.liquidityPool - assetAmount.toUint128();
-        _accountLiquidityPoolBalance[account] =
-            _accountLiquidityPoolBalance[account] -
-            assetAmount.toUint128();
     }
 
     function updateStorageWhenOpenSwapPayFixed(

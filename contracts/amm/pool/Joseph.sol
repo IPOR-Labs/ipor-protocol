@@ -42,8 +42,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
         _miltonStanleyBalanceRatio = 85e16;
-		_maxLiquidityPoolAmount = 2_000_000;
-		_maxLpAccountContributionAmount = 50_000;
+        _maxLiquidityPoolAmount = 2_000_000;
+        _maxLpAccountContributionAmount = 50_000;
     }
 
     function calculateExchangeRate() external view override returns (uint256) {
@@ -94,6 +94,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 assetDecimals,
         uint256 timestamp
     ) internal nonReentrant {
+        address msgSender = _msgSender();
         IMiltonInternal milton = _getMilton();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
@@ -102,20 +103,22 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
-		//TODO: check if user achieve max
-		//TODO: check if milton achieve max  
+        _getMiltonStorage().addLiquidity(
+            msgSender,
+            wadAssetAmount,
+            _maxLiquidityPoolAmount,
+            _maxLpAccountContributionAmount
+        );
 
-        _getMiltonStorage().addLiquidity(wadAssetAmount);
-
-        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(milton), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
 
-        _getIpToken().mint(_msgSender(), ipTokenAmount);
+        _getIpToken().mint(msgSender, ipTokenAmount);
 
         emit ProvideLiquidity(
             timestamp,
-            _msgSender(),
+            msgSender,
             address(milton),
             exchangeRate,
             wadAssetAmount,

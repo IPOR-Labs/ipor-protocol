@@ -152,8 +152,8 @@ interface IJosephInternal {
     /// @param newMaxLiquidityPoolAmount New max liquidity pool amount
     event MaxLiquidityPoolAmountChanged(
         address indexed changedBy,
-        address indexed oldMaxLiquidityPoolAmount,
-        address indexed newMaxLiquidityPoolAmount
+        uint256 indexed oldMaxLiquidityPoolAmount,
+        uint256 indexed newMaxLiquidityPoolAmount
     );
 
     /// @notice Emmited after the max liquidity pool account contribution amount has changed
@@ -162,7 +162,7 @@ interface IJosephInternal {
     /// @param newMaxLpAccountContributionAmount New max liquidity pool account contribution amount
     event MaxLpAccountContributionAmountChanged(
         address indexed changedBy,
-        address indexed oldMaxLpAccountContributionAmount,
-        address indexed newMaxLpAccountContributionAmount
+        uint256 indexed oldMaxLpAccountContributionAmount,
+        uint256 indexed newMaxLpAccountContributionAmount
     );
 }

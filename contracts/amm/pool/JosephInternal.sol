@@ -27,6 +27,7 @@ abstract contract JosephInternal is
     IJosephInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
+	using SafeCast for uint256;	
 
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
@@ -285,8 +286,8 @@ abstract contract JosephInternal is
         onlyOwner
         whenNotPaused
     {
-        uint64 oldMaxLiquidityPoolAmount = _maxLiquidityPoolAmount;
-        _maxLiquidityPoolAmount = newMaxLiquidityPoolAmount.toUint64();
+        uint256 oldMaxLiquidityPoolAmount = _maxLiquidityPoolAmount;
+        _maxLiquidityPoolAmount = newMaxLiquidityPoolAmount.toUint32();
         emit MaxLiquidityPoolAmountChanged(
             _msgSender(),
             oldMaxLiquidityPoolAmount,
@@ -304,8 +305,8 @@ abstract contract JosephInternal is
         onlyOwner
         whenNotPaused
     {
-        uint64 oldMaxLpAccountContributionAmount = _maxLpAccountContributionAmount;
-        _maxLpAccountContributionAmount = newMaxLpAccountContributionAmount.toUint64();
+        uint256 oldMaxLpAccountContributionAmount = _maxLpAccountContributionAmount;
+        _maxLpAccountContributionAmount = newMaxLpAccountContributionAmount.toUint32();
         emit MaxLpAccountContributionAmountChanged(
             _msgSender(),
             oldMaxLpAccountContributionAmount,

@@ -373,7 +373,12 @@ describe("MiltonStorage", () => {
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await assertError(
             //when
-            miltonStorageDai.addLiquidity(ZERO),
+            miltonStorageDai.addLiquidity(
+                await liquidityProvider.getAddress(),
+                ZERO,
+                BigNumber.from("10000000"),
+                BigNumber.from("1000000")
+            ),
             //then
             "IPOR_326"
         );

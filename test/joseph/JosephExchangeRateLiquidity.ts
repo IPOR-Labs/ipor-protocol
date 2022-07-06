@@ -184,7 +184,9 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await miltonStorageDai.setJoseph(await userOne.getAddress());
-        await miltonStorageDai.connect(userOne).subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
+        await miltonStorageDai
+            .connect(userOne)
+            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await miltonStorageDai.setJoseph(josephDai.address);
 
         //when
@@ -280,7 +282,12 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
 
         //BEGIN HACK - provide liquidity without mint ipToken
         await miltonStorageDai.setJoseph(await admin.getAddress());
-        await miltonStorageDai.addLiquidity(BigNumber.from("2000").mul(N1__0_18DEC));
+        await miltonStorageDai.addLiquidity(
+            await liquidityProvider.getAddress(),
+            BigNumber.from("2000").mul(N1__0_18DEC),
+            BigNumber.from("20000000"),
+            BigNumber.from("10000000")
+        );
         await tokenDai.transfer(miltonDai.address, BigNumber.from("2000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
         //END HACK - provide liquidity without mint ipToken

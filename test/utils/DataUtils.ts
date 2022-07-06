@@ -40,6 +40,8 @@ import {
 } from "../../types";
 
 import {
+    USD_10_000_000,
+    USD_1_000_000,
     TC_DEFAULT_EMA_18DEC,
     USD_10_000_6DEC,
     TOTAL_SUPPLY_6_DECIMALS,
@@ -53,8 +55,8 @@ import {
     N0__01_18DEC,
     N1__0_18DEC,
     YEAR_IN_SECONDS,
-	LEG_PAY_FIXED,
-	LEG_RECEIVE_FIXED,
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -206,6 +208,9 @@ export const prepareTestData = async (
             miltonStorageUsdt.address,
             stanleyUsdt.address
         );
+        await josephUsdt.setMaxLiquidityPoolAmount(USD_10_000_000);
+        await josephUsdt.setMaxLpAccountContributionAmount(USD_1_000_000);
+
         await miltonStorageUsdt.setJoseph(josephUsdt.address);
         await miltonStorageUsdt.setMilton(miltonUsdt.address);
 
@@ -243,6 +248,9 @@ export const prepareTestData = async (
             stanleyUsdc.address
         );
 
+        await josephUsdc.setMaxLiquidityPoolAmount(USD_10_000_000);
+        await josephUsdc.setMaxLpAccountContributionAmount(USD_1_000_000);
+
         await miltonStorageUsdc.setJoseph(josephUsdc.address);
         await miltonStorageUsdc.setMilton(miltonUsdc.address);
 
@@ -278,6 +286,9 @@ export const prepareTestData = async (
             miltonStorageDai.address,
             stanleyDai.address
         );
+
+        await josephDai.setMaxLiquidityPoolAmount(USD_10_000_000);
+        await josephDai.setMaxLpAccountContributionAmount(USD_1_000_000);
 
         await miltonStorageDai.setJoseph(josephDai.address);
         await miltonStorageDai.setMilton(miltonDai.address);

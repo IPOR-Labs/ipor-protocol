@@ -149,8 +149,14 @@ interface IMiltonStorage {
         returns (int256 soapReceiveFixed);
 
     /// @notice add liquidity to the Liquidity Pool. Function available only to Joseph.
-    /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
-    function addLiquidity(uint256 assetAmount) external;
+    /// @param account account address who execute request for redeem asset amount
+    /// @param wadAssetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
+    function addLiquidity(
+        address account,
+        uint256 wadAssetAmount,
+        uint256 cfgMaxLiquidityPoolAmount,
+        uint256 cfgMaxLpAccountContributionAmount
+    ) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Joseph.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals
