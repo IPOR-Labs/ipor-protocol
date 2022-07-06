@@ -27,7 +27,7 @@ abstract contract JosephInternal is
     IJosephInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-	using SafeCast for uint256;	
+    using SafeCast for uint256;
 
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
@@ -44,8 +44,8 @@ abstract contract JosephInternal is
     address internal _charlieTreasuryManager;
 
     uint256 internal _miltonStanleyBalanceRatio;
-    uint32 internal _maxLiquidityPoolAmount;
-    uint32 internal _maxLpAccountContributionAmount;
+    uint32 internal _maxLiquidityPoolBalance;
+    uint32 internal _maxLpAccountContribution;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -276,41 +276,41 @@ abstract contract JosephInternal is
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
     }
 
-    function getMaxLiquidityPoolAmount() external view override returns (uint64) {
-        return _maxLiquidityPoolAmount;
+    function getMaxLiquidityPoolBalance() external view override returns (uint256) {
+        return _maxLiquidityPoolBalance;
     }
 
-    function setMaxLiquidityPoolAmount(uint256 newMaxLiquidityPoolAmount)
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        uint256 oldMaxLiquidityPoolAmount = _maxLiquidityPoolAmount;
-        _maxLiquidityPoolAmount = newMaxLiquidityPoolAmount.toUint32();
-        emit MaxLiquidityPoolAmountChanged(
+        uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
+        _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
+        emit MaxLiquidityPoolBalanceChanged(
             _msgSender(),
-            oldMaxLiquidityPoolAmount,
-            newMaxLiquidityPoolAmount
+            oldMaxLiquidityPoolBalance * Constants.D18,
+            newMaxLiquidityPoolBalance * Constants.D18
         );
     }
 
-    function getMaxLpAccountContributionAmount() external view override returns (uint64) {
-        return _maxLpAccountContributionAmount;
+    function getMaxLpAccountContribution() external view override returns (uint256) {
+        return _maxLpAccountContribution;
     }
 
-    function setMaxLpAccountContributionAmount(uint256 newMaxLpAccountContributionAmount)
+    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        uint256 oldMaxLpAccountContributionAmount = _maxLpAccountContributionAmount;
-        _maxLpAccountContributionAmount = newMaxLpAccountContributionAmount.toUint32();
-        emit MaxLpAccountContributionAmountChanged(
+        uint256 oldMaxLpAccountContribution = _maxLpAccountContribution;
+        _maxLpAccountContribution = newMaxLpAccountContribution.toUint32();
+        emit MaxLpAccountContributionChanged(
             _msgSender(),
-            oldMaxLpAccountContributionAmount,
-            newMaxLpAccountContributionAmount
+            oldMaxLpAccountContribution * Constants.D18,
+            newMaxLpAccountContribution * Constants.D18
         );
     }
 

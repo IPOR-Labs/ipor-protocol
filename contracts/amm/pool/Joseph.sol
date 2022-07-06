@@ -42,8 +42,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
         _miltonStanleyBalanceRatio = 85e16;
-        _maxLiquidityPoolAmount = 2_000_000;
-        _maxLpAccountContributionAmount = 50_000;
+        _maxLiquidityPoolBalance = 2_000_000;
+        _maxLpAccountContribution = 50_000;
     }
 
     function calculateExchangeRate() external view override returns (uint256) {
@@ -106,8 +106,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
         _getMiltonStorage().addLiquidity(
             msgSender,
             wadAssetAmount,
-            _maxLiquidityPoolAmount,
-            _maxLpAccountContributionAmount
+            _maxLiquidityPoolBalance * Constants.D18,
+            _maxLpAccountContribution * Constants.D18
         );
 
         IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(milton), assetAmount);

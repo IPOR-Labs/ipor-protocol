@@ -376,8 +376,8 @@ describe("MiltonStorage", () => {
             miltonStorageDai.addLiquidity(
                 await liquidityProvider.getAddress(),
                 ZERO,
-                BigNumber.from("10000000"),
-                BigNumber.from("1000000")
+                BigNumber.from("10000000").mul(N1__0_18DEC),
+                BigNumber.from("1000000").mul(N1__0_18DEC)
             ),
             //then
             "IPOR_326"

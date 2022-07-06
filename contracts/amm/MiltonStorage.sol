@@ -295,24 +295,24 @@ contract MiltonStorage is
 
     function addLiquidity(
         address account,
-        uint256 wadAssetAmount,
-        uint256 cfgMaxLiquidityPoolAmount,
-        uint256 cfgMaxLpAccountContributionAmount
+        uint256 assetAmount,
+        uint256 cfgMaxLiquidityPoolBalance,
+        uint256 cfgMaxLpAccountContribution
     ) external override onlyJoseph {
-        require(wadAssetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
+        require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
 
-        uint128 newLiquidityPoolBalance = _balances.liquidityPool + wadAssetAmount.toUint128();
+        uint128 newLiquidityPoolBalance = _balances.liquidityPool + assetAmount.toUint128();
 
         require(
-            newLiquidityPoolBalance <= cfgMaxLiquidityPoolAmount * Constants.D18,
+            newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance,
             MiltonErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
         uint128 newAccountLiquidityPoolBalance = _accountLiquidityPoolBalance[account] +
-            wadAssetAmount.toUint128();
+            assetAmount.toUint128();
 
         require(
-            newAccountLiquidityPoolBalance <= cfgMaxLpAccountContributionAmount * Constants.D18,
+            newAccountLiquidityPoolBalance <= cfgMaxLpAccountContribution,
             MiltonErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
         );
 

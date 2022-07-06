@@ -314,11 +314,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken
+        //BEGIN HACK - subtract liquidity without  burn ipToken
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await miltonStorageDai.subtractLiquidity(BigNumber.from("55000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
+        //END HACK - subtract liquidity without  burn ipToken
 
         await testData.iporOracle
             .connect(userOne)
@@ -390,11 +390,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken
+        //BEGIN HACK - subtract liquidity without  burn ipToken
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await miltonStorageDai.subtractLiquidity(BigNumber.from("55000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
+        //END HACK - subtract liquidity without  burn ipToken
 
         await testData.iporOracle
             .connect(userOne)
@@ -464,11 +464,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
+        //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await miltonStorageDai.subtractLiquidity(BigNumber.from("55000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
+        //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         await iporOracle
             .connect(userOne)
@@ -539,11 +539,11 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
+        //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await miltonStorageDai.subtractLiquidity(BigNumber.from("55000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken. Notice! This affect ipToken price!
+        //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         await iporOracle
             .connect(userOne)

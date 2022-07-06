@@ -285,8 +285,8 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         await miltonStorageDai.addLiquidity(
             await liquidityProvider.getAddress(),
             BigNumber.from("2000").mul(N1__0_18DEC),
-            BigNumber.from("20000000"),
-            BigNumber.from("10000000")
+            BigNumber.from("20000000").mul(N1__0_18DEC),
+            BigNumber.from("10000000").mul(N1__0_18DEC)
         );
         await tokenDai.transfer(miltonDai.address, BigNumber.from("2000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);

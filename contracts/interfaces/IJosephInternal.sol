@@ -98,13 +98,23 @@ interface IJosephInternal {
     /// @param newTreasuryManager new Treasury Manager address
     function setTreasuryManager(address newTreasuryManager) external;
 
-    function getMaxLiquidityPoolAmount() external view returns (uint64);
+    /// @notice Gets max Liquidity Pool balance
+    /// @return max Liquidity Pool balance. Value represented without decimals.
+    function getMaxLiquidityPoolBalance() external view returns (uint256);
 
-    function setMaxLiquidityPoolAmount(uint256 newMaxLiquidityPoolAmount) external;
+    /// @notice Sets max Liquidity Pool balance
+    /// @param newMaxLiquidityPoolBalance new max liquidity pool balance
+    /// @dev Value represented without decimals
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance) external;
 
-    function getMaxLpAccountContributionAmount() external view returns (uint64);
+    /// @notice Gets max Liquidity Pool account contribution amount
+    /// @return max Liquidity Pool account contribution amount. Value represented without decimals.
+    function getMaxLpAccountContribution() external view returns (uint256);
 
-    function setMaxLpAccountContributionAmount(uint256 newMaxLpAccountContributionAmount) external;
+    /// @notice Sets max Liquidity Pool account contribution amount
+    /// @param newMaxLpAccountContribution new max liquidity pool account contribution amount
+    /// @dev Value represented without decimals.
+    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
@@ -146,23 +156,23 @@ interface IJosephInternal {
         address indexed newTreasury
     );
 
-    /// @notice Emmited after the max liquidity pool amount has changed
-    /// @param changedBy account address that changed max liquidity pool amount
-    /// @param oldMaxLiquidityPoolAmount Old max liquidity pool amount
-    /// @param newMaxLiquidityPoolAmount New max liquidity pool amount
-    event MaxLiquidityPoolAmountChanged(
+    /// @notice Emmited after the max liquidity pool balance has changed
+    /// @param changedBy account address that changed max liquidity pool balance
+    /// @param oldMaxLiquidityPoolBalance Old max liquidity pool balance, represented in 18 decimals
+    /// @param newMaxLiquidityPoolBalance New max liquidity pool balance, represented in 18 decimals
+    event MaxLiquidityPoolBalanceChanged(
         address indexed changedBy,
-        uint256 indexed oldMaxLiquidityPoolAmount,
-        uint256 indexed newMaxLiquidityPoolAmount
+        uint256 indexed oldMaxLiquidityPoolBalance,
+        uint256 indexed newMaxLiquidityPoolBalance
     );
 
     /// @notice Emmited after the max liquidity pool account contribution amount has changed
     /// @param changedBy account address that changed max liquidity pool account contribution amount
-    /// @param oldMaxLpAccountContributionAmount Old max liquidity pool account contribution amount
-    /// @param newMaxLpAccountContributionAmount New max liquidity pool account contribution amount
-    event MaxLpAccountContributionAmountChanged(
+    /// @param oldMaxLpAccountContribution Old max liquidity pool account contribution amount, represented in 18 decimals
+    /// @param newMaxLpAccountContribution New max liquidity pool account contribution amount, represented in 18 decimals
+    event MaxLpAccountContributionChanged(
         address indexed changedBy,
-        uint256 indexed oldMaxLpAccountContributionAmount,
-        uint256 indexed newMaxLpAccountContributionAmount
+        uint256 indexed oldMaxLpAccountContribution,
+        uint256 indexed newMaxLpAccountContribution
     );
 }

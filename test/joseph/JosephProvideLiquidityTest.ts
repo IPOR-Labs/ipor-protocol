@@ -296,11 +296,11 @@ describe("Joseph - provide liquidity", () => {
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
         );
-        const maxLpAccountContributionAmount = BigNumber.from("15000");
-        await testData.josephDai.setMaxLiquidityPoolAmount(
-            maxLpAccountContributionAmount.add(BigNumber.from("5000"))
+        const maxLpAccountContribution = BigNumber.from("15000");
+        await testData.josephDai.setMaxLiquidityPoolBalance(
+            maxLpAccountContribution.add(BigNumber.from("5000"))
         );
-        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -324,7 +324,7 @@ describe("Joseph - provide liquidity", () => {
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+        params.totalAmount = maxLpAccountContribution.mul(N1__0_18DEC);
 
         await josephDai
             .connect(liquidityProvider)
@@ -341,7 +341,7 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 1", async () => {
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution exceeded - case 1", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -349,9 +349,9 @@ describe("Joseph - provide liquidity", () => {
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
         );
-        const maxLpAccountContributionAmount = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+        const maxLpAccountContribution = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -375,9 +375,7 @@ describe("Joseph - provide liquidity", () => {
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        params.totalAmount = maxLpAccountContributionAmount
-            .add(BigNumber.from("1000"))
-            .mul(N1__0_18DEC);
+        params.totalAmount = maxLpAccountContribution.add(BigNumber.from("1000")).mul(N1__0_18DEC);
 
         //when
         await assertError(
@@ -390,7 +388,7 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 2", async () => {
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution exceeded - case 2", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -398,9 +396,9 @@ describe("Joseph - provide liquidity", () => {
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
         );
-        const maxLpAccountContributionAmount = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+        const maxLpAccountContribution = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -424,7 +422,7 @@ describe("Joseph - provide liquidity", () => {
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+        params.totalAmount = maxLpAccountContribution.mul(N1__0_18DEC);
 
         // first time should pass
         await josephDai
@@ -442,7 +440,7 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 3", async () => {
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution exceeded - case 3", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -450,9 +448,9 @@ describe("Joseph - provide liquidity", () => {
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
         );
-        const maxLpAccountContributionAmount = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+        const maxLpAccountContribution = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -476,7 +474,7 @@ describe("Joseph - provide liquidity", () => {
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+        params.totalAmount = maxLpAccountContribution.mul(N1__0_18DEC);
 
         await josephDai
             .connect(liquidityProvider)
@@ -497,7 +495,7 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 4", async () => {
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution exceeded - case 4", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -505,9 +503,9 @@ describe("Joseph - provide liquidity", () => {
             miltonSpreadModel,
             PERCENTAGE_3_18DEC
         );
-        const maxLpAccountContributionAmount = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+        const maxLpAccountContribution = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -531,7 +529,7 @@ describe("Joseph - provide liquidity", () => {
         await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
         const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
 
-        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+        params.totalAmount = maxLpAccountContribution.mul(N1__0_18DEC);
 
         await josephDai
             .connect(liquidityProvider)

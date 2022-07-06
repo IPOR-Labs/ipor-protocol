@@ -150,12 +150,12 @@ interface IMiltonStorage {
 
     /// @notice add liquidity to the Liquidity Pool. Function available only to Joseph.
     /// @param account account address who execute request for redeem asset amount
-    /// @param wadAssetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
+    /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
     function addLiquidity(
         address account,
-        uint256 wadAssetAmount,
-        uint256 cfgMaxLiquidityPoolAmount,
-        uint256 cfgMaxLpAccountContributionAmount
+        uint256 assetAmount,
+        uint256 cfgMaxLiquidityPoolBalance,
+        uint256 cfgMaxLpAccountContribution
     ) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Joseph.

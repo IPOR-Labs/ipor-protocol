@@ -56,9 +56,9 @@ library MiltonFacadeTypes {
         /// @dev It is a ratio of total collateral balance for one leg / liquidity pool balance
         uint256 maxLpUtilizationPerLegRate;
         /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
-        uint256 maxLiquidityPoolAmount;
-        /// @notice Maximum amount which can be contributed by one account in Liquidity Pool.
-        uint256 maxLpAccountContributionAmount;
+        uint256 maxLiquidityPoolBalance;
+        /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.
+        uint256 maxLpAccountContribution;
     }
 
     /// @notice IPOR Swap structure used by facades.

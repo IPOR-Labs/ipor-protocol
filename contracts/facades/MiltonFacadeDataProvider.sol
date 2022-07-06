@@ -218,8 +218,8 @@ contract MiltonFacadeDataProvider is
             spreadReceiveFixed,
             milton.getMaxLpUtilizationRate(),
             milton.getMaxLpUtilizationPerLegRate(),
-            joseph.getMaxLiquidityPoolAmount() * Constants.D18,
-            joseph.getMaxLpAccountContributionAmount() * Constants.D18
+            joseph.getMaxLiquidityPoolBalance() * Constants.D18,
+            joseph.getMaxLpAccountContribution() * Constants.D18
         );
     }
 

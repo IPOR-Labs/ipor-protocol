@@ -16,8 +16,8 @@ export default (configurations) =>
                         <th scope="col">Income Fee Rate</th>
                         <th scope="col">Max Liquidity Pool Utilization Rate</th>
                         <th scope="col">Max Liquidity Pool Utilization Per Leg Rate</th>
-                        <th scope="col">Max Liquidity Pool Amount</th>
-                        <th scope="col">Max Liquidity Pool Account Contribution Amount</th>
+                        <th scope="col">Max Liquidity Pool Balance</th>
+                        <th scope="col">Max Liquidity Pool Account Contribution</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,15 +66,14 @@ export default (configurations) =>
                                     <small>{configuration.maxLpUtilizationPerLegRate}</small>
                                 </td>
                                 <td>
-                                    {configuration.maxLiquidityPoolAmount / 1000000000000000000}
+                                    {configuration.maxLiquidityPoolBalance / 1000000000000000000}
                                     <br />
-                                    <small>{configuration.maxLiquidityPoolAmount}</small>
+                                    <small>{configuration.maxLiquidityPoolBalance}</small>
                                 </td>
                                 <td>
-                                    {configuration.maxLpAccountContributionAmount /
-                                        1000000000000000000}
+                                    {configuration.maxLpAccountContribution / 1000000000000000000}
                                     <br />
-                                    <small>{configuration.maxLpAccountContributionAmount}</small>
+                                    <small>{configuration.maxLpAccountContribution}</small>
                                 </td>
                             </tr>
                         );
