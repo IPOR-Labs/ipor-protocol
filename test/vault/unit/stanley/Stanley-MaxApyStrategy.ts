@@ -26,7 +26,6 @@ describe("Stanley -> maxApyStrategy", () => {
 
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAave = (await StrategyAave.deploy()) as MockStrategy;
-
         await strategyAave.setShareToken(DAI.address);
         await strategyAave.setAsset(DAI.address);
 
