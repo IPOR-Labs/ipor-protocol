@@ -2,7 +2,6 @@ require("dotenv").config({ path: "../../../.env" });
 const keys = require("../../libs/json_keys.js");
 const func = require("../../libs/json_func.js");
 const script = require("../../libs/contracts/deploy/ipor_oracle/0001_initial_deploy.js");
-const itfScript = require("../../libs/itf/deploy/ipor_oracle/0001_initial_deploy.js");
 
 module.exports = async function (deployer, _network, addresses) {
     if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT) {
@@ -88,12 +87,8 @@ module.exports = async function (deployer, _network, addresses) {
         exponentialWeightedMovingVariances,
     };
 
-    if (process.env.ITF_ENABLED === "true") {
-        const ItfIporOracle = artifacts.require("ItfIporOracle");
-        await itfScript(deployer, _network, addresses, ItfIporOracle, initialParams);
-    } else {
-        const IporOracle = artifacts.require("IporOracle");
-        await script(deployer, _network, addresses, IporOracle, initialParams);
-    }
+    const IporOracle = artifacts.require("IporOracle");
+    await script(deployer, _network, addresses, IporOracle, initialParams);
+
     await func.updateLastCompletedMigration();
 };

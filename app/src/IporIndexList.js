@@ -40,7 +40,11 @@ export default (indexes) =>
                             <br />
                             <small>{index.exponentialWeightedMovingVariance}</small>
                         </td>
-                        <td>{toDate(index.lastUpdateTimestamp)}</td>
+                        <td>
+							{toDate(index.lastUpdateTimestamp)}
+							<br/>
+							<small>{index.lastUpdateTimestamp}</small>
+						</td>
                     </tr>
                 ))}
             </tbody>
