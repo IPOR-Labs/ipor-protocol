@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IMilton and IMiltonStorage interfaces.
@@ -19,17 +19,17 @@ library AmmTypes {
         uint256 openTimestamp;
         /// @notice Swap's collateral amount.
         /// @dev value represented in 18 decimals
-        uint256 collateral;        
+        uint256 collateral;
         /// @notice Swap's notional amount.
         /// @dev value represented in 18 decimals
         uint256 notional;
-		/// @notice Quantity of Interest Bearing Token (IBT) at moment when position was opened.
+        /// @notice Quantity of Interest Bearing Token (IBT) at moment when position was opened.
         /// @dev value represented in 18 decimals
         uint256 ibtQuantity;
-		/// @notice Fixed interest rate at which the position has been opened.
+        /// @notice Fixed interest rate at which the position has been opened.
         /// @dev value represented in 18 decimals
         uint256 fixedInterestRate;
-		/// @notice Liquidation deposit is retained when the swap is opened. It is then paid back to agent who closes the derivative at maturity.
+        /// @notice Liquidation deposit is retained when the swap is opened. It is then paid back to agent who closes the derivative at maturity.
         /// It can be both trader or community member. Trader receives the deposit back when he chooses to close the derivative before maturity.
         /// @dev value represented in 18 decimals
         uint256 liquidationDepositAmount;

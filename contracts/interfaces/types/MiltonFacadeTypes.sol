@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
 /// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
