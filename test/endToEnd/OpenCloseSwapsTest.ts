@@ -105,10 +105,10 @@ describe("Open/Close Swap", function () {
             await transferDaiToAddress(
                 "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
                 await admin.getAddress(),
-                ONE_18.mul("50000")
+                ONE_18.mul("5000000")
             );
-            await dai.connect(admin).approve(josephDai.address, ONE_18.mul("50000"));
-            await dai.connect(admin).approve(miltonDai.address, ONE_18.mul("50000"));
+            await dai.connect(admin).approve(josephDai.address, ONE_18.mul("5000000"));
+            await dai.connect(admin).approve(miltonDai.address, ONE_18.mul("5000000"));
             //when
             await josephDai.connect(admin).provideLiquidity(deposit);
 
@@ -181,7 +181,7 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, DAI", async () => {
             //when
             await miltonDai.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
@@ -207,10 +207,10 @@ describe("Open/Close Swap", function () {
             await transferUsdcToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("50000")
+                BigNumber.from("5000000")
             );
-            await usdc.connect(admin).approve(josephUsdc.address, ONE_6.mul("50000"));
-            await usdc.connect(admin).approve(miltonUsdc.address, ONE_6.mul("50000"));
+            await usdc.connect(admin).approve(josephUsdc.address, ONE_6.mul("5000000"));
+            await usdc.connect(admin).approve(miltonUsdc.address, ONE_6.mul("5000000"));
             //when
             await josephUsdc.connect(admin).provideLiquidity(deposit);
 
@@ -283,7 +283,7 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, USDC", async () => {
             //when
             await miltonUsdc.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
@@ -309,10 +309,10 @@ describe("Open/Close Swap", function () {
             await transferUsdtToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("50000")
+                BigNumber.from("5000000")
             );
-            await usdt.connect(admin).approve(josephUsdt.address, ONE_6.mul("50000"));
-            await usdt.connect(admin).approve(miltonUsdt.address, ONE_6.mul("50000"));
+            await usdt.connect(admin).approve(josephUsdt.address, ONE_6.mul("5000000"));
+            await usdt.connect(admin).approve(miltonUsdt.address, ONE_6.mul("5000000"));
             //when
             await josephUsdt.connect(admin).provideLiquidity(deposit);
 
@@ -385,8 +385,10 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, USDT", async () => {
             //when
+            console.log("swapReceiveFixedId=", swapReceiveFixedId);
+
             await miltonUsdt.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
 
