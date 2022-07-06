@@ -151,6 +151,8 @@ interface IMiltonStorage {
     /// @notice add liquidity to the Liquidity Pool. Function available only to Joseph.
     /// @param account account address who execute request for redeem asset amount
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
+    /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from Joseph configuration, represented in 18 decimals.
+    /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from Joseph configuration, represented in 18 decimals.
     function addLiquidity(
         address account,
         uint256 assetAmount,

@@ -33,7 +33,7 @@ contract MiltonStorage is
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsPayFixed;
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsReceiveFixed;
 
-    mapping(address => uint128) private _accountLiquidityPoolBalance;
+    mapping(address => uint128) private _liquidityPoolAccountContribution;
 
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
@@ -308,16 +308,16 @@ contract MiltonStorage is
             MiltonErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
         );
 
-        uint128 newAccountLiquidityPoolBalance = _accountLiquidityPoolBalance[account] +
+        uint128 newLiquidityPoolAccountContribution = _liquidityPoolAccountContribution[account] +
             assetAmount.toUint128();
 
         require(
-            newAccountLiquidityPoolBalance <= cfgMaxLpAccountContribution,
+            newLiquidityPoolAccountContribution <= cfgMaxLpAccountContribution,
             MiltonErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
         );
 
         _balances.liquidityPool = newLiquidityPoolBalance;
-        _accountLiquidityPoolBalance[account] = newAccountLiquidityPoolBalance;
+        _liquidityPoolAccountContribution[account] = newLiquidityPoolAccountContribution;
     }
 
     function subtractLiquidity(uint256 assetAmount) external override onlyJoseph {
