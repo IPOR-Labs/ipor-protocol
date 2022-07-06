@@ -10,7 +10,7 @@ import {
     USD_14_000_6DEC,
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
-import {    
+import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -285,6 +285,276 @@ describe("Joseph - provide liquidity", () => {
             josephDai.checkVaultReservesRatio(),
             //then
             "IPOR_408"
+        );
+    });
+
+    it("should NOT provide liquidity because Max Liquidity Pool Balance exceeded", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        const maxLpAccountContributionAmount = BigNumber.from("15000");
+        await testData.josephDai.setMaxLiquidityPoolAmount(
+            maxLpAccountContributionAmount.add(BigNumber.from("5000"))
+        );
+        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+
+        const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
+        if (
+            ipTokenDai === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        //when other user provide liquidity
+        await assertError(
+            //when
+            josephDai
+                .connect(userOne)
+                .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_329"
+        );
+    });
+
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 1", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        const maxLpAccountContributionAmount = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+
+        const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
+        if (
+            ipTokenDai === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+        params.totalAmount = maxLpAccountContributionAmount
+            .add(BigNumber.from("1000"))
+            .mul(N1__0_18DEC);
+
+        //when
+        await assertError(
+            //when
+            josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_330"
+        );
+    });
+
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 2", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        const maxLpAccountContributionAmount = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+
+        const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
+        if (
+            ipTokenDai === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+
+        // first time should pass
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        //when
+        await assertError(
+            //when
+            josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_330"
+        );
+    });
+
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 3", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        const maxLpAccountContributionAmount = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+
+        const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
+        if (
+            ipTokenDai === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfRedeem(params.totalAmount, params.openTimestamp);
+
+        //when
+        await assertError(
+            //when
+            josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_330"
+        );
+    });
+
+    it("should NOT provide liquidity because Max Liquidity Pool Account Contribution Amount exceeded - case 4", async () => {
+        //given
+        const testData = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        const maxLpAccountContributionAmount = BigNumber.from("50000");
+        await testData.josephDai.setMaxLiquidityPoolAmount(BigNumber.from("2000000"));
+        await testData.josephDai.setMaxLpAccountContributionAmount(maxLpAccountContributionAmount);
+
+        const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
+        if (
+            ipTokenDai === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+        await setupIpTokenInitialValues(ipTokenDai, liquidityProvider, ZERO);
+        const params = getStandardDerivativeParamsDAI(userTwo, tokenDai);
+
+        params.totalAmount = maxLpAccountContributionAmount.mul(N1__0_18DEC);
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(params.totalAmount, params.openTimestamp);
+
+        await ipTokenDai
+            .connect(liquidityProvider)
+            .transfer(await userThree.getAddress(), params.totalAmount);
+
+        const balance = await ipTokenDai
+            .connect(liquidityProvider)
+            .balanceOf(await liquidityProvider.getAddress());
+
+        expect(ZERO).to.be.equal(balance);
+
+        //when
+        await assertError(
+            //when
+            josephDai
+                .connect(liquidityProvider)
+                .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
+            //then
+            "IPOR_330"
         );
     });
 });
