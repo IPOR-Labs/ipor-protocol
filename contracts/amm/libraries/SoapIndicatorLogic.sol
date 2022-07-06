@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/Constants.sol";
@@ -118,7 +118,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            MiltonErrors.CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP
+            MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *

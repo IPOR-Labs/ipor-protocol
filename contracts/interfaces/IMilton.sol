@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
@@ -56,16 +56,18 @@ interface IMilton {
 
     /// @notice Closes Pay-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
+    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Pay-Fixed Swap ID.
     function closeSwapPayFixed(uint256 swapId) external;
 
     /// @notice Closes Receive-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
+    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Receive-Fixed swap ID.
     function closeSwapReceiveFixed(uint256 swapId) external;
 
     /// @notice Closes list of pay fixed and receive fixed swaps in one transaction.
-	/// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset for every swap which was closed within this transaction.
+    /// @dev Emits {CloseSwap} events from Milton, {Transfer} events from ERC20 asset for every swap which was closed within this transaction.
     /// @param payFixedSwapIds list of pay fixed swap ids
     /// @param receiveFixedSwapIds list of receive fixed swap ids
     /// @return closedPayFixedSwaps list of pay fixed swaps with information which one was closed during this particular transaction.
@@ -110,6 +112,8 @@ interface IMilton {
         /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
         /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
-        uint256 transferredToLiquidator
+        uint256 transferredToLiquidator,
+        /// @notice incomeFeeValue value transferred to treasury
+        uint256 incomeFeeValue
     );
 }

@@ -3,6 +3,8 @@ import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import { MockSpreadModel } from "../../types";
 import {
+    LEG_PAY_FIXED,
+    LEG_RECEIVE_FIXED,
     ZERO,
     N0__01_18DEC,
     USD_10_18DEC,
@@ -13,14 +15,10 @@ import {
     PERCENTAGE_160_18DEC,
     PERCENTAGE_5_18DEC,
     PERCENTAGE_120_18DEC,
-    PERCENTAGE_121_18DEC,
     PERIOD_50_DAYS_IN_SECONDS,
-    PERCENTAGE_6_18DEC,
-    PERCENTAGE_119_18DEC,
     PERIOD_14_DAYS_IN_SECONDS,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -60,8 +58,11 @@ describe("Milton should calculate income - Core", () => {
         );
     });
 
-    it("should calculate income fee, 5%, not owner, Milton loses, user earns, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+    it("should calculate income fee 5%, receive fixed, not owner, Milton loses, user earns, |I| < D", async () => {
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -93,21 +94,20 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
-        const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
-        const expectedPayoff = BigNumber.from("9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
+        const expectedIncomeFeeValue = BigNumber.from("34133595537777021487");
+        const expectedIncomeFeeValueWad = BigNumber.from("34133595537777021487");
+        const expectedPayoff = BigNumber.from("682671910755540429746");
+        const expectedPayoffWad = BigNumber.from("682671910755540429746");
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -121,10 +121,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 5%, Milton loses, user earns, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+    it("should calculate income fee 5%, pay fixed, Milton loses, user earns, |I| > D", async () => {
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -166,12 +170,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -185,10 +188,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 5%, Milton earns, user loses, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should calculate income fee 5%, pay fixed, Milton earns, user loses, |I| < D", async () => {
+        const quote = BigNumber.from("121").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -220,7 +227,6 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("395949708238213469173");
         const expectedIncomeFeeValueWad = BigNumber.from("395949708238213469173");
         const expectedPayoff = BigNumber.from("-7918994164764269383465");
         const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
@@ -229,12 +235,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -247,10 +252,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 5%, Milton earns, user loses, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should calculate income fee 5%, receive fixed, Milton earns, user loses, |I| > D", async () => {
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -281,7 +290,6 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("498350494851544536639");
         const expectedIncomeFeeValueWad = BigNumber.from("498350494851544536639");
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -290,12 +298,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -308,10 +315,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 100%, Milton loses, user earns, |I| < D", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+    it("should calculate income fee 100%, receive fixed, Milton loses, user earns, |I| < D, after maturity", async () => {
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -341,21 +352,20 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("9967009897030890732780");
-        const expectedIncomeFeeValueWad = BigNumber.from("9967009897030890732780");
-        const expectedPayoff = BigNumber.from("9967009897030890732780");
-        const expectedPayoffWad = BigNumber.from("9967009897030890732780");
+        const expectedIncomeFeeValue = BigNumber.from("682671910755540429746");
+        const expectedIncomeFeeValueWad = BigNumber.from("682671910755540429746");
+        const expectedPayoff = expectedIncomeFeeValue;
+        const expectedPayoffWad = expectedIncomeFeeValueWad;
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_119_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -369,10 +379,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 100%, Milton loses, user earns, |I| > D", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+    it("should calculate income fee 100%, pay fixed, Milton loses, user earns, |I| > D, before maturity", async () => {
+        const quote = BigNumber.from("6").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -413,12 +427,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            PERCENTAGE_6_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -432,10 +445,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 100%, Milton earns, user loses, |I| < D, to low liquidity pool", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+    it("should calculate income fee 100%, pay fixed, Milton earns, user loses, |I| < D, before maturity", async () => {
+        const quote = BigNumber.from("121").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -467,7 +484,6 @@ describe("Milton should calculate income - Core", () => {
             return;
         }
 
-        const expectedIncomeFeeValue = BigNumber.from("7918994164764269383465");
         const expectedIncomeFeeValueWad = BigNumber.from("7918994164764269383465");
         const expectedPayoff = BigNumber.from("-7918994164764269383465");
         const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
@@ -476,12 +492,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            0,
+            LEG_PAY_FIXED,
             userTwo,
             userTwo,
-            PERCENTAGE_120_18DEC,
             PERCENTAGE_5_18DEC,
-            PERCENTAGE_121_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -494,10 +509,14 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should calculate income fee, 100%, Milton earns, user loses, |I| > D, to low liquidity pool", async () => {
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should calculate income fee 100%, receive fixed, Milton earns, user loses, |I| > D, after maturity", async () => {
+        const quote = BigNumber.from("4").mul(N0__01_18DEC);
+        const acceptableFixedInterestRate = quote;
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -529,7 +548,6 @@ describe("Milton should calculate income - Core", () => {
             testData
         );
 
-        const expectedIncomeFeeValue = TC_COLLATERAL_18DEC;
         const expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
@@ -538,12 +556,11 @@ describe("Milton should calculate income - Core", () => {
             testData,
             tokenDai.address,
             USD_10_18DEC,
-            1,
+            LEG_RECEIVE_FIXED,
             userTwo,
             userThree,
-            PERCENTAGE_5_18DEC,
             PERCENTAGE_160_18DEC,
-            N0__01_18DEC,
+            acceptableFixedInterestRate,
             PERIOD_50_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
@@ -556,10 +573,12 @@ describe("Milton should calculate income - Core", () => {
             userOne,
             liquidityProvider
         );
+        expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+
         //given
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -569,6 +588,7 @@ describe("Milton should calculate income - Core", () => {
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -584,11 +604,15 @@ describe("Milton should calculate income - Core", () => {
         await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_3_18DEC, params.openTimestamp);
+
         const miltonBalanceBeforePayoutWad = USD_28_000_18DEC;
+
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(miltonBalanceBeforePayoutWad, params.openTimestamp);
+
         await openSwapPayFixed(testData, params);
+
         const derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
 
         const expectedPayoff = BigNumber.from("-38229627002310297226");

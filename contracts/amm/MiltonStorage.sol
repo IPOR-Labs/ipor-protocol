@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.9;
+pragma solidity 0.8.14;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -292,7 +292,7 @@ contract MiltonStorage is
     }
 
     function addLiquidity(uint256 assetAmount) external override onlyJoseph {
-        require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_TOO_LOW);
+        require(assetAmount != 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
         _balances.liquidityPool = _balances.liquidityPool + assetAmount.toUint128();
     }
 
@@ -345,8 +345,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
@@ -355,8 +355,8 @@ contract MiltonStorage is
             liquidator,
             iporSwap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -367,8 +367,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) external override onlyMilton {
@@ -377,8 +377,8 @@ contract MiltonStorage is
             liquidator,
             iporSwap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -394,7 +394,7 @@ contract MiltonStorage is
         // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,
-            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
+            MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
 
@@ -414,7 +414,7 @@ contract MiltonStorage is
 
         require(
             currentVaultBalance <= (vaultBalance - depositAmount),
-            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
+            MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = currentVaultBalance != 0
             ? (vaultBalance - currentVaultBalance - depositAmount)
@@ -433,7 +433,7 @@ contract MiltonStorage is
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferredAmount <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 
@@ -449,7 +449,7 @@ contract MiltonStorage is
 
         uint256 balance = _balances.treasury;
 
-        require(transferredAmount <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.TREASURY_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 
@@ -611,6 +611,7 @@ contract MiltonStorage is
         _balances.totalCollateralReceiveFixed =
             _balances.totalCollateralReceiveFixed +
             collateral.toUint128();
+
         _balances.iporPublicationFee =
             _balances.iporPublicationFee +
             cfgIporPublicationFee.toUint128();
@@ -647,8 +648,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -656,8 +657,8 @@ contract MiltonStorage is
             liquidator,
             swap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -671,8 +672,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -693,9 +694,7 @@ contract MiltonStorage is
             }
         }
 
-        uint256 incomeFee = IporMath.division(absPayoff * cfgIncomeFeeRate, Constants.D18);
-
-        _balances.treasury = _balances.treasury + incomeFee.toUint128();
+        _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
             require(
@@ -705,7 +704,9 @@ contract MiltonStorage is
 
             _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
-            _balances.liquidityPool = _balances.liquidityPool + (absPayoff - incomeFee).toUint128();
+            _balances.liquidityPool =
+                _balances.liquidityPool +
+                (absPayoff - incomeFeeValue).toUint128();
         }
     }
 
@@ -877,11 +878,11 @@ contract MiltonStorage is
         );
 
         _soapIndicatorsPayFixed = AmmMiltonStorageTypes.SoapIndicators(
-            pf.quasiHypotheticalInterestCumulative,			
-            pf.totalNotional.toUint128(),            
+            pf.quasiHypotheticalInterestCumulative,
+            pf.totalNotional.toUint128(),
             pf.totalIbtQuantity.toUint128(),
-			pf.averageInterestRate.toUint64(),
-			pf.rebalanceTimestamp.toUint32()            
+            pf.averageInterestRate.toUint64(),
+            pf.rebalanceTimestamp.toUint32()
         );
     }
 
@@ -908,7 +909,7 @@ contract MiltonStorage is
 
         _soapIndicatorsReceiveFixed = AmmMiltonStorageTypes.SoapIndicators(
             rf.quasiHypotheticalInterestCumulative,
-			rf.totalNotional.toUint128(),
+            rf.totalNotional.toUint128(),
             rf.totalIbtQuantity.toUint128(),
             rf.averageInterestRate.toUint64(),
             rf.rebalanceTimestamp.toUint32()

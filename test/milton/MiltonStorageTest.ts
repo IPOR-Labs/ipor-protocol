@@ -20,8 +20,6 @@ import {
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -575,8 +573,8 @@ describe("MiltonStorage", () => {
                 await userTwo.getAddress(),
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_18DEC),
+                BigNumber.from("1").mul(N1__0_18DEC),
                 closeSwapTimestamp,
-                await miltonDai.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -661,8 +659,8 @@ describe("MiltonStorage", () => {
                 await userTwo.getAddress(),
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_6DEC),
+                BigNumber.from("1").mul(N1__0_6DEC),
                 closeSwapTimestamp,
-                await miltonUsdt.getIncomeFeeRate(),
                 PERCENTAGE_95_18DEC,
                 PERIOD_6_HOURS_IN_SECONDS
             );
@@ -741,8 +739,8 @@ describe("MiltonStorage", () => {
                     await userTwo.getAddress(),
                     derivativeItem,
                     BigNumber.from("10").mul(N1__0_18DEC),
+                    BigNumber.from("1").mul(N1__0_18DEC),
                     closeSwapTimestamp,
-                    await miltonDai.getIncomeFeeRate(),
                     PERCENTAGE_95_18DEC,
                     PERIOD_6_HOURS_IN_SECONDS
                 ),

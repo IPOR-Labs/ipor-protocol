@@ -20,11 +20,8 @@ import {
     PERIOD_50_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_1_DAY_IN_SECONDS,
-    PERCENTAGE_50_18DEC,
 } from "../utils/Constants";
 import {
-    MockMiltonSpreadModel,
-    MiltonSpreadModels,
     prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
@@ -175,6 +172,7 @@ describe("Milton SOAP", () => {
     it("should calculate soap, DAI, pay fixed, add position, calculate after 25 days", async () => {
         //given
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -292,6 +290,7 @@ describe("Milton SOAP", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
         await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
@@ -1129,6 +1128,7 @@ describe("Milton SOAP", () => {
         //given
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
         miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
