@@ -20,7 +20,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
+                        methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPayFixed / 1000000000000000000}
@@ -36,7 +36,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
+                        methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPayFixed / 1000000000000000000}
@@ -52,7 +52,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
+                        methodArgs={[drizzle.contracts.DrizzleDai.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadPayFixed / 1000000000000000000}
@@ -71,7 +71,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdt.address]}
+                        methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadReceiveFixed / 1000000000000000000}
@@ -87,7 +87,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenUsdc.address]}
+                        methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadReceiveFixed / 1000000000000000000}
@@ -103,7 +103,7 @@ export default ({ drizzle, drizzleState }) => (
                         drizzleState={drizzleState}
                         contract="CockpitDataProvider"
                         method="calculateSpread"
-                        methodArgs={[drizzle.contracts.MockTestnetTokenDai.address]}
+                        methodArgs={[drizzle.contracts.DrizzleDai.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadReceiveFixed / 1000000000000000000}
