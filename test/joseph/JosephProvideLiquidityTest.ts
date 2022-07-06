@@ -297,10 +297,6 @@ describe("Joseph - provide liquidity", () => {
             PERCENTAGE_3_18DEC
         );
         const maxLpAccountContribution = BigNumber.from("15000");
-        await testData.josephDai.setMaxLiquidityPoolBalance(
-            maxLpAccountContribution.add(BigNumber.from("5000"))
-        );
-        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -312,6 +308,12 @@ describe("Joseph - provide liquidity", () => {
             expect(true).to.be.false;
             return;
         }
+
+        await josephDai.setMaxLiquidityPoolBalance(
+            maxLpAccountContribution.add(BigNumber.from("5000"))
+        );
+        await josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -350,8 +352,6 @@ describe("Joseph - provide liquidity", () => {
             PERCENTAGE_3_18DEC
         );
         const maxLpAccountContribution = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -363,6 +363,10 @@ describe("Joseph - provide liquidity", () => {
             expect(true).to.be.false;
             return;
         }
+
+        await josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -397,8 +401,6 @@ describe("Joseph - provide liquidity", () => {
             PERCENTAGE_3_18DEC
         );
         const maxLpAccountContribution = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -410,6 +412,9 @@ describe("Joseph - provide liquidity", () => {
             expect(true).to.be.false;
             return;
         }
+        await josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -449,8 +454,6 @@ describe("Joseph - provide liquidity", () => {
             PERCENTAGE_3_18DEC
         );
         const maxLpAccountContribution = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -462,6 +465,10 @@ describe("Joseph - provide liquidity", () => {
             expect(true).to.be.false;
             return;
         }
+
+        await josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -504,8 +511,6 @@ describe("Joseph - provide liquidity", () => {
             PERCENTAGE_3_18DEC
         );
         const maxLpAccountContribution = BigNumber.from("50000");
-        await testData.josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
-        await testData.josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
 
         const { ipTokenDai, tokenDai, josephDai, miltonStorageDai } = testData;
         if (
@@ -517,6 +522,10 @@ describe("Joseph - provide liquidity", () => {
             expect(true).to.be.false;
             return;
         }
+
+        await josephDai.setMaxLiquidityPoolBalance(BigNumber.from("2000000"));
+        await josephDai.setMaxLpAccountContribution(maxLpAccountContribution);
+
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
