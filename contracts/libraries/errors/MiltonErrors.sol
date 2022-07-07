@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 /// @title Errors which occur inside Milton's method execution.
 library MiltonErrors {
@@ -22,8 +22,8 @@ library MiltonErrors {
     /// @notice Liquidity Pool account contribution is too high.
     string public constant LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH = "IPOR_305";
 
-	/// @notice Swap id used in input has incorrect value (like 0) or not exists.
-    string public constant INCORRECT_SWAP_ID = "IPOR_306";    
+    /// @notice Swap id used in input has incorrect value (like 0) or not exists.
+    string public constant INCORRECT_SWAP_ID = "IPOR_306";
 
     /// @notice Swap has incorrect status.
     string public constant INCORRECT_SWAP_STATUS = "IPOR_307";
