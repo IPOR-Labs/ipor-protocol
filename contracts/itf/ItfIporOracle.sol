@@ -14,7 +14,7 @@ contract ItfIporOracle is IporOracle {
         return _decayFactorValue(timeFromLastPublication);
     }
 
-    function setDecayFactor(uint256 decayFactor) external {
+    function setDecayFactor(uint256 decayFactor) external onlyOwner {
         _decayFactor = decayFactor;
     }
 
