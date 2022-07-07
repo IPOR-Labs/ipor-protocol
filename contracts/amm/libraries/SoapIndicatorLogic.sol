@@ -118,7 +118,7 @@ library SoapIndicatorLogic {
     ) internal pure returns (uint256) {
         require(
             calculateTimestamp >= derivativeOpenTimestamp,
-            MiltonErrors.CALC_TIMESTAMP_HIGHER_THAN_SWAP_OPEN_TIMESTAMP
+            MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
         return
             derivativeNotional *
