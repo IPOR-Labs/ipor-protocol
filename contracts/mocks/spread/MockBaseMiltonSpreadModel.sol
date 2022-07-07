@@ -9,7 +9,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (int256 spreadPremiums) {
+    ) public view returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
@@ -24,7 +24,7 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
-    ) public pure returns (int256 spreadPremiums) {
+    ) public view returns (int256 spreadPremiums) {
         IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
@@ -37,42 +37,42 @@ contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
     function testCalculateVolatilityAndMeanReversionPayFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _calculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
     }
 
     function testCalculateVolatilityAndMeanReversionReceiveFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
     }
 
     function testVolatilityAndMeanReversionPayFixedRegionOne(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _volatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
     function testVolatilityAndMeanReversionReceiveFixedRegionOne(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
     function testVolatilityAndMeanReversionPayFixedRegionTwo(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
     }
 
     function testVolatilityAndMeanReversionReceiveFixedRegionTwo(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) public pure returns (int256) {
+    ) public view returns (int256) {
         return _volatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
     }
 }

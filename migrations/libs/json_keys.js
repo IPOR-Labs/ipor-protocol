@@ -82,6 +82,7 @@ module.exports = {
     ItfMiltonImplUsdc: "ItfMiltonImplUsdc",
     ItfMiltonProxyDai: "ItfMiltonProxyDai",
     ItfMiltonImplDai: "ItfMiltonImplDai",
+    ItfMiltonSpreadModel: "ItfMiltonSpreadModel",
     ItfStanleyProxyUsdt: "ItfStanleyProxyUsdt",
     ItfStanleyImplUsdt: "ItfStanleyImplUsdt",
     ItfStanleyProxyUsdc: "ItfStanleyProxyUsdc",

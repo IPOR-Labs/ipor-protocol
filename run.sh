@@ -280,6 +280,7 @@ function create_env_config_file() {
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageUsdc.json" "milton_storage_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageDai.json" "milton_storage_dai_address")
   RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModel.json" "milton_spread_model_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModel.json" "itf_milton_spread_model_address")
   RESULT=$(set_smart_contract_address_from_json_file "TestnetFaucet.json" "testnet_faucet_address")
   RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdc.json" "ipor_ip_token_usdc_address")
   RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdt.json" "ipor_ip_token_usdt_address")
