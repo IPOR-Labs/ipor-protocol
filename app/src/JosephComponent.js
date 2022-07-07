@@ -268,27 +268,15 @@ export default ({ drizzle, drizzleState }) => (
                     <td></td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephUsdt.address}
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="DrizzleUsdt"
-                            method="approve"
-                        />
+                        <ContractForm drizzle={drizzle} contract="DrizzleUsdt" method="approve" />
                     </td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephUsdc.address}
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="DrizzleUsdc"
-                            method="approve"
-                        />
+                        <ContractForm drizzle={drizzle} contract="DrizzleUsdc" method="approve" />
                     </td>
                     <td>
                         <strong>Joseph</strong> {drizzle.contracts.DrizzleJosephDai.address}
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="DrizzleDai"
-                            method="approve"
-                        />
+                        <ContractForm drizzle={drizzle} contract="DrizzleDai" method="approve" />
                     </td>
                 </tr>
             </table>
@@ -495,6 +483,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Transfer Treasury</strong>
+                        <br />
+                        <small>Income fee, part of opening fee</small>
                     </td>
                     <td>
                         <div>

@@ -152,7 +152,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Charlie Treasurer</strong>
-                        <small></small>
+                        <br />
+                        <small>Publication fee</small>
                     </td>
                     <td>
                         <div>
@@ -204,6 +205,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Treasury Treasurer</strong>
+                        <br />
+                        <small>Income fee, part of opening fee</small>
                     </td>
                     <td>
                         <div>
@@ -254,7 +257,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Publication Fee Transferer</strong>
+                        <strong>Charlie Treasury Manager</strong>
                     </td>
                     <td>
                         <div>
@@ -305,7 +308,7 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Treasury Transferer</strong>
+                        <strong>Treasury Manager</strong>
                     </td>
                     <td>
                         <div>
@@ -349,6 +352,112 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
                                 method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Max Liquidity Pool Balance</strong>
+						<br/>
+						<small>Notice! Don't use decimals.</small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdt"
+                                method="getMaxLiquidityPoolBalance"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdt"
+                                method="setMaxLiquidityPoolBalance"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdc"
+                                method="getMaxLiquidityPoolBalance"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdc"
+                                method="setMaxLiquidityPoolBalance"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephDai"
+                                method="getMaxLiquidityPoolBalance"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephDai"
+                                method="setMaxLiquidityPoolBalance"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Max Liquidity Pool Account Contribution</strong>
+						<br/>
+						<small>Notice! Don't use decimals.</small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdt"
+                                method="getMaxLpAccountContribution"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdt"
+                                method="setMaxLpAccountContribution"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdc"
+                                method="getMaxLpAccountContribution"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdc"
+                                method="setMaxLpAccountContribution"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephDai"
+                                method="getMaxLpAccountContribution"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephDai"
+                                method="setMaxLpAccountContribution"
                             />
                         </div>
                     </td>
