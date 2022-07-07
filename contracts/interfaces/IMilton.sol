@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
@@ -56,13 +56,13 @@ interface IMilton {
 
     /// @notice Closes Pay-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
-    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
+    /// @dev Rejects transaction and returns error code IPOR_307 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Pay-Fixed Swap ID.
     function closeSwapPayFixed(uint256 swapId) external;
 
     /// @notice Closes Receive-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.
-    /// @dev Rejects transaction and returns error code IPOR_305 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
+    /// @dev Rejects transaction and returns error code IPOR_307 if swapId doesn't have AmmTypes.SwapState.ACTIVE status.
     /// @param swapId Receive-Fixed swap ID.
     function closeSwapReceiveFixed(uint256 swapId) external;
 

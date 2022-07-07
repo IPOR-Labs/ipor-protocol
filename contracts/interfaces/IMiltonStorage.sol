@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
@@ -149,8 +149,16 @@ interface IMiltonStorage {
         returns (int256 soapReceiveFixed);
 
     /// @notice add liquidity to the Liquidity Pool. Function available only to Joseph.
+    /// @param account account address who execute request for redeem asset amount
     /// @param assetAmount amount of asset added to balance of Liquidity Pool, represented in 18 decimals
-    function addLiquidity(uint256 assetAmount) external;
+    /// @param cfgMaxLiquidityPoolBalance max liquidity pool balance taken from Joseph configuration, represented in 18 decimals.
+    /// @param cfgMaxLpAccountContribution max liquidity pool account contribution taken from Joseph configuration, represented in 18 decimals.
+    function addLiquidity(
+        address account,
+        uint256 assetAmount,
+        uint256 cfgMaxLiquidityPoolBalance,
+        uint256 cfgMaxLpAccountContribution
+    ) external;
 
     /// @notice subtract liquidity from the Liquidity Pool. Function available only to Joseph.
     /// @param assetAmount amount of asset subtracted from Liquidity Pool, represented in 18 decimals

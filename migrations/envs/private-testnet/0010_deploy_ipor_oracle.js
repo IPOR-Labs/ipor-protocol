@@ -5,22 +5,80 @@ const script = require("../../libs/contracts/deploy/ipor_oracle/0001_initial_dep
 const itfScript = require("../../libs/itf/deploy/ipor_oracle/0001_initial_deploy.js");
 
 module.exports = async function (deployer, _network, addresses) {
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDC) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDC is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_DAI) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_DAI is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDT) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDT is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDC) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDC is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_DAI) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_DAI is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDT) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDT is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDC) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDC is not set!"
+        );
+    }
+
+    if (!process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_DAI) {
+        throw new Error(
+            "Migration stopped! Environment parameter SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_DAI is not set!"
+        );
+    }
+
     const usdt = await func.getValue(keys.USDT);
     const usdc = await func.getValue(keys.USDC);
     const dai = await func.getValue(keys.DAI);
 
     const assets = [usdt, usdc, dai];
 
-    const updateTimestamps = [BigInt("1650886888"), BigInt("1650886630"), BigInt("1650886104")];
+    const updateTimestamps = [
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDT),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_USDC),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_UPDATE_TIMESTAMP_DAI),
+    ];
     const exponentialMovingAverages = [
-        BigInt("31132626894697926"),
-        BigInt("30109512549022512"),
-        BigInt("32706669664256327"),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDT),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_USDC),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EMA_DAI),
     ];
     const exponentialWeightedMovingVariances = [
-        BigInt("1828129745656718"),
-        BigInt("53273740801041"),
-        BigInt("49811986068491"),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDT),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_USDC),
+        BigInt(process.env.SC_MIGRATION_INITIAL_IPOR_INDEX_EWMVAR_DAI),
     ];
 
     const initialParams = {

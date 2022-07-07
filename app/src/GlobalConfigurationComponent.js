@@ -25,262 +25,158 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>IporOracle</td>
+                <td>{drizzle.contracts.DrizzleIporOracle.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.IporOracle.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporOracle"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleIporOracle"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonUsdt</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdt.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdt"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdt"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonUsdc</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdc.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdc"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdc"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonDai</td>
+                <td>{drizzle.contracts.DrizzleMiltonDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonDai.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonDai"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonDai"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonStorageUsdt</td>
+                <td>{drizzle.contracts.MiltonStorageUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonStorageUsdt.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonStorageUsdt"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageUsdt"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonStorageUsdc</td>
+                <td>{drizzle.contracts.MiltonStorageUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonStorageUsdc.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonStorageUsdc"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageUsdc"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonStorageDai</td>
+                <td>{drizzle.contracts.MiltonStorageDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonStorageDai.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonStorageDai"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageDai"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdt</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdt.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdt"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdt"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdc</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdc.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdc"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdc"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephDai</td>
+                <td>{drizzle.contracts.DrizzleJosephDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephDai.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephDai"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephDai"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyUsdt</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdt.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdt"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdt"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyUsdc</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdc.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdc"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdc"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyDai</td>
+                <td>{drizzle.contracts.DrizzleStanleyDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyDai.address}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyDai"
-                            method="getVersion"
-                        />
-                    )}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyDai"
+                        method="getVersion"
+                    />
                 </td>
             </tr>
             <tr>
@@ -393,209 +289,17 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>TestnetFaucet</td>
-                <td>{drizzle.contracts.TestnetFaucet.address}</td>
                 <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="TestnetFaucet"
-                        method="getVersion"
-                    />
-                </td>
-            </tr>
-            <tr>
-                <td>ItfIporOracle</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfIporOracle.address
+                    {process.env.REACT_APP_ENV_PROFILE !== "mainnet"
+                        ? drizzle.contracts.TestnetFaucet.address
                         : "NONE"}
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+                    {process.env.REACT_APP_ENV_PROFILE !== "mainnet" ? (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="ItfIporOracle"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdt"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdc"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonDai"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdt"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdc"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephDai"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdt"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdc"
-                            method="getVersion"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyDai"
+                            contract="TestnetFaucet"
                             method="getVersion"
                         />
                     ) : (
@@ -617,81 +321,24 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>USDT</td>
-                <td>{drizzle.contracts.MockTestnetTokenUsdt.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenUsdt"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdt"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdt"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleUsdt.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>USDC</td>
-                <td>{drizzle.contracts.MockTestnetTokenUsdc.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenUsdc"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdc"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenUsdc"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleUsdc.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>DAI</td>
-                <td>{drizzle.contracts.MockTestnetTokenDai.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="MockTestnetTokenDai"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenDai"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="MockTestnetTokenDai"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
+                <td>{drizzle.contracts.DrizzleDai.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
             </tr>
             <tr>
                 <td>ipUSDT</td>
@@ -851,44 +498,28 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>Ipor Oracle</td>
+                <td>{drizzle.contracts.DrizzleIporOracle.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.IporOracle.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleIporOracle"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporOracle"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleIporOracle"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporOracle"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="IporOracle"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleIporOracle"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
@@ -920,381 +551,237 @@ export default ({ drizzle, drizzleState }) => (
 
             <tr>
                 <td>MiltonUsdt</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdt"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdt"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonUsdt"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdt"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonUsdt"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonUsdc</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdc"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdc"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonUsdc"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdc"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonUsdc"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>MiltonDai</td>
+                <td>{drizzle.contracts.DrizzleMiltonDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonDai"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonDai"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonDai"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonDai"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="MiltonDai"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonDai"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdt</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdt"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdt"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephUsdt"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephUsdt"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephUsdt"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdc</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdc"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdc"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephUsdc"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephUsdc"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephUsdc"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>JosephDai</td>
+                <td>{drizzle.contracts.DrizzleJosephDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephDai"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephDai"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephDai"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephDai"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="JosephDai"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephDai"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
 
             <tr>
                 <td>StanleyUsdt</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdt"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdt"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdt"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyUsdt"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdt"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyUsdc</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdc"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdc"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdc"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyUsdc"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdc"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyDai</td>
+                <td>{drizzle.contracts.DrizzleStanleyDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyDai"
+                        method="owner"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyDai"
-                            method="owner"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyDai"
+                        method="transferOwnership"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyDai"
-                            method="transferOwnership"
-                        />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="StanleyDai"
-                            method="confirmTransferOwnership"
-                        />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyDai"
+                        method="confirmTransferOwnership"
+                    />
                 </td>
             </tr>
             <tr>
@@ -1454,32 +941,37 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </td>
             </tr>
-            <tr>
-                <td>Testnet Faucet</td>
-                <td>{drizzle.contracts.TestnetFaucet.address}</td>
-                <td>
-                    <ContractData
-                        drizzle={drizzle}
-                        drizzleState={drizzleState}
-                        contract="TestnetFaucet"
-                        method="owner"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
-                        method="transferOwnership"
-                    />
-                </td>
-                <td>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="TestnetFaucet"
-                        method="confirmTransferOwnership"
-                    />
-                </td>
-            </tr>
+            {/* {process.env.REACT_APP_BS_NETWORK_NAME !== "localhost" ? (
+                <tr>
+                    <td>Testnet Faucet</td>
+                    <td>{drizzle.contracts.TestnetFaucet.address}</td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="TestnetFaucet"
+                            method="owner"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="TestnetFaucet"
+                            method="transferOwnership"
+                        />
+                    </td>
+                    <td>
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="TestnetFaucet"
+                            method="confirmTransferOwnership"
+                        />
+                    </td>
+                </tr>
+            ) : (
+                <tr></tr>
+            )} */}
+
             <tr>
                 <td>Mock Testnet Strategy Aave Usdt</td>
                 <td>{drizzle.contracts.DrizzleStrategyAaveUsdt.address}</td>
@@ -1641,429 +1133,6 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </td>
             </tr>
-            <tr>
-                <td>ItfOracle</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfIporOracle.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfIporOracle"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfIporOracle"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfIporOracle"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfMiltonUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdt"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdt"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdc"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdc"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonDai"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonDai"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfMiltonDai"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfJosephUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdt"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephUsdt"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdc"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephUsdc"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephDai"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephDai"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfJosephDai"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfStanleyUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdt"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdt"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdt"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdc"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdc"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdc"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyDai"
-                            method="owner"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyDai"
-                            method="transferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyDai"
-                            method="confirmTransferOwnership"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
         </table>
 
         <hr />
@@ -2078,344 +1147,192 @@ export default ({ drizzle, drizzleState }) => (
             </tr>
             <tr>
                 <td>Ipor Oracle</td>
+                <td>{drizzle.contracts.DrizzleIporOracle.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.IporOracle.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleIporOracle"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="IporOracle"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleIporOracle" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="IporOracle" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="IporOracle" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleIporOracle" method="unpause" />
                 </td>
             </tr>
 
             <tr>
                 <td>MiltonUsdt</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdt"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdt"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonUsdt" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonUsdt" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonUsdt" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonUsdt" method="unpause" />
                 </td>
             </tr>
             <tr>
                 <td>MiltonUsdc</td>
+                <td>{drizzle.contracts.DrizzleMiltonUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdc"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonUsdc"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonUsdc" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonUsdc" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonUsdc" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonUsdc" method="unpause" />
                 </td>
             </tr>
             <tr>
                 <td>MiltonDai</td>
+                <td>{drizzle.contracts.DrizzleMiltonDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.MiltonDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonDai"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="MiltonDai"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonDai" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonDai" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="MiltonDai" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonDai" method="unpause" />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdt</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdt"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdt"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephUsdt" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephUsdt" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephUsdt" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephUsdt" method="unpause" />
                 </td>
             </tr>
             <tr>
                 <td>JosephUsdc</td>
+                <td>{drizzle.contracts.DrizzleJosephUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephUsdc"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephUsdc"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephUsdc" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephUsdc" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephUsdc" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephUsdc" method="unpause" />
                 </td>
             </tr>
             <tr>
                 <td>JosephDai</td>
+                <td>{drizzle.contracts.DrizzleJosephDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.JosephDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephDai"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="JosephDai"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephDai" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephDai" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="JosephDai" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephDai" method="unpause" />
                 </td>
             </tr>
 
             <tr>
                 <td>StanleyUsdt</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdt.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdt.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdt"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdt"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleStanleyUsdt" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyUsdt" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyUsdt" method="unpause" />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdt"
+                        method="unpause"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyUsdc</td>
+                <td>{drizzle.contracts.DrizzleStanleyUsdc.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyUsdc.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyUsdc"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyUsdc"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleStanleyUsdc" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyUsdc" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyUsdc" method="unpause" />
-                    )}
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleStanleyUsdc"
+                        method="unpause"
+                    />
                 </td>
             </tr>
             <tr>
                 <td>StanleyDai</td>
+                <td>{drizzle.contracts.DrizzleStanleyDai.address}</td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? "NONE"
-                        : drizzle.contracts.StanleyDai.address}
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleStanleyDai"
+                        method="paused"
+                    />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="StanleyDai"
-                            method="paused"
-                        />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleStanleyDai" method="pause" />
                 </td>
                 <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyDai" method="pause" />
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        "NONE"
-                    ) : (
-                        <ContractForm drizzle={drizzle} contract="StanleyDai" method="unpause" />
-                    )}
+                    <ContractForm drizzle={drizzle} contract="DrizzleStanleyDai" method="unpause" />
                 </td>
             </tr>
             <tr>
@@ -2632,358 +1549,6 @@ export default ({ drizzle, drizzleState }) => (
                         contract="DrizzleStrategyCompoundDai"
                         method="unpause"
                     />
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfIporOracle</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfIporOracle.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfIporOracle"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfMiltonUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdt"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdt" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonUsdc"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdc" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonUsdc" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfMiltonDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfMiltonDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfMiltonDai"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonDai" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfMiltonDai" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfJosephUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdt"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephUsdt" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephUsdt" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephUsdc"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephUsdc" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephUsdc" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfJosephDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfJosephDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfJosephDai"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephDai" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfJosephDai" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-
-            <tr>
-                <td>ItfStanleyUsdt</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdt.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdt"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfStanleyUsdt" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdt"
-                            method="unpause"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyUsdc</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyUsdc.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyUsdc"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfStanleyUsdc" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm
-                            drizzle={drizzle}
-                            contract="ItfStanleyUsdc"
-                            method="unpause"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-            </tr>
-            <tr>
-                <td>ItfStanleyDai</td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true"
-                        ? drizzle.contracts.ItfStanleyDai.address
-                        : "NONE"}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="ItfStanleyDai"
-                            method="paused"
-                        />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfStanleyDai" method="pause" />
-                    ) : (
-                        "NONE"
-                    )}
-                </td>
-                <td>
-                    {process.env.REACT_APP_ITF_ENABLED === "true" ? (
-                        <ContractForm drizzle={drizzle} contract="ItfStanleyDai" method="unpause" />
-                    ) : (
-                        "NONE"
-                    )}
                 </td>
             </tr>
         </table>

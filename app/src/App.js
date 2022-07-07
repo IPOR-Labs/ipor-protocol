@@ -9,7 +9,7 @@ const drizzle = new Drizzle(drizzleOptions);
 
 const App = () => {
 
-
+	
     // const [accounts, setAccounts] = useState(undefined);
     //
     // useEffect(() => {
@@ -22,7 +22,7 @@ const App = () => {
             <DrizzleContext.Consumer>
                 {drizzleContext => {
                     const {drizzle, drizzleState, initialized} = drizzleContext;
-
+					
                     if (!initialized) {
                         return "Loading..."
                     }

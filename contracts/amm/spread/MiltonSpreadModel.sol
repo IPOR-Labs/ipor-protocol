@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
@@ -13,7 +13,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 quoteValue) {
+    ) external view override returns (uint256 quoteValue) {
         int256 spreadPremiums = _calculateSpreadPremiumsPayFixed(accruedIpor, accruedBalance);
 
         int256 intQuoteValue = accruedIpor.indexValue.toInt256() + spreadPremiums;
@@ -26,7 +26,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (uint256 quoteValue) {
+    ) external view override returns (uint256 quoteValue) {
         int256 spreadPremiums = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
 
         int256 intQuoteValue = accruedIpor.indexValue.toInt256() + spreadPremiums;
@@ -39,21 +39,21 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function calculateSpreadPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (int256 spreadValue) {
+    ) external view override returns (int256 spreadValue) {
         spreadValue = _calculateSpreadPremiumsPayFixed(accruedIpor, accruedBalance);
     }
 
     function calculateSpreadReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) external pure override returns (int256 spreadValue) {
+    ) external view override returns (int256 spreadValue) {
         spreadValue = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
     }
 
     function _calculateSpreadPremiumsPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums) {
+    ) internal view returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.LIQUIDITY_POOL_ACCRUED_IS_EQUAL_ZERO
@@ -71,7 +71,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function _calculateSpreadPremiumsReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
-    ) internal pure returns (int256 spreadPremiums) {
+    ) internal view returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool != 0,
             MiltonErrors.LIQUIDITY_POOL_ACCRUED_IS_EQUAL_ZERO
@@ -89,7 +89,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.
     function _calculateVolatilityAndMeanReversionPayFixed(uint256 emaVar, int256 diffIporIndexEma)
         internal
-        pure
+        view
         returns (int256)
     {
         int256 regionOne = _volatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
@@ -105,7 +105,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function _calculateVolatilityAndMeanReversionReceiveFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) internal pure returns (int256) {
+    ) internal view returns (int256) {
         int256 regionOne = _volatilityAndMeanReversionReceiveFixedRegionOne(
             emaVar,
             diffIporIndexEma
@@ -123,7 +123,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
 
     function _volatilityAndMeanReversionPayFixedRegionOne(uint256 emaVar, int256 diffIporIndexEma)
         internal
-        pure
+        view
         returns (int256)
     {
         return
@@ -139,7 +139,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
 
     function _volatilityAndMeanReversionPayFixedRegionTwo(uint256 emaVar, int256 diffIporIndexEma)
         internal
-        pure
+        view
         returns (int256)
     {
         return
@@ -156,7 +156,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function _volatilityAndMeanReversionReceiveFixedRegionOne(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) internal pure returns (int256) {
+    ) internal view returns (int256) {
         return
             _getReceiveFixedRegionOneBase() +
             IporMath.divisionInt(
@@ -171,7 +171,7 @@ contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     function _volatilityAndMeanReversionReceiveFixedRegionTwo(
         uint256 emaVar,
         int256 diffIporIndexEma
-    ) internal pure returns (int256) {
+    ) internal view returns (int256) {
         return
             _getReceiveFixedRegionTwoBase() +
             IporMath.divisionInt(
