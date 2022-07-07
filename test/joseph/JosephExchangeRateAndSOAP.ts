@@ -339,7 +339,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             //when
             josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_314"
+            "IPOR_316"
         );
 
         //then
@@ -415,7 +415,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             //when
             josephDai.itfCalculateExchangeRate(calculateTimestamp),
             //then
-            "IPOR_314"
+            "IPOR_316"
         );
 
         //then

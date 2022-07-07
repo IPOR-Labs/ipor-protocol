@@ -339,7 +339,7 @@ describe("Joseph - provide liquidity", () => {
                 .connect(userOne)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_329"
+            "IPOR_304"
         );
     });
 
@@ -388,7 +388,7 @@ describe("Joseph - provide liquidity", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_330"
+            "IPOR_305"
         );
     });
 
@@ -441,7 +441,7 @@ describe("Joseph - provide liquidity", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_330"
+            "IPOR_305"
         );
     });
 
@@ -498,7 +498,7 @@ describe("Joseph - provide liquidity", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_330"
+            "IPOR_305"
         );
     });
 
@@ -561,7 +561,7 @@ describe("Joseph - provide liquidity", () => {
                 .connect(liquidityProvider)
                 .itfProvideLiquidity(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_330"
+            "IPOR_305"
         );
     });
 });

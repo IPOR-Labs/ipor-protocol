@@ -3578,7 +3578,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_319"
+            "IPOR_321"
         );
     });
 
@@ -3661,7 +3661,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_313"
+            "IPOR_315"
         );
     });
 
@@ -3744,7 +3744,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_313"
+            "IPOR_315"
         );
     });
 
