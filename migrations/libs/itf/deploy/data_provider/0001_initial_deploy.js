@@ -22,7 +22,7 @@ module.exports = async function (deployer, _network, addresses, ItfDataProvider)
     const miltonStorages = [miltonStorageUsdt, miltonStorageUsdc, miltonStorageDai];
 
     const iporOracle = await func.getValue(keys.ItfIporOracleProxy);
-    const miltonSpreadModel = await func.getValue(keys.MiltonSpreadModel);
+    const miltonSpreadModel = await func.getValue(keys.ItfMiltonSpreadModel);
 
     const itfDataProviderProxy = await deployProxy(
         ItfDataProvider,
