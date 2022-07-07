@@ -249,7 +249,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
 
     function _decayFactorValue(uint256 timeFromLastPublication)
         internal
-        pure
+        view
         virtual
         returns (uint256)
     {
