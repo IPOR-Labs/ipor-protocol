@@ -85,11 +85,11 @@ describe("Joseph Treasury", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken
+        //BEGIN HACK - subtract liquidity without  burn ipToken
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await miltonStorageDai.subtractLiquidity(BigNumber.from("45000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
+        //END HACK - subtract liquidity without  burn ipToken
 
         const balance = await miltonDai.getAccruedBalance();
         const actualCollateral = balance.totalCollateralPayFixed.add(
@@ -163,12 +163,12 @@ describe("Joseph Treasury", () => {
                 params.leverage
             );
 
-        //BEGIN HACK - substract liquidity without  burn ipToken
+        //BEGIN HACK - subtract liquidity without  burn ipToken
         await miltonStorageDai.setJoseph(await admin.getAddress());
 
         await miltonStorageDai.subtractLiquidity(BigNumber.from("45000").mul(N1__0_18DEC));
         await miltonStorageDai.setJoseph(josephDai.address);
-        //END HACK - substract liquidity without  burn ipToken
+        //END HACK - subtract liquidity without  burn ipToken
 
         const balance = await miltonDai.getAccruedBalance();
         const actualCollateral = balance.totalCollateralPayFixed.add(

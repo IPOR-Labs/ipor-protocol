@@ -24,7 +24,8 @@ import { deploy, DeployType, setup } from "./deploy";
 import { transferUsdtToAddress, transferUsdcToAddress, transferDaiToAddress } from "./tokens";
 
 const ONE_18 = BigNumber.from("1000000000000000000");
-const ONE_6 = BigNumber.from("100000000");
+const ONE_6 = BigNumber.from("1000000");
+
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
 describe("Open/Close Swap", function () {
@@ -98,17 +99,17 @@ describe("Open/Close Swap", function () {
         let swapPayFixedId: BigNumber;
         let swapReceiveFixedId: BigNumber;
 
-        it("ProvideLiquidity for 1000000 dai", async () => {
+        it("ProvideLiquidity for 50000 dai", async () => {
             //given
 
-            const deposit = ONE_18.mul("100000");
+            const deposit = ONE_18.mul("50000");
             await transferDaiToAddress(
                 "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
                 await admin.getAddress(),
-                ONE_18.mul("1000000")
+                ONE_18.mul("500000")
             );
-            await dai.connect(admin).approve(josephDai.address, ONE_18.mul("1000000000"));
-            await dai.connect(admin).approve(miltonDai.address, ONE_18.mul("1000000000"));
+            await dai.connect(admin).approve(josephDai.address, ONE_18.mul("500000"));
+            await dai.connect(admin).approve(miltonDai.address, ONE_18.mul("500000"));
             //when
             await josephDai.connect(admin).provideLiquidity(deposit);
 
@@ -117,7 +118,7 @@ describe("Open/Close Swap", function () {
             expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(deposit);
         });
 
-        it("Should rebalanse and deposit(dai) into vault (aave)", async () => {
+        it("Should rebalance and deposit(dai) into vault (aave)", async () => {
             //given
             const strategyAaveBalance = await strategyAaveDai.balanceOf();
             //when
@@ -130,7 +131,7 @@ describe("Open/Close Swap", function () {
             ).to.be.true;
         });
 
-        it("Should open Swap Pay Fixed", async () => {
+        it("Should open Swap Pay Fixed, DAI", async () => {
             //when
             await miltonDai.openSwapPayFixed(
                 ONE_18.mul("100"),
@@ -149,11 +150,11 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 1").to.be.equal(1);
         });
 
-        it("Should open Swap Receive Fixed", async () => {
+        it("Should open Swap Receive Fixed, DAI", async () => {
             //when
             await miltonDai.openSwapReceiveFixed(ONE_18.mul("100"), N0__01_18DEC, ONE_18.mul("10"));
-            //then
 
+            //then
             const swaps = await miltonFacadeDataProvider.getMySwaps(
                 dai.address,
                 BigNumber.from("0"),
@@ -164,7 +165,7 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 2").to.be.equal(2);
         });
 
-        it("Should close Swap Pay Fixed", async () => {
+        it("Should close Swap Pay Fixed, DAI", async () => {
             //when
             await miltonDai.closeSwapPayFixed(swapPayFixedId);
             //then
@@ -181,7 +182,7 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, DAI", async () => {
             //when
             await miltonDai.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
@@ -200,17 +201,17 @@ describe("Open/Close Swap", function () {
         let swapPayFixedId: BigNumber;
         let swapReceiveFixedId: BigNumber;
 
-        it("ProvideLiquidity for usdc", async () => {
+        it("ProvideLiquidity for 50000 usdc", async () => {
             //given
 
-            const deposit = BigNumber.from("10000000000");
+            const deposit = ONE_6.mul("50000");
             await transferUsdcToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("100000000000")
+                ONE_6.mul("500000")
             );
-            await usdc.connect(admin).approve(josephUsdc.address, N0__01_18DEC);
-            await usdc.connect(admin).approve(miltonUsdc.address, N0__01_18DEC);
+            await usdc.connect(admin).approve(josephUsdc.address, ONE_6.mul("500000"));
+            await usdc.connect(admin).approve(miltonUsdc.address, ONE_6.mul("500000"));
             //when
             await josephUsdc.connect(admin).provideLiquidity(deposit);
 
@@ -219,7 +220,7 @@ describe("Open/Close Swap", function () {
             expect(usdcMiltonBalanceAfter, "usdcMiltonBalanceAfter").to.be.equal(deposit);
         });
 
-        it("Should rebalanse and deposit(usdc) into vault (aave)", async () => {
+        it("Should rebalance and deposit(usdc) into vault (aave)", async () => {
             //given
             const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
             //when
@@ -232,10 +233,10 @@ describe("Open/Close Swap", function () {
             ).to.be.true;
         });
 
-        it("Should open Swap Pay Fixed", async () => {
+        it("Should open Swap Pay Fixed, USDC", async () => {
             //when
             await miltonUsdc.openSwapPayFixed(
-                ONE_6.mul("3"),
+                ONE_6.mul("300"),
                 BigNumber.from("39999999999999999"),
                 ONE_18.mul("10")
             );
@@ -251,9 +252,9 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 1").to.be.equal(1);
         });
 
-        it("Should open Swap Receive Fixed", async () => {
+        it("Should open Swap Receive Fixed, USDC", async () => {
             //when
-            await miltonUsdc.openSwapReceiveFixed(ONE_6.mul("3"), N0__01_18DEC, ONE_18.mul("10"));
+            await miltonUsdc.openSwapReceiveFixed(ONE_6.mul("300"), N0__01_18DEC, ONE_18.mul("10"));
             //then
 
             const swaps = await miltonFacadeDataProvider.getMySwaps(
@@ -266,7 +267,7 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 2").to.be.equal(2);
         });
 
-        it("Should close Swap Pay Fixed", async () => {
+        it("Should close Swap Pay Fixed, USDC", async () => {
             //when
             await miltonUsdc.closeSwapPayFixed(swapPayFixedId);
             //then
@@ -283,7 +284,7 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, USDC", async () => {
             //when
             await miltonUsdc.closeSwapReceiveFixed(swapReceiveFixedId);
             //then
@@ -302,17 +303,17 @@ describe("Open/Close Swap", function () {
         let swapPayFixedId: BigNumber;
         let swapReceiveFixedId: BigNumber;
 
-        it("ProvideLiquidity for usdt", async () => {
+        it("ProvideLiquidity for 50000 usdt", async () => {
             //given
 
-            const deposit = BigNumber.from("10000000000");
+            const deposit = ONE_6.mul("50000");
             await transferUsdtToAddress(
                 testnetFaucet.address,
                 await admin.getAddress(),
-                BigNumber.from("100000000000")
+                ONE_6.mul("500000")
             );
-            await usdt.connect(admin).approve(josephUsdt.address, BigNumber.from("100000000000"));
-            await usdt.connect(admin).approve(miltonUsdt.address, BigNumber.from("100000000000"));
+            await usdt.connect(admin).approve(josephUsdt.address, ONE_6.mul("500000"));
+            await usdt.connect(admin).approve(miltonUsdt.address, ONE_6.mul("500000"));
             //when
             await josephUsdt.connect(admin).provideLiquidity(deposit);
 
@@ -321,7 +322,7 @@ describe("Open/Close Swap", function () {
             expect(usdtMiltonBalanceAfter, "usdtMiltonBalanceAfter").to.be.equal(deposit);
         });
 
-        it("Should rebalanse and deposit(usdt) into vault (compound)", async () => {
+        it("Should rebalance and deposit(usdt) into vault (compound)", async () => {
             //given
             const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
             //when
@@ -334,10 +335,10 @@ describe("Open/Close Swap", function () {
             ).to.be.true;
         });
 
-        it("Should open Swap Pay Fixed", async () => {
+        it("Should open Swap Pay Fixed, USDT", async () => {
             //when
             await miltonUsdt.openSwapPayFixed(
-                ONE_6.mul("3"),
+                ONE_6.mul("300"),
                 BigNumber.from("39999999999999999"),
                 ONE_18.mul("10")
             );
@@ -353,11 +354,11 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 1").to.be.equal(1);
         });
 
-        it("Should open Swap Receive Fixed", async () => {
+        it("Should open Swap Receive Fixed, USDT", async () => {
             //when
-            await miltonUsdt.openSwapReceiveFixed(ONE_6.mul("3"), N0__01_18DEC, ONE_18.mul("10"));
-            //then
+            await miltonUsdt.openSwapReceiveFixed(ONE_6.mul("300"), N0__01_18DEC, ONE_18.mul("10"));
 
+            //then
             const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
@@ -368,7 +369,7 @@ describe("Open/Close Swap", function () {
             expect(numberOfOpenSwaps, "numberOfOpenSwaps = 2").to.be.equal(2);
         });
 
-        it("Should close Swap Pay Fixed", async () => {
+        it("Should close Swap Pay Fixed, USDT", async () => {
             //when
             await miltonUsdt.closeSwapPayFixed(swapPayFixedId);
             //then
@@ -385,11 +386,11 @@ describe("Open/Close Swap", function () {
             );
         });
 
-        it("Should close Swap Receive Fixed", async () => {
+        it("Should close Swap Receive Fixed, USDT", async () => {
             //when
             await miltonUsdt.closeSwapReceiveFixed(swapReceiveFixedId);
-            //then
 
+            //then
             const swaps = await miltonFacadeDataProvider.getMySwaps(
                 usdt.address,
                 BigNumber.from("0"),
