@@ -106,7 +106,7 @@ describe("IporSwapLogic calculateQuasiInterest", () => {
                 swap.openTimestamp.sub(BigNumber.from(60 * 60 * 24 * 28)),
                 N1__0_18DEC
             )
-        ).to.be.revertedWith("IPOR_317");
+        ).to.be.revertedWith("IPOR_319");
     });
 
     it("Calculate Quasi Interest Case 2 Same Timestamp IBT Price Increase Decimal 18 Case1", async () => {
