@@ -195,13 +195,13 @@ describe("MiltonConfiguration", () => {
         //when
         const actualValue = await miltonConfiguration.getLiquidationDepositAmount();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("50"));
+        expect(actualValue).to.be.eq(BigNumber.from("25"));
     });
 	it("should setup init value for Liquidation Deposit Amount - method 2", async () => {
         //when
         const actualValue = await miltonConfiguration.getWadLiquidationDepositAmount();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("50").mul(N1__0_18DEC));
+        expect(actualValue).to.be.eq(BigNumber.from("25").mul(N1__0_18DEC));
     });
     it("should setup init value for Max Leveragey Value", async () => {
         //when

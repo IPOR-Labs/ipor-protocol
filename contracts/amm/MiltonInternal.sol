@@ -51,7 +51,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
-    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50;
+    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 25;
 
     uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
 
