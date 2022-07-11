@@ -21,7 +21,7 @@ library SoapIndicatorLogic {
                 calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256();
     }
 
-    //@notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
+    /// @notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
@@ -99,7 +99,7 @@ library SoapIndicatorLogic {
             si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
             si.averageInterestRate = newAverageInterestRate;
         } else {
-            //@dev when newAverageInterestRate = 0 it means in IPOR Protocol is closing the LAST derivative on this leg.
+            /// @dev when newAverageInterestRate = 0 it means in IPOR Protocol is closing the LAST derivative on this leg.
             si.rebalanceTimestamp = rebalanceTimestamp;
             si.quasiHypotheticalInterestCumulative = 0;
             si.totalNotional = 0;
@@ -141,7 +141,7 @@ library SoapIndicatorLogic {
             );
     }
 
-    //division by Constants.YEAR_IN_SECONDS * 1e36 postponed at the end of calculation
+    /// @dev division by Constants.YEAR_IN_SECONDS * 1e36 postponed at the end of calculation
     function calculateQuasiHypotheticalInterestDelta(
         uint256 calculateTimestamp,
         uint256 lastRebalanceTimestamp,

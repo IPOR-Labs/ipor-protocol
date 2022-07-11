@@ -78,12 +78,12 @@ library IporSwapLogic {
         );
     }
 
+    /// @notice Calculates interests fixed and floating without division by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterest(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
-        //iFixed = fixed interest rate * notional amount * T / Ty
         require(
             closingTimestamp >= swap.openTimestamp,
             MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
@@ -98,7 +98,7 @@ library IporSwapLogic {
         quasiIFloating = calculateQuasiInterestFloating(swap.ibtQuantity, mdIbtPrice);
     }
 
-    //@notice for final value divide by Constants.D18* Constants.YEAR_IN_SECONDS
+    /// @notice Calculates interest fixed without division by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFixed(
         uint256 notional,
         uint256 swapFixedInterestRate,
@@ -112,7 +112,7 @@ library IporSwapLogic {
             swapPeriodInSeconds;
     }
 
-    //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS
+    /// @notice Calculates interest floating without division by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterestFloating(uint256 ibtQuantity, uint256 ibtCurrentPrice)
         internal
         pure

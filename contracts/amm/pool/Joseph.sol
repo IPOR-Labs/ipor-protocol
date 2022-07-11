@@ -33,11 +33,11 @@ abstract contract Joseph is JosephInternal, IJoseph {
             IporErrors.WRONG_DECIMALS
         );
 
-        IIpToken iipToken = IIpToken(ipToken);
-        require(initAsset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
+        IIpToken iIpToken = IIpToken(ipToken);
+        require(initAsset == iIpToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
 
         _asset = initAsset;
-        _ipToken = iipToken;
+        _ipToken = iIpToken;
         _milton = IMiltonInternal(milton);
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
@@ -48,12 +48,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
         return _calculateExchangeRate(block.timestamp);
     }
 
-    //@param assetAmount underlying token amount represented in decimals specific for underlying asset
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
         _provideLiquidity(assetAmount, _getDecimals(), block.timestamp);
     }
 
-    //@param ipTokenAmount IpToken amount represented in 18 decimals
     function redeem(uint256 ipTokenAmount) external override whenNotPaused {
         _redeem(ipTokenAmount, block.timestamp);
     }
@@ -86,7 +84,6 @@ abstract contract Joseph is JosephInternal, IJoseph {
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
-    //@param assetAmount in decimals like asset
     function _provideLiquidity(
         uint256 assetAmount,
         uint256 assetDecimals,

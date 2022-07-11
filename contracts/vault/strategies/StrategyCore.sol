@@ -24,12 +24,12 @@ abstract contract StrategyCore is
     address internal _treasuryManager;
 
     modifier onlyStanley() {
-        require(_msgSender() == _getStanley(), StanleyErrors.CALLER_NOT_STANLEY);
+        require(_msgSender() == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(_msgSender() == _getTreasuryManager(), StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
+        require(_msgSender() == _treasuryManager, StanleyErrors.CALLER_NOT_TREASURY_MANAGER);
         _;
     }
 
@@ -49,26 +49,26 @@ abstract contract StrategyCore is
     }
 
     function getStanley() external view override returns (address) {
-        return _getStanley();
+        return _stanley;
     }
 
     function setStanley(address newStanley) external whenNotPaused onlyOwner {
         require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStanley = _getStanley();
+        address oldStanley = _stanley;
         _stanley = newStanley;
         emit StanleyChanged(_msgSender(), oldStanley, newStanley);
     }
 
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _getTreasuryManager();
+        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = manager;
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, manager);
     }
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
         require(newTreasury != address(0), StanleyErrors.INCORRECT_TREASURY_ADDRESS);
-        address oldTreasury = _getTreasury();
+        address oldTreasury = _treasury;
         _treasury = newTreasury;
         emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
     }
@@ -79,18 +79,6 @@ abstract contract StrategyCore is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function _getStanley() internal view virtual returns (address) {
-        return _stanley;
-    }
-
-    function _getTreasury() internal view virtual returns (address) {
-        return _treasury;
-    }
-
-    function _getTreasuryManager() internal view virtual returns (address) {
-        return _treasuryManager;
     }
 
     //solhint-disable no-empty-blocks
