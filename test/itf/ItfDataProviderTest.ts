@@ -80,7 +80,7 @@ describe("ItfDataProvider - smoke tests", () => {
             [miltonUsdc.address],
             [miltonStorageUsdc.address],
             iporOracle.address,
-            miltonSpreadModel.address
+            [miltonSpreadModel.address]
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
 
@@ -95,7 +95,7 @@ describe("ItfDataProvider - smoke tests", () => {
         );
         const miltonStorageData = await itfDataProvider.getMiltonStorageData(tokenUsdc.address);
 
-        const miltonSpreadModelData = await itfDataProvider.getMiltonSpreadModelData();
+        const miltonSpreadModelData = await itfDataProvider.getMiltonSpreadModelData(tokenUsdc.address);
 
         const ammData = await itfDataProvider.getAmmData(
             Math.floor(Date.now() / 1000),
