@@ -13,7 +13,9 @@ import {
     MiltonStorageDai,
     MiltonStorageUsdc,
     MiltonStorageUsdt,
-    MiltonSpreadModel,
+    MiltonSpreadModelUsdt,
+    MiltonSpreadModelUsdc,
+    MiltonSpreadModelDai,
     IporOracle,
     MiltonUsdc,
     MiltonUsdt,
@@ -106,7 +108,9 @@ export type DeployType = {
     miltonStorageDai: MiltonStorageDai;
     miltonStorageUsdc: MiltonStorageUsdc;
     miltonStorageUsdt: MiltonStorageUsdt;
-    miltonSpreadModel: MiltonSpreadModel;
+    miltonSpreadModelUsdt: MiltonSpreadModelUsdt;
+    miltonSpreadModelUsdc: MiltonSpreadModelUsdc;
+    miltonSpreadModelDai: MiltonSpreadModelDai;
     miltonFacadeDataProvider: MiltonFacadeDataProvider;
     iporOracle: IporOracle;
     miltonDai: MiltonDai;
