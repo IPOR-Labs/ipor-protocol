@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import "../../amm/spread/MiltonSpreadModel.sol";
+import "../../amm/spread/MiltonSpreadModelDai.sol";
 
-contract MockBaseMiltonSpreadModel is MiltonSpreadModel {
+contract MockBaseMiltonSpreadModel is MiltonSpreadModelDai {
     function testCalculateSpreadPremiumsPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,

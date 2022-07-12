@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.15;
 
-import "../amm/spread/MiltonSpreadModel.sol";
+import "../amm/spread/MiltonSpreadModelUsdc.sol";
 import "hardhat/console.sol";
 
-contract ItfMiltonSpreadModel is MiltonSpreadModel {
+contract ItfMiltonSpreadModelUsdc is MiltonSpreadModelUsdc {
     int256 internal _payFixedRegionOneBase;
     int256 internal _payFixedRegionOneSlopeForVolatility;
     int256 internal _payFixedRegionOneSlopeForMeanReversion;
@@ -54,56 +54,56 @@ contract ItfMiltonSpreadModel is MiltonSpreadModel {
         if (_payFixedRegionOneBase != 0) {
             return _payFixedRegionOneBase;
         }
-        return _PAY_FIXED_REGION_ONE_BASE;
+        return MiltonSpreadModelUsdc._getPayFixedRegionOneBase();
     }
 
     function _getPayFixedRegionOneSlopeForVolatility() internal view override returns (int256) {
         if (_payFixedRegionOneSlopeForVolatility != 0) {
             return _payFixedRegionOneSlopeForVolatility;
         }
-        return _PAY_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY;
+        return MiltonSpreadModelUsdc._getPayFixedRegionOneSlopeForVolatility();
     }
 
     function _getPayFixedRegionOneSlopeForMeanReversion() internal view override returns (int256) {
         if (_payFixedRegionOneSlopeForMeanReversion != 0) {
             return _payFixedRegionOneSlopeForMeanReversion;
         }
-        return _PAY_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION;
+        return MiltonSpreadModelUsdc._getPayFixedRegionOneSlopeForMeanReversion();
     }
 
     function _getPayFixedRegionTwoBase() internal view override returns (int256) {
         if (_payFixedRegionTwoBase != 0) {
             return _payFixedRegionTwoBase;
         }
-        return _PAY_FIXED_REGION_TWO_BASE;
+        return MiltonSpreadModelUsdc._getPayFixedRegionTwoBase();
     }
 
     function _getPayFixedRegionTwoSlopeForVolatility() internal view override returns (int256) {
         if (_payFixedRegionTwoSlopeForVolatility != 0) {
             return _payFixedRegionTwoSlopeForVolatility;
         }
-        return _PAY_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY;
+        return MiltonSpreadModelUsdc._getPayFixedRegionTwoSlopeForVolatility();
     }
 
     function _getPayFixedRegionTwoSlopeForMeanReversion() internal view override returns (int256) {
         if (_payFixedRegionTwoSlopeForMeanReversion != 0) {
             return _payFixedRegionTwoSlopeForMeanReversion;
         }
-        return _PAY_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION;
+        return MiltonSpreadModelUsdc._getPayFixedRegionTwoSlopeForMeanReversion();
     }
 
     function _getReceiveFixedRegionOneBase() internal view override returns (int256) {
         if (_receiveFixedRegionOneBase != 0) {
             return _receiveFixedRegionOneBase;
         }
-        return _RECEIVE_FIXED_REGION_ONE_BASE;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionOneBase();
     }
 
     function _getReceiveFixedRegionOneSlopeForVolatility() internal view override returns (int256) {
         if (_receiveFixedRegionOneSlopeForVolatility != 0) {
             return _receiveFixedRegionOneSlopeForVolatility;
         }
-        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_VOLATILITY;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionOneSlopeForVolatility();
     }
 
     function _getReceiveFixedRegionOneSlopeForMeanReversion()
@@ -115,21 +115,21 @@ contract ItfMiltonSpreadModel is MiltonSpreadModel {
         if (_receiveFixedRegionOneSlopeForMeanReversion != 0) {
             return _receiveFixedRegionOneSlopeForMeanReversion;
         }
-        return _RECEIVE_FIXED_REGION_ONE_SLOPE_FOR_MEAN_REVERSION;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionOneSlopeForMeanReversion();
     }
 
     function _getReceiveFixedRegionTwoBase() internal view override returns (int256) {
         if (_receiveFixedRegionTwoBase != 0) {
             return _receiveFixedRegionTwoBase;
         }
-        return _RECEIVE_FIXED_REGION_TWO_BASE;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionTwoBase();
     }
 
     function _getReceiveFixedRegionTwoSlopeForVolatility() internal view override returns (int256) {
         if (_receiveFixedRegionTwoSlopeForVolatility != 0) {
             return _receiveFixedRegionTwoSlopeForVolatility;
         }
-        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_VOLATILITY;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionTwoSlopeForVolatility();
     }
 
     function _getReceiveFixedRegionTwoSlopeForMeanReversion()
@@ -141,6 +141,6 @@ contract ItfMiltonSpreadModel is MiltonSpreadModel {
         if (_receiveFixedRegionTwoSlopeForMeanReversion != 0) {
             return _receiveFixedRegionTwoSlopeForMeanReversion;
         }
-        return _RECEIVE_FIXED_REGION_TWO_SLOPE_FOR_MEAN_REVERSION;
+        return MiltonSpreadModelUsdc._getReceiveFixedRegionTwoSlopeForMeanReversion();
     }
 }
