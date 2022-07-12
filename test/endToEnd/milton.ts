@@ -111,10 +111,20 @@ export const miltonStorageUsdtFactory = async (): Promise<MiltonStorageUsdt> => 
     }) as Promise<MiltonStorageUsdt>;
 };
 
-export const miltonSpreadModelFactory = async (): Promise<MiltonSpreadModel> => {
+export const miltonSpreadModelUsdtFactory = async (): Promise<MiltonSpreadModelUsdt> => {
     const [admin] = await hre.ethers.getSigners();
-    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModel");
-    return (await spreadModelFactory.deploy()) as MiltonSpreadModel;
+    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModelUsdt");
+    return (await spreadModelFactory.deploy()) as MiltonSpreadModelUsdt;
+};
+export const miltonSpreadModelUsdcFactory = async (): Promise<MiltonSpreadModelUsdc> => {
+    const [admin] = await hre.ethers.getSigners();
+    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModelUsdc");
+    return (await spreadModelFactory.deploy()) as MiltonSpreadModelUsdc;
+};
+export const miltonSpreadModelDaiFactory = async (): Promise<MiltonSpreadModelDai> => {
+    const [admin] = await hre.ethers.getSigners();
+    const spreadModelFactory = await hre.ethers.getContractFactory("MiltonSpreadModelDai");
+    return (await spreadModelFactory.deploy()) as MiltonSpreadModelDai;
 };
 
 export const miltonUsdtFactory = async (
