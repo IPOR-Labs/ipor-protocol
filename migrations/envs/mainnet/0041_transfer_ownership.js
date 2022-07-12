@@ -11,7 +11,9 @@ const IvTokenUsdt = artifacts.require("IvTokenUsdt");
 const IvTokenUsdc = artifacts.require("IvTokenUsdc");
 const IvTokenDai = artifacts.require("IvTokenDai");
 
-const MiltonSpreadModel = artifacts.require("MiltonSpreadModel");
+const MiltonSpreadModelUsdt = artifacts.require("MiltonSpreadModelUsdt");
+const MiltonSpreadModelUsdc = artifacts.require("MiltonSpreadModelUsdc");
+const MiltonSpreadModelDai = artifacts.require("MiltonSpreadModelDai");
 
 const IporOracle = artifacts.require("IporOracle");
 
@@ -81,10 +83,20 @@ module.exports = async function (deployer, _network, addresses) {
     await ivDaiInstance.transferOwnership(iporOwnerAddress);
 
     // Milton Spread Model
-    const miltonSpreadModel = await func.getValue(keys.MiltonSpreadModel);
+    const miltonSpreadModelUsdt = await func.getValue(keys.MiltonSpreadModelUsdt);
 
-    const miltonSpreadModelInstance = await MiltonSpreadModel.at(miltonSpreadModel);
-    await miltonSpreadModelInstance.transferOwnership(iporOwnerAddress);
+    const miltonSpreadModelUsdtInstance = await MiltonSpreadModelUsdt.at(miltonSpreadModelUsdt);
+    await miltonSpreadModelUsdtInstance.transferOwnership(iporOwnerAddress);
+
+    const miltonSpreadModelUsdc = await func.getValue(keys.MiltonSpreadModelUsdc);
+
+    const miltonSpreadModelUsdcInstance = await MiltonSpreadModelUsdc.at(miltonSpreadModelUsdc);
+    await miltonSpreadModelUsdcInstance.transferOwnership(iporOwnerAddress);
+
+    const miltonSpreadModelDai = await func.getValue(keys.MiltonSpreadModelDai);
+
+    const miltonSpreadModelDaiInstance = await MiltonSpreadModelDai.at(miltonSpreadModelDai);
+    await miltonSpreadModelDaiInstance.transferOwnership(iporOwnerAddress);
 
     // Ipor Oracle
     const iporOracleProxy = await func.getValue(keys.IporOracleProxy);
