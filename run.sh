@@ -408,6 +408,9 @@ function clean_openzeppelin_migration_file() {
   4)
     file_name="rinkeby"
     ;;
+  5)
+    file_name="goerli"
+    ;;
   *)
     file_name="unknown-${ETH_BC_NETWORK_ID}"
     ;;
