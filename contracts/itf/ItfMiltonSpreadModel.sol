@@ -35,7 +35,6 @@ contract ItfMiltonSpreadModel is MiltonSpreadModel {
         int256 receiveFixedRegionTwoSlopeForVolatility,
         int256 receiveFixedRegionTwoSlopeForMeanReversion
     ) external onlyOwner {
-        console.logInt(receiveFixedRegionOneSlopeForMeanReversion);
         _payFixedRegionOneBase = payFixedRegionOneBase;
         _payFixedRegionOneSlopeForVolatility = payFixedRegionOneSlopeForVolatility;
         _payFixedRegionOneSlopeForMeanReversion = payFixedRegionOneSlopeForMeanReversion;
