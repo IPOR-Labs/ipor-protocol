@@ -2,7 +2,7 @@ import { Signer, BigNumber } from "ethers";
 import hre from "hardhat";
 
 import {
-    MockBaseMiltonSpreadModel,
+    MockBaseMiltonSpreadModelDai,
     MockCase0MiltonUsdt,
     MockCase1MiltonUsdt,
     MockCase2MiltonUsdt,
@@ -115,9 +115,9 @@ export type MiltonDaiMockCase =
     | MockCase6MiltonDai
     | MockCase8MiltonDai;
 
-export const prepareMockMiltonSpreadModel = async (): Promise<MockBaseMiltonSpreadModel> => {
-    const MockMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
-    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockBaseMiltonSpreadModel;
+export const prepareMockMiltonSpreadModelDai = async (): Promise<MockBaseMiltonSpreadModelDai> => {
+    const MockMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModelDai");
+    const miltonSpread = (await MockMiltonSpreadModel.deploy()) as MockBaseMiltonSpreadModelDai;
     return miltonSpread;
 };
 
@@ -186,9 +186,11 @@ export const getReceiveFixedDerivativeParamsUSDTCase1 = (
     };
 };
 
-export const prepareMiltonSpreadBase = async () => {
-    const MockBaseMiltonSpreadModel = await ethers.getContractFactory("MockBaseMiltonSpreadModel");
-    const miltonSpread = await MockBaseMiltonSpreadModel.deploy();
+export const prepareMiltonSpreadBaseDai = async () => {
+    const MockBaseMiltonSpreadModelDai = await ethers.getContractFactory(
+        "MockBaseMiltonSpreadModelDai"
+    );
+    const miltonSpread = await MockBaseMiltonSpreadModelDai.deploy();
     return miltonSpread;
 };
 
@@ -294,7 +296,7 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
         leverage,
         direction,
         openerUser,
-        closerUser,        
+        closerUser,
         iporValueAfterOpenSwap,
         acceptableFixedInterestRate,
         periodOfTimeElapsedInSeconds,

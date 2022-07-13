@@ -11,7 +11,7 @@ import {
     N1__0_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
 } from "../utils/Constants";
-import { prepareMiltonSpreadBase } from "../utils/MiltonUtils";
+import { prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
@@ -28,7 +28,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should calculate Quote Value Pay Fixed Value - Spread Premiums negative, Spread Premiums < IPOR Index", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -68,7 +68,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
 
     it("should calculate Quote Value Pay Fixed Value - Spread Premiums positive", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;

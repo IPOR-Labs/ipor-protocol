@@ -8,11 +8,11 @@ module.exports = async function (deployer, _network, addresses, MiltonUsdc) {
     const stanley = await func.getValue(keys.StanleyProxyUsdc);
     const miltonStorage = await func.getValue(keys.MiltonStorageProxyUsdc);
     const iporOracle = await func.getValue(keys.IporOracleProxy);
-    const miltonSpreadModel = await func.getValue(keys.MiltonSpreadModel);
+    const miltonSpreadModelUsdc = await func.getValue(keys.MiltonSpreadModelUsdc);
 
     const miltonProxy = await deployProxy(
         MiltonUsdc,
-        [asset, iporOracle, miltonStorage, miltonSpreadModel, stanley],
+        [asset, iporOracle, miltonStorage, miltonSpreadModelUsdc, stanley],
         {
             deployer: deployer,
             initializer: "initialize",

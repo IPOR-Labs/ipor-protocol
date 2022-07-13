@@ -145,7 +145,9 @@
                         <argument>hardhat/console.sol=${PWD}/node_modules/hardhat/console.sol</argument>
                         <!-- INFO: wildcards not working here :( -->
                         <argument>${contracts.sources}/amm/Milton.sol</argument>                        
-                        <argument>${contracts.sources}/amm/spread/MiltonSpreadModel.sol</argument>
+                        <argument>${contracts.sources}/amm/spread/MiltonSpreadModelUsdt.sol</argument>
+						<argument>${contracts.sources}/amm/spread/MiltonSpreadModelUsdc.sol</argument>
+						<argument>${contracts.sources}/amm/spread/MiltonSpreadModelDai.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                                                                                                       
                         <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
                         <argument>${contracts.sources}/facades/MiltonFacadeDataProvider.sol</argument>                        

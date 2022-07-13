@@ -60,7 +60,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     before(async () => {
         [admin] = await hre.ethers.getSigners();
 
-        const deployd: DeployType = await deploy();
+        const deployed: DeployType = await deploy();
         ({
             testnetFaucet,
             usdc,
@@ -80,13 +80,13 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
             ipTokenUsdc,
             ipTokenUsdt,
             ivTokenUsdt,
-        } = deployd);
+        } = deployed);
 
         // #####################################################################
         // ##################          Setup            ########################
         // #####################################################################
 
-        await setup(deployd);
+        await setup(deployed);
     });
 
     it("ProvideLiquidity for dai", async () => {
