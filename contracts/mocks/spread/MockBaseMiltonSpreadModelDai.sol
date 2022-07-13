@@ -3,7 +3,7 @@ pragma solidity 0.8.15;
 
 import "../../amm/spread/MiltonSpreadModelDai.sol";
 
-contract MockBaseMiltonSpreadModel is MiltonSpreadModelDai {
+contract MockBaseMiltonSpreadModelDai is MiltonSpreadModelDai {
     function testCalculateSpreadPremiumsPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,

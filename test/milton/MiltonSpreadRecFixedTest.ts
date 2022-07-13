@@ -12,7 +12,7 @@ import {
     ZERO,
     N0__01_18DEC,
 } from "../utils/Constants";
-import { prepareMockSpreadModel, prepareMiltonSpreadBase } from "../utils/MiltonUtils";
+import { prepareMockSpreadModel, prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
@@ -31,7 +31,7 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium > IPOR Index", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -71,7 +71,7 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium < IPOR Index", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -111,7 +111,7 @@ describe("MiltonSpreadRecFixed", () => {
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premiums positive", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;

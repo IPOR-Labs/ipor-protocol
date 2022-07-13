@@ -1,15 +1,15 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockBaseMiltonSpreadModel } from "../../types";
-import { prepareMockMiltonSpreadModel, prepareMiltonSpreadBase } from "../utils/MiltonUtils";
+import { MockBaseMiltonSpreadModelDai } from "../../types";
+import { prepareMockMiltonSpreadModelDai, prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 import { assertError } from "../utils/AssertUtils";
 
 const { expect } = chai;
 
 describe("MiltonSpreadModel - Core", () => {
-    let miltonSpreadModel: MockBaseMiltonSpreadModel;
+    let miltonSpreadModel: MockBaseMiltonSpreadModelDai;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -18,12 +18,12 @@ describe("MiltonSpreadModel - Core", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel();
+        miltonSpreadModel = await prepareMockMiltonSpreadModelDai();
     });
 
     it("should transfer ownership - simple case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
         const expectedNewOwner = userTwo;
 
         //when
@@ -38,7 +38,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
         const expectedNewOwner = userTwo;
 
         //when
@@ -51,7 +51,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
         const expectedNewOwner = userTwo;
 
         //when
@@ -66,7 +66,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
         const expectedNewOwner = userTwo;
 
         //when
@@ -82,7 +82,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should NOT transfer ownership - sender already lost ownership", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
         const expectedNewOwner = userTwo;
 
         await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -99,7 +99,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("should have rights to transfer ownership - sender still have rights", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const expectedNewOwner = userTwo;
 
@@ -113,7 +113,7 @@ describe("MiltonSpreadModel - Core", () => {
 
     it("Should return proper constant", async () => {
         // given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         // when
         const payFixedRegionOneBase = await miltonSpread.getPayFixedRegionOneBase();

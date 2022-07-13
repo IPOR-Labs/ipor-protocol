@@ -290,8 +290,8 @@ let options = {
         IvTokenDai,
 
         MiltonSpreadModelUsdt,
-		MiltonSpreadModelUsdc,
-		MiltonSpreadModelDai,
+        MiltonSpreadModelUsdc,
+        MiltonSpreadModelDai,
         DrizzleIporOracle,
 
         MiltonStorageUsdt,
