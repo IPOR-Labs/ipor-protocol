@@ -2,7 +2,6 @@
 pragma solidity 0.8.14;
 
 import "../amm/spread/MiltonSpreadModel.sol";
-import "hardhat/console.sol";
 
 contract ItfMiltonSpreadModel is MiltonSpreadModel {
     int256 internal _payFixedRegionOneBase;
