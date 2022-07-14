@@ -233,7 +233,7 @@ abstract contract MiltonInternal is
         return address(_miltonSpreadModel);
     }
 
-    function _getDecimals() internal view virtual returns (uint256);
+    function _getDecimals() internal pure virtual returns (uint256);
 
     function _getMaxSwapCollateralAmount() internal view virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;

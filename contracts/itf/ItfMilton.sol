@@ -2,6 +2,7 @@
 pragma solidity 0.8.15;
 
 import "../amm/Milton.sol";
+import "./types/ItfMiltonTypes.sol";
 
 abstract contract ItfMilton is Milton {
     using SafeCast for uint256;
@@ -176,29 +177,25 @@ abstract contract ItfMilton is Milton {
 
     function setMiltonConstants(
         uint256 maxSwapCollateralAmount,
-        uint256 maxLpUtilizationRate,
-        uint256 maxLpUtilizationPerLegRate,
         uint256 incomeTaxRate,
-        uint256 openingFeeRate,
-        uint256 openingFeeForTreasuryPortionRate,
-        uint256 iporPublicationFee,
         uint256 liquidationDepositAmount,
-        uint256 maxLeverage,
-        uint256 minLeverage,
         uint256 minLiquidationThresholdToCloseBeforeMaturity,
         uint256 secondsBeforeMaturityWhenPositionCanBeClosed,
-        uint256 liquidationLegLimit
+        uint256 liquidationLegLimit,
+        ItfMiltonTypes.ItfUtilization memory utilization,
+        ItfMiltonTypes.ItfFees memory fees,
+        ItfMiltonTypes.ItfLeverage memory leverage
     ) external {
         _maxSwapCollateralAmount = maxSwapCollateralAmount;
-        _maxLpUtilizationRate = maxLpUtilizationRate;
-        _maxLpUtilizationPerLegRate = maxLpUtilizationPerLegRate;
+        _maxLpUtilizationRate = utilization.maxLpUtilizationRate;
+        _maxLpUtilizationPerLegRate = utilization.maxLpUtilizationPerLegRate;
         _incomeTaxRate = incomeTaxRate;
-        _openingFeeRate = openingFeeRate;
-        _openingFeeForTreasuryPortionRate = openingFeeForTreasuryPortionRate;
-        _iporPublicationFee = iporPublicationFee;
+        _openingFeeRate = fees.openingFeeRate;
+        _openingFeeForTreasuryPortionRate = fees.openingFeeForTreasuryPortionRate;
+        _iporPublicationFee = fees.iporPublicationFee;
         _liquidationDepositAmount = liquidationDepositAmount;
-        _maxLeverage = maxLeverage;
-        _minLeverage = minLeverage;
+        _maxLeverage = leverage.maxLeverage;
+        _minLeverage = leverage.minLeverage;
         _minLiquidationThresholdToCloseBeforeMaturity = minLiquidationThresholdToCloseBeforeMaturity;
         _secondsBeforeMaturityWhenPositionCanBeClosed = secondsBeforeMaturityWhenPositionCanBeClosed;
         _liquidationLegLimit = liquidationLegLimit;
