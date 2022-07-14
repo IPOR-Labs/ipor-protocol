@@ -465,6 +465,7 @@ describe("Joseph Maintenance", () => {
         const ipTokenDai = (await IpToken.deploy("IP DAI", "ipDai", dai.address)) as IpToken;
         // when
         await josephDai.initialize(
+            false,
             dai.address, // we check only this position the rest could be random
             ipTokenDai.address,
             dai.address,
@@ -488,6 +489,7 @@ describe("Joseph Maintenance", () => {
         const ipTokenUsdc = (await IpToken.deploy("IP USDC", "ipUSDC", usdc.address)) as IpToken;
         // when
         await josephUsdc.initialize(
+            false,
             usdc.address, // we check only this position the rest could be random
             ipTokenUsdc.address,
             usdc.address,
@@ -511,6 +513,7 @@ describe("Joseph Maintenance", () => {
 
         // when
         await josephUsdt.initialize(
+            false,
             usdt.address, // we check only this position the rest could be random
             ipTokenUsdt.address,
             usdt.address,

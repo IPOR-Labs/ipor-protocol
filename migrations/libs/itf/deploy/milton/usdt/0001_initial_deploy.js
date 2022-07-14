@@ -3,7 +3,7 @@ const func = require("../../../../json_func.js");
 
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
-module.exports = async function (deployer, _network, addresses, ItfMiltonUsdt) {
+module.exports = async function (deployer, _network, addresses, ItfMiltonUsdt, isPaused) {
     const asset = await func.getValue(keys.USDT);
     const stanley = await func.getValue(keys.ItfStanleyProxyUsdt);
     const miltonStorage = await func.getValue(keys.MiltonStorageProxyUsdt);
@@ -12,7 +12,7 @@ module.exports = async function (deployer, _network, addresses, ItfMiltonUsdt) {
 
     const miltonProxy = await deployProxy(
         ItfMiltonUsdt,
-        [asset, iporOracle, miltonStorage, miltonSpreadModelUsdt, stanley],
+        [isPaused, asset, iporOracle, miltonStorage, miltonSpreadModelUsdt, stanley],
         {
             deployer: deployer,
             initializer: "initialize",

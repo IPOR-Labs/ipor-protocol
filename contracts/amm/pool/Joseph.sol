@@ -15,6 +15,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
     using SafeCast for int256;
 
     function initialize(
+        bool paused,
         address initAsset,
         address ipToken,
         address milton,
@@ -35,6 +36,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         IIpToken iIpToken = IIpToken(ipToken);
         require(initAsset == iIpToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
+
+        if (paused) {
+            _pause();
+        }
 
         _asset = initAsset;
         _ipToken = iIpToken;

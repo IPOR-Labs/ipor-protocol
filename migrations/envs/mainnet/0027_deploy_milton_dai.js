@@ -4,6 +4,12 @@ const script = require("../../libs/contracts/deploy/milton/dai/0001_initial_depl
 
 module.exports = async function (deployer, _network, addresses) {
     const MiltonDai = artifacts.require("MiltonDai");
-    await script(deployer, _network, addresses, MiltonDai);
+    await script(
+        deployer,
+        _network,
+        addresses,
+        MiltonDai,
+        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON
+    );
     await func.updateLastCompletedMigration();
 };

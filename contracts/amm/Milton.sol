@@ -30,6 +30,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
     /**
+     * @param paused - Initial flag to determine if smart contract is paused or not
      * @param asset - Instance of Milton is initialised in the context of the given ERC20 asset. Every trasaction is by the default scoped to that ERC20.
      * @param iporOracle - Address of Oracle treated as the source of true IPOR rate.
      * @param miltonStorage - Address of contract responsible for managing the state of Milton.
@@ -39,6 +40,7 @@ abstract contract Milton is MiltonInternal, IMilton {
      **/
 
     function initialize(
+        bool paused,
         address asset,
         address iporOracle,
         address miltonStorage,
@@ -53,6 +55,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+
+        if (paused) {
+            _pause();
+        }
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
