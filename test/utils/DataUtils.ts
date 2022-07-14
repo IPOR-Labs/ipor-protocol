@@ -193,6 +193,7 @@ export const prepareTestData = async (
 
         miltonUsdt = await getMockMiltonUsdtCase(miltonUsdtCase);
         miltonUsdt.initialize(
+            false,
             tokenUsdt.address,
             iporOracle.address,
             miltonStorageUsdt.address,
@@ -202,6 +203,7 @@ export const prepareTestData = async (
 
         josephUsdt = await getMockJosephUsdtCase(josephCaseUsdt);
         await josephUsdt.initialize(
+            false,
             tokenUsdt.address,
             ipTokenUsdt.address,
             miltonUsdt.address,
@@ -232,6 +234,7 @@ export const prepareTestData = async (
         miltonUsdc = await getMockMiltonUsdcCase(miltonUsdcCase);
         await miltonUsdc.deployed();
         miltonUsdc.initialize(
+            false,
             tokenUsdc.address,
             iporOracle.address,
             miltonStorageUsdc.address,
@@ -241,6 +244,7 @@ export const prepareTestData = async (
 
         josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
         await josephUsdc.initialize(
+            false,
             tokenUsdc.address,
             ipTokenUsdc.address,
             miltonUsdc.address,
@@ -271,6 +275,7 @@ export const prepareTestData = async (
 
         miltonDai = await getMockMiltonDaiCase(miltonDaiCase);
         miltonDai.initialize(
+            false,
             tokenDai.address,
             iporOracle.address,
             miltonStorageDai.address,
@@ -280,6 +285,7 @@ export const prepareTestData = async (
 
         josephDai = await getMockJosephDaiCase(josephCaseDai);
         await josephDai.initialize(
+            false,
             tokenDai.address,
             ipTokenDai.address,
             miltonDai.address,

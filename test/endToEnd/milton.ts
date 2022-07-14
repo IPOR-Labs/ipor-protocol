@@ -140,6 +140,7 @@ export const miltonUsdtFactory = async (
     return upgrades.deployProxy(
         miltonFactory,
         [
+            false,
             usdtAddress,
             iporOracleAddress,
             miltonStorageUsdtAddress,
@@ -163,6 +164,7 @@ export const miltonUsdcFactory = async (
     return upgrades.deployProxy(
         miltonFactory,
         [
+            false,
             usdcAddress,
             iporOracleAddress,
             miltonStorageUsdcAddress,
@@ -186,6 +188,7 @@ export const miltonDaiFactory = async (
     return upgrades.deployProxy(
         miltonFactory,
         [
+            false,
             daiAddress,
             iporOracleAddress,
             miltonStorageDaiAddress,
