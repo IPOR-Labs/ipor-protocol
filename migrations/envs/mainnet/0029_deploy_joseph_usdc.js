@@ -4,6 +4,12 @@ const script = require("../../libs/contracts/deploy/joseph/usdc/0001_initial_dep
 
 module.exports = async function (deployer, _network, addresses) {
     const JosephUsdc = artifacts.require("JosephUsdc");
-    await script(deployer, _network, addresses, JosephUsdc);
+    await script(
+        deployer,
+        _network,
+        addresses,
+        JosephUsdc,
+        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH
+    );
     await func.updateLastCompletedMigration();
 };
