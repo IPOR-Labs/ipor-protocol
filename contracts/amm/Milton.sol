@@ -247,7 +247,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
     }
 
-    function _calculateIncomeFeeValue(int256 payoff) internal pure returns (uint256) {
+    function _calculateIncomeFeeValue(int256 payoff) internal view returns (uint256) {
         return
             IporMath.division(IporMath.absoluteValue(payoff) * _getIncomeFeeRate(), Constants.D18);
     }
@@ -491,7 +491,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 totalLiquidityPoolBalance,
         uint256 collateralPerLegBalance,
         uint256 totalCollateralBalance
-    ) internal pure {
+    ) internal view {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 
