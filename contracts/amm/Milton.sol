@@ -30,6 +30,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
     /**
+     * @param paused - Initial flag to determine if smart contract is paused or not
      * @param asset - Instance of Milton is initialised in the context of the given ERC20 asset. Every trasaction is by the default scoped to that ERC20.
      * @param iporOracle - Address of Oracle treated as the source of true IPOR rate.
      * @param miltonStorage - Address of contract responsible for managing the state of Milton.
@@ -39,6 +40,7 @@ abstract contract Milton is MiltonInternal, IMilton {
      **/
 
     function initialize(
+        bool paused,
         address asset,
         address iporOracle,
         address miltonStorage,
@@ -53,6 +55,10 @@ abstract contract Milton is MiltonInternal, IMilton {
         require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+
+        if (paused) {
+            _pause();
+        }
 
         _miltonStorage = IMiltonStorage(miltonStorage);
         _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
@@ -247,7 +253,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
     }
 
-    function _calculateIncomeFeeValue(int256 payoff) internal pure returns (uint256) {
+    function _calculateIncomeFeeValue(int256 payoff) internal view returns (uint256) {
         return
             IporMath.division(IporMath.absoluteValue(payoff) * _getIncomeFeeRate(), Constants.D18);
     }
@@ -264,12 +270,10 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
 
-        spreadPayFixed = _getMiltonSpreadModel().calculateSpreadPayFixed(accruedIpor, balance);
+        IMiltonSpreadModel miltonSpreadModel = _miltonSpreadModel;
 
-        spreadReceiveFixed = _getMiltonSpreadModel().calculateSpreadReceiveFixed(
-            accruedIpor,
-            balance
-        );
+        spreadPayFixed = miltonSpreadModel.calculateSpreadPayFixed(accruedIpor, balance);
+        spreadReceiveFixed = miltonSpreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
     }
 
     function _beforeOpenSwap(
@@ -370,7 +374,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
-        uint256 quoteValue = _getMiltonSpreadModel().calculateQuotePayFixed(
+        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
             bosStruct.accruedIpor,
             balance
         );
@@ -443,7 +447,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
-        uint256 quoteValue = _getMiltonSpreadModel().calculateQuoteReceiveFixed(
+        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
             bosStruct.accruedIpor,
             balance
         );
@@ -493,7 +497,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 totalLiquidityPoolBalance,
         uint256 collateralPerLegBalance,
         uint256 totalCollateralBalance
-    ) internal pure {
+    ) internal view {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 

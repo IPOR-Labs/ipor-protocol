@@ -45,13 +45,13 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _OPENING_FEE_RATE = 1e16;
 
-    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
-    //below value define how big pie going to Treasury Balance
+    /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
+    /// below value define how big pie going to Treasury Balance
     uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 0;
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
-    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 50;
+    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 25;
 
     uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
 
@@ -65,10 +65,10 @@ abstract contract MiltonInternal is
 
     address internal _asset;
     address internal _joseph;
+    IStanley internal _stanley;
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IStanley internal _stanley;
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -83,49 +83,49 @@ abstract contract MiltonInternal is
         return _asset;
     }
 
-    function getMaxSwapCollateralAmount() external pure override returns (uint256) {
+    function getMaxSwapCollateralAmount() external view override returns (uint256) {
         return _getMaxSwapCollateralAmount();
     }
 
-    function getMaxLpUtilizationRate() external pure override returns (uint256) {
+    function getMaxLpUtilizationRate() external view override returns (uint256) {
         return _getMaxLpUtilizationRate();
     }
 
-    function getMaxLpUtilizationPerLegRate() external pure override returns (uint256) {
+    function getMaxLpUtilizationPerLegRate() external view override returns (uint256) {
         return _getMaxLpUtilizationPerLegRate();
     }
 
-    function getIncomeFeeRate() external pure override returns (uint256) {
+    function getIncomeFeeRate() external view override returns (uint256) {
         return _getIncomeFeeRate();
     }
 
-    function getOpeningFeeRate() external pure override returns (uint256) {
+    function getOpeningFeeRate() external view override returns (uint256) {
         return _getOpeningFeeRate();
     }
 
-    function getOpeningFeeTreasuryPortionRate() external pure override returns (uint256) {
+    function getOpeningFeeTreasuryPortionRate() external view override returns (uint256) {
         return _getOpeningFeeTreasuryPortionRate();
     }
 
-    function getIporPublicationFee() external pure override returns (uint256) {
+    function getIporPublicationFee() external view override returns (uint256) {
         return _getIporPublicationFee();
     }
 
     /// @notice Returns configured liquidation deposit amount
     /// @return liquidation deposit amount, value represented WITHOUT decimals
-    function getLiquidationDepositAmount() external pure override returns (uint256) {
+    function getLiquidationDepositAmount() external view override returns (uint256) {
         return _getLiquidationDepositAmount();
     }
 
-    function getWadLiquidationDepositAmount() external pure override returns (uint256) {
+    function getWadLiquidationDepositAmount() external view override returns (uint256) {
         return _getLiquidationDepositAmount() * Constants.D18;
     }
 
-    function getMaxLeverage() external pure override returns (uint256) {
+    function getMaxLeverage() external view override returns (uint256) {
         return _getMaxLeverage();
     }
 
-    function getMinLeverage() external pure override returns (uint256) {
+    function getMinLeverage() external view override returns (uint256) {
         return _getMinLeverage();
     }
 
@@ -230,54 +230,54 @@ abstract contract MiltonInternal is
     }
 
     function getMiltonSpreadModel() external view override returns (address) {
-        return address(_getMiltonSpreadModel());
+        return address(_miltonSpreadModel);
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
 
-    function _getMaxSwapCollateralAmount() internal pure virtual returns (uint256) {
+    function _getMaxSwapCollateralAmount() internal view virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxLpUtilizationRate() internal pure virtual returns (uint256) {
+    function _getMaxLpUtilizationRate() internal view virtual returns (uint256) {
         return _MAX_LP_UTILIZATION_RATE;
     }
 
-    function _getMaxLpUtilizationPerLegRate() internal pure virtual returns (uint256) {
+    function _getMaxLpUtilizationPerLegRate() internal view virtual returns (uint256) {
         return _MAX_LP_UTILIZATION_PER_LEG_RATE;
     }
 
-    function _getIncomeFeeRate() internal pure virtual returns (uint256) {
+    function _getIncomeFeeRate() internal view virtual returns (uint256) {
         return _INCOME_TAX_RATE;
     }
 
-    function _getOpeningFeeRate() internal pure virtual returns (uint256) {
+    function _getOpeningFeeRate() internal view virtual returns (uint256) {
         return _OPENING_FEE_RATE;
     }
 
-    function _getOpeningFeeTreasuryPortionRate() internal pure virtual returns (uint256) {
+    function _getOpeningFeeTreasuryPortionRate() internal view virtual returns (uint256) {
         return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
     }
 
-    function _getIporPublicationFee() internal pure virtual returns (uint256) {
+    function _getIporPublicationFee() internal view virtual returns (uint256) {
         return _IPOR_PUBLICATION_FEE;
     }
 
-    function _getLiquidationDepositAmount() internal pure virtual returns (uint256) {
+    function _getLiquidationDepositAmount() internal view virtual returns (uint256) {
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal pure virtual returns (uint256) {
+    function _getMaxLeverage() internal view virtual returns (uint256) {
         return _MAX_LEVERAGE;
     }
 
-    function _getMinLeverage() internal pure virtual returns (uint256) {
+    function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturity()
         internal
-        pure
+        view
         virtual
         returns (uint256)
     {
@@ -286,14 +286,14 @@ abstract contract MiltonInternal is
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
         internal
-        pure
+        view
         virtual
         returns (uint256)
     {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 
-    function _getLiquidationLegLimit() internal pure virtual returns (uint256) {
+    function _getLiquidationLegLimit() internal view virtual returns (uint256) {
         return _LIQUIDATION_LEG_LIMIT;
     }
 
@@ -307,10 +307,6 @@ abstract contract MiltonInternal is
 
     function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
         return _miltonStorage;
-    }
-
-    function _getMiltonSpreadModel() internal view virtual returns (IMiltonSpreadModel) {
-        return _miltonSpreadModel;
     }
 
     function _getStanley() internal view virtual returns (IStanley) {

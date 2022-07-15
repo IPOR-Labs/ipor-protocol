@@ -35,7 +35,7 @@ abstract contract Stanley is
     address internal _strategyCompound;
 
     modifier onlyMilton() {
-        require(_msgSender() == _getMilton(), IporErrors.CALLER_NOT_MILTON);
+        require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
     }
 
@@ -138,7 +138,7 @@ abstract contract Stanley is
             ivTokenAmount = senderIvTokens;
         }
 
-        if (address(strategyMaxApy) == _getStrategyCompound() && amount <= assetBalanceAave) {
+        if (address(strategyMaxApy) == _strategyCompound && amount <= assetBalanceAave) {
             ivToken.burn(_msgSender(), ivTokenAmount);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenAmount, exchangeRate, true);
 
@@ -162,7 +162,7 @@ abstract contract Stanley is
             return (withdrawnAmount, balance);
         }
 
-        if (address(strategyMaxApy) == _getStrategyAave() && amount <= assetBalanceAave) {
+        if (address(strategyMaxApy) == _strategyAave && amount <= assetBalanceAave) {
             ivToken.burn(_msgSender(), ivTokenAmount);
             _withdrawFromStrategy(address(strategyAave), amount, ivTokenAmount, exchangeRate, true);
 
@@ -216,7 +216,7 @@ abstract contract Stanley is
         onlyMilton
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
-        IStrategy strategyAave = IStrategy(_getStrategyAave());
+        IStrategy strategyAave = IStrategy(_strategyAave);
 
         (uint256 exchangeRate, , ) = _calcExchangeRate();
 
@@ -235,7 +235,7 @@ abstract contract Stanley is
             false
         );
 
-        IStrategy strategyCompound = IStrategy(_getStrategyCompound());
+        IStrategy strategyCompound = IStrategy(_strategyCompound);
 
         uint256 assetBalanceCompound = strategyCompound.balanceOf();
         uint256 ivTokenAmountCompound = IporMath.division(
@@ -315,7 +315,7 @@ abstract contract Stanley is
 
     function setMilton(address newMilton) external override whenNotPaused onlyOwner {
         require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
-        address oldMilton = _getMilton();
+        address oldMilton = _milton;
         _milton = newMilton;
         emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
@@ -326,18 +326,6 @@ abstract contract Stanley is
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function _getMilton() internal view virtual returns (address) {
-        return _milton;
-    }
-
-    function _getStrategyAave() internal view virtual returns (address) {
-        return _strategyAave;
-    }
-
-    function _getStrategyCompound() internal view virtual returns (address) {
-        return _strategyCompound;
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
@@ -352,8 +340,8 @@ abstract contract Stanley is
             IStrategy strategyCompound
         )
     {
-        strategyAave = IStrategy(_getStrategyAave());
-        strategyCompound = IStrategy(_getStrategyCompound());
+        strategyAave = IStrategy(_strategyAave);
+        strategyCompound = IStrategy(_strategyCompound);
         strategyMaxApy = strategyAave;
         if (strategyAave.getApr() < strategyCompound.getApr()) {
             strategyMaxApy = strategyCompound;
@@ -374,7 +362,7 @@ abstract contract Stanley is
     function _setStrategyCompound(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
-        address oldStrategy = _getStrategyCompound();
+        address oldStrategy = _strategyCompound;
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
@@ -402,7 +390,7 @@ abstract contract Stanley is
     function _setStrategyAave(address newStrategy) internal nonReentrant {
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
-        address oldStrategy = _getStrategyAave();
+        address oldStrategy = _strategyAave;
 
         IERC20Upgradeable asset = ERC20Upgradeable(_asset);
 
@@ -482,8 +470,8 @@ abstract contract Stanley is
             uint256 assetBalanceCompound
         )
     {
-        assetBalanceAave = IStrategy(_getStrategyAave()).balanceOf();
-        assetBalanceCompound = IStrategy(_getStrategyCompound()).balanceOf();
+        assetBalanceAave = IStrategy(_strategyAave).balanceOf();
+        assetBalanceCompound = IStrategy(_strategyCompound).balanceOf();
 
         uint256 totalAssetBalance = assetBalanceAave + assetBalanceCompound;
 

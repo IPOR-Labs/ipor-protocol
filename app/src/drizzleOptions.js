@@ -8,7 +8,9 @@ import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
 import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
 import IvTokenDai from "./contracts/IvTokenDai.json";
 
-import MiltonSpreadModel from "./contracts/MiltonSpreadModel.json";
+import MiltonSpreadModelUsdt from "./contracts/MiltonSpreadModelUsdt.json";
+import MiltonSpreadModelUsdc from "./contracts/MiltonSpreadModelUsdc.json";
+import MiltonSpreadModelDai from "./contracts/MiltonSpreadModelDai.json";
 import IporOracle from "./contracts/IporOracle.json";
 
 import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
@@ -287,7 +289,9 @@ let options = {
         IvTokenUsdc,
         IvTokenDai,
 
-        MiltonSpreadModel,
+        MiltonSpreadModelUsdt,
+        MiltonSpreadModelUsdc,
+        MiltonSpreadModelDai,
         DrizzleIporOracle,
 
         MiltonStorageUsdt,

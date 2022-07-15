@@ -6,9 +6,9 @@ import { PERCENTAGE_5_18DEC, N1__0_6DEC } from "../utils/Constants";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
-import { ItfDataProvider, MockBaseMiltonSpreadModel } from "../../types";
+import { ItfDataProvider, MockBaseMiltonSpreadModelDai } from "../../types";
 import {
-    prepareMockMiltonSpreadModel,
+    prepareMockMiltonSpreadModelDai,
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -19,7 +19,7 @@ import { TestData, prepareTestData } from "../utils/DataUtils";
 const { expect } = chai;
 
 describe("ItfDataProvider - smoke tests", () => {
-    let miltonSpreadModel: MockBaseMiltonSpreadModel;
+    let miltonSpreadModel: MockBaseMiltonSpreadModelDai;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -32,7 +32,7 @@ describe("ItfDataProvider - smoke tests", () => {
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel();
+        miltonSpreadModel = await prepareMockMiltonSpreadModelDai();
         testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
@@ -80,7 +80,7 @@ describe("ItfDataProvider - smoke tests", () => {
             [miltonUsdc.address],
             [miltonStorageUsdc.address],
             iporOracle.address,
-            miltonSpreadModel.address
+            [miltonSpreadModel.address]
         );
         const calculateTimestamp = Math.floor(Date.now() / 1000);
 
@@ -95,7 +95,9 @@ describe("ItfDataProvider - smoke tests", () => {
         );
         const miltonStorageData = await itfDataProvider.getMiltonStorageData(tokenUsdc.address);
 
-        const miltonSpreadModelData = await itfDataProvider.getMiltonSpreadModelData();
+        const miltonSpreadModelData = await itfDataProvider.getMiltonSpreadModelData(
+            tokenUsdc.address
+        );
 
         const ammData = await itfDataProvider.getAmmData(
             Math.floor(Date.now() / 1000),
