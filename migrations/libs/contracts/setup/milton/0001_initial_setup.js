@@ -24,7 +24,6 @@ module.exports = async function (deployer, _network, addresses) {
     const miltonDaiInstance = await MiltonDai.at(miltonDai);
 
     if (process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true") {
-        console.log("Pause is true!!!!!!!!!");
         await miltonUsdtInstance.unpause();
         await miltonUsdtInstance.setJoseph(josephUsdt);
         await miltonUsdtInstance.setupMaxAllowanceForAsset(josephUsdt);
