@@ -23,7 +23,7 @@ module.exports = async function (deployer, _network, addresses) {
     const miltonUsdcInstance = await MiltonUsdc.at(miltonUsdc);
     const miltonDaiInstance = await MiltonDai.at(miltonDai);
 
-    if (process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON) {
+    if (process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true") {
         await miltonUsdtInstance.unpause();
         await miltonUsdtInstance.setJoseph(josephUsdt);
         await miltonUsdtInstance.setupMaxAllowanceForAsset(josephUsdt);
