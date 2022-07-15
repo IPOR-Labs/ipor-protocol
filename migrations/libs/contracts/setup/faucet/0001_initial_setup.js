@@ -9,7 +9,7 @@ const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
 const MockTestnetTokenDai = artifacts.require("MockTestnetTokenDai");
 
 module.exports = async function (deployer, _network, addresses) {
-    const [admin, iporIndexAdmin, _] = addresses;
+    const [admin, _] = addresses;
 
     const usdt = await func.getValue(keys.USDT);
     const usdc = await func.getValue(keys.USDC);

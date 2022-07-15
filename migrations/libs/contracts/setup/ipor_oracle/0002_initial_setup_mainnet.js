@@ -1,15 +1,14 @@
 const keys = require("../../../json_keys.js");
 const func = require("../../../json_func.js");
 
-const ItfIporOracle = artifacts.require("ItfIporOracle");
+const IporOracle = artifacts.require("IporOracle");
 
 module.exports = async function (deployer, _network, addresses) {
     const [admin, iporIndexUpdater, _] = addresses;
 
-    const iporOracle = await func.getValue(keys.ItfIporOracleProxy);
+    const iporOracle = await func.getValue(keys.IporOracleProxy);
 
-    const iporOracleInstance = await ItfIporOracle.at(iporOracle);
+    const iporOracleInstance = await IporOracle.at(iporOracle);
 
-    await iporOracleInstance.addUpdater(admin);
     await iporOracleInstance.addUpdater(iporIndexUpdater);
 };
