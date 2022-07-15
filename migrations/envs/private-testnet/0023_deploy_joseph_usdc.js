@@ -11,7 +11,7 @@ module.exports = async function (deployer, _network, addresses) {
             _network,
             addresses,
             ItfJosephUsdc,
-            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH
+            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH == "true" ? true : false
         );
     } else {
         const JosephUsdc = artifacts.require("JosephUsdc");
@@ -20,7 +20,7 @@ module.exports = async function (deployer, _network, addresses) {
             _network,
             addresses,
             JosephUsdc,
-            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH
+            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH == "true" ? true : false
         );
     }
     await func.updateLastCompletedMigration();
