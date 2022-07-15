@@ -11,7 +11,7 @@ module.exports = async function (deployer, _network, addresses) {
             _network,
             addresses,
             ItfMiltonDai,
-            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON
+            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true" ? true : false
         );
     } else {
         const MiltonDai = artifacts.require("MiltonDai");
@@ -20,7 +20,7 @@ module.exports = async function (deployer, _network, addresses) {
             _network,
             addresses,
             MiltonDai,
-            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON
+            process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true" ? true : false
         );
     }
     await func.updateLastCompletedMigration();

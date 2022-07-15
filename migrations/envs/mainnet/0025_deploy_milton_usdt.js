@@ -9,7 +9,7 @@ module.exports = async function (deployer, _network, addresses) {
         _network,
         addresses,
         MiltonUsdt,
-        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON
+        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true" ? true : false
     );
     await func.updateLastCompletedMigration();
 };

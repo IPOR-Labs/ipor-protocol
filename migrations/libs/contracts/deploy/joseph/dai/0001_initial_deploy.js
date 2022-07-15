@@ -9,7 +9,6 @@ module.exports = async function (deployer, _network, addresses, JosephDai, isPau
     const stanley = await func.getValue(keys.StanleyProxyDai);
     const milton = await func.getValue(keys.MiltonProxyDai);
     const miltonStorage = await func.getValue(keys.MiltonStorageProxyDai);
-
     const josephProxy = await deployProxy(
         JosephDai,
         [isPaused, asset, ipToken, milton, miltonStorage, stanley],

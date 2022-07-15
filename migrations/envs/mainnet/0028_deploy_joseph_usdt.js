@@ -9,7 +9,7 @@ module.exports = async function (deployer, _network, addresses) {
         _network,
         addresses,
         JosephUsdt,
-        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH
+        process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_JOSEPH == "true" ? true : false
     );
     await func.updateLastCompletedMigration();
 };
