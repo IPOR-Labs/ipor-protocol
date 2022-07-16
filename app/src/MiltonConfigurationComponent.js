@@ -12,21 +12,18 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">
                         USDT
                         <br />
-                        {/* {drizzle.contracts.DrizzleUsdt.address} */}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         USDC
                         <br />
-                        {/* {drizzle.contracts.DrizzleUsdc.address} */}
                         <br />
                         <br />
                     </th>
                     <th scope="col">
                         DAI
                         <br />
-                        {/* {drizzle.contracts.DrizzleDai.address} */}
                         <br />
                         <br />
                     </th>

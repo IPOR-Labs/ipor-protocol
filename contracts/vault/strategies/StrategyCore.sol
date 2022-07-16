@@ -59,11 +59,19 @@ abstract contract StrategyCore is
         emit StanleyChanged(_msgSender(), oldStanley, newStanley);
     }
 
+	function getTreasuryManager() external view override returns (address) {
+        return _treasuryManager;
+    }
+
     function setTreasuryManager(address manager) external whenNotPaused onlyOwner {
         require(manager != address(0), IporErrors.WRONG_ADDRESS);
         address oldTreasuryManager = _treasuryManager;
         _treasuryManager = manager;
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, manager);
+    }
+
+	function getTreasury() external view override returns (address) {
+        return _treasury;
     }
 
     function setTreasury(address newTreasury) external whenNotPaused onlyTreasuryManager {
