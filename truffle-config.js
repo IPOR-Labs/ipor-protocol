@@ -20,7 +20,10 @@ module.exports = {
             },
             network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
-            networkCheckTimeout: 300000, //5 min
+            networkCheckTimeout: 600000, //10 min
+            gas: 10000000,
+            gasPrice: 20000000000,
+            confirmations: 1,
         },
         develop: {
             host: "127.0.0.1",
@@ -48,7 +51,7 @@ module.exports = {
                     enabled: true,
                     runs: 800,
                 },
-                //  evmVersion: "byzantium"
+                evmVersion: "london",
             },
         },
     },
