@@ -52,7 +52,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("129952238730246296");
+        const expectedQuoteValue = BigNumber.from("9244971955154032");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -92,7 +92,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("24168688996532136");
+        const expectedQuoteValue = BigNumber.from("9927671196789982");
 
         //when
         const actualQuotedValue = await miltonSpread
