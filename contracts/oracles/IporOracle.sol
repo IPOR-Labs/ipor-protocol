@@ -58,7 +58,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getIndex(address asset)
