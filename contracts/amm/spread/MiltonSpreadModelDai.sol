@@ -66,7 +66,7 @@ contract MiltonSpreadModelDai is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return -42067907929723001;
+        return -273806204298245;
     }
 
     function _getReceiveFixedRegionOneSlopeForMeanReversion()

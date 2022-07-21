@@ -14,7 +14,7 @@ int256 constant BASE_ONE = 1000000000000000000;
 
 // Line two Parameters in wand
 int256 constant SLOPE_FACTOR_TWO = -958849469240;
-int256 constant BASE_TWO = 672268604625703833;
+int256 constant BASE_TWO = 672268604625703800;
 
 // Line three Parameters in wand
 int256 constant SLOPE_FACTOR_THREE = -133388866004;
