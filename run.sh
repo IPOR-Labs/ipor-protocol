@@ -55,8 +55,6 @@ ETH_BC_ITF_TAG_NAME="itf"
 AWS_REGION="eu-central-1"
 AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
 
-ETH_BC_URL="http://localhost:9545"
-
 IPOR_MIGRATION_STATE_DIR=".ipor"
 SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
 
@@ -371,6 +369,7 @@ function get_branch_name() {
 
 function create_commit_file() {
   local commit_hash="${1}"
+  local ENV_NAME="${2}"
 
   local MIGRATION_COMMIT_FILE_PATH="$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${ENV_NAME}")"
 
@@ -398,6 +397,7 @@ function update_global_state_vars() {
 }
 
 function get_last_migration_number() {
+  local ENV_NAME="${1}"
   local LAST_COMPLETED_MIGRATION_FILE_PATH="$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${ENV_NAME}")"
   local last_migration_number=$(printf "%04d" $(jq -r ".lastCompletedMigration" "${LAST_COMPLETED_MIGRATION_FILE_PATH}"))
   echo "${last_migration_number}"
@@ -425,7 +425,7 @@ function clean_openzeppelin_migration_file() {
 function prepare_migration_state_files_structure() {
   update_global_state_vars
   create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
-  create_commit_file "${LAST_COMMIT_HASH}"
+  create_commit_file "${LAST_COMMIT_HASH}" "${ENV_PROFILE}"
 }
 
 function run_docker_compose() {
@@ -488,6 +488,8 @@ function wait_for_eth_bc() {
 }
 
 function clean_migration_files(){
+  local ENV_NAME="${1}"
+
   cd "${DIR}"
 
   echo -e "Remove migration files:"
@@ -502,7 +504,7 @@ function run_clean_smart_contract_migrations() {
 
   clean_openzeppelin_migration_file
   rm -rf -v app/src/contracts/
-  clean_migration_files
+  clean_migration_files "${ENV_PROFILE}"
 
   prepare_migration_state_files_structure
 
@@ -939,7 +941,7 @@ fi
 if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
 
   cd "${DIR}"
-  LAST_MIGRATION_NUMBER=$(get_last_migration_number)
+  LAST_MIGRATION_NUMBER=$(get_last_migration_number "${ENV_PROFILE}")
 
   profile_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}"
   migration_date_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
