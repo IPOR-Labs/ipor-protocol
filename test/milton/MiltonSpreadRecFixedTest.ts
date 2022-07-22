@@ -55,7 +55,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("7667309525618462");
+        const expectedQuoteValue = BigNumber.from("10020204038696488");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -95,7 +95,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("27694127417763331");
+        const expectedQuoteValue = BigNumber.from("30033828582110955");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -135,7 +135,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("47763081233617409");
+        const expectedQuoteValue = BigNumber.from("49705279151455823");
 
         //when
         const actualQuotedValue = await miltonSpread
