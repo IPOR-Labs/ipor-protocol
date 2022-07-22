@@ -18,7 +18,7 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return 7872105544626249;
+        return 7872105544626250;
     }
 
     function _getPayFixedRegionOneSlopeForMeanReversion()
