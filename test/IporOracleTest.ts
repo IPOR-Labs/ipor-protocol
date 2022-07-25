@@ -762,7 +762,7 @@ describe("IporOracle", () => {
         const assets = [_tokenDai.address, _tokenUsdc.address, _tokenUsdt.address];
         const indexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
 
-        const expectedExpoMovingAverage = BigNumber.from("67754799242793888");
+        const expectedExpoMovingAverage = BigNumber.from("70000000000000000");
 
         const executionTimestamp = testData.executionTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
         //when
@@ -788,7 +788,7 @@ describe("IporOracle", () => {
         const assets = [_tokenDai.address, _tokenUsdt.address, _tokenUsdc.address];
         const firstIndexValues = [PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC, PERCENTAGE_7_18DEC];
         const secondIndexValues = [PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC, PERCENTAGE_50_18DEC];
-        const expectedExpoMovingAverage = BigNumber.from("34122000077192064");
+        const expectedExpoMovingAverage = BigNumber.from("39618017140823040");
 
         const executionTimestamp1 = testData.executionTimestamp.add(PERIOD_1_DAY_IN_SECONDS);
         const executionTimestamp2 = testData.executionTimestamp.add(PERIOD_1_DAY_IN_SECONDS);
@@ -839,7 +839,7 @@ describe("IporOracle", () => {
         const assets = [tokenUsdc.address, tokenDai.address, tokenUsdt.address];
         const firstIndexValues = [PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC, PERCENTAGE_7_6DEC];
         const secondIndexValues = [PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC, PERCENTAGE_50_6DEC];
-        const expectedExpoMovingAverage = BigNumber.from("71846");
+        const expectedExpoMovingAverage = BigNumber.from("74308");
 
         //when
         await iporOracle

@@ -4,21 +4,21 @@ pragma solidity 0.8.15;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/math/IporMath.sol";
 
-uint256 constant END_INTERVAL_ONE = 419215;
-uint256 constant END_INTERVAL_TWO = 1392607;
-uint256 constant END_INTERVAL_THREE = 3024000;
+uint256 constant END_INTERVAL_ONE = 179666;
+uint256 constant END_INTERVAL_TWO = 596832;
+uint256 constant END_INTERVAL_THREE = 1346513;
 
 // Line One Parameters in wand
-int256 constant SLOPE_FACTOR_ONE = -1192708355669;
+int256 constant SLOPE_FACTOR_ONE = -2782991070840;
 int256 constant BASE_ONE = 1000000000000000000;
 
 // Line two Parameters in wand
-int256 constant SLOPE_FACTOR_TWO = -410935977479;
-int256 constant BASE_TWO = 672270580524927104;
+int256 constant SLOPE_FACTOR_TWO = -958849469240;
+int256 constant BASE_TWO = 672268604625703800;
 
 // Line three Parameters in wand
-int256 constant SLOPE_FACTOR_THREE = -57166749921;
-int256 constant BASE_THREE = 179610198759512800;
+int256 constant SLOPE_FACTOR_THREE = -133388866004;
+int256 constant BASE_THREE = 179609917339805645;
 
 library DecayFactorCalculation {
     using SafeCast for uint256;

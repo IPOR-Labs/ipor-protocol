@@ -726,7 +726,7 @@ abstract contract Milton is MiltonInternal, IMilton {
      * @param derivativeItem - Derivative struct
      * @param payoff - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
      * @param incomeFeeValue - amount of fee calculated based on payoff.
-     * @param _calculationTimestamp - Time for which the calculations in this funciton are run
+     * @param calculationTimestamp - Time for which the calculations in this funciton are run
      * @param cfgMinLiquidationThresholdToCloseBeforeMaturity - Minimal profit to loss required to put the swap up for the liquidation by non-byer regardless of maturity
      * @param cfgSecondsBeforeMaturityWhenPositionCanBeClosed - Time before the appointed maturity allowing the liquidation of the swap
      * for more information on liquidations refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
@@ -736,7 +736,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 payoff,
         uint256 incomeFeeValue,
-        uint256 _calculationTimestamp,
+        uint256 calculationTimestamp,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
@@ -750,7 +750,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             //verify if sender is an owner of swap. If not then check if maturity has been reached - if not then reject, if yes then close even if not an owner
             if (_msgSender() != derivativeItem.buyer) {
                 require(
-                    _calculationTimestamp >=
+                    calculationTimestamp >=
                         derivativeItem.endTimestamp -
                             cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
