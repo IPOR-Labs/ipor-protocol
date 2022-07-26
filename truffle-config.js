@@ -23,7 +23,7 @@ module.exports = {
             networkCheckTimeout: 600000, //10 min
             gas: 10000000,
             gasPrice: 20000000000,
-            confirmations: 1,
+            confirmations: process.env.SC_MIGRATION_CONFIRMATION,
         },
         develop: {
             host: "127.0.0.1",
