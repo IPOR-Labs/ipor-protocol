@@ -194,15 +194,16 @@ function set_smart_contract_address_in_env_config_file() {
 }
 
 function get_smart_contract_address_from_json_file() {
-  local FILE_NAME="${1}"
-  local VAR_VALUE=$(jq -r '.networks[].address' "${ENV_CONTRACTS_DIR}/${FILE_NAME}")
+  local JSON_KEY="${1}"
+  local IPOR_ADDRESSES="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_NAME}")"
+  local VAR_VALUE=$(jq -r ".${JSON_KEY}" "${IPOR_ADDRESSES}")
   echo "${VAR_VALUE}"
 }
 
 function set_smart_contract_address_from_json_file() {
-  local FILE_NAME="${1}"
+  local JSON_KEY="${1}"
   local VAR_NAME="${2}"
-  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${FILE_NAME}")
+  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${JSON_KEY}")
   set_smart_contract_address_in_env_config_file "${VAR_NAME}" "${VAR_VALUE}"
   echo "${VAR_VALUE}"
 }
@@ -254,43 +255,43 @@ function create_env_config_file() {
   cp "${ENV_CONFIG_FILE_SRC}" "${ENV_CONFIG_FILE_DEST}"
 
   local RESULT=""
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonUsdt.json" "milton_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonUsdc.json" "milton_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonDai.json" "milton_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IporOracle.json" "ipor_oracle_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephUsdt.json" "joseph_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephUsdc.json" "joseph_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephDai.json" "joseph_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonUsdt.json" "itf_milton_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonUsdc.json" "itf_milton_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonDai.json" "itf_milton_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfIporOracle.json" "itf_ipor_oracle_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephUsdt.json" "itf_joseph_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephUsdc.json" "itf_joseph_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephDai.json" "itf_joseph_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProvider.json" "cockpit_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProvider.json" "milton_facade_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProvider.json" "ipor_oracle_facade_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdt" "milton_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdc" "milton_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyDai" "milton_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IporOracleProxy" "ipor_oracle_address")
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdt" "joseph_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdc" "joseph_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyDai" "joseph_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdt" "itf_milton_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdc" "itf_milton_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyDai" "itf_milton_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfIporOracleProxy" "itf_ipor_oracle_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdt" "itf_joseph_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdc" "itf_joseph_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyDai" "itf_joseph_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProviderProxy" "cockpit_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProviderProxy" "milton_facade_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProviderProxy" "ipor_oracle_facade_data_provider_address")
   RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenDai.json" "dai_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdc.json" "usdc_mocked_address")
   RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdt.json" "usdt_mocked_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageUsdt.json" "milton_storage_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageUsdc.json" "milton_storage_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageDai.json" "milton_storage_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdt.json" "milton_spread_model_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdc.json" "milton_spread_model_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelDai.json" "milton_spread_model_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdt.json" "itf_milton_spread_model_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdc.json" "itf_milton_spread_model_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelDai.json" "itf_milton_spread_model_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "TestnetFaucet.json" "testnet_faucet_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdc.json" "ipor_ip_token_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IpTokenUsdt.json" "ipor_ip_token_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IpTokenDai.json" "ipor_ip_token_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdc.json" "stanley_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyUsdt.json" "stanley_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyDai.json" "stanley_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProvider.json" "itf_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdt" "milton_storage_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdc" "milton_storage_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyDai" "milton_storage_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdt" "milton_spread_model_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdc" "milton_spread_model_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelDai" "milton_spread_model_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdt" "itf_milton_spread_model_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdc" "itf_milton_spread_model_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelDai" "itf_milton_spread_model_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "TestnetFaucetProxy" "testnet_faucet_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ipUSDC" "ipor_ip_token_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ipUSDT" "ipor_ip_token_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ipDAI" "ipor_ip_token_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdc" "stanley_usdc_address")
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdt" "stanley_usdt_address")
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyDai" "stanley_dai_address")
+  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProviderProxy" "itf_data_provider_address")
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
@@ -987,8 +988,8 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   create_env_config_file
   create_contracts_zip
 
-  put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
-  put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
+  #put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
+  #put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
 fi
 
 if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
