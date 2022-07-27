@@ -55,8 +55,6 @@ ETH_BC_ITF_TAG_NAME="itf"
 AWS_REGION="eu-central-1"
 AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
 
-ETH_BC_URL="http://localhost:9545"
-
 IPOR_MIGRATION_STATE_DIR=".ipor"
 SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
 
