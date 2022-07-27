@@ -195,15 +195,15 @@ function set_smart_contract_address_in_env_config_file() {
 
 function get_smart_contract_address_from_json_file() {
   local JSON_KEY="${1}"
-  local IPOR_ADDRESSES="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_NAME}")"
-  local VAR_VALUE=$(jq -r ".${JSON_KEY}" "${IPOR_ADDRESSES}")
-  echo "${VAR_VALUE}"
+  local IPOR_ADDRESSES="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_PROFILE}")"
+  local VAR_VALUE=$(jq -r ".${JSON_KEY} // empty" "${IPOR_ADDRESSES}")  
+  echo "${VAR_VALUE}"  
 }
 
 function set_smart_contract_address_from_json_file() {
   local JSON_KEY="${1}"
   local VAR_NAME="${2}"
-  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${JSON_KEY}")
+  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${JSON_KEY}")  
   set_smart_contract_address_in_env_config_file "${VAR_NAME}" "${VAR_VALUE}"
   echo "${VAR_VALUE}"
 }
@@ -988,8 +988,8 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   create_env_config_file
   create_contracts_zip
 
-  #put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
-  #put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
+  put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
+  put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
 fi
 
 if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
