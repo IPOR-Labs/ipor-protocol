@@ -10,7 +10,6 @@ import "../security/IporOwnable.sol";
 
 contract IvToken is IporOwnable, IIvToken, ERC20 {
     using SafeERC20 for IERC20;
-    using SafeMath for uint256;
 
     uint8 private immutable _decimals;
 
@@ -45,13 +44,13 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
     }
 
     function mint(address account, uint256 amount) external override onlyStanley {
-        require(amount != 0, StanleyErrors.IV_TOKEN_MINT_AMOUNT_TOO_LOW);
+        require(amount > 0, StanleyErrors.IV_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
     function burn(address account, uint256 amount) external override onlyStanley {
-        require(amount != 0, StanleyErrors.IV_TOKEN_BURN_AMOUNT_TOO_LOW);
+        require(amount > 0, StanleyErrors.IV_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }

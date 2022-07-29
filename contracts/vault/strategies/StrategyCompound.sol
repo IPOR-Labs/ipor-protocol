@@ -132,7 +132,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     }
 
     function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
-        require(newBlocksPerYear != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(newBlocksPerYear > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         uint256 oldBlocksPerYear = _blocksPerYear;
         _blocksPerYear = newBlocksPerYear;
         emit BlocksPerYearChanged(_msgSender(), oldBlocksPerYear, newBlocksPerYear);

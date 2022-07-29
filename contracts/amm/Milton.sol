@@ -205,7 +205,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 swapId,
         uint256 closeTimestamp
     ) internal {
-        require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
+        require(swapId > 0, MiltonErrors.INCORRECT_SWAP_ID);
 
         IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
 
@@ -219,7 +219,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 swapId,
         uint256 closeTimestamp
     ) internal {
-        require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
+        require(swapId > 0, MiltonErrors.INCORRECT_SWAP_ID);
 
         IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
 
@@ -277,7 +277,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 totalAmount,
         uint256 leverage
     ) internal view returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(totalAmount != 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
+        require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
         require(
             IERC20Upgradeable(_asset).balanceOf(_msgSender()) >= totalAmount,
@@ -376,7 +376,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         require(
-            acceptableFixedInterestRate != 0 && quoteValue <= acceptableFixedInterestRate,
+            acceptableFixedInterestRate > 0 && quoteValue <= acceptableFixedInterestRate,
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
@@ -497,7 +497,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 
-        if (totalLiquidityPoolBalance != 0) {
+        if (totalLiquidityPoolBalance > 0) {
             utilizationRate = IporMath.division(
                 totalCollateralBalance * Constants.D18,
                 totalLiquidityPoolBalance
@@ -669,7 +669,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         for (uint256 i = 0; i < swapIds.length; i++) {
             uint256 swapId = swapIds[i];
-            require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
+            require(swapId > 0, MiltonErrors.INCORRECT_SWAP_ID);
 
             IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
 
@@ -698,7 +698,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         for (uint256 i = 0; i < swapIds.length; i++) {
             uint256 swapId = swapIds[i];
-            require(swapId != 0, MiltonErrors.INCORRECT_SWAP_ID);
+            require(swapId > 0, MiltonErrors.INCORRECT_SWAP_ID);
 
             IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(
                 swapId
@@ -793,7 +793,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             payoutForLiquidator = liquidationDepositAmount;
         }
 
-        if (transferAmount != 0) {
+        if (transferAmount > 0) {
             uint256 transferAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
                 transferAmount,
                 decimals
@@ -811,7 +811,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     function _transferLiquidationDepositAmount(address liquidator, uint256 liquidationDepositAmount)
         internal
     {
-        if (liquidationDepositAmount != 0) {
+        if (liquidationDepositAmount > 0) {
             IERC20Upgradeable(_asset).safeTransfer(
                 liquidator,
                 IporMath.convertWadToAssetDecimals(liquidationDepositAmount, _getDecimals())

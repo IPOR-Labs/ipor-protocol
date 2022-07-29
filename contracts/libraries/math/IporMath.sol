@@ -30,7 +30,7 @@ library IporMath {
     }
 
     function convertToWad(uint256 value, uint256 assetDecimals) internal pure returns (uint256) {
-        if (value != 0) {
+        if (value > 0) {
             if (assetDecimals == 18) {
                 return value;
             } else if (assetDecimals > 18) {

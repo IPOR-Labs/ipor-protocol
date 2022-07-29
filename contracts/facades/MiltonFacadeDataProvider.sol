@@ -113,25 +113,25 @@ contract MiltonFacadeDataProvider is
         override
         returns (uint256 totalCount, MiltonFacadeTypes.IporSwap[] memory swaps)
     {
-        require(chunkSize != 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
+        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
         require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
 
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
 
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage
-            .getSwapIds(_msgSender(), offset, chunkSize);
+        MiltonStorageTypes.IporSwapId[] memory swapIds;
+
+        (totalCount, swapIds) = miltonStorage.getSwapIds(_msgSender(), offset, chunkSize);
 
         IMiltonInternal milton = IMiltonInternal(config.milton);
 
-        MiltonFacadeTypes.IporSwap[] memory iporDerivatives = new MiltonFacadeTypes.IporSwap[](
-            swapIds.length
-        );
+        swaps = new MiltonFacadeTypes.IporSwap[](swapIds.length);
+
         for (uint256 i = 0; i != swapIds.length; i++) {
             MiltonStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
-                iporDerivatives[i] = _mapToIporSwap(
+                swaps[i] = _mapToIporSwap(
                     asset,
                     iporSwap,
                     0,
@@ -141,7 +141,7 @@ contract MiltonFacadeDataProvider is
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
                     swapId.id
                 );
-                iporDerivatives[i] = _mapToIporSwap(
+                swaps[i] = _mapToIporSwap(
                     asset,
                     iporSwap,
                     1,
@@ -149,8 +149,6 @@ contract MiltonFacadeDataProvider is
                 );
             }
         }
-
-        return (totalCount, iporDerivatives);
     }
 
     function _getIporOracle() internal view virtual returns (address) {
