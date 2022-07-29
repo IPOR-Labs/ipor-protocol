@@ -29,7 +29,7 @@ describe("MiltonSpreadRecFixed", () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
-    it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium > IPOR Index", async () => {
+    it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums positive, Spread Premium > IPOR Index", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBaseDai();
 
@@ -65,8 +65,8 @@ describe("MiltonSpreadRecFixed", () => {
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
 
-        //Actual Quote Value cannot be higher then Index Value for this particular test case.
-        expect(accruedIpor.indexValue).to.be.gte(actualQuotedValue);
+        //Actual Index Value cannot be higher than Quote Value for this particular test case.
+        expect(accruedIpor.indexValue).to.be.lte(actualQuotedValue);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium < IPOR Index", async () => {
