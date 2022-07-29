@@ -55,7 +55,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("201059071562814259");
+        const expectedQuoteValue = BigNumber.from("30000000000000000");
 
         //when
         const actualQuotedValue = await miltonSpread
