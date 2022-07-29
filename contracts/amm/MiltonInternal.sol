@@ -325,7 +325,7 @@ abstract contract MiltonInternal is
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
-        require(liquidityPool > 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
 
         accruedBalance.vault = actualVaultBalance;
