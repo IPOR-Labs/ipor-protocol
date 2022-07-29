@@ -141,7 +141,7 @@ describe("MiltonSpreadModel - Core", () => {
         expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("44525308187"));
         expect(payFixedRegionOneSlopeForVolatility).to.be.equal(BigNumber.from("7295029327499250688"));
         expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-995028945311348300")
+            BigNumber.from("1957606734120302592")
         );
         expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("1020441609091"));
         expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(BigNumber.from("1714472199264284"));
