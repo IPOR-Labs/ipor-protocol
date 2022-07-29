@@ -69,7 +69,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
 
-        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+        require(balance > 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = _getIpToken().totalSupply();
 
