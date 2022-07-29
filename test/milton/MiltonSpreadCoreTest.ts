@@ -138,7 +138,7 @@ describe("MiltonSpreadModel - Core", () => {
             await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         // then
-        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("21778096"));
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("44525308187"));
         expect(payFixedRegionOneSlopeForVolatility).to.be.equal(BigNumber.from("1764770686821589"));
         expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
             BigNumber.from("-995028945311348300")
