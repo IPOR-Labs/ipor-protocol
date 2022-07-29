@@ -37,7 +37,7 @@ console.log("Hardhat Mocha Jobs =", jobs);
  */
 export default {
     solidity: {
-        version: "0.8.14",
+        version: "0.8.15",
         settings: {
             optimizer: {
                 enabled: true,
