@@ -6,41 +6,24 @@ const { AccountData, ContractData, ContractForm } = newContextComponents;
 
 export default ({ drizzle, drizzleState }) => (
     <div>
-        {process.env.REACT_APP_ITF_ENABLED === "true" ? (
+        <div>
             <div>
-                <div>
-                    <strong>Add IPOR Index (ItfIporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="updateIndex" />
-                </div>
-                <div>
-                    <strong>Add updater (ItfIporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="ItfIporOracle" method="addUpdater" />
-                </div>
-                <div>
-                    <strong>Remove updater (ItfIporOracle)</strong>
-                    <ContractForm
-                        drizzle={drizzle}
-                        contract="ItfIporOracle"
-                        method="removeUpdater"
-                    />
-                </div>
+                <strong>Add IPOR Index</strong>
+                <ContractForm drizzle={drizzle} contract="DrizzleIporOracle" method="updateIndex" />
             </div>
-        ) : (
             <div>
-                <div>
-                    <strong>Add IPOR Index (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="updateIndex" />
-                </div>
-                <div>
-                    <strong>Add updater (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="addUpdater" />
-                </div>
-                <div>
-                    <strong>Remove updater (IporOracle)</strong>
-                    <ContractForm drizzle={drizzle} contract="IporOracle" method="removeUpdater" />
-                </div>
+                <strong>Add updater</strong>
+                <ContractForm drizzle={drizzle} contract="DrizzleIporOracle" method="addUpdater" />
             </div>
-        )}
+            <div>
+                <strong>Remove updater</strong>
+                <ContractForm
+                    drizzle={drizzle}
+                    contract="DrizzleIporOracle"
+                    method="removeUpdater"
+                />
+            </div>
+        </div>
 
         <div>
             <hr />
@@ -54,6 +37,6 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </p>
             <hr />
-        </div>        
+        </div>
     </div>
 );

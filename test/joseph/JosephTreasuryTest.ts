@@ -193,7 +193,7 @@ describe("Joseph Treasury", () => {
         );
     });
 
-    it("should NOT transfer Publication Fee to Charlie Treasury - Treasury Transferer address incorrect", async () => {
+    it("should NOT transfer Publication Fee to Charlie Treasury - Treasury Manager address incorrect", async () => {
         //given
         const { josephDai } = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),

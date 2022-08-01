@@ -70,7 +70,7 @@ describe("ItfDataProvider - smoke tests", () => {
             return;
         }
 
-        const liquidityAmount = BigNumber.from("1000000").mul(N1__0_6DEC);
+        const liquidityAmount = BigNumber.from("10000").mul(N1__0_6DEC);
         await tokenUsdc.setupInitialAmount(await admin.getAddress(), liquidityAmount);
         await tokenUsdc.approve(josephUsdc.address, liquidityAmount);
         await tokenUsdc.approve(miltonUsdc.address, liquidityAmount);

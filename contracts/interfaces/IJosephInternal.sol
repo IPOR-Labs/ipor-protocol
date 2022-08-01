@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 /// @title Administrative interface for interaction with Joseph.
 interface IJosephInternal {
@@ -70,10 +70,6 @@ interface IJosephInternal {
     /// @return Treasury address
     function getTreasury() external view returns (address);
 
-    /// @notice Sets Charlie Treasury address
-    /// @param newCharlieTreasury new Charlie Treasury address
-    function setCharlieTreasury(address newCharlieTreasury) external;
-
     /// @notice Sets Treasury address
     /// @param newTreasury new Treasury address
     function setTreasury(address newTreasury) external;
@@ -90,6 +86,10 @@ interface IJosephInternal {
     /// @return Charlie Treasury address
     function getCharlieTreasury() external view returns (address);
 
+    /// @notice Sets Charlie Treasury address
+    /// @param newCharlieTreasury new Charlie Treasury address
+    function setCharlieTreasury(address newCharlieTreasury) external;
+
     /// @notice Gets Treasury Manager address, external multisig address which has permission to transfer Treasury balance from Milton to external Treausry wallet.
     /// @return Treasury Manager address
     function getTreasuryManager() external view returns (address);
@@ -97,6 +97,24 @@ interface IJosephInternal {
     /// @notice Sets Treasury Manager address
     /// @param newTreasuryManager new Treasury Manager address
     function setTreasuryManager(address newTreasuryManager) external;
+
+    /// @notice Gets max Liquidity Pool balance
+    /// @return max Liquidity Pool balance. Value represented without decimals.
+    function getMaxLiquidityPoolBalance() external view returns (uint256);
+
+    /// @notice Sets max Liquidity Pool balance
+    /// @param newMaxLiquidityPoolBalance new max liquidity pool balance
+    /// @dev Value represented without decimals
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance) external;
+
+    /// @notice Gets max Liquidity Pool account contribution amount
+    /// @return max Liquidity Pool account contribution amount. Value represented without decimals.
+    function getMaxLpAccountContribution() external view returns (uint256);
+
+    /// @notice Sets max Liquidity Pool account contribution amount
+    /// @param newMaxLpAccountContribution new max liquidity pool account contribution amount
+    /// @dev Value represented without decimals.
+    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
@@ -136,5 +154,25 @@ interface IJosephInternal {
         address indexed changedBy,
         address indexed oldTreasury,
         address indexed newTreasury
+    );
+
+    /// @notice Emmited after the max liquidity pool balance has changed
+    /// @param changedBy account address that changed max liquidity pool balance
+    /// @param oldMaxLiquidityPoolBalance Old max liquidity pool balance, represented in 18 decimals
+    /// @param newMaxLiquidityPoolBalance New max liquidity pool balance, represented in 18 decimals
+    event MaxLiquidityPoolBalanceChanged(
+        address indexed changedBy,
+        uint256 indexed oldMaxLiquidityPoolBalance,
+        uint256 indexed newMaxLiquidityPoolBalance
+    );
+
+    /// @notice Emmited after the max liquidity pool account contribution amount has changed
+    /// @param changedBy account address that changed max liquidity pool account contribution amount
+    /// @param oldMaxLpAccountContribution Old max liquidity pool account contribution amount, represented in 18 decimals
+    /// @param newMaxLpAccountContribution New max liquidity pool account contribution amount, represented in 18 decimals
+    event MaxLpAccountContributionChanged(
+        address indexed changedBy,
+        uint256 indexed oldMaxLpAccountContribution,
+        uint256 indexed newMaxLpAccountContribution
     );
 }

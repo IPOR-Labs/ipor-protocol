@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
 /// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
@@ -55,6 +55,10 @@ library MiltonFacadeTypes {
         /// @notice Maximum Liquidity Pool Utilization per one leg.
         /// @dev It is a ratio of total collateral balance for one leg / liquidity pool balance
         uint256 maxLpUtilizationPerLegRate;
+        /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
+        uint256 maxLiquidityPoolBalance;
+        /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.
+        uint256 maxLpAccountContribution;
     }
 
     /// @notice IPOR Swap structure used by facades.

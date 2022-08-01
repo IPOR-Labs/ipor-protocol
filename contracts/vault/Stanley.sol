@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -32,9 +32,7 @@ abstract contract Stanley is
 
     address internal _milton;
     address internal _strategyAave;
-    address internal _aaveShareToken;
     address internal _strategyCompound;
-    address internal _compoundShareToken;
 
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
@@ -83,7 +81,6 @@ abstract contract Stanley is
      */
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
 
         (
@@ -346,7 +343,6 @@ abstract contract Stanley is
         strategyAave = IStrategy(_strategyAave);
         strategyCompound = IStrategy(_strategyCompound);
         strategyMaxApy = strategyAave;
-
         if (strategyAave.getApr() < strategyCompound.getApr()) {
             strategyMaxApy = strategyCompound;
         } else {
@@ -367,23 +363,20 @@ abstract contract Stanley is
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
         address oldStrategy = _strategyCompound;
-        address oldShareToken = _compoundShareToken;
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
         IStrategy strategy = IStrategy(newStrategy);
-        IERC20Upgradeable shareToken = IERC20Upgradeable(oldShareToken);
 
         require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
         if (oldStrategy != address(0)) {
             asset.safeApprove(oldStrategy, 0);
-            shareToken.safeApprove(oldStrategy, 0);
+            IERC20Upgradeable(IStrategy(oldStrategy).getShareToken()).safeApprove(oldStrategy, 0);
         }
 
         IERC20Upgradeable newShareToken = IERC20Upgradeable(IStrategy(newStrategy).getShareToken());
         _strategyCompound = newStrategy;
-        _compoundShareToken = address(newShareToken);
 
         asset.safeApprove(newStrategy, 0);
         asset.safeApprove(newStrategy, type(uint256).max);
@@ -398,21 +391,18 @@ abstract contract Stanley is
         require(newStrategy != address(0), IporErrors.WRONG_ADDRESS);
 
         address oldStrategy = _strategyAave;
-        address oldShareToken = _aaveShareToken;
 
         IERC20Upgradeable asset = ERC20Upgradeable(_asset);
 
         IStrategy strategy = IStrategy(newStrategy);
 
         require(strategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
-
         if (oldStrategy != address(0)) {
             asset.safeApprove(oldStrategy, 0);
-            IERC20Upgradeable(oldShareToken).safeApprove(oldStrategy, 0);
+            IERC20Upgradeable(IStrategy(oldStrategy).getShareToken()).safeApprove(oldStrategy, 0);
         }
 
         IERC20Upgradeable newShareToken = IERC20Upgradeable(strategy.getShareToken());
-        _aaveShareToken = address(newShareToken);
         _strategyAave = newStrategy;
 
         asset.safeApprove(newStrategy, 0);

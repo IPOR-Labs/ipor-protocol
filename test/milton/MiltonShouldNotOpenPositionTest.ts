@@ -84,7 +84,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_308"
+            "IPOR_310"
         );
     });
 
@@ -153,7 +153,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_311"
+            "IPOR_313"
         );
     });
 
@@ -192,7 +192,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_311"
+            "IPOR_313"
         );
     });
 
@@ -250,7 +250,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_311"
+            "IPOR_313"
         );
     });
 
@@ -310,7 +310,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_311"
+            "IPOR_313"
         );
     });
 
@@ -342,7 +342,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_310"
+            "IPOR_312"
         );
     });
 
@@ -373,7 +373,7 @@ describe("Milton - Should Not Open Position", () => {
                 leverage
             ),
             //then
-            "IPOR_310"
+            "IPOR_312"
         );
     });
 
@@ -448,7 +448,7 @@ describe("Milton - Should Not Open Position", () => {
             //when
             miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, closeSwapTimestamp),
             //then
-            "IPOR_318"
+            "IPOR_320"
         );
     });
 
@@ -491,7 +491,7 @@ describe("Milton - Should Not Open Position", () => {
                     params.leverage
                 ),
             //then
-            "IPOR_306"
+            "IPOR_308"
         );
     });
 
@@ -534,7 +534,7 @@ describe("Milton - Should Not Open Position", () => {
                     params.leverage
                 ),
             //then
-            "IPOR_307"
+            "IPOR_309"
         );
     });
 
@@ -597,7 +597,7 @@ describe("Milton - Should Not Open Position", () => {
             from: userThree,
         };
         // when
-        await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("IPOR_309");
+        await expect(openSwapPayFixed(testData, derivativeParams)).to.be.revertedWith("IPOR_311");
     });
 
     it("Should not open position when total amount lower than fee", async () => {
