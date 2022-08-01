@@ -7,9 +7,96 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
+
+# Variables set by .env file
 GLOBAL_AWS_PROFILE=""
-ROOT_PASSWORD=""
-WITH_PROFILE=""
+ENV_PROFILE=""
+SC_MIGRATION_STATE_REPO=""
+ETH_BC_NETWORK_NAME=""
+
+function refresh_global_variables(){
+  ROOT_PASSWORD=""
+  WITH_PROFILE=""
+
+  ENV_CONFIG_BUCKET="ipor-env"
+
+  ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
+  ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
+  ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/${ENV_CONFIG_FILE_DEST}"
+
+  ENV_CONTRACTS_FILE_NAME="contracts.zip"
+  ENV_CONTRACTS_ROOT_DIR="app/src"
+  ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
+  ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/${ENV_CONTRACTS_FILE_NAME}"
+  ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
+
+  CONTAINERS_DIR="${DIR}/containers"
+  ETH_BC_CONTAINER="ipor-protocol-eth-bc"
+  ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
+  ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
+
+  ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
+  ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
+
+  NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
+
+  ETH_BC_IMAGE_NAME="ipor-geth"
+  ETH_BC_DOCKERFILE_PATH="${CONTAINERS_DIR}/eth-bc"
+
+  ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME="s0"
+  ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME="s12"
+  ETH_BC_ITF_TAG_NAME="itf"
+
+  AWS_REGION="eu-central-1"
+  AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
+
+  IPOR_MIGRATION_STATE_DIR=".ipor"
+  SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
+
+  ENVS_DIR="${ETH_BC_DOCKERFILE_PATH}/envs"
+  ETH_BC_DUMP_DIR="${ETH_BC_DOCKERFILE_PATH}/eth-bc-dump"
+  ETH_BC_DUMP_FILE="eth-bc-dump.tar"
+  ETH_BC_DUMP_PATH="${ETH_BC_DUMP_DIR}/${ETH_BC_DUMP_FILE}"
+  ETH_DATA_DIR=".ethereum"
+  ETH_BC_DUMP_CONFIG_DIR="${ENVS_DIR}/{ENV}"
+  ETH_BC_DUMP_J2_DIR="${ETH_BC_DOCKERFILE_PATH}/templates/env"
+  ENV_CREDENTIALS_VARIABLES_FILE="${ETH_BC_DOCKERFILE_PATH}/templates/credentials-variables.env"
+  ENV_LOCAL_VARIABLES_FILE="${ETH_BC_DUMP_CONFIG_DIR}/variables.env"
+
+  ETH_BC_GENESIS_J2_PATH="${ETH_BC_DUMP_J2_DIR}/genesis.json.j2"
+  ETH_BC_CONFIG_J2_PATH="${ETH_BC_DUMP_J2_DIR}/geth-config.toml.j2"
+  ETH_BC_KEY_PASSWORD_J2_PATH="${ETH_BC_DUMP_J2_DIR}/key-password.txt.j2"
+  ETH_BC_MINER_KEY_J2_PATH="${ETH_BC_DUMP_J2_DIR}/miner.key.j2"
+
+  ETH_BC_GEN_VARIABLES_PATH="${ETH_BC_DUMP_CONFIG_DIR}/all-variables.env"
+  ETH_BC_GEN_GENESIS_PATH="${ETH_BC_DUMP_CONFIG_DIR}/genesis.json"
+  ETH_BC_GEN_CONFIG_PATH="${ETH_BC_DUMP_CONFIG_DIR}/geth-config.toml"
+  ETH_BC_GEN_KEY_PASSWORD_PATH="${ETH_BC_DUMP_CONFIG_DIR}/key-password.txt"
+  ETH_BC_GEN_MINER_KEY_PATH="${ETH_BC_DUMP_CONFIG_DIR}/miner.key"
+  ETH_BC_GEN_ENV_CONFIG_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONFIG_FILE_DEST}"
+  ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONTRACTS_FILE_NAME}"
+  ETH_BC_GEN_ENV_DUMP_CONFIG_DIR="${ETH_BC_DUMP_CONFIG_DIR}/"
+
+  GEN_IPOR_ADDRESSES_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json"
+  GEN_MIGRATION_COMMIT_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
+  GEN_LAST_COMPLETED_MIGRATION_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
+
+  IPOR_COCKPIT_DOCKERFILE_PATH="${DIR}/app"
+  IPOR_COCKPIT_IMAGE_NAME="ipor-cockpit"
+  IPOR_COCKPIT_CONTAINER_DIR="${CONTAINERS_DIR}/cockpit"
+  IPOR_COCKPIT_ENV_CONFIG_J2_PATH="${IPOR_COCKPIT_CONTAINER_DIR}/.env.j2"
+  IPOR_COCKPIT_GEN_ENV_CONFIG_PATH="${IPOR_COCKPIT_DOCKERFILE_PATH}/.env"
+
+  LAST_MIGRATION_DATE=""
+  LAST_COMMIT_HASH=""
+  LAST_COMMIT_SHORT_HASH=""
+  LAST_MIGRATION_NUMBER=""
+
+  CGI_IMAGE_TYPE=""
+  CGI_BRANCH_NAME=""
+  CGI_COMMIT_HASH=""
+  CGI_PUBLISH_ENABLED=""
+}
 
 function read_env_file() {
   local ENV_FILE_PATH="${1}"
@@ -19,78 +106,12 @@ function read_env_file() {
     set +a
     echo -e "\n\e[32m${ENV_FILE_PATH} file was read\e[0m\n"
   fi
+  refresh_global_variables
 }
 
+
+# Read .env file
 read_env_file "${ENV_FILE}"
-
-ENV_CONFIG_BUCKET="ipor-env"
-
-ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
-ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
-ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/${ENV_CONFIG_FILE_DEST}"
-
-ENV_CONTRACTS_FILE_NAME="contracts.zip"
-ENV_CONTRACTS_ROOT_DIR="app/src"
-ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
-ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/${ENV_CONTRACTS_FILE_NAME}"
-ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
-
-CONTAINERS_DIR="${DIR}/containers"
-ETH_BC_CONTAINER="ipor-protocol-eth-bc"
-ETH_EXP_CONTAINER="ipor-protocol-eth-explorer"
-ETH_EXP_POSTGRES_CONTAINER="ipor-protocol-eth-exp-postgres"
-
-ETH_BC_DATA_VOLUME="ipor-protocol-eth-bc-data"
-ETH_EXP_DATA_VOLUME="ipor-protocol-eth-exp-postgres-data"
-
-NGINX_ETH_BC_CONTAINER="ipor-protocol-nginx-eth-bc"
-
-ETH_BC_IMAGE_NAME="ipor-geth"
-ETH_BC_DOCKERFILE_PATH="${CONTAINERS_DIR}/eth-bc"
-
-ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME="s0"
-ETH_BC_BLOCK_PER_INTERVAL_TAG_NAME="s12"
-ETH_BC_ITF_TAG_NAME="itf"
-
-AWS_REGION="eu-central-1"
-AWS_DOCKER_REGISTRY="964341344241.dkr.ecr.eu-central-1.amazonaws.com"
-
-IPOR_MIGRATION_STATE_DIR=".ipor"
-SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
-
-ENVS_DIR="${ETH_BC_DOCKERFILE_PATH}/envs"
-ETH_BC_DUMP_DIR="${ETH_BC_DOCKERFILE_PATH}/eth-bc-dump"
-ETH_BC_DUMP_FILE="eth-bc-dump.tar"
-ETH_BC_DUMP_PATH="${ETH_BC_DUMP_DIR}/${ETH_BC_DUMP_FILE}"
-ETH_DATA_DIR=".ethereum"
-ETH_BC_DUMP_CONFIG_DIR="${ENVS_DIR}/{ENV}"
-ETH_BC_DUMP_J2_DIR="${ETH_BC_DOCKERFILE_PATH}/templates/env"
-ENV_CREDENTIALS_VARIABLES_FILE="${ETH_BC_DOCKERFILE_PATH}/templates/credentials-variables.env"
-ENV_LOCAL_VARIABLES_FILE="${ETH_BC_DUMP_CONFIG_DIR}/variables.env"
-
-ETH_BC_GENESIS_J2_PATH="${ETH_BC_DUMP_J2_DIR}/genesis.json.j2"
-ETH_BC_CONFIG_J2_PATH="${ETH_BC_DUMP_J2_DIR}/geth-config.toml.j2"
-ETH_BC_KEY_PASSWORD_J2_PATH="${ETH_BC_DUMP_J2_DIR}/key-password.txt.j2"
-ETH_BC_MINER_KEY_J2_PATH="${ETH_BC_DUMP_J2_DIR}/miner.key.j2"
-
-ETH_BC_GEN_VARIABLES_PATH="${ETH_BC_DUMP_CONFIG_DIR}/all-variables.env"
-ETH_BC_GEN_GENESIS_PATH="${ETH_BC_DUMP_CONFIG_DIR}/genesis.json"
-ETH_BC_GEN_CONFIG_PATH="${ETH_BC_DUMP_CONFIG_DIR}/geth-config.toml"
-ETH_BC_GEN_KEY_PASSWORD_PATH="${ETH_BC_DUMP_CONFIG_DIR}/key-password.txt"
-ETH_BC_GEN_MINER_KEY_PATH="${ETH_BC_DUMP_CONFIG_DIR}/miner.key"
-ETH_BC_GEN_ENV_CONFIG_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONFIG_FILE_DEST}"
-ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONTRACTS_FILE_NAME}"
-ETH_BC_GEN_ENV_DUMP_CONFIG_DIR="${ETH_BC_DUMP_CONFIG_DIR}/"
-
-GEN_IPOR_ADDRESSES_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json"
-GEN_MIGRATION_COMMIT_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
-GEN_LAST_COMPLETED_MIGRATION_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
-
-IPOR_COCKPIT_DOCKERFILE_PATH="${DIR}/app"
-IPOR_COCKPIT_IMAGE_NAME="ipor-cockpit"
-IPOR_COCKPIT_CONTAINER_DIR="${CONTAINERS_DIR}/cockpit"
-IPOR_COCKPIT_ENV_CONFIG_J2_PATH="${IPOR_COCKPIT_CONTAINER_DIR}/.env.j2"
-IPOR_COCKPIT_GEN_ENV_CONFIG_PATH="${IPOR_COCKPIT_DOCKERFILE_PATH}/.env"
 
 IS_DOCKER_LOGIN="NO"
 IS_MIGRATE_SC="NO"
@@ -108,16 +129,6 @@ IS_UPDATE_COCKPIT="NO"
 IS_DUMP_ETH_BLOCKCHAIN="NO"
 IS_CREATE_GETH_IMAGE="NO"
 IS_RETAG_GETH_IMAGE="NO"
-
-LAST_MIGRATION_DATE=""
-LAST_COMMIT_HASH=""
-LAST_COMMIT_SHORT_HASH=""
-LAST_MIGRATION_NUMBER=""
-
-CGI_IMAGE_TYPE=""
-CGI_BRANCH_NAME=""
-CGI_COMMIT_HASH=""
-CGI_PUBLISH_ENABLED=""
 
 if [ $# -eq 0 ]; then
   IS_RUN="YES"
@@ -196,14 +207,16 @@ function set_smart_contract_address_in_env_config_file() {
 function get_smart_contract_address_from_json_file() {
   local JSON_KEY="${1}"
   local IPOR_ADDRESSES="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_PROFILE}")"
-  local VAR_VALUE=$(jq -r ".${JSON_KEY} // empty" "${IPOR_ADDRESSES}")  
+  local VAR_VALUE
+  VAR_VALUE=$(jq -r ".${JSON_KEY} // empty" "${IPOR_ADDRESSES}") || exit
   echo "${VAR_VALUE}"  
 }
 
 function set_smart_contract_address_from_json_file() {
   local JSON_KEY="${1}"
   local VAR_NAME="${2}"
-  local VAR_VALUE=$(get_smart_contract_address_from_json_file "${JSON_KEY}")  
+  local VAR_VALUE
+  VAR_VALUE=$(get_smart_contract_address_from_json_file "${JSON_KEY}") || exit
   set_smart_contract_address_in_env_config_file "${VAR_NAME}" "${VAR_VALUE}"
   echo "${VAR_VALUE}"
 }
@@ -255,43 +268,43 @@ function create_env_config_file() {
   cp "${ENV_CONFIG_FILE_SRC}" "${ENV_CONFIG_FILE_DEST}"
 
   local RESULT=""
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdt" "milton_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdc" "milton_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyDai" "milton_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IporOracleProxy" "ipor_oracle_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdt" "joseph_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdc" "joseph_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyDai" "joseph_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdt" "itf_milton_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdc" "itf_milton_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyDai" "itf_milton_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfIporOracleProxy" "itf_ipor_oracle_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdt" "itf_joseph_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdc" "itf_joseph_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyDai" "itf_joseph_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProviderProxy" "cockpit_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProviderProxy" "milton_facade_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProviderProxy" "ipor_oracle_facade_data_provider_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenDai.json" "dai_mocked_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdc.json" "usdc_mocked_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdt.json" "usdt_mocked_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdt" "milton_storage_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdc" "milton_storage_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyDai" "milton_storage_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdt" "milton_spread_model_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdc" "milton_spread_model_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelDai" "milton_spread_model_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdt" "itf_milton_spread_model_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdc" "itf_milton_spread_model_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelDai" "itf_milton_spread_model_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "TestnetFaucetProxy" "testnet_faucet_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ipUSDC" "ipor_ip_token_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ipUSDT" "ipor_ip_token_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ipDAI" "ipor_ip_token_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdc" "stanley_usdc_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdt" "stanley_usdt_address")
-  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyDai" "stanley_dai_address")
-  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProviderProxy" "itf_data_provider_address")
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdt" "milton_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyUsdc" "milton_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonProxyDai" "milton_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "IporOracleProxy" "ipor_oracle_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdt" "joseph_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyUsdc" "joseph_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "JosephProxyDai" "joseph_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdt" "itf_milton_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyUsdc" "itf_milton_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonProxyDai" "itf_milton_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfIporOracleProxy" "itf_ipor_oracle_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdt" "itf_joseph_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyUsdc" "itf_joseph_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfJosephProxyDai" "itf_joseph_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProviderProxy" "cockpit_data_provider_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProviderProxy" "milton_facade_data_provider_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProviderProxy" "ipor_oracle_facade_data_provider_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenDai.json" "dai_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdc.json" "usdc_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdt.json" "usdt_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdt" "milton_storage_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdc" "milton_storage_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyDai" "milton_storage_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdt" "milton_spread_model_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelUsdc" "milton_spread_model_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "MiltonSpreadModelDai" "milton_spread_model_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdt" "itf_milton_spread_model_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelUsdc" "itf_milton_spread_model_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfMiltonSpreadModelDai" "itf_milton_spread_model_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "TestnetFaucetProxy" "testnet_faucet_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ipUSDC" "ipor_ip_token_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ipUSDT" "ipor_ip_token_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ipDAI" "ipor_ip_token_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdc" "stanley_usdc_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyUsdt" "stanley_usdt_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "StanleyProxyDai" "stanley_dai_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "ItfDataProviderProxy" "itf_data_provider_address") || exit
 
   echo -e "${ENV_CONFIG_FILE_DEST} file was created"
 }
