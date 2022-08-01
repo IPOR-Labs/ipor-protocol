@@ -495,6 +495,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Transfer Treasury</strong>
+                        <br />
+                        <small>Income fee, part of opening fee</small>
                     </td>
                     <td>
                         <div>

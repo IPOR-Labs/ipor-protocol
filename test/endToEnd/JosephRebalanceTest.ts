@@ -105,7 +105,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalanse and deposit(dai) into vault (aave)", async () => {
+    it("Should rebalance and deposit(dai) into vault (aave)", async () => {
         //given
         const strategyAaveBalance = await strategyAaveDai.balanceOf();
         //when
@@ -130,7 +130,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should rebalanse and withdraw(dai) from vault (aave)", async () => {
+    it("Should rebalance and withdraw(dai) from vault (aave)", async () => {
         //given
         const strategyAaveBalance = await strategyAaveDai.balanceOf();
         //when
@@ -161,7 +161,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         expect(usdcMiltonBalanceAfter, "usdcMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalanse and deposit(usdc) into vault (aave)", async () => {
+    it("Should rebalance and deposit(usdc) into vault (aave)", async () => {
         //given
         const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
         //when
@@ -186,7 +186,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should rebalanse and withdraw(usdc) from vault (aave)", async () => {
+    it("Should rebalance and withdraw(usdc) from vault (aave)", async () => {
         //given
         const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
         //when
@@ -217,7 +217,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         expect(usdtMiltonBalanceAfter, "usdtMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalanse and deposit(usdt) into vault (compound)", async () => {
+    it("Should rebalance and deposit(usdt) into vault (compound)", async () => {
         //given
         const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
         //when
@@ -244,11 +244,11 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should not rebalanse and withdraw(usdt) from vault (compound)", async () => {
+    it("Should not rebalance and withdraw(usdt) from vault (compound)", async () => {
         //given
         const strategyCompoundBalance = await strategyCompoundUsdt.balanceOf();
         //when
-        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_320");
+        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_322");
         //then
         const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
         expect(
@@ -257,7 +257,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should rebalanse and withdraw(usdt) from vault (compound)", async () => {
+    it("Should rebalance and withdraw(usdt) from vault (compound)", async () => {
         //given
         // this set of acttion generate change on compound balance
         await usdt
