@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
@@ -12,7 +12,7 @@ import "./JosephInternal.sol";
 abstract contract Joseph is JosephInternal, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
-    using SafeCast for int256;    
+    using SafeCast for int256;
 
     function calculateExchangeRate() external view override returns (uint256) {
         return _calculateExchangeRate(block.timestamp);
@@ -62,6 +62,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 assetDecimals,
         uint256 timestamp
     ) internal nonReentrant {
+        address msgSender = _msgSender();
         IMiltonInternal milton = _getMilton();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
@@ -70,17 +71,22 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
-        _getMiltonStorage().addLiquidity(wadAssetAmount);
+        _getMiltonStorage().addLiquidity(
+            msgSender,
+            wadAssetAmount,
+            _maxLiquidityPoolBalance * Constants.D18,
+            _maxLpAccountContribution * Constants.D18
+        );
 
-        IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(milton), assetAmount);
+        IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
 
-        _getIpToken().mint(_msgSender(), ipTokenAmount);
+        _getIpToken().mint(msgSender, ipTokenAmount);
 
         emit ProvideLiquidity(
             timestamp,
-            _msgSender(),
+            msgSender,
             address(milton),
             exchangeRate,
             wadAssetAmount,

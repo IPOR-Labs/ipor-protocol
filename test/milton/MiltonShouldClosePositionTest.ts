@@ -32,6 +32,7 @@ import {
     PERCENTAGE_151_18DEC,
     PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
     PERCENTAGE_150_18DEC,
+    USD_1_000_000_18DEC,
     USD_10_000_000_18DEC,
     TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
@@ -2071,7 +2072,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.closeSwaps([1], []);
@@ -2125,7 +2126,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
                 return contract.closeSwaps([1, 2], []);
@@ -2179,7 +2180,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.closeSwaps([], [1]);
@@ -2233,7 +2234,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("2"),
             async (contract) => {
                 return contract.closeSwaps([], [1, 2]);
@@ -2287,7 +2288,7 @@ describe("Milton - close position", () => {
             admin,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.emergencyCloseSwapsPayFixed([1]);
@@ -2341,7 +2342,7 @@ describe("Milton - close position", () => {
             admin,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.emergencyCloseSwapPayFixed(1);
@@ -2399,7 +2400,7 @@ describe("Milton - close position", () => {
             admin,
             acceptableFixedInterestRate,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.emergencyCloseSwapReceiveFixed(1);
@@ -2736,222 +2737,6 @@ describe("Milton - close position", () => {
         await assertSoap(testData, soapParams);
     });
 
-    it("should close single pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await executeCloseSwapsTestCase(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            LEG_PAY_FIXED,
-            userTwo,
-            userTwo,
-            PERCENTAGE_160_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
-            BigNumber.from("1"),
-            async (contract) => {
-                return contract.closeSwaps([1], []);
-            },
-            ZERO,
-            false,
-            admin,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close two pay fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await executeCloseSwapsTestCase(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            LEG_PAY_FIXED,
-            userTwo,
-            userTwo,
-            PERCENTAGE_160_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
-            BigNumber.from("2"),
-            async (contract) => {
-                return contract.closeSwaps([1, 2], []);
-            },
-            ZERO,
-            false,
-            admin,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close single receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await executeCloseSwapsTestCase(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            LEG_RECEIVE_FIXED,
-            userTwo,
-            userTwo,
-            PERCENTAGE_160_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
-            BigNumber.from("1"),
-            async (contract) => {
-                return contract.closeSwaps([], [1]);
-            },
-            ZERO,
-            false,
-            admin,
-            userOne,
-            liquidityProvider
-        );
-    });
-
-    it("should close two receive fixed position using multicall function, DAI", async () => {
-        const testData = await prepareTestData(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            ["DAI"],
-            [PERCENTAGE_5_18DEC],
-            miltonSpreadModel,
-            MiltonUsdcCase.CASE3,
-            MiltonUsdtCase.CASE3,
-            MiltonDaiCase.CASE3,
-            MockStanleyCase.CASE1,
-            JosephUsdcMockCases.CASE0,
-            JosephUsdtMockCases.CASE0,
-            JosephDaiMockCases.CASE0
-        );
-
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
-        await setupTokenDaiInitialValuesForUsers(
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            testData
-        );
-
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        await executeCloseSwapsTestCase(
-            testData,
-            tokenDai.address,
-            USD_10_18DEC,
-            LEG_RECEIVE_FIXED,
-            userTwo,
-            userTwo,
-            PERCENTAGE_160_18DEC,
-            PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
-            BigNumber.from("2"),
-            async (contract) => {
-                return contract.closeSwaps([], [1, 2]);
-            },
-            ZERO,
-            false,
-            admin,
-            userOne,
-            liquidityProvider
-        );
-    });
-
     it("should close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
         miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("-1").mul(N0__01_18DEC));
         const testData = await prepareTestData(
@@ -2994,7 +2779,7 @@ describe("Milton - close position", () => {
             admin,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
                 return contract.emergencyCloseSwapsReceiveFixed([1]);
@@ -3793,7 +3578,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_319"
+            "IPOR_321"
         );
     });
 
@@ -3876,7 +3661,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_313"
+            "IPOR_315"
         );
     });
 
@@ -3959,7 +3744,7 @@ describe("Milton - close position", () => {
             miltonDai
                 .connect(paramsPayFixed.from)
                 .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp),
-            "IPOR_313"
+            "IPOR_315"
         );
     });
 

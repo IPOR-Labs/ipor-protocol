@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
@@ -7,6 +7,7 @@ import "../interfaces/types/MiltonFacadeTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonInternal.sol";
+import "../interfaces/IJosephInternal.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -185,8 +186,11 @@ contract MiltonFacadeDataProvider is
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         address miltonAddr = config.milton;
+        address josephAddr = config.joseph;
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
+        IJosephInternal joseph = IJosephInternal(josephAddr);
+
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(
             timestamp,
@@ -211,7 +215,9 @@ contract MiltonFacadeDataProvider is
             spreadPayFixed,
             spreadReceiveFixed,
             milton.getMaxLpUtilizationRate(),
-            milton.getMaxLpUtilizationPerLegRate()
+            milton.getMaxLpUtilizationPerLegRate(),
+            joseph.getMaxLiquidityPoolBalance() * Constants.D18,
+            joseph.getMaxLpAccountContribution() * Constants.D18
         );
     }
 

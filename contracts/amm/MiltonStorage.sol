@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -32,6 +32,8 @@ contract MiltonStorage is
     AmmMiltonStorageTypes.SoapIndicators internal _soapIndicatorsReceiveFixed;
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsPayFixed;
     AmmMiltonStorageTypes.IporSwapContainer internal _swapsReceiveFixed;
+
+    mapping(address => uint128) private _liquidityPoolAccountContribution;
 
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
@@ -285,9 +287,31 @@ contract MiltonStorage is
         soapReceiveFixed = IporMath.divisionInt(qSoapRf, Constants.WAD_P2_YEAR_IN_SECONDS_INT);
     }
 
-    function addLiquidity(uint256 assetAmount) external override onlyJoseph {
-        require(assetAmount > 0, MiltonErrors.DEPOSIT_AMOUNT_TOO_LOW);
-        _balances.liquidityPool = _balances.liquidityPool + assetAmount.toUint128();
+    function addLiquidity(
+        address account,
+        uint256 assetAmount,
+        uint256 cfgMaxLiquidityPoolBalance,
+        uint256 cfgMaxLpAccountContribution
+    ) external override onlyJoseph {
+        require(assetAmount > 0, MiltonErrors.DEPOSIT_AMOUNT_IS_TOO_LOW);
+
+        uint128 newLiquidityPoolBalance = _balances.liquidityPool + assetAmount.toUint128();
+
+        require(
+            newLiquidityPoolBalance <= cfgMaxLiquidityPoolBalance,
+            MiltonErrors.LIQUIDITY_POOL_BALANCE_IS_TOO_HIGH
+        );
+
+        uint128 newLiquidityPoolAccountContribution = _liquidityPoolAccountContribution[account] +
+            assetAmount.toUint128();
+
+        require(
+            newLiquidityPoolAccountContribution <= cfgMaxLpAccountContribution,
+            MiltonErrors.LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH
+        );
+
+        _balances.liquidityPool = newLiquidityPoolBalance;
+        _liquidityPoolAccountContribution[account] = newLiquidityPoolAccountContribution;
     }
 
     function subtractLiquidity(uint256 assetAmount) external override onlyJoseph {
@@ -388,7 +412,7 @@ contract MiltonStorage is
         // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,
-            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
+            MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
 
@@ -408,7 +432,7 @@ contract MiltonStorage is
 
         require(
             currentVaultBalance <= (vaultBalance - depositAmount),
-            MiltonErrors.INTREST_FROM_STRATEGY_BELOW_ZERO
+            MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
         uint256 interest = currentVaultBalance > 0
             ? (vaultBalance - currentVaultBalance - depositAmount)
@@ -427,7 +451,7 @@ contract MiltonStorage is
 
         uint256 balance = _balances.iporPublicationFee;
 
-        require(transferredAmount <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.PUBLICATION_FEE_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 
@@ -443,7 +467,7 @@ contract MiltonStorage is
 
         uint256 balance = _balances.treasury;
 
-        require(transferredAmount <= balance, MiltonErrors.TREASURE_BALANCE_TOO_LOW);
+        require(transferredAmount <= balance, MiltonErrors.TREASURY_BALANCE_IS_TOO_LOW);
 
         balance = balance - transferredAmount;
 

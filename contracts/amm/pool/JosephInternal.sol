@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.14;
+pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -27,11 +27,11 @@ abstract contract JosephInternal is
     IJosephInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
+    using SafeCast for uint256;
 
     uint256 internal constant _REDEEM_FEE_RATE = 5e15;
     uint256 internal constant _REDEEM_LP_MAX_UTILIZATION_RATE = 1e18;
 
-    uint256 internal _miltonStanleyBalanceRatio;
     address internal _asset;
     IIpToken internal _ipToken;
     IMiltonInternal internal _milton;
@@ -42,6 +42,10 @@ abstract contract JosephInternal is
     address internal _treasuryManager;
     address internal _charlieTreasury;
     address internal _charlieTreasuryManager;
+
+    uint256 internal _miltonStanleyBalanceRatio;
+    uint32 internal _maxLiquidityPoolBalance;
+    uint32 internal _maxLpAccountContribution;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -300,6 +304,44 @@ abstract contract JosephInternal is
         address oldTreasuryManager = _getTreasuryManager();
         _treasuryManager = newTreasuryManager;
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
+    }
+
+    function getMaxLiquidityPoolBalance() external view override returns (uint256) {
+        return _maxLiquidityPoolBalance;
+    }
+
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
+        _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
+        emit MaxLiquidityPoolBalanceChanged(
+            _msgSender(),
+            oldMaxLiquidityPoolBalance * Constants.D18,
+            newMaxLiquidityPoolBalance * Constants.D18
+        );
+    }
+
+    function getMaxLpAccountContribution() external view override returns (uint256) {
+        return _maxLpAccountContribution;
+    }
+
+    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        uint256 oldMaxLpAccountContribution = _maxLpAccountContribution;
+        _maxLpAccountContribution = newMaxLpAccountContribution.toUint32();
+        emit MaxLpAccountContributionChanged(
+            _msgSender(),
+            oldMaxLpAccountContribution * Constants.D18,
+            newMaxLpAccountContribution * Constants.D18
+        );
     }
 
     function getRedeemFeeRate() external pure override returns (uint256) {
