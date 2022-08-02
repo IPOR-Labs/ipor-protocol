@@ -831,6 +831,15 @@ function copy_env_files() {
   copy_ipor_migrations_dir "${ENV_NAME}"
 }
 
+function create_migrated_env_files() {
+  local SRC_ENV_NAME="${1}"
+  local TRG_ENV_NAME="${2}"
+
+  cp "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${TRG_ENV_NAME}")"
+  cp "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${TRG_ENV_NAME}")"
+  cp "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${TRG_ENV_NAME}")"
+}
+
 function build_and_push_docker_images() {
   local ENV_NAME="${1}"
   local COMMIT_HASH="${2}"
@@ -900,6 +909,8 @@ function create_migrated_geth_image() {
   clean_env_files "${ENV_NAME}"
 
   create_env_config "${ENV_NAME}"
+
+  create_migrated_env_files "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${ENV_NAME}"
 
   copy_env_files "${ENV_NAME}"
 
