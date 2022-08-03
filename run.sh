@@ -8,12 +8,19 @@ ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
 
+# global vars that shouldn't be reset
+LAST_MIGRATION_DATE=""
+LAST_COMMIT_HASH=""
+LAST_COMMIT_SHORT_HASH=""
+LAST_MIGRATION_NUMBER=""
+
 # Variables set by .env file
 GLOBAL_AWS_PROFILE=""
 ENV_PROFILE=""
 SC_MIGRATION_STATE_REPO=""
 ETH_BC_NETWORK_NAME=""
 
+# global vars that can be reset
 function refresh_global_variables(){
   ROOT_PASSWORD=""
   WITH_PROFILE=""
@@ -87,15 +94,9 @@ function refresh_global_variables(){
   IPOR_COCKPIT_ENV_CONFIG_J2_PATH="${IPOR_COCKPIT_CONTAINER_DIR}/.env.j2"
   IPOR_COCKPIT_GEN_ENV_CONFIG_PATH="${IPOR_COCKPIT_DOCKERFILE_PATH}/.env"
 
-  LAST_MIGRATION_DATE=""
-  LAST_COMMIT_HASH=""
-  LAST_COMMIT_SHORT_HASH=""
-  LAST_MIGRATION_NUMBER=""
-
   CGI_IMAGE_TYPE=""
   CGI_BRANCH_NAME=""
   CGI_COMMIT_HASH=""
-  CGI_PUBLISH_ENABLED=""
 }
 
 function read_env_file() {
@@ -129,6 +130,7 @@ IS_UPDATE_COCKPIT="NO"
 IS_DUMP_ETH_BLOCKCHAIN="NO"
 IS_CREATE_GETH_IMAGE="NO"
 IS_RETAG_GETH_IMAGE="NO"
+CGI_PUBLISH_ENABLED="false"
 
 if [ $# -eq 0 ]; then
   IS_RUN="YES"
@@ -285,9 +287,9 @@ function create_env_config_file() {
   RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProviderProxy" "cockpit_data_provider_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProviderProxy" "milton_facade_data_provider_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProviderProxy" "ipor_oracle_facade_data_provider_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenDai.json" "dai_mocked_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdc.json" "usdc_mocked_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdt.json" "usdt_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "DAI" "dai_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "USDC" "usdc_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "USDT" "usdt_mocked_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdt" "milton_storage_usdt_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdc" "milton_storage_usdc_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyDai" "milton_storage_dai_address") || exit
@@ -831,6 +833,17 @@ function copy_env_files() {
   copy_ipor_migrations_dir "${ENV_NAME}"
 }
 
+function create_migrated_env_files() {
+  local SRC_ENV_NAME="${1}"
+  local TRG_ENV_NAME="${2}"
+
+  cd "${DIR}"
+
+  cp "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${TRG_ENV_NAME}")"
+  cp "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${TRG_ENV_NAME}")"
+  cp "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${TRG_ENV_NAME}")"
+}
+
 function build_and_push_docker_images() {
   local ENV_NAME="${1}"
   local COMMIT_HASH="${2}"
@@ -900,6 +913,8 @@ function create_migrated_geth_image() {
   clean_env_files "${ENV_NAME}"
 
   create_env_config "${ENV_NAME}"
+
+  create_migrated_env_files "${ETH_BC_BLOCK_PER_TRANSACTION_TAG_NAME}" "${ENV_NAME}"
 
   copy_env_files "${ENV_NAME}"
 
