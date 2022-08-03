@@ -95,7 +95,6 @@ function refresh_global_variables(){
   CGI_IMAGE_TYPE=""
   CGI_BRANCH_NAME=""
   CGI_COMMIT_HASH=""
-  CGI_PUBLISH_ENABLED=""
 }
 
 function read_env_file() {
@@ -129,6 +128,7 @@ IS_UPDATE_COCKPIT="NO"
 IS_DUMP_ETH_BLOCKCHAIN="NO"
 IS_CREATE_GETH_IMAGE="NO"
 IS_RETAG_GETH_IMAGE="NO"
+CGI_PUBLISH_ENABLED="false"
 
 if [ $# -eq 0 ]; then
   IS_RUN="YES"
@@ -834,6 +834,8 @@ function copy_env_files() {
 function create_migrated_env_files() {
   local SRC_ENV_NAME="${1}"
   local TRG_ENV_NAME="${2}"
+
+  cd "${DIR}"
 
   cp "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${TRG_ENV_NAME}")"
   cp "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${TRG_ENV_NAME}")"
