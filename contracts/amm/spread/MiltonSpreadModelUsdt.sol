@@ -8,7 +8,7 @@ import "./MiltonSpreadModel.sol";
 
 contract MiltonSpreadModelUsdt is MiltonSpreadModel {
     function _getPayFixedRegionOneBase() internal view virtual override returns (int256) {
-        return 22579085322459;
+        return 22084227524539736;
     }
 
     function _getPayFixedRegionOneSlopeForVolatility()
@@ -18,7 +18,7 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return 7872105544626250;
+        return 12233916159597158400;
     }
 
     function _getPayFixedRegionOneSlopeForMeanReversion()
@@ -28,11 +28,11 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return -1021159105931766200;
+        return -1038310995344575744;
     }
 
     function _getPayFixedRegionTwoBase() internal view virtual override returns (int256) {
-        return 252490769;
+        return 22084227524539736;
     }
 
     function _getPayFixedRegionTwoSlopeForVolatility()
@@ -42,7 +42,7 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return 7967987113640670;
+        return 12233916159597158400;
     }
 
     function _getPayFixedRegionTwoSlopeForMeanReversion()
@@ -52,11 +52,11 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return -1023150794788214100;
+        return -1038310995344575744;
     }
 
     function _getReceiveFixedRegionOneBase() internal view virtual override returns (int256) {
-        return 149091665;
+        return -3573428561;
     }
 
     function _getReceiveFixedRegionOneSlopeForVolatility()
@@ -66,7 +66,7 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return 865358669925254;
+        return 3523683519622560256;
     }
 
     function _getReceiveFixedRegionOneSlopeForMeanReversion()
@@ -76,11 +76,11 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return -1023669247563316500;
+        return -1031474802336217728;
     }
 
     function _getReceiveFixedRegionTwoBase() internal view virtual override returns (int256) {
-        return 6617956022635318;
+        return -52682824387392;
     }
 
     function _getReceiveFixedRegionTwoSlopeForVolatility()
@@ -90,7 +90,7 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return 9153953736592224;
+        return 6277464542080274432;
     }
 
     function _getReceiveFixedRegionTwoSlopeForMeanReversion()
@@ -100,6 +100,6 @@ contract MiltonSpreadModelUsdt is MiltonSpreadModel {
         override
         returns (int256)
     {
-        return -657837031764984200;
+        return 953541897049335168;
     }
 }
