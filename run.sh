@@ -8,12 +8,19 @@ ENV_FILE_NAME=".env"
 ENV_FILE="${DIR}/${ENV_FILE_NAME}"
 ENV_LOCAL_TEMPLATE_FILE="${DIR}/.env-local.j2"
 
+# global vars that shouldn't be reset
+LAST_MIGRATION_DATE=""
+LAST_COMMIT_HASH=""
+LAST_COMMIT_SHORT_HASH=""
+LAST_MIGRATION_NUMBER=""
+
 # Variables set by .env file
 GLOBAL_AWS_PROFILE=""
 ENV_PROFILE=""
 SC_MIGRATION_STATE_REPO=""
 ETH_BC_NETWORK_NAME=""
 
+# global vars that can be reset
 function refresh_global_variables(){
   ROOT_PASSWORD=""
   WITH_PROFILE=""
@@ -86,11 +93,6 @@ function refresh_global_variables(){
   IPOR_COCKPIT_CONTAINER_DIR="${CONTAINERS_DIR}/cockpit"
   IPOR_COCKPIT_ENV_CONFIG_J2_PATH="${IPOR_COCKPIT_CONTAINER_DIR}/.env.j2"
   IPOR_COCKPIT_GEN_ENV_CONFIG_PATH="${IPOR_COCKPIT_DOCKERFILE_PATH}/.env"
-
-  LAST_MIGRATION_DATE=""
-  LAST_COMMIT_HASH=""
-  LAST_COMMIT_SHORT_HASH=""
-  LAST_MIGRATION_NUMBER=""
 
   CGI_IMAGE_TYPE=""
   CGI_BRANCH_NAME=""
