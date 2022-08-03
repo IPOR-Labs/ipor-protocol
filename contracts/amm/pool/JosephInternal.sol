@@ -49,14 +49,14 @@ abstract contract JosephInternal is
 
     modifier onlyCharlieTreasuryManager() {
         require(
-            _msgSender() == _getCharlieTreasuryManager(),
+            _msgSender() == _charlieTreasuryManager,
             JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
         _;
     }
 
     modifier onlyTreasuryManager() {
-        require(_msgSender() == _getTreasuryManager(), JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+        require(_msgSender() == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
     }
 
@@ -82,10 +82,6 @@ abstract contract JosephInternal is
         return _REDEEM_LP_MAX_UTILIZATION_RATE;
     }
 
-    function _getMiltonStanleyBalanceRatio() internal view virtual returns (uint256) {
-        return _miltonStanleyBalanceRatio;
-    }
-
     function _getStanley() internal view virtual returns (IStanley) {
         return _stanley;
     }
@@ -102,22 +98,6 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function _getTreasury() internal view virtual returns (address) {
-        return _treasury;
-    }
-
-    function _getTreasuryManager() internal view virtual returns (address) {
-        return _treasuryManager;
-    }
-
-    function _getCharlieTreasury() internal view virtual returns (address) {
-        return _charlieTreasury;
-    }
-
-    function _getCharlieTreasuryManager() internal view virtual returns (address) {
-        return _charlieTreasuryManager;
-    }
-
     function rebalance() external override onlyOwner whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
@@ -125,13 +105,15 @@ abstract contract JosephInternal is
 
         uint256 ratio = IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
 
-        if (ratio > _getMiltonStanleyBalanceRatio()) {
+        uint256 miltonStanleyBalanceRatio = _miltonStanleyBalanceRatio;
+
+        if (ratio > miltonStanleyBalanceRatio) {
             uint256 assetAmount = wadMiltonAssetBalance -
-                IporMath.division(_getMiltonStanleyBalanceRatio() * totalBalance, Constants.D18);
+                IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
             _milton.depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
-                _getMiltonStanleyBalanceRatio() * totalBalance,
+                miltonStanleyBalanceRatio * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
             _getMilton().withdrawFromStanley(assetAmount);
@@ -161,7 +143,8 @@ abstract contract JosephInternal is
         whenNotPaused
         onlyTreasuryManager
     {
-        require(address(0) != _getTreasury(), JosephErrors.INCORRECT_TREASURE_TREASURER);
+        address treasury = _treasury;
+        require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetAmount,
@@ -174,7 +157,7 @@ abstract contract JosephInternal is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_getMilton()),
-            _getTreasury(),
+            treasury,
             assetAmountAssetDecimals
         );
     }
@@ -187,7 +170,9 @@ abstract contract JosephInternal is
         whenNotPaused
         onlyCharlieTreasuryManager
     {
-        require(address(0) != _getCharlieTreasury(), JosephErrors.INCORRECT_CHARLIE_TREASURER);
+        address charlieTreasury = _charlieTreasury;
+
+        require(address(0) != charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
             assetAmount,
@@ -200,7 +185,7 @@ abstract contract JosephInternal is
 
         IERC20Upgradeable(_asset).safeTransferFrom(
             address(_getMilton()),
-            _getCharlieTreasury(),
+            charlieTreasury,
             assetAmountAssetDecimals
         );
     }
@@ -214,7 +199,7 @@ abstract contract JosephInternal is
     }
 
     function getCharlieTreasury() external view override returns (address) {
-        return _getCharlieTreasury();
+        return _charlieTreasury;
     }
 
     function setCharlieTreasury(address newCharlieTreasury)
@@ -224,24 +209,24 @@ abstract contract JosephInternal is
         whenNotPaused
     {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
-        address oldCharlieTreasury = _getCharlieTreasury();
+        address oldCharlieTreasury = _charlieTreasury;
         _charlieTreasury = newCharlieTreasury;
         emit CharlieTreasuryChanged(_msgSender(), oldCharlieTreasury, newCharlieTreasury);
     }
 
     function getTreasury() external view override returns (address) {
-        return _getTreasury();
+        return _treasury;
     }
 
     function setTreasury(address newTreasury) external override onlyOwner whenNotPaused {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasury = _getTreasury();
+        address oldTreasury = _treasury;
         _treasury = newTreasury;
         emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
     }
 
     function getCharlieTreasuryManager() external view override returns (address) {
-        return _getCharlieTreasuryManager();
+        return _charlieTreasuryManager;
     }
 
     function setCharlieTreasuryManager(address newCharlieTreasuryManager)
@@ -251,7 +236,7 @@ abstract contract JosephInternal is
         whenNotPaused
     {
         require(address(0) != newCharlieTreasuryManager, IporErrors.WRONG_ADDRESS);
-        address oldCharlieTreasuryManager = _getCharlieTreasuryManager();
+        address oldCharlieTreasuryManager = _charlieTreasuryManager;
         _charlieTreasuryManager = newCharlieTreasuryManager;
         emit CharlieTreasuryManagerChanged(
             _msgSender(),
@@ -261,7 +246,7 @@ abstract contract JosephInternal is
     }
 
     function getTreasuryManager() external view override returns (address) {
-        return _getTreasuryManager();
+        return _treasuryManager;
     }
 
     function setTreasuryManager(address newTreasuryManager)
@@ -271,7 +256,7 @@ abstract contract JosephInternal is
         whenNotPaused
     {
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _getTreasuryManager();
+        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = newTreasuryManager;
         emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
     }
@@ -323,7 +308,7 @@ abstract contract JosephInternal is
     }
 
     function getMiltonStanleyBalanceRatio() external view override returns (uint256) {
-        return _getMiltonStanleyBalanceRatio();
+        return _miltonStanleyBalanceRatio;
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
