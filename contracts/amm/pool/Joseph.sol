@@ -18,12 +18,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
         return _calculateExchangeRate(block.timestamp);
     }
 
-    //@param assetAmount underlying token amount represented in decimals specific for underlying asset
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
         _provideLiquidity(assetAmount, _getDecimals(), block.timestamp);
     }
 
-    //@param ipTokenAmount IpToken amount represented in 18 decimals
     function redeem(uint256 ipTokenAmount) external override whenNotPaused {
         _redeem(ipTokenAmount, block.timestamp);
     }
@@ -56,7 +54,6 @@ abstract contract Joseph is JosephInternal, IJoseph {
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
-    //@param assetAmount in decimals like asset
     function _provideLiquidity(
         uint256 assetAmount,
         uint256 assetDecimals,

@@ -45,8 +45,8 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _OPENING_FEE_RATE = 1e16;
 
-    //@notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
-    //below value define how big pie going to Treasury Balance
+    /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
+    /// below value define how big pie going to Treasury Balance
     uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 0;
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
@@ -65,10 +65,10 @@ abstract contract MiltonInternal is
 
     address internal _asset;
     address internal _joseph;
+    IStanley internal _stanley;
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IStanley internal _stanley;
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -230,7 +230,7 @@ abstract contract MiltonInternal is
     }
 
     function getMiltonSpreadModel() external view override returns (address) {
-        return address(_getMiltonSpreadModel());
+        return address(_miltonSpreadModel);
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
@@ -307,10 +307,6 @@ abstract contract MiltonInternal is
 
     function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
         return _miltonStorage;
-    }
-
-    function _getMiltonSpreadModel() internal view virtual returns (IMiltonSpreadModel) {
-        return _miltonSpreadModel;
     }
 
     function _getStanley() internal view virtual returns (IStanley) {
