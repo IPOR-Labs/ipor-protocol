@@ -287,9 +287,9 @@ function create_env_config_file() {
   RESULT=$(set_smart_contract_address_from_json_file "CockpitDataProviderProxy" "cockpit_data_provider_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonFacadeDataProviderProxy" "milton_facade_data_provider_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "IporOracleFacadeDataProviderProxy" "ipor_oracle_facade_data_provider_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenDai.json" "dai_mocked_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdc.json" "usdc_mocked_address") || exit
-  RESULT=$(set_smart_contract_address_from_json_file "MockTestnetTokenUsdt.json" "usdt_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "DAI" "dai_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "USDC" "usdc_mocked_address") || exit
+  RESULT=$(set_smart_contract_address_from_json_file "USDT" "usdt_mocked_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdt" "milton_storage_usdt_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyUsdc" "milton_storage_usdc_address") || exit
   RESULT=$(set_smart_contract_address_from_json_file "MiltonStorageProxyDai" "milton_storage_dai_address") || exit
