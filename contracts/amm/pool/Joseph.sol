@@ -14,38 +14,6 @@ abstract contract Joseph is JosephInternal, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    function initialize(
-        address initAsset,
-        address ipToken,
-        address milton,
-        address miltonStorage,
-        address stanley
-    ) public initializer {
-        __Ownable_init();
-
-        require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
-        require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(milton != address(0), IporErrors.WRONG_ADDRESS);
-        require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == ERC20Upgradeable(initAsset).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
-
-        IIpToken iIpToken = IIpToken(ipToken);
-        require(initAsset == iIpToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
-
-        _asset = initAsset;
-        _ipToken = iIpToken;
-        _milton = IMiltonInternal(milton);
-        _miltonStorage = IMiltonStorage(miltonStorage);
-        _stanley = IStanley(stanley);
-        _miltonStanleyBalanceRatio = 85e16;
-        _maxLiquidityPoolBalance = 2_000_000;
-        _maxLpAccountContribution = 50_000;
-    }
-
     function calculateExchangeRate() external view override returns (uint256) {
         return _calculateExchangeRate(block.timestamp);
     }
@@ -73,7 +41,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 ipTokenTotalSupply = _getIpToken().totalSupply();
 
-        if (ipTokenTotalSupply != 0) {
+        if (ipTokenTotalSupply > 0) {
             return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
         } else {
             return Constants.D18;
@@ -82,7 +50,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
     function _checkVaultReservesRatio() internal view returns (uint256) {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
-        require(totalBalance != 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
+        require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
         return IporMath.division(wadMiltonAssetBalance * Constants.D18, totalBalance);
     }
 
@@ -96,7 +64,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
-        require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
 
@@ -125,14 +93,14 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
         require(
-            ipTokenAmount != 0 && ipTokenAmount <= _getIpToken().balanceOf(_msgSender()),
+            ipTokenAmount > 0 && ipTokenAmount <= _getIpToken().balanceOf(_msgSender()),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
         IMiltonInternal milton = _getMilton();
 
         uint256 exchangeRate = _calculateExchangeRate(timestamp);
 
-        require(exchangeRate != 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
+        require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
 
@@ -189,7 +157,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 redeemedAmount
     ) internal pure returns (uint256) {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
-        if (denominator != 0) {
+        if (denominator > 0) {
             return
                 IporMath.division(
                     totalCollateralBalance * Constants.D18,
