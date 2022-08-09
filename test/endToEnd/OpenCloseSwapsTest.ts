@@ -339,7 +339,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonUsdt.openSwapPayFixed(
                 ONE_6.mul("300"),
-                BigNumber.from("39999999999999999"),
+                BigNumber.from("59999999999999999"),
                 ONE_18.mul("10")
             );
             //then
