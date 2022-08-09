@@ -77,7 +77,7 @@ library SoapIndicatorLogic {
             swapFixedInterestRate
         );
 
-        if (newAverageInterestRate != 0) {
+        if (newAverageInterestRate > 0) {
             uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp

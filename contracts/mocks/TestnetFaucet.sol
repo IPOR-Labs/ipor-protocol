@@ -69,7 +69,7 @@ contract TestnetFaucet is
 
     function transfer(address asset, uint256 amount) external onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         ERC20Upgradeable token = ERC20Upgradeable(asset);
         uint256 maxValue = token.balanceOf(address(this));
