@@ -496,6 +496,10 @@ contract MiltonStorage is
         _unpause();
     }
 
+    function getLiquidityPoolAccountContribution(address account) external view {
+        return _liquidityPoolAccountContribution[account];
+    }
+
     function _getPositions(
         mapping(uint32 => AmmMiltonStorageTypes.IporSwap) storage swaps,
         uint32[] storage ids,
