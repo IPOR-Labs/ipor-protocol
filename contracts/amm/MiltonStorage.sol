@@ -496,7 +496,7 @@ contract MiltonStorage is
         _unpause();
     }
 
-    function getLiquidityPoolAccountContribution(address account) external view {
+    function getLiquidityPoolAccountContribution(address account) external view returns (uint256) {
         return _liquidityPoolAccountContribution[account];
     }
 
