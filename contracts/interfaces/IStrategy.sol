@@ -43,9 +43,17 @@ interface IStrategy {
     /// @param newStanley new Stanley address
     function setStanley(address newStanley) external;
 
+    /// @notice Gets Treasury address.
+    /// @return Treasury address.
+    function getTreasury() external view returns (address);
+
     /// @notice Sets new Treasury address. Function can be executed only by the smart contract Owner.
     /// @param newTreasury new Treasury address
     function setTreasury(address newTreasury) external;
+
+    /// @notice Gets new Treasury Manager address.
+    /// @return Treasury Manager address.
+    function getTreasuryManager() external view returns (address);
 
     /// @notice Sets new Treasury Manager address. Function can be executed only by the smart contract Owner.
     /// @param newTreasuryManager new Treasury Manager address

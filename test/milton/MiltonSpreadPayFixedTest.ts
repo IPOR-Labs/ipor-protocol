@@ -11,7 +11,7 @@ import {
     N1__0_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
 } from "../utils/Constants";
-import { prepareMiltonSpreadBase } from "../utils/MiltonUtils";
+import { prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
@@ -26,9 +26,9 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
     });
 
-    it("should calculate Quote Value Pay Fixed Value - Spread Premiums negative, Spread Premiums < IPOR Index", async () => {
+    it("should calculate Quote Value Pay Fixed Value - Spread Premiums positive, Spread Premiums > IPOR Index", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -52,7 +52,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("129952238730246296");
+        const expectedQuoteValue = BigNumber.from("1143541266398148366");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -62,13 +62,13 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
 
-        //Actual Quote Value cannot be higher than Index Value for this particular test case.
-        expect(accruedIpor.indexValue).to.be.gte(actualQuotedValue);
+        //Actual Index Value cannot be higher than Quote Value for this particular test case.
+        expect(accruedIpor.indexValue).to.be.lte(actualQuotedValue);
     });
 
     it("should calculate Quote Value Pay Fixed Value - Spread Premiums positive", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const liquidityPoolBalance = USD_15_000_18DEC;
         const swapCollateral = TC_TOTAL_AMOUNT_10_000_18DEC;
@@ -92,7 +92,7 @@ describe("MiltonSpreadModel - Pay Fixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("24168688996532136");
+        const expectedQuoteValue = BigNumber.from("943897359512690169");
 
         //when
         const actualQuotedValue = await miltonSpread

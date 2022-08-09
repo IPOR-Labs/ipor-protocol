@@ -113,6 +113,7 @@ interface IMilton {
         uint256 transferredToBuyer,
         /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
         uint256 transferredToLiquidator,
+        /// @notice incomeFeeValue value transferred to treasury
         uint256 incomeFeeValue
     );
 }

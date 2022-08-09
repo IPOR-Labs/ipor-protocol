@@ -14,6 +14,7 @@ export const josephDaiFactory = async (
     return upgrades.deployProxy(
         factory,
         [
+            false,
             daiAddress,
             ipTokenDaiAddress,
             miltonDaiAddress,
@@ -37,6 +38,7 @@ export const josephUsdcFactory = async (
     return upgrades.deployProxy(
         factory,
         [
+            false,
             usdcAddress,
             ipTokenUsdcAddress,
             miltonUsdcAddress,
@@ -60,6 +62,7 @@ export const josephUsdtFactory = async (
     return upgrades.deployProxy(
         factory,
         [
+            false,
             usdtAddress,
             ipTokenUsdtAddress,
             miltonUsdtAddress,

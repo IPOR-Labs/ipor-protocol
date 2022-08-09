@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "../../../../../.env" });
 const keys = require("../../../json_keys.js");
 const func = require("../../../json_func.js");
 
@@ -22,15 +23,35 @@ module.exports = async function (deployer, _network, addresses) {
     const miltonUsdcInstance = await MiltonUsdc.at(miltonUsdc);
     const miltonDaiInstance = await MiltonDai.at(miltonDai);
 
-    await miltonUsdtInstance.setJoseph(josephUsdt);
-    await miltonUsdcInstance.setJoseph(josephUsdc);
-    await miltonDaiInstance.setJoseph(josephDai);
+    if (process.env.SC_MIGRATION_INITIAL_PAUSE_FLAG_MILTON == "true") {
+        await miltonUsdtInstance.unpause();
+        await miltonUsdtInstance.setJoseph(josephUsdt);
+        await miltonUsdtInstance.setupMaxAllowanceForAsset(josephUsdt);
+        await miltonUsdtInstance.setupMaxAllowanceForAsset(stanleyUsdt);
+        await miltonUsdtInstance.pause();
 
-    await miltonUsdtInstance.setupMaxAllowanceForAsset(josephUsdt);
-    await miltonUsdcInstance.setupMaxAllowanceForAsset(josephUsdc);
-    await miltonDaiInstance.setupMaxAllowanceForAsset(josephDai);
+        await miltonUsdcInstance.unpause();
+        await miltonUsdcInstance.setJoseph(josephUsdc);
+        await miltonUsdcInstance.setupMaxAllowanceForAsset(josephUsdc);
+        await miltonUsdcInstance.setupMaxAllowanceForAsset(stanleyUsdc);
+        await miltonUsdcInstance.pause();
 
-    await miltonUsdtInstance.setupMaxAllowanceForAsset(stanleyUsdt);
-    await miltonUsdcInstance.setupMaxAllowanceForAsset(stanleyUsdc);
-    await miltonDaiInstance.setupMaxAllowanceForAsset(stanleyDai);
+        await miltonDaiInstance.unpause();
+        await miltonDaiInstance.setJoseph(josephDai);
+        await miltonDaiInstance.setupMaxAllowanceForAsset(josephDai);
+        await miltonDaiInstance.setupMaxAllowanceForAsset(stanleyDai);
+        await miltonDaiInstance.pause();
+    } else {
+        await miltonUsdtInstance.setJoseph(josephUsdt);
+        await miltonUsdcInstance.setJoseph(josephUsdc);
+        await miltonDaiInstance.setJoseph(josephDai);
+
+        await miltonUsdtInstance.setupMaxAllowanceForAsset(josephUsdt);
+        await miltonUsdcInstance.setupMaxAllowanceForAsset(josephUsdc);
+        await miltonDaiInstance.setupMaxAllowanceForAsset(josephDai);
+
+        await miltonUsdtInstance.setupMaxAllowanceForAsset(stanleyUsdt);
+        await miltonUsdcInstance.setupMaxAllowanceForAsset(stanleyUsdc);
+        await miltonDaiInstance.setupMaxAllowanceForAsset(stanleyDai);
+    }
 };

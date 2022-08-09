@@ -62,8 +62,16 @@ contract MockStrategy is IStrategy {
         _shareTokens = shareToken;
     }
 
+    function getTreasuryManager() external view override returns (address) {
+        return _treasuryManager;
+    }
+
     function setTreasuryManager(address manager) external {
         _treasuryManager = manager;
+    }
+
+    function getTreasury() external view override returns (address) {
+        return _treasury;
     }
 
     function setTreasury(address treasury) external {

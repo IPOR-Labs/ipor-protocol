@@ -27,7 +27,7 @@ import {
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
 import { prepareIporOracle } from "./IporOracleUtils";
 import {
-    MockBaseMiltonSpreadModel,
+    MockBaseMiltonSpreadModelDai,
     DaiMockedToken,
     UsdtMockedToken,
     UsdcMockedToken,
@@ -95,7 +95,7 @@ export const prepareTestData = async (
     accounts: Signer[],
     assets: AssetsType[],
     emas: BigNumber[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MiltonSpreadModel | MockSpreadModel, //data
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MiltonSpreadModel | MockSpreadModel, //data
     miltonUsdcCase: MiltonUsdcCase,
     miltonUsdtCase: MiltonUsdtCase,
     miltonDaiCase: MiltonDaiCase,
@@ -193,6 +193,7 @@ export const prepareTestData = async (
 
         miltonUsdt = await getMockMiltonUsdtCase(miltonUsdtCase);
         miltonUsdt.initialize(
+            false,
             tokenUsdt.address,
             iporOracle.address,
             miltonStorageUsdt.address,
@@ -202,6 +203,7 @@ export const prepareTestData = async (
 
         josephUsdt = await getMockJosephUsdtCase(josephCaseUsdt);
         await josephUsdt.initialize(
+            false,
             tokenUsdt.address,
             ipTokenUsdt.address,
             miltonUsdt.address,
@@ -232,6 +234,7 @@ export const prepareTestData = async (
         miltonUsdc = await getMockMiltonUsdcCase(miltonUsdcCase);
         await miltonUsdc.deployed();
         miltonUsdc.initialize(
+            false,
             tokenUsdc.address,
             iporOracle.address,
             miltonStorageUsdc.address,
@@ -241,6 +244,7 @@ export const prepareTestData = async (
 
         josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
         await josephUsdc.initialize(
+            false,
             tokenUsdc.address,
             ipTokenUsdc.address,
             miltonUsdc.address,
@@ -271,6 +275,7 @@ export const prepareTestData = async (
 
         miltonDai = await getMockMiltonDaiCase(miltonDaiCase);
         miltonDai.initialize(
+            false,
             tokenDai.address,
             iporOracle.address,
             miltonStorageDai.address,
@@ -280,6 +285,7 @@ export const prepareTestData = async (
 
         josephDai = await getMockJosephDaiCase(josephCaseDai);
         await josephDai.initialize(
+            false,
             tokenDai.address,
             ipTokenDai.address,
             miltonDai.address,
@@ -371,7 +377,7 @@ export const setupTokenDaiInitialValuesForUsers = async (users: Signer[], testDa
 export const prepareTestDataDaiCase000 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockSpreadModel | MockBaseMiltonSpreadModel, //data
+    miltonSpreadModel: MockSpreadModel | MockBaseMiltonSpreadModelDai, //data
     ema: BigNumber,
     iporOracleOption?: ItfIporOracle
 ): Promise<TestData> => {
@@ -395,7 +401,7 @@ export const prepareTestDataDaiCase000 = async (
 export const prepareTestDataDaiCase700 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel //data
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel //data
 ): Promise<TestData> => {
     return await prepareTestData(
         executionTimestamp,
@@ -415,7 +421,7 @@ export const prepareTestDataDaiCase700 = async (
 export const prepareTestDataDaiCase800 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel //data
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel //data
 ): Promise<TestData> => {
     return await prepareTestData(
         executionTimestamp,
@@ -436,7 +442,7 @@ export const prepareTestDataDaiCase800 = async (
 export const prepareTestDataDaiCase001 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel //data
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel //data
 ): Promise<TestData> => {
     return await prepareTestData(
         executionTimestamp,
@@ -457,7 +463,7 @@ export const prepareTestDataDaiCase001 = async (
 export const prepareTestDataUsdtCase000 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     return await prepareTestData(
         executionTimestamp,
@@ -478,7 +484,7 @@ export const prepareTestDataUsdtCase000 = async (
 export const prepareComplexTestDataDaiCase000 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockSpreadModel | MockBaseMiltonSpreadModel,
+    miltonSpreadModel: MockSpreadModel | MockBaseMiltonSpreadModelDai,
     ema: BigNumber,
     iporOracleOption?: ItfIporOracle
 ) => {
@@ -497,7 +503,7 @@ export const prepareComplexTestDataDaiCase000 = async (
 export const prepareComplexTestDataDaiCase700 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     const testData = (await prepareTestDataDaiCase700(
         executionTimestamp,
@@ -512,7 +518,7 @@ export const prepareComplexTestDataDaiCase700 = async (
 export const prepareComplexTestDataDaiCase800 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     const testData = (await prepareTestDataDaiCase800(
         executionTimestamp,
@@ -527,7 +533,7 @@ export const prepareComplexTestDataDaiCase800 = async (
 export const prepareComplexTestDataUsdtCase000 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     const testData = (await prepareTestDataUsdtCase000(
         executionTimestamp,
@@ -546,7 +552,7 @@ export const prepareComplexTestDataUsdtCase000 = async (
 export const prepareComplexTestDataDaiCase400 = async (
     executionTimestamp: BigNumber,
     accounts: Signer[],
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     const testData = await prepareTestData(
         executionTimestamp,

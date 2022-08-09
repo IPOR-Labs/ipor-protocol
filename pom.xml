@@ -12,13 +12,6 @@
     <url>https://www.ipor.io</url>
     <inceptionYear>2021</inceptionYear>
 
-    <licenses>
-        <license>
-            <name>TODO</name>
-            <url>TODO</url>
-        </license>
-    </licenses>
-
     <properties>
         <!-- BASICS -->
         <java.version>11</java.version>
@@ -65,11 +58,6 @@
         <system>JIRA</system>
         <url>https://ipor-labs.atlassian.net/jira/software/c/projects/IL/issues/</url>
     </issueManagement>
-
-    <ciManagement>
-        <system>TODO</system>
-        <url>TODO</url>
-    </ciManagement>
 
     <distributionManagement>
         <repository>
@@ -145,7 +133,9 @@
                         <argument>hardhat/console.sol=${PWD}/node_modules/hardhat/console.sol</argument>
                         <!-- INFO: wildcards not working here :( -->
                         <argument>${contracts.sources}/amm/Milton.sol</argument>                        
-                        <argument>${contracts.sources}/amm/spread/MiltonSpreadModel.sol</argument>
+                        <argument>${contracts.sources}/amm/spread/MiltonSpreadModelUsdt.sol</argument>
+						<argument>${contracts.sources}/amm/spread/MiltonSpreadModelUsdc.sol</argument>
+						<argument>${contracts.sources}/amm/spread/MiltonSpreadModelDai.sol</argument>
                         <argument>${contracts.sources}/amm/MiltonStorage.sol</argument>                                                                                                                       
                         <argument>${contracts.sources}/facades/cockpit/CockpitDataProvider.sol</argument>
                         <argument>${contracts.sources}/facades/MiltonFacadeDataProvider.sol</argument>                        

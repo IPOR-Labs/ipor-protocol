@@ -12,5 +12,6 @@
 -   `mainnet` - migrations specific for mainnet environment
 -   `private-testnet` - migrations specific for dev, test, localhost environments
 -   `rinkeby` - migrations specific for Rinkeby environment
+-   `goerli` - migrations specific for Goerli environment
 
 #### How to specify migration folder?

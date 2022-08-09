@@ -10,7 +10,7 @@ import {
 } from "./DataUtils";
 import { MiltonUsdcCase, MiltonUsdtCase, MiltonDaiCase } from "./MiltonUtils";
 
-import { MockBaseMiltonSpreadModel } from "../../types";
+import { MockBaseMiltonSpreadModelDai } from "../../types";
 
 import { Derivatives, countOpenSwaps } from "./SwapUtils";
 
@@ -80,7 +80,7 @@ export const testCasePagination = async (
     pageSize: BigNumber,
     expectedResponseSize: BigNumber,
     expectedError: string | null,
-    miltonSpreadModel: MockBaseMiltonSpreadModel | MockSpreadModel
+    miltonSpreadModel: MockBaseMiltonSpreadModelDai | MockSpreadModel
 ) => {
     //given
     const testData = await prepareTestData(
