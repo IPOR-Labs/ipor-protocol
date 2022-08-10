@@ -58,7 +58,11 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         _asset = asset;
         _shareToken = aToken;
         _provider = AaveLendingPoolProviderV2(addressesProvider);
-        IERC20Upgradeable(_asset).safeApprove(_provider.getLendingPool(), type(uint256).max);
+
+        address lendingPoolAddress = _provider.getLendingPool();
+        require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+        IERC20Upgradeable(_asset).safeApprove(lendingPoolAddress, type(uint256).max);
+
         _stakedAaveInterface = StakedAaveInterface(stkAave);
         _aaveIncentive = AaveIncentivesInterface(aaveIncentive);
         _stkAave = stkAave;
@@ -70,7 +74,10 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @dev get current APY, represented in 18 decimals
      */
     function getApr() external view override returns (uint256 apr) {
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
+        address lendingPoolAddress = _provider.getLendingPool();
+        require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
+
         DataTypesContract.ReserveData memory reserveData = lendingPool.getReserveData(_asset);
         apr = IporMath.division(reserveData.currentLiquidityRate, (10**9));
     }
@@ -99,7 +106,9 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         );
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
 
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(_provider.getLendingPool());
+        address lendingPoolAddress = _provider.getLendingPool();
+        require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
         lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
     }
@@ -115,7 +124,10 @@ contract StrategyAave is StrategyCore, IStrategyAave {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        AaveLendingPoolV2(_provider.getLendingPool()).withdraw(asset, amount, _msgSender());
+        address lendingPoolAddress = _provider.getLendingPool();
+        require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+
+        AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
     }
 
     /**

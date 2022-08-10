@@ -55,7 +55,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal view returns (int256 spreadPremiums) {
         require(
-            accruedBalance.liquidityPool != 0,
+            accruedBalance.liquidityPool > 0,
             MiltonErrors.LIQUIDITY_POOL_ACCRUED_IS_EQUAL_ZERO
         );
 
@@ -73,7 +73,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) internal view returns (int256 spreadPremiums) {
         require(
-            accruedBalance.liquidityPool != 0,
+            accruedBalance.liquidityPool > 0,
             MiltonErrors.LIQUIDITY_POOL_ACCRUED_IS_EQUAL_ZERO
         );
 

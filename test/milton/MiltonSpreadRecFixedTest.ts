@@ -29,7 +29,7 @@ describe("MiltonSpreadRecFixed", () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
-    it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium > IPOR Index", async () => {
+    it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums positive, Spread Premium > IPOR Index", async () => {
         //given
         const miltonSpread = await prepareMiltonSpreadBaseDai();
 
@@ -55,7 +55,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = ZERO;
+        const expectedQuoteValue = BigNumber.from("201059071562814259");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -65,8 +65,8 @@ describe("MiltonSpreadRecFixed", () => {
         //then
         expect(actualQuotedValue).to.be.eq(expectedQuoteValue);
 
-        //Actual Quote Value cannot be higher then Index Value for this particular test case.
-        expect(accruedIpor.indexValue).to.be.gte(actualQuotedValue);
+        //Actual Index Value cannot be higher than Quote Value for this particular test case.
+        expect(accruedIpor.indexValue).to.be.lte(actualQuotedValue);
     });
 
     it("should calculate Quote Value Receive Fixed Value - Spread Premiums negative, Spread Premium < IPOR Index", async () => {
@@ -95,7 +95,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("27571245122648950");
+        const expectedQuoteValue = BigNumber.from("42053416758851205");
 
         //when
         const actualQuotedValue = await miltonSpread
@@ -135,7 +135,7 @@ describe("MiltonSpreadRecFixed", () => {
             treasury: ZERO,
         };
 
-        const expectedQuoteValue = BigNumber.from("30070456967867765");
+        const expectedQuoteValue = BigNumber.from("64420587268787107");
 
         //when
         const actualQuotedValue = await miltonSpread

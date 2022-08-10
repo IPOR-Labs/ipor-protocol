@@ -20,6 +20,7 @@ jobs:
     needs: notify
     uses: ./.github/workflows/build-java.yml
     with:
+      solc-version: 0.8.15
       smart-contracts-compile-enabled: true
       build-enabled: true
       tests-enabled: true

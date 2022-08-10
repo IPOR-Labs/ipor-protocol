@@ -67,15 +67,9 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
 
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
         expect(actualBalance).to.be.equal(expectedBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(expectedBalance);
-        // expect(actualAssetBalanceCompound).to.be.equal(0);
     });
 
     it("Should should return balance from Compound - 18 decimals", async () => {
@@ -93,15 +87,9 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
 
         expect(actualBalance).to.be.equal(expectedBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(0);
-        // expect(actualAssetBalanceCompound).to.be.equal(expectedBalance);
     });
 
     it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
@@ -123,17 +111,8 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenDai.balanceOf(await admin.getAddress());
 
-        const actualAssetBalanceAave = await DAI.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await DAI.balanceOf(strategyCompound.address);
-
         expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(TC_AMOUNT_10000_USD_18DEC);
-        // expect(actualAssetBalanceCompound).to.be.equal(
-        //     TC_AMOUNT_10000_USD_18DEC
-        // );
     });
 });
 
@@ -194,15 +173,9 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await usdc.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await usdc.balanceOf(strategyCompound.address);
 
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
         expect(actualBalance).to.be.equal(expectedBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(expectedBalance);
-        // expect(actualAssetBalanceCompound).to.be.equal(0);
     });
 
     it("Should should return balance from Compound - 6 decimals", async () => {
@@ -220,15 +193,9 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
-        const actualAssetBalanceAave = await usdc.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await usdc.balanceOf(strategyCompound.address);
 
         expect(actualBalance).to.be.equal(expectedBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(0);
-        // expect(actualAssetBalanceCompound).to.be.equal(expectedBalance);
     });
 
     it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
@@ -250,16 +217,7 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
 
-        const actualAssetBalanceAave = await usdc.balanceOf(strategyAave.address);
-        const actualAssetBalanceCompound = await usdc.balanceOf(strategyCompound.address);
-
         expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
         expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);
-
-        //TODO: currently always 0 uncomment when good mocks for Aave and Compound will be in code
-        // expect(actualAssetBalanceAave).to.be.equal(TC_AMOUNT_10000_USD_18DEC);
-        // expect(actualAssetBalanceCompound).to.be.equal(
-        //     TC_AMOUNT_10000_USD_18DEC
-        // );
     });
 });
