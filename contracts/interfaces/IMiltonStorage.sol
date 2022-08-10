@@ -207,6 +207,7 @@ interface IMiltonStorage {
     /// @param liquidator address of account closing the swap
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param payoff amount that trader has earned or lost, represented in 18 decimals, can be negative.
+    /// @param incomeFeeValue amount of fee calculated based on payoff.
     /// @param closingTimestamp moment when swap was closed
     /// @param cfgMinLiquidationThresholdToCloseBeforeMaturity configuration param for closing swap validation, describes minimal change in
     /// position value required to close swap before maturity. Value represented in 18 decimals.

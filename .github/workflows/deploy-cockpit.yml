@@ -10,8 +10,8 @@ on:
         type: choice
         options:
           - ipor-dev-cockpit
-          - ipor-test-cockpit
           - ipor-rinkeby-cockpit
+          - ipor-goerli-cockpit
 
 jobs:
   notify:

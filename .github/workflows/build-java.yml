@@ -28,11 +28,16 @@ on:
             solc-version:
                 description: "Solidity complier version"
                 type: string
-                default: 0.8.15
+                default: 0.8.9
 
             ecr-repository-name:
                 description: "AWS ECR repository name for target docker image"
                 type: string
+
+            docker-image-extra-tags:
+                description: "Additional docker image tags to be added to the pushed image, separated by a comma"
+                type: string
+                default: latest
 
             smart-contracts-compile-enabled:
                 description: "Enable smart contracts compile"
@@ -58,6 +63,16 @@ on:
                 description: "Enable push docker artifacts"
                 type: boolean
                 default: false
+
+            ecr-login-enabled:
+                description: "Enable ECR login"
+                type: boolean
+                default: false
+
+            aws-region:
+                description: "AWS region used in ECR commands"
+                type: string
+                default: eu-central-1
 
 jobs:
     java:
@@ -109,14 +124,24 @@ jobs:
                   path: "**/node_modules"
                   key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
-            - name: Set up docker cache
-              # from tag: v0.0.11
-              uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
-              continue-on-error: true
-
             - name: Set up node_modules
               if: inputs.smart-contracts-compile-enabled
               run: npm install
+
+            - name: Set up AWS credentials
+              if: inputs.ecr-login-enabled
+              # from tag: v1.6.1
+              uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: ${{ inputs.aws-region }}
+
+            - name: Login to ECR
+              if: inputs.ecr-login-enabled
+              id: login-ecr
+              # from tag: v1.4.0
+              uses: aws-actions/amazon-ecr-login@3d4e073ce6a6845ed27b30a0fe05b6e22c80ac6b
 
             - name: Build
               if: inputs.build-enabled
@@ -151,5 +176,5 @@ jobs:
                   secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   account_id: ${{ secrets.AWS_ACCOUNT_ID }}
                   repo: ${{ inputs.ecr-repository-name }}
-                  region: eu-central-1
-                  tags: latest,${{ github.sha }}
+                  region: ${{ inputs.aws-region }}
+                  tags: ${{ github.sha }},${{ inputs.docker-image-extra-tags }}

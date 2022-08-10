@@ -1,13 +1,13 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockBaseMiltonSpreadModel } from "../../types";
-import { prepareMockMiltonSpreadModel, prepareMiltonSpreadBase } from "../utils/MiltonUtils";
+import { MockBaseMiltonSpreadModelDai } from "../../types";
+import { prepareMockMiltonSpreadModelDai, prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
 describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", () => {
-    let miltonSpreadModel: MockBaseMiltonSpreadModel;
+    let miltonSpreadModel: MockBaseMiltonSpreadModelDai;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -18,16 +18,16 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockMiltonSpreadModel();
+        miltonSpreadModel = await prepareMockMiltonSpreadModelDai();
     });
 
     it("should calculate spread - Volatility And Mean Reversion - Pay Fixed - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("7913818016227369189");
+        const expectedResult = BigNumber.from("59002984759871816032");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -41,11 +41,11 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
     it("should calculate spread - Volatility And Mean Reversion - Receive Fixed - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("-34030932527761379");
+        const expectedResult = BigNumber.from("21380627139646475976");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -60,11 +60,11 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
     it("should calculate spread - Volatility And Mean Reversion, Pay Fixed - Region One - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("486966281453281400");
+        const expectedResult = BigNumber.from("-6208105803306950336");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -79,11 +79,11 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
     it("should calculate spread - Volatility And Mean Reversion, Receive Fixed - Region One - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("-34030932527761379");
+        const expectedResult = BigNumber.from("30754812898208943148");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -98,11 +98,11 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
     it("should calculate spread - Volatility And Mean Reversion, Pay Fixed - Region Two - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("7913818016227369189");
+        const expectedResult = BigNumber.from("59002984759871816032");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -117,11 +117,11 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
     it("should calculate spread - Volatility And Mean Reversion, Receive Fixed - Region Two - Simple Case 1", async () => {
         //given
-        const miltonSpread = await prepareMiltonSpreadBase();
+        const miltonSpread = await prepareMiltonSpreadBaseDai();
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("3723932533749678286");
+        const expectedResult = BigNumber.from("21380627139646475976");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)

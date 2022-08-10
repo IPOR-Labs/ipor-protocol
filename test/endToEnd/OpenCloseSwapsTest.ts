@@ -1,7 +1,7 @@
 import hre from "hardhat";
 import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
-import { N0__1_18DEC, N0__01_18DEC, USD_10_000_6DEC, USD_100_000_6DEC } from "../utils/Constants";
+import { N0__01_18DEC } from "../utils/Constants";
 import {
     ERC20,
     TestnetFaucet,
@@ -135,7 +135,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonDai.openSwapPayFixed(
                 ONE_18.mul("100"),
-                BigNumber.from("9").mul(N0__1_18DEC),
+                BigNumber.from("90000000000000000"),
                 ONE_18.mul("10")
             );
             //then
@@ -339,7 +339,7 @@ describe("Open/Close Swap", function () {
             //when
             await miltonUsdt.openSwapPayFixed(
                 ONE_6.mul("300"),
-                BigNumber.from("39999999999999999"),
+                BigNumber.from("59999999999999999"),
                 ONE_18.mul("10")
             );
             //then

@@ -1,16 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+/// @title Errors which occur inside Milton's method execution.
 library MiltonErrors {
     // 300-399-milton
-    //@notice Liquidity Pool balance is equal 0
+    /// @notice Liquidity Pool balance is equal 0.
     string public constant LIQUIDITY_POOL_IS_EMPTY = "IPOR_300";
 
+    /// @notice Liquidity Pool balance is too low, should be equal or higher than 0.
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
+    /// @notice Liquidity Pool Utilization exceeded. Liquidity Pool utilization is higher than configured in Milton maximum liquidity pool utilization.
     string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
 
-    //@notice Liquidity Pool Utilization Per Leg exceeded
+    /// @notice Liquidity Pool Utilization Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in Milton maximu liquidity pool utilization per leg.
     string public constant LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_303";
 
     /// @notice Liquidity Pool Balance is too high
@@ -19,7 +22,7 @@ library MiltonErrors {
     /// @notice Liquidity Pool account contribution is too high.
     string public constant LP_ACCOUNT_CONTRIBUTION_IS_TOO_HIGH = "IPOR_305";
 
-	/// @notice Swap id used in input has incorrect value (like 0) or not exists.
+    /// @notice Swap id used in input has incorrect value (like 0) or not exists.
     string public constant INCORRECT_SWAP_ID = "IPOR_306";
 
     /// @notice Swap has incorrect status.

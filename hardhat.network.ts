@@ -78,15 +78,8 @@ if (mnemonic) {
 }
 
 if (infuraApiKey && mnemonic) {
-    networks.kovan = {
-        url: `https://kovan.infura.io/v3/${infuraApiKey}`,
-        accounts: {
-            mnemonic,
-        },
-    };
-
-    networks.ropsten = {
-        url: `https://ropsten.infura.io/v3/${infuraApiKey}`,
+    networks.goerli = {
+        url: `https://goerli.infura.io/v3/${infuraApiKey}`,
         accounts: {
             mnemonic,
         },

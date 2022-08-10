@@ -12,29 +12,56 @@ jobs:
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-  build-1:
+  build-sc:
     needs: notify
     uses: ./.github/workflows/build-smart-contracts.yml
 
-  build-2:
+  build-java:
     needs: notify
     uses: ./.github/workflows/build-java.yml
     with:
+      solc-version: 0.8.15
       smart-contracts-compile-enabled: true
       build-enabled: true
       tests-enabled: true
       publish-jar-enabled: false
       push-docker-enabled: false
 
+  build-geth-itf:
+    needs: notify
+    uses: ./.github/workflows/build-geth-image.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    with:
+      image-type: itf
+      build-enabled: true
+      push-docker-enabled: false
+      retag-docker-enabled: false
+
+  build-geth-s0-s12:
+    needs: notify
+    uses: ./.github/workflows/build-geth-image.yml
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    with:
+      image-type: s0/s12
+      build-enabled: true
+      push-docker-enabled: false
+      retag-docker-enabled: false
+
   report:
     if: ${{ always() }}
     needs:
       - notify
-      - build-1
-      - build-2
+      - build-sc
+      - build-java
+      - build-geth-itf
+      - build-geth-s0-s12
     uses: ./.github/workflows/report-slack.yml
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     with:
-      success: ${{ needs.build-1.result == 'success' && needs.build-2.result == 'success' }}
+      success: ${{ needs.build-sc.result == 'success' && needs.build-java.result == 'success' && needs.build-geth-itf.result == 'success' && needs.build-geth-s0-s12.result == 'success' }}
       slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}

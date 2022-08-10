@@ -30,6 +30,7 @@ describe("MiltonConfiguration", () => {
         await usdt.setDecimals(BigNumber.from("6"));
 
         await miltonUsdt.initialize(
+            false,
             usdt.address, // we check only this position the rest could be random
             usdt.address,
             usdt.address,
@@ -50,6 +51,7 @@ describe("MiltonConfiguration", () => {
         await usdc.setDecimals(BigNumber.from("6"));
 
         await miltonUsdc.initialize(
+            false,
             usdc.address, // we check only this position the rest could be random
             usdc.address,
             usdc.address,
@@ -69,6 +71,7 @@ describe("MiltonConfiguration", () => {
         await dai.setDecimals(BigNumber.from("18"));
         // when
         await miltonDai.initialize(
+            false,
             dai.address, // we check only this position the rest could be random
             dai.address,
             dai.address,
@@ -90,6 +93,7 @@ describe("MiltonConfiguration", () => {
 
         await expect(
             miltonUsdt.initialize(
+                false,
                 usdt.address, // we check only this position the rest could be random
                 usdt.address,
                 usdt.address,
@@ -109,6 +113,7 @@ describe("MiltonConfiguration", () => {
 
         await expect(
             miltonUsdc.initialize(
+                false,
                 usdc.address, // we check only this position the rest could be random
                 usdc.address,
                 usdc.address,
@@ -128,6 +133,7 @@ describe("MiltonConfiguration", () => {
 
         await expect(
             miltonDai.initialize(
+                false,
                 dai.address, // we check only this position the rest could be random
                 dai.address,
                 dai.address,
@@ -195,13 +201,13 @@ describe("MiltonConfiguration", () => {
         //when
         const actualValue = await miltonConfiguration.getLiquidationDepositAmount();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("50"));
+        expect(actualValue).to.be.eq(BigNumber.from("25"));
     });
-	it("should setup init value for Liquidation Deposit Amount - method 2", async () => {
+    it("should setup init value for Liquidation Deposit Amount - method 2", async () => {
         //when
         const actualValue = await miltonConfiguration.getWadLiquidationDepositAmount();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("50").mul(N1__0_18DEC));
+        expect(actualValue).to.be.eq(BigNumber.from("25").mul(N1__0_18DEC));
     });
     it("should setup init value for Max Leveragey Value", async () => {
         //when

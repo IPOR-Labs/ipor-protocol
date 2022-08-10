@@ -1,44 +1,44 @@
 import hre from "hardhat";
 import chai from "chai";
-import { ItfMiltonSpreadModel } from "../../types";
+import { ItfMiltonSpreadModelDai } from "../../types";
 import { N0__01_18DEC } from "../utils/Constants";
 const { expect } = chai;
 
-describe("MiltonSpreadRecFixed", () => {
-    let miltonSpreadModel: ItfMiltonSpreadModel;
+describe("ITF MiltonSpreadModel", () => {
+    let miltonSpreadModelDai: ItfMiltonSpreadModelDai;
 
     beforeEach(async () => {
-        const MockSpreadModel = await hre.ethers.getContractFactory("ItfMiltonSpreadModel");
-        miltonSpreadModel = (await MockSpreadModel.deploy()) as ItfMiltonSpreadModel;
+        const MockSpreadModel = await hre.ethers.getContractFactory("ItfMiltonSpreadModelDai");
+        miltonSpreadModelDai = (await MockSpreadModel.deploy()) as ItfMiltonSpreadModelDai;
     });
 
-    it("tst", async () => {
+    it("should check if setup method works, DAI", async () => {
         // given
-        const payFixedRegionOneBaseBefore = await miltonSpreadModel.getPayFixedRegionOneBase();
+        const payFixedRegionOneBaseBefore = await miltonSpreadModelDai.getPayFixedRegionOneBase();
         const payFixedRegionOneSlopeForVolatilityBefore =
-            await miltonSpreadModel.getPayFixedRegionOneSlopeForVolatility();
+            await miltonSpreadModelDai.getPayFixedRegionOneSlopeForVolatility();
         const payFixedRegionOneSlopeForMeanReversionBefore =
-            await miltonSpreadModel.getPayFixedRegionOneSlopeForMeanReversion();
-        const payFixedRegionTwoBaseBefore = await miltonSpreadModel.getPayFixedRegionTwoBase();
+            await miltonSpreadModelDai.getPayFixedRegionOneSlopeForMeanReversion();
+        const payFixedRegionTwoBaseBefore = await miltonSpreadModelDai.getPayFixedRegionTwoBase();
         const payFixedRegionTwoSlopeForVolatilityBefore =
-            await miltonSpreadModel.getPayFixedRegionTwoSlopeForVolatility();
+            await miltonSpreadModelDai.getPayFixedRegionTwoSlopeForVolatility();
         const payFixedRegionTwoSlopeForMeanReversionBefore =
-            await miltonSpreadModel.getPayFixedRegionTwoSlopeForMeanReversion();
+            await miltonSpreadModelDai.getPayFixedRegionTwoSlopeForMeanReversion();
         const receiveFixedRegionOneBaseBefore =
-            await miltonSpreadModel.getReceiveFixedRegionOneBase();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneBase();
         const receiveFixedRegionOneSlopeForVolatilityBefore =
-            await miltonSpreadModel.getReceiveFixedRegionOneSlopeForVolatility();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneSlopeForVolatility();
         const receiveFixedRegionOneSlopeForMeanReversionBefore =
-            await miltonSpreadModel.getReceiveFixedRegionOneSlopeForMeanReversion();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneSlopeForMeanReversion();
         const receiveFixedRegionTwoBaseBefore =
-            await miltonSpreadModel.getReceiveFixedRegionTwoBase();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoBase();
         const receiveFixedRegionTwoSlopeForVolatilityBefore =
-            await miltonSpreadModel.getReceiveFixedRegionTwoSlopeForVolatility();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoSlopeForVolatility();
         const receiveFixedRegionTwoSlopeForMeanReversionBefore =
-            await miltonSpreadModel.getReceiveFixedRegionTwoSlopeForMeanReversion();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         // when
-        await miltonSpreadModel.setupModelParams(
+        await miltonSpreadModelDai.setupModelParams(
             N0__01_18DEC,
             N0__01_18DEC,
             N0__01_18DEC,
@@ -53,28 +53,28 @@ describe("MiltonSpreadRecFixed", () => {
             N0__01_18DEC
         );
         // then
-        const payFixedRegionOneBaseAfter = await miltonSpreadModel.getPayFixedRegionOneBase();
+        const payFixedRegionOneBaseAfter = await miltonSpreadModelDai.getPayFixedRegionOneBase();
         const payFixedRegionOneSlopeForVolatilityAfter =
-            await miltonSpreadModel.getPayFixedRegionOneSlopeForVolatility();
+            await miltonSpreadModelDai.getPayFixedRegionOneSlopeForVolatility();
         const payFixedRegionOneSlopeForMeanReversionAfter =
-            await miltonSpreadModel.getPayFixedRegionOneSlopeForMeanReversion();
-        const payFixedRegionTwoBaseAfter = await miltonSpreadModel.getPayFixedRegionTwoBase();
+            await miltonSpreadModelDai.getPayFixedRegionOneSlopeForMeanReversion();
+        const payFixedRegionTwoBaseAfter = await miltonSpreadModelDai.getPayFixedRegionTwoBase();
         const payFixedRegionTwoSlopeForVolatilityAfter =
-            await miltonSpreadModel.getPayFixedRegionTwoSlopeForVolatility();
+            await miltonSpreadModelDai.getPayFixedRegionTwoSlopeForVolatility();
         const payFixedRegionTwoSlopeForMeanReversionAfter =
-            await miltonSpreadModel.getPayFixedRegionTwoSlopeForMeanReversion();
+            await miltonSpreadModelDai.getPayFixedRegionTwoSlopeForMeanReversion();
         const receiveFixedRegionOneBaseAfter =
-            await miltonSpreadModel.getReceiveFixedRegionOneBase();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneBase();
         const receiveFixedRegionOneSlopeForVolatilityAfter =
-            await miltonSpreadModel.getReceiveFixedRegionOneSlopeForVolatility();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneSlopeForVolatility();
         const receiveFixedRegionOneSlopeForMeanReversionAfter =
-            await miltonSpreadModel.getReceiveFixedRegionOneSlopeForMeanReversion();
+            await miltonSpreadModelDai.getReceiveFixedRegionOneSlopeForMeanReversion();
         const receiveFixedRegionTwoBaseAfter =
-            await miltonSpreadModel.getReceiveFixedRegionTwoBase();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoBase();
         const receiveFixedRegionTwoSlopeForVolatilityAfter =
-            await miltonSpreadModel.getReceiveFixedRegionTwoSlopeForVolatility();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoSlopeForVolatility();
         const receiveFixedRegionTwoSlopeForMeanReversionAfter =
-            await miltonSpreadModel.getReceiveFixedRegionTwoSlopeForMeanReversion();
+            await miltonSpreadModelDai.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         expect(payFixedRegionOneBaseBefore).to.be.not.equal(N0__01_18DEC);
         expect(payFixedRegionOneSlopeForVolatilityBefore).to.be.not.equal(N0__01_18DEC);

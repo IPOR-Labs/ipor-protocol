@@ -61,6 +61,7 @@ abstract contract JosephInternal is
     }
 
     function initialize(
+        bool paused,
         address initAsset,
         address ipToken,
         address milton,
@@ -78,6 +79,10 @@ abstract contract JosephInternal is
             _getDecimals() == ERC20Upgradeable(initAsset).decimals(),
             IporErrors.WRONG_DECIMALS
         );
+
+        if (paused) {
+            _pause();
+        }
 
         IIpToken iipToken = IIpToken(ipToken);
         require(initAsset == iipToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
