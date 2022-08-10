@@ -80,7 +80,7 @@ abstract contract Stanley is
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
-        require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
 
         (
@@ -114,7 +114,7 @@ abstract contract Stanley is
         onlyMilton
         returns (uint256 withdrawnAmount, uint256 balance)
     {
-        require(amount != 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         IIvToken ivToken = _ivToken;
 
@@ -253,7 +253,7 @@ abstract contract Stanley is
 
         uint256 assetBalanceStanley = ERC20Upgradeable(_asset).balanceOf(address(this));
 
-        if (assetBalanceStanley != 0) {
+        if (assetBalanceStanley > 0) {
             IERC20Upgradeable(_asset).safeTransfer(_msgSender(), assetBalanceStanley);
             uint256 wadAssetBalanceStanley = IporMath.convertToWad(
                 assetBalanceStanley,
@@ -427,7 +427,7 @@ abstract contract Stanley is
         uint256 exchangeRate,
         bool transfer
     ) internal nonReentrant {
-        if (amount != 0) {
+        if (amount > 0) {
             IStrategy(strategyAddress).withdraw(amount);
 
             IERC20Upgradeable asset = IERC20Upgradeable(_asset);

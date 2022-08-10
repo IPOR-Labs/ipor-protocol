@@ -317,6 +317,7 @@ abstract contract MiltonInternal is
         IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
 
         uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
+		
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();

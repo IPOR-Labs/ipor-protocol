@@ -1,155 +1,184 @@
 name: Build java
 
 on:
-    workflow_call:
-        secrets:
-            CI_GITHUB_ACTOR:
-                required: false
-            CI_GITHUB_TOKEN:
-                required: false
-            AWS_ACCESS_KEY_ID:
-                required: false
-            AWS_SECRET_ACCESS_KEY:
-                required: false
-            AWS_ACCOUNT_ID:
-                required: false
+  workflow_call:
 
-        inputs:
-            java-version:
-                description: "Java SDK compiler version"
-                type: string
-                default: 11
+    secrets:
+      CI_GITHUB_ACTOR:
+        required: false
+      CI_GITHUB_TOKEN:
+        required: false
+      AWS_ACCESS_KEY_ID:
+        required: false
+      AWS_SECRET_ACCESS_KEY:
+        required: false
+      AWS_ACCOUNT_ID:
+        required: false
 
-            mvn-version:
-                description: "Maven version"
-                type: string
-                default: 3.8.4
+    inputs:
 
-            solc-version:
-                description: "Solidity complier version"
-                type: string
-                default: 0.8.15
+      java-version:
+        description: 'Java SDK compiler version'
+        type: string
+        default: 11
 
-            ecr-repository-name:
-                description: "AWS ECR repository name for target docker image"
-                type: string
+      mvn-version:
+        description: 'Maven version'
+        type: string
+        default: 3.8.4
 
-            smart-contracts-compile-enabled:
-                description: "Enable smart contracts compile"
-                type: boolean
-                default: false
+      solc-version:
+        description: 'Solidity complier version'
+        type: string
+        default: 0.8.9
 
-            build-enabled:
-                description: "Enable build"
-                type: boolean
-                default: true
+      ecr-repository-name:
+        description: 'AWS ECR repository name for target docker image'
+        type: string
 
-            tests-enabled:
-                description: "Enable tests"
-                type: boolean
-                default: true
+      docker-image-extra-tags:
+        description: 'Additional docker image tags to be added to the pushed image, separated by a comma'
+        type: string
+        default: latest
 
-            publish-jar-enabled:
-                description: "Enable publish java jar artifacts"
-                type: boolean
-                default: false
+      smart-contracts-compile-enabled:
+        description: 'Enable smart contracts compile'
+        type: boolean
+        default: false
 
-            push-docker-enabled:
-                description: "Enable push docker artifacts"
-                type: boolean
-                default: false
+      build-enabled:
+        description: 'Enable build'
+        type: boolean
+        default: true
+
+      tests-enabled:
+        description: 'Enable tests'
+        type: boolean
+        default: true
+
+      publish-jar-enabled:
+        description: 'Enable publish java jar artifacts'
+        type: boolean
+        default: false
+
+      push-docker-enabled:
+        description: 'Enable push docker artifacts'
+        type: boolean
+        default: false
+
+      ecr-login-enabled:
+        description: 'Enable ECR login'
+        type: boolean
+        default: false
+
+      aws-region:
+        description: 'AWS region used in ECR commands'
+        type: string
+        default: eu-central-1
 
 jobs:
-    java:
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-            packages: write
 
-        steps:
-            - name: Set up solidity compiler
-              if: inputs.smart-contracts-compile-enabled
-              run: |
-                  python -m pip install --upgrade --no-cache-dir solc-select
-                  solc-select install ${{ inputs.solc-version }}
-                  solc-select use ${{ inputs.solc-version }}
-              shell: bash
+  java:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
-            - name: Set up java
-              # from tag: v2.5.0
-              uses: actions/setup-java@f0bb91606209742fe3ea40199be2f3ef195ecabf
-              with:
-                  java-version: ${{ inputs.java-version }}
-                  distribution: temurin
-                  server-id: github
-                  settings-path: ${{ github.workspace }}
+    steps:
 
-            - name: Set up maven
-              # from tag: v4.2
-              uses: stCarolas/setup-maven@7060d72b50fbf2389a16d6f66a9c7d4d9ece5d36
-              with:
-                  maven-version: ${{ inputs.mvn-version }}
+      - name: Set up solidity compiler
+        if: inputs.smart-contracts-compile-enabled
+        run: |
+          python -m pip install --upgrade --no-cache-dir solc-select
+          solc-select install ${{ inputs.solc-version }}
+          solc-select use ${{ inputs.solc-version }}
+        shell: bash
 
-            - name: Checkout
-              # from tag: v3.0.0
-              uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+      - name: Set up java
+        # from tag: v2.5.0
+        uses: actions/setup-java@f0bb91606209742fe3ea40199be2f3ef195ecabf
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: temurin
+          server-id: github
+          settings-path: ${{ github.workspace }}
 
-            - name: Set up maven repository cache
-              # from tag: v2.1.7
-              uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
-              with:
-                  path: ~/.m2/repository
-                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      - name: Set up maven
+        # from tag: v4.2
+        uses: stCarolas/setup-maven@7060d72b50fbf2389a16d6f66a9c7d4d9ece5d36
+        with:
+          maven-version: ${{ inputs.mvn-version }}
 
-            - name: Set up node_modules cache
-              if: inputs.smart-contracts-compile-enabled
-              # from tag: v2.1.7
-              uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
-              with:
-                  path: "**/node_modules"
-                  key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+      - name: Checkout
+        # from tag: v3.0.0
+        uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
 
-            - name: Set up docker cache
-              # from tag: v0.0.11
-              uses: satackey/action-docker-layer-caching@46d2c640b1d8ef50d185452ad6fb324e6bd1d052
-              continue-on-error: true
+      - name: Set up maven repository cache
+        # from tag: v2.1.7
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
 
-            - name: Set up node_modules
-              if: inputs.smart-contracts-compile-enabled
-              run: npm install
+      - name: Set up node_modules cache
+        if: inputs.smart-contracts-compile-enabled
+        # from tag: v2.1.7
+        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
 
-            - name: Build
-              if: inputs.build-enabled
-              run: mvn clean package -B -ntp -s '${{ github.workspace }}/settings.xml' -DskipTests -DskipITs --update-snapshots
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
-                  CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+      - name: Set up node_modules
+        if: inputs.smart-contracts-compile-enabled
+        run: npm install
 
-            - name: Tests
-              if: inputs.tests-enabled
-              run: mvn test -B -ntp -s '${{ github.workspace }}/settings.xml'
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
-                  CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+      - name: Set up AWS credentials
+        if: inputs.ecr-login-enabled
+        # from tag: v1.6.1
+        uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ inputs.aws-region }}
 
-            - name: Publish jars
-              if: inputs.publish-jar-enabled
-              run: mvn deploy -B -ntp -s '${{ github.workspace }}/settings.xml' -DskipTests -DskipITs
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
-                  CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+      - name: Login to ECR
+        if: inputs.ecr-login-enabled
+        id: login-ecr
+        # from tag: v1.4.0
+        uses: aws-actions/amazon-ecr-login@3d4e073ce6a6845ed27b30a0fe05b6e22c80ac6b
 
-            - name: Push docker
-              if: inputs.push-docker-enabled
-              # from tag: v4
-              uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
-              with:
-                  access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                  secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                  account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-                  repo: ${{ inputs.ecr-repository-name }}
-                  region: eu-central-1
-                  tags: latest,${{ github.sha }}
+      - name: Build
+        if: inputs.build-enabled
+        run: mvn clean package -B -ntp -s '${{ github.workspace }}/settings.xml' -DskipTests -DskipITs --update-snapshots
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
+          CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
+      - name: Tests
+        if: inputs.tests-enabled
+        run: mvn test -B -ntp -s '${{ github.workspace }}/settings.xml'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
+          CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
+      - name: Publish jars
+        if: inputs.publish-jar-enabled
+        run: mvn deploy -B -ntp -s '${{ github.workspace }}/settings.xml' -DskipTests -DskipITs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_GITHUB_ACTOR: ${{ secrets.CI_GITHUB_ACTOR }}
+          CI_GITHUB_TOKEN: ${{ secrets.CI_GITHUB_TOKEN }}
+
+      - name: Push docker
+        if: inputs.push-docker-enabled
+        # from tag: v4
+        uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
+        with:
+          access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+          repo: ${{ inputs.ecr-repository-name }}
+          region: ${{ inputs.aws-region }}
+          tags: ${{ github.sha }},${{ inputs.docker-image-extra-tags }}
