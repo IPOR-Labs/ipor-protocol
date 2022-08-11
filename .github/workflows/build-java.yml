@@ -28,7 +28,7 @@ on:
             solc-version:
                 description: "Solidity complier version"
                 type: string
-                default: 0.8.9
+                default: 0.8.15
 
             ecr-repository-name:
                 description: "AWS ECR repository name for target docker image"
