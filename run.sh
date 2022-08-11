@@ -971,9 +971,9 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
   cd "${DIR}"
   LAST_MIGRATION_NUMBER=$(get_last_migration_number "${ENV_PROFILE}")
 
-  profile_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}"
-  migration_date_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
-  actual_state_dir="${profile_dir}/actual_state"
+  profile_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/${SC_REPO}"
+  migration_date_dir="${profile_dir}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
+  current_state_dir="${profile_dir}/actual_state"
 
   echo "Copy migration state to: ${migration_date_dir}"
 
@@ -982,25 +982,38 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
   git pull
 
   cd "${DIR}"
-  mkdir -p "${actual_state_dir}"
-  mkdir -p "${migration_date_dir}/logs"
 
   create_contracts_zip
+
+  mkdir -p "${migration_date_dir}/logs"
 
   cp -R ".logs/${ENV_PROFILE}/compile/${LAST_MIGRATION_DATE}_compile.log" "${migration_date_dir}/logs"
   cp -R ".logs/${ENV_PROFILE}/migrate/${LAST_MIGRATION_DATE}_migrate.log" "${migration_date_dir}/logs"
   cp -R "${IPOR_MIGRATION_STATE_DIR}/" "${migration_date_dir}"
-  cp -R "${IPOR_MIGRATION_STATE_DIR}/" "${actual_state_dir}"
   cp -R .openzeppelin/ "${migration_date_dir}"
-  cp -R .openzeppelin/ "${actual_state_dir}"
+
   cp "${ENV_CONTRACTS_ZIP_DEST}" "${migration_date_dir}/${ENV_CONTRACTS_FILE_NAME}"
 
   cd "${SC_MIGRATION_STATE_REPO_DIR}"
-  echo "Git add: ${SC_MIGRATION_STATE_REPO}"
+  echo "Git add: ${SC_MIGRATION_STATE_REPO} - details"
   git add .
 
-  echo "Git commit: ${SC_MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
-  git commit -m "Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE}"
+  echo "Git commit: ${SC_MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE} - details"
+  git commit -m "Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE} - details"
+
+  cd "${DIR}"
+
+  mkdir -p "${current_state_dir}"
+
+  cp -R "${IPOR_MIGRATION_STATE_DIR}/" "${current_state_dir}"
+  cp -R .openzeppelin/ "${current_state_dir}"
+
+  cd "${SC_MIGRATION_STATE_REPO_DIR}"
+  echo "Git add: ${SC_MIGRATION_STATE_REPO} - current state"
+  git add .
+
+  echo "Git commit: ${SC_MIGRATION_STATE_REPO} | with msg: Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE} - current state"
+  git commit -m "Migration - ${ENV_PROFILE} - ${LAST_MIGRATION_DATE} - current state"
 
   echo "Git push: ${SC_MIGRATION_STATE_REPO}"
   git push
