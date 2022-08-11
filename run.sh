@@ -210,7 +210,7 @@ function get_smart_contract_address_from_json_file() {
   local IPOR_ADDRESSES="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_PROFILE}")"
   local VAR_VALUE
   VAR_VALUE=$(jq -r ".${JSON_KEY} // empty" "${IPOR_ADDRESSES}") || exit
-  echo "${VAR_VALUE}"  
+  echo "${VAR_VALUE}"
 }
 
 function set_smart_contract_address_from_json_file() {
