@@ -19,6 +19,7 @@ import FrontendComponent from "./FrontendComponent";
 require("dotenv").config({ path: "../../.env" });
 const { AccountData, ContractData, ContractForm } = newContextComponents;
 
+
 export default ({ drizzle, drizzleState }) => {
     return (
         <div className="App">
