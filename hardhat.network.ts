@@ -85,13 +85,6 @@ if (infuraApiKey && mnemonic) {
         },
     };
 
-    networks.rinkeby = {
-        url: `https://rinkeby.infura.io/v3/${infuraApiKey}`,
-        accounts: {
-            mnemonic,
-        },
-    };
-
     networks.mainnet = {
         url: `https://eth-mainnet.alchemyapi.io/v2/${alchemyKey}`,
         accounts: {
