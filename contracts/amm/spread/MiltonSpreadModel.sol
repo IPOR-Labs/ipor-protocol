@@ -115,6 +115,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             emaVar,
             diffIporIndexEma
         );
+
         if (regionOne >= regionTwo) {
             return regionTwo;
         } else {

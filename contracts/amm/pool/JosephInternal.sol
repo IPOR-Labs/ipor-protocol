@@ -93,7 +93,7 @@ abstract contract JosephInternal is
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
         _miltonStanleyBalanceRatio = 85e16;
-        _maxLiquidityPoolBalance = 2_000_000;
+        _maxLiquidityPoolBalance = 3_000_000;
         _maxLpAccountContribution = 50_000;
     }
 
