@@ -47,6 +47,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address aaveToken
     ) public initializer nonReentrant {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(aToken != address(0), IporErrors.WRONG_ADDRESS);

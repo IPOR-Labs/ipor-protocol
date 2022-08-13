@@ -38,6 +38,7 @@ contract MiltonFacadeDataProvider is
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
 
         __Ownable_init();
+        __UUPSUpgradeable_init();
         _iporOracle = iporOracle;
 
         uint256 assetsLength = assets.length;

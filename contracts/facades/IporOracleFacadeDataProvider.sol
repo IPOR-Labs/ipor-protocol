@@ -21,6 +21,7 @@ contract IporOracleFacadeDataProvider is
     function initialize(address[] memory assets, address iporOracle) public initializer {
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         __Ownable_init();
+        __UUPSUpgradeable_init();
         _iporOracle = iporOracle;
         _assets = assets;
     }

@@ -34,6 +34,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address compToken
     ) public initializer nonReentrant {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);

@@ -23,6 +23,7 @@ contract MockTestnetStrategy is StrategyCore {
 
     function initialize(address asset, address shareToken) public initializer nonReentrant {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);

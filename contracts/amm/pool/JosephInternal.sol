@@ -69,6 +69,7 @@ abstract contract JosephInternal is
         address stanley
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);

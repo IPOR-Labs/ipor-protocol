@@ -27,6 +27,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address[] memory ivTokens
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,

@@ -41,6 +41,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         uint64[] memory exponentialWeightedMovingVariances
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         uint256 assetsLength = assets.length;
 

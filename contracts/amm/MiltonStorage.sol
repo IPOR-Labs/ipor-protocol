@@ -47,6 +47,7 @@ contract MiltonStorage is
 
     function initialize() public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
     }
 
     function getVersion() external pure virtual override returns (uint256) {

@@ -48,6 +48,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         address stanley
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);

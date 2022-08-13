@@ -24,6 +24,8 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         address iporOracle,
         address[] memory miltonSpreadModels
     ) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
         uint256 i = 0;
         for (i; i < assets.length; i++) {
             _miltons[assets[i]] = ItfMilton(miltons[i]);

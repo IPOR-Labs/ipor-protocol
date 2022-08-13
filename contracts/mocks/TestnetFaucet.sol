@@ -31,6 +31,7 @@ contract TestnetFaucet is
         address usdt
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);
