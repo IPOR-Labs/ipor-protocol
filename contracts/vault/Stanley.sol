@@ -50,6 +50,7 @@ abstract contract Stanley is
         address strategyAave,
         address strategyCompound
     ) public initializer {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 

@@ -33,6 +33,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address comptroller,
         address compToken
     ) public initializer nonReentrant {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 

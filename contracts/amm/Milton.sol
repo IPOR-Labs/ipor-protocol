@@ -47,6 +47,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         address miltonSpreadModel,
         address stanley
     ) public initializer {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 

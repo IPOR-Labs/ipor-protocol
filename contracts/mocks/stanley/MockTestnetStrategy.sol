@@ -22,6 +22,7 @@ contract MockTestnetStrategy is StrategyCore {
     uint256 private _lastUpdateBalance;
 
     function initialize(address asset, address shareToken) public initializer nonReentrant {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 

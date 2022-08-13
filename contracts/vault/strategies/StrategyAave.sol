@@ -46,6 +46,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address aaveIncentive,
         address aaveToken
     ) public initializer nonReentrant {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 

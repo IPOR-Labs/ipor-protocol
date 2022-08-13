@@ -40,6 +40,7 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
         uint64[] memory exponentialMovingAverages,
         uint64[] memory exponentialWeightedMovingVariances
     ) public initializer {
+        __Pausable_init();
         __Ownable_init();
         __UUPSUpgradeable_init();
 
