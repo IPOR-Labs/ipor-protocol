@@ -11,7 +11,6 @@ module.exports = async function (deployer, _network, addresses) {
             "Migration stopped! Environment parameter SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS is not set!"
         );
     }
-
     const iporIndexUpdater = process.env.SC_MIGRATION_IPOR_INDEX_UPDATER_ADDRESS;
 
     const iporOracle = await func.getValue(keys.IporOracleProxy);
