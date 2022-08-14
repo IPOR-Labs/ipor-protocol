@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import { expect } from "chai";
 import { Signer, BigNumber } from "ethers";
 
@@ -188,28 +188,43 @@ export const prepareTestData = async (
     if (tokenUsdt) {
         stanleyUsdt = await getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
         ipTokenUsdt = (await IpToken.deploy("IP USDT", "ipUSDT", tokenUsdt.address)) as IpToken;
-        miltonStorageUsdt = (await MiltonStorage.deploy()) as MiltonStorage;
-        miltonStorageUsdt.initialize();
 
-        miltonUsdt = await getMockMiltonUsdtCase(miltonUsdtCase);
-        miltonUsdt.initialize(
-            false,
-            tokenUsdt.address,
-            iporOracle.address,
-            miltonStorageUsdt.address,
-            miltonSpreadModel.address,
-            stanleyUsdt.address
-        );
+        miltonStorageUsdt = (await upgrades.deployProxy(MiltonStorage, [], {
+            kind: "uups",
+        })) as MiltonStorage;
 
-        josephUsdt = await getMockJosephUsdtCase(josephCaseUsdt);
-        await josephUsdt.initialize(
-            false,
-            tokenUsdt.address,
-            ipTokenUsdt.address,
-            miltonUsdt.address,
-            miltonStorageUsdt.address,
-            stanleyUsdt.address
-        );
+        const MiltonUSDT = await ethers.getContractFactory(miltonUsdtCase);
+        miltonUsdt = (await upgrades.deployProxy(
+            MiltonUSDT,
+            [
+                false,
+                tokenUsdt.address,
+                iporOracle.address,
+                miltonStorageUsdt.address,
+                miltonSpreadModel.address,
+                stanleyUsdt.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonUsdtMockCase;
+
+        let JosephUsdt = await ethers.getContractFactory(josephCaseUsdt);
+        josephUsdt = (await upgrades.deployProxy(
+            JosephUsdt,
+            [
+                false,
+                tokenUsdt.address,
+                ipTokenUsdt.address,
+                miltonUsdt.address,
+                miltonStorageUsdt.address,
+                stanleyUsdt.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as JosephUsdtMocks;
+
         await josephUsdt.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephUsdt.setMaxLpAccountContribution(USD_1_000_000);
 
@@ -228,29 +243,41 @@ export const prepareTestData = async (
 
         ipTokenUsdc = (await IpToken.deploy("IP USDC", "ipUSDC", tokenUsdc.address)) as IpToken;
 
-        miltonStorageUsdc = (await MiltonStorage.deploy()) as MiltonStorage;
-        miltonStorageUsdc.initialize();
+        miltonStorageUsdc = (await upgrades.deployProxy(MiltonStorage, [], {
+            kind: "uups",
+        })) as MiltonStorage;
 
-        miltonUsdc = await getMockMiltonUsdcCase(miltonUsdcCase);
-        await miltonUsdc.deployed();
-        miltonUsdc.initialize(
-            false,
-            tokenUsdc.address,
-            iporOracle.address,
-            miltonStorageUsdc.address,
-            miltonSpreadModel.address,
-            stanleyUsdc.address
-        );
+        const MiltonUSDC = await ethers.getContractFactory(miltonUsdcCase);
+        miltonUsdc = (await upgrades.deployProxy(
+            MiltonUSDC,
+            [
+                false,
+                tokenUsdc.address,
+                iporOracle.address,
+                miltonStorageUsdc.address,
+                miltonSpreadModel.address,
+                stanleyUsdc.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonUsdcMockCase;
 
-        josephUsdc = await getMockJosephUsdcCase(josephCaseUsdc);
-        await josephUsdc.initialize(
-            false,
-            tokenUsdc.address,
-            ipTokenUsdc.address,
-            miltonUsdc.address,
-            miltonStorageUsdc.address,
-            stanleyUsdc.address
-        );
+        let JosephUsdc = await ethers.getContractFactory(josephCaseUsdc);
+        josephUsdc = (await upgrades.deployProxy(
+            JosephUsdc,
+            [
+                false,
+                tokenUsdc.address,
+                ipTokenUsdc.address,
+                miltonUsdc.address,
+                miltonStorageUsdc.address,
+                stanleyUsdc.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as JosephUsdcMocks;
 
         await josephUsdc.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephUsdc.setMaxLpAccountContribution(USD_1_000_000);
@@ -270,28 +297,41 @@ export const prepareTestData = async (
 
         ipTokenDai = (await IpToken.deploy("IP DAI", "ipDAI", tokenDai.address)) as IpToken;
 
-        miltonStorageDai = (await MiltonStorage.deploy()) as MiltonStorage;
-        miltonStorageDai.initialize();
+        miltonStorageDai = (await upgrades.deployProxy(MiltonStorage, [], {
+            kind: "uups",
+        })) as MiltonStorage;
 
-        miltonDai = await getMockMiltonDaiCase(miltonDaiCase);
-        miltonDai.initialize(
-            false,
-            tokenDai.address,
-            iporOracle.address,
-            miltonStorageDai.address,
-            miltonSpreadModel.address,
-            stanleyDai.address
-        );
+        const MiltonDAI = await ethers.getContractFactory(miltonDaiCase);
+        miltonDai = (await upgrades.deployProxy(
+            MiltonDAI,
+            [
+                false,
+                tokenDai.address,
+                iporOracle.address,
+                miltonStorageDai.address,
+                miltonSpreadModel.address,
+                stanleyDai.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonDaiMockCase;
 
-        josephDai = await getMockJosephDaiCase(josephCaseDai);
-        await josephDai.initialize(
-            false,
-            tokenDai.address,
-            ipTokenDai.address,
-            miltonDai.address,
-            miltonStorageDai.address,
-            stanleyDai.address
-        );
+        let JosephDai = await ethers.getContractFactory(josephCaseDai);
+        josephDai = (await upgrades.deployProxy(
+            JosephDai,
+            [
+                false,
+                tokenDai.address,
+                ipTokenDai.address,
+                miltonDai.address,
+                miltonStorageDai.address,
+                stanleyDai.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as JosephDaiMocks;
 
         await josephDai.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephDai.setMaxLpAccountContribution(USD_1_000_000);

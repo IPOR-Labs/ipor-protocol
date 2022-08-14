@@ -1,5 +1,6 @@
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
@@ -9,12 +10,17 @@ import "../amm/MiltonStorage.sol";
 import "./ItfIporOracle.sol";
 import "../interfaces/IMiltonSpreadInternal.sol";
 
-contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
+contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable {
     // asset => milton addres for asset
     mapping(address => ItfMilton) private _miltons;
     mapping(address => MiltonStorage) private _miltonStorages;
     mapping(address => IMiltonSpreadInternal) private _miltonSpreadModels;
     ItfIporOracle private _iporOracle;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
     // all arrary contains adresses for 1) usdt, 2) usdc, 3) dai
     function initialize(
@@ -24,6 +30,8 @@ contract ItfDataProvider is UUPSUpgradeable, IporOwnableUpgradeable {
         address iporOracle,
         address[] memory miltonSpreadModels
     ) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
         uint256 i = 0;
         for (i; i < assets.length; i++) {
             _miltons[assets[i]] = ItfMilton(miltons[i]);

@@ -29,11 +29,12 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
     ) external view override returns (uint256 quoteValue) {
         int256 spreadPremiums = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
 
-        int256 intQuoteValue = accruedIpor.indexValue.toInt256() + spreadPremiums;
+        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() + spreadPremiums;
 
-        if (intQuoteValue > 0) {
-            quoteValue = intQuoteValue.toUint256();
-        }
+        quoteValue = _calculateReferenceLegReceiveFixed(
+            intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
+            accruedIpor.exponentialMovingAverage
+        );
     }
 
     function calculateSpreadPayFixed(
@@ -114,6 +115,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             emaVar,
             diffIporIndexEma
         );
+
         if (regionOne >= regionTwo) {
             return regionTwo;
         } else {
@@ -181,5 +183,16 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
                     diffIporIndexEma,
                 Constants.D18_INT
             );
+    }
+
+    function _calculateReferenceLegReceiveFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue < exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
     }
 }
