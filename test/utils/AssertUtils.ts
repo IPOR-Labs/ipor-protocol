@@ -1,5 +1,5 @@
 import chai from "chai";
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import { BigNumber, Signer } from "ethers";
 import { MockSpreadModel } from "../../types";
 import {
@@ -159,13 +159,19 @@ export const testCasePagination = async (
     const MiltonFacadeDataProvider = await hre.ethers.getContractFactory(
         "MiltonFacadeDataProvider"
     );
-    const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
-    await miltonFacadeDataProvider.initialize(
-        iporOracle.address,
-        [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
-        [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
-        [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
-        [josephDai.address, josephUsdt.address, josephUsdc.address]
+
+    const miltonFacadeDataProvider = await upgrades.deployProxy(
+        MiltonFacadeDataProvider,
+        [
+            iporOracle.address,
+            [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
+            [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
+            [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
+            [josephDai.address, josephUsdt.address, josephUsdc.address],
+        ],
+        {
+            kind: "uups",
+        }
     );
 
     for (let i = 0; BigNumber.from(i).lt(numberOfSwapsToCreate); i++) {

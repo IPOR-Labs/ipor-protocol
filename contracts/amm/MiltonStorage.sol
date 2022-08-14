@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
@@ -15,8 +16,9 @@ import "./libraries/SoapIndicatorLogic.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is
-    UUPSUpgradeable,
+    Initializable,
     PausableUpgradeable,
+    UUPSUpgradeable,
     IporOwnableUpgradeable,
     IMiltonStorage
 {
@@ -45,8 +47,15 @@ contract MiltonStorage is
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize() public initializer {
+        __Pausable_init();
         __Ownable_init();
+        __UUPSUpgradeable_init();
     }
 
     function getVersion() external pure virtual override returns (uint256) {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../interfaces/types/MiltonStorageTypes.sol";
 import "../interfaces/types/MiltonFacadeTypes.sol";
@@ -16,13 +17,19 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../amm/MiltonStorage.sol";
 
 contract MiltonFacadeDataProvider is
-    IporOwnableUpgradeable,
+    Initializable,
     UUPSUpgradeable,
+    IporOwnableUpgradeable,
     IMiltonFacadeDataProvider
 {
     address internal _iporOracle;
     address[] internal _assets;
     mapping(address => MiltonFacadeTypes.AssetConfig) internal _assetConfig;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
     function initialize(
         address iporOracle,
@@ -38,6 +45,7 @@ contract MiltonFacadeDataProvider is
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
 
         __Ownable_init();
+        __UUPSUpgradeable_init();
         _iporOracle = iporOracle;
 
         uint256 assetsLength = assets.length;

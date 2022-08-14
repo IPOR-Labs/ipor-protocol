@@ -118,21 +118,21 @@ It also says about how new blocks are created in ethereum blockchain.
 ### How to execute smart contracts migrations remotely?
 
 -   On remote server all parameters in `.env` are already prepared, you should not modify them without consultation with IT Team.
--   For `dev` in command line execute: `ssh ipor-dev-warren`, for `Rinkeby` in command line execute: `ssh ipor-rinkeby-sc-deploy`
+-   For `dev` in command line execute: `ssh ipor-dev-warren`,
 -   `cd repos/ipor-protocol`
 -   `git pull`
 -   `./run.sh m mlogs`
 -   `./run.sh p`
 -   `exit`
 
-### How to deploy new version of `Cockpit` on `Rinkeby` environment?
+### How to deploy new version of `Cockpit` on `Goerli` environment?
 
 Do following steps:
 
 -   Go to Github Actions in `ipor-protocol` repository
 -   Select `Deploy Cockpit` -> Run workflow:
--   Select branch: `env/rinkeby`
--   IPOR cockpit Amplify application name: `ipor-rinkeby-cockpit`
+-   Select branch: `env/goerli`
+-   IPOR cockpit Amplify application name: `ipor-goerli-cockpit`
 
 #### How to run all tests?
 

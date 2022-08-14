@@ -19,6 +19,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @dev Deploy StrategyCompound.
      * @notice Deploy StrategyCompound.
@@ -33,7 +38,9 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address comptroller,
         address compToken
     ) public initializer nonReentrant {
+        __Pausable_init();
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);
