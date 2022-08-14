@@ -2,6 +2,7 @@
 pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../../interfaces/types/CockpitTypes.sol";
@@ -12,10 +13,20 @@ import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
-contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpitDataProvider {
+contract CockpitDataProvider is
+    Initializable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    ICockpitDataProvider
+{
     address internal _iporOracle;
     mapping(address => CockpitTypes.AssetConfig) internal _assetConfig;
     address[] internal _assets;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
     function initialize(
         address iporOracle,
@@ -27,6 +38,7 @@ contract CockpitDataProvider is IporOwnableUpgradeable, UUPSUpgradeable, ICockpi
         address[] memory ivTokens
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(
             assets.length == miltons.length && assets.length == miltonStorages.length,
