@@ -29,6 +29,11 @@ abstract contract Milton is MiltonInternal, IMilton {
     using SafeCast for int256;
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @param paused - Initial flag to determine if smart contract is paused or not
      * @param asset - Instance of Milton is initialised in the context of the given ERC20 asset. Every trasaction is by the default scoped to that ERC20.

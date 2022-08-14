@@ -30,6 +30,11 @@ contract StrategyAave is StrategyCore, IStrategyAave {
     StakedAaveInterface private _stakedAaveInterface;
     AaveIncentivesInterface private _aaveIncentive;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @param asset underlying token like DAI, USDT etc.
      * @param aToken share token like aDAI etc.

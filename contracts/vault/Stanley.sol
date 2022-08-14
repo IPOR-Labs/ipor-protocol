@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
@@ -18,9 +19,10 @@ import "../security/IporOwnableUpgradeable.sol";
 
 /// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
-    UUPSUpgradeable,
+    Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
     IporOwnableUpgradeable,
     IStanley,
     IStanleyInternal
@@ -37,6 +39,11 @@ abstract contract Stanley is
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
         _;
+    }
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
     /**

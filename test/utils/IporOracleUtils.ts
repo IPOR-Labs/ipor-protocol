@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import { BigNumber, Signer } from "ethers";
 
 import { ItfIporOracle } from "../../types";
@@ -17,14 +17,20 @@ export const prepareIporOracle = async (
     exponentialWeightedMovingVariances: BigNumber[]
 ): Promise<ItfIporOracle> => {
     const ItfIporOracle = await ethers.getContractFactory("ItfIporOracle");
-    const iporOracle = (await ItfIporOracle.deploy()) as ItfIporOracle;
 
-    await iporOracle.initialize(
-        assets,
-        lastUpdateTimestamps,
-        exponentialMovingAverages,
-        exponentialWeightedMovingVariances
-    );
+    const iporOracle = (await upgrades.deployProxy(
+        ItfIporOracle,
+        [
+            assets,
+            lastUpdateTimestamps,
+            exponentialMovingAverages,
+            exponentialWeightedMovingVariances,
+        ],
+        {
+            kind: "uups",
+        }
+    )) as ItfIporOracle;
+
     if (accounts[1]) {
         await iporOracle.addUpdater(await accounts[1].getAddress());
     }

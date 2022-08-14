@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -21,7 +22,13 @@ import "./libraries/DecayFactorCalculation.sol";
  *
  * @author IPOR Labs
  */
-contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradeable, IIporOracle {
+contract IporOracle is
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IIporOracle
+{
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
@@ -32,6 +39,11 @@ contract IporOracle is UUPSUpgradeable, IporOwnableUpgradeable, PausableUpgradea
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
         _;
+    }
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
     function initialize(

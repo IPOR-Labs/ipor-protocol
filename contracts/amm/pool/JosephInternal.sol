@@ -3,12 +3,13 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -20,9 +21,10 @@ import "../../interfaces/IStanley.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 abstract contract JosephInternal is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
+    Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
     IporOwnableUpgradeable,
     IJosephInternal
 {
@@ -58,6 +60,11 @@ abstract contract JosephInternal is
     modifier onlyTreasuryManager() {
         require(_msgSender() == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
         _;
+    }
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
     function initialize(

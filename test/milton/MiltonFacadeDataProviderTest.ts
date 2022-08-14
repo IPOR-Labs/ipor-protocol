@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import { MockSpreadModel } from "../../types";
@@ -187,14 +187,19 @@ describe("MiltonFacadeDataProvider", () => {
         const MiltonFacadeDataProvider = await hre.ethers.getContractFactory(
             "MiltonFacadeDataProvider"
         );
-        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
-        await miltonFacadeDataProvider.deployed();
-        await miltonFacadeDataProvider.initialize(
-            iporOracle.address,
-            [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
-            [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
-            [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
-            [josephDai.address, josephUsdt.address, josephUsdc.address]
+
+        const miltonFacadeDataProvider = await upgrades.deployProxy(
+            MiltonFacadeDataProvider,
+            [
+                iporOracle.address,
+                [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
+                [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
+                [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
+                [josephDai.address, josephUsdt.address, josephUsdc.address],
+            ],
+            {
+                kind: "uups",
+            }
         );
 
         const expectedMinLeverage = BigNumber.from("10").mul(N1__0_18DEC);
@@ -369,14 +374,19 @@ describe("MiltonFacadeDataProvider", () => {
         const MiltonFacadeDataProvider = await hre.ethers.getContractFactory(
             "MiltonFacadeDataProvider"
         );
-        const miltonFacadeDataProvider = await MiltonFacadeDataProvider.deploy();
 
-        await miltonFacadeDataProvider.initialize(
-            iporOracle.address,
-            [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
-            [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
-            [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
-            [josephDai.address, josephUsdt.address, josephUsdc.address]
+        const miltonFacadeDataProvider = await upgrades.deployProxy(
+            MiltonFacadeDataProvider,
+            [
+                iporOracle.address,
+                [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
+                [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
+                [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
+                [josephDai.address, josephUsdt.address, josephUsdc.address],
+            ],
+            {
+                kind: "uups",
+            }
         );
 
         //when

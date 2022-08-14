@@ -19,6 +19,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     /**
      * @dev Deploy StrategyCompound.
      * @notice Deploy StrategyCompound.

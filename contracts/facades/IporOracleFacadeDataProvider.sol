@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.15;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../interfaces/types/IporOracleFacadeTypes.sol";
@@ -11,12 +12,18 @@ import "../interfaces/IIporOracleFacadeDataProvider.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 contract IporOracleFacadeDataProvider is
-    IporOwnableUpgradeable,
+    Initializable,
     UUPSUpgradeable,
+    IporOwnableUpgradeable,
     IIporOracleFacadeDataProvider
 {
     address private _iporOracle;
     address[] internal _assets;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
     function initialize(address[] memory assets, address iporOracle) public initializer {
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
