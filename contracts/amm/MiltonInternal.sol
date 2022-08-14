@@ -7,6 +7,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/MiltonErrors.sol";
@@ -22,9 +23,10 @@ import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
 abstract contract MiltonInternal is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
+    Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
     IporOwnableUpgradeable,
     IMiltonInternal
 {
@@ -317,7 +319,7 @@ abstract contract MiltonInternal is
         IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
 
         uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
-		
+
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();

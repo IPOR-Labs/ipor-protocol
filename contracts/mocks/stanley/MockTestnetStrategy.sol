@@ -21,8 +21,15 @@ contract MockTestnetStrategy is StrategyCore {
     uint256 private _depositsBalance;
     uint256 private _lastUpdateBalance;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(address asset, address shareToken) public initializer nonReentrant {
+        __Pausable_init();
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(shareToken != address(0), IporErrors.WRONG_ADDRESS);

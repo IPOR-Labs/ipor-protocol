@@ -54,8 +54,8 @@
         "export-errorCodes": "node utiles/ExtractErrorCodeToJson.js"
     },
     "dependencies": {
-        "@openzeppelin/contracts": "4.5.0",
-        "@openzeppelin/contracts-upgradeable": "4.5.2",
+        "@openzeppelin/contracts": "4.7.3",
+        "@openzeppelin/contracts-upgradeable": "4.7.3",
         "edit-json-file": "1.7.0",
         "hardhat-tracer": "1.0.0-alpha.6",
         "keccak256": "1.0.6"

@@ -27,7 +27,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("59002984759871816032");
+        const expectedResult = BigNumber.from("234616050688066827447");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -45,7 +45,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("21380627139646475976");
+        const expectedResult = BigNumber.from("-95841997917942311442");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -64,7 +64,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("-6208105803306950336");
+        const expectedResult = BigNumber.from("78947314294154128210");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -83,7 +83,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("30754812898208943148");
+        const expectedResult = BigNumber.from("-31754644462878008830");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -102,7 +102,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("59002984759871816032");
+        const expectedResult = BigNumber.from("234616050688066827447");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
@@ -121,7 +121,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
 
         const emaVar = BigNumber.from("1065000000000000000");
         const diffIporIndexEma = BigNumber.from("-7140000000000000000");
-        const expectedResult = BigNumber.from("21380627139646475976");
+        const expectedResult = BigNumber.from("-95841997917942311442");
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)

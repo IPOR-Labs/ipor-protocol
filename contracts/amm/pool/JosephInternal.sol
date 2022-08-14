@@ -3,12 +3,13 @@ pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts/utils/Address.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -20,9 +21,10 @@ import "../../interfaces/IStanley.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
 abstract contract JosephInternal is
-    UUPSUpgradeable,
-    ReentrancyGuardUpgradeable,
+    Initializable,
     PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
     IporOwnableUpgradeable,
     IJosephInternal
 {
@@ -60,6 +62,11 @@ abstract contract JosephInternal is
         _;
     }
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(
         bool paused,
         address initAsset,
@@ -68,7 +75,9 @@ abstract contract JosephInternal is
         address miltonStorage,
         address stanley
     ) public initializer {
+        __Pausable_init();
         __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
@@ -93,7 +102,7 @@ abstract contract JosephInternal is
         _miltonStorage = IMiltonStorage(miltonStorage);
         _stanley = IStanley(stanley);
         _miltonStanleyBalanceRatio = 85e16;
-        _maxLiquidityPoolBalance = 2_000_000;
+        _maxLiquidityPoolBalance = 3_000_000;
         _maxLpAccountContribution = 50_000;
     }
 

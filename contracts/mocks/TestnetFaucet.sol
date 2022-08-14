@@ -2,6 +2,7 @@
 pragma solidity 0.8.15;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
@@ -11,9 +12,10 @@ import "../libraries/errors/MocksErrors.sol";
 import "../interfaces/ITestnetFaucet.sol";
 
 contract TestnetFaucet is
+    Initializable,
+    ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    ReentrancyGuardUpgradeable,
     ITestnetFaucet
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -25,12 +27,18 @@ contract TestnetFaucet is
     address internal _usdc;
     address internal _usdt;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
     function initialize(
         address dai,
         address usdc,
         address usdt
     ) public initializer {
         __Ownable_init();
+        __UUPSUpgradeable_init();
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);

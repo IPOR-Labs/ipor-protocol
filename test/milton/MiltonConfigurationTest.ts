@@ -1,4 +1,4 @@
-import hre from "hardhat";
+import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
 import { N0__01_18DEC, N1__0_18DEC, N0__1_18DEC, PERCENTAGE_100_18DEC } from "../utils/Constants";
@@ -23,20 +23,26 @@ describe("MiltonConfiguration", () => {
 
     it("Should create MiltonUsdt", async () => {
         // when
-        const MiltonUsdt = await hre.ethers.getContractFactory("MiltonUsdt");
-        const miltonUsdt = (await MiltonUsdt.deploy()) as MiltonUsdt;
+        const MiltonUsdtFactory = await hre.ethers.getContractFactory("MiltonUsdt");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const usdt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await usdt.setDecimals(BigNumber.from("6"));
 
-        await miltonUsdt.initialize(
-            false,
-            usdt.address, // we check only this position the rest could be random
-            usdt.address,
-            usdt.address,
-            usdt.address,
-            usdt.address
-        );
+        const miltonUsdt = (await upgrades.deployProxy(
+            MiltonUsdtFactory,
+            [
+                false,
+                usdt.address, // we check only this position the rest could be random
+                usdt.address,
+                usdt.address,
+                usdt.address,
+                usdt.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonUsdt;
+
         // then
         expect(miltonUsdt.address).to.be.not.empty;
         expect(await miltonUsdt.getAsset()).to.be.equal(usdt.address);
@@ -44,40 +50,52 @@ describe("MiltonConfiguration", () => {
 
     it("Should create MiltonUsdc", async () => {
         // when
-        const MiltonUsdc = await hre.ethers.getContractFactory("MiltonUsdc");
-        const miltonUsdc = (await MiltonUsdc.deploy()) as MiltonUsdt;
+        const MiltonUsdcFactory = await hre.ethers.getContractFactory("MiltonUsdc");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await usdc.setDecimals(BigNumber.from("6"));
 
-        await miltonUsdc.initialize(
-            false,
-            usdc.address, // we check only this position the rest could be random
-            usdc.address,
-            usdc.address,
-            usdc.address,
-            usdc.address
-        );
+        const miltonUsdc = (await upgrades.deployProxy(
+            MiltonUsdcFactory,
+            [
+                false,
+                usdc.address, // we check only this position the rest could be random
+                usdc.address,
+                usdc.address,
+                usdc.address,
+                usdc.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonUsdc;
+
         expect(miltonUsdc.address).to.be.not.empty;
         expect(await miltonUsdc.getAsset()).to.be.equal(usdc.address);
     });
 
     it("Should create MiltonDai", async () => {
         // given
-        const MiltonDai = await hre.ethers.getContractFactory("MiltonDai");
-        const miltonDai = (await MiltonDai.deploy()) as MiltonDai;
+        const MiltonDaiFactory = await hre.ethers.getContractFactory("MiltonDai");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const dai = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await dai.setDecimals(BigNumber.from("18"));
         // when
-        await miltonDai.initialize(
-            false,
-            dai.address, // we check only this position the rest could be random
-            dai.address,
-            dai.address,
-            dai.address,
-            dai.address
-        );
+        const miltonDai = (await upgrades.deployProxy(
+            MiltonDaiFactory,
+            [
+                false,
+                dai.address, // we check only this position the rest could be random
+                dai.address,
+                dai.address,
+                dai.address,
+                dai.address,
+            ],
+            {
+                kind: "uups",
+            }
+        )) as MiltonDai;
+
         // then
         expect(miltonDai.address).to.be.not.empty;
         expect(await miltonDai.getAsset()).to.be.equal(dai.address);
@@ -85,60 +103,75 @@ describe("MiltonConfiguration", () => {
 
     it("Should revert initializer(usdt) when mismatch asset and milton decimals", async () => {
         // when
-        const MiltonUsdt = await hre.ethers.getContractFactory("MiltonUsdt");
-        const miltonUsdt = (await MiltonUsdt.deploy()) as MiltonUsdt;
+        const MiltonUsdtFactory = await hre.ethers.getContractFactory("MiltonUsdt");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const usdt = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await usdt.setDecimals(BigNumber.from("8"));
 
         await expect(
-            miltonUsdt.initialize(
-                false,
-                usdt.address, // we check only this position the rest could be random
-                usdt.address,
-                usdt.address,
-                usdt.address,
-                usdt.address
+            upgrades.deployProxy(
+                MiltonUsdtFactory,
+                [
+                    false,
+                    usdt.address, // we check only this position the rest could be random
+                    usdt.address,
+                    usdt.address,
+                    usdt.address,
+                    usdt.address,
+                ],
+                {
+                    kind: "uups",
+                }
             )
         ).to.be.revertedWith("IPOR_001");
     });
 
     it("Should revert initializer(usdc) when mismatch asset and milton decimals", async () => {
         // when
-        const MiltonUsdc = await hre.ethers.getContractFactory("MiltonUsdc");
-        const miltonUsdc = (await MiltonUsdc.deploy()) as MiltonUsdt;
+        const MiltonUsdcFactory = await hre.ethers.getContractFactory("MiltonUsdc");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await usdc.setDecimals(BigNumber.from("8"));
 
         await expect(
-            miltonUsdc.initialize(
-                false,
-                usdc.address, // we check only this position the rest could be random
-                usdc.address,
-                usdc.address,
-                usdc.address,
-                usdc.address
+            upgrades.deployProxy(
+                MiltonUsdcFactory,
+                [
+                    false,
+                    usdc.address, // we check only this position the rest could be random
+                    usdc.address,
+                    usdc.address,
+                    usdc.address,
+                    usdc.address,
+                ],
+                {
+                    kind: "uups",
+                }
             )
         ).to.be.revertedWith("IPOR_001");
     });
 
     it("Should revert initializer for dai when mismatch asset and milton decimals", async () => {
         // when
-        const MiltonDai = await hre.ethers.getContractFactory("MiltonDai");
-        const miltonDai = (await MiltonDai.deploy()) as MiltonDai;
+        const MiltonDaiFactory = await hre.ethers.getContractFactory("MiltonDai");
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
         const dai = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await dai.setDecimals(BigNumber.from("8"));
 
         await expect(
-            miltonDai.initialize(
-                false,
-                dai.address, // we check only this position the rest could be random
-                dai.address,
-                dai.address,
-                dai.address,
-                dai.address
+            upgrades.deployProxy(
+                MiltonDaiFactory,
+                [
+                    false,
+                    dai.address, // we check only this position the rest could be random
+                    dai.address,
+                    dai.address,
+                    dai.address,
+                    dai.address,
+                ],
+                {
+                    kind: "uups",
+                }
             )
         ).to.be.revertedWith("IPOR_001");
     });
