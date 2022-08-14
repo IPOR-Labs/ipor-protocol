@@ -973,7 +973,7 @@ if [ $COMMIT_MIGRATION_STATE = "YES" ]; then
 
   profile_dir="${SC_MIGRATION_STATE_REPO_DIR}/${ENV_PROFILE}/${SC_REPO}"
   migration_date_dir="${profile_dir}/migrations/${LAST_MIGRATION_NUMBER}_${LAST_COMMIT_SHORT_HASH}_${LAST_MIGRATION_DATE}"
-  current_state_dir="${profile_dir}/actual_state"
+  current_state_dir="${profile_dir}/current_state"
 
   echo "Copy migration state to: ${migration_date_dir}"
 
