@@ -19,16 +19,15 @@ CGI_COMMIT_HASH=""
 
 # Variables set by .env file
 GLOBAL_AWS_PROFILE=""
-ENV_PROFILE=""
+ENV_PROFILE="${ENV_PROFILE}"
 SC_MIGRATION_STATE_REPO=""
 ETH_BC_NETWORK_NAME=""
+ENV_CONFIG_BUCKET="${ENV_CONFIG_BUCKET:-ipor-env}"
 
 # global vars that can be reset
 function refresh_global_variables(){
   ROOT_PASSWORD=""
   WITH_PROFILE=""
-
-  ENV_CONFIG_BUCKET="ipor-env"
 
   ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
   ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
