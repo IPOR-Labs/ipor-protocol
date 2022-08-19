@@ -479,6 +479,42 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        <strong>Withdraw ALL from Stanley</strong>
+                        <br />
+                        <small>
+                            Transfer ALL cash from Strategy (AAVE or Compound) via Stanley to Milton
+                        </small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdt"
+                                method="withdrawAllFromStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdc"
+                                method="withdrawAllFromStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephDai"
+                                method="withdrawAllFromStanley"
+                            />
+                        </div>
+                    </td>
+                </tr>
 
                 <tr>
                     <td>

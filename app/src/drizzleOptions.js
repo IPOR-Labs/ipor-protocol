@@ -1,3 +1,5 @@
+import * as fs from "fs";
+
 import Migrations from "./contracts/Migrations.json";
 
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
@@ -120,7 +122,7 @@ let DrizzleStrategyCompoundUsdt;
 let DrizzleStrategyCompoundUsdc;
 let DrizzleStrategyCompoundDai;
 
-if (process.env.REACT_APP_ENV_PROFILE === "mainnet") {
+if (process.env.REACT_APP_ENV_PROFILE === "mainnet.ipor.io") {
     //Mainnet
     const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
     const usdc = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
@@ -327,7 +329,7 @@ let options = {
     ],
 };
 
-if (process.env.REACT_APP_ENV_PROFILE !== "mainnet") {
+if (process.env.REACT_APP_ENV_PROFILE !== "mainnet.ipor.io") {
     options.contracts.push(TestnetFaucet);
 }
 

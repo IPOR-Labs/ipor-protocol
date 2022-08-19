@@ -3,10 +3,8 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const alchemyKey = process.env.ALCHEMY_API_KEY;
-const infuraApiKey = process.env.INFURA_API_KEY;
-const mnemonic = process.env.MNEMONIC;
-const fork_enabled = process.env.FORK_ENABLED;
+const forkEnabled = process.env.FORK_ENABLED;
+const forkingUrl = process.env.HARDHAT_FORKING_URL as string;
 
 const networks: HardhatUserConfig["networks"] = {
     coverage: {
@@ -21,13 +19,13 @@ const networks: HardhatUserConfig["networks"] = {
     },
 };
 
-if (fork_enabled == "true") {
-    console.log("MainNet fork");
+if (forkEnabled == "true") {
+    console.log("Mainnet Fork");
     networks.hardhat = {
         chainId: 1,
         forking: {
-            url: `https://eth-mainnet.alchemyapi.io/v2/rT2R1mRGMzUr80dcTdwOTG1JSMVYzSJi`,
-            blockNumber: 14222088, // 14222087 Compaund APY: 2093206012009920000, AAVE APY: 2242773611830780298
+            url: forkingUrl,
+            blockNumber: 14222088,
         },
     };
 } else {
@@ -37,62 +35,12 @@ if (fork_enabled == "true") {
 }
 
 networks.hardhatfork = {
-    chainId: 1,
+    chainId: 31337,
     url: "http://127.0.0.1:8545",
     forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/rT2R1mRGMzUr80dcTdwOTG1JSMVYzSJi`,
-        blockNumber: 14222088, // 14222087 Compaund APY: 2093206012009920000, AAVE APY: 2242773611830780298
+        url: `https://eth-mainnet.g.alchemy.com/v2/ufaEYojUhakRot1riVa0TIJ8OzfqiLhZ`,
+        blockNumber: 14222088,
     },
 };
-
-if (mnemonic) {
-    networks.xdai = {
-        chainId: 100,
-        url: "https://rpc.xdaichain.com/",
-        accounts: {
-            mnemonic,
-        },
-    };
-    networks.poaSokol = {
-        chainId: 77,
-        url: "https://sokol.poa.network",
-        accounts: {
-            mnemonic,
-        },
-    };
-    networks.matic = {
-        chainId: 137,
-        url: "https://rpc-mainnet.maticvigil.com",
-        accounts: {
-            mnemonic,
-        },
-    };
-    networks.mumbai = {
-        chainId: 80001,
-        url: "https://rpc-mumbai.matic.today",
-        accounts: {
-            mnemonic,
-        },
-        loggingEnabled: true,
-    };
-}
-
-if (infuraApiKey && mnemonic) {
-    networks.goerli = {
-        url: `https://goerli.infura.io/v3/${infuraApiKey}`,
-        accounts: {
-            mnemonic,
-        },
-    };
-
-    networks.mainnet = {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${alchemyKey}`,
-        accounts: {
-            mnemonic,
-        },
-    };
-} else {
-    console.warn("No infura or hdwallet available for testnets");
-}
 
 export default networks;

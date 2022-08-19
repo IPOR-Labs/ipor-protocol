@@ -1,6 +1,6 @@
-### How to run script?
+### How to run script on Mainnet fork?
 
-`npx hardhat run scripts/validation.js --network localhost`
+`npx hardhat run scripts/<<SOME_SCRIPT>>.js --network hardhatfork`
 
 ### How to export ABI?
 

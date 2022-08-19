@@ -1,9 +1,9 @@
 import React from "react";
-import { newContextComponents } from "@drizzle/react-components";
+import {newContextComponents} from "@drizzle/react-components";
 
-const { ContractData, ContractForm } = newContextComponents;
+const {ContractData, ContractForm} = newContextComponents;
 
-export default ({ drizzle, drizzleState }) => (
+export default ({drizzle, drizzleState}) => (
     <div>
         <div className="row">
             <table className="table" align="center">
@@ -11,24 +11,24 @@ export default ({ drizzle, drizzleState }) => (
                     <th scope="col">Parameter</th>
                     <th scope="col">
                         USDT
-                        <br />
+                        <br/>
                         {drizzle.contracts.DrizzleUsdt.address}
-                        <br />
-                        <br />
+                        <br/>
+                        <br/>
                     </th>
                     <th scope="col">
                         USDC
-                        <br />
+                        <br/>
                         {drizzle.contracts.DrizzleUsdc.address}
-                        <br />
-                        <br />
+                        <br/>
+                        <br/>
                     </th>
                     <th scope="col">
                         DAI
-                        <br />
+                        <br/>
                         {drizzle.contracts.DrizzleDai.address}
-                        <br />
-                        <br />
+                        <br/>
+                        <br/>
                     </th>
                 </tr>
 
@@ -45,7 +45,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -60,7 +60,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -75,7 +75,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -86,6 +86,9 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Milton Stanley Balance Rate</strong>
+                        <br/>
+                        <small>Value describe what percentage stay on Milton when rebalance cash between
+                            Milton and Stanley</small>
                     </td>
                     <td>
                         <ContractData
@@ -96,7 +99,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -116,7 +119,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -136,7 +139,7 @@ export default ({ drizzle, drizzleState }) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br />
+                                    <br/>
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -152,7 +155,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Charlie Treasurer</strong>
-                        <br />
+                        <br/>
                         <small>Publication fee</small>
                     </td>
                     <td>
@@ -205,7 +208,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Treasury Treasurer</strong>
-                        <br />
+                        <br/>
                         <small>Income fee, part of opening fee</small>
                     </td>
                     <td>
@@ -360,8 +363,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Max Liquidity Pool Balance</strong>
-						<br/>
-						<small>Notice! Don't use decimals.</small>
+                        <br/>
+                        <small>Guarded Launch. Notice! Don't use decimals.</small>
                     </td>
                     <td>
                         <div>
@@ -413,8 +416,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Max Liquidity Pool Account Contribution</strong>
-						<br/>
-						<small>Notice! Don't use decimals.</small>
+                        <br/>
+                        <small>Guarded Launch. Notice! Don't use decimals.</small>
                     </td>
                     <td>
                         <div>
