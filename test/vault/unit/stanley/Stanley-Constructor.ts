@@ -274,7 +274,7 @@ describe("Stanley -> constructor", () => {
         const version = await stanley.getVersion();
 
         // then
-        expect(version).to.be.equal(1);
+        expect(version).to.be.equal(2);
     });
 
     it("Should return propper asset", async () => {

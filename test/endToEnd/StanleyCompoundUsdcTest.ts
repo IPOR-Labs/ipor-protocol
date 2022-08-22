@@ -135,7 +135,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Shoiuld compand APR > aave APR ", async () => {
+    it("Should Compound APR > Aave APR ", async () => {
         // when
         const aaveApy = await strategyAaveContract_Instance.getApr();
         const compoundApy = await strategyCompoundContract_Instance.getApr();
