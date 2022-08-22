@@ -77,11 +77,6 @@ contract MockCaseBaseStanley is IStanley {
         vaultBalance = 0;
     }
 
-    function _getCurrentInterest() internal pure virtual returns (uint256) {
-        //@dev for test purposes always the same fixed interest for any msg.sender
-        return 0;
-    }
-
     function _withdrawRate() internal pure virtual returns (uint256) {
         return 1e18;
     }

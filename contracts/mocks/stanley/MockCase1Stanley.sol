@@ -6,7 +6,4 @@ contract MockCase1Stanley is MockCaseBaseStanley {
     //solhint-disable no-empty-blocks
     constructor(address asset) MockCaseBaseStanley(asset) {}
 
-    function _getCurrentInterest() internal pure override returns (uint256) {
-        return 3e18;
-    }
 }

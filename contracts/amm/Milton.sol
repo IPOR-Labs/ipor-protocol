@@ -413,7 +413,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             newSwap,
             _getIporPublicationFee()
         );
-
+        console.log("[_openSwapPayFixed] totalAmount=", totalAmount);
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), totalAmount);
 
         _emitOpenSwapEvent(
@@ -834,7 +834,6 @@ abstract contract Milton is MiltonInternal, IMilton {
     /**
      * @notice Function run at the time of the contract upgrade via proxy. Available only to the contract's owner.
      **/
-
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

@@ -95,7 +95,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
     /**
      * @dev withdraw from compound lending.
-     * @notice withdraw can only done by owner.
+     * @notice withdraw can only done by Stanley.
      * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
      */
     function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {

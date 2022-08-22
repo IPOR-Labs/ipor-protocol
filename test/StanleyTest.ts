@@ -371,8 +371,16 @@ describe("Stanley - Asset Management Vault", () => {
 
         //then
         const stanleyBalanceAfter = await stanleyDai.totalBalance(miltonDai.address);
+        const miltonLPBalanceAfter = (await miltonDai.getAccruedBalance()).liquidityPool;
+        const exchangeRateAfter = await josephDai.itfCalculateExchangeRate(timestamp);
+
+        console.log("miltonLPBalanceAfter=", miltonLPBalanceAfter.toString());
+
+        console.log("exchangeRateAfter=", exchangeRateAfter.toString());
 
         expect(stanleyBalanceBefore.gt(stanleyBalanceAfter)).to.be.true;
+        expect(miltonLPBalanceAfter.eq(BigNumber.from("1003000000000000000000"))).to.be.true;
+        expect(exchangeRateAfter.eq(BigNumber.from("1003000000000000000"))).to.be.true;
     });
 
     it("should not sent ETH to Stanley DAI, USDT, USDC", async () => {

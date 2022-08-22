@@ -6,6 +6,7 @@ import {
     TestnetFaucet,
     StrategyAave,
     StrategyCompound,
+    StanleyUsdc,
     StanleyUsdt,
     MiltonUsdc,
     MiltonUsdt,
@@ -18,13 +19,14 @@ import {
 } from "../../types";
 
 import { deploy, DeployType, setup } from "./deploy";
+import { assertError } from "../utils/AssertUtils";
 
 import { transferUsdtToAddress, transferUsdcToAddress, transferDaiToAddress } from "./tokens";
 import { N0__01_18DEC, N0__1_18DEC, N1__0_18DEC, N1__0_6DEC } from "../utils/Constants";
 
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
-describe("Josepf rebalance, deposit/withdraw from vault", function () {
+describe("Joseph rebalance, deposit/withdraw from vault", function () {
     if (process.env.FORK_ENABLED != "true") {
         return;
     }
@@ -38,6 +40,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
     let josephUsdc: JosephUsdc;
     let josephUsdt: JosephUsdt;
 
+    let stanleyUsdc: StanleyUsdc;
     let stanleyUsdt: StanleyUsdt;
 
     let strategyAaveDai: StrategyAave;
@@ -69,6 +72,7 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
             strategyAaveDai,
             strategyAaveUsdc,
             strategyCompoundUsdt,
+            stanleyUsdc,
             stanleyUsdt,
             miltonDai,
             miltonUsdc,
@@ -278,5 +282,130 @@ describe("Josepf rebalance, deposit/withdraw from vault", function () {
             ivTokenUsdtBalanceAfter.lt(ivTokenUsdtBalanceBefore),
             "ivTokenUsdtBalanceAfter < ivTokenUsdtBalanceBefore"
         ).to.be.true;
+    });
+
+    it("Should not change IP Token exchange rate when rebalance and withdraw all - usdc, 1% in Milton, 99% in Stanley", async () => {
+        //given
+        const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
+        //99% ERC20 balance move from Milton to Stanley
+        await josephUsdc.setMiltonStanleyBalanceRatio(BigNumber.from("10000000000000000"));
+
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
+
+        await usdc
+            .connect(admin)
+            .approve(josephUsdc.address, BigNumber.from("100000").mul(N1__0_6DEC));
+
+        await transferUsdcToAddress(
+            testnetFaucet.address,
+            await admin.getAddress(),
+            BigNumber.from("10000").mul(N1__0_6DEC)
+        );
+
+        //when
+        await josephUsdc.connect(admin).provideLiquidity(deposit);
+
+        let exchangeRateBefore = await josephUsdc.connect(admin).calculateExchangeRate();
+        console.log(exchangeRateBefore.toString());
+
+        //when
+        await josephUsdc.rebalance();
+        await josephUsdc.withdrawAllFromStanley();
+
+        //then
+        let exchangeRateAfter = await josephUsdc.connect(admin).calculateExchangeRate();
+        const stanleyBalance = await usdc.balanceOf(stanleyUsdc.address);
+        const exchangeRateBeforeLittleHigher = exchangeRateBefore.add(
+            BigNumber.from("1100000000000")
+        );
+        expect(exchangeRateBeforeLittleHigher.gt(exchangeRateAfter)).to.be.true;
+        expect(stanleyBalance.eq(0)).to.be.true;
+
+        await josephUsdc.setMiltonStanleyBalanceRatio(oldMiltonStanleyBalanceRation);
+    });
+
+    it("Should not change IP Token exchange rate when rebalance and withdraw ALMOST all - usdc, 1% in Milton, 99% in Stanley", async () => {
+        // given
+        const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
+        //99% ERC20 balance move from Milton to Stanley
+        await josephUsdc.setMiltonStanleyBalanceRatio(BigNumber.from("10000000000000000"));
+
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
+
+        await usdc
+            .connect(admin)
+            .approve(josephUsdc.address, BigNumber.from("100000").mul(N1__0_6DEC));
+
+        await transferUsdcToAddress(
+            testnetFaucet.address,
+            await admin.getAddress(),
+            BigNumber.from("10000").mul(N1__0_6DEC)
+        );
+
+        //when
+        await josephUsdc.connect(admin).provideLiquidity(deposit);
+
+        let exchangeRateBefore = await josephUsdc.connect(admin).calculateExchangeRate();
+        console.log(exchangeRateBefore.toString());
+
+        //when
+        await josephUsdc.rebalance();
+        await josephUsdc.withdrawFromStanley(BigNumber.from("989000000000000000000"));
+
+        //then
+        let exchangeRateAfter = await josephUsdc.connect(admin).calculateExchangeRate();
+        const stanleyBalance = await usdc.balanceOf(stanleyUsdc.address);
+
+        const exchangeRateBeforeLittleHigher = exchangeRateBefore.add(
+            BigNumber.from("1100000000000")
+        );
+        expect(exchangeRateBeforeLittleHigher.gt(exchangeRateAfter)).to.be.true;
+        expect(stanleyBalance.eq(0)).to.be.true;
+        await josephUsdc.setMiltonStanleyBalanceRatio(oldMiltonStanleyBalanceRation);
+    });
+
+    it("Should not close position because Joseph rebalance from Milton to Stanley - usdc, 1% in Milton, 99% in Stanley", async () => {
+        //given
+        const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
+        //99% ERC20 balance move from Milton to Stanley
+        await josephUsdc.setMiltonStanleyBalanceRatio(BigNumber.from("10000000000000000"));
+
+        const accountBalance = BigNumber.from("1000000").mul(N1__0_6DEC);
+
+        await transferUsdcToAddress(
+            testnetFaucet.address,
+            await admin.getAddress(),
+            accountBalance
+        );
+
+        await usdc.connect(admin).approve(josephUsdc.address, accountBalance);
+        await usdc.connect(admin).approve(miltonUsdc.address, accountBalance);
+
+        const adminBalance = await usdc.balanceOf(await admin.getAddress());
+        console.log("adminBalance=", adminBalance.toString());
+
+        await josephUsdc.connect(admin).provideLiquidity(BigNumber.from("2000").mul(N1__0_6DEC));
+
+        console.log("usdc address=", usdc.address);
+        console.log("usdc address in milton=", await miltonUsdc.getAsset());
+
+        await miltonUsdc
+            .connect(admin)
+            .openSwapPayFixed(
+                BigNumber.from("1000").mul(N1__0_6DEC),
+                BigNumber.from("90000000000000000"),
+                BigNumber.from("1000000000000000000000")
+            );
+
+        //when
+        await josephUsdc.rebalance();
+
+        //then
+        await assertError(
+            //when
+            miltonUsdc.closeSwapPayFixed(1),
+            //then
+            "ERC20: transfer amount exceeds balance"
+        );
     });
 });

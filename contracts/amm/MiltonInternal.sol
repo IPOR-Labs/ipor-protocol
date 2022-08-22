@@ -22,6 +22,8 @@ import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
+import "hardhat/console.sol";
+
 abstract contract MiltonInternal is
     Initializable,
     PausableUpgradeable,
@@ -319,6 +321,8 @@ abstract contract MiltonInternal is
         IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
 
         uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
+		console.log("actualVaultBalance=",actualVaultBalance);
+		console.log("accruedBalance.liquidityPool=",accruedBalance.liquidityPool);
 
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
