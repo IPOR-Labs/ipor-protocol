@@ -61,7 +61,7 @@ contract MockTestnetStrategy is StrategyCore {
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
     }
 
-    function withdraw(uint256 wadAmount) external override onlyStanley {
+    function withdraw(uint256 wadAmount) external override onlyStanley returns (uint256) {
         address asset = _asset;
         uint256 amount = IporMath.convertWadToAssetDecimals(
             wadAmount,
@@ -72,6 +72,8 @@ contract MockTestnetStrategy is StrategyCore {
         _depositsBalance = newDepositsBalance;
         _lastUpdateBalance = block.timestamp;
         IERC20Upgradeable(asset).safeTransfer(_msgSender(), amount);
+
+        return wadAmount;
     }
 
     function doClaim() external override onlyOwner {}

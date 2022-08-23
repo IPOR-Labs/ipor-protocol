@@ -167,7 +167,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
@@ -180,7 +180,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         expect(strategyAaveBalanceBefore, "strategyAaveBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        const balance = await stanleyUsdc.connect(signer).deposit(depositAmound);
+        const balance = await stanleyUsdc.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -208,7 +208,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
 
     it("Should accept deposit twice and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
@@ -218,8 +218,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         );
 
         //When
-        await stanleyUsdc.connect(signer).deposit(depositAmound);
-        await stanleyUsdc.connect(signer).deposit(depositAmound);
+        await stanleyUsdc.connect(signer).deposit(depositAmount);
+        await stanleyUsdc.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);

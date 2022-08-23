@@ -81,7 +81,7 @@ abstract contract Stanley is
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
-        (exchangeRate, , ) = _calcExchangeRate();
+        (, exchangeRate, , ) = _calcExchangeRate();
     }
 
     /**
@@ -91,30 +91,35 @@ abstract contract Stanley is
      */
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        (IStrategy strategyMaxApy, , ) = _getMaxApyStrategy();
+        (address strategyMaxApy, , ) = _getMaxApyStrategy();
 
         (
+            ,
             uint256 exchangeRate,
-            uint256 assetBalanceAave,
-            uint256 assetBalanceCompound
+            uint256 assetBalanceAaveStrategy,
+            uint256 assetBalanceCompoundStrategy
         ) = _calcExchangeRate();
 
         uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
 
         _depositToStrategy(strategyMaxApy, amount);
 
+        console.log("[deposit]strategyMaxApy=", strategyMaxApy);
+        console.log("[deposit]exchangeRate=", exchangeRate);
+        console.log("[deposit]ivTokenAmount=", ivTokenAmount);
+
         _ivToken.mint(_msgSender(), ivTokenAmount);
 
         emit Deposit(
             block.timestamp,
             _msgSender(),
-            address(strategyMaxApy),
+            strategyMaxApy,
             exchangeRate,
             amount,
             ivTokenAmount
         );
 
-        return assetBalanceAave + assetBalanceCompound + amount;
+        return assetBalanceAaveStrategy + assetBalanceCompoundStrategy + amount;
     }
 
     function withdraw(uint256 amount)
@@ -130,75 +135,54 @@ abstract contract Stanley is
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
         (
+            uint256 ivTokenTotalSupply,
             uint256 exchangeRate,
-            uint256 assetBalanceAave,
-            uint256 assetBalanceCompound
+            uint256 assetBalanceAaveStrategy,
+            uint256 assetBalanceCompoundStrategy
         ) = _calcExchangeRate();
 
-        uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
         uint256 senderIvTokens = ivToken.balanceOf(msgSender);
 
-        if (senderIvTokens < ivTokenAmount) {
+        if (senderIvTokens < IporMath.division(amount * Constants.D18, exchangeRate)) {
             amount = IporMath.divisionWithoutRound(senderIvTokens * exchangeRate, Constants.D18);
         }
 
         (
-            IStrategy establishedStrategy,
-            uint256 establishedWithdrawnAmount
-        ) = _establishStrategyAndWithdrawnAmount(amount, assetBalanceAave, assetBalanceCompound);
-
-        if (establishedWithdrawnAmount > 0) {
-            uint256 ivTokenWithdrawnAmount = IporMath.division(
-                establishedWithdrawnAmount * Constants.D18,
-                exchangeRate
+            address selectedStrategy,
+            uint256 selectedWithdrawAmount,
+            uint256 selectedStrategyAssetBalance
+        ) = _selectStrategyAndWithdrawAmount(
+                amount,
+                assetBalanceAaveStrategy,
+                assetBalanceCompoundStrategy
             );
+
+        if (selectedWithdrawAmount > 0) {
+            //Tranfer from Strategy to Stanley
+            uint256 ivTokenWithdrawnAmount = _withdrawFromStrategy(
+                selectedStrategy,
+                selectedWithdrawAmount,
+                selectedStrategyAssetBalance,
+                ivTokenTotalSupply
+            );
+
+            console.log("XXX ivTokenWithdrawnAmount=", ivTokenWithdrawnAmount);
+            console.log("XXX ivToken actual balance=", ivToken.balanceOf(msgSender));
 
             ivToken.burn(msgSender, ivTokenWithdrawnAmount);
 
-            //Tranfer from Strategy to Stanley
-            _withdrawFromStrategy(
-                address(establishedStrategy),
-                establishedWithdrawnAmount,
-                ivTokenWithdrawnAmount,
-                exchangeRate
-            );
+            uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
-            //Always transfer everything from Stanley to Milton
-            asset.safeTransfer(msgSender, asset.balanceOf(address(this)));
+            if (assetBalanceStanley > 0) {
+                //Always transfer everything from Stanley to Milton
+                asset.safeTransfer(msgSender, assetBalanceStanley);
+                withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
+            }
         }
 
-        withdrawnAmount = establishedWithdrawnAmount;
-        balance = assetBalanceAave + assetBalanceCompound - establishedWithdrawnAmount;
+        balance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy - withdrawnAmount;
 
         return (withdrawnAmount, balance);
-    }
-
-    function _establishStrategyAndWithdrawnAmount(
-        uint256 amount,
-        uint256 assetBalanceAave,
-        uint256 assetBalanceCompound
-    ) internal view returns (IStrategy, uint256) {
-        (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
-        ) = _getMaxApyStrategy();
-
-        if (address(strategyMaxApy) == _strategyCompound && amount <= assetBalanceAave) {
-            return (strategyAave, amount);
-        } else if (amount <= assetBalanceCompound) {
-            return (strategyCompound, amount);
-        }
-
-        if (address(strategyMaxApy) == _strategyAave && amount <= assetBalanceAave) {
-            return (strategyAave, amount);
-        }
-
-        if (assetBalanceAave < assetBalanceCompound) {
-            return (strategyCompound, assetBalanceCompound);
-        } else {
-            return (strategyAave, assetBalanceAave);
-        }
     }
 
     function withdrawAll()
@@ -209,70 +193,56 @@ abstract contract Stanley is
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
+
         IIvToken ivToken = _ivToken;
+
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
-        IStrategy strategyAave = IStrategy(_strategyAave);
-        IStrategy strategyCompound = IStrategy(_strategyCompound);
+        (
+            uint256 ivTokenTotalSupply,
+            ,
+            uint256 assetBalanceAaveStrategy,
+            uint256 assetBalanceCompoundStrategy
+        ) = _calcExchangeRate();
 
-        uint256 assetBalanceAave = strategyAave.balanceOf();
-        uint256 assetBalanceCompound = strategyCompound.balanceOf();
-        uint256 assetBalanceStrategiesSum = assetBalanceAave + assetBalanceCompound;
-
-        (uint256 exchangeRate, , ) = _calcExchangeRate();
-
-        ivToken.burn(msgSender, ivToken.balanceOf(msgSender));
+        uint256 assetBalanceStrategiesSum = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
 
         if (assetBalanceStrategiesSum > 0) {
-            if (assetBalanceAave > 0) {
-                uint256 ivTokenAmountAave = IporMath.division(
-                    assetBalanceAave * Constants.D18,
-                    exchangeRate
-                );
+            if (assetBalanceAaveStrategy > 0) {
                 _withdrawFromStrategy(
-                    address(strategyAave),
-                    assetBalanceAave,
-                    ivTokenAmountAave,
-                    exchangeRate
+                    _strategyAave,
+                    assetBalanceAaveStrategy,
+                    assetBalanceAaveStrategy,
+                    ivTokenTotalSupply
                 );
             }
 
-            if (assetBalanceCompound > 0) {
-                uint256 ivTokenAmountCompound = IporMath.division(
-                    assetBalanceCompound * Constants.D18,
-                    exchangeRate
-                );
-
+            if (assetBalanceCompoundStrategy > 0) {
                 _withdrawFromStrategy(
-                    address(strategyCompound),
-                    assetBalanceCompound,
-                    ivTokenAmountCompound,
-                    exchangeRate
+                    _strategyCompound,
+                    assetBalanceCompoundStrategy,
+                    assetBalanceCompoundStrategy,
+                    ivTokenTotalSupply
                 );
             }
         }
+
+        ivToken.burn(msgSender, ivToken.balanceOf(msgSender));
 
         uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
         console.log("[stanley-withdrawAll]assetBalanceStanley=", assetBalanceStanley);
 
-        if (assetBalanceStanley > 0) {
-            // Tranfer from Stanley to Milton
-            asset.safeTransfer(msgSender, assetBalanceStanley);
+        //Always transfer everything from Stanley to Milton
+        asset.safeTransfer(msgSender, assetBalanceStanley);
 
-            withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
+        withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
 
-            console.log("[stanley-withdrawAll]assetBalanceAave=", assetBalanceAave);
-            console.log("[stanley-withdrawAll]assetBalanceCompound=", assetBalanceCompound);
-        } else {
-            require(
-                assetBalanceStrategiesSum > 0,
-                StanleyErrors.INCONSISTENT_BALANCE_WITH_STRATEGIES
-            );
-
-            console.log("[stanley-withdrawAll]assetBalanceAave=", assetBalanceAave);
-            console.log("[stanley-withdrawAll]assetBalanceCompound=", assetBalanceCompound);
-        }
+        console.log("[stanley-withdrawAll]assetBalanceAaveStrategy=", assetBalanceAaveStrategy);
+        console.log(
+            "[stanley-withdrawAll]assetBalanceCompoundStrategy=",
+            assetBalanceCompoundStrategy
+        );
 
         vaultBalance = 0;
     }
@@ -287,24 +257,24 @@ abstract contract Stanley is
 
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
         (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
+            address strategyMaxApy,
+            address strategyAave,
+            address strategyCompound
         ) = _getMaxApyStrategy();
 
         uint256 decimals = _getDecimals();
         address from;
 
-        if (address(strategyMaxApy) == address(strategyAave)) {
-            from = address(strategyCompound);
-            uint256 shares = strategyCompound.balanceOf();
+        if (strategyMaxApy == strategyAave) {
+            from = strategyCompound;
+            uint256 shares = IStrategy(strategyCompound).balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            strategyCompound.withdraw(shares);
+            IStrategy(strategyCompound).withdraw(shares);
         } else {
-            from = address(strategyAave);
-            uint256 shares = strategyAave.balanceOf();
+            from = strategyAave;
+            uint256 shares = IStrategy(strategyAave).balanceOf();
             require(shares > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-            strategyAave.withdraw(shares);
+            IStrategy(strategyAave).withdraw(shares);
         }
 
         uint256 amount = ERC20Upgradeable(_asset).balanceOf(address(this));
@@ -345,23 +315,24 @@ abstract contract Stanley is
         internal
         view
         returns (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
+            address strategyMaxApy,
+            address strategyAave,
+            address strategyCompound
         )
     {
-        strategyAave = IStrategy(_strategyAave);
-        strategyCompound = IStrategy(_strategyCompound);
+        strategyAave = _strategyAave;
+        strategyCompound = _strategyCompound;
         strategyMaxApy = strategyAave;
-        if (strategyAave.getApr() < strategyCompound.getApr()) {
+
+        if (IStrategy(strategyAave).getApr() < IStrategy(strategyCompound).getApr()) {
             strategyMaxApy = strategyCompound;
         } else {
             strategyMaxApy = strategyAave;
         }
     }
 
-    function _totalBalance(address who) internal view returns (uint256) {
-        (uint256 exchangeRate, , ) = _calcExchangeRate();
+    function _totalBalance(address who) internal returns (uint256) {
+        (, uint256 exchangeRate, , ) = _calcExchangeRate();
         return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, Constants.D18);
     }
 
@@ -427,70 +398,137 @@ abstract contract Stanley is
     /**
      * @notice Withdraws asset amount from given strategyAddress to Stanley
      * @param strategyAddress strategy address
-     * @param ivTokenAmount ivToken amount which is calculated for asset amount for given exchange rate
-     * @param exchangeRate current exchange rate for IV Token
+     * @param amount asset amount which will be withdraw from Strategy, represented in 18 decimals
+     * @param strategyAssetBalance strategy asset balance, represented in 18 decimals
+     * @return ivTokenWithdrawnAmount final withdrawn IV Token amount, represented in 18 decimals
      */
     function _withdrawFromStrategy(
         address strategyAddress,
         uint256 amount,
-        uint256 ivTokenAmount,
-        uint256 exchangeRate
-    ) internal nonReentrant {
+        uint256 strategyAssetBalance,
+        uint256 ivTokenTotalSupply
+    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount) {
         if (amount > 0) {
+            console.log("xxx _withdrawFromStrategy amount=", amount);
+            //9,99 -
             //Withdraw from Strategy to Stanley
-            IStrategy(strategyAddress).withdraw(amount);
+            uint256 withdrawnAmount = IStrategy(strategyAddress).withdraw(amount);
+            uint256 interest = withdrawnAmount - amount;
+            uint256 assetBalance = strategyAssetBalance + interest;
+            uint256 exchangeRate;
+
+            ///@dev after withdraw balance could change which influence on exchange rate so exchange rate have to be calculated again
+
+            //10,....99 ? ech
+            console.log("xxx _withdrawFromStrategy withdrawnAmount=", withdrawnAmount);
+
+            if (assetBalance == 0 || ivTokenTotalSupply == 0) {
+                exchangeRate = Constants.D18;
+            } else {
+                exchangeRate = IporMath.division(assetBalance * Constants.D18, ivTokenTotalSupply);
+            }
+
+            ivTokenWithdrawnAmount = IporMath.division(
+                withdrawnAmount * Constants.D18,
+                exchangeRate
+            );
+
+            console.log(
+                "xxx _withdrawFromStrategy ivTokenWithdrawnAmount=",
+                ivTokenWithdrawnAmount
+            );
 
             emit Withdraw(
                 block.timestamp,
                 strategyAddress,
                 _msgSender(),
                 exchangeRate,
-                amount,
-                ivTokenAmount
+                withdrawnAmount,
+                ivTokenWithdrawnAmount
             );
         }
     }
 
-    /**  Internal Methods */
     /**
      * @dev to deposit asset in current strategy.
      * @notice internal method.
      * @param strategyAddress strategy from amount to deposit
      * @param wadAmount _amount is _asset token like DAI.
      */
-    function _depositToStrategy(IStrategy strategyAddress, uint256 wadAmount) internal {
+    function _depositToStrategy(address strategyAddress, uint256 wadAmount) internal {
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, _getDecimals());
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), amount);
-        strategyAddress.deposit(IporMath.convertToWad(amount, _getDecimals()));
+        IStrategy(strategyAddress).deposit(IporMath.convertToWad(amount, _getDecimals()));
     }
 
     function _calcExchangeRate()
         internal
-        view
         returns (
+            uint256 ivTokenTotalSupply,
             uint256 exchangeRate,
-            uint256 assetBalanceAave,
-            uint256 assetBalanceCompound
+            uint256 assetBalanceAaveStrategy,
+            uint256 assetBalanceCompoundStrategy
         )
     {
-        assetBalanceAave = IStrategy(_strategyAave).balanceOf();
-        assetBalanceCompound = IStrategy(_strategyCompound).balanceOf();
+        assetBalanceAaveStrategy = IStrategy(_strategyAave).balanceOf();
+        assetBalanceCompoundStrategy = IStrategy(_strategyCompound).balanceOf();
 
-        console.log("[_calcExchangeRate]assetBalanceAave=", assetBalanceAave);
-        console.log("[_calcExchangeRate]assetBalanceCompound=", assetBalanceCompound);
+        console.log("[_calcExchangeRate]assetBalanceAaveStrategy=", assetBalanceAaveStrategy);
+        console.log(
+            "[_calcExchangeRate]assetBalanceCompoundStrategy=",
+            assetBalanceCompoundStrategy
+        );
 
-        uint256 totalAssetBalance = assetBalanceAave + assetBalanceCompound;
+        uint256 totalAssetBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
 
         console.log("[_calcExchangeRate]totalAssetBalance=", totalAssetBalance);
 
-        uint256 ivTokenBalance = _ivToken.totalSupply();
+        ivTokenTotalSupply = _ivToken.totalSupply();
 
-        if (totalAssetBalance == 0 || ivTokenBalance == 0) {
+        console.log("[_calcExchangeRate]ivTokenBalance=", ivTokenTotalSupply);
+
+        if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
             exchangeRate = Constants.D18;
         } else {
-            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenBalance);
+            exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
         }
         console.log("[_calcExchangeRate]exchangeRate=", exchangeRate);
+    }
+
+    function _selectStrategyAndWithdrawAmount(
+        uint256 amount,
+        uint256 assetBalanceAaveStrategy,
+        uint256 assetBalanceCompoundStrategy
+    )
+        internal
+        view
+        returns (
+            address,
+            uint256,
+            uint256
+        )
+    {
+        (
+            address strategyMaxApy,
+            address strategyAave,
+            address strategyCompound
+        ) = _getMaxApyStrategy();
+
+        if (strategyMaxApy == strategyCompound && amount <= assetBalanceAaveStrategy) {
+            return (strategyAave, amount, assetBalanceAaveStrategy);
+        } else if (amount <= assetBalanceCompoundStrategy) {
+            return (strategyCompound, amount, assetBalanceCompoundStrategy);
+        }
+
+        if (strategyMaxApy == strategyAave && amount <= assetBalanceAaveStrategy) {
+            return (strategyAave, amount, assetBalanceAaveStrategy);
+        }
+
+        if (assetBalanceAaveStrategy < assetBalanceCompoundStrategy) {
+            return (strategyCompound, assetBalanceCompoundStrategy, assetBalanceCompoundStrategy);
+        } else {
+            return (strategyAave, assetBalanceAaveStrategy, assetBalanceAaveStrategy);
+        }
     }
 
     //solhint-disable no-empty-blocks

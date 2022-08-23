@@ -18,7 +18,4 @@ library StanleyErrors {
 
     // only Treasury Manager can have access to function
     string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_505";
-
-    // Stanley balance is inconsitent with Strategies balances
-    string public constant INCONSISTENT_BALANCE_WITH_STRATEGIES = "IPOR_506";
 }

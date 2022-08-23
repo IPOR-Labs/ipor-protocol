@@ -117,24 +117,38 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
+        //TODO: wyjaśnic referral
         lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
     }
 
     /**
      * @dev withdraw from _aave lending.
-     * @notice withdraw can only done by owner.
+     * @notice withdraw can only done by Stanley.
      * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function withdraw(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 withdrawnAmount)
+    {
         address asset = _asset;
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+
         address lendingPoolAddress = _provider.getLendingPool();
+
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
+        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(
+            asset,
+            amount,
+            _msgSender()
+        );
+
+        withdrawnAmount = IporMath.convertToWad(withdrawnAmountAave, assetDecimals);
     }
 
     /**

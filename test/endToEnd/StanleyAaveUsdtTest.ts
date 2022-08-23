@@ -161,7 +161,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         await ivToken.setStanley(stanleyUsdt.address);
     });
 
-    it("Shoiuld compand APR < aave APR ", async () => {
+    it("Should compand APR < aave APR ", async () => {
         // when
         const aaveApr = await strategyAaveContract_Instance.getApr();
         const compoundApr = await strategyCompoundContract_Instance.getApr();
@@ -172,7 +172,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
@@ -185,7 +185,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         expect(strategyAaveBalanceBefore, "strategyAaveBalanceBefore = 0").to.be.equal(zero);
 
         //When
-        await stanleyUsdt.connect(signer).deposit(depositAmound);
+        await stanleyUsdt.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
@@ -213,7 +213,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
 
     it("Should accept deposit twice and transfer tokens into AAVE", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = one.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContract_Instance.balanceOf();
@@ -223,8 +223,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         );
 
         //When
-        await stanleyUsdt.connect(signer).deposit(depositAmound);
-        await stanleyUsdt.connect(signer).deposit(depositAmound);
+        await stanleyUsdt.connect(signer).deposit(depositAmount);
+        await stanleyUsdt.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);

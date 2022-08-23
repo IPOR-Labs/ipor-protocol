@@ -8,9 +8,9 @@ abstract contract ItfStanley is Stanley {
         external
         view
         returns (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
+            address strategyMaxApy,
+            address strategyAave,
+            address strategyCompound
         )
     {
         return _getMaxApyStrategy();

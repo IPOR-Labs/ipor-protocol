@@ -65,7 +65,8 @@ contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
         address asset,
         uint256 amount,
         address to
-    ) external override {
+    ) external override returns (uint256) {
         AToken(_aDai).burn(msg.sender, to, amount, 0);
+        return amount;
     }
 }

@@ -86,10 +86,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             ivTokenUsdt,
         } = deployed);
 
-        // #####################################################################
-        // ##################          Setup            ########################
-        // #####################################################################
-
         await setup(deployed);
     });
 
@@ -141,6 +137,8 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephDai.rebalance();
         //then
         const strategyAaveAfter = await strategyAaveDai.balanceOf();
+        console.log("strategyAaveAfter=", strategyAaveAfter.toString());
+        console.log("strategyAaveBalance=", strategyAaveBalance.toString());
         expect(strategyAaveAfter.lt(strategyAaveBalance), "strategyAaveAfter < strategyAaveBalance")
             .to.be.true;
     });

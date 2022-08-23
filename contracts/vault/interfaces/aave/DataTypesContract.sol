@@ -40,14 +40,4 @@ contract DataTypesContract {
         //bit 64-79: reserve factor
         uint256 data;
     }
-
-    struct UserConfigurationMap {
-        uint256 data;
-    }
-
-    enum InterestRateMode {
-        NONE,
-        STABLE,
-        VARIABLE
-    }
 }

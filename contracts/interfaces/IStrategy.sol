@@ -31,7 +31,8 @@ interface IStrategy {
     /// @notice Withdraws asset amount from Strategy to Stanley. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
-    function withdraw(uint256 amount) external;
+    /// @return withdrawnAmount The final amount withdrawn, represented in 18 decimals
+    function withdraw(uint256 amount) external returns (uint256 withdrawnAmount);
 
     /// @notice Claims rewards. Function can be executed by anyone.
     function doClaim() external;
