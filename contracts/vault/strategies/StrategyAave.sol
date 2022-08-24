@@ -136,7 +136,8 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+        /// @dev without rounding because amount to redeem could be too high (to early redeem with high rounding) when roundting to big
+        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         address lendingPoolAddress = _provider.getLendingPool();
 

@@ -111,7 +111,8 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        /// @dev without rounding because amount to redeem could be too high (to early redeem with high rounding) when roundting to big
+        /// @dev without rounding because amount to redeem could be too high (to early redeem with high rounding)
+        /// when roundting to big
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
@@ -121,21 +122,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
             IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
-        console.log("[redeem]sharreTokenBalanceOf=", shareToken.balanceOf(address(this)));
-        console.log(
-            "[redeem]redeemedAmount=",
-            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
-        );
-        console.log("[redeem]amount=", amount);
-        console.log("[redeem]exchangeRateStored=", shareToken.exchangeRateStored());
-        console.log("[redeem]redeem status=", redeemStatus);
-
         require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
-
-        console.log(
-            "YYY withdraw balanceOf AFTER:",
-            IERC20Upgradeable(asset).balanceOf(address(this))
-        );
 
         uint256 withdrawnAmountCompound = IERC20Upgradeable(asset).balanceOf(address(this));
 
