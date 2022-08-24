@@ -81,7 +81,9 @@ abstract contract Stanley is
     }
 
     function calculateExchangeRate() external view override returns (uint256 exchangeRate) {
-        (, exchangeRate, , ) = _calcExchangeRate();
+        IStrategy strategyAave = IStrategy(_strategyAave);
+        IStrategy strategyCompound = IStrategy(_strategyCompound);
+        (, exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
     }
 
     /**
@@ -91,14 +93,18 @@ abstract contract Stanley is
      */
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        (address strategyMaxApy, , ) = _getMaxApyStrategy();
+        (
+            address strategyMaxApy,
+            address strategyAaveAddr,
+            address strategyCompoundAddr
+        ) = _getMaxApyStrategy();
 
         (
             ,
             uint256 exchangeRate,
             uint256 assetBalanceAaveStrategy,
             uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate();
+        ) = _calcExchangeRate(IStrategy(strategyAaveAddr), IStrategy(strategyCompoundAddr));
 
         uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
 
@@ -127,21 +133,23 @@ abstract contract Stanley is
         override
         whenNotPaused
         onlyMilton
-        returns (uint256 withdrawnAmount, uint256 balance)
+        returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        address msgSender = _msgSender();
+
         IIvToken ivToken = _ivToken;
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
+        IStrategy strategyAave = IStrategy(_strategyAave);
+        IStrategy strategyCompound = IStrategy(_strategyCompound);
 
         (
             uint256 ivTokenTotalSupply,
             uint256 exchangeRate,
             uint256 assetBalanceAaveStrategy,
             uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate();
+        ) = _calcExchangeRate(strategyAave, strategyCompound);
 
-        uint256 senderIvTokens = ivToken.balanceOf(msgSender);
+        uint256 senderIvTokens = ivToken.balanceOf(_msgSender());
 
         if (senderIvTokens < IporMath.division(amount * Constants.D18, exchangeRate)) {
             amount = IporMath.divisionWithoutRound(senderIvTokens * exchangeRate, Constants.D18);
@@ -150,7 +158,7 @@ abstract contract Stanley is
         (
             address selectedStrategy,
             uint256 selectedWithdrawAmount,
-            uint256 selectedStrategyAssetBalance
+
         ) = _selectStrategyAndWithdrawAmount(
                 amount,
                 assetBalanceAaveStrategy,
@@ -159,30 +167,44 @@ abstract contract Stanley is
 
         if (selectedWithdrawAmount > 0) {
             //Tranfer from Strategy to Stanley
-            uint256 ivTokenWithdrawnAmount = _withdrawFromStrategy(
+            uint256 ivTokenWithdrawnAmount;
+            (ivTokenWithdrawnAmount, vaultBalance) = _withdrawFromStrategy(
                 selectedStrategy,
                 selectedWithdrawAmount,
-                selectedStrategyAssetBalance,
-                ivTokenTotalSupply
+                ivTokenTotalSupply,
+                strategyAave,
+                strategyCompound
             );
 
             console.log("XXX ivTokenWithdrawnAmount=", ivTokenWithdrawnAmount);
-            console.log("XXX ivToken actual balance=", ivToken.balanceOf(msgSender));
+            console.log("XXX ivToken actual balance=", ivToken.balanceOf(_msgSender()));
 
-            ivToken.burn(msgSender, ivTokenWithdrawnAmount);
+            if (ivTokenWithdrawnAmount > senderIvTokens) {
+                ivToken.burn(_msgSender(), senderIvTokens);
+            } else {
+                ivToken.burn(_msgSender(), ivTokenWithdrawnAmount);
+            }
 
             uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
             if (assetBalanceStanley > 0) {
                 //Always transfer everything from Stanley to Milton
-                asset.safeTransfer(msgSender, assetBalanceStanley);
+                asset.safeTransfer(_msgSender(), assetBalanceStanley);
                 withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
             }
         }
+        console.log("XXX withdrawnAmount=", withdrawnAmount);
 
-        balance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy - withdrawnAmount;
+        console.log("XXX assetBalanceAaveStrategy V2=", strategyAave.balanceOf());
+        console.log("XXX assetBalanceCompoundStrategy V2=", strategyCompound.balanceOf());
+        console.log("XXX vaultBalance=", vaultBalance);
+        console.log("XXX ivToken last calc=", ivToken.balanceOf(_msgSender()));
+        //TODO: powinnimy wypłacać ivTokeny a nie stable bo nie zgadza sie wtedy na 2 strony,
+        //gdybysmy wyplacali tokeny to przynajmniej zgadzalo by sie po stronie ivTokenow
 
-        return (withdrawnAmount, balance);
+        // balance = strategyAave.balanceOf() + strategyCompound.balanceOf();
+
+        return (withdrawnAmount, vaultBalance);
     }
 
     function withdrawAll()
@@ -193,36 +215,38 @@ abstract contract Stanley is
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
-
         IIvToken ivToken = _ivToken;
-
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
+        IStrategy strategyAave = IStrategy(_strategyAave);
+        IStrategy strategyCompound = IStrategy(_strategyCompound);
 
         (
             uint256 ivTokenTotalSupply,
             ,
             uint256 assetBalanceAaveStrategy,
             uint256 assetBalanceCompoundStrategy
-        ) = _calcExchangeRate();
+        ) = _calcExchangeRate(strategyAave, strategyCompound);
 
         uint256 assetBalanceStrategiesSum = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
 
         if (assetBalanceStrategiesSum > 0) {
             if (assetBalanceAaveStrategy > 0) {
-                _withdrawFromStrategy(
+                (, vaultBalance) = _withdrawFromStrategy(
                     _strategyAave,
                     assetBalanceAaveStrategy,
-                    assetBalanceAaveStrategy,
-                    ivTokenTotalSupply
+                    ivTokenTotalSupply,
+                    strategyAave,
+                    strategyCompound
                 );
             }
 
             if (assetBalanceCompoundStrategy > 0) {
-                _withdrawFromStrategy(
+                (, vaultBalance) = _withdrawFromStrategy(
                     _strategyCompound,
                     assetBalanceCompoundStrategy,
-                    assetBalanceCompoundStrategy,
-                    ivTokenTotalSupply
+                    ivTokenTotalSupply,
+                    strategyAave,
+                    strategyCompound
                 );
             }
         }
@@ -243,8 +267,6 @@ abstract contract Stanley is
             "[stanley-withdrawAll]assetBalanceCompoundStrategy=",
             assetBalanceCompoundStrategy
         );
-
-        vaultBalance = 0;
     }
 
     function getVersion() external pure override returns (uint256) {
@@ -331,8 +353,10 @@ abstract contract Stanley is
         }
     }
 
-    function _totalBalance(address who) internal returns (uint256) {
-        (, uint256 exchangeRate, , ) = _calcExchangeRate();
+    function _totalBalance(address who) internal view returns (uint256) {
+        IStrategy strategyAave = IStrategy(_strategyAave);
+        IStrategy strategyCompound = IStrategy(_strategyCompound);
+        (, uint256 exchangeRate, , ) = _calcExchangeRate(strategyAave, strategyCompound);
         return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, Constants.D18);
     }
 
@@ -397,35 +421,45 @@ abstract contract Stanley is
 
     /**
      * @notice Withdraws asset amount from given strategyAddress to Stanley
-     * @param strategyAddress strategy address
+     * @param selectedStrategyAddress strategy address
      * @param amount asset amount which will be withdraw from Strategy, represented in 18 decimals
-     * @param strategyAssetBalance strategy asset balance, represented in 18 decimals
      * @return ivTokenWithdrawnAmount final withdrawn IV Token amount, represented in 18 decimals
      */
     function _withdrawFromStrategy(
-        address strategyAddress,
+        address selectedStrategyAddress,
         uint256 amount,
-        uint256 strategyAssetBalance,
-        uint256 ivTokenTotalSupply
-    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount) {
+        uint256 ivTokenTotalSupply,
+        IStrategy strategyAave,
+        IStrategy strategyCompound
+    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalance) {
         if (amount > 0) {
             console.log("xxx _withdrawFromStrategy amount=", amount);
-            //9,99 -
             //Withdraw from Strategy to Stanley
-            uint256 withdrawnAmount = IStrategy(strategyAddress).withdraw(amount);
-            uint256 interest = withdrawnAmount - amount;
-            uint256 assetBalance = strategyAssetBalance + interest;
-            uint256 exchangeRate;
+            uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
 
-            ///@dev after withdraw balance could change which influence on exchange rate so exchange rate have to be calculated again
-
-            //10,....99 ? ech
             console.log("xxx _withdrawFromStrategy withdrawnAmount=", withdrawnAmount);
 
-            if (assetBalance == 0 || ivTokenTotalSupply == 0) {
+            totalBalance = strategyAave.balanceOf() + strategyCompound.balanceOf();
+
+            uint256 totalBalanceWithWithdrawnAmount = totalBalance + withdrawnAmount;
+
+            console.log("xxx _withdrawFromStrategy totalBalance=", totalBalance);
+            console.log(
+                "xxx _withdrawFromStrategy totalBalanceWithWithdrawnAmount=",
+                totalBalanceWithWithdrawnAmount
+            );
+
+            uint256 exchangeRate;
+
+            /// @dev after withdraw balance could change which influence on exchange rate
+            /// so exchange rate have to be calculated again
+            if (totalBalanceWithWithdrawnAmount == 0 || ivTokenTotalSupply == 0) {
                 exchangeRate = Constants.D18;
             } else {
-                exchangeRate = IporMath.division(assetBalance * Constants.D18, ivTokenTotalSupply);
+                exchangeRate = IporMath.division(
+                    totalBalanceWithWithdrawnAmount * Constants.D18,
+                    ivTokenTotalSupply
+                );
             }
 
             ivTokenWithdrawnAmount = IporMath.division(
@@ -433,14 +467,9 @@ abstract contract Stanley is
                 exchangeRate
             );
 
-            console.log(
-                "xxx _withdrawFromStrategy ivTokenWithdrawnAmount=",
-                ivTokenWithdrawnAmount
-            );
-
             emit Withdraw(
                 block.timestamp,
-                strategyAddress,
+                selectedStrategyAddress,
                 _msgSender(),
                 exchangeRate,
                 withdrawnAmount,
@@ -461,8 +490,9 @@ abstract contract Stanley is
         IStrategy(strategyAddress).deposit(IporMath.convertToWad(amount, _getDecimals()));
     }
 
-    function _calcExchangeRate()
+    function _calcExchangeRate(IStrategy strategyAave, IStrategy strategyCompound)
         internal
+        view
         returns (
             uint256 ivTokenTotalSupply,
             uint256 exchangeRate,
@@ -470,8 +500,8 @@ abstract contract Stanley is
             uint256 assetBalanceCompoundStrategy
         )
     {
-        assetBalanceAaveStrategy = IStrategy(_strategyAave).balanceOf();
-        assetBalanceCompoundStrategy = IStrategy(_strategyCompound).balanceOf();
+        assetBalanceAaveStrategy = strategyAave.balanceOf();
+        assetBalanceCompoundStrategy = strategyCompound.balanceOf();
 
         console.log("[_calcExchangeRate]assetBalanceAaveStrategy=", assetBalanceAaveStrategy);
         console.log(

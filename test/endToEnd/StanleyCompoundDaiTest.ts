@@ -4,8 +4,9 @@ import hre, { upgrades } from "hardhat";
 const daiAbi = require("../../abis/daiAbi.json");
 const comptrollerAbi = require("../../abis/comptroller.json");
 
-const zero = BigNumber.from("0");
-const one = BigNumber.from("1000000000000000000");
+const ZERO = BigNumber.from("0");
+const ONE_18 = BigNumber.from("1000000000000000000");
+const ONE_6 = BigNumber.from("1000000");
 const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
@@ -128,136 +129,136 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         await ivToken.setStanley(stanley.address);
     });
 
-    // it("Should compand APR > aave APR ", async () => {
-    //     // when
-    //     const aaveApy = await strategyAaveContractInstance.getApr();
-    //     const compoundApy = await strategyCompoundContractInstance.getApr();
-    //     // then
-    //     expect(compoundApy.gt(aaveApy)).to.be.true;
-    // });
+    it("Should compand APR > aave APR ", async () => {
+        // when
+        const aaveApy = await strategyAaveContractInstance.getApr();
+        const compoundApy = await strategyCompoundContractInstance.getApr();
+        // then
+        expect(compoundApy.gt(aaveApy)).to.be.true;
+    });
 
-    // it("Should accept deposit and transfer tokens into COMPOUND", async () => {
-    //     //given
-    //     const depositAmount = one.mul(10);
-    //     const userAddress = await signer.getAddress();
-    //     const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
-    //     expect(strategyCompoundBalanceBefore, "strategyCompoundBalanceBefore = 0").to.be.equal(
-    //         zero
-    //     );
-
-    //     //When
-    //     await stanley.connect(signer).deposit(depositAmount);
-
-    //     //Then
-    //     const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     expect(userIvTokenAfter, "userIvTokenAfter = depositAmount").to.be.equal(depositAmount);
-    //     expect(
-    //         strategyCompoundBalanceAfter.gt(strategyCompoundBalanceBefore),
-    //         "strategyCompoundBalanceAfter > strategyCompoundBalanceBefore"
-    //     ).to.be.true;
-    //     expect(
-    //         userDaiBalanceAfter.lt(userDaiBalanceBefore),
-    //         "userDaiBalanceAfter < userDaiBalanceAfter>"
-    //     ).to.be.true;
-    //     expect(
-    //         strategyCTokenContractAfter.gt(strategyCTokenContractBefore),
-    //         "strategyATokenContractAfter > strategyCTokenContractBefore"
-    //     ).to.be.true;
-    // });
-
-    // it("Should accept deposit twice and transfer tokens into COMPOUND", async () => {
-    //     //given
-    //     const depositAmount = one.mul(10);
-    //     const userAddress = await signer.getAddress();
-    //     const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     //When
-    //     await stanley.connect(signer).deposit(depositAmount);
-    //     await stanley.connect(signer).deposit(depositAmount);
-
-    //     //Then
-    //     const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     expect(userIvTokenAfter.gt(userIvTokenBefore), "userIvTokenAfter > userIvTokenBefore").to.be
-    //         .true;
-    //     expect(
-    //         strategyCompoundBalanceAfter.gt(strategyCompoundBalanceBefore),
-    //         "strategyAaveBalanceAfter > strategyCompoundBalanceBefore"
-    //     ).to.be.true;
-    //     expect(
-    //         userDaiBalanceAfter.lt(userDaiBalanceBefore),
-    //         "userDaiBalanceAfter < userDaiBalanceBefore>"
-    //     ).to.be.true;
-    //     expect(
-    //         strategyCTokenContractAfter.gte(strategyCTokenContractBefore),
-    //         "strategyATokenContractAfter > strategyCTokenContractBefore"
-    //     ).to.be.true;
-    // });
-
-    // it("Should withdraw 10000000000000000000 from COMPOUND", async () => {
-    //     //given
-    //     const withdrawAmmond = one.mul(10);
-    //     const userAddress = await signer.getAddress();
-    //     const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     //when
-    //     await stanley.withdraw(withdrawAmmond);
-
-    //     //then
-    //     const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-    //     const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
-    //     const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
-    //     const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-    //         strategyCompoundContractInstance.address
-    //     );
-
-    //     expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenAfter").to.be
-    //         .true;
-    //     expect(
-    //         strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
-    //         "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore"
-    //     ).to.be.true;
-    //     expect(
-    //         userDaiBalanceAfter.gt(userDaiBalanceBefore),
-    //         "userDaiBalanceAfter > userDaiBalanceBefore "
-    //     ).to.be.true;
-    //     expect(
-    //         strategyCTokenContractAfter.lt(strategyCTokenContractBefore),
-    //         "strategyCTokenContractAfter < strategyCTokenContractBefore"
-    //     ).to.be.true;
-    // });
-
-    it("Should withdraw all user asset from COMPOUND", async () => {
+    it("Should accept deposit and transfer tokens into COMPOUND", async () => {
         //given
-        await stanley.deposit(one.mul(10));
+        const depositAmount = ONE_18.mul(10);
+        const userAddress = await signer.getAddress();
+        const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(ZERO);
+        expect(strategyCompoundBalanceBefore, "strategyCompoundBalanceBefore = 0").to.be.equal(
+            ZERO
+        );
+
+        //When
+        await stanley.connect(signer).deposit(depositAmount);
+
+        //Then
+        const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        expect(userIvTokenAfter, "userIvTokenAfter = depositAmount").to.be.equal(depositAmount);
+        expect(
+            strategyCompoundBalanceAfter.gt(strategyCompoundBalanceBefore),
+            "strategyCompoundBalanceAfter > strategyCompoundBalanceBefore"
+        ).to.be.true;
+        expect(
+            userDaiBalanceAfter.lt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceAfter>"
+        ).to.be.true;
+        expect(
+            strategyCTokenContractAfter.gt(strategyCTokenContractBefore),
+            "strategyATokenContractAfter > strategyCTokenContractBefore"
+        ).to.be.true;
+    });
+
+    it("Should accept deposit twice and transfer tokens into COMPOUND", async () => {
+        //given
+        const depositAmount = ONE_18.mul(10);
+        const userAddress = await signer.getAddress();
+        const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        //When
+        await stanley.connect(signer).deposit(depositAmount);
+        await stanley.connect(signer).deposit(depositAmount);
+
+        //Then
+        const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        expect(userIvTokenAfter.gt(userIvTokenBefore), "userIvTokenAfter > userIvTokenBefore").to.be
+            .true;
+        expect(
+            strategyCompoundBalanceAfter.gt(strategyCompoundBalanceBefore),
+            "strategyAaveBalanceAfter > strategyCompoundBalanceBefore"
+        ).to.be.true;
+        expect(
+            userDaiBalanceAfter.lt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceBefore>"
+        ).to.be.true;
+        expect(
+            strategyCTokenContractAfter.gte(strategyCTokenContractBefore),
+            "strategyATokenContractAfter > strategyCTokenContractBefore"
+        ).to.be.true;
+    });
+
+    it("Should withdraw 10000000000000000000 from COMPOUND", async () => {
+        //given
+        const withdrawAmount = ONE_18.mul(10);
+        const userAddress = await signer.getAddress();
+        const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractBefore = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        //when
+        await stanley.withdraw(withdrawAmount);
+
+        //then
+        const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractAfter = await cTokenContract.balanceOf(
+            strategyCompoundContractInstance.address
+        );
+
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenAfter").to.be
+            .true;
+        expect(
+            strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
+            "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore"
+        ).to.be.true;
+        expect(
+            userDaiBalanceAfter.gt(userDaiBalanceBefore),
+            "userDaiBalanceAfter > userDaiBalanceBefore "
+        ).to.be.true;
+        expect(
+            strategyCTokenContractAfter.lt(strategyCTokenContractBefore),
+            "strategyCTokenContractAfter < strategyCTokenContractBefore"
+        ).to.be.true;
+    });
+
+    it("Should withdraw all user asset from COMPOUND - withdraw method", async () => {
+        //given
+        await stanley.deposit(ONE_18.mul(10));
 
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
@@ -281,6 +282,11 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
             strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
             "strategyCompoundBalanceAfter <= strategyCompoundBalanceBefore"
         ).to.be.true;
+
+        /// Important check!
+        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = ZERO").to.be
+            .true;
+
         expect(
             userDaiBalanceAfter.gt(userDaiBalanceBefore),
             "userDaiBalanceAfter < userDaiBalanceBefore"
@@ -288,6 +294,56 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         expect(
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
-        ).to.be.equal(zero);
+        ).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw all user asset from COMPOUND - withdrawAll method", async () => {
+        //given
+        await stanley.deposit(ONE_18.mul(10));
+
+        const userAddress = await signer.getAddress();
+        const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceBefore = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceBefore = await daiContract.balanceOf(userAddress);
+
+        //when
+        await stanley.withdrawAll();
+
+        //then
+        const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceAfter = await strategyCompoundContractInstance.balanceOf();
+        const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
+        const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
+            strategyAaveContractInstance.address
+        );
+
+        console.log("userIvTokenAfter=", userIvTokenAfter.toString());
+        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
+        console.log("userDaiBalanceAfter=", userDaiBalanceAfter.toString());
+        console.log("userDaiBalanceBefore=", userDaiBalanceBefore.toString());
+        console.log(
+            "strategyCTokenContractAfterWithdraw=",
+            strategyCTokenContractAfterWithdraw.toString()
+        );
+
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
+            .true;
+        expect(
+            strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
+            "strategyCompoundBalanceAfter <= strategyCompoundBalanceBefore"
+        ).to.be.true;
+
+        /// Important check!
+        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = ZERO").to.be
+            .true;
+
+        expect(
+            userDaiBalanceAfter.gt(userDaiBalanceBefore),
+            "userDaiBalanceAfter < userDaiBalanceBefore"
+        ).to.be.true;
+        expect(
+            strategyCTokenContractAfterWithdraw,
+            "strategyCTokenContractAfterWithdraw = 0"
+        ).to.be.equal(ZERO);
     });
 });

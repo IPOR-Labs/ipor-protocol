@@ -74,6 +74,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         return (
             IporMath.division(
                 (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
+                //TODO: pogadać z rzonsą
                 (10**IERC20Metadata(_asset).decimals())
             )
         );
@@ -110,19 +111,26 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+        /// @dev without rounding because amount to redeem could be too high (to early redeem with high rounding) when roundting to big
+        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 
-        console.log(
-            "YYY withdraw balanceOf BEFORE:",
-            IERC20Upgradeable(asset).balanceOf(address(this))
+        // Transfer assets from Compound to Strategy
+        uint256 redeemStatus = shareToken.redeem(
+            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
-        // Transfer assets from  Compound to Strategy
-        shareToken.redeem(
-            IporMath.divisionWithoutRound(amount * Constants.D18, shareToken.exchangeRateStored())
+        console.log("[redeem]sharreTokenBalanceOf=", shareToken.balanceOf(address(this)));
+        console.log(
+            "[redeem]redeemedAmount=",
+            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
+        console.log("[redeem]amount=", amount);
+        console.log("[redeem]exchangeRateStored=", shareToken.exchangeRateStored());
+        console.log("[redeem]redeem status=", redeemStatus);
+
+        require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
 
         console.log(
             "YYY withdraw balanceOf AFTER:",

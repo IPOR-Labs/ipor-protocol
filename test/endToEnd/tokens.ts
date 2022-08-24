@@ -63,7 +63,7 @@ export const usdcFactory = async (): Promise<ERC20> => {
     const [admin] = await hre.ethers.getSigners();
     return new hre.ethers.Contract(usdcAddress, usdcAbi, admin) as ERC20;
 };
-// max amound 1606287659962048
+// max amount 1606287659962048
 export const transferUsdcToAddress = async (from: string, to: string, amoung: BigNumber) => {
     const accountToImpersonate = from; // Usdc rich address - Curve.fi: DAI/USDC/USDT Pool
     await hre.network.provider.send("hardhat_setBalance", [
@@ -83,7 +83,7 @@ export const usdtFactory = async (): Promise<ERC20> => {
     const [admin] = await hre.ethers.getSigners();
     return new hre.ethers.Contract(usdtAddress, usdtAbi, admin) as ERC20;
 };
-// max amound 1010694873293061
+// max amount 1010694873293061
 export const transferUsdtToAddress = async (from: string, to: string, amoung: BigNumber) => {
     const accountToImpersonate = from; // Usdt rich address
     await hre.network.provider.send("hardhat_setBalance", [
@@ -103,7 +103,7 @@ export const daiFactory = async (): Promise<ERC20> => {
     const [admin] = await hre.ethers.getSigners();
     return new hre.ethers.Contract(daiAddress, daiAbi, admin) as ERC20;
 };
-// max amound 1700078532741875411567855723
+// max amount 1700078532741875411567855723
 export const transferDaiToAddress = async (from: string, to: string, amoung: BigNumber) => {
     const accountToImpersonate = from; // Dai rich address - Curve.fi: DAI/USDC/USDT Pool
     await hre.network.provider.send("hardhat_setBalance", [

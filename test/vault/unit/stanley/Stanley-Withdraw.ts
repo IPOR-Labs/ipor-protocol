@@ -425,7 +425,7 @@ describe("Stanley -> Withdraw", () => {
         expect(userIvTokenAfter).to.be.equal(one.mul(20));
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
-    it("Should withdraw from COMPOUND when deposit to both but COMPOUND has max APR but in AAVE has less balanse", async () => {
+    it("Should withdraw from COMPOUND when deposit to both but COMPOUND has max APR but in AAVE has less balance", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));
@@ -455,7 +455,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
 
-    it("Should withdrow from COMPOUND when deposit to both but AAVE has max APR", async () => {
+    it("Should withdraw from COMPOUND when deposit to both but AAVE has max APR", async () => {
         await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
@@ -483,7 +483,7 @@ describe("Stanley -> Withdraw", () => {
         expect(userIvTokenAfter).to.be.equal(one.mul(20));
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
-    it("Should withdrow from AAVE when deposit to both but AAVE has max APR but in COMPOUND has less balanse", async () => {
+    it("Should withdraw from AAVE when deposit to both but AAVE has max APR but in COMPOUND has less balance", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));
@@ -695,7 +695,7 @@ describe("Stanley -> Withdraw", () => {
         expect(balanceOfIporeVault).to.be.equal(ZERO);
     });
 
-    it("Should withdraw from Compound when not all amound in one strategy when deposit to both but AAVE has max APR", async () => {
+    it("Should withdraw from Compound when not all amount in one strategy when deposit to both but AAVE has max APR", async () => {
         const adminAddress = await await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(TC_AAVE_CURRENT_LIQUIDITY_RATE);
         await DAI.approve(await admin.getAddress(), one.mul(10000));
