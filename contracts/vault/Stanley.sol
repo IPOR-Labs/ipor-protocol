@@ -184,7 +184,7 @@ abstract contract Stanley is
             uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
             if (assetBalanceStanley > 0) {
-                //Always transfer everything from Stanley to Milton
+                //Always transfer all assets from Stanley to Milton
                 asset.safeTransfer(_msgSender(), assetBalanceStanley);
                 withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
             }
@@ -247,7 +247,7 @@ abstract contract Stanley is
 
         uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
-        //Always transfer everything from Stanley to Milton
+        //Always transfer all assets from Stanley to Milton
         asset.safeTransfer(msgSender, assetBalanceStanley);
 
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());

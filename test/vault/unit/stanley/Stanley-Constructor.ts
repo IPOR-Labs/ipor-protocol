@@ -41,7 +41,7 @@ describe("Stanley -> constructor", () => {
         await strategyCompound.setAsset(DAI.address);
     });
 
-    it("Shoudl throw error when underlyingToken address is 0", async () => {
+    it("Shouldl throw error when underlyingToken address is 0", async () => {
         // given
         // when
         await expect(
@@ -56,7 +56,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud deploy new IporVault", async () => {
+    it("Should deploy new IporVault", async () => {
         // given
         // when
         stanley = (await upgrades.deployProxy(StanleyDaiFactory, [
@@ -70,7 +70,7 @@ describe("Stanley -> constructor", () => {
         expect(stanley.address).to.be.not.empty;
     });
 
-    it("Shoud throw error when ivToken address is 0", async () => {
+    it("Should throw error when ivToken address is 0", async () => {
         // given
         // when
         await expect(
@@ -85,7 +85,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud throw error when strategyAave address is 0", async () => {
+    it("Should throw error when strategyAave address is 0", async () => {
         // given
         // when
         await expect(
@@ -100,7 +100,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_000");
     });
 
-    it("Shoud throw error when strategyCompound address is 0", async () => {
+    it("Should throw error when strategyCompound address is 0", async () => {
         // given
         // when
         await expect(
@@ -131,7 +131,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_500");
     });
 
-    it("Shoud throw error when strategyCompound asset != from IporVault asset", async () => {
+    it("Should throw error when strategyCompound asset != from IporVault asset", async () => {
         // given
         await strategyCompound.setAsset(USDt.address);
         // when
@@ -147,7 +147,7 @@ describe("Stanley -> constructor", () => {
         ).to.be.revertedWith("IPOR_500");
     });
 
-    it("Shoud throw error when stanley asset != from IvToken asset", async () => {
+    it("Should throw error when stanley asset != from IvToken asset", async () => {
         // given
         // when
         await expect(
@@ -291,7 +291,7 @@ describe("Stanley -> constructor", () => {
         expect(assetAddress).to.be.equal(DAI.address);
     });
 
-    it("Shoud deploy new StanleyUsdt", async () => {
+    it("Should deploy new StanleyUsdt", async () => {
         // given
         const StanleyUsdtFactory = await hre.ethers.getContractFactory("StanleyUsdt");
         const tokenFactoryIvTokenUsdt = await hre.ethers.getContractFactory("IvToken");
@@ -323,7 +323,7 @@ describe("Stanley -> constructor", () => {
         expect(stanley.address).to.be.not.empty;
     });
 
-    it("Shoud deploy new StanleyUsdc", async () => {
+    it("Should deploy new StanleyUsdc", async () => {
         // given
         const StanleyUsdtFactory = await hre.ethers.getContractFactory("StanleyUsdc");
         const tokenFactoryIvTokenUsdt = await hre.ethers.getContractFactory("IvToken");

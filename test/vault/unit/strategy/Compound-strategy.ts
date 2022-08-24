@@ -22,6 +22,7 @@ const totalSupply6Decimals = "100000000000000000000";
 
 const ZERO = BigNumber.from("0");
 const ONE = BigNumber.from("1");
+const TC_1_USD_18DEC = BigNumber.from("1000000000000000000");
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 const TC_9_000_USD_18DEC = BigNumber.from("9000000000000000000000");
 const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");

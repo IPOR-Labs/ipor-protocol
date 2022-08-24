@@ -11,7 +11,6 @@ import "../../interfaces/IStrategyCompound.sol";
 import "../interfaces/compound/CErc20.sol";
 import "../interfaces/compound/ComptrollerInterface.sol";
 import "./StrategyCore.sol";
-import "hardhat/console.sol";
 
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -91,7 +90,6 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
             wadAmount,
             IERC20Metadata(asset).decimals()
         );
-        console.log("[strategy-deposit]amount=", amount);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(_shareToken).mint(amount);
     }
@@ -99,7 +97,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     /**
      * @dev withdraw from compound lending.
      * @notice withdraw can only done by Stanley.
-     * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
+     * @param wadAmount candidate amount to withdraw from compound lending, amount represented in 18 decimals
      */
     function withdraw(uint256 wadAmount)
         external
@@ -111,22 +109,21 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        /// @dev without rounding because amount to redeem could be too high (to early redeem with high rounding)
-        /// when roundting to big
+        /// @dev without rounding up because amount to redeem could be too high (too early to redeem)
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 
         // Transfer assets from Compound to Strategy
         uint256 redeemStatus = shareToken.redeem(
-            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
+            IporMath.divisionWithoutRound(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
         require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
 
         uint256 withdrawnAmountCompound = IERC20Upgradeable(asset).balanceOf(address(this));
 
-        // Transfer assets from Strategy to Stanley
+        // Transfer all assets from Strategy to Stanley
         IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAmountCompound);
 
         withdrawnAmount = IporMath.convertToWad(withdrawnAmountCompound, assetDecimals);
