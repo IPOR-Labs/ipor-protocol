@@ -137,8 +137,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephDai.rebalance();
         //then
         const strategyAaveAfter = await strategyAaveDai.balanceOf();
-        console.log("strategyAaveAfter=", strategyAaveAfter.toString());
-        console.log("strategyAaveBalance=", strategyAaveBalance.toString());
         expect(strategyAaveAfter.lt(strategyAaveBalance), "strategyAaveAfter < strategyAaveBalance")
             .to.be.true;
     });
@@ -304,7 +302,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephUsdc.connect(admin).provideLiquidity(deposit);
 
         let exchangeRateBefore = await josephUsdc.connect(admin).calculateExchangeRate();
-        console.log(exchangeRateBefore.toString());
 
         //when
         await josephUsdc.rebalance();
@@ -344,7 +341,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephUsdc.connect(admin).provideLiquidity(deposit);
 
         let exchangeRateBefore = await josephUsdc.connect(admin).calculateExchangeRate();
-        console.log(exchangeRateBefore.toString());
 
         //when
         await josephUsdc.rebalance();
@@ -379,13 +375,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await usdc.connect(admin).approve(josephUsdc.address, accountBalance);
         await usdc.connect(admin).approve(miltonUsdc.address, accountBalance);
 
-        const adminBalance = await usdc.balanceOf(await admin.getAddress());
-        console.log("adminBalance=", adminBalance.toString());
-
         await josephUsdc.connect(admin).provideLiquidity(BigNumber.from("2000").mul(N1__0_6DEC));
-
-        console.log("usdc address=", usdc.address);
-        console.log("usdc address in milton=", await miltonUsdc.getAsset());
 
         await miltonUsdc
             .connect(admin)

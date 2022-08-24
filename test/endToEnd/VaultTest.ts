@@ -179,7 +179,6 @@ describe("End to End tests on mainnet fork", function () {
     it("Should not be able to withdraw from stanley Usdt", async () => {
         // given
         const stanleyUsdtBalanceBefore = await stanleyUsdt.totalBalance(miltonUsdt.address);
-        console.log("stanleyUsdtBalanceBefore=", stanleyUsdtBalanceBefore.toString());
 
         // when
         await expect(
@@ -188,7 +187,6 @@ describe("End to End tests on mainnet fork", function () {
 
         // then
         const stanleyUsdtBalanceAfter = await stanleyUsdt.totalBalance(miltonUsdt.address);
-        console.log("stanleyUsdtBalanceAfter=", stanleyUsdtBalanceAfter.toString());
         expect(
             stanleyUsdtBalanceAfter.eq(stanleyUsdtBalanceBefore),
             "stanleyUsdtBalanceAfter = stanleyUsdtBalanceBefore"

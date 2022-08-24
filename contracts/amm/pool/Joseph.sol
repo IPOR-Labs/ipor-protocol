@@ -8,7 +8,6 @@ import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
 import "../../interfaces/IJoseph.sol";
 import "./JosephInternal.sol";
-import "hardhat/console.sol";
 
 abstract contract Joseph is JosephInternal, IJoseph {
     using SafeERC20Upgradeable for IERC20Upgradeable;

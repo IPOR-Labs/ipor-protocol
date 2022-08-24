@@ -16,7 +16,6 @@ import "../interfaces/IStanleyInternal.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
 
 /// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
@@ -172,9 +171,6 @@ abstract contract Stanley is
                 strategyCompound
             );
 
-            console.log("XXX ivTokenWithdrawnAmount=", ivTokenWithdrawnAmount);
-            console.log("XXX ivToken actual balance=", ivToken.balanceOf(_msgSender()));
-
             if (ivTokenWithdrawnAmount > senderIvTokens) {
                 ivToken.burn(_msgSender(), senderIvTokens);
             } else {
@@ -189,12 +185,6 @@ abstract contract Stanley is
                 withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
             }
         }
-        console.log("XXX withdrawnAmount=", withdrawnAmount);
-
-        console.log("XXX assetBalanceAaveStrategy V2=", strategyAave.balanceOf());
-        console.log("XXX assetBalanceCompoundStrategy V2=", strategyCompound.balanceOf());
-        console.log("XXX vaultBalance=", vaultBalance);
-        console.log("XXX ivToken last calc=", ivToken.balanceOf(_msgSender()));
 
         return (withdrawnAmount, vaultBalance);
     }
@@ -417,21 +407,12 @@ abstract contract Stanley is
         IStrategy strategyCompound
     ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalance) {
         if (amount > 0) {
-            console.log("xxx _withdrawFromStrategy amount=", amount);
             //Withdraw from Strategy to Stanley
             uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
-
-            console.log("xxx _withdrawFromStrategy withdrawnAmount=", withdrawnAmount);
 
             totalBalance = strategyAave.balanceOf() + strategyCompound.balanceOf();
 
             uint256 totalBalanceWithWithdrawnAmount = totalBalance + withdrawnAmount;
-
-            console.log("xxx _withdrawFromStrategy totalBalance=", totalBalance);
-            console.log(
-                "xxx _withdrawFromStrategy totalBalanceWithWithdrawnAmount=",
-                totalBalanceWithWithdrawnAmount
-            );
 
             uint256 exchangeRate;
 

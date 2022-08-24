@@ -317,15 +317,6 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
             strategyAaveContractInstance.address
         );
 
-        console.log("userIvTokenAfter=", userIvTokenAfter.toString());
-        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
-        console.log("userDaiBalanceAfter=", userDaiBalanceAfter.toString());
-        console.log("userDaiBalanceBefore=", userDaiBalanceBefore.toString());
-        console.log(
-            "strategyCTokenContractAfterWithdraw=",
-            strategyCTokenContractAfterWithdraw.toString()
-        );
-
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
             .true;
         expect(
