@@ -19,7 +19,6 @@ import "../../interfaces/IMiltonInternal.sol";
 import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/IStanley.sol";
 import "../../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
 
 abstract contract JosephInternal is
     Initializable,
@@ -157,14 +156,12 @@ abstract contract JosephInternal is
         if (ratio > miltonStanleyBalanceRatio) {
             uint256 assetAmount = wadMiltonAssetBalance -
                 IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
-            console.log("[rebalance]depositToStanelyAmount=", assetAmount);
             _milton.depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
                 miltonStanleyBalanceRatio * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
-            console.log("[rebalance]withdrawFromStanleyAmount=", assetAmount);
             _getMilton().withdrawFromStanley(assetAmount);
         }
     }

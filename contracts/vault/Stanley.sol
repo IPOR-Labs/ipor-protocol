@@ -110,10 +110,6 @@ abstract contract Stanley is
 
         _depositToStrategy(strategyMaxApy, amount);
 
-        console.log("[deposit]strategyMaxApy=", strategyMaxApy);
-        console.log("[deposit]exchangeRate=", exchangeRate);
-        console.log("[deposit]ivTokenAmount=", ivTokenAmount);
-
         _ivToken.mint(_msgSender(), ivTokenAmount);
 
         emit Deposit(
@@ -199,10 +195,6 @@ abstract contract Stanley is
         console.log("XXX assetBalanceCompoundStrategy V2=", strategyCompound.balanceOf());
         console.log("XXX vaultBalance=", vaultBalance);
         console.log("XXX ivToken last calc=", ivToken.balanceOf(_msgSender()));
-        //TODO: powinnimy wypłacać ivTokeny a nie stable bo nie zgadza sie wtedy na 2 strony,
-        //gdybysmy wyplacali tokeny to przynajmniej zgadzalo by sie po stronie ivTokenow
-
-        // balance = strategyAave.balanceOf() + strategyCompound.balanceOf();
 
         return (withdrawnAmount, vaultBalance);
     }
@@ -255,18 +247,10 @@ abstract contract Stanley is
 
         uint256 assetBalanceStanley = asset.balanceOf(address(this));
 
-        console.log("[stanley-withdrawAll]assetBalanceStanley=", assetBalanceStanley);
-
         //Always transfer everything from Stanley to Milton
         asset.safeTransfer(msgSender, assetBalanceStanley);
 
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-
-        console.log("[stanley-withdrawAll]assetBalanceAaveStrategy=", assetBalanceAaveStrategy);
-        console.log(
-            "[stanley-withdrawAll]assetBalanceCompoundStrategy=",
-            assetBalanceCompoundStrategy
-        );
     }
 
     function getVersion() external pure override returns (uint256) {
@@ -503,26 +487,15 @@ abstract contract Stanley is
         assetBalanceAaveStrategy = strategyAave.balanceOf();
         assetBalanceCompoundStrategy = strategyCompound.balanceOf();
 
-        console.log("[_calcExchangeRate]assetBalanceAaveStrategy=", assetBalanceAaveStrategy);
-        console.log(
-            "[_calcExchangeRate]assetBalanceCompoundStrategy=",
-            assetBalanceCompoundStrategy
-        );
-
         uint256 totalAssetBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy;
 
-        console.log("[_calcExchangeRate]totalAssetBalance=", totalAssetBalance);
-
         ivTokenTotalSupply = _ivToken.totalSupply();
-
-        console.log("[_calcExchangeRate]ivTokenBalance=", ivTokenTotalSupply);
 
         if (totalAssetBalance == 0 || ivTokenTotalSupply == 0) {
             exchangeRate = Constants.D18;
         } else {
             exchangeRate = IporMath.division(totalAssetBalance * Constants.D18, ivTokenTotalSupply);
         }
-        console.log("[_calcExchangeRate]exchangeRate=", exchangeRate);
     }
 
     function _selectStrategyAndWithdrawAmount(

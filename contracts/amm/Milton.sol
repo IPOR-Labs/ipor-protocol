@@ -413,7 +413,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             newSwap,
             _getIporPublicationFee()
         );
-        console.log("[_openSwapPayFixed] totalAmount=", totalAmount);
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), totalAmount);
 
         _emitOpenSwapEvent(

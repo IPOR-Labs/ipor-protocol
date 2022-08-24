@@ -115,10 +115,10 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         address lendingPoolAddress = _provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
+
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
-        //TODO: wyjaśnic referral
-        lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
+        lendingPool.deposit(asset, amount, address(this), 0);
     }
 
     /**

@@ -13,7 +13,6 @@ import "../interfaces/IMiltonStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmMiltonStorageTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
-import "hardhat/console.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is
@@ -423,17 +422,11 @@ contract MiltonStorage is
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
-        );		
+        );
 
         uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
 
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
-
-		console.log("[storage withdraw from stanley]vaultBalance=",vaultBalance);
-		console.log("[storage withdraw from stanley]withdrawnAmount=",withdrawnAmount);
-		console.log("[storage withdraw from stanley]currentVaultBalance=",currentVaultBalance);
-		console.log("[storage withdraw from stanley]interest=",interest);
-		console.log("[storage withdraw from stanley]liquidityPoolBalance=",liquidityPoolBalance);
 
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
@@ -458,11 +451,6 @@ contract MiltonStorage is
         _balances.vault = vaultBalance.toUint128();
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
-		console.log("[storage deposit to stanley]depositAmount=",depositAmount);
-		console.log("[storage deposit to stanley]vaultBalance=",vaultBalance);		
-		console.log("[storage deposit to stanley]currentVaultBalance=",currentVaultBalance);
-		console.log("[storage deposit to stanley]interest=",interest);
-		console.log("[storage deposit to stanley]liquidityPoolBalance=",liquidityPoolBalance);
     }
 
     function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount)
