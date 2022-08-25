@@ -2,6 +2,9 @@ name: Build smart contracts
 
 on:
     workflow_call:
+      secrets:
+        HARDHAT_FORKING_URL:
+          required: true
 
 jobs:
     smart-contracts:
@@ -31,6 +34,9 @@ jobs:
               run: npm run compile:hardhat
 
             - name: Tests
-              run: npm run test
-              env:
-                  HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+              run: |
+                touch .env
+                echo "${{ secrets.HARDHAT_FORKING_URL }}"
+                echo HARDHAT_FORKING_URL=${{ secrets.HARDHAT_FORKING_URL }} >> .env
+                cat .env
+                npm run test
