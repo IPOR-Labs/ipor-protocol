@@ -38,7 +38,7 @@ networks.hardhatfork = {
     chainId: 31337,
     url: "http://127.0.0.1:8545",
     forking: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/ufaEYojUhakRot1riVa0TIJ8OzfqiLhZ`,
+        url: forkingUrl,
         blockNumber: 14222088,
     },
 };

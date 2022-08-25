@@ -33,4 +33,4 @@ jobs:
             - name: Tests
               run: npm run test
               env:
-                  HARDHAT_FORKING_URL: "${{ secrets.HARDHAT_FORKING_URL }}"
+                  HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}

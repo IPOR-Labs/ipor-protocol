@@ -397,6 +397,9 @@ abstract contract Stanley is
      * @notice Withdraws asset amount from given strategyAddress to Stanley
      * @param selectedStrategyAddress strategy address
      * @param amount asset amount which will be withdraw from Strategy, represented in 18 decimals
+     * @param ivTokenTotalSupply current IV Token total supply, represented in 18 decimals
+     * @param strategyAave AAVE Strategy address
+     * @param strategyCompound Compound Strategy address
      * @return ivTokenWithdrawnAmount final withdrawn IV Token amount, represented in 18 decimals
      */
     function _withdrawFromStrategy(
