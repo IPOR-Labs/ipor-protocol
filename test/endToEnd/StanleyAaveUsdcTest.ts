@@ -7,8 +7,7 @@ const aaveIncentiveContractAbi = require("../../abis/aaveIncentiveContract.json"
 
 const ZERO = BigNumber.from("0");
 const ONE_18 = BigNumber.from("1000000000000000000");
-const ONE_12 = BigNumber.from("1000000000000");
-const ONE_6 = BigNumber.from("1000000");
+const HALF_18 = BigNumber.from("500000000000000000");
 const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
@@ -287,7 +286,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
 
     it("Should withdraw ALL stanley balance from AAVE - withdraw method", async () => {
         //given
-		await stanleyUsdc.deposit(ONE_18.mul(10));
+        await stanleyUsdc.deposit(ONE_18.mul(10));
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContractInstance.balanceOf();
@@ -332,7 +331,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
 
     it("Should withdraw ALL stanley balance from AAVE - withdrawAll method", async () => {
         //given
-		await stanleyUsdc.deposit(ONE_18.mul(10));
+        await stanleyUsdc.deposit(ONE_18.mul(10));
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyAaveBalanceBefore = await strategyAaveContractInstance.balanceOf();
