@@ -6,7 +6,7 @@ const comptrollerAbi = require("../../abis/comptroller.json");
 
 const ZERO = BigNumber.from("0");
 const ONE_18 = BigNumber.from("1000000000000000000");
-const ONE_6 = BigNumber.from("1000000");
+const ONE_12 = BigNumber.from("1000000000000");
 const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
@@ -284,8 +284,8 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         ).to.be.true;
 
         /// Important check!
-        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = ZERO").to.be
-            .true;
+        expect(strategyCompoundBalanceAfter.lt(ONE_12), "strategyCompoundBalanceAfter < ONE_12").to
+            .be.true;
 
         expect(
             userDaiBalanceAfter.gt(userDaiBalanceBefore),
@@ -325,8 +325,8 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         ).to.be.true;
 
         /// Important check!
-        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = ZERO").to.be
-            .true;
+        expect(strategyCompoundBalanceAfter.lt(ONE_12), "strategyCompoundBalanceAfter < ONE_12").to
+            .be.true;
 
         expect(
             userDaiBalanceAfter.gt(userDaiBalanceBefore),

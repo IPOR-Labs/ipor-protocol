@@ -7,7 +7,7 @@ import hre, { upgrades } from "hardhat";
 const ZERO = BigNumber.from("0");
 const ONE_18 = BigNumber.from("1000000000000000000");
 const ONE_12 = BigNumber.from("1000000000000");
-const ONE_6 = BigNumber.from("1000000");
+
 const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
