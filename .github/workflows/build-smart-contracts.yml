@@ -2,6 +2,9 @@ name: Build smart contracts
 
 on:
     workflow_call:
+      secrets:
+        HARDHAT_FORKING_URL:
+          required: true
 
 jobs:
     smart-contracts:
