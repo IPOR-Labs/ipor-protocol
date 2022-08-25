@@ -57,23 +57,28 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     }
 
     /**
-     * @dev get current APY.
+     * @notice gets current APR in Compound Protocol.
      */
     function getApr() external view override returns (uint256 apr) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
         apr = cRate * _blocksPerYear;
     }
 
-    /**
-     * @dev Total Balance = Principal Amount + Interest Amount.
-     * returns uint256 with 18 Decimals
-     */
+    /// @notice Gets Stanley Compound Strategy's asset amount in Compound Protocol.
+    /// @dev Explanation decimals inside implementation
+    /// In Compound exchangeRateStored is calculated in following way:
+    /// uint exchangeRate = cashPlusBorrowsMinusReserves * expScale / _totalSupply;
+    /// When:
+    /// Asset decimals = 18, then exchangeRate decimals := 18 + 18 - 8 = 28 and balanceOf decimals := 28 + 8 - 18 = 18 decimals.
+    /// Asset decimals = 6, then exchangeRate decimals := 6 + 18 - 8 = 16 and balanceOf decimals := 16 + 8 - 6 = 18 decimals.
+    /// In both cases we have 18 decimals which is number of decimals supported in IPOR Protocol.
+    /// @return uint256 Stanley Strategy's asset amount in Compound represented in 18 decimals
     function balanceOf() external view override returns (uint256) {
         CErc20 shareToken = CErc20(_shareToken);
+
         return (
             IporMath.division(
                 (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
-                //TODO: pogadać z rzonsą
                 (10**IERC20Metadata(_asset).decimals())
             )
         );

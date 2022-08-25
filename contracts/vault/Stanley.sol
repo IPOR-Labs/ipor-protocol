@@ -413,6 +413,7 @@ abstract contract Stanley is
             //Withdraw from Strategy to Stanley
             uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
 
+            /// @dev when in future more strategies then change this calculation
             totalBalance = strategyAave.balanceOf() + strategyCompound.balanceOf();
 
             uint256 totalBalanceWithWithdrawnAmount = totalBalance + withdrawnAmount;
