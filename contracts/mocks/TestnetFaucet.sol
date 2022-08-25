@@ -4,8 +4,9 @@ pragma solidity 0.8.15;
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/MocksErrors.sol";
@@ -79,7 +80,7 @@ contract TestnetFaucet is
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        ERC20Upgradeable token = ERC20Upgradeable(asset);
+        IERC20Upgradeable token = IERC20Upgradeable(asset);
         uint256 maxValue = token.balanceOf(address(this));
         require(amount <= maxValue, IporErrors.NOT_ENOUGH_AMOUNT_TO_TRANSFER);
         IERC20Upgradeable(asset).safeTransfer(_msgSender(), amount);
@@ -107,7 +108,7 @@ contract TestnetFaucet is
     }
 
     function _transfer(address asset) internal {
-        ERC20Upgradeable token = ERC20Upgradeable(asset);
+        IERC20MetadataUpgradeable token = IERC20MetadataUpgradeable(asset);
         uint256 value;
         value = 10_000 * 10**token.decimals();
         IERC20Upgradeable(asset).safeTransfer(msg.sender, value);

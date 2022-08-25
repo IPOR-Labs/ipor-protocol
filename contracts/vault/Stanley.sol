@@ -4,7 +4,8 @@ pragma solidity 0.8.15;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
@@ -63,7 +64,7 @@ abstract contract Stanley is
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+        require(_getDecimals() == IERC20MetadataUpgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIvToken iivToken = IIvToken(ivToken);
         require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
@@ -273,7 +274,7 @@ abstract contract Stanley is
             IStrategy(strategyAave).withdraw(shares);
         }
 
-        uint256 amount = ERC20Upgradeable(_asset).balanceOf(address(this));
+        uint256 amount = IERC20Upgradeable(_asset).balanceOf(address(this));
         uint256 wadAmount = IporMath.convertToWad(amount, decimals);
 
         _depositToStrategy(strategyMaxApy, wadAmount);
@@ -371,7 +372,7 @@ abstract contract Stanley is
 
         address oldStrategy = _strategyAave;
 
-        IERC20Upgradeable asset = ERC20Upgradeable(_asset);
+        IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
         IStrategy strategy = IStrategy(newStrategy);
 

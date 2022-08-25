@@ -10,6 +10,7 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -85,7 +86,7 @@ abstract contract JosephInternal is
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            _getDecimals() == ERC20Upgradeable(initAsset).decimals(),
+            _getDecimals() == IERC20MetadataUpgradeable(initAsset).decimals(),
             IporErrors.WRONG_DECIMALS
         );
 
