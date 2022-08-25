@@ -1,5 +1,3 @@
-import * as fs from "fs";
-
 import Migrations from "./contracts/Migrations.json";
 
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";

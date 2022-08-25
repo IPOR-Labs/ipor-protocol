@@ -161,7 +161,7 @@ abstract contract Stanley is
             );
 
         if (selectedWithdrawAmount > 0) {
-            //Tranfer from Strategy to Stanley
+            //Transfer from Strategy to Stanley
             uint256 ivTokenWithdrawnAmount;
             (ivTokenWithdrawnAmount, vaultBalance) = _withdrawFromStrategy(
                 selectedStrategy,

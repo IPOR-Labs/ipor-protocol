@@ -19,8 +19,8 @@ async function main() {
     await helpers.impersonateAccount(timelockAddress);
     const impersonatedSigner = await ethers.getSigner(timelockAddress);
 
-    let josephUsdtAddress = "0x33C5A44fd6E76Fc2b50a9187CfeaC336A74324AC";
-    let josephUsdt = new hre.ethers.Contract(josephUsdtAddress, josephUsdtAbi, impersonatedSigner);
+    const josephUsdtAddress = "0x33C5A44fd6E76Fc2b50a9187CfeaC336A74324AC";
+    const josephUsdt = new hre.ethers.Contract(josephUsdtAddress, josephUsdtAbi, impersonatedSigner);
     await josephUsdt.transferOwnership(myAddress);
 }
 main()

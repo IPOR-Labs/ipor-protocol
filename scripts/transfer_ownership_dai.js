@@ -34,22 +34,22 @@ async function main() {
     await helpers.impersonateAccount(timelockAddress);
     const impersonatedSigner = await ethers.getSigner(timelockAddress);
 
-    let josephDaiContract = new hre.ethers.Contract(
+    const josephDaiContract = new hre.ethers.Contract(
         josephDaiAddress,
         josephDaiAbi,
         impersonatedSigner
     );
-    let stanleyDaiContract = new hre.ethers.Contract(
+    const stanleyDaiContract = new hre.ethers.Contract(
         stanleyDaiAddress,
         stanleyDaiAbi,
         impersonatedSigner
     );
-    let strategyAaveDaiContract = new hre.ethers.Contract(
+    const strategyAaveDaiContract = new hre.ethers.Contract(
         strategyAaveDaiAddress,
         strategyAaveDaiAbi,
         impersonatedSigner
     );
-    let strategyCompoundDaiContract = new hre.ethers.Contract(
+    const strategyCompoundDaiContract = new hre.ethers.Contract(
         strategyCompoundDaiAddress,
         strategyCompoundDaiAbi,
         impersonatedSigner
