@@ -322,7 +322,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         ).to.be.true;
 
         /// Important check!
-        expect(strategyAaveBalanceAfter.lt(ONE_12), "strategyAaveBalanceAfter <= ONE_12").to.be.true;
+        expect(strategyAaveBalanceAfter.lt(HALF_18), "strategyAaveBalanceAfter <= HALF_18").to.be.true;
 
         expect(
             userUsdtBalanceAfter.gt(userUsdtBalanceBefore),
@@ -365,7 +365,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         ).to.be.true;
 
         /// Important check!
-        expect(strategyAaveBalanceAfter.lt(ONE_12), "strategyAaveBalanceAfter <= ONE_12").to.be.true;
+        expect(strategyAaveBalanceAfter.lt(HALF_18), "strategyAaveBalanceAfter <= HALF_18").to.be.true;
 
         expect(
             userUsdtBalanceAfter.gt(userUsdtBalanceBefore),

@@ -289,7 +289,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
         ).to.be.true;
 
         /// Important check!
-        expect(strategyCompoundBalanceAfter.lt(ONE_12), "strategyCompoundBalanceAfter <= ONE_12").to
+        expect(strategyCompoundBalanceAfter.lt(HALF_18), "strategyCompoundBalanceAfter <= HALF_18").to
             .be.true;
 
         expect(
@@ -329,7 +329,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
         ).to.be.true;
 
         /// Important check!
-        expect(strategyCompoundBalanceAfter.lt(ONE_12), "strategyCompoundBalanceAfter <= ONE_12").to
+        expect(strategyCompoundBalanceAfter.lt(HALF_18), "strategyCompoundBalanceAfter <= HALF_18").to
             .be.true;
 
         expect(
