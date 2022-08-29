@@ -36,7 +36,7 @@ abstract contract StrategyCore is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getAsset() external view override returns (address) {
