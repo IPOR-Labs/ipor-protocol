@@ -3,16 +3,12 @@ const func = require("../../../../../json_func.js");
 
 const { prepareUpgrade } = require("@openzeppelin/truffle-upgrades");
 
-module.exports = async function (deployer, _network, addresses, StrategyAaveUsdt) {
-    const aaveStrategyProxyAddress = await func.getValue(keys.AaveStrategyProxyUsdt);
+module.exports = async function (deployer, _network, addresses, StrategyAave) {
+    const strategyProxyAddress = await func.getValue(keys.AaveStrategyProxyUsdt);
 
-    const aaveStrategyImplAddress = await prepareUpgrade(
-        aaveStrategyProxyAddress,
-        StrategyAaveUsdt,
-        {
-            deployer: deployer,
-            kind: "uups",
-        }
-    );
-    await func.update(keys.AaveStrategyImplUsdt, aaveStrategyImplAddress);
+    const strategyImplAddress = await prepareUpgrade(strategyProxyAddress, StrategyAave, {
+        deployer: deployer,
+        kind: "uups",
+    });
+    await func.update(keys.AaveStrategyImplUsdt, strategyImplAddress);
 };

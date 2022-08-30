@@ -11,8 +11,9 @@ async function main() {
 
     //Mainnet Fork Admin address
     const adminAddress = "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266";
+
     //IPOR Protocol Owner with Timelock
-    const timelockAddress = "0xD92E9F039E4189c342b4067CC61f5d063960D248";
+    const timelockAddress = "0x8cA837b13ADDf53d64fbb246a0d72213b7F450fe";
     //Joseph DAI address
     const josephDaiAddress = "0x086d4daab14741b195deE65aFF050ba184B65045";
     //Stanley DAI address
