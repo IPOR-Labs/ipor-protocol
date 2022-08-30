@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 /// @title Interface for interaction with Stanley smart contract.
 /// @notice Stanley is reposnsible for delegating assets stored in Milton to money markets where they can earn interest.

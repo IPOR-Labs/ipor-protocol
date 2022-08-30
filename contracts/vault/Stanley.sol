@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -64,7 +64,10 @@ abstract contract Stanley is
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(_getDecimals() == IERC20MetadataUpgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
+        require(
+            _getDecimals() == IERC20MetadataUpgradeable(asset).decimals(),
+            IporErrors.WRONG_DECIMALS
+        );
 
         IIvToken iivToken = IIvToken(ivToken);
         require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);

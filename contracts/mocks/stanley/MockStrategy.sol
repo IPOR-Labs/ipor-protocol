@@ -1,6 +1,6 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 import "../../interfaces/IStrategy.sol";
 
 // simple mock for total _balance tests

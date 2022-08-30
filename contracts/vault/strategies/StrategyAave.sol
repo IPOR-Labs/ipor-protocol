@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -136,14 +136,14 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        /// @dev without rounding up because amount to redeem could be too high (too early to redeem) 
+        /// @dev without rounding up because amount to redeem could be too high (too early to redeem)
         uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         address lendingPoolAddress = _provider.getLendingPool();
 
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-		//Transfer assets from Aave directly to msgSender which is Stanley
+        //Transfer assets from Aave directly to msgSender which is Stanley
         uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(
             asset,
             amount,

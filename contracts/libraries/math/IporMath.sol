@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 library IporMath {
     //@notice Division with rounding up on last position, x, and y is with MD
@@ -29,7 +29,7 @@ library IporMath {
         }
     }
 
-	function convertWadToAssetDecimalsWithoutRound(uint256 value, uint256 assetDecimals)
+    function convertWadToAssetDecimalsWithoutRound(uint256 value, uint256 assetDecimals)
         internal
         pure
         returns (uint256)
