@@ -1,12 +1,14 @@
 const keys = require("../../../../json_keys.js");
 const func = require("../../../../json_func.js");
 
-const { upgradeProxy } = require("@openzeppelin/truffle-upgrades");
+const { upgradeProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, Stanley) {
     const stanleyProxyAddress = await func.getValue(keys.StanleyProxyUsdt);
 
-    const stanleyImplAddress = await upgradeProxy(stanleyProxyAddress, Stanley);
+    await upgradeProxy(stanleyProxyAddress, Stanley);
 
-    await func.update(keys.StanleyImplUsdt, stanleyImplAddress);
+    const implAddress = await erc1967.getImplementationAddress(stanleyProxyAddress);
+
+    await func.update(keys.StanleyImplUsdt, implAddress);
 };

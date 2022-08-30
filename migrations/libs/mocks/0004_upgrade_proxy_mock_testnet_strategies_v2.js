@@ -1,6 +1,6 @@
 const keys = require("../json_keys.js");
 const func = require("../json_func.js");
-const { upgradeProxy } = require("@openzeppelin/truffle-upgrades");
+const { upgradeProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (
     deployer,
@@ -18,46 +18,46 @@ module.exports = async function (
     //AAVE
 
     const aaveStrategyProxyUsdtAddress = await func.getValue(keys.AaveStrategyProxyUsdt);
-    const aaveStrategyImplUsdtAddress = await upgradeProxy(
-        aaveStrategyProxyUsdtAddress,
-        MockTestnetStrategyAaveUsdt
+    await upgradeProxy(aaveStrategyProxyUsdtAddress, MockTestnetStrategyAaveUsdt);
+    const aaveStrategyImplUsdtAddress = await erc1967.getImplementationAddress(
+        aaveStrategyProxyUsdtAddress
     );
     await func.update(keys.AaveStrategyImplUsdt, aaveStrategyImplUsdtAddress);
 
     const aaveStrategyProxyUsdcAddress = await func.getValue(keys.AaveStrategyProxyUsdc);
-    const aaveStrategyImplUsdcAddress = await upgradeProxy(
-        aaveStrategyProxyUsdcAddress,
-        MockTestnetStrategyAaveUsdc
+    await upgradeProxy(aaveStrategyProxyUsdcAddress, MockTestnetStrategyAaveUsdc);
+    const aaveStrategyImplUsdcAddress = await erc1967.getImplementationAddress(
+        aaveStrategyProxyUsdcAddress
     );
     await func.update(keys.AaveStrategyImplUsdc, aaveStrategyImplUsdcAddress);
 
     const aaveStrategyProxyDaiAddress = await func.getValue(keys.AaveStrategyProxyDai);
-    const aaveStrategyImplDaiAddress = await upgradeProxy(
-        aaveStrategyProxyDaiAddress,
-        MockTestnetStrategyAaveDai
+    await upgradeProxy(aaveStrategyProxyDaiAddress, MockTestnetStrategyAaveDai);
+    const aaveStrategyImplDaiAddress = await erc1967.getImplementationAddress(
+        aaveStrategyProxyDaiAddress
     );
     await func.update(keys.AaveStrategyImplDai, aaveStrategyImplDaiAddress);
 
     // Compound
 
     const compoundStrategyProxyUsdtAddress = await func.getValue(keys.CompoundStrategyProxyUsdt);
-    const compoundStrategyImplUsdtAddress = await upgradeProxy(
-        compoundStrategyProxyUsdtAddress,
-        MockTestnetStrategyCompoundUsdt
+    await upgradeProxy(compoundStrategyProxyUsdtAddress, MockTestnetStrategyCompoundUsdt);
+    const compoundStrategyImplUsdtAddress = await erc1967.getImplementationAddress(
+        compoundStrategyProxyUsdtAddress
     );
     await func.update(keys.CompoundStrategyImplUsdt, compoundStrategyImplUsdtAddress);
 
     const compoundStrategyProxyUsdcAddress = await func.getValue(keys.CompoundStrategyProxyUsdc);
-    const compoundStrategyImplUsdcAddress = await upgradeProxy(
-        compoundStrategyProxyUsdcAddress,
-        MockTestnetStrategyCompoundUsdc
+    await upgradeProxy(compoundStrategyProxyUsdcAddress, MockTestnetStrategyCompoundUsdc);
+    const compoundStrategyImplUsdcAddress = await erc1967.getImplementationAddress(
+        compoundStrategyProxyUsdcAddress
     );
     await func.update(keys.CompoundStrategyImplUsdc, compoundStrategyImplUsdcAddress);
 
     const compoundStrategyProxyDaiAddress = await func.getValue(keys.CompoundStrategyProxyDai);
-    const compoundStrategyImplDaiAddress = await upgradeProxy(
-        compoundStrategyProxyDaiAddress,
-        MockTestnetStrategyCompoundDai
+    await upgradeProxy(compoundStrategyProxyDaiAddress, MockTestnetStrategyCompoundDai);
+    const compoundStrategyImplDaiAddress = await erc1967.getImplementationAddress(
+        compoundStrategyProxyDaiAddress
     );
     await func.update(keys.CompoundStrategyImplDai, compoundStrategyImplDaiAddress);
 };
