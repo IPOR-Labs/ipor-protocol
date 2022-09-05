@@ -13,4 +13,5 @@
 -   `private-testnet` - migrations specific for dev, test, localhost environments
 -   `goerli` - migrations specific for Goerli environment
 
-#### How to specify migration folder?
+#### Notice! 
+Migration inside `private-testnet` folder is based on current source code. If you add incompatible changes in smart contract please align old scripts to new changes. Don't add incremental changes for example with upgrades in folder `private-testnet`.
