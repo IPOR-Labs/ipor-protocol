@@ -18,7 +18,7 @@ import "../interfaces/IStanley.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-/// @title Stanley represents Asset Management module resposnible for investing Milton's cash in external DeFi protocols.
+/// @title Stanley represents Asset Management module responsible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
     Initializable,
     PausableUpgradeable,
@@ -77,6 +77,18 @@ abstract contract Stanley is
 
         _setStrategyAave(strategyAave);
         _setStrategyCompound(strategyCompound);
+    }
+
+    function getVersion() external pure override returns (uint256) {
+        return 2;
+    }
+
+    function getAsset() external view override returns (address) {
+        return _asset;
+    }
+
+    function getMilton() external view override returns (address) {
+        return _milton;
     }
 
     function totalBalance(address who) external view override returns (uint256) {
@@ -245,14 +257,6 @@ abstract contract Stanley is
         asset.safeTransfer(msgSender, assetBalanceStanley);
 
         withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
-    }
-
-    function getVersion() external pure override returns (uint256) {
-        return 2;
-    }
-
-    function getAsset() external view override returns (address) {
-        return _asset;
     }
 
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {

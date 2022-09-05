@@ -11,6 +11,10 @@ interface IStanleyInternal {
     /// @return asset / underlying token / stablecoin address
     function getAsset() external view returns (address);
 
+    /// @notice Gets Milton address
+    /// @return Milton address
+    function getMilton() external view returns (address);
+
     /// @notice Transfers all asset in current strategy to strategy with the highest APR. Function available only for the Owner.
     /// @dev Emits {Deposit} or {Withdraw} event from Stanley depending on current asset balance on Milton and Stanley. Emits {Transfer} from ERC20 asset.
     function migrateAssetToStrategyWithMaxApr() external;

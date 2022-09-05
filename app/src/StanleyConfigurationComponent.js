@@ -252,6 +252,141 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
+
+            <h4>Stanley - setup NEW Milton Address</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdt"
+                                method="getMilton"
+                            />
+                            <br/>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdt"
+                                method="setMilton"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdc"
+                                method="getMilton"
+                            />
+                            <br/>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdc"
+                                method="setMilton"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyDai"
+                                method="getMilton"
+                            />
+                            <br/>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyDai"
+                                method="setMilton"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <h4>Stanley - setup NEW Strategy Address</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>AAVE</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdt"
+                                method="setStrategyAave"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdc"
+                                method="setStrategyAave"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyDai"
+                                method="setStrategyAave"
+                            />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Compound</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdt"
+                                method="setStrategyCompound"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdc"
+                                method="setStrategyCompound"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyDai"
+                                method="setStrategyCompound"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 );
