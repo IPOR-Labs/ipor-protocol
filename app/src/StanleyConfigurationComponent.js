@@ -1,259 +1,12 @@
 import React from "react";
-import { newContextComponents } from "@drizzle/react-components";
+import {newContextComponents} from "@drizzle/react-components";
 
-const { ContractData, ContractForm } = newContextComponents;
+const {ContractData, ContractForm} = newContextComponents;
 
-export default ({ drizzle, drizzleState }) => (
+export default ({drizzle, drizzleState}) => (
     <div>
         <div className="row">
-            <h4>Strategies setTreasuryManager</h4>
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Strategy</th>
-                    <th scope="col">USDT</th>
-                    <th scope="col">USDC</th>
-                    <th scope="col">DAI</th>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Aave</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdt"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdc"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveDai"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Compound</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdt"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdc"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundDai"
-                                method="getTreasuryManager"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
-                                method="setTreasuryManager"
-                            />
-                        </div>
-                    </td>
-                </tr>
-            </table>
-            <h4>Strategies setTreasury</h4>
-            <table className="table" align="center">
-                <tr>
-                    <th scope="col">Strategy</th>
-                    <th scope="col">USDT</th>
-                    <th scope="col">USDC</th>
-                    <th scope="col">DAI</th>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Aave</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdt"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdc"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveDai"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Compound</strong>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdt"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdc"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundDai"
-                                method="getTreasury"
-                            />
-                        </div>
-                        <div>
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
-                                method="setTreasury"
-                            />
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-            <h4>Stanley - setup NEW Milton Address</h4>
+            <h4>Stanley: Setup new Milton address</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">USDT</th>
@@ -316,7 +69,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
             </table>
 
-            <h4>Stanley - setup NEW Strategy Address</h4>
+            <h4>Stanley: Setup new Strategy address</h4>
             <table className="table" align="center">
                 <tr>
                     <th scope="col">Strategy</th>
@@ -330,12 +83,12 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>AAVE</strong>
                     </td>
                     <td>
-					<div>
+                        <div>
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
                                 contract="DrizzleStanleyUsdt"
-                                method="getMilton"
+                                method="getStrategyAave"
                             />
                         </div>
                         <div>
@@ -347,6 +100,14 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                     <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdc"
+                                method="getStrategyAave"
+                            />
+                        </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
@@ -356,6 +117,14 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                     <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyDai"
+                                method="getStrategyAave"
+                            />
+                        </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
@@ -371,6 +140,14 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdt"
+                                method="getStrategyCompound"
+                            />
+                        </div>
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleStanleyUsdt"
@@ -379,6 +156,14 @@ export default ({ drizzle, drizzleState }) => (
                         </div>
                     </td>
                     <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdc"
+                                method="getStrategyCompound"
+                            />
+                        </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
@@ -389,6 +174,14 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                     <td>
                         <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyDai"
+                                method="getStrategyCompound"
+                            />
+                        </div>
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleStanleyDai"
@@ -398,6 +191,379 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
+
+            <h4>Strategies: Setup new Stanley address</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>AAVE</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveDai"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveDai"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Compound</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="getStanley"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="setStanley"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+            <h4>Strategies: Setup new Treasury Manager address</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Aave</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveDai"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveDai"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Compound</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="getTreasuryManager"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <h4>Strategies: Setup new Treasury address</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Strategy</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Aave</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdt"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveUsdc"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyAaveDai"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyAaveDai"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Compound</strong>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdt"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundUsdc"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="getTreasury"
+                            />
+                        </div>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStrategyCompoundDai"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+
         </div>
     </div>
 );
