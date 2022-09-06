@@ -5,7 +5,7 @@ pragma solidity 0.8.16;
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
 interface IStrategy {
     /// @notice Returns current version of strategy
-	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Strategy's version
     function getVersion() external pure returns (uint256);
 

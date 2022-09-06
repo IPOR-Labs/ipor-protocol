@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 /// @title Administrative interface for interaction with Joseph.
 interface IJosephInternal {
     /// @notice Returns current version of Joseph
-	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return Joseph's current version
     function getVersion() external pure returns (uint256);
 
