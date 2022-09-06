@@ -8,7 +8,8 @@ import "./types/MiltonStorageTypes.sol";
 /// @title Interface for interaction with Milton Storage smart contract, reposnsible for managing AMM storage.
 interface IMiltonStorage {
     /// @notice Returns current version of Milton Storage
-    /// @return current Milton Storage version, integer.
+	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @return current Milton Storage version, integer
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets last swap ID.

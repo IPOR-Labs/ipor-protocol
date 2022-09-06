@@ -68,7 +68,7 @@ contract CockpitDataProvider is
     }
 
     function getVersion() external pure override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {

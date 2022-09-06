@@ -6,6 +6,7 @@ import "../interfaces/types/MiltonFacadeTypes.sol";
 /// @title Interface for reading on-chain data related to Milton Automated Market Maker.
 interface IMiltonFacadeDataProvider {
     /// @notice Returns current version of Milton Facade Data Provider
+	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Milton Facade Data Provider version
     function getVersion() external pure returns (uint256);
 

@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 /// @title Interface for interaction with Stanley smart contract - administration and maintenance part.
 interface IStanleyInternal {
     /// @notice Returns current version of Stanley
+	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Stanley's version
     function getVersion() external pure returns (uint256);
 

@@ -6,6 +6,7 @@ import "./types/IporTypes.sol";
 /// @title Interface for interaction with IporOracle, smart contract responsible for managing IPOR Index.
 interface IIporOracle {
     /// @notice Returns current version of IporOracle's
+	/// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current IporOracle version
     function getVersion() external pure returns (uint256);
 

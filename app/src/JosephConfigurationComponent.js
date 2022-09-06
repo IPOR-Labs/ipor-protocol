@@ -364,7 +364,7 @@ export default ({drizzle, drizzleState}) => (
                     <td>
                         <strong>Max Liquidity Pool Balance</strong>
                         <br/>
-                        <small>Guarded Launch. Notice! Don't use decimals.</small>
+                        <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
                         <div>
@@ -417,7 +417,7 @@ export default ({drizzle, drizzleState}) => (
                     <td>
                         <strong>Max Liquidity Pool Account Contribution</strong>
                         <br/>
-                        <small>Guarded Launch. Notice! Don't use decimals.</small>
+                        <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
                         <div>

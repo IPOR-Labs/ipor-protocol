@@ -244,7 +244,7 @@ describe("Stanley -> Deposit", () => {
 
     it("Should accept deposit and transfer tokens into Compound", async () => {
         //given
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -461,7 +461,7 @@ describe("Stanley -> Deposit", () => {
     });
 
     it("Should migrate all asset from compound to AAVE", async () => {
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into compound
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
@@ -480,7 +480,7 @@ describe("Stanley -> Deposit", () => {
     });
 
     it("Should migrate all asset from AAVE to compound", async () => {
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into aave
