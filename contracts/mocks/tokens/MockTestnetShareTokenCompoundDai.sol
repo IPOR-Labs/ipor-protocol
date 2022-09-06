@@ -9,4 +9,5 @@ contract MockTestnetShareTokenCompoundDai is MockTestnetToken {
     constructor(uint256 initialSupply)
         MockTestnetToken("Mocked Share cDAI", "cDAI", initialSupply, 18)
     {}
+    function accrueInterest() public returns (uint) {}
 }

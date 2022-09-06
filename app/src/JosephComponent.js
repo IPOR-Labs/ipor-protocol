@@ -27,7 +27,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Exchange Rate</strong>
+                        <strong>IpToken Exchange Rate</strong>
                     </td>
                     <td>
                         <ContractData

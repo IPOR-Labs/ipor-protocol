@@ -60,7 +60,7 @@ describe("Stanley -> StrategyChanged", () => {
                 //then
                 .to.emit(stanley, "StrategyChanged")
                 .withArgs(
-                    await admin.getAddress,
+                    admin.getAddress,
                     oldStrategyAddress,
                     newStrategyAave.address,
                     DAI.address

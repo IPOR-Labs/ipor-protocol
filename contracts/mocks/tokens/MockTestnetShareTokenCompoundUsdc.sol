@@ -9,4 +9,5 @@ contract MockTestnetShareTokenCompoundUsdc is MockTestnetToken {
     constructor(uint256 initialSupply)
         MockTestnetToken("Mocked Share cUSDC", "cUSDC", initialSupply, 6)
     {}
+    function accrueInterest() public returns (uint) {}
 }

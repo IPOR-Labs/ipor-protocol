@@ -270,7 +270,8 @@ export default ({ drizzle, drizzleState }) => (
                                 contract="DrizzleStanleyUsdt"
                                 method="getMilton"
                             />
-                            <br/>
+                        </div>
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleStanleyUsdt"
@@ -286,7 +287,8 @@ export default ({ drizzle, drizzleState }) => (
                                 contract="DrizzleStanleyUsdc"
                                 method="getMilton"
                             />
-                            <br/>
+                        </div>
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleStanleyUsdc"
@@ -302,7 +304,8 @@ export default ({ drizzle, drizzleState }) => (
                                 contract="DrizzleStanleyDai"
                                 method="getMilton"
                             />
-                            <br/>
+                        </div>
+                        <div>
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleStanleyDai"
@@ -327,6 +330,14 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>AAVE</strong>
                     </td>
                     <td>
+					<div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleStanleyUsdt"
+                                method="getMilton"
+                            />
+                        </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}

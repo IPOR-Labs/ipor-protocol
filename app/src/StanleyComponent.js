@@ -1,9 +1,9 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
             <table className="table" align="center">
@@ -11,23 +11,23 @@ export default ({drizzle, drizzleState}) => (
                     <th scope="col"></th>
                     <th scope="col">
                         ivUSDT
-                        <br/>
+                        <br />
                         {drizzle.contracts.IvTokenUsdt.address}
                     </th>
                     <th scope="col">
                         ivUSDC
-                        <br/>
+                        <br />
                         {drizzle.contracts.IvTokenUsdc.address}
                     </th>
                     <th scope="col">
                         ivDAI
-                        <br/>
+                        <br />
                         {drizzle.contracts.IvTokenDai.address}
                     </th>
                 </tr>
                 <tr>
                     <td>
-                        <strong>Exchange Rate</strong>
+                        <strong>IvToken Exchange Rate</strong>
                     </td>
                     <td>
                         <ContractData
@@ -38,7 +38,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -53,7 +53,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -68,7 +68,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -89,7 +89,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -105,7 +105,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -121,7 +121,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -142,7 +142,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -158,7 +158,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -174,7 +174,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -188,17 +188,17 @@ export default ({drizzle, drizzleState}) => (
                     <th scope="col">Component</th>
                     <th scope="col">
                         aUSDT
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenAaveUsdt.address}
                     </th>
                     <th scope="col">
                         aUSDC
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenAaveUsdc.address}
                     </th>
                     <th scope="col">
                         aDAI
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenAaveDai.address}
                     </th>
                 </tr>
@@ -215,7 +215,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -230,7 +230,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -245,7 +245,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -266,7 +266,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -282,7 +282,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -298,7 +298,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -312,17 +312,17 @@ export default ({drizzle, drizzleState}) => (
                     <th scope="col">Component</th>
                     <th scope="col">
                         cUSDT
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenCompoundUsdt.address}
                     </th>
                     <th scope="col">
                         cUSDC
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenCompoundUsdc.address}
                     </th>
                     <th scope="col">
                         cDAI
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleShareTokenCompoundDai.address}
                     </th>
                 </tr>
@@ -339,7 +339,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -354,7 +354,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -369,7 +369,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -390,7 +390,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -406,7 +406,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -422,7 +422,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -442,6 +442,8 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Stanley Asset Balance</strong>
+                        <br />
+                        <small>IvToken Exchange Rate * Volume of IvToken on Milton</small>
                     </td>
                     <td>
                         <ContractData
@@ -453,7 +455,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -469,7 +471,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -485,7 +487,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -496,6 +498,13 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Strategy Aave Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in AAVE protocol.
+                            <br /> It is a aToken volume in 1:1 relation with asset.
+                            <br />
+                            Balance is accrued when new block is mined.
+                        </small>
                     </td>
                     <td>
                         <ContractData
@@ -506,7 +515,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -521,7 +530,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -536,7 +545,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -546,6 +555,14 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in Compound protocol. <br />
+                            In calculation is taken in consideration exchange rate and volume of
+                            cToken.
+                            <br />
+                            Balance is accrued when method accrueInterest() in cToken is executed.
+                        </small>
                     </td>
                     <td>
                         <ContractData
@@ -556,11 +573,19 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdt"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
@@ -571,11 +596,19 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdc"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
@@ -586,18 +619,26 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundDai"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
                         <strong>Strategy Aave ERC20 Token Balance</strong>
-                        <br/>
+                        <br />
                         <small>Most time should be equal 0</small>
                     </td>
                     <td>
@@ -610,7 +651,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -626,7 +667,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -642,7 +683,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -652,7 +693,7 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound ERC20 Token Balance</strong>
-                        <br/>
+                        <br />
                         <small>Most time should be equal 0.</small>
                     </td>
                     <td>
@@ -665,7 +706,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -681,7 +722,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -697,7 +738,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -727,7 +768,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -742,7 +783,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -757,7 +798,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -777,7 +818,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -792,7 +833,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -807,7 +848,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
