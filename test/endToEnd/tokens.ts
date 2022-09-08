@@ -1,11 +1,15 @@
 import hre from "hardhat";
 import { BigNumber } from "ethers";
 
-import { ERC20, IpToken, IvToken } from "../../types";
+import { ERC20, MockCUSDT, IpToken, IvToken } from "../../types";
 
 const usdcAbi = require("../../abis/usdcAbi.json");
 const usdtAbi = require("../../abis/usdtAbi.json");
 const daiAbi = require("../../abis/daiAbi.json");
+
+const cUsdcAbi = require("../../abis/cTokenAbi.json");
+const cUsdtAbi = require("../../abis/cTokenAbi.json");
+const cDaiAbi = require("../../abis/cTokenAbi.json");
 
 // #####################################################################
 // ##################          aTokens           #######################
@@ -37,18 +41,18 @@ export const cDaiAddress = "0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643";
 export const cUsdcAddress = "0x39AA39c021dfbaE8faC545936693aC917d5E7563";
 export const cUsdtAddress = "0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9";
 
-export const cDaiFactory = async (): Promise<ERC20> => {
+export const cDaiFactory = async (): Promise<MockCUSDT> => {
     const [admin] = await hre.ethers.getSigners();
-    return new hre.ethers.Contract(cDaiAddress, daiAbi, admin) as ERC20;
+    return new hre.ethers.Contract(cDaiAddress, cDaiAbi, admin) as MockCUSDT;
 };
 
-export const cUsdcFactory = async (): Promise<ERC20> => {
+export const cUsdcFactory = async (): Promise<MockCUSDT> => {
     const [admin] = await hre.ethers.getSigners();
-    return new hre.ethers.Contract(cUsdcAddress, usdcAbi, admin) as ERC20;
+    return new hre.ethers.Contract(cUsdcAddress, cUsdcAbi, admin) as MockCUSDT;
 };
-export const cUsdtFactory = async (): Promise<ERC20> => {
+export const cUsdtFactory = async (): Promise<MockCUSDT> => {
     const [admin] = await hre.ethers.getSigners();
-    return new hre.ethers.Contract(cUsdtAddress, usdtAbi, admin) as ERC20;
+    return new hre.ethers.Contract(cUsdtAddress, cUsdtAbi, admin) as MockCUSDT;
 };
 
 // #####################################################################

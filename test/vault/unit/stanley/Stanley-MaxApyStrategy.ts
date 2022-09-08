@@ -35,7 +35,7 @@ describe("Stanley -> maxApyStrategy", () => {
         await strategyCompound.setAsset(DAI.address);
 
         const ItfStanleyDai = await hre.ethers.getContractFactory("ItfStanleyDai");
-        stanley = (await await upgrades.deployProxy(ItfStanleyDai, [
+        stanley = (await upgrades.deployProxy(ItfStanleyDai, [
             DAI.address,
             ivToken.address,
             strategyAave.address,
@@ -44,7 +44,7 @@ describe("Stanley -> maxApyStrategy", () => {
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Should select aave strategy", async () => {
+    it("Should select AAVE strategy", async () => {
         //  given
         await strategyAave.setApy(BigNumber.from("100000"));
         await strategyCompound.setApy(BigNumber.from("99999"));
@@ -57,7 +57,7 @@ describe("Stanley -> maxApyStrategy", () => {
 
         //  then
         expect(result.strategyMaxApy).to.be.equal(strategyAave.address);
-    });
+    });	
 
     it("Should select aave strategy when aaveApy == compoundApy", async () => {
         //  given

@@ -121,4 +121,6 @@ contract MockCToken is ERC20, CErc20Mock {
     function underlying() external view returns (address) {}
 
     function exchangeRateCurrent() external override returns (uint256) {}
+
+    function accrueInterest() external override returns (uint256) {}
 }

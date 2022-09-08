@@ -113,7 +113,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         //  ********************************************************************************************
         const StanleyFactory = await hre.ethers.getContractFactory("StanleyDai", signer);
 
-        stanley = (await await upgrades.deployProxy(StanleyFactory, [
+        stanley = (await upgrades.deployProxy(StanleyFactory, [
             daiAddress,
             ivToken.address,
             strategyAaveContractInstance.address,

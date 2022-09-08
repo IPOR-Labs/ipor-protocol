@@ -11,4 +11,6 @@ interface CErc20Mock {
     function exchangeRateStored() external view returns (uint256);
 
     function redeem(uint256) external returns (uint256);
+
+	function accrueInterest() external returns (uint256);
 }

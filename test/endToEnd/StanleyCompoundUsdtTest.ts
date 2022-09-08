@@ -114,7 +114,7 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
         //  ********************************************************************************************
         const StanleyFactory = await hre.ethers.getContractFactory("StanleyUsdt", signer);
 
-        stanley = (await await upgrades.deployProxy(StanleyFactory, [
+        stanley = (await upgrades.deployProxy(StanleyFactory, [
             usdtAddress,
             ivToken.address,
             strategyAaveContractInstance.address,

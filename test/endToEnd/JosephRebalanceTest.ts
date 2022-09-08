@@ -3,9 +3,11 @@ import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
 import {
     ERC20,
+    MockCUSDT,
     TestnetFaucet,
     StrategyAave,
     StrategyCompound,
+    StanleyDai,
     StanleyUsdc,
     StanleyUsdt,
     MiltonUsdc,
@@ -22,10 +24,8 @@ import { deploy, DeployType, setup } from "./deploy";
 import { assertError } from "../utils/AssertUtils";
 
 import { transferUsdtToAddress, transferUsdcToAddress, transferDaiToAddress } from "./tokens";
-import { N0__01_18DEC, N0__1_18DEC, N1__0_18DEC, N1__0_6DEC } from "../utils/Constants";
+import { N0__01_18DEC, N0__1_18DEC, N1__0_18DEC, N1__0_6DEC, ZERO } from "../utils/Constants";
 
-// Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
-// work for blockNumber: 14222088,
 describe("Joseph rebalance, deposit/withdraw from vault", function () {
     if (process.env.FORK_ENABLED != "true") {
         return;
@@ -40,17 +40,24 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
     let josephUsdc: JosephUsdc;
     let josephUsdt: JosephUsdt;
 
+    let stanleyDai: StanleyDai;
     let stanleyUsdc: StanleyUsdc;
     let stanleyUsdt: StanleyUsdt;
 
     let strategyAaveDai: StrategyAave;
+    let strategyAaveDaiV2: StrategyAave;
     let strategyAaveUsdc: StrategyAave;
+    let strategyAaveUsdt: StrategyAave;
 
+    let strategyCompoundDai: StrategyCompound;
     let strategyCompoundUsdt: StrategyCompound;
+    let strategyCompoundUsdc: StrategyCompound;
 
     let dai: ERC20;
     let usdc: ERC20;
     let usdt: ERC20;
+
+    let cUsdt: MockCUSDT;
 
     let ipTokenDai: IpToken;
     let ipTokenUsdc: IpToken;
@@ -69,9 +76,15 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             usdc,
             usdt,
             dai,
+            cUsdt,
             strategyAaveDai,
+            strategyAaveDaiV2,
             strategyAaveUsdc,
+            strategyAaveUsdt,
+            strategyCompoundDai,
+            strategyCompoundUsdc,
             strategyCompoundUsdt,
+            stanleyDai,
             stanleyUsdc,
             stanleyUsdt,
             miltonDai,
@@ -89,14 +102,14 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await setup(deployed);
     });
 
-    it("ProvideLiquidity for dai", async () => {
+    it("ProvideLiquidity for DAI", async () => {
         //given
-
         const deposit = BigNumber.from("10").mul(N1__0_18DEC);
-        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), N1__0_18DEC);
+        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), deposit);
         await dai
             .connect(admin)
             .approve(josephDai.address, BigNumber.from("1000").mul(N1__0_18DEC));
+
         //when
         await josephDai.connect(admin).provideLiquidity(deposit);
 
@@ -105,23 +118,112 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalance and deposit(dai) into vault (aave)", async () => {
+    it("Should rebalance and deposit(DAI) into vault (AAVE)", async () => {
         //given
-        const strategyAaveBalance = await strategyAaveDai.balanceOf();
+        const deposit = BigNumber.from("10").mul(N1__0_18DEC);
+        await josephDai.connect(admin).provideLiquidity(deposit);
+
+        const strategyAaveBalanceBefore = await strategyAaveDai.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundDai.balanceOf();
+        const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+
         //when
         await josephDai.rebalance();
+
         //then
-        const strategyAaveAfter = await strategyAaveDai.balanceOf();
-        expect(strategyAaveBalance.lt(strategyAaveAfter), "strategyAaveBalance < strategyAaveAfter")
-            .to.be.true;
+        const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
+        const strategyCompoundBalanceAfter = await strategyCompoundDai.balanceOf();
+        const strategyAaveBalanceAfter = await strategyAaveDai.balanceOf();
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyAaveBalanceBefore.eq(ZERO), "strategyAaveBalanceBefore = 0").to.be.true;
+
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceBefore.eq(BigNumber.from("20").mul(N1__0_18DEC)),
+            "miltonAssetBalanceBefore = 20"
+        ).to.be.true;
+
+        expect(
+            miltonAssetBalanceAfter.eq(BigNumber.from("17").mul(N1__0_18DEC)),
+            "miltonAssetBalanceAfter = 17"
+        ).to.be.true;
+
+        expect(
+            strategyAaveBalanceAfter.eq(BigNumber.from("3").mul(N1__0_18DEC)),
+            "strategyAaveBalanceAfter = 3"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
+        ).to.be.true;
+    });
+
+    it("Should set new AAVE strategy and rebalance and deposit(DAI) into vault (AAVE)", async () => {
+        //given
+        const deposit = BigNumber.from("10").mul(N1__0_18DEC);
+        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), deposit);
+        await josephDai.connect(admin).provideLiquidity(deposit);
+
+        const strategyAaveBalanceV2BeforeSet = await strategyAaveDaiV2.balanceOf();
+        const strategyAaveBalanceBefore = await strategyAaveDai.balanceOf();
+
+        const oldAaveStrategyAddress = await stanleyDai.getStrategyAave();
+        await stanleyDai.setStrategyAave(strategyAaveDaiV2.address);
+        const strategyAaveBalanceV2AfterSet = await strategyAaveDaiV2.balanceOf();
+
+        const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+
+        // when
+        await josephDai.rebalance();
+
+        //then
+        const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
+        expect(
+            miltonAssetBalanceAfter.lt(miltonAssetBalanceBefore),
+            "miltonAssetBalanceAfter < miltonAssetBalanceBefore"
+        ).to.be.true;
+
+        const strategyAaveBalanceV2AfterRebalance = await strategyAaveDaiV2.balanceOf();
+        const strategyAaveBalanceAfterRebalance = await strategyAaveDai.balanceOf();
+
+        expect(strategyAaveBalanceV2BeforeSet).to.be.equal(ZERO);
+        expect(strategyAaveBalanceAfterRebalance).to.be.equal(ZERO);
+
+        expect(
+            strategyAaveBalanceV2BeforeSet.lt(strategyAaveBalanceV2AfterSet),
+            "strategyAaveBalanceV2BeforeSet < strategyAaveBalanceV2AfterSet"
+        ).to.be.true;
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceV2AfterRebalance),
+            "strategyAaveBalanceBefore < strategyAaveBalanceV2AfterRebalance"
+        ).to.be.true;
+
+        const balanceMinimum = BigNumber.from("3").mul(N1__0_18DEC);
+        expect(
+            balanceMinimum.lt(strategyAaveBalanceV2AfterRebalance),
+            "balanceMinimum < strategyAaveBalanceV2AfterRebalance"
+        ).to.be.true;
+
+        await stanleyDai.setStrategyAave(oldAaveStrategyAddress);
     });
 
     it("Redeem tokens from Joseph(dai)", async () => {
         //given
         const ipTokenDaiBalansBefore = await ipTokenDai.balanceOf(await admin.getAddress());
         const toRedeem = N0__01_18DEC;
+
         //when
         await josephDai.redeem(toRedeem);
+
         //then
         const ipTokenDaiBalansAfter = await ipTokenDai.balanceOf(await admin.getAddress());
         expect(
@@ -130,18 +232,45 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should rebalance and withdraw(dai) from vault (aave)", async () => {
+    it("Should rebalance and withdraw(DAI) from vault (AAVE)", async () => {
         //given
-        const strategyAaveBalance = await strategyAaveDai.balanceOf();
+        const deposit = BigNumber.from("10").mul(N1__0_18DEC);
+        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), deposit);
+        await josephDai.connect(admin).provideLiquidity(deposit);
+
+        const strategyAaveBalanceBefore = await strategyAaveDai.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundDai.balanceOf();
+        const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+
+        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
+        console.log("strategyCompoundBalanceBefore=", strategyCompoundBalanceBefore.toString());
+        console.log("miltonAssetBalanceBefore=", miltonAssetBalanceBefore.toString());
+
         //when
         await josephDai.rebalance();
+
         //then
-        const strategyAaveAfter = await strategyAaveDai.balanceOf();
-        expect(strategyAaveAfter.lt(strategyAaveBalance), "strategyAaveAfter < strategyAaveBalance")
-            .to.be.true;
+        const strategyAaveBalanceAfter = await strategyAaveDai.balanceOf();
+        const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
+        const strategyCompoundBalanceAfter = await strategyCompoundDai.balanceOf();
+
+        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
+        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
+        console.log("miltonAssetBalanceAfter=", miltonAssetBalanceAfter.toString());
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        const balanceMinimum = BigNumber.from("44").mul(N0__1_18DEC);
+        expect(
+            balanceMinimum.lt(strategyAaveBalanceAfter),
+            "balanceMinimum < strategyAaveBalanceAfter"
+        ).to.be.true;
     });
 
-    it("ProvideLiquidity for usdc", async () => {
+    it("ProvideLiquidity for USDC", async () => {
         //given
 
         const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
@@ -161,18 +290,58 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         expect(usdcMiltonBalanceAfter, "usdcMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalance and deposit(usdc) into vault (aave)", async () => {
+    it("Should rebalance and deposit(USDC) into vault (AAVE)", async () => {
         //given
-        const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
+        await josephUsdc.connect(admin).provideLiquidity(deposit);
+
+        const strategyAaveBalanceBefore = await strategyAaveUsdc.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundUsdc.balanceOf();
+        const miltonAssetBalanceBefore = await usdc.balanceOf(miltonUsdc.address);
+
         //when
         await josephUsdc.rebalance();
+
         //then
-        const strategyAaveAfter = await strategyAaveUsdc.balanceOf();
-        expect(strategyAaveBalance.lt(strategyAaveAfter), "strategyAaveBalance < strategyAaveAfter")
-            .to.be.true;
+        const strategyAaveBalanceAfter = await strategyAaveUsdc.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompoundUsdc.balanceOf();
+        const miltonAssetBalanceAfter = await usdc.balanceOf(miltonUsdc.address);
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyAaveBalanceBefore.eq(ZERO), "strategyAaveBalanceBefore = 0").to.be.true;
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceBefore.eq(BigNumber.from("2000").mul(N1__0_6DEC)),
+            "miltonAssetBalanceBefore = 2000"
+        ).to.be.true;
+
+        expect(
+            miltonAssetBalanceAfter.eq(BigNumber.from("1700").mul(N1__0_6DEC)),
+            "miltonAssetBalanceAfter = 1700"
+        ).to.be.true;
+
+        expect(
+            strategyAaveBalanceAfter.gte(BigNumber.from("300").mul(N1__0_18DEC)),
+            "strategyAaveBalanceAfter > 300"
+        ).to.be.true;
+        expect(
+            strategyAaveBalanceAfter.lt(BigNumber.from("301").mul(N1__0_18DEC)),
+            "strategyAaveBalanceAfter < 301"
+        ).to.be.true;
     });
 
-    it("Redeem tokens from Joseph(usdc)", async () => {
+    it("Redeem tokens from Joseph(USDC)", async () => {
         //given
         const ipTokenUsdcBalansBefore = await ipTokenUsdc.balanceOf(await admin.getAddress());
         const toRedeem = N0__1_18DEC;
@@ -186,20 +355,52 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should rebalance and withdraw(usdc) from vault (aave)", async () => {
+    it("Should rebalance and withdraw(USDC) from vault (AAVE)", async () => {
         //given
-        const strategyAaveBalance = await strategyAaveUsdc.balanceOf();
+        const deposit = BigNumber.from("1000").mul(N1__0_18DEC);
+        await josephUsdc.depositToStanley(deposit);
+
+        const strategyAaveBalanceBefore = await strategyAaveUsdc.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundUsdc.balanceOf();
+        const miltonAssetBalanceBefore = await usdc.balanceOf(miltonUsdc.address);
+
         //when
         await josephUsdc.rebalance();
+
         //then
-        const strategyAaveAfter = await strategyAaveUsdc.balanceOf();
-        expect(strategyAaveAfter.lt(strategyAaveBalance), "strategyAaveAfter < strategyAaveBalance")
-            .to.be.true;
+        const strategyAaveBalanceAfter = await strategyAaveUsdc.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompoundUsdc.balanceOf();
+        const miltonAssetBalanceAfter = await usdc.balanceOf(miltonUsdc.address);
+
+        expect(
+            strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            strategyAaveBalanceAfter.lte(strategyAaveBalanceBefore),
+            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+        ).to.be.true;
+
+        /// means that was withdraw from Stanley
+        expect(
+            miltonAssetBalanceAfter.gte(
+                miltonAssetBalanceBefore.add(BigNumber.from("1000").mul(N1__0_6DEC))
+            ),
+            "miltonAssetBalanceAfter > miltonAssetBalanceBefore + 1000"
+        ).to.be.true;
     });
 
-    it("ProvideLiquidity for usdt", async () => {
+    it("ProvideLiquidity for USDT", async () => {
         //given
-
         const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
         await transferUsdtToAddress(
             testnetFaucet.address,
@@ -209,6 +410,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await usdt
             .connect(admin)
             .approve(josephUsdt.address, BigNumber.from("100000").mul(N1__0_6DEC));
+
         //when
         await josephUsdt.connect(admin).provideLiquidity(deposit);
 
@@ -217,16 +419,65 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         expect(usdtMiltonBalanceAfter, "usdtMiltonBalanceAfter").to.be.equal(deposit);
     });
 
-    it("Should rebalance and deposit(usdt) into vault (compound)", async () => {
+    it("Should rebalance and deposit(USDT) into vault (Compound)", async () => {
         //given
-        const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
+        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
+        await josephUsdt.connect(admin).provideLiquidity(deposit);
+
+        const strategyAaveBalanceBefore = await strategyAaveUsdt.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundUsdt.balanceOf();
+        const miltonAssetBalanceBefore = await usdt.balanceOf(miltonUsdt.address);
+
         //when
         await josephUsdt.rebalance();
+
         //then
-        const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
+        const strategyAaveBalanceAfter = await strategyAaveUsdt.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompoundUsdt.balanceOf();
+        const miltonAssetBalanceAfter = await usdt.balanceOf(miltonUsdt.address);
+
         expect(
-            strategyCompoundBefore.lt(strategyCompoundAfter),
-            "strategyCompoundBefore < strategyCompoundAfter"
+            strategyAaveBalanceBefore.eq(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore = strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.lt(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore < strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyAaveBalanceBefore.eq(ZERO), "strategyAaveBalanceBefore = 0").to.be.true;
+
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceBefore.eq(BigNumber.from("2000").mul(N1__0_6DEC)),
+            "miltonAssetBalanceBefore = 2000"
+        ).to.be.true;
+
+        expect(
+            miltonAssetBalanceAfter.eq(BigNumber.from("1700").mul(N1__0_6DEC)),
+            "miltonAssetBalanceAfter = 1700"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceAfter.lte(BigNumber.from("300").mul(N1__0_18DEC)),
+            "strategyCompoundBalanceAfter <= 300"
+        ).to.be.true;
+        expect(
+            strategyCompoundBalanceAfter.gt(BigNumber.from("299").mul(N1__0_18DEC)),
+            "strategyCompoundBalanceAfter > 299"
+        ).to.be.true;
+
+        /// @dev [!] important test for Compound strategy
+        await cUsdt.accrueInterest();
+
+        const strategyCompoundBalanceAfterAccrued = await strategyCompoundUsdt.balanceOf();
+
+        expect(
+            strategyCompoundBalanceAfterAccrued.gt(BigNumber.from("300").mul(N1__0_18DEC)),
+            "strategyCompoundBalanceAfterAccrued > 300"
         ).to.be.true;
     });
 
@@ -234,8 +485,10 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         //given
         const ipTokenUsdtBalansBefore = await ipTokenUsdt.balanceOf(await admin.getAddress());
         const toRedeem = N1__0_6DEC;
+
         //when
         await josephUsdt.redeem(toRedeem);
+
         //then
         const ipTokenUsdtBalansAfter = await ipTokenUsdt.balanceOf(await admin.getAddress());
         expect(
@@ -244,34 +497,67 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         ).to.be.true;
     });
 
-    it("Should not rebalance and withdraw(usdt) from vault (compound)", async () => {
+    it("Should rebalance and withdraw(USDT) from vault (Compound)", async () => {
         //given
-        const strategyCompoundBalance = await strategyCompoundUsdt.balanceOf();
-        //when
-        await expect(josephUsdt.rebalance()).to.be.revertedWith("IPOR_322");
-        //then
-        const strategyCompoundAfter = await strategyCompoundUsdt.balanceOf();
-        expect(
-            strategyCompoundAfter.eq(strategyCompoundBalance),
-            "strategyCompoundAfter = strategyCompoundBalance"
-        ).to.be.true;
-    });
 
-    it("Should rebalance and withdraw(usdt) from vault (compound)", async () => {
-        //given
-        // this set of acttion generate change on compound balance
+		//TODO: fix accrue interest , provide liquidity
+        // this set of actions generate change on compound balance
         await usdt
             .connect(admin)
             .approve(stanleyUsdt.address, BigNumber.from("100000").mul(N1__0_6DEC));
         await stanleyUsdt.setMilton(await admin.getAddress());
-        await stanleyUsdt.deposit(N1__0_6DEC);
+        await stanleyUsdt.deposit(BigNumber.from("1000").mul(N1__0_18DEC));
         await stanleyUsdt.setMilton(miltonUsdt.address);
-        // END this set of acttion generate change on compound balance
+        // END this set of actions generate change on compound balance
+
         const ivTokenUsdtBalanceBefore = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
-        // //when
+        const strategyAaveBalanceBefore = await strategyAaveUsdt.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompoundUsdt.balanceOf();
+        const miltonAssetBalanceBefore = await usdt.balanceOf(miltonUsdt.address);
+
+        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
+        console.log("strategyCompoundBalanceBefore=", strategyCompoundBalanceBefore.toString());
+        console.log("miltonAssetBalanceBefore=", miltonAssetBalanceBefore.toString());
+
+        //when
         await josephUsdt.rebalance();
-        // //then
+
+        //then
+        const strategyAaveBalanceAfter = await strategyAaveUsdt.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompoundUsdt.balanceOf();
+        const miltonAssetBalanceAfter = await usdt.balanceOf(miltonUsdt.address);
+
+        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
+        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
+        console.log("miltonAssetBalanceAfter=", miltonAssetBalanceAfter.toString());
+
+        expect(
+            strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            strategyAaveBalanceAfter.lte(strategyAaveBalanceBefore),
+            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+        ).to.be.true;
+
+        /// means that was withdraw from Stanley
+        expect(
+            miltonAssetBalanceAfter.gte(
+                miltonAssetBalanceBefore.add(BigNumber.from("1000").mul(N1__0_6DEC))
+            ),
+            "miltonAssetBalanceAfter > miltonAssetBalanceBefore + 1000"
+        ).to.be.true;
+
         const ivTokenUsdtBalanceAfter = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
         expect(

@@ -144,7 +144,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         //  ********************************************************************************************
         const IPORVaultFactory = await hre.ethers.getContractFactory("StanleyUsdt", signer);
 
-        stanleyUsdt = (await await upgrades.deployProxy(IPORVaultFactory, [
+        stanleyUsdt = (await upgrades.deployProxy(IPORVaultFactory, [
             usdtAddress,
             ivToken.address,
             strategyAaveContractInstance.address,

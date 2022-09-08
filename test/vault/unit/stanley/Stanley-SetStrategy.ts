@@ -37,7 +37,7 @@ describe("Stanley -> StrategyChanged", () => {
         await strategyCompound.setAsset(DAI.address);
 
         const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
-        stanley = (await await upgrades.deployProxy(StanleyDai, [
+        stanley = (await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivToken.address,
             strategyAave.address,
@@ -55,6 +55,8 @@ describe("Stanley -> StrategyChanged", () => {
             await newStrategyAave.setShareToken(DAI.address);
             await newStrategyAave.setAsset(DAI.address);
             const oldStrategyAddress = strategyAave.address;
+            const newStrategyBalanceBefore = await newStrategyAave.balanceOf();
+
             //when
             await expect(stanley.setStrategyAave(newStrategyAave.address))
                 //then
@@ -65,6 +67,16 @@ describe("Stanley -> StrategyChanged", () => {
                     newStrategyAave.address,
                     DAI.address
                 );
+            //then
+            const newStrategyBalanceAfter = await newStrategyAave.balanceOf();
+
+            expect(
+                newStrategyBalanceBefore.eq(newStrategyBalanceAfter),
+                "newStrategyBalanceBefore = newStrategyBalanceAfter"
+            ).to.be.true;
+
+            //revert to old strategy
+            await stanley.setStrategyAave(oldStrategyAddress);
         });
 
         it("Should not setup new strategy when underlying Token don't match", async () => {
