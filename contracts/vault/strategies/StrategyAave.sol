@@ -106,7 +106,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @param wadAmount amount to deposit in _aave lending.
      */
     function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
-        console.log("strategy aave deposit...wadAmount=",wadAmount);
         address asset = _asset;
 
         uint256 amount = IporMath.convertWadToAssetDecimals(
@@ -119,7 +118,6 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
-		console.log("strategy aave deposit - last step amount=", amount);
         lendingPool.deposit(asset, amount, address(this), 0);
     }
 

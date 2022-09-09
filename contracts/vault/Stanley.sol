@@ -116,7 +116,6 @@ abstract contract Stanley is
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
-        console.log("stanley deposit...amount=", amount);
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
         (
             address strategyMaxApy,
@@ -387,6 +386,7 @@ abstract contract Stanley is
         //when first initialization then old
         if (oldStrategyAddr != address(0)) {
             uint256 assetAmount = IStrategy(oldStrategyAddr).balanceOf();
+
             require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
             IStrategy(oldStrategyAddr).withdraw(assetAmount);

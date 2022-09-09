@@ -63,7 +63,9 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
     let ipTokenUsdc: IpToken;
     let ipTokenUsdt: IpToken;
 
+    let ivTokenDai: IvToken;
     let ivTokenUsdt: IvToken;
+    let ivTokenUsdc: IvToken;
 
     let testnetFaucet: TestnetFaucet;
 
@@ -96,7 +98,9 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             ipTokenDai,
             ipTokenUsdc,
             ipTokenUsdt,
+            ivTokenDai,
             ivTokenUsdt,
+            ivTokenUsdc,
         } = deployed);
 
         await setup(deployed);
@@ -126,6 +130,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceBefore = await strategyAaveDai.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundDai.balanceOf();
         const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+        const ivTokenBalanceBefore = await ivTokenDai.balanceOf(miltonDai.address);
 
         //when
         await josephDai.rebalance();
@@ -134,6 +139,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
         const strategyCompoundBalanceAfter = await strategyCompoundDai.balanceOf();
         const strategyAaveBalanceAfter = await strategyAaveDai.balanceOf();
+        const ivTokenBalanceAfter = await ivTokenDai.balanceOf(miltonDai.address);
 
         expect(
             strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
@@ -164,6 +170,11 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
             "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
         ).to.be.true;
+
+        expect(
+            ivTokenBalanceBefore.lt(ivTokenBalanceAfter),
+            "ivTokenBalanceBefore < ivTokenBalanceAfter"
+        ).to.be.true;
     });
 
     it("Should set new AAVE strategy and rebalance and deposit(DAI) into vault (AAVE)", async () => {
@@ -178,14 +189,15 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const oldAaveStrategyAddress = await stanleyDai.getStrategyAave();
         await stanleyDai.setStrategyAave(strategyAaveDaiV2.address);
         const strategyAaveBalanceV2AfterSet = await strategyAaveDaiV2.balanceOf();
-
         const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+        const ivTokenBalanceBefore = await ivTokenDai.balanceOf(miltonDai.address);
 
         // when
         await josephDai.rebalance();
 
         //then
         const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
+        const ivTokenBalanceAfter = await ivTokenDai.balanceOf(miltonDai.address);
         expect(
             miltonAssetBalanceAfter.lt(miltonAssetBalanceBefore),
             "miltonAssetBalanceAfter < miltonAssetBalanceBefore"
@@ -213,6 +225,11 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             "balanceMinimum < strategyAaveBalanceV2AfterRebalance"
         ).to.be.true;
 
+        expect(
+            ivTokenBalanceBefore.lt(ivTokenBalanceAfter),
+            "ivTokenBalanceBefore < ivTokenBalanceAfter"
+        ).to.be.true;
+
         await stanleyDai.setStrategyAave(oldAaveStrategyAddress);
     });
 
@@ -234,17 +251,15 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
 
     it("Should rebalance and withdraw(DAI) from vault (AAVE)", async () => {
         //given
-        const deposit = BigNumber.from("10").mul(N1__0_18DEC);
-        await transferDaiToAddress(testnetFaucet.address, await admin.getAddress(), deposit);
-        await josephDai.connect(admin).provideLiquidity(deposit);
 
         const strategyAaveBalanceBefore = await strategyAaveDai.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundDai.balanceOf();
         const miltonAssetBalanceBefore = await dai.balanceOf(miltonDai.address);
+        const ivTokenBalanceBefore = await ivTokenDai.balanceOf(miltonDai.address);
 
-        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
-        console.log("strategyCompoundBalanceBefore=", strategyCompoundBalanceBefore.toString());
-        console.log("miltonAssetBalanceBefore=", miltonAssetBalanceBefore.toString());
+        await hre.network.provider.send("evm_mine");
+        await hre.network.provider.send("evm_mine");
+        await hre.network.provider.send("evm_mine");
 
         //when
         await josephDai.rebalance();
@@ -253,20 +268,32 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceAfter = await strategyAaveDai.balanceOf();
         const miltonAssetBalanceAfter = await dai.balanceOf(miltonDai.address);
         const strategyCompoundBalanceAfter = await strategyCompoundDai.balanceOf();
+        const ivTokenBalanceAfter = await ivTokenDai.balanceOf(miltonDai.address);
 
+        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
         console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
-        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
-        console.log("miltonAssetBalanceAfter=", miltonAssetBalanceAfter.toString());
 
         expect(
-            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
-            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+            strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
         ).to.be.true;
 
-        const balanceMinimum = BigNumber.from("44").mul(N0__1_18DEC);
         expect(
-            balanceMinimum.lt(strategyAaveBalanceAfter),
-            "balanceMinimum < strategyAaveBalanceAfter"
+            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceAfter.gt(miltonAssetBalanceBefore),
+            "miltonAssetBalanceAfter > miltonAssetBalanceBefore"
+        ).to.be.true;
+
+        expect(
+            ivTokenBalanceBefore.gte(ivTokenBalanceAfter),
+            "ivTokenBalanceBefore >= ivTokenBalanceAfter"
         ).to.be.true;
     });
 
@@ -298,6 +325,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceBefore = await strategyAaveUsdc.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundUsdc.balanceOf();
         const miltonAssetBalanceBefore = await usdc.balanceOf(miltonUsdc.address);
+        const ivTokenBalanceBefore = await ivTokenUsdc.balanceOf(miltonUsdc.address);
 
         //when
         await josephUsdc.rebalance();
@@ -306,6 +334,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceAfter = await strategyAaveUsdc.balanceOf();
         const strategyCompoundBalanceAfter = await strategyCompoundUsdc.balanceOf();
         const miltonAssetBalanceAfter = await usdc.balanceOf(miltonUsdc.address);
+        const ivTokenBalanceAfter = await ivTokenUsdc.balanceOf(miltonUsdc.address);
 
         expect(
             strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
@@ -335,9 +364,15 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             strategyAaveBalanceAfter.gte(BigNumber.from("300").mul(N1__0_18DEC)),
             "strategyAaveBalanceAfter > 300"
         ).to.be.true;
+
         expect(
             strategyAaveBalanceAfter.lt(BigNumber.from("301").mul(N1__0_18DEC)),
             "strategyAaveBalanceAfter < 301"
+        ).to.be.true;
+
+        expect(
+            ivTokenBalanceAfter.gt(ivTokenBalanceBefore),
+            "ivTokenBalanceAfter > ivTokenBalanceBefore"
         ).to.be.true;
     });
 
@@ -363,6 +398,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceBefore = await strategyAaveUsdc.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundUsdc.balanceOf();
         const miltonAssetBalanceBefore = await usdc.balanceOf(miltonUsdc.address);
+        const ivTokenBalanceBefore = await ivTokenUsdc.balanceOf(miltonUsdc.address);
 
         //when
         await josephUsdc.rebalance();
@@ -371,6 +407,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceAfter = await strategyAaveUsdc.balanceOf();
         const strategyCompoundBalanceAfter = await strategyCompoundUsdc.balanceOf();
         const miltonAssetBalanceAfter = await usdc.balanceOf(miltonUsdc.address);
+        const ivTokenBalanceAfter = await ivTokenUsdc.balanceOf(miltonUsdc.address);
 
         expect(
             strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
@@ -396,6 +433,11 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
                 miltonAssetBalanceBefore.add(BigNumber.from("1000").mul(N1__0_6DEC))
             ),
             "miltonAssetBalanceAfter > miltonAssetBalanceBefore + 1000"
+        ).to.be.true;
+
+        expect(
+            ivTokenBalanceAfter.lt(ivTokenBalanceBefore),
+            "ivTokenBalanceAfter < ivTokenBalanceBefore"
         ).to.be.true;
     });
 
@@ -427,6 +469,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceBefore = await strategyAaveUsdt.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundUsdt.balanceOf();
         const miltonAssetBalanceBefore = await usdt.balanceOf(miltonUsdt.address);
+        const ivTokenBalanceBefore = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
         //when
         await josephUsdt.rebalance();
@@ -435,6 +478,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceAfter = await strategyAaveUsdt.balanceOf();
         const strategyCompoundBalanceAfter = await strategyCompoundUsdt.balanceOf();
         const miltonAssetBalanceAfter = await usdt.balanceOf(miltonUsdt.address);
+        const ivTokenBalanceAfter = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
         expect(
             strategyAaveBalanceBefore.eq(strategyAaveBalanceAfter),
@@ -479,6 +523,14 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             strategyCompoundBalanceAfterAccrued.gt(BigNumber.from("300").mul(N1__0_18DEC)),
             "strategyCompoundBalanceAfterAccrued > 300"
         ).to.be.true;
+
+        console.log("ivTokenBalanceBefore=", ivTokenBalanceBefore.toString());
+        console.log("ivTokenBalanceAfter=", ivTokenBalanceAfter.toString());
+
+        expect(
+            ivTokenBalanceBefore.lt(ivTokenBalanceAfter),
+            "ivTokenBalanceBefore < ivTokenBalanceAfter"
+        ).to.be.true;
     });
 
     it("Redeem tokens from Joseph(usdt)", async () => {
@@ -499,26 +551,17 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
 
     it("Should rebalance and withdraw(USDT) from vault (Compound)", async () => {
         //given
+        await josephUsdt.rebalance();
 
-		//TODO: fix accrue interest , provide liquidity
-        // this set of actions generate change on compound balance
-        await usdt
-            .connect(admin)
-            .approve(stanleyUsdt.address, BigNumber.from("100000").mul(N1__0_6DEC));
-        await stanleyUsdt.setMilton(await admin.getAddress());
-        await stanleyUsdt.deposit(BigNumber.from("1000").mul(N1__0_18DEC));
-        await stanleyUsdt.setMilton(miltonUsdt.address);
-        // END this set of actions generate change on compound balance
-
-        const ivTokenUsdtBalanceBefore = await ivTokenUsdt.balanceOf(miltonUsdt.address);
+        for (let i = 0; i < 10; i++) {
+            await hre.network.provider.send("evm_mine");
+            await cUsdt.accrueInterest();
+        }
 
         const strategyAaveBalanceBefore = await strategyAaveUsdt.balanceOf();
         const strategyCompoundBalanceBefore = await strategyCompoundUsdt.balanceOf();
         const miltonAssetBalanceBefore = await usdt.balanceOf(miltonUsdt.address);
-
-        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
-        console.log("strategyCompoundBalanceBefore=", strategyCompoundBalanceBefore.toString());
-        console.log("miltonAssetBalanceBefore=", miltonAssetBalanceBefore.toString());
+        const ivTokenBalanceBefore = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
         //when
         await josephUsdt.rebalance();
@@ -527,42 +570,29 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyAaveBalanceAfter = await strategyAaveUsdt.balanceOf();
         const strategyCompoundBalanceAfter = await strategyCompoundUsdt.balanceOf();
         const miltonAssetBalanceAfter = await usdt.balanceOf(miltonUsdt.address);
-
-        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
-        console.log("strategyCompoundBalanceAfter=", strategyCompoundBalanceAfter.toString());
-        console.log("miltonAssetBalanceAfter=", miltonAssetBalanceAfter.toString());
+        const ivTokenBalanceAfter = await ivTokenUsdt.balanceOf(miltonUsdt.address);
 
         expect(
-            strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
-            "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
+            strategyAaveBalanceBefore.eq(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore = strategyAaveBalanceAfter"
         ).to.be.true;
 
-        expect(
-            strategyCompoundBalanceBefore.eq(strategyCompoundBalanceAfter),
-            "strategyCompoundBalanceBefore = strategyCompoundBalanceAfter"
-        ).to.be.true;
-
-        expect(strategyCompoundBalanceBefore.eq(ZERO), "strategyCompoundBalanceBefore = 0").to.be
-            .true;
+        expect(strategyAaveBalanceBefore.eq(ZERO), "strategyAaveBalanceBefore = 0").to.be.true;
 
         expect(
-            strategyAaveBalanceAfter.lte(strategyAaveBalanceBefore),
-            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+            strategyCompoundBalanceBefore.gte(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore >= strategyCompoundBalanceAfter"
         ).to.be.true;
 
         /// means that was withdraw from Stanley
         expect(
-            miltonAssetBalanceAfter.gte(
-                miltonAssetBalanceBefore.add(BigNumber.from("1000").mul(N1__0_6DEC))
-            ),
-            "miltonAssetBalanceAfter > miltonAssetBalanceBefore + 1000"
+            miltonAssetBalanceAfter.gte(miltonAssetBalanceBefore),
+            "miltonAssetBalanceAfter > miltonAssetBalanceBefore"
         ).to.be.true;
 
-        const ivTokenUsdtBalanceAfter = await ivTokenUsdt.balanceOf(miltonUsdt.address);
-
         expect(
-            ivTokenUsdtBalanceAfter.lt(ivTokenUsdtBalanceBefore),
-            "ivTokenUsdtBalanceAfter < ivTokenUsdtBalanceBefore"
+            ivTokenBalanceAfter.lt(ivTokenBalanceBefore),
+            "ivTokenBalanceAfter < ivTokenBalanceBefore"
         ).to.be.true;
     });
 
