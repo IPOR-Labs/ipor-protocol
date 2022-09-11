@@ -14,8 +14,6 @@ import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/types/AmmMiltonStorageTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
 
-import "hardhat/console.sol";
-
 //@dev all stored valuse related with money are in 18 decimals.
 contract MiltonStorage is
     Initializable,
@@ -439,7 +437,6 @@ contract MiltonStorage is
         override
         onlyMilton
     {
-		console.log("updateStorageWhenDepositToStanley...");
         require(vaultBalance >= depositAmount, MiltonErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
         uint256 currentVaultBalance = _balances.vault;
@@ -454,7 +451,6 @@ contract MiltonStorage is
         _balances.vault = vaultBalance.toUint128();
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
-		console.log("updateStorageWhenDepositToStanley... end");
     }
 
     function updateStorageWhenTransferToCharlieTreasury(uint256 transferredAmount)

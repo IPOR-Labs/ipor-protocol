@@ -41,7 +41,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
     let aTokenContract: ERC20;
     let aaveIncentiveAddress: string;
     let stkAave: string;
-    let strategyCompoundContractInstance: StrategyCompound;
+    let strategyCompound: StrategyCompound;
     let ivToken: IvToken;
     let stanley: StanleyDai;
 
@@ -69,11 +69,11 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             params: [accountToImpersonate],
         });
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
         const impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
         await daiContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
         daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
 
         //  ********************************************************************************************
@@ -134,7 +134,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             signer
         );
 
-        strategyCompoundContractInstance = (await upgrades.deployProxy(strategyCompoundContract, [
+        strategyCompound = (await upgrades.deployProxy(strategyCompoundContract, [
             daiAddress,
             cDaiAddress,
             ComptrollerAddress,
@@ -163,7 +163,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             daiAddress,
             ivToken.address,
             strategyAave.address,
-            strategyCompoundContractInstance.address,
+            strategyCompound.address,
         ])) as StanleyDai;
 
         await stanley.setMilton(await signer.getAddress());
@@ -171,8 +171,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         await strategyAave.setStanley(stanley.address);
         await strategyAaveV2.setStanley(stanley.address);
         await strategyAave.setTreasury(await signer.getAddress());
-        await strategyCompoundContractInstance.setStanley(stanley.address);
-        await strategyCompoundContractInstance.setTreasury(await signer.getAddress());
+        await strategyCompound.setStanley(stanley.address);
+        await strategyCompound.setTreasury(await signer.getAddress());
 
         await daiContract.approve(await signer.getAddress(), maxValue);
         await daiContract.approve(stanley.address, maxValue);
@@ -397,6 +397,70 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         expect(
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
             "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
+        ).to.be.true;
+
+        //clean up
+        await stanley.setStrategyAave(strategyAave.address);
+    });
+
+    it("Should migrate asset to strategy with max APR - Aave, DAI", async () => {
+        //given
+        const depositAmount = ONE_18.mul(1000);
+
+        await stanley.connect(signer).deposit(depositAmount);
+
+        await strategyCompound.setStanley(await signer.getAddress());
+        await daiContract.approve(strategyCompound.address, depositAmount);
+        await strategyCompound.connect(signer).deposit(depositAmount);
+        await strategyCompound.setStanley(stanley.address);
+
+        const miltonIvTokenBefore = await ivToken.balanceOf(await signer.getAddress());
+        const strategyAaveBalanceBefore = await strategyAave.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
+        const miltonAssetBalanceBefore = await daiContract.balanceOf(await signer.getAddress());
+        const miltonTotalBalanceBefore = await stanley.totalBalance(await signer.getAddress());
+
+        //when
+        await stanley.migrateAssetToStrategyWithMaxApr();
+
+        //then
+        const miltonIvTokenAfter = await ivToken.balanceOf(await signer.getAddress());
+        const strategyAaveBalanceAfter = await strategyAave.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
+        const miltonAssetBalanceAfter = await daiContract.balanceOf(await signer.getAddress());
+        const miltonTotalBalanceAfter = await stanley.totalBalance(await signer.getAddress());
+
+        expect(
+            miltonIvTokenAfter.eq(miltonIvTokenBefore),
+            "miltonIvTokenAfter = miltonIvTokenBefore"
+        ).to.be.true;
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.gt(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore > strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = 0").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceAfter.eq(miltonAssetBalanceBefore),
+            "miltonAssetBalanceAfter = miltonAssetBalanceBefore"
+        ).to.be.true;
+
+        expect(
+            miltonTotalBalanceBefore.lte(miltonTotalBalanceAfter),
+            "miltonTotalBalanceBefore <= miltonTotalBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            miltonTotalBalanceAfter.lte(miltonTotalBalanceBefore.add(ONE_18)),
+            "miltonTotalBalanceAfter <= miltonTotalBalanceBefore+1"
         ).to.be.true;
     });
 });

@@ -46,7 +46,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
     let aaveIncentiveContract: IAaveIncentivesController;
     let stkAave: string;
     let stakeAaveContract: ERC20;
-    let strategyCompoundContract_Instance: StrategyCompound;
+    let strategyCompound: StrategyCompound;
     let ivToken: IvToken;
     let stanleyUsdc: StanleyUsdc;
 
@@ -74,11 +74,11 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
             params: [accountToImpersonate],
         });
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         usdcContract = new hre.ethers.Contract(usdcAddress, usdcAbi, signer) as ERC20;
         const impersonateBalanceBefore = await usdcContract.balanceOf(accountToImpersonate);
         await usdcContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
         usdcContract = new hre.ethers.Contract(usdcAddress, usdcAbi, signer) as ERC20;
 
         //  ********************************************************************************************
@@ -129,17 +129,17 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         COMP = "0xc00e94Cb662C3520282E6f5717214004A7f26888";
         ComptrollerAddress = "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B";
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         compContract = new hre.ethers.Contract(COMP, usdcAbi, signer) as ERC20;
         cTokenContract = new hre.ethers.Contract(cUsdcAddress, usdcAbi, signer) as ERC20;
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
         const strategyCompoundContract = await hre.ethers.getContractFactory(
             "StrategyCompound",
             signer
         );
 
-        strategyCompoundContract_Instance = (await upgrades.deployProxy(strategyCompoundContract, [
+        strategyCompound = (await upgrades.deployProxy(strategyCompoundContract, [
             usdcAddress,
             cUsdcAddress,
             ComptrollerAddress,
@@ -164,15 +164,15 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
             usdcAddress,
             ivToken.address,
             strategyAave.address,
-            strategyCompoundContract_Instance.address,
+            strategyCompound.address,
         ])) as StanleyUsdc;
 
         await stanleyUsdc.setMilton(await signer.getAddress());
         await strategyAave.setStanley(stanleyUsdc.address);
         await strategyAaveV2.setStanley(stanleyUsdc.address);
         await strategyAave.setTreasury(await signer.getAddress());
-        await strategyCompoundContract_Instance.setStanley(stanleyUsdc.address);
-        await strategyCompoundContract_Instance.setTreasury(await signer.getAddress());
+        await strategyCompound.setStanley(stanleyUsdc.address);
+        await strategyCompound.setTreasury(await signer.getAddress());
 
         await usdcContract.approve(await signer.getAddress(), maxValue);
         await usdcContract.approve(stanleyUsdc.address, maxValue);
@@ -379,7 +379,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
 
         expect(claimable.gt(ZERO), "Aave Claimable Amount > 0").to.be.true;
-        expect(aaveBalanceBefore, "Cliamed Aave Balance Before").to.be.equal(ZERO);
+        expect(aaveBalanceBefore, "Claimed Aave Balance Before").to.be.equal(ZERO);
 
         // when
         await strategyAave.beforeClaim();
@@ -390,7 +390,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         // then
         const userOneBalance = await aaveContract.balanceOf(await signer.getAddress());
 
-        expect(userOneBalance.gt(ZERO), "Cliamed Aave Balance > 0").to.be.true;
+        expect(userOneBalance.gt(ZERO), "Claimed Aave Balance > 0").to.be.true;
     });
 
     it("Should set new AAVE strategy for USDC", async () => {
@@ -423,6 +423,72 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         expect(
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
             "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
+        ).to.be.true;
+
+        //clean up
+        await stanleyUsdc.setStrategyAave(strategyAave.address);
+    });
+
+    it("Should migrate asset to strategy with max APR - Aave, USDC", async () => {
+        //given
+        const depositAmount = ONE_18.mul(1000);
+
+        await stanleyUsdc.connect(signer).deposit(depositAmount);
+
+        await strategyCompound.setStanley(await signer.getAddress());
+        await usdcContract.approve(strategyCompound.address, depositAmount);
+        await strategyCompound.connect(signer).deposit(depositAmount);
+        await strategyCompound.setStanley(stanleyUsdc.address);
+
+        const miltonIvTokenBefore = await ivToken.balanceOf(await signer.getAddress());
+        const strategyAaveBalanceBefore = await strategyAave.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
+        const miltonAssetBalanceBefore = await usdcContract.balanceOf(await signer.getAddress());
+        const miltonTotalBalanceBefore = await stanleyUsdc.totalBalance(await signer.getAddress());
+        
+        //when
+        await stanleyUsdc.migrateAssetToStrategyWithMaxApr();
+
+        //then
+        const miltonIvTokenAfter = await ivToken.balanceOf(await signer.getAddress());
+        const strategyAaveBalanceAfter = await strategyAave.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
+        const miltonAssetBalanceAfter = await usdcContract.balanceOf(await signer.getAddress());
+        const miltonTotalBalanceAfter = await stanleyUsdc.totalBalance(await signer.getAddress());
+
+        expect(
+            miltonIvTokenAfter.eq(miltonIvTokenBefore),
+            "miltonIvTokenAfter = miltonIvTokenBefore"
+        ).to.be.true;
+
+        expect(
+            strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
+            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            strategyCompoundBalanceBefore.gt(strategyCompoundBalanceAfter),
+            "strategyCompoundBalanceBefore > strategyCompoundBalanceAfter"
+        ).to.be.true;
+
+        expect(strategyCompoundBalanceAfter.gte(ZERO), "strategyCompoundBalanceAfter >= 0").to.be
+            .true;
+        expect(strategyCompoundBalanceAfter.lte(ONE_18), "strategyCompoundBalanceAfter <= 1").to.be
+            .true;
+
+        expect(
+            miltonAssetBalanceAfter.eq(miltonAssetBalanceBefore),
+            "miltonAssetBalanceAfter = miltonAssetBalanceBefore"
+        ).to.be.true;
+
+        expect(
+            miltonTotalBalanceBefore.lte(miltonTotalBalanceAfter),
+            "miltonTotalBalanceBefore <= miltonTotalBalanceAfter"
+        ).to.be.true;
+
+        expect(
+            miltonTotalBalanceAfter.lte(miltonTotalBalanceBefore.add(ONE_18)),
+            "miltonTotalBalanceAfter <= miltonTotalBalanceBefore+1"
         ).to.be.true;
     });
 });

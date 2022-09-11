@@ -46,7 +46,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
     let aaveIncentiveContract: IAaveIncentivesController;
     let stkAave: string;
     let stakeAaveContract: ERC20;
-    let strategyCompoundContract_Instance: MockStrategy;
+    let strategyCompound: MockStrategy;
     let ivToken: IvToken;
     let stanleyUsdt: StanleyUsdt;
 
@@ -74,11 +74,11 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
             params: [accountToImpersonate],
         });
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         usdtContract = new hre.ethers.Contract(usdtAddress, usdtAbi, signer) as ERC20;
         const impersonateBalanceBefore = await usdtContract.balanceOf(accountToImpersonate);
         await usdtContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
         usdtContract = new hre.ethers.Contract(usdtAddress, usdtAbi, signer) as ERC20;
 
         //  ********************************************************************************************
@@ -134,12 +134,12 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         cTokenContract = new hre.ethers.Contract(cUsdtAddress, usdtAbi, signer) as ERC20;
         signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
-        // becouse compand APR > aave APR we need to mock strategyCompoundContract_Instance
+        // becouse compand APR > aave APR we need to mock strategyCompound
         const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
-        strategyCompoundContract_Instance = (await StrategyCompound.deploy()) as MockStrategy;
+        strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
 
-        await strategyCompoundContract_Instance.setShareToken(usdtAddress);
-        await strategyCompoundContract_Instance.setAsset(usdtAddress);
+        await strategyCompound.setShareToken(cUsdtAddress);
+        await strategyCompound.setAsset(usdtAddress);
 
         compTrollerContract = new hre.ethers.Contract(ComptrollerAddress, comptrollerAbi, signer);
 
@@ -159,15 +159,15 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
             usdtAddress,
             ivToken.address,
             strategyAave.address,
-            strategyCompoundContract_Instance.address,
+            strategyCompound.address,
         ])) as StanleyUsdt;
 
         await stanleyUsdt.setMilton(await signer.getAddress());
         await strategyAave.setStanley(stanleyUsdt.address);
         await strategyAaveV2.setStanley(stanleyUsdt.address);
         await strategyAave.setTreasury(await signer.getAddress());
-        await strategyCompoundContract_Instance.setStanley(stanleyUsdt.address);
-        await strategyCompoundContract_Instance.setTreasury(await signer.getAddress());
+        await strategyCompound.setStanley(stanleyUsdt.address);
+        await strategyCompound.setTreasury(await signer.getAddress());
 
         await usdtContract.approve(await signer.getAddress(), maxValue);
         await usdtContract.approve(stanleyUsdt.address, maxValue);
@@ -177,7 +177,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
     it("Should compand APR < aave APR ", async () => {
         // when
         const aaveApr = await strategyAave.getApr();
-        const compoundApr = await strategyCompoundContract_Instance.getApr();
+        const compoundApr = await strategyCompound.getApr();
 
         // then
         expect(compoundApr.lt(aaveApr)).to.be.true;
@@ -401,5 +401,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
             "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
         ).to.be.true;
+
+        //clean up
+        await stanleyUsdt.setStrategyAave(strategyAave.address);
     });
 });

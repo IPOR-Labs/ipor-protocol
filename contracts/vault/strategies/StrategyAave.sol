@@ -18,7 +18,6 @@ import "../interfaces/aave/AaveLendingPoolProviderV2.sol";
 import "../interfaces/aave/AaveIncentivesInterface.sol";
 import "../interfaces/aave/StakedAaveInterface.sol";
 import "./StrategyCore.sol";
-import "hardhat/console.sol";
 
 contract StrategyAave is StrategyCore, IStrategyAave {
     using SafeCast for uint256;

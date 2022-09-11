@@ -44,6 +44,17 @@ contract TestERC20 is IERC20 {
         return true;
     }
 
+    /// @dev only for test purposes
+    function approveFor(
+        address owner,
+        address spender,
+        uint256 amount
+    ) public virtual returns (bool) {
+        allowance[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
+        return true;
+    }
+
     function transferFrom(
         address sender,
         address recipient,
@@ -58,6 +69,7 @@ contract TestERC20 is IERC20 {
         require(balanceRecipient + amount >= balanceRecipient, "overflow balance recipient");
         _balance[recipient] = balanceRecipient + amount;
         uint256 balanceSender = _balance[sender];
+
         require(balanceSender >= amount, "underflow balance sender");
         _balance[sender] = balanceSender - amount;
         emit Transfer(sender, recipient, amount);

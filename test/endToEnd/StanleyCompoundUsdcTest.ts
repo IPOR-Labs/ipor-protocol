@@ -31,6 +31,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
     let strategyAaveContract_Instance: MockStrategy;
     let signer: Signer;
     let cUsdcAddress: string;
+    let aUsdcAddress: string;
     let COMP: string;
     let compContract: ERC20;
     let cTokenContract: MockCUSDC;
@@ -54,6 +55,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
 
         accountToImpersonate = "0xa191e578a6736167326d05c119ce0c90849e84b7"; // Usdc rich address
         usdcAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // usdc
+        aUsdcAddress = "0xBcca60bB61934080951369a648Fb03DF4F96263C";
 
         await hre.network.provider.send("hardhat_setBalance", [
             accountToImpersonate,
@@ -80,7 +82,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAaveContract_Instance = (await StrategyAave.deploy()) as MockStrategy;
 
-        await strategyAaveContract_Instance.setShareToken(usdcAddress);
+        await strategyAaveContract_Instance.setShareToken(aUsdcAddress);
         await strategyAaveContract_Instance.setAsset(usdcAddress);
 
         //  ********************************************************************************************
@@ -350,54 +352,5 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
         ).to.be.equal(ZERO);
-    });
-
-    it("Should set new Compound strategy for USDC", async () => {
-        //given
-        const depositAmount = ONE_18.mul(100000);
-        await stanley.connect(signer).deposit(depositAmount);
-        await cTokenContract.accrueInterest();
-
-        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
-        const strategyCompoundV2BalanceBefore = await strategyCompoundV2.balanceOf();
-        const miltonAssetBalanceBefore = await usdcContract.balanceOf(await signer.getAddress());
-
-        //when
-        await stanley.setStrategyCompound(strategyCompoundV2.address);
-
-        //then
-        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
-        const strategyCompoundV2BalanceAfter = await strategyCompoundV2.balanceOf();
-        const miltonAssetBalanceAfter = await usdcContract.balanceOf(await signer.getAddress());
-
-        expect(
-            strategyCompoundBalanceBefore.gte(depositAmount),
-            "strategyCompoundBalanceBefore >= 1000"
-        ).to.be.true;
-
-        expect(
-            strategyCompoundBalanceBefore.lte(depositAmount.add(ONE_18)),
-            "strategyCompoundBalanceBefore <= 1001"
-        ).to.be.true;
-
-        expect(strategyCompoundV2BalanceBefore.eq(ZERO), "strategyCompoundV2BalanceBefore = 0").to
-            .be.true;
-
-        expect(strategyCompoundBalanceAfter.gte(ZERO), "strategyCompoundBalanceAfter >= 0").to.be
-            .true;
-
-        expect(strategyCompoundBalanceAfter.lte(ONE_18), "strategyCompoundBalanceAfter <= 1").to.be
-            .true;
-
-        /// Great Than Equal because with accrued interest
-        expect(
-            strategyCompoundV2BalanceAfter.gte(depositAmount),
-            "strategyCompoundV2BalanceAfter = 1000"
-        ).to.be.true;
-
-        expect(
-            miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
-            "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
-        ).to.be.true;
     });
 });

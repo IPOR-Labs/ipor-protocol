@@ -21,9 +21,11 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
     let accountToImpersonate: string;
     let daiAddress: string;
     let daiContract: ERC20;
-    let strategyAaveContractInstance: MockStrategy;
+    let strategyAave: MockStrategy;
     let signer: Signer;
+    let signerTwo: Signer;
     let cDaiAddress: string;
+    let aDaiAddress: string;
     let COMP: string;
     let compContract: ERC20;
     let cTokenContract: MockCDAI;
@@ -46,7 +48,9 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         //  ********************************************************************************************
 
         accountToImpersonate = "0x6b175474e89094c44da98b954eedeac495271d0f"; // Dai rich address
+
         daiAddress = "0x6b175474e89094c44da98b954eedeac495271d0f"; // DAI
+        aDaiAddress = "0x028171bCA77440897B824Ca71D1c56caC55b68A3";
 
         await hre.network.provider.send("hardhat_setBalance", [
             accountToImpersonate,
@@ -59,6 +63,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         });
 
         signer = hre.ethers.provider.getSigner(accountToImpersonate);
+
         daiContract = new hre.ethers.Contract(daiAddress, daiAbi, signer) as ERC20;
         const impersonateBalanceBefore = await daiContract.balanceOf(accountToImpersonate);
         await daiContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
@@ -71,10 +76,10 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
 
         // we mock aave bacoude we want compand APR > aave APR
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
-        strategyAaveContractInstance = (await StrategyAave.deploy()) as MockStrategy;
+        strategyAave = (await StrategyAave.deploy()) as MockStrategy;
 
-        await strategyAaveContractInstance.setShareToken(daiAddress);
-        await strategyAaveContractInstance.setAsset(daiAddress);
+        await strategyAave.setShareToken(aDaiAddress);
+        await strategyAave.setAsset(daiAddress);
 
         //  ********************************************************************************************
         //  **************                       COMPOUND                                 **************
@@ -125,7 +130,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         stanley = (await upgrades.deployProxy(StanleyFactory, [
             daiAddress,
             ivToken.address,
-            strategyAaveContractInstance.address,
+            strategyAave.address,
             strategyCompound.address,
         ])) as StanleyDai;
 
@@ -139,9 +144,9 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Should compand APR > aave APR ", async () => {
+    it("Should compound APR > aave APR ", async () => {
         // when
-        const aaveApy = await strategyAaveContractInstance.getApr();
+        const aaveApy = await strategyAave.getApr();
         const compoundApy = await strategyCompound.getApr();
         // then
         expect(compoundApy.gt(aaveApy)).to.be.true;
@@ -283,7 +288,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
         const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
-            strategyAaveContractInstance.address
+            strategyAave.address
         );
 
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
@@ -324,7 +329,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
         const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userDaiBalanceAfter = await daiContract.balanceOf(userAddress);
         const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
-            strategyAaveContractInstance.address
+            strategyAave.address
         );
 
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
@@ -392,5 +397,8 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound DAI", function 
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
             "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
         ).to.be.true;
+
+        //clean up
+        await stanley.setStrategyCompound(strategyCompound.address);
     });
 });

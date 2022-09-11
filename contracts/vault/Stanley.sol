@@ -17,7 +17,6 @@ import "../interfaces/IStanleyInternal.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "hardhat/console.sol";
 
 /// @title Stanley represents Asset Management module responsible for investing Milton's cash in external DeFi protocols.
 abstract contract Stanley is
@@ -133,7 +132,6 @@ abstract contract Stanley is
         uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
 
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
-
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
@@ -298,7 +296,6 @@ abstract contract Stanley is
         /// @dev Temporary on Stanley wallet.
         uint256 stanleyAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
         uint256 wadStanleyAssetAmount = IporMath.convertToWad(stanleyAssetAmount, _getDecimals());
-
         IStrategy(strategyMaxApy).deposit(wadStanleyAssetAmount);
 
         emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadStanleyAssetAmount);

@@ -32,6 +32,7 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
     let strategyAaveContractInstance: MockStrategy;
     let signer: Signer;
     let cUsdtAddress: string;
+    let aUsdtAddress: string;
     let COMP: string;
     let compContract: ERC20;
     let cTokenContract: MockCUSDT;
@@ -55,6 +56,7 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
 
         accountToImpersonate = "0xad41bd1cf3fd753017ef5c0da8df31a3074ea1ea"; // Usdt rich address
         usdtAddress = "0xdAC17F958D2ee523a2206206994597C13D831ec7"; // usdt
+        aUsdtAddress = "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811";
 
         await hre.network.provider.send("hardhat_setBalance", [
             accountToImpersonate,
@@ -81,7 +83,7 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAaveContractInstance = (await StrategyAave.deploy()) as MockStrategy;
 
-        await strategyAaveContractInstance.setShareToken(usdtAddress);
+        await strategyAaveContractInstance.setShareToken(aUsdtAddress);
         await strategyAaveContractInstance.setAsset(usdtAddress);
 
         //  ********************************************************************************************
@@ -360,14 +362,14 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
         await hre.network.provider.send("evm_mine");
 
         const compoundBalanceBefore = await compContract.balanceOf(treasurAddres);
-        expect(compoundBalanceBefore, "Cliamed Compound Balance Before = 0").to.be.equal(ZERO);
+        expect(compoundBalanceBefore, "Claimed Compound Balance Before = 0").to.be.equal(ZERO);
 
         // when
         await strategyCompound.doClaim();
 
         // then
         const userBalanceAfter = await compContract.balanceOf(treasurAddres);
-        expect(userBalanceAfter.gte(userBalanceBefore), "Cliamed compound Balance after > before")
+        expect(userBalanceAfter.gte(userBalanceBefore), "Claimed compound Balance after > before")
             .to.be.true;
     });
 
@@ -405,55 +407,6 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
         expect(strategyCompoundBalanceAfter.gte(ZERO), "strategyCompoundBalanceAfter > 0").to.be
             .true;
         expect(strategyCompoundBalanceAfter.lt(ONE_18), "strategyCompoundBalanceAfter < 1").to.be
-            .true;
-
-        /// Great Than Equal because with accrued interest
-        expect(
-            strategyCompoundV2BalanceAfter.gte(depositAmount),
-            "strategyCompoundV2BalanceAfter = 1000"
-        ).to.be.true;
-
-        expect(
-            miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
-            "miltonAssetBalanceBefore = miltonAssetBalanceAfter"
-        ).to.be.true;
-    });
-
-    it("Should set new Compound strategy for USDT", async () => {
-        //given
-        const depositAmount = ONE_18.mul(100000);
-        await stanley.connect(signer).deposit(depositAmount);
-        await cTokenContract.accrueInterest();
-
-        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
-        const strategyCompoundV2BalanceBefore = await strategyCompoundV2.balanceOf();
-        const miltonAssetBalanceBefore = await usdtContract.balanceOf(await signer.getAddress());
-
-        //when
-        await stanley.setStrategyCompound(strategyCompoundV2.address);
-
-        //then
-        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
-        const strategyCompoundV2BalanceAfter = await strategyCompoundV2.balanceOf();
-        const miltonAssetBalanceAfter = await usdtContract.balanceOf(await signer.getAddress());
-
-        expect(strategyCompoundBalanceBefore.gte(ZERO), "strategyCompoundBalanceBefore >= 0").to.be
-            .true;
-
-        expect(
-            strategyCompoundBalanceBefore.lte(depositAmount.add(ONE_18)),
-            "strategyCompoundBalanceBefore <= 1"
-        ).to.be.true;
-
-        expect(
-            strategyCompoundV2BalanceBefore.gte(depositAmount.mul(2)),
-            "strategyCompoundV2BalanceBefore > 20000"
-        ).to.be.true;
-
-        expect(strategyCompoundBalanceAfter.gte(ZERO), "strategyCompoundBalanceAfter >= 0").to.be
-            .true;
-
-        expect(strategyCompoundBalanceAfter.lte(ONE_18), "strategyCompoundBalanceAfter <= 1").to.be
             .true;
 
         /// Great Than Equal because with accrued interest

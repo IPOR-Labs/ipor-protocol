@@ -139,6 +139,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      */
     function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
+        IERC20Upgradeable compToken = _compToken;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -147,11 +148,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         _comptroller.claimComp(address(this), assets);
 
-        uint256 balance = _compToken.balanceOf(address(this));
+        uint256 balance = compToken.balanceOf(address(this));
 
-        _compToken.safeTransfer(treasury, balance);
+        compToken.safeTransfer(treasury, balance);
 
-        emit DoClaim(_msgSender(), _shareToken, treasury, balance);
+        emit DoClaim(_msgSender(), assets[0], treasury, balance);
     }
 
     function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {

@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, ItfStanleyDai, TestERC20 } from "../../../../types";
+import { MockStrategy, ItfStanleyDai, TestERC20, MockCDAI } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -49,23 +49,17 @@ describe("Stanley -> maxApyStrategy", () => {
         await strategyAave.setApy(BigNumber.from("100000"));
         await strategyCompound.setApy(BigNumber.from("99999"));
 
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
-
         //  when
         const result = await stanley.getMaxApyStrategy();
 
         //  then
         expect(result.strategyMaxApy).to.be.equal(strategyAave.address);
-    });	
+    });
 
     it("Should select aave strategy when aaveApy == compoundApy", async () => {
         //  given
         await strategyAave.setApy(BigNumber.from("10"));
         await strategyCompound.setApy(BigNumber.from("10"));
-
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();
@@ -78,9 +72,6 @@ describe("Stanley -> maxApyStrategy", () => {
         //  given
         await strategyAave.setApy(BigNumber.from("1000"));
         await strategyCompound.setApy(BigNumber.from("99999"));
-
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();

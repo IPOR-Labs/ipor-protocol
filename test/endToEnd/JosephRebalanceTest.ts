@@ -270,9 +270,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const strategyCompoundBalanceAfter = await strategyCompoundDai.balanceOf();
         const ivTokenBalanceAfter = await ivTokenDai.balanceOf(miltonDai.address);
 
-        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
-        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
-
         expect(
             strategyAaveBalanceBefore.gt(strategyAaveBalanceAfter),
             "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
@@ -523,9 +520,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             strategyCompoundBalanceAfterAccrued.gt(BigNumber.from("300").mul(N1__0_18DEC)),
             "strategyCompoundBalanceAfterAccrued > 300"
         ).to.be.true;
-
-        console.log("ivTokenBalanceBefore=", ivTokenBalanceBefore.toString());
-        console.log("ivTokenBalanceAfter=", ivTokenBalanceAfter.toString());
 
         expect(
             ivTokenBalanceBefore.lt(ivTokenBalanceAfter),
