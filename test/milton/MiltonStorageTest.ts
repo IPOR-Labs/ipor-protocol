@@ -291,18 +291,12 @@ describe("MiltonStorage", () => {
             JosephUsdtMockCases.CASE0,
             JosephDaiMockCases.CASE0
         );
-        await prepareApproveForUsers(
-            [userOne, userTwo, userThree, liquidityProvider],
-            "DAI",
-            testData
-        );
+
         const { miltonStorageDai, miltonDai } = testData;
         if (miltonStorageDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
         }
-
-        await setupTokenDaiInitialValuesForUsers([admin, userOne, liquidityProvider], testData);
 
         await miltonStorageDai.setMilton(await miltonStorageAddress.getAddress());
 
@@ -1193,5 +1187,213 @@ describe("MiltonStorage", () => {
             null,
             miltonSpreadModel
         );
+    });
+
+    it("should not take into account income fee during update Liquidity Pool balance when Milton earn and Trader lost", async () => {
+        //given
+        let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+
+        const { miltonStorageDai, miltonDai, tokenDai, iporOracle, josephDai } = testData;
+        if (
+            miltonStorageDai === undefined ||
+            miltonDai === undefined ||
+            tokenDai === undefined ||
+            iporOracle === undefined ||
+            josephDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const derivativeParams = {
+            asset: tokenDai,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+            direction: 0,
+        };
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset.address,
+                PERCENTAGE_5_18DEC,
+                derivativeParams.openTimestamp
+            );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonStorageDai.setMilton(await miltonStorageAddress.getAddress());
+
+        /// Positive payoff - means that Trader earn, Milton lost
+        const positivePayoff = BigNumber.from("1500").mul(N1__0_18DEC);
+
+        const incomeFeeValue = BigNumber.from("125").mul(N1__0_18DEC);
+
+        const balanceBefore = await miltonStorageDai.getBalance();
+        const liquidityPoolBalanceBefore = balanceBefore.liquidityPool;
+
+        //when
+        await miltonStorageDai
+            .connect(miltonStorageAddress)
+            .updateStorageWhenCloseSwapPayFixed(
+                await userTwo.getAddress(),
+                derivativeItem,
+                positivePayoff,
+                incomeFeeValue,
+                closeSwapTimestamp,
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
+            );
+
+        await miltonStorageDai.setMilton(miltonDai.address);
+
+        //then
+        const balanceAfter = await miltonStorageDai.getBalance();
+        const actualLiquidityPoolBalanceAfter = balanceAfter.liquidityPool;
+
+        const expectedLiquidityPoolBalanceAfter = liquidityPoolBalanceBefore
+            .sub(positivePayoff)
+            .add(incomeFeeValue);
+
+        expect(
+            actualLiquidityPoolBalanceAfter.eq(expectedLiquidityPoolBalanceAfter),
+            "actualLiquidityPoolBalanceAfter = expectedLiquidityPoolBalanceAfter"
+        ).to.be.true;
+    });
+
+    it("should take into account income fee during update Liquidity Pool balance when Milton lost and Trader earn", async () => {
+        //given
+        let testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI"],
+            [PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+
+        const { miltonStorageDai, miltonDai, tokenDai, iporOracle, josephDai } = testData;
+        if (
+            miltonStorageDai === undefined ||
+            miltonDai === undefined ||
+            tokenDai === undefined ||
+            iporOracle === undefined ||
+            josephDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, liquidityProvider],
+            testData
+        );
+
+        const derivativeParams = {
+            asset: tokenDai,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: LEVERAGE_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+            direction: 0,
+        };
+
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(
+                derivativeParams.asset.address,
+                PERCENTAGE_5_18DEC,
+                derivativeParams.openTimestamp
+            );
+
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
+        await openSwapPayFixed(testData, derivativeParams);
+        let derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
+        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+
+        await miltonStorageDai.setMilton(await miltonStorageAddress.getAddress());
+
+        /// Negative payoff - means that Trader lost, Milton earn
+        const negativePayoff = BigNumber.from("-1500").mul(N1__0_18DEC);
+
+        const incomeFeeValue = BigNumber.from("125").mul(N1__0_18DEC);
+
+        const balanceBefore = await miltonStorageDai.getBalance();
+        const liquidityPoolBalanceBefore = balanceBefore.liquidityPool;
+
+        //when
+        await miltonStorageDai
+            .connect(miltonStorageAddress)
+            .updateStorageWhenCloseSwapPayFixed(
+                await userTwo.getAddress(),
+                derivativeItem,
+                negativePayoff,
+                incomeFeeValue,
+                closeSwapTimestamp,
+                PERCENTAGE_95_18DEC,
+                PERIOD_6_HOURS_IN_SECONDS
+            );
+
+        await miltonStorageDai.setMilton(miltonDai.address);
+
+        //then
+        const balanceAfter = await miltonStorageDai.getBalance();
+        const actualLiquidityPoolBalanceAfter = balanceAfter.liquidityPool;
+
+        const expectedLiquidityPoolBalanceAfter = liquidityPoolBalanceBefore.sub(negativePayoff);
+
+        expect(
+            actualLiquidityPoolBalanceAfter.eq(expectedLiquidityPoolBalanceAfter),
+            "actualLiquidityPoolBalanceAfter = expectedLiquidityPoolBalanceAfter"
+        ).to.be.true;
     });
 });
