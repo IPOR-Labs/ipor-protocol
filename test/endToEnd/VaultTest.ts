@@ -163,6 +163,8 @@ describe("End to End tests on mainnet fork", function () {
 
     it("Should be able to withdraw from stanley Usdc", async () => {
         // given
+        await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
+
         const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
 
         // when

@@ -7,6 +7,7 @@ const aaveIncentiveContractAbi = require("../../abis/aaveIncentiveContract.json"
 
 const ZERO = BigNumber.from("0");
 const ONE_18 = BigNumber.from("1000000000000000000");
+const HALF_18 = BigNumber.from("500000000000000000");
 const ONE_12 = BigNumber.from("1000000000000");
 const ONE_6 = BigNumber.from("1000000");
 const maxValue = BigNumber.from(
@@ -391,6 +392,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         expect(strategyAaveBalanceAfter.eq(ZERO), "strategyAaveBalanceAfter = 0").to.be.true;
 
         /// Great Than Equal because with accrued interest
+        console.log("strategyAaveV2BalanceAfter=", strategyAaveV2BalanceAfter.toString());
         expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter = 1000")
             .to.be.true;
 
@@ -435,6 +437,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             "miltonIvTokenAfter = miltonIvTokenBefore"
         ).to.be.true;
 
+        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
+        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
         expect(
             strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
             "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
@@ -445,8 +449,10 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             "strategyCompoundBalanceBefore > strategyCompoundBalanceAfter"
         ).to.be.true;
 
-        expect(strategyCompoundBalanceAfter.eq(ZERO), "strategyCompoundBalanceAfter = 0").to.be
+        expect(strategyCompoundBalanceAfter.gte(ZERO), "strategyCompoundBalanceAfter >= 0").to.be
             .true;
+        expect(strategyCompoundBalanceAfter.lte(HALF_18), "strategyCompoundBalanceAfter < 0.5").to
+            .be.true;
 
         expect(
             miltonAssetBalanceAfter.eq(miltonAssetBalanceBefore),

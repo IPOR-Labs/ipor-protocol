@@ -12,5 +12,5 @@ interface CErc20Mock {
 
     function redeem(uint256) external returns (uint256);
 
-	function accrueInterest() external returns (uint256);
+    function accrueInterest() external returns (uint256);
 }

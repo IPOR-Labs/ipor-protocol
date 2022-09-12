@@ -44,17 +44,6 @@ contract TestERC20 is IERC20 {
         return true;
     }
 
-    /// @dev only for test purposes
-    function approveFor(
-        address owner,
-        address spender,
-        uint256 amount
-    ) public virtual returns (bool) {
-        allowance[owner][spender] = amount;
-        emit Approval(owner, spender, amount);
-        return true;
-    }
-
     function transferFrom(
         address sender,
         address recipient,

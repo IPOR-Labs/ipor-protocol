@@ -394,6 +394,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         expect(strategyAaveBalanceAfter.eq(ZERO), "strategyAaveBalanceAfter = 0").to.be.true;
 
         /// Great Than Equal because with accrued interest
+        console.log("strategyAaveV2BalanceAfter=", strategyAaveV2BalanceAfter.toString());
         expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter = 1000")
             .to.be.true;
 

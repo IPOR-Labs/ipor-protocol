@@ -57,17 +57,6 @@ contract MockCToken is ERC20, CErc20Mock {
         return 0;
     }
 
-    /// @dev only for test purposes
-    function mintFor(address account, uint256 amount) external returns (uint256) {
-        require(
-            IERC20(_asset).transferFrom(account, address(this), amount),
-            "Error during transferFrom"
-        );
-        _mint(account, IporMath.division((amount * Constants.D18), _exchangeRate));
-
-        return 0;
-    }    
-
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
