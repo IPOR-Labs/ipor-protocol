@@ -168,7 +168,11 @@ describe("End to End tests on mainnet fork", function () {
     it("Should be able to withdraw from stanley Usdc", async () => {
         // given
         await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
+
+        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
+        await hre.network.provider.send("evm_setNextBlockTimestamp", [timestamp]);
         await hre.network.provider.send("evm_mine");
+
         await cUsdc.accrueInterest();
 
         const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);

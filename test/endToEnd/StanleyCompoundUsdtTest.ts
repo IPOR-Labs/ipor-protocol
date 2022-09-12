@@ -355,20 +355,20 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
 
     it("Should Claim from COMPOUND", async () => {
         //given
-        const treasurAddres = await accounts[0].getAddress();
-        const userBalanceBefore = await compContract.balanceOf(treasurAddres);
+        const treasuryAddres = await accounts[0].getAddress();
+        const userBalanceBefore = await compContract.balanceOf(treasuryAddres);
         const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
         await hre.network.provider.send("evm_increaseTime", [864000 * 2]);
         await hre.network.provider.send("evm_mine");
 
-        const compoundBalanceBefore = await compContract.balanceOf(treasurAddres);
+        const compoundBalanceBefore = await compContract.balanceOf(treasuryAddres);
         expect(compoundBalanceBefore, "Claimed Compound Balance Before = 0").to.be.equal(ZERO);
 
         // when
         await strategyCompound.doClaim();
 
         // then
-        const userBalanceAfter = await compContract.balanceOf(treasurAddres);
+        const userBalanceAfter = await compContract.balanceOf(treasuryAddres);
         expect(userBalanceAfter.gte(userBalanceBefore), "Claimed compound Balance after > before")
             .to.be.true;
     });
