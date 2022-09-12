@@ -392,9 +392,12 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         expect(strategyAaveBalanceAfter.eq(ZERO), "strategyAaveBalanceAfter = 0").to.be.true;
 
         /// Great Than Equal because with accrued interest
-        console.log("strategyAaveV2BalanceAfter=", strategyAaveV2BalanceAfter.toString());
-        expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter = 1000")
+        expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter >= 1000")
             .to.be.true;
+        expect(
+            strategyAaveV2BalanceAfter.lt(depositAmount.add(ONE_18)),
+            "strategyAaveV2BalanceAfter < 1001"
+        ).to.be.true;
 
         expect(
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
@@ -437,8 +440,6 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
             "miltonIvTokenAfter = miltonIvTokenBefore"
         ).to.be.true;
 
-        console.log("strategyAaveBalanceBefore=", strategyAaveBalanceBefore.toString());
-        console.log("strategyAaveBalanceAfter=", strategyAaveBalanceAfter.toString());
         expect(
             strategyAaveBalanceBefore.lt(strategyAaveBalanceAfter),
             "strategyAaveBalanceBefore < strategyAaveBalanceAfter"

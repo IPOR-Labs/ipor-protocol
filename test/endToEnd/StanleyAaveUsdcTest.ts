@@ -417,8 +417,12 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         expect(strategyAaveBalanceAfter.eq(ZERO), "strategyAaveBalanceAfter = 0").to.be.true;
 
         /// Great Than Equal because with accrued interest
-        expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter = 1000")
+        expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter > 1000")
             .to.be.true;
+        expect(
+            strategyAaveV2BalanceAfter.lt(depositAmount.add(ONE_18)),
+            "strategyAaveV2BalanceAfter < 1001"
+        ).to.be.true;
 
         expect(
             miltonAssetBalanceBefore.eq(miltonAssetBalanceAfter),
@@ -445,7 +449,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const miltonAssetBalanceBefore = await usdcContract.balanceOf(await signer.getAddress());
         const miltonTotalBalanceBefore = await stanleyUsdc.totalBalance(await signer.getAddress());
-        
+
         //when
         await stanleyUsdc.migrateAssetToStrategyWithMaxApr();
 

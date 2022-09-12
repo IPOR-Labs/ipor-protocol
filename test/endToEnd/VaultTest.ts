@@ -1,7 +1,9 @@
+import hre from "hardhat";
 import { BigNumber } from "ethers";
 import { expect } from "chai";
 import {
     ERC20,
+    MockCUSDT,
     TestnetFaucet,
     StrategyAave,
     StrategyCompound,
@@ -30,6 +32,7 @@ describe("End to End tests on mainnet fork", function () {
     let dai: ERC20;
     let usdc: ERC20;
     let usdt: ERC20;
+    let cUsdc: MockCUSDT;
 
     let testnetFaucet: TestnetFaucet;
 
@@ -60,6 +63,7 @@ describe("End to End tests on mainnet fork", function () {
             usdc,
             usdt,
             dai,
+            cUsdc,
             strategyAaveDai,
             strategyAaveUsdc,
             strategyAaveUsdt,
@@ -164,6 +168,8 @@ describe("End to End tests on mainnet fork", function () {
     it("Should be able to withdraw from stanley Usdc", async () => {
         // given
         await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
+        await hre.network.provider.send("evm_mine");
+        await cUsdc.accrueInterest();
 
         const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
 
