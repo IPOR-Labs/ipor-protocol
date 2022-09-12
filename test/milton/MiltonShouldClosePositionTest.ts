@@ -2624,6 +2624,7 @@ describe("Milton - close position", () => {
         const miltonBalanceBeforePayoutWad = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
 
         const closerUserEarned = TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+
         const openerUserLost = TC_OPENING_FEE_18DEC.add(TC_IPOR_PUBLICATION_AMOUNT_18DEC)
             .add(TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC)
             .sub(expectedPayoff)
@@ -2651,9 +2652,11 @@ describe("Milton - close position", () => {
         const expectedCloserUserUnderlyingTokenBalanceAfterClose =
             USER_SUPPLY_10MLN_18DEC.add(closerUserEarned).sub(closerUserLost);
 
+        //Milton earned, user lost, income fee stay on Liquidity Pool
         const expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
             .sub(expectedPayoff)
-            .add(TC_OPENING_FEE_18DEC);
+            .add(TC_OPENING_FEE_18DEC)
+            .add(expectedIncomeFeeValue);
 
         //given
         let localOpenTimestamp = ZERO;
