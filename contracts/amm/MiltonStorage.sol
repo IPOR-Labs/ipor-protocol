@@ -59,7 +59,7 @@ contract MiltonStorage is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getLastSwapId() external view override returns (uint256) {
@@ -728,16 +728,18 @@ contract MiltonStorage is
         _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
+            //Buyer earns, Milton looses
+            uint128 finalAbsPayoff = (absPayoff - incomeFeeValue).toUint128();
+
             require(
-                _balances.liquidityPool >= absPayoff,
+                _balances.liquidityPool >= finalAbsPayoff,
                 MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
-            _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
+            _balances.liquidityPool = _balances.liquidityPool - finalAbsPayoff;
         } else {
-            _balances.liquidityPool =
-                _balances.liquidityPool +
-                (absPayoff - incomeFeeValue).toUint128();
+            //Milton earns, Buyer looses
+            _balances.liquidityPool = _balances.liquidityPool + absPayoff.toUint128();
         }
     }
 

@@ -232,10 +232,11 @@ export const testCaseWhenMiltonEarnAndUserLost = async function (
     let expectedOpenerUserUnderlyingTokenBalanceAfterClose = ZERO;
     let expectedCloserUserUnderlyingTokenBalanceAfterClose = ZERO;
     let expectedMiltonUnderlyingTokenBalance = ZERO;
+	
+	//[!] Milton earned and user lost
     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
         .add(TC_OPENING_FEE_18DEC)
-        .add(expectedPayoffWadAbs)
-        .sub(expectedIncomeFeeValueWad);
+        .add(expectedPayoffWadAbs);
 
     if (testData.tokenDai && asset === testData.tokenDai.address) {
         miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
@@ -357,9 +358,11 @@ export const testCaseWhenMiltonLostAndUserEarn = async function (
     let expectedOpenerUserUnderlyingTokenBalanceAfterClose = ZERO;
     let expectedCloserUserUnderlyingTokenBalanceAfterClose = ZERO;
 
+    //[!] Milton lost, user earned.
     let expectedLiquidityPoolTotalBalanceWad = miltonBalanceBeforePayoutWad
         .sub(expectedPayoffWadAbs)
-        .add(TC_OPENING_FEE_18DEC);
+        .add(TC_OPENING_FEE_18DEC)
+        .add(expectedIncomeFeeValueWad);
 
     if (testData.tokenDai && asset === testData.tokenDai.address) {
         miltonBalanceBeforePayout = TC_LP_BALANCE_BEFORE_CLOSE_18DEC;
