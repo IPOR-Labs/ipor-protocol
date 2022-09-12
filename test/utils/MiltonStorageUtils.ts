@@ -18,11 +18,7 @@ import {
     LEVERAGE_18DEC,
     USD_50_000_6DEC,
 } from "./Constants";
-import {
-    MiltonUsdcCase,
-    MiltonUsdtCase,
-    MiltonDaiCase
-} from "./MiltonUtils";
+import { MiltonUsdcCase, MiltonUsdtCase, MiltonDaiCase } from "./MiltonUtils";
 
 import { MockStanleyCase } from "./StanleyUtils";
 
@@ -370,7 +366,7 @@ export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer
         openingFeeTreasuryAmount: BigNumber.from("1500").mul(N1__0_18DEC),
     };
 };
-// [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress]
+
 const preparePayFixedState = async (
     users: Signer[],
     numberOfSwapsToCreate: BigNumber,
