@@ -13,11 +13,11 @@ jobs:
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-    build-sc:
-        needs: notify
-        uses: ./.github/workflows/build-smart-contracts.yml
-        secrets:
-            HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+  build-sc:
+      needs: notify
+      uses: ./.github/workflows/build-smart-contracts.yml
+      secrets:
+          HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
 
   build-java:
     needs: notify
