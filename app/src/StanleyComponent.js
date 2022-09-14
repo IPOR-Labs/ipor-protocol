@@ -77,15 +77,14 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>My IvToken Balance</strong>
+                        <strong>IvToken Total Supply</strong>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            contract="IvTokenUsdt"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -99,9 +98,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            contract="IvTokenUsdc"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -115,9 +113,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                            contract="IvTokenDai"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -171,6 +168,59 @@ export default ({ drizzle, drizzleState }) => (
                             contract="IvTokenDai"
                             method="balanceOf"
                             methodArgs={[drizzle.contracts.DrizzleMiltonDai.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>My IvToken Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}

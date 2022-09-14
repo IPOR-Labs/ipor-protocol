@@ -1,14 +1,14 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 import SpreadComponent from "./SpreadComponent";
 import SoapComponent from "./SoapComponent";
 
-const {ContractData} = newContextComponents;
+const { ContractData } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
-        <SpreadComponent drizzle={drizzle} drizzleState={drizzleState}/>
-        <SoapComponent drizzle={drizzle} drizzleState={drizzleState}/>
+        <SpreadComponent drizzle={drizzle} drizzleState={drizzleState} />
+        <SoapComponent drizzle={drizzle} drizzleState={drizzleState} />
 
         <table className="table" align="center">
             <tr>
@@ -28,7 +28,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
@@ -43,7 +43,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
@@ -58,7 +58,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralPayFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralPayFixed}</small>
                             </div>
                         )}
@@ -76,7 +76,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
@@ -91,7 +91,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
@@ -106,7 +106,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.totalCollateralReceiveFixed}</small>
                             </div>
                         )}
@@ -124,7 +124,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.liquidityPool}</small>
                             </div>
                         )}
@@ -139,7 +139,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.liquidityPool}</small>
                             </div>
                         )}
@@ -154,7 +154,61 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
-                                <br/>
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Accrued</strong> Liquidity Pool (including part of Opening Fee)
+                    <br />
+                    <small>
+                        Takes into account also accrued cash from Stanley (Asset Manager){" "}
+                    </small>
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdt"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdc"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonDai"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
                                 <small>{value.liquidityPool}</small>
                             </div>
                         )}
@@ -172,7 +226,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
@@ -187,7 +241,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
@@ -202,7 +256,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.iporPublicationFee / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.iporPublicationFee}</small>
                             </div>
                         )}
@@ -220,7 +274,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.treasury}</small>
                             </div>
                         )}
@@ -235,7 +289,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.treasury}</small>
                             </div>
                         )}
@@ -250,7 +304,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.treasury / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.treasury}</small>
                             </div>
                         )}
@@ -260,10 +314,10 @@ export default ({drizzle, drizzleState}) => (
             <tr>
                 <td>
                     VAULT (Stanley)
-                    <br/>
+                    <br />
                     <small>
-                        Amount of Liquidity Pool transferred to Stanley Strategies + accrued amount on Strategies
-                        site
+                        Amount of Liquidity Pool transferred to Stanley Strategies + accrued amount
+                        on Strategies site
                     </small>
                 </td>
                 <td>
@@ -275,7 +329,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.vault / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.vault}</small>
                             </div>
                         )}
@@ -290,7 +344,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.vault / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.vault}</small>
                             </div>
                         )}
@@ -305,7 +359,7 @@ export default ({drizzle, drizzleState}) => (
                         render={(value) => (
                             <div>
                                 {value.vault / 1000000000000000000}
-                                <br/>
+                                <br />
                                 <small>{value.vault}</small>
                             </div>
                         )}

@@ -157,7 +157,7 @@ abstract contract JosephInternal is
         if (ratio > miltonStanleyBalanceRatio) {
             uint256 assetAmount = wadMiltonAssetBalance -
                 IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
-            _milton.depositToStanley(assetAmount);
+            _getMilton().depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
                 miltonStanleyBalanceRatio * totalBalance,

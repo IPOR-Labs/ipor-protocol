@@ -418,7 +418,7 @@ contract MiltonStorage is
         onlyMilton
     {
         uint256 currentVaultBalance = _balances.vault;
-        // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
+        // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
@@ -445,6 +445,7 @@ contract MiltonStorage is
             currentVaultBalance <= (vaultBalance - depositAmount),
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
+		
         uint256 interest = currentVaultBalance > 0
             ? (vaultBalance - currentVaultBalance - depositAmount)
             : 0;
@@ -730,13 +731,17 @@ contract MiltonStorage is
         _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
+            /// @dev Buyer earns, Milton (LP) looses
             require(
                 _balances.liquidityPool >= absPayoff,
                 MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
+            /// @dev When Milton (LP) looses, then  always substract all payoff,
+            /// income fee is added in separate balance - treasury
             _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
+            /// @dev Milton earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
                 (absPayoff - incomeFeeValue).toUint128();
