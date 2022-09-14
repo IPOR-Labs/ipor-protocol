@@ -311,7 +311,9 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Provide Liquidity</strong>
                         <br />
                         <small>
-                            Transfer from Liquidity Provider to Milton Liquidity Pool using Joseph
+                            Transfer from Liquidity Provider to Milton Liquidity Pool using Joseph.
+                            <br />
+                            Asset amount represented in 18 decimals.
                         </small>
                     </td>
                     <td>
@@ -342,7 +344,9 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Redeem</strong>
                         <br />
                         <small>
-                            Transfer from Milton Liquidity Pool to Liquidity Provider using Joseph
+                            Transfer from Milton Liquidity Pool to Liquidity Provider using Joseph.
+                            <br />
+                            Ip Token amount represented in 18 decimals.
                         </small>
                     </td>
                     <td>
@@ -411,7 +415,9 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Deposit to Stanley</strong>
                         <br />
                         <small>
-                            Transfer from Milton via Stanley to Strategy (AAVE or Compound)
+                            Transfer from Milton via Stanley to Strategy (AAVE or Compound).
+                            <br />
+                            Asset amount represented in 18 decimals.
                         </small>
                     </td>
                     <td>
@@ -448,7 +454,9 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Withdraw from Stanley</strong>
                         <br />
                         <small>
-                            Transfer from Strategy (AAVE or Compound) via Stanley to Milton
+                            Transfer from Strategy (AAVE or Compound) via Stanley to Milton.
+                            <br />
+                            Asset amount represented in 18 decimals.
                         </small>
                     </td>
                     <td>
@@ -520,7 +528,10 @@ export default ({ drizzle, drizzleState }) => (
                     <td>
                         <strong>Transfer Treasury</strong>
                         <br />
-                        <small>Income fee, part of opening fee</small>
+                        <small>
+                            Income fee, part of opening fee. <br />
+                            Asset amount represented in 18 decimals.
+                        </small>
                     </td>
                     <td>
                         <div>
@@ -553,7 +564,11 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Transfer to Charlie Treasury</strong>
+                        <strong>
+                            Transfer to Charlie Treasury
+                            <br />
+                            Asset amount represented in 18 decimals.
+                        </strong>
                         <small>Publication Fee</small>
                     </td>
                     <td>
