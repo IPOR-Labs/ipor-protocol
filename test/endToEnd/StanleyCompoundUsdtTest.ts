@@ -274,11 +274,12 @@ describe("Deposit -> deployed Contract on Mainnet fork Compound USDT", function 
 
     it("Should withdraw all user asset from COMPOUND - withdraw method", async () => {
         //given
-        await stanley.connect(signer).deposit(ONE_18.mul(10));
+        await stanley.connect(signer).deposit(ONE_18.mul(1000));
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdtBalanceBefore = await usdtContract.balanceOf(userAddress);
+        await cTokenContract.accrueInterest();
 
         //when
         await stanley.withdraw(strategyCompoundBalanceBefore);

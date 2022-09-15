@@ -281,6 +281,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
+        await cTokenContract.accrueInterest();
 
         //when
         await stanley.withdraw(strategyCompoundBalanceBefore);
@@ -321,6 +322,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
         const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
+        await cTokenContract.accrueInterest();
 
         //when
         await stanley.withdrawAll();
