@@ -89,14 +89,19 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice deposit can only done by Stanley .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function deposit(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 depositedAmount)
+    {
         address asset = _asset;
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(_shareToken).mint(amount);
+        depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
     /**
@@ -115,7 +120,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
         /// @dev without rounding up because amount to redeem could be too high (too early to redeem)
-        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 

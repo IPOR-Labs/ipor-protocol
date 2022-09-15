@@ -47,18 +47,23 @@ contract MockTestnetStrategy is StrategyCore {
         return _calculateNewBalance();
     }
 
-    function deposit(uint256 wadAmount) external override onlyStanley {
+    function deposit(uint256 wadAmount)
+        external
+        override
+        onlyStanley
+        returns (uint256 depositedAmount)
+    {
         address asset = _asset;
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+
         uint256 newDepositsBalance = _calculateNewBalance() +
             IporMath.convertToWad(amount, IERC20Metadata(asset).decimals());
         _depositsBalance = newDepositsBalance;
         _lastUpdateBalance = block.timestamp;
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
+        return IporMath.convertToWad(amount, assetDecimals);
     }
 
     function withdraw(uint256 wadAmount) external override onlyStanley returns (uint256) {

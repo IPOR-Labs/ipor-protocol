@@ -104,13 +104,17 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice deposit can only done by owner.
      * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function deposit(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 depositedAmount)
+    {
         address asset = _asset;
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
 
         address lendingPoolAddress = _provider.getLendingPool();
@@ -118,6 +122,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
 
         AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
         lendingPool.deposit(asset, amount, address(this), 0);
+        depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
     /**
@@ -136,7 +141,7 @@ contract StrategyAave is StrategyCore, IStrategyAave {
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
         /// @dev without rounding up because amount to redeem could be too high (too early to redeem)
-        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
 
         address lendingPoolAddress = _provider.getLendingPool();
 

@@ -175,11 +175,11 @@ abstract contract MiltonInternal is
         return _calculatePayoffReceiveFixed(block.timestamp, swap);
     }
 
-	/// @notice Joseph deposits to Stanley asset amount from Milton.
+    /// @notice Joseph deposits to Stanley asset amount from Milton.
     /// @param assetAmount underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetAmount) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _getStanley().deposit(assetAmount);
-        _getMiltonStorage().updateStorageWhenDepositToStanley(assetAmount, vaultBalance);
+        (uint256 vaultBalance, uint256 depositedAmount) = _getStanley().deposit(assetAmount);
+        _getMiltonStorage().updateStorageWhenDepositToStanley(depositedAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals

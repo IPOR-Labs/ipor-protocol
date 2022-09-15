@@ -27,7 +27,7 @@ interface IStrategy {
     /// @notice Deposits asset amount from Stanley to this specific Strategy. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
-    function deposit(uint256 amount) external;
+    function deposit(uint256 amount) external returns (uint256 depositedAmount);
 
     /// @notice Withdraws asset amount from Strategy to Stanley. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.

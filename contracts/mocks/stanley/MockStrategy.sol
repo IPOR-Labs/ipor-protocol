@@ -18,13 +18,14 @@ contract MockStrategy is IStrategy {
         return 1;
     }
 
-    function deposit(uint256 amount) external {
+    function deposit(uint256 amount) external override returns (uint256 depositedAmount) {
         _balance = _balance + amount;
+        depositedAmount = amount;
     }
 
-    function withdraw(uint256 amount) external override returns (uint256) {
+    function withdraw(uint256 amount) external override returns (uint256 withdrawnAmount) {
         _balance = _balance - amount;
-        return amount;
+        withdrawnAmount = amount;
     }
 
     function getAsset() external view returns (address) {

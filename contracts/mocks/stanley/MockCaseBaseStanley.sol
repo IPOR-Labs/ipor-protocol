@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -41,12 +42,20 @@ contract MockCaseBaseStanley is IStanley {
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
-    function deposit(uint256 assetAmount) external override returns (uint256 balance) {
+    function deposit(uint256 assetAmount)
+        external
+        override
+        returns (uint256 balance, uint256 depositedAmount)
+    {
         balance = _balance[msg.sender] + assetAmount;
 
         _balance[msg.sender] = balance;
 
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
+        depositedAmount = IporMath.convertToWad(
+            assetAmount,
+            IERC20Metadata(address(_asset)).decimals()
+        );
     }
 
     function withdraw(uint256 assetAmount)

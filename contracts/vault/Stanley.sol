@@ -114,11 +114,16 @@ abstract contract Stanley is
      * @notice only owner can deposit.
      * @param amount underlying token amount represented in 18 decimals
      */
-    function deposit(uint256 amount) external override whenNotPaused onlyMilton returns (uint256) {
+    function deposit(uint256 amount)
+        external
+        override
+        whenNotPaused
+        onlyMilton
+        returns (uint256 vaultBalance, uint256 depositedAmount)
+    {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
+		uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 amountNormalized = IporMath.convertToWad(assetAmount, _getDecimals());
 
         (
             address strategyMaxApy,
@@ -133,11 +138,11 @@ abstract contract Stanley is
             uint256 assetBalanceCompoundStrategy
         ) = _calcExchangeRate(IStrategy(strategyAaveAddr), IStrategy(strategyCompoundAddr));
 
-        uint256 ivTokenAmount = IporMath.division(amountNormalized * Constants.D18, exchangeRate);
+        uint256 ivTokenAmount = IporMath.division(amount * Constants.D18, exchangeRate);
 
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), assetAmount);
 
-        IStrategy(strategyMaxApy).deposit(amountNormalized);
+        depositedAmount = IStrategy(strategyMaxApy).deposit(amount);
 
         _ivToken.mint(_msgSender(), ivTokenAmount);
 
@@ -146,11 +151,11 @@ abstract contract Stanley is
             _msgSender(),
             strategyMaxApy,
             exchangeRate,
-            amountNormalized,
+            depositedAmount,
             ivTokenAmount
         );
 
-        return assetBalanceAaveStrategy + assetBalanceCompoundStrategy + amount;
+        vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + amount;
     }
 
     function withdraw(uint256 amount)
@@ -161,9 +166,6 @@ abstract contract Stanley is
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
-        require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 amountNormalized = IporMath.convertToWad(assetAmount, _getDecimals());
 
         IIvToken ivToken = _ivToken;
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
@@ -184,7 +186,7 @@ abstract contract Stanley is
             uint256 selectedWithdrawAmount,
 
         ) = _selectStrategyAndWithdrawAmount(
-                amountNormalized,
+                amount,
                 assetBalanceAaveStrategy,
                 assetBalanceCompoundStrategy
             );
