@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 /// @title Interface for interaction with  Stanley's strategy.
 /// @notice Strategy represents an external DeFi protocol and acts as and wrapper that standarizes the API of the external protocol.
 interface IStrategy {
     /// @notice Returns current version of strategy
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Strategy's version
     function getVersion() external pure returns (uint256);
 
@@ -26,12 +27,13 @@ interface IStrategy {
     /// @notice Deposits asset amount from Stanley to this specific Strategy. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
-    function deposit(uint256 amount) external;
+    function deposit(uint256 amount) external returns (uint256 depositedAmount);
 
     /// @notice Withdraws asset amount from Strategy to Stanley. Function available only for Stanley.
     /// @dev Emits {Transfer} from ERC20 asset. If available then events from external DeFi protocol assocciated with this strategy.
     /// @param amount asset amount represented in 18 decimals.
-    function withdraw(uint256 amount) external;
+    /// @return withdrawnAmount The final amount withdrawn, represented in 18 decimals
+    function withdraw(uint256 amount) external returns (uint256 withdrawnAmount);
 
     /// @notice Claims rewards. Function can be executed by anyone.
     function doClaim() external;

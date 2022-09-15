@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -78,7 +79,7 @@ abstract contract MiltonInternal is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getAsset() external view override returns (address) {
@@ -174,10 +175,11 @@ abstract contract MiltonInternal is
         return _calculatePayoffReceiveFixed(block.timestamp, swap);
     }
 
-    //@param assetAmount underlying token amount represented in 18 decimals
+    /// @notice Joseph deposits to Stanley asset amount from Milton.
+    /// @param assetAmount underlying token amount represented in 18 decimals
     function depositToStanley(uint256 assetAmount) external onlyJoseph nonReentrant whenNotPaused {
-        uint256 vaultBalance = _getStanley().deposit(assetAmount);
-        _getMiltonStorage().updateStorageWhenDepositToStanley(assetAmount, vaultBalance);
+        (uint256 vaultBalance, uint256 depositedAmount) = _getStanley().deposit(assetAmount);
+        _getMiltonStorage().updateStorageWhenDepositToStanley(depositedAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals

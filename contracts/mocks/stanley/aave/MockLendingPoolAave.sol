@@ -1,21 +1,20 @@
 //solhint-disable
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../../vault/interfaces/aave/DataTypesContract.sol";
+import "../../../vault/interfaces/aave/AaveLendingPoolV2.sol";
 import "./aTokens/MockIAToken.sol";
 
-contract MockLendingPoolAave {
+contract MockLendingPoolAave is AaveLendingPoolV2 {
     using SafeERC20 for IERC20;
     using SafeCast for uint256;
 
     // asset(dai/usdt/usdc) => adai/ausdt/ausdc
     mapping(address => address) _aTokens;
-
-    // mapping(address => MockReserveData) _liquidityRates;
     mapping(address => DataTypesContract.ReserveData) _liquidityRates;
 
     constructor(
@@ -43,7 +42,7 @@ contract MockLendingPoolAave {
         uint256 amount,
         address owner,
         uint16 referralCode
-    ) public {
+    ) external {
         MockIAToken aToken = MockIAToken(_aTokens[asset]);
         IERC20(asset).safeTransferFrom(owner, address(this), amount);
         aToken.mint(owner, amount);
@@ -53,14 +52,15 @@ contract MockLendingPoolAave {
         address asset,
         uint256 amount,
         address to
-    ) public {
+    ) external returns (uint256) {
         MockIAToken aToken = MockIAToken(_aTokens[asset]);
         IERC20(asset).safeTransfer(to, amount);
         aToken.burn(msg.sender, amount);
+        return amount;
     }
 
     function getReserveData(address asset)
-        public
+        external
         view
         returns (DataTypesContract.ReserveData memory)
     {

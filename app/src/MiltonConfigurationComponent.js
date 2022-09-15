@@ -470,6 +470,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Liquidation Deposit Amount</strong>
+                        <br/>
+                        <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
                         <ContractData
@@ -477,13 +479,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleMiltonUsdt"
                             method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
                         />
                     </td>
                     <td>
@@ -492,13 +487,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleMiltonUsdc"
                             method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
                         />
                     </td>
                     <td>
@@ -507,13 +495,6 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleMiltonDai"
                             method="getLiquidationDepositAmount"
-                            render={(value) => (
-                                <div>
-                                    {value / 1000000000000000000}
-                                    <br />
-                                    <small>{value}</small>
-                                </div>
-                            )}
                         />
                     </td>
                 </tr>

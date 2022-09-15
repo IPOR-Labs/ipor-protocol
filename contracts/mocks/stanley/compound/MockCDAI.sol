@@ -1,6 +1,6 @@
 //solhint-disable no-empty-blocks
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -109,4 +109,6 @@ contract MockCDAI is ERC20, CErc20Mock {
     function underlying() external view returns (address) {}
 
     function exchangeRateCurrent() external view override returns (uint256) {}
+
+    function accrueInterest() external override returns (uint256) {}
 }

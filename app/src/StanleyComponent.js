@@ -27,7 +27,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Exchange Rate</strong>
+                        <strong>IvToken Exchange Rate</strong>
                     </td>
                     <td>
                         <ContractData
@@ -77,15 +77,14 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>My IvToken Balance</strong>
+                        <strong>IvToken Total Supply</strong>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            contract="IvTokenUsdt"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -99,9 +98,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            contract="IvTokenUsdc"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -115,9 +113,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                            contract="IvTokenDai"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -171,6 +168,59 @@ export default ({ drizzle, drizzleState }) => (
                             contract="IvTokenDai"
                             method="balanceOf"
                             methodArgs={[drizzle.contracts.DrizzleMiltonDai.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>My IvToken Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -442,6 +492,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Stanley Asset Balance</strong>
+                        <br />
+                        <small>IvToken Exchange Rate * Volume of IvToken on Milton</small>
                     </td>
                     <td>
                         <ContractData
@@ -496,6 +548,13 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Aave Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in AAVE protocol.
+                            <br /> It is a aToken volume in 1:1 relation with asset.
+                            <br />
+                            Balance is accrued when new block is mined.
+                        </small>
                     </td>
                     <td>
                         <ContractData
@@ -546,6 +605,14 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in Compound protocol. <br />
+                            In calculation is taken in consideration exchange rate and volume of
+                            cToken.
+                            <br />
+                            Balance is accrued when method accrueInterest() in cToken is executed.
+                        </small>
                     </td>
                     <td>
                         <ContractData
@@ -561,6 +628,14 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdt"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
@@ -576,6 +651,14 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdc"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
@@ -591,12 +674,22 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundDai"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
                         <strong>Strategy Aave ERC20 Token Balance</strong>
+                        <br />
+                        <small>Most time should be equal 0</small>
                     </td>
                     <td>
                         <ContractData
@@ -650,6 +743,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound ERC20 Token Balance</strong>
+                        <br />
+                        <small>Most time should be equal 0.</small>
                     </td>
                     <td>
                         <ContractData
@@ -1008,7 +1103,45 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
             </table>
-            
+
+            <h4>Stanley - migrate assets to strategy with MAX APR</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdt"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdc"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyDai"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 );
