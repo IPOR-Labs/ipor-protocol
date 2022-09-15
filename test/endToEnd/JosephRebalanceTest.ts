@@ -631,30 +631,31 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
 
     it("Should not change IP Token exchange rate when rebalance and withdraw ALMOST all - usdc, 1% in Milton, 99% in Stanley", async () => {
         // given
+        const oldMaxLpAccountContribution = await josephUsdc.getMaxLpAccountContribution();
         const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
         //99% ERC20 balance move from Milton to Stanley
         await josephUsdc.setMiltonStanleyBalanceRatio(BigNumber.from("10000000000000000"));
+        await josephUsdc.setMaxLpAccountContribution(BigNumber.from("1000000"));
 
-        const deposit = BigNumber.from("1000").mul(N1__0_6DEC);
+        const deposit = BigNumber.from("100000").mul(N1__0_6DEC);
 
         await usdc
             .connect(admin)
-            .approve(josephUsdc.address, BigNumber.from("100000").mul(N1__0_6DEC));
+            .approve(josephUsdc.address, BigNumber.from("10000000").mul(N1__0_6DEC));
 
         await transferUsdcToAddress(
             testnetFaucet.address,
             await admin.getAddress(),
-            BigNumber.from("10000").mul(N1__0_6DEC)
+            BigNumber.from(deposit)
         );
 
-        //when
         await josephUsdc.connect(admin).provideLiquidity(deposit);
 
         let exchangeRateBefore = await josephUsdc.connect(admin).calculateExchangeRate();
 
         //when
         await josephUsdc.rebalance();
-        await josephUsdc.withdrawFromStanley(BigNumber.from("989000000000000000000"));
+        await josephUsdc.withdrawFromStanley(BigNumber.from("98999000000000000000000"));
 
         //then
         let exchangeRateAfter = await josephUsdc.connect(admin).calculateExchangeRate();
@@ -663,16 +664,25 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         const exchangeRateBeforeLittleHigher = exchangeRateBefore.add(
             BigNumber.from("1100000000000")
         );
+
+        console.log("exchangeRateBeforeLittleHigher=", exchangeRateBeforeLittleHigher.toString());
+        console.log("exchangeRateAfter=", exchangeRateAfter.toString());
+
         expect(exchangeRateBeforeLittleHigher.gt(exchangeRateAfter)).to.be.true;
         expect(stanleyBalance.eq(0)).to.be.true;
+
+        //clean up
         await josephUsdc.setMiltonStanleyBalanceRatio(oldMiltonStanleyBalanceRation);
+        await josephUsdc.setMaxLpAccountContribution(oldMaxLpAccountContribution);
     });
 
     it("Should not close position because Joseph rebalance from Milton to Stanley - usdc, 1% in Milton, 99% in Stanley", async () => {
         //given
+        const oldMaxLpAccountContribution = await josephUsdc.getMaxLpAccountContribution();
         const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
         //99% ERC20 balance move from Milton to Stanley
         await josephUsdc.setMiltonStanleyBalanceRatio(BigNumber.from("10000000000000000"));
+        await josephUsdc.setMaxLpAccountContribution(BigNumber.from("1000000"));
 
         const accountBalance = BigNumber.from("1000000").mul(N1__0_6DEC);
 
@@ -685,12 +695,12 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await usdc.connect(admin).approve(josephUsdc.address, accountBalance);
         await usdc.connect(admin).approve(miltonUsdc.address, accountBalance);
 
-        await josephUsdc.connect(admin).provideLiquidity(BigNumber.from("2000").mul(N1__0_6DEC));
+        await josephUsdc.connect(admin).provideLiquidity(BigNumber.from("200000").mul(N1__0_6DEC));
 
         await miltonUsdc
             .connect(admin)
             .openSwapPayFixed(
-                BigNumber.from("1000").mul(N1__0_6DEC),
+                BigNumber.from("100000").mul(N1__0_6DEC),
                 BigNumber.from("90000000000000000"),
                 BigNumber.from("1000000000000000000000")
             );
@@ -705,5 +715,9 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             //then
             "ERC20: transfer amount exceeds balance"
         );
+
+        //clean up
+        await josephUsdc.setMiltonStanleyBalanceRatio(oldMiltonStanleyBalanceRation);
+        await josephUsdc.setMaxLpAccountContribution(oldMaxLpAccountContribution);
     });
 });

@@ -122,7 +122,7 @@ abstract contract Stanley is
         returns (uint256 vaultBalance, uint256 depositedAmount)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-		uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
         (
@@ -155,7 +155,7 @@ abstract contract Stanley is
             ivTokenAmount
         );
 
-        vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + amount;
+        vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + depositedAmount;
     }
 
     function withdraw(uint256 amount)
