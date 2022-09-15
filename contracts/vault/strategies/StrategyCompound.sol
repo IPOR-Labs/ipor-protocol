@@ -118,7 +118,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
-        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 
