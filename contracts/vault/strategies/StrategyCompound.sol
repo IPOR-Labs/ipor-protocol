@@ -118,15 +118,13 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     {
         address asset = _asset;
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
-
-        /// @dev without rounding up because amount to redeem could be too high (too early to redeem)
         uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 
         // Transfer assets from Compound to Strategy
         uint256 redeemStatus = shareToken.redeem(
-            IporMath.divisionWithoutRound(amount * Constants.D18, shareToken.exchangeRateStored())
+            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
         require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
