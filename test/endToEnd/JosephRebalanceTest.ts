@@ -665,9 +665,6 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
             BigNumber.from("1100000000000")
         );
 
-        console.log("exchangeRateBeforeLittleHigher=", exchangeRateBeforeLittleHigher.toString());
-        console.log("exchangeRateAfter=", exchangeRateAfter.toString());
-
         expect(exchangeRateBeforeLittleHigher.gt(exchangeRateAfter)).to.be.true;
         expect(stanleyBalance.eq(0)).to.be.true;
 
