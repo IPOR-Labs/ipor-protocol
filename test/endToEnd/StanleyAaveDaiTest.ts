@@ -385,18 +385,18 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         const strategyAaveV2BalanceAfter = await strategyAaveV2.balanceOf();
         const miltonAssetBalanceAfter = await daiContract.balanceOf(await signer.getAddress());
 
-        expect(strategyAaveBalanceBefore.eq(depositAmount), "strategyAaveBalanceBefore = 1000").to
-            .be.true;
         expect(strategyAaveV2BalanceBefore.eq(ZERO), "strategyAaveV2BalanceBefore = 0").to.be.true;
 
         expect(strategyAaveBalanceAfter.eq(ZERO), "strategyAaveBalanceAfter = 0").to.be.true;
 
         /// Great Than Equal because with accrued interest
-        expect(strategyAaveV2BalanceAfter.gte(depositAmount), "strategyAaveV2BalanceAfter >= 1000")
-            .to.be.true;
         expect(
-            strategyAaveV2BalanceAfter.lt(depositAmount.add(ONE_18)),
-            "strategyAaveV2BalanceAfter < 1001"
+            strategyAaveV2BalanceAfter.gte(strategyAaveBalanceBefore),
+            "strategyAaveV2BalanceAfter >= strategyAaveBalanceBefore"
+        ).to.be.true;
+        expect(
+            strategyAaveV2BalanceAfter.lt(strategyAaveBalanceBefore.add(ONE_18)),
+            "strategyAaveV2BalanceAfter < strategyAaveBalanceBefore + 1"
         ).to.be.true;
 
         expect(
@@ -418,6 +418,8 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         await daiContract.approve(strategyCompound.address, depositAmount);
         await strategyCompound.connect(signer).deposit(depositAmount);
         await strategyCompound.setStanley(stanley.address);
+
+		await hre.network.provider.send("evm_mine");
 
         const miltonIvTokenBefore = await ivToken.balanceOf(await signer.getAddress());
         const strategyAaveBalanceBefore = await strategyAave.balanceOf();

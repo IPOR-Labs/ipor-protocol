@@ -398,7 +398,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdt", function () {
         ).to.be.true;
         expect(
             strategyAaveV2BalanceAfter.lt(strategyAaveBalanceBefore.add(ONE_18)),
-            "strategyAaveV2BalanceAfter < 1001"
+            "strategyAaveV2BalanceAfter < strategyAaveBalanceBefore + 1"
         ).to.be.true;
 
         expect(
