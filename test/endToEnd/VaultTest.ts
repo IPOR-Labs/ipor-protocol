@@ -167,29 +167,6 @@ describe("End to End tests on mainnet fork", function () {
         ).to.be.true;
     });
 
-    it("Should be able to withdraw from stanley Usdc", async () => {
-        // given
-        await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
-
-        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
-        await hre.network.provider.send("evm_increaseTime", [timestamp]);
-        await hre.network.provider.send("evm_mine");
-
-        await cUsdc.accrueInterest();
-
-        const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
-
-        // when
-        await josephUsdc.withdrawFromStanley(BigNumber.from("100000000000000000"));
-
-        // then
-        const stanleyUsdcBalanceAfter = await stanleyUsdc.totalBalance(miltonUsdc.address);
-        expect(
-            stanleyUsdcBalanceAfter.lt(stanleyUsdcBalanceBefore),
-            "stanleyUsdcBalanceAfter < stanleyUsdcBalanceBefore"
-        ).to.be.true;
-    });
-
     it("Should not be able to withdraw from stanley Usdt", async () => {
         // given
         await transferFromFaucetTo(
@@ -215,6 +192,29 @@ describe("End to End tests on mainnet fork", function () {
         expect(
             stanleyUsdtBalanceAfter.eq(stanleyUsdtBalanceBefore),
             "stanleyUsdtBalanceAfter = stanleyUsdtBalanceBefore"
+        ).to.be.true;
+    });
+
+    it("Should be able to withdraw from stanley Usdc", async () => {
+        // given
+        await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
+
+        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
+        await hre.network.provider.send("evm_increaseTime", [timestamp]);
+        await hre.network.provider.send("evm_mine");
+
+        await cUsdc.accrueInterest();
+
+        const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
+
+        // when
+        await josephUsdc.withdrawFromStanley(BigNumber.from("100000000000000000"));
+
+        // then
+        const stanleyUsdcBalanceAfter = await stanleyUsdc.totalBalance(miltonUsdc.address);
+        expect(
+            stanleyUsdcBalanceAfter.lt(stanleyUsdcBalanceBefore),
+            "stanleyUsdcBalanceAfter < stanleyUsdcBalanceBefore"
         ).to.be.true;
     });
 
