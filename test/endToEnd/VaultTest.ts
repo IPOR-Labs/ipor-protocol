@@ -199,7 +199,8 @@ describe("End to End tests on mainnet fork", function () {
             BigNumber.from("20000000000")
         );
         await cUsdt.accrueInterest();
-        await josephUsdt.depositToStanley(BigNumber.from("10000000000000000000000"));
+
+        await josephUsdt.depositToStanley(BigNumber.from("10000000004000000000000"));
         await josephUsdt.withdrawFromStanley(BigNumber.from("10000000000000000000000"));
 
         const stanleyUsdtBalanceBefore = await stanleyUsdt.totalBalance(miltonUsdt.address);
