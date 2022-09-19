@@ -28,6 +28,7 @@ ENV_CONFIG_BUCKET="${ENV_CONFIG_BUCKET:-ipor-env}"
 function refresh_global_variables(){
   ROOT_PASSWORD=""
   WITH_PROFILE=""
+  FILE_PATH_TO_DOWNLOAD=""
 
   ENV_CONFIG_FILE_SRC="smart-contract-addresses.yaml.j2"
   ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
@@ -88,6 +89,7 @@ function refresh_global_variables(){
 
   GEN_IPOR_ADDRESSES_FILE="{ENV}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json"
   GEN_IPOR_ADDRESSES_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/${GEN_IPOR_ADDRESSES_FILE}"
+  GEN_IPOR_ADDRESSES_FILE_RMT="${ENV_PROFILE}/${GEN_IPOR_ADDRESSES_FILE}"
   GEN_MIGRATION_COMMIT_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-migration-commit.txt"
   GEN_LAST_COMPLETED_MIGRATION_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/{ENV}-${ETH_BC_NETWORK_NAME}-last-completed-migration.json"
 
@@ -1034,6 +1036,7 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
 
   put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
   put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
+  put_file_to_bucket "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_PROFILE}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_RMT}" "${ENV_PROFILE}")"
 fi
 
 if [ $IS_NGINX_ETH_BC_RESTART = "YES" ]; then
@@ -1077,6 +1080,9 @@ if [ $IS_DOWNLOAD_DEPLOYED_SMART_CONTRACTS = "YES" ]; then
   aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${ENV_CONTRACTS_ZIP_RMT}" "${ENV_CONTRACTS_ZIP_DEST}" ${WITH_PROFILE}
 
   unzip -o "${ENV_CONTRACTS_ZIP_DEST}" -d "${ENV_CONTRACTS_DIR}"
+
+  FILE_PATH_TO_DOWNLOAD="$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_RMT}" "${ENV_PROFILE}")"
+  aws s3 cp "s3://${ENV_CONFIG_BUCKET}/${FILE_PATH_TO_DOWNLOAD}" "${ENV_CONTRACTS_ROOT_DIR}" ${WITH_PROFILE}
 fi
 
 if [ $IS_CREATE_GETH_IMAGE = "YES" ]; then
