@@ -4,19 +4,30 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, StanleyDai, TestERC20, IvToken, StanleyUsdc } from "../../../../types";
-import { N1__0_6DEC } from "../../../utils/Constants";
+import {
+    MockStrategy,
+    StanleyDai,
+    TestERC20,
+    IvToken,
+    StanleyUsdc,
+    MockTestnetShareTokenAaveDai,
+    MockTestnetShareTokenCompoundDai,
+    MockTestnetShareTokenAaveUsdc,
+    MockTestnetShareTokenCompoundUsdc,
+} from "../../../../types";
+import { N1__0_6DEC, N1__0_18DEC } from "../../../utils/Constants";
 
 chai.use(solidity);
 const { expect } = chai;
 
 describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
-    const ONE_18DEC: any = BigNumber.from("1000000000000000000");
-    const TC_AMOUNT_10000_USD_18DEC = ONE_18DEC.mul(10000);
-    const TC_AMOUNT_20000_USD_18DEC = ONE_18DEC.mul(20000);
+    const TC_AMOUNT_10000_USD_18DEC = N1__0_18DEC.mul(10000);
+    const TC_AMOUNT_20000_USD_18DEC = N1__0_18DEC.mul(20000);
     let admin: Signer;
     let stanley: StanleyDai;
     let DAI: TestERC20;
+    let aDAI: MockTestnetShareTokenAaveDai;
+    let cDAI: MockTestnetShareTokenCompoundDai;
     let ivTokenDai: IvToken;
     let strategyAave: MockStrategy;
     let strategyCompound: MockStrategy;
@@ -24,18 +35,32 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+        const shareTokenAaveFactory = await hre.ethers.getContractFactory(
+            "MockTestnetShareTokenAaveDai"
+        );
+        const shareTokenCompoundFactory = await hre.ethers.getContractFactory(
+            "MockTestnetShareTokenCompoundDai"
+        );
+
         DAI = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        aDAI = (await shareTokenAaveFactory.deploy(
+            BigNumber.from(2).pow(255)
+        )) as MockTestnetShareTokenAaveDai;
+
+        cDAI = (await shareTokenCompoundFactory.deploy(
+            BigNumber.from(2).pow(255)
+        )) as MockTestnetShareTokenCompoundDai;
 
         const tokenFactoryIvToken = await hre.ethers.getContractFactory("IvToken");
 
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAave = (await StrategyAave.deploy()) as MockStrategy;
-        await strategyAave.setShareToken(DAI.address);
+        await strategyAave.setShareToken(aDAI.address);
         await strategyAave.setAsset(DAI.address);
 
         const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
         strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
-        await strategyCompound.setShareToken(DAI.address);
+        await strategyCompound.setShareToken(cDAI.address);
         await strategyCompound.setAsset(DAI.address);
 
         ivTokenDai = (await tokenFactoryIvToken.deploy("IvToken", "IVT", DAI.address)) as IvToken;
@@ -118,17 +143,36 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
 
 describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
     const TC_AMOUNT_10000_USD_6DEC = N1__0_6DEC.mul(10000);
+    const TC_AMOUNT_10000_USD_18DEC = N1__0_18DEC.mul(10000);
     const TC_AMOUNT_20000_USD_6DEC = N1__0_6DEC.mul(20000);
+    const TC_AMOUNT_20000_USD_18DEC = N1__0_18DEC.mul(20000);
     let admin: Signer;
     let stanley: StanleyUsdc;
     let usdc: TestERC20;
     let ivTokenUsdc: IvToken;
     let strategyAave: MockStrategy;
     let strategyCompound: MockStrategy;
+    let aUSDC: MockTestnetShareTokenAaveUsdc;
+    let cUSDC: MockTestnetShareTokenCompoundUsdc;
 
     beforeEach(async () => {
         [admin] = await hre.ethers.getSigners();
         const tokenFactory = await hre.ethers.getContractFactory("TestERC20");
+        const shareTokenAaveFactory = await hre.ethers.getContractFactory(
+            "MockTestnetShareTokenAaveUsdc"
+        );
+        const shareTokenCompoundFactory = await hre.ethers.getContractFactory(
+            "MockTestnetShareTokenCompoundUsdc"
+        );
+
+        aUSDC = (await shareTokenAaveFactory.deploy(
+            BigNumber.from(2).pow(255)
+        )) as MockTestnetShareTokenAaveUsdc;
+
+        cUSDC = (await shareTokenCompoundFactory.deploy(
+            BigNumber.from(2).pow(255)
+        )) as MockTestnetShareTokenCompoundUsdc;
+
         usdc = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         await usdc.setDecimals(BigNumber.from("6"));
 
@@ -136,12 +180,12 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAave = (await StrategyAave.deploy()) as MockStrategy;
-        await strategyAave.setShareToken(usdc.address);
+        await strategyAave.setShareToken(aUSDC.address);
         await strategyAave.setAsset(usdc.address);
 
         const StrategyCompound = await hre.ethers.getContractFactory("MockStrategy");
         strategyCompound = (await StrategyCompound.deploy()) as MockStrategy;
-        await strategyCompound.setShareToken(usdc.address);
+        await strategyCompound.setShareToken(cUSDC.address);
         await strategyCompound.setAsset(usdc.address);
 
         ivTokenUsdc = (await tokenFactoryIvToken.deploy("IvToken", "IVT", usdc.address)) as IvToken;
@@ -158,15 +202,17 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
         await stanley.setMilton(await admin.getAddress());
     });
 
-    it("Should should return balance from Aave - 18 decimals", async () => {
+    it("Should should return balance from Aave - 6 decimals asset", async () => {
         //given
-        const expectedBalance = TC_AMOUNT_10000_USD_6DEC;
-        await usdc.approve(stanley.address, expectedBalance);
+        const expectedBalance18D = TC_AMOUNT_10000_USD_18DEC;
+        const expectedBalance6D = TC_AMOUNT_10000_USD_6DEC;
+
+        await usdc.approve(stanley.address, expectedBalance6D);
 
         await strategyAave.setApy(BigNumber.from("555"));
         await strategyCompound.setApy(BigNumber.from("444"));
 
-        await stanley.deposit(expectedBalance);
+        await stanley.deposit(expectedBalance18D);
 
         //when
         const actualBalance = await stanley.totalBalance(await admin.getAddress());
@@ -174,19 +220,21 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
 
-        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
-        expect(actualBalance).to.be.equal(expectedBalance);
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance18D);
+        expect(actualBalance).to.be.equal(expectedBalance18D);
     });
 
-    it("Should should return balance from Compound - 6 decimals", async () => {
+    it("Should should return balance from Compound - 6 decimals asset", async () => {
         //given
-        const expectedBalance = TC_AMOUNT_10000_USD_6DEC;
-        await usdc.approve(stanley.address, expectedBalance);
+        const expectedBalance18D = TC_AMOUNT_10000_USD_18DEC;
+        const expectedBalance6D = TC_AMOUNT_10000_USD_6DEC;
+
+        await usdc.approve(stanley.address, expectedBalance6D);
 
         await strategyAave.setApy(BigNumber.from("33333333"));
         await strategyCompound.setApy(BigNumber.from("55555555"));
 
-        await stanley.deposit(expectedBalance);
+        await stanley.deposit(expectedBalance18D);
 
         //when
         const actualBalance = await stanley.totalBalance(await admin.getAddress());
@@ -194,22 +242,24 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
 
-        expect(actualBalance).to.be.equal(expectedBalance);
-        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance);
+        expect(actualBalance).to.be.equal(expectedBalance18D);
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedBalance18D);
     });
 
-    it("Should should return sum of balances from Aave and Compound - 18 decimals", async () => {
+    it("Should return sum of balances from Aave and Compound - 6 decimals asset", async () => {
         //given
-        const expectedTotalBalance = TC_AMOUNT_20000_USD_6DEC;
-        await usdc.approve(stanley.address, expectedTotalBalance);
+        const expectedTotalBalance6D = TC_AMOUNT_20000_USD_6DEC;
+        const expectedTotalBalance18D = TC_AMOUNT_20000_USD_18DEC;
+
+        await usdc.approve(stanley.address, expectedTotalBalance6D);
 
         await strategyAave.setApy(BigNumber.from("33333333"));
         await strategyCompound.setApy(BigNumber.from("55555555"));
-        await stanley.deposit(TC_AMOUNT_10000_USD_6DEC);
+        await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         await strategyAave.setApy(BigNumber.from("55555555"));
         await strategyCompound.setApy(BigNumber.from("33333333"));
-        await stanley.deposit(TC_AMOUNT_10000_USD_6DEC);
+        await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         //when
         const actualTotalBalance = await stanley.totalBalance(await admin.getAddress());
@@ -217,7 +267,7 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
         //then
         const actualMiltonIvTokenBalance = await ivTokenUsdc.balanceOf(await admin.getAddress());
 
-        expect(actualTotalBalance).to.be.equal(expectedTotalBalance);
-        expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance);
+        expect(actualTotalBalance).to.be.equal(expectedTotalBalance18D);
+        expect(actualMiltonIvTokenBalance).to.be.equal(expectedTotalBalance18D);
     });
 });

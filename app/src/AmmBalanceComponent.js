@@ -162,6 +162,60 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
+                <td>
+                    <strong>Accrued</strong> Liquidity Pool (including part of Opening Fee)
+                    <br />
+                    <small>
+                        Takes into account also accrued cash from Stanley (Asset Manager){" "}
+                    </small>
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdt"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonUsdc"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonDai"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>Ipor Publication Fee</td>
                 <td>
                     <ContractData
@@ -258,7 +312,14 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
-                <td>VAULT (Stanley)</td>
+                <td>
+                    VAULT (Stanley)
+                    <br />
+                    <small>
+                        Amount of Liquidity Pool transferred to Stanley Strategies + accrued amount
+                        on Strategies site
+                    </small>
+                </td>
                 <td>
                     <ContractData
                         drizzle={drizzle}

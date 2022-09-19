@@ -29,14 +29,6 @@ import StanleyUsdt from "./contracts/StanleyUsdt.json";
 import StanleyUsdc from "./contracts/StanleyUsdc.json";
 import StanleyDai from "./contracts/StanleyDai.json";
 
-import StrategyAaveUsdt from "./contracts/StrategyAaveUsdt.json";
-import StrategyAaveUsdc from "./contracts/StrategyAaveUsdc.json";
-import StrategyAaveDai from "./contracts/StrategyAaveDai.json";
-
-import StrategyCompoundUsdt from "./contracts/StrategyCompoundUsdt.json";
-import StrategyCompoundUsdc from "./contracts/StrategyCompoundUsdc.json";
-import StrategyCompoundDai from "./contracts/StrategyCompoundDai.json";
-
 import CockpitDataProvider from "./contracts/CockpitDataProvider.json";
 import MiltonFacadeDataProvider from "./contracts/MiltonFacadeDataProvider.json";
 import IporOracleFacadeDataProvider from "./contracts/IporOracleFacadeDataProvider.json";
@@ -66,15 +58,23 @@ import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
 import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
 import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
 
+import StrategyAaveUsdt from "./contracts/StrategyAaveUsdt.json";
+import StrategyAaveUsdc from "./contracts/StrategyAaveUsdc.json";
+import StrategyAaveDai from "./contracts/StrategyAaveDai.json";
+
 import MockTestnetStrategyAaveUsdt from "./contracts/MockTestnetStrategyAaveUsdt.json";
 import MockTestnetStrategyAaveUsdc from "./contracts/MockTestnetStrategyAaveUsdc.json";
 import MockTestnetStrategyAaveDai from "./contracts/MockTestnetStrategyAaveDai.json";
+
+import StrategyCompoundUsdt from "./contracts/StrategyCompoundUsdt.json";
+import StrategyCompoundUsdc from "./contracts/StrategyCompoundUsdc.json";
+import StrategyCompoundDai from "./contracts/StrategyCompoundDai.json";
 
 import MockTestnetStrategyCompoundUsdt from "./contracts/MockTestnetStrategyCompoundUsdt.json";
 import MockTestnetStrategyCompoundUsdc from "./contracts/MockTestnetStrategyCompoundUsdc.json";
 import MockTestnetStrategyCompoundDai from "./contracts/MockTestnetStrategyCompoundDai.json";
 
-require("dotenv").config({ path: "../../.env" });
+require("dotenv").config({path: "../../.env"});
 
 const Web3 = require("web3");
 const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545")); //Web3.givenProvider || "ws://127.0.0.1:8545");
@@ -83,17 +83,12 @@ web3.fallback = {
     url: "ws://127.0.0.1:8545",
 };
 
-const abiERC20 = require("./contracts/ERC20.json");
-const abiShareTokenAaveUsdt = require("./contracts/ERC20.json");
-const abiShareTokenAaveUsdc = require("./contracts/ERC20.json");
-const abiShareTokenAaveDai = require("./contracts/ERC20.json");
-const abiShareTokenCompoundUsdt = require("./contracts/ERC20.json");
-const abiShareTokenCompoundUsdc = require("./contracts/ERC20.json");
-const abiShareTokenCompoundDai = require("./contracts/ERC20.json");
+const networkId = process.env.REACT_APP_ETH_BC_NETWORK_ID;
+const addresses = require("./" + process.env.REACT_APP_ENV_PROFILE + "-docker-ipor-addresses.json");
 
-let DrizzleUsdt;
-let DrizzleUsdc;
-let DrizzleDai;
+const DrizzleUsdt = MockTestnetTokenUsdt;
+const DrizzleUsdc = MockTestnetTokenUsdc;
+const DrizzleDai = MockTestnetTokenDai;
 
 let DrizzleIporOracle;
 let DrizzleMiltonUsdt;
@@ -106,12 +101,12 @@ let DrizzleStanleyUsdt;
 let DrizzleStanleyUsdc;
 let DrizzleStanleyDai;
 
-let DrizzleShareTokenAaveUsdt;
-let DrizzleShareTokenAaveUsdc;
-let DrizzleShareTokenAaveDai;
-let DrizzleShareTokenCompoundUsdt;
-let DrizzleShareTokenCompoundUsdc;
-let DrizzleShareTokenCompoundDai;
+const DrizzleShareTokenAaveUsdt = MockTestnetShareTokenAaveUsdt;
+const DrizzleShareTokenAaveUsdc = MockTestnetShareTokenAaveUsdc;
+const DrizzleShareTokenAaveDai = MockTestnetShareTokenAaveDai;
+const DrizzleShareTokenCompoundUsdt = MockTestnetShareTokenCompoundUsdt;
+const DrizzleShareTokenCompoundUsdc = MockTestnetShareTokenCompoundUsdc;
+const DrizzleShareTokenCompoundDai = MockTestnetShareTokenCompoundDai;
 
 let DrizzleStrategyAaveUsdt;
 let DrizzleStrategyAaveUsdc;
@@ -120,75 +115,18 @@ let DrizzleStrategyCompoundUsdt;
 let DrizzleStrategyCompoundUsdc;
 let DrizzleStrategyCompoundDai;
 
-if (process.env.REACT_APP_ENV_PROFILE === "mainnet") {
+if (process.env.REACT_APP_ENV_PROFILE === "mainnet.ipor.io") {
     //Mainnet
-    const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-    const usdc = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-    const dai = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
 
-    const aUsdt = "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811";
-    const aUsdc = "0xBcca60bB61934080951369a648Fb03DF4F96263C";
-    const aDai = "0x028171bCA77440897B824Ca71D1c56caC55b68A3";
-
-    const cUsdt = "0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9";
-    const cUsdc = "0x39aa39c021dfbae8fac545936693ac917d5e7563";
-    const cDai = "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643";
-
-    const MainnetStableUsdt = {
-        contractName: "DrizzleUsdt",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, usdt),
-    };
-
-    const MainnetStableUsdc = {
-        contractName: "DrizzleUsdc",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, usdc),
-    };
-
-    const MainnetStableDai = {
-        contractName: "DrizzleDai",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, dai),
-    };
-
-    const MainnetShareTokenAaveUsdt = {
-        contractName: "DrizzleShareTokenAaveUsdt",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveUsdt.abi, aUsdt),
-    };
-
-    const MainnetShareTokenAaveUsdc = {
-        contractName: "DrizzleShareTokenAaveUsdc",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveUsdc.abi, aUsdc),
-    };
-
-    const MainnetShareTokenAaveDai = {
-        contractName: "DrizzleShareTokenAaveDai",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveDai.abi, aDai),
-    };
-
-    const MainnetShareTokenCompoundUsdt = {
-        contractName: "DrizzleShareTokenCompoundUsdt",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundUsdt.abi, cUsdt),
-    };
-
-    const MainnetShareTokenCompoundUsdc = {
-        contractName: "DrizzleShareTokenCompoundUsdc",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundUsdc.abi, cUsdc),
-    };
-
-    const MainnetShareTokenCompoundDai = {
-        contractName: "DrizzleShareTokenCompoundDai",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundDai.abi, cDai),
-    };
-
-    DrizzleUsdt = MainnetStableUsdt;
-    DrizzleUsdc = MainnetStableUsdc;
-    DrizzleDai = MainnetStableDai;
-
-    DrizzleShareTokenAaveUsdt = MainnetShareTokenAaveUsdt;
-    DrizzleShareTokenAaveUsdc = MainnetShareTokenAaveUsdc;
-    DrizzleShareTokenAaveDai = MainnetShareTokenAaveDai;
-    DrizzleShareTokenCompoundUsdt = MainnetShareTokenCompoundUsdt;
-    DrizzleShareTokenCompoundUsdc = MainnetShareTokenCompoundUsdc;
-    DrizzleShareTokenCompoundDai = MainnetShareTokenCompoundDai;
+    DrizzleUsdt.networks[networkId] = {address: addresses.USDT};
+    DrizzleUsdc.networks[networkId] = {address: addresses.USDC};
+    DrizzleDai.networks[networkId] = {address: addresses.DAI};
+    DrizzleShareTokenAaveUsdt.networks[networkId] = {address: addresses.aUSDT};
+    DrizzleShareTokenAaveUsdc.networks[networkId] = {address: addresses.aUSDC};
+    DrizzleShareTokenAaveDai.networks[networkId] = {address: addresses.aDAI};
+    DrizzleShareTokenCompoundUsdt.networks[networkId] = {address: addresses.cUSDT};
+    DrizzleShareTokenCompoundUsdc.networks[networkId] = {address: addresses.cUSDC};
+    DrizzleShareTokenCompoundDai.networks[networkId] = {address: addresses.cDAI};
 
     DrizzleStrategyAaveUsdt = StrategyAaveUsdt;
     DrizzleStrategyAaveUsdc = StrategyAaveUsdc;
@@ -199,17 +137,6 @@ if (process.env.REACT_APP_ENV_PROFILE === "mainnet") {
     DrizzleStrategyCompoundDai = StrategyCompoundDai;
 } else {
     //Other than Mainnet
-    DrizzleUsdt = MockTestnetTokenUsdt;
-    DrizzleUsdc = MockTestnetTokenUsdc;
-    DrizzleDai = MockTestnetTokenDai;
-
-    DrizzleShareTokenAaveUsdt = MockTestnetShareTokenAaveUsdt;
-    DrizzleShareTokenAaveUsdc = MockTestnetShareTokenAaveUsdc;
-    DrizzleShareTokenAaveDai = MockTestnetShareTokenAaveDai;
-    DrizzleShareTokenCompoundUsdt = MockTestnetShareTokenCompoundUsdt;
-    DrizzleShareTokenCompoundUsdc = MockTestnetShareTokenCompoundUsdc;
-    DrizzleShareTokenCompoundDai = MockTestnetShareTokenCompoundDai;
-
     DrizzleStrategyAaveUsdt = MockTestnetStrategyAaveUsdt;
     DrizzleStrategyAaveUsdc = MockTestnetStrategyAaveUsdc;
     DrizzleStrategyAaveDai = MockTestnetStrategyAaveDai;
@@ -238,6 +165,7 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
     DrizzleJosephUsdt = JosephUsdt;
     DrizzleJosephUsdc = JosephUsdc;
     DrizzleJosephDai = JosephDai;
+
     DrizzleStanleyUsdt = StanleyUsdt;
     DrizzleStanleyUsdc = StanleyUsdc;
     DrizzleStanleyDai = StanleyDai;
@@ -311,9 +239,11 @@ let options = {
         DrizzleShareTokenAaveUsdt,
         DrizzleShareTokenAaveUsdc,
         DrizzleShareTokenAaveDai,
+
         DrizzleShareTokenCompoundUsdt,
         DrizzleShareTokenCompoundUsdc,
         DrizzleShareTokenCompoundDai,
+
         DrizzleStrategyAaveUsdt,
         DrizzleStrategyAaveUsdc,
         DrizzleStrategyAaveDai,
@@ -327,7 +257,7 @@ let options = {
     ],
 };
 
-if (process.env.REACT_APP_ENV_PROFILE !== "mainnet") {
+if (process.env.REACT_APP_ENV_PROFILE !== "mainnet.ipor.io") {
     options.contracts.push(TestnetFaucet);
 }
 

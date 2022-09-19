@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
@@ -413,7 +413,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             newSwap,
             _getIporPublicationFee()
         );
-
         IERC20Upgradeable(_asset).safeTransferFrom(_msgSender(), address(this), totalAmount);
 
         _emitOpenSwapEvent(
@@ -834,7 +833,6 @@ abstract contract Milton is MiltonInternal, IMilton {
     /**
      * @notice Function run at the time of the contract upgrade via proxy. Available only to the contract's owner.
      **/
-
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 }

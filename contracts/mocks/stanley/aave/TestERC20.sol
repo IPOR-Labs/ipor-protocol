@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -58,6 +58,7 @@ contract TestERC20 is IERC20 {
         require(balanceRecipient + amount >= balanceRecipient, "overflow balance recipient");
         _balance[recipient] = balanceRecipient + amount;
         uint256 balanceSender = _balance[sender];
+
         require(balanceSender >= amount, "underflow balance sender");
         _balance[sender] = balanceSender - amount;
         emit Transfer(sender, recipient, amount);

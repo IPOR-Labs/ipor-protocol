@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
@@ -104,37 +104,55 @@ contract StrategyAave is StrategyCore, IStrategyAave {
      * @notice deposit can only done by owner.
      * @param wadAmount amount to deposit in _aave lending.
      */
-    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function deposit(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 depositedAmount)
+    {
         address asset = _asset;
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
 
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
 
         address lendingPoolAddress = _provider.getLendingPool();
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
-        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
 
-        lendingPool.deposit(asset, amount, address(this), 0); // 29 -> referral
+        AaveLendingPoolV2 lendingPool = AaveLendingPoolV2(lendingPoolAddress);
+        lendingPool.deposit(asset, amount, address(this), 0);
+        depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
     /**
      * @dev withdraw from _aave lending.
-     * @notice withdraw can only done by owner.
+     * @notice withdraw can only done by Stanley.
      * @param wadAmount amount to withdraw from _aave lending.
      */
-    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function withdraw(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 withdrawnAmount)
+    {
         address asset = _asset;
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
+
         address lendingPoolAddress = _provider.getLendingPool();
+
         require(lendingPoolAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        AaveLendingPoolV2(lendingPoolAddress).withdraw(asset, amount, _msgSender());
+        //Transfer assets from Aave directly to msgSender which is Stanley
+        uint256 withdrawnAmountAave = AaveLendingPoolV2(lendingPoolAddress).withdraw(
+            asset,
+            amount,
+            _msgSender()
+        );
+
+        withdrawnAmount = IporMath.convertToWad(withdrawnAmountAave, assetDecimals);
     }
 
     /**

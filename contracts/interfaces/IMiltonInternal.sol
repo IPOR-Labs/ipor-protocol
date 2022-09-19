@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "./types/IporTypes.sol";
 import "./types/AmmTypes.sol";
@@ -7,8 +7,9 @@ import "./types/MiltonTypes.sol";
 
 /// @title Interface for interaction with Milton, smart contract resposnible for issuing and closing interest rate swaps also known as Automated Market Maker - administrative part.
 interface IMiltonInternal {
-    /// @notice Returns current version of Milton.
-    /// @return Current Milton's version.
+    /// @notice Returns current version of Milton
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
+    /// @return Current Milton's version
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets asset assocciated with this Milton instance. (each Milton instance is scoped per asset)

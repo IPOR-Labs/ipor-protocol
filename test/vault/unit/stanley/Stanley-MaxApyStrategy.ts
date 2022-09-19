@@ -4,7 +4,7 @@ import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, ItfStanleyDai, TestERC20 } from "../../../../types";
+import { MockStrategy, ItfStanleyDai, TestERC20, MockCDAI } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -35,7 +35,7 @@ describe("Stanley -> maxApyStrategy", () => {
         await strategyCompound.setAsset(DAI.address);
 
         const ItfStanleyDai = await hre.ethers.getContractFactory("ItfStanleyDai");
-        stanley = (await await upgrades.deployProxy(ItfStanleyDai, [
+        stanley = (await upgrades.deployProxy(ItfStanleyDai, [
             DAI.address,
             ivToken.address,
             strategyAave.address,
@@ -44,13 +44,10 @@ describe("Stanley -> maxApyStrategy", () => {
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Should select aave strategy", async () => {
+    it("Should select AAVE strategy", async () => {
         //  given
         await strategyAave.setApy(BigNumber.from("100000"));
         await strategyCompound.setApy(BigNumber.from("99999"));
-
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();
@@ -64,9 +61,6 @@ describe("Stanley -> maxApyStrategy", () => {
         await strategyAave.setApy(BigNumber.from("10"));
         await strategyCompound.setApy(BigNumber.from("10"));
 
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
-
         //  when
         const result = await stanley.getMaxApyStrategy();
 
@@ -78,9 +72,6 @@ describe("Stanley -> maxApyStrategy", () => {
         //  given
         await strategyAave.setApy(BigNumber.from("1000"));
         await strategyCompound.setApy(BigNumber.from("99999"));
-
-        await stanley.setStrategyAave(strategyAave.address);
-        await stanley.setStrategyCompound(strategyCompound.address);
 
         //  when
         const result = await stanley.getMaxApyStrategy();

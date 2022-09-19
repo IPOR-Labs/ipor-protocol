@@ -16,13 +16,13 @@ const usdcAbi = require("../../abis/usdcAbi.json");
 const usdtAbi = require("../../abis/usdtAbi.json");
 const daiAbi = require("../../abis/daiAbi.json");
 
-const aaveAaddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
+const aaveAddress = "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9";
 const stkAave = "0x4da27a545c0c5B758a6BA100e3a049001de870f5";
 const aaveIncentiveAddress = "0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5";
 
 export const aaveTokenFactory = async (): Promise<ERC20> => {
     const [admin] = await hre.ethers.getSigners();
-    return new hre.ethers.Contract(aaveAaddress, daiAbi, admin) as ERC20;
+    return new hre.ethers.Contract(aaveAddress, daiAbi, admin) as ERC20;
 };
 
 export const aaveDaiStrategyFactory = async (): Promise<StrategyAave> => {
@@ -30,7 +30,7 @@ export const aaveDaiStrategyFactory = async (): Promise<StrategyAave> => {
     const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
         strategyAaveContract,
-        [daiAddress, aDaiAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
+        [daiAddress, aDaiAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAddress],
         {
             kind: "uups",
         }
@@ -42,7 +42,7 @@ export const aaveUsdcStrategyFactory = async (): Promise<StrategyAave> => {
     const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
         strategyAaveContract,
-        [usdcAddress, aUsdcAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
+        [usdcAddress, aUsdcAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAddress],
         {
             kind: "uups",
         }
@@ -54,7 +54,7 @@ export const aaveUsdtStrategyFactory = async (): Promise<StrategyAave> => {
     const strategyAaveContract = await hre.ethers.getContractFactory("StrategyAave", admin);
     return (await upgrades.deployProxy(
         strategyAaveContract,
-        [usdtAddress, aUsdtAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAaddress],
+        [usdtAddress, aUsdtAddress, addressProvider, stkAave, aaveIncentiveAddress, aaveAddress],
         {
             kind: "uups",
         }
