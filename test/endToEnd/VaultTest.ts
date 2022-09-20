@@ -1,7 +1,9 @@
+import hre from "hardhat";
 import { BigNumber } from "ethers";
 import { expect } from "chai";
 import {
     ERC20,
+    MockCUSDT,
     TestnetFaucet,
     StrategyAave,
     StrategyCompound,
@@ -19,6 +21,7 @@ import {
 import { transferFromFaucetTo } from "./milton";
 
 import { deploy, DeployType, setup } from "./deploy";
+import { cUsdtAddress } from "./tokens";
 
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
@@ -26,10 +29,11 @@ describe("End to End tests on mainnet fork", function () {
     if (process.env.FORK_ENABLED != "true") {
         return;
     }
-
     let dai: ERC20;
     let usdc: ERC20;
     let usdt: ERC20;
+    let cUsdc: MockCUSDT;
+    let cUsdt: MockCUSDT;
 
     let testnetFaucet: TestnetFaucet;
 
@@ -60,6 +64,8 @@ describe("End to End tests on mainnet fork", function () {
             usdc,
             usdt,
             dai,
+            cUsdc,
+            cUsdt,
             strategyAaveDai,
             strategyAaveUsdc,
             strategyAaveUsdt,
@@ -161,8 +167,44 @@ describe("End to End tests on mainnet fork", function () {
         ).to.be.true;
     });
 
+    it("Should not be able to withdraw from stanley Usdt", async () => {
+        // given
+        await transferFromFaucetTo(
+            testnetFaucet,
+            usdt,
+            miltonUsdt.address,
+            BigNumber.from("20000000000")
+        );
+        await cUsdt.accrueInterest();
+
+        await josephUsdt.depositToStanley(BigNumber.from("10000000000000000000000"));
+        await josephUsdt.withdrawFromStanley(BigNumber.from("9999999995000000000000"));
+
+        const stanleyUsdtBalanceBefore = await stanleyUsdt.totalBalance(miltonUsdt.address);
+
+        // when
+        await expect(
+            josephUsdt.withdrawFromStanley(BigNumber.from("10000000000000000000000"))
+        ).to.be.revertedWith("IPOR_322");
+
+        // then
+        const stanleyUsdtBalanceAfter = await stanleyUsdt.totalBalance(miltonUsdt.address);
+        expect(
+            stanleyUsdtBalanceAfter.eq(stanleyUsdtBalanceBefore),
+            "stanleyUsdtBalanceAfter = stanleyUsdtBalanceBefore"
+        ).to.be.true;
+    });
+
     it("Should be able to withdraw from stanley Usdc", async () => {
         // given
+        await josephUsdc.depositToStanley(BigNumber.from("1000000000000000000"));
+
+        const timestamp = Math.floor(Date.now() / 1000) + 864000 * 2;
+        await hre.network.provider.send("evm_increaseTime", [timestamp]);
+        await hre.network.provider.send("evm_mine");
+
+        await cUsdc.accrueInterest();
+
         const stanleyUsdcBalanceBefore = await stanleyUsdc.totalBalance(miltonUsdc.address);
 
         // when
@@ -173,23 +215,6 @@ describe("End to End tests on mainnet fork", function () {
         expect(
             stanleyUsdcBalanceAfter.lt(stanleyUsdcBalanceBefore),
             "stanleyUsdcBalanceAfter < stanleyUsdcBalanceBefore"
-        ).to.be.true;
-    });
-
-    it("Should not be able to withdraw from stanley Usdt", async () => {
-        // given
-        const stanleyUsdtBalanceBefore = await stanleyUsdt.totalBalance(miltonUsdt.address);
-
-        // when
-        await expect(
-            josephUsdt.withdrawFromStanley(BigNumber.from("100000000000000000"))
-        ).to.be.revertedWith("IPOR_322");
-
-        // then
-        const stanleyUsdtBalanceAfter = await stanleyUsdt.totalBalance(miltonUsdt.address);
-        expect(
-            stanleyUsdtBalanceAfter.eq(stanleyUsdtBalanceBefore),
-            "stanleyUsdtBalanceAfter = stanleyUsdtBalanceBefore"
         ).to.be.true;
     });
 

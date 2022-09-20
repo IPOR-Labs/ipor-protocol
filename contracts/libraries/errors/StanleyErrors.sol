@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 library StanleyErrors {
     // 500-599-stanley
@@ -18,4 +18,7 @@ library StanleyErrors {
 
     // only Treasury Manager can have access to function
     string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_505";
+
+    // problem with redeem shared token
+    string public constant SHARED_TOKEN_REDEEM_ERROR = "IPOR_506";
 }

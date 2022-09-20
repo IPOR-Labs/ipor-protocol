@@ -104,7 +104,7 @@ export default ({ drizzle, drizzleState }) => {
                     <MyPositions drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
 
-                {process.env.REACT_APP_ENV_PROFILE !== "mainnet" ? (
+                {process.env.REACT_APP_ENV_PROFILE !== "mainnet.ipor.io" ? (
                     <Tab eventKey="faucet" title="Faucet">
                         <FaucetComponent drizzle={drizzle} drizzleState={drizzleState} />
                     </Tab>

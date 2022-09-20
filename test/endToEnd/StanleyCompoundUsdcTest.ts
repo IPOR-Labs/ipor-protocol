@@ -1,11 +1,13 @@
 import { expect } from "chai";
 import { BigNumber, Signer } from "ethers";
 const usdcAbi = require("../../abis/usdcAbi.json");
+const cTokenAbi = require("../../abis/cTokenAbi.json");
 const comptrollerAbi = require("../../abis/comptroller.json");
 import hre, { upgrades } from "hardhat";
 
-const zero = BigNumber.from("0");
-const one = BigNumber.from("1000000000000000000");
+const ZERO = BigNumber.from("0");
+const ONE_18 = BigNumber.from("1000000000000000000");
+const HALF_18 = BigNumber.from("500000000000000000");
 const maxValue = BigNumber.from(
     "115792089237316195423570985008687907853269984665640564039457584007913129639935"
 );
@@ -15,13 +17,13 @@ import {
     StanleyUsdc,
     IvToken,
     ERC20,
-    IAaveIncentivesController,
+    MockCUSDC,
     MockStrategy,
 } from "../../types";
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222087,
-describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function () {
+describe("Deposit -> deployed Contract on Mainnet fork  Compound USDC", function () {
     let accounts: Signer[];
     let accountToImpersonate: string;
     let usdcAddress: string;
@@ -29,12 +31,14 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
     let strategyAaveContract_Instance: MockStrategy;
     let signer: Signer;
     let cUsdcAddress: string;
+    let aUsdcAddress: string;
     let COMP: string;
     let compContract: ERC20;
-    let cTokenContract: ERC20;
+    let cTokenContract: MockCUSDC;
     let ComptrollerAddress: string;
     let compTrollerContract: any;
-    let strategyCompoundContract_Instance: StrategyCompound;
+    let strategyCompound: StrategyCompound;
+    let strategyCompoundV2: StrategyCompound;
     let ivToken: IvToken;
     let stanley: StanleyUsdc;
 
@@ -51,6 +55,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
 
         accountToImpersonate = "0xa191e578a6736167326d05c119ce0c90849e84b7"; // Usdc rich address
         usdcAddress = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // usdc
+        aUsdcAddress = "0xBcca60bB61934080951369a648Fb03DF4F96263C";
 
         await hre.network.provider.send("hardhat_setBalance", [
             accountToImpersonate,
@@ -62,11 +67,11 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
             params: [accountToImpersonate],
         });
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         usdcContract = new hre.ethers.Contract(usdcAddress, usdcAbi, signer) as ERC20;
         const impersonateBalanceBefore = await usdcContract.balanceOf(accountToImpersonate);
         await usdcContract.transfer(await accounts[0].getAddress(), impersonateBalanceBefore);
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
         usdcContract = new hre.ethers.Contract(usdcAddress, usdcAbi, signer) as ERC20;
 
         //  ********************************************************************************************
@@ -77,7 +82,7 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         strategyAaveContract_Instance = (await StrategyAave.deploy()) as MockStrategy;
 
-        await strategyAaveContract_Instance.setShareToken(usdcAddress);
+        await strategyAaveContract_Instance.setShareToken(aUsdcAddress);
         await strategyAaveContract_Instance.setAsset(usdcAddress);
 
         //  ********************************************************************************************
@@ -88,17 +93,24 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         COMP = "0xc00e94Cb662C3520282E6f5717214004A7f26888";
         ComptrollerAddress = "0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B";
 
-        signer = await hre.ethers.provider.getSigner(accountToImpersonate);
+        signer = hre.ethers.provider.getSigner(accountToImpersonate);
         compContract = new hre.ethers.Contract(COMP, usdcAbi, signer) as ERC20;
-        cTokenContract = new hre.ethers.Contract(cUsdcAddress, usdcAbi, signer) as ERC20;
-        signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
+        cTokenContract = new hre.ethers.Contract(cUsdcAddress, cTokenAbi, signer) as MockCUSDC;
+        signer = hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
         const strategyCompoundContract = await hre.ethers.getContractFactory(
             "StrategyCompound",
             signer
         );
 
-        strategyCompoundContract_Instance = (await upgrades.deployProxy(strategyCompoundContract, [
+        strategyCompound = (await upgrades.deployProxy(strategyCompoundContract, [
+            usdcAddress,
+            cUsdcAddress,
+            ComptrollerAddress,
+            COMP,
+        ])) as StrategyCompound;
+
+        strategyCompoundV2 = (await upgrades.deployProxy(strategyCompoundContract, [
             usdcAddress,
             cUsdcAddress,
             ComptrollerAddress,
@@ -119,58 +131,59 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         //  ********************************************************************************************
         const StanleyFactory = await hre.ethers.getContractFactory("StanleyUsdc", signer);
 
-        stanley = (await await upgrades.deployProxy(StanleyFactory, [
+        stanley = (await upgrades.deployProxy(StanleyFactory, [
             usdcAddress,
             ivToken.address,
             strategyAaveContract_Instance.address,
-            strategyCompoundContract_Instance.address,
+            strategyCompound.address,
         ])) as StanleyUsdc;
 
         await stanley.setMilton(await signer.getAddress());
-        await strategyCompoundContract_Instance.setStanley(stanley.address);
-        await strategyCompoundContract_Instance.setTreasury(await signer.getAddress());
+        await strategyCompound.setStanley(stanley.address);
+        await strategyCompoundV2.setStanley(stanley.address);
+        await strategyCompound.setTreasury(await signer.getAddress());
 
         await usdcContract.approve(await signer.getAddress(), maxValue);
         await usdcContract.approve(stanley.address, maxValue);
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Shoiuld compand APR > aave APR ", async () => {
+    it("Should Compound APR > Aave APR ", async () => {
         // when
         const aaveApy = await strategyAaveContract_Instance.getApr();
-        const compoundApy = await strategyCompoundContract_Instance.getApr();
+        const compoundApy = await strategyCompound.getApr();
         // then
         expect(compoundApy.gt(aaveApy)).to.be.true;
     });
 
     it("Should accept deposit and transfer tokens into COMPOUND", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = ONE_18.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceBefore = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
-        expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(zero);
+        expect(userIvTokenBefore, "userIvTokenBefore = 0").to.be.equal(ZERO);
         expect(strategyCompoundBalanceBefore, "strategyCompoundBalanceBefore = 0").to.be.equal(
-            zero
+            ZERO
         );
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmount);
 
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceAfter = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
-        expect(userIvTokenAfter, "userIvTokenAfter = depositAmound").to.be.equal(depositAmound);
+        expect(userIvTokenAfter, "userIvTokenAfter = depositAmount").to.be.equal(depositAmount);
         expect(
             strategyCompoundBalanceAfter.gt(strategyCompoundBalanceBefore),
             "strategyCompoundBalanceAfter > strategyCompoundBalanceBefore"
@@ -187,24 +200,24 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
 
     it("Should accept deposit twice and transfer tokens into COMPOUND", async () => {
         //given
-        const depositAmound = one.mul(10);
+        const depositAmount = ONE_18.mul(10);
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceBefore = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
         //When
-        await stanley.connect(signer).deposit(depositAmound);
-        await stanley.connect(signer).deposit(depositAmound);
+        await stanley.connect(signer).deposit(depositAmount);
+        await stanley.connect(signer).deposit(depositAmount);
         //Then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceAfter = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
         expect(userIvTokenAfter.gt(userIvTokenBefore), "ivToken > userIvTokenBefore").to.be.true;
@@ -224,23 +237,25 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
 
     it("Should withdraw 10000000000000000000 from COMPOUND", async () => {
         //given
-        const withdrawAmmond = one.mul(10);
+        const withdrawAmount = ONE_18.mul(10);
+        await stanley.connect(signer).deposit(withdrawAmount);
+
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceBefore = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractBefore = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
         //when
-        await stanley.withdraw(withdrawAmmond);
+        await stanley.withdraw(withdrawAmount);
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceAfter = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractAfter = await cTokenContract.balanceOf(
-            strategyCompoundContract_Instance.address
+            strategyCompound.address
         );
 
         expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
@@ -259,19 +274,21 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         ).to.be.true;
     });
 
-    it("Should withdraw all user assset from COMPOUND", async () => {
+    it("Should withdraw all user asset from COMPOUND - withdraw method", async () => {
         //given
+        await stanley.connect(signer).deposit(ONE_18.mul(100));
         const userAddress = await signer.getAddress();
         const userIvTokenBefore = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceBefore = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
         const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
+        await cTokenContract.accrueInterest();
 
         //when
         await stanley.withdraw(strategyCompoundBalanceBefore);
 
         //then
         const userIvTokenAfter = await ivToken.balanceOf(userAddress);
-        const strategyCompoundBalanceAfter = await strategyCompoundContract_Instance.balanceOf();
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
         const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
         const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
             strategyAaveContract_Instance.address
@@ -283,6 +300,11 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
             strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
             "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore>"
         ).to.be.true;
+
+        /// Important check!
+        expect(strategyCompoundBalanceAfter.lt(HALF_18), "strategyCompoundBalanceAfter <= HALF_18")
+            .to.be.true;
+
         expect(
             userUsdcBalanceAfter.gt(userUsdcBalanceBefore),
             "userUsdcBalanceAfter > userUsdcBalanceBefore"
@@ -290,6 +312,47 @@ describe("Deposit -> deployed Contract on Mainnet fork  Compound Usdc", function
         expect(
             strategyCTokenContractAfterWithdraw,
             "strategyCTokenContractAfterWithdraw = 0"
-        ).to.be.equal(zero);
+        ).to.be.equal(ZERO);
+    });
+
+    it("Should withdraw all user asset from COMPOUND - withdrawAll method", async () => {
+        //given
+        await stanley.connect(signer).deposit(ONE_18.mul(100));
+        const userAddress = await signer.getAddress();
+        const userIvTokenBefore = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceBefore = await strategyCompound.balanceOf();
+        const userUsdcBalanceBefore = await usdcContract.balanceOf(userAddress);
+        await cTokenContract.accrueInterest();
+
+        //when
+        await stanley.withdrawAll();
+
+        //then
+        const userIvTokenAfter = await ivToken.balanceOf(userAddress);
+        const strategyCompoundBalanceAfter = await strategyCompound.balanceOf();
+        const userUsdcBalanceAfter = await usdcContract.balanceOf(userAddress);
+        const strategyCTokenContractAfterWithdraw = await cTokenContract.balanceOf(
+            strategyAaveContract_Instance.address
+        );
+
+        expect(userIvTokenAfter.lt(userIvTokenBefore), "userIvTokenAfter < userIvTokenBefore").to.be
+            .true;
+        expect(
+            strategyCompoundBalanceAfter.lt(strategyCompoundBalanceBefore),
+            "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore>"
+        ).to.be.true;
+
+        /// Important check!
+        expect(strategyCompoundBalanceAfter.lt(HALF_18), "strategyCompoundBalanceAfter <= HALF_18")
+            .to.be.true;
+
+        expect(
+            userUsdcBalanceAfter.gt(userUsdcBalanceBefore),
+            "userUsdcBalanceAfter > userUsdcBalanceBefore"
+        ).to.be.true;
+        expect(
+            strategyCTokenContractAfterWithdraw,
+            "strategyCTokenContractAfterWithdraw = 0"
+        ).to.be.equal(ZERO);
     });
 });

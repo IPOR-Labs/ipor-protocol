@@ -2,6 +2,7 @@ import { BigNumber } from "ethers";
 
 import {
     ERC20,
+	MockCUSDT,
     IpToken,
     IvToken,
     TestnetFaucet,
@@ -86,9 +87,9 @@ export type DeployType = {
     aUsdt: ERC20;
     aaveToken: ERC20;
     compToken: ERC20;
-    cDai: ERC20;
-    cUsdc: ERC20;
-    cUsdt: ERC20;
+    cDai: MockCUSDT;
+    cUsdc: MockCUSDT;
+    cUsdt: MockCUSDT;
     testnetFaucet: TestnetFaucet;
     ipTokenDai: IpToken;
     ipTokenUsdc: IpToken;
@@ -97,6 +98,7 @@ export type DeployType = {
     ivTokenUsdc: IvToken;
     ivTokenUsdt: IvToken;
     strategyAaveDai: StrategyAave;
+    strategyAaveDaiV2: StrategyAave;
     strategyAaveUsdc: StrategyAave;
     strategyAaveUsdt: StrategyAave;
     strategyCompoundDai: StrategyCompound;
@@ -147,6 +149,7 @@ export const deploy = async (): Promise<DeployType> => {
     const ivTokenDai = await ivTokenDaiFactory();
 
     const strategyAaveDai = await aaveDaiStrategyFactory();
+    const strategyAaveDaiV2 = await aaveDaiStrategyFactory();
     const strategyAaveUsdc = await aaveUsdcStrategyFactory();
     const strategyAaveUsdt = await aaveUsdtStrategyFactory();
 
@@ -280,6 +283,7 @@ export const deploy = async (): Promise<DeployType> => {
         ivTokenUsdc,
         ivTokenUsdt,
         strategyAaveDai,
+        strategyAaveDaiV2,
         strategyAaveUsdc,
         strategyAaveUsdt,
         strategyCompoundDai,
@@ -318,6 +322,7 @@ export const setup = async (deployed: DeployType) => {
         ivTokenUsdc,
         ivTokenDai,
         strategyAaveDai,
+		strategyAaveDaiV2,
         strategyAaveUsdc,
         strategyAaveUsdt,
         strategyCompoundDai,
@@ -359,6 +364,7 @@ export const setup = async (deployed: DeployType) => {
     await ivTokenSetup(ivTokenUsdt, stanleyUsdt.address);
 
     await strategyAaveSetup(strategyAaveDai, stanleyDai.address);
+	await strategyAaveSetup(strategyAaveDaiV2, stanleyDai.address);
     await strategyAaveSetup(strategyAaveUsdc, stanleyUsdc.address);
     await strategyAaveSetup(strategyAaveUsdt, stanleyUsdt.address);
 

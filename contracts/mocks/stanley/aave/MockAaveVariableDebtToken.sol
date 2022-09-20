@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 contract MockAaveVariableDebtToken {
     uint256 private _scaledTotalSupply;

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
 import "../../libraries/Constants.sol";
@@ -57,19 +57,25 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
     }
 
     /**
-     * @dev get current APY.
+     * @notice gets current APR in Compound Protocol.
      */
     function getApr() external view override returns (uint256 apr) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
         apr = cRate * _blocksPerYear;
     }
 
-    /**
-     * @dev Total Balance = Principal Amount + Interest Amount.
-     * returns uint256 with 18 Decimals
-     */
+    /// @notice Gets Stanley Compound Strategy's asset amount in Compound Protocol.
+    /// @dev Explanation decimals inside implementation
+    /// In Compound exchangeRateStored is calculated in following way:
+    /// uint exchangeRate = cashPlusBorrowsMinusReserves * expScale / _totalSupply;
+    /// When:
+    /// Asset decimals = 18, then exchangeRate decimals := 18 + 18 - 8 = 28 and balanceOf decimals := 28 + 8 - 18 = 18 decimals.
+    /// Asset decimals = 6, then exchangeRate decimals := 6 + 18 - 8 = 16 and balanceOf decimals := 16 + 8 - 6 = 18 decimals.
+    /// In both cases we have 18 decimals which is number of decimals supported in IPOR Protocol.
+    /// @return uint256 Stanley Strategy's asset amount in Compound represented in 18 decimals
     function balanceOf() external view override returns (uint256) {
         CErc20 shareToken = CErc20(_shareToken);
+
         return (
             IporMath.division(
                 (shareToken.exchangeRateStored() * shareToken.balanceOf(address(this))),
@@ -83,39 +89,52 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      * @notice deposit can only done by Stanley .
      * @param wadAmount amount to deposit in compound lending, amount represented in 18 decimals
      */
-    function deposit(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function deposit(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 depositedAmount)
+    {
         address asset = _asset;
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+        uint256 amount = IporMath.convertWadToAssetDecimals(wadAmount, assetDecimals);
         IERC20Upgradeable(asset).safeTransferFrom(_msgSender(), address(this), amount);
         CErc20(_shareToken).mint(amount);
+        depositedAmount = IporMath.convertToWad(amount, assetDecimals);
     }
 
     /**
      * @dev withdraw from compound lending.
-     * @notice withdraw can only done by owner.
-     * @param wadAmount amount to withdraw from compound lending, amount represented in 18 decimals
+     * @notice withdraw can only done by Stanley.
+     * @param wadAmount candidate amount to withdraw from compound lending, amount represented in 18 decimals
      */
-    function withdraw(uint256 wadAmount) external override whenNotPaused onlyStanley {
+    function withdraw(uint256 wadAmount)
+        external
+        override
+        whenNotPaused
+        onlyStanley
+        returns (uint256 withdrawnAmount)
+    {
         address asset = _asset;
-
-        uint256 amount = IporMath.convertWadToAssetDecimals(
-            wadAmount,
-            IERC20Metadata(asset).decimals()
-        );
+        uint256 assetDecimals = IERC20Metadata(asset).decimals();
+        uint256 amount = IporMath.convertWadToAssetDecimalsWithoutRound(wadAmount, assetDecimals);
 
         CErc20 shareToken = CErc20(_shareToken);
 
-        shareToken.redeem(
-            IporMath.divisionWithoutRound(amount * Constants.D18, shareToken.exchangeRateStored())
+        // Transfer assets from Compound to Strategy
+        uint256 redeemStatus = shareToken.redeem(
+            IporMath.division(amount * Constants.D18, shareToken.exchangeRateStored())
         );
 
-        IERC20Upgradeable(address(asset)).safeTransfer(
-            _msgSender(),
-            IERC20Upgradeable(asset).balanceOf(address(this))
-        );
+        require(redeemStatus == 0, StanleyErrors.SHARED_TOKEN_REDEEM_ERROR);
+
+        uint256 withdrawnAmountCompound = IERC20Upgradeable(asset).balanceOf(address(this));
+
+        // Transfer all assets from Strategy to Stanley
+        IERC20Upgradeable(asset).safeTransfer(_msgSender(), withdrawnAmountCompound);
+
+        withdrawnAmount = IporMath.convertToWad(withdrawnAmountCompound, assetDecimals);
     }
 
     /**
@@ -123,6 +142,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      */
     function doClaim() external override whenNotPaused nonReentrant onlyOwner {
         address treasury = _treasury;
+        IERC20Upgradeable compToken = _compToken;
 
         require(treasury != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -131,11 +151,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
 
         _comptroller.claimComp(address(this), assets);
 
-        uint256 balance = _compToken.balanceOf(address(this));
+        uint256 balance = compToken.balanceOf(address(this));
 
-        _compToken.safeTransfer(treasury, balance);
+        compToken.safeTransfer(treasury, balance);
 
-        emit DoClaim(_msgSender(), _shareToken, treasury, balance);
+        emit DoClaim(_msgSender(), assets[0], treasury, balance);
     }
 
     function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 contract DataTypesContract {
     // refer to the whitepaper, section 1.1 basic concepts for a formal description of these properties.
@@ -39,15 +39,5 @@ contract DataTypesContract {
         //bit 60-63: reserved
         //bit 64-79: reserve factor
         uint256 data;
-    }
-
-    struct UserConfigurationMap {
-        uint256 data;
-    }
-
-    enum InterestRateMode {
-        NONE,
-        STABLE,
-        VARIABLE
     }
 }

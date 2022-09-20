@@ -6,7 +6,7 @@ async function main() {
     signer = await hre.ethers.provider.getSigner(await accounts[0].getAddress());
 
     const Migrations = await ethers.getContractFactory("Migrations", signer);
-    const migrations = Migrations.attach("0x93d0f54207a7A1bDAaE81D2e80320f3a7903750C");
+    const migrations = Migrations.attach("0x987e855776C03A4682639eEb14e65b3089EE6310");
 
     const lastNumber = await migrations.last_completed_migration();
 
