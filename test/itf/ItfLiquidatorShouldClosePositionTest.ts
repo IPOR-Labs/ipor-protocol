@@ -141,8 +141,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             itfLiquidator.itfLiquidate([1, 2], [], closeTimestamp)
         )
         //then
-        .to.emit(miltonDai, "CloseSwap").withArgs(anyValue, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
-        .to.emit(miltonDai, "CloseSwap").withArgs(anyValue, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+        .to.emit(miltonDai, "CloseSwap").withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+        .to.emit(miltonDai, "CloseSwap").withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
     });
 
 
@@ -203,8 +203,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
                 .itfLiquidate([], [1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
         )
         //then
-        .to.emit(miltonDai, "CloseSwap").withArgs(anyValue, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
-        .to.emit(miltonDai, "CloseSwap").withArgs(anyValue, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+        .to.emit(miltonDai, "CloseSwap").withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+        .to.emit(miltonDai, "CloseSwap").withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
     });
 
     it("should close 10 pay fixed, 10 receive fixed positions in one transaction - case 1, all are opened", async () => {
