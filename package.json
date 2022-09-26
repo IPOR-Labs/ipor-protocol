@@ -7,7 +7,7 @@
     "devDependencies": {
         "@hardhat-docgen/core": "1.2.3",
         "@hardhat-docgen/markdown": "1.2.4",
-        "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
+        "@nomicfoundation/hardhat-chai-matchers": "1.0.3",
         "@nomicfoundation/hardhat-network-helpers": "1.0.4",
         "@nomiclabs/hardhat-ethers": "2.0.5",
         "@nomiclabs/hardhat-waffle": "2.0.3",
@@ -48,7 +48,7 @@
         "compile:truffle": "truffle compile --all",
         "migrate:truffle": "truffle migrate --network $ETH_BC_NETWORK_NAME  --compile-none",
         "migrate:truffle-reset": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
-        "test:unit": "export FORK_ENABLED=false; hardhat test",
+        "test:unit": "export FORK_ENABLED=false; hardhat test test/itf/ItfLiquidatorShouldClosePositionTest.ts",
         "test:mainnet": "export FORK_ENABLED=true; hardhat test test/endToEnd/*.ts",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
