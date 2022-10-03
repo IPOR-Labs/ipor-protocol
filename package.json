@@ -48,7 +48,7 @@
         "compile:truffle": "truffle compile --all",
         "migrate:truffle": "truffle migrate --network $ETH_BC_NETWORK_NAME  --compile-none",
         "migrate:truffle-reset": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
-        "test:unit": "export FORK_ENABLED=false; hardhat test test/itf/ItfLiquidatorShouldClosePositionTest.ts",
+        "test:unit": "export FORK_ENABLED=false; hardhat test",
         "test:mainnet": "export FORK_ENABLED=true; hardhat test test/endToEnd/*.ts",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
