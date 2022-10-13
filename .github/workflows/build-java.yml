@@ -13,6 +13,12 @@ on:
                 required: false
             AWS_ACCOUNT_ID:
                 required: false
+            MAINNET_AWS_ACCESS_KEY_ID:
+                required: false
+            MAINNET_AWS_SECRET_ACCESS_KEY:
+                required: false
+            MAINNET_AWS_ACCOUNT_ID:
+                required: false
 
         inputs:
             java-version:
@@ -28,7 +34,7 @@ on:
             solc-version:
                 description: "Solidity complier version"
                 type: string
-                default: 0.8.15
+                default: 0.8.16
 
             ecr-repository-name:
                 description: "AWS ECR repository name for target docker image"
@@ -61,6 +67,11 @@ on:
 
             push-docker-enabled:
                 description: "Enable push docker artifacts"
+                type: boolean
+                default: false
+
+            push-docker-mainnet-enabled:
+                description: "Enable push docker artifacts to mainnet"
                 type: boolean
                 default: false
 
@@ -175,6 +186,18 @@ jobs:
                   access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
                   secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   account_id: ${{ secrets.AWS_ACCOUNT_ID }}
+                  repo: ${{ inputs.ecr-repository-name }}
+                  region: ${{ inputs.aws-region }}
+                  tags: ${{ github.sha }},${{ inputs.docker-image-extra-tags }}
+
+            - name: Push mainnet
+              if: inputs.push-docker-mainnet-enabled
+              # from tag: v4
+              uses: docker://ghcr.io/kciter/aws-ecr-action@sha256:fb211ece872fdfb5be4c6cb731765967b081a72c3ef3944d4f0d15e7d885d1e8
+              with:
+                  access_key_id: ${{ secrets.MAINNET_AWS_ACCESS_KEY_ID }}
+                  secret_access_key: ${{ secrets.MAINNET_AWS_SECRET_ACCESS_KEY }}
+                  account_id: ${{ secrets.MAINNET_AWS_ACCOUNT_ID }}
                   repo: ${{ inputs.ecr-repository-name }}
                   region: ${{ inputs.aws-region }}
                   tags: ${{ github.sha }},${{ inputs.docker-image-extra-tags }}

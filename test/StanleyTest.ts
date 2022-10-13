@@ -309,7 +309,7 @@ describe("Stanley - Asset Management Vault", () => {
         ).to.be.eq(actualMiltonAccruedBalance.liquidityPool);
     });
 
-    it("should withdraw All FromStanley", async () => {
+    it("should withdraw All From Stanley", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -371,8 +371,12 @@ describe("Stanley - Asset Management Vault", () => {
 
         //then
         const stanleyBalanceAfter = await stanleyDai.totalBalance(miltonDai.address);
+        const miltonLPBalanceAfter = (await miltonDai.getAccruedBalance()).liquidityPool;
+        const exchangeRateAfter = await josephDai.itfCalculateExchangeRate(timestamp);
 
         expect(stanleyBalanceBefore.gt(stanleyBalanceAfter)).to.be.true;
+        expect(miltonLPBalanceAfter.eq(BigNumber.from("1003000000000000000000"))).to.be.true;
+        expect(exchangeRateAfter.eq(BigNumber.from("1003000000000000000"))).to.be.true;
     });
 
     it("should not sent ETH to Stanley DAI, USDT, USDC", async () => {

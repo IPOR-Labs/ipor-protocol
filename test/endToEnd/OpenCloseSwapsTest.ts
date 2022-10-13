@@ -118,19 +118,6 @@ describe("Open/Close Swap", function () {
             expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(deposit);
         });
 
-        it("Should rebalance and deposit(dai) into vault (aave)", async () => {
-            //given
-            const strategyAaveBalance = await strategyAaveDai.balanceOf();
-            //when
-            await josephDai.rebalance();
-            //then
-            const strategyAaveAfter = await strategyAaveDai.balanceOf();
-            expect(
-                strategyAaveBalance.lt(strategyAaveAfter),
-                "strategyAaveBalance < strategyAaveAfter"
-            ).to.be.true;
-        });
-
         it("Should open Swap Pay Fixed, DAI", async () => {
             //when
             await miltonDai.openSwapPayFixed(

@@ -22,8 +22,10 @@ const totalSupply6Decimals = "100000000000000000000";
 
 const ZERO = BigNumber.from("0");
 const ONE = BigNumber.from("1");
+const TC_1_USD_18DEC = BigNumber.from("1000000000000000000");
+const TC_500_USD_18DEC = BigNumber.from("500000000000000000000");
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
-const TC_9_000_USD_18DEC = BigNumber.from("9000000000000000000000");
+const TC_9_500_USD_18DEC = BigNumber.from("9500000000000000000000");
 const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");
 const TC_9_999_USD_18DEC = BigNumber.from("9999999999999999999999");
 
@@ -135,7 +137,7 @@ describe("Compound strategy", () => {
         //when
         await expect(strategyCompoundInstanceDAI.setStanley(newStanleyAddress))
             .to.emit(strategyCompoundInstanceDAI, "StanleyChanged")
-            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
+            .withArgs(admin.getAddress, oldStanleyAddress, newStanleyAddress);
     });
 
     it("Should not be able to setup Stanley when non owner want to setup new address", async () => {
@@ -154,7 +156,7 @@ describe("Compound strategy", () => {
 
         await expect(strategyCompoundInstanceDAI.setStanley(newStanleyAddress))
             .to.emit(strategyCompoundInstanceDAI, "StanleyChanged")
-            .withArgs(await admin.getAddress, oldStanleyAddress, newStanleyAddress);
+            .withArgs(admin.getAddress, oldStanleyAddress, newStanleyAddress);
 
         await DAI.setupInitialAmount(newStanleyAddress, TC_10_000_USD_18DEC);
 
@@ -163,17 +165,12 @@ describe("Compound strategy", () => {
             TC_1000_USD_18DEC
         );
 
-        await strategyCompoundInstanceDAI.connect(userTwo).deposit(TC_1000_USD_18DEC);
+        //when
+        await strategyCompoundInstanceDAI.connect(userTwo).deposit(TC_500_USD_18DEC);
+        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_500_USD_18DEC);
 
-        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_000_USD_18DEC);
-        expect((await cDAI.balanceOf(strategyCompoundInstanceDAI.address)).toString()).to.be.equal(
-            "754533916231843181332"
-        );
-
-        await strategyCompoundInstanceDAI.connect(userTwo).withdraw(TC_1000_USD_18DEC);
-
-        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_9_999_USD_18DEC);
-        expect(await cDAI.balanceOf(strategyCompoundInstanceDAI.address)).to.be.equal(ONE);
+        await strategyCompoundInstanceDAI.connect(userTwo).withdraw(TC_500_USD_18DEC);
+        expect(await DAI.balanceOf(newStanleyAddress)).to.be.equal(TC_10_000_USD_18DEC);
     });
 
     it("Should be able to setup Stanley and interact with USDT", async () => {

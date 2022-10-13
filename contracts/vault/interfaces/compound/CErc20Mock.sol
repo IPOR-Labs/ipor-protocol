@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 interface CErc20Mock {
     function mint(uint256) external returns (uint256);
@@ -11,4 +11,6 @@ interface CErc20Mock {
     function exchangeRateStored() external view returns (uint256);
 
     function redeem(uint256) external returns (uint256);
+
+    function accrueInterest() external returns (uint256);
 }

@@ -8,7 +8,7 @@
 
 ### Node build artifacts ###
 /node_modules
-/package-lock.json
+
 
 ### Smart Contracts build artifacts ###
 /app/src/contracts/

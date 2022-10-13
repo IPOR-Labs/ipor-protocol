@@ -99,7 +99,7 @@ describe("MockStrategyTestnet Aave / Compound", () => {
         expect(aprUsdt).to.be.equal(PERCENTAGE_3_5_18DEC);
     });
 
-    it("Shoud deposit into strategy 18 dec", async () => {
+    it("Should deposit into strategy 18 dec", async () => {
         // given
         const strategyBalanceTokenBefore = await tokenDai.balanceOf(strategyDai.address);
         const strategyBalanceBefore = await strategyDai.balanceOf();
@@ -117,7 +117,7 @@ describe("MockStrategyTestnet Aave / Compound", () => {
         expect(strategyBalanceBefore.lt(strategyBalanceAfter)).to.be.true;
     });
 
-    it("Shoud deposit into strategy 6 dec", async () => {
+    it("Should deposit into strategy 6 dec", async () => {
         // given
         const strategyBalanceTokenBefore = await tokenUsdc.balanceOf(strategyUsdc.address);
         const strategyBalanceBefore = await strategyUsdc.balanceOf();
