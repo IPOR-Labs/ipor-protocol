@@ -24,9 +24,14 @@ contract TestnetFaucet is
     uint256 private constant _SECONDS_IN_DAY = 60 * 60 * 24;
 
     mapping(address => uint256) internal _lastClaim;
+    /// @dev  need to stay because of proxy compatibility
     address internal _dai;
+    /// @dev  need to stay because of proxy compatibility
     address internal _usdc;
+    /// @dev  need to stay because of proxy compatibility
     address internal _usdt;
+    address[] internal _assets;
+    mapping(address => bool) _activeAssets;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -43,9 +48,12 @@ contract TestnetFaucet is
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);
-        _dai = dai;
-        _usdc = usdc;
-        _usdt = usdt;
+        _assets.push(dai);
+        _activeAssets[dai] = true;
+        _assets.push(usdt);
+        _activeAssets[usdt] = true;
+        _assets.push(usdc);
+        _activeAssets[usdc] = true;
     }
 
     //solhint-disable no-empty-blocks
@@ -70,9 +78,11 @@ contract TestnetFaucet is
                 )
             )
         );
-        _transfer(_dai);
-        _transfer(_usdc);
-        _transfer(_usdt);
+        for(uint256 i; i!= _assets.length;i++){
+            if(_activeAssets[_assets[i]]) {
+            _transfer(_assets[i]);
+            }
+        }
         _lastClaim[_msgSender()] = block.timestamp;
     }
 
@@ -105,6 +115,20 @@ contract TestnetFaucet is
 
     function balanceOf(address asset) external view override returns (uint256) {
         return IERC20Upgradeable(asset).balanceOf(address(this));
+    }
+
+    function addAsset(address asset) external onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        _assets.push(asset);
+        _activeAssets[asset] = true;
+    }
+
+    function removeAsset(address asset) external onlyOwner {
+        _activeAssets[asset] = false;
+    }
+
+    function isAssetActive(address asset) external view returns(bool) {
+        return _activeAssets[asset];
     }
 
     function _transfer(address asset) internal {

@@ -18,6 +18,12 @@ interface ITestnetFaucet {
     /// @return true if user calim before and false otherwise
     function hasClaimBefore() external view returns (bool);
 
+    function addAsset(address asset) external;
+
+    function removeAsset(address asset) external;
+
+    function isAssetActive(address asset) external view returns(bool);
+
     event Claim(
         /// @notice address to which stable were transfer
         address to,
