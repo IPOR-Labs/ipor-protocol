@@ -2907,8 +2907,8 @@ describe("Milton - close position", () => {
             );
     });
 
-    it.skip("should close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
-        // await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2948,7 +2948,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
                 return contract.closeSwaps([], [1, 300]);
@@ -2961,7 +2961,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it.skip("should close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+    it("should close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
         await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -3003,7 +3003,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
-            USD_10_000_000_18DEC,
+            USD_1_000_000_18DEC,
             BigNumber.from("2"),
             (contract) => {
                 return contract.closeSwaps([1, 300], []);
