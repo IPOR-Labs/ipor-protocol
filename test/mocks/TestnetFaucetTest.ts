@@ -41,9 +41,9 @@ describe("TestnetFaucet", () => {
             tokenUsdt.address,
         ])) as TestnetFaucet;
 
-        tokenDai.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_10MLN_18DEC);
-        tokenUsdc.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
-        tokenUsdt.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
+        await tokenDai.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_10MLN_18DEC);
+        await tokenUsdc.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
+        await tokenUsdt.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_6_DECIMALS);
     });
 
     it("Should not be able to claim twice", async () => {

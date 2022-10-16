@@ -39,12 +39,14 @@ describe("Milton Utilisation Rate", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
+    });
+    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -99,7 +101,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -155,7 +157,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open pay fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -211,7 +213,7 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

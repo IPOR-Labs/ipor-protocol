@@ -30,12 +30,12 @@ describe("IpToken", () => {
         liquidityProvider: Signer;
     let miltonSpreadModel: MockSpreadModel; //data
 
-    before(async () => {
+    beforeEach(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
-    const preperateIpTokenCase010 = async (): Promise<{
+    const prepareIpTokenCase010 = async (): Promise<{
         ipToken: IpToken;
         josephDai: JosephDaiMocks;
         tokenDai: DaiMockedToken;
@@ -91,7 +91,7 @@ describe("IpToken", () => {
     it("should transfer ownership - simple case 1", async () => {
         //given
         const expectedNewOwner = userTwo;
-        const { ipToken } = await preperateIpTokenCase010();
+        const { ipToken } = await prepareIpTokenCase010();
 
         //when
         await ipToken.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -105,7 +105,7 @@ describe("IpToken", () => {
     it("should NOT transfer ownership - sender not current owner", async () => {
         //given
         const expectedNewOwner = userTwo;
-        const { ipToken } = await preperateIpTokenCase010();
+        const { ipToken } = await prepareIpTokenCase010();
 
         //when
         await assertError(
@@ -118,7 +118,7 @@ describe("IpToken", () => {
     it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
         //given
         const expectedNewOwner = userTwo;
-        const { ipToken } = await preperateIpTokenCase010();
+        const { ipToken } = await prepareIpTokenCase010();
 
         //when
         await ipToken.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -132,7 +132,7 @@ describe("IpToken", () => {
     it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
         //given
         const expectedNewOwner = userTwo;
-        const { ipToken } = await preperateIpTokenCase010();
+        const { ipToken } = await prepareIpTokenCase010();
 
         //when
         await ipToken.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
@@ -225,7 +225,7 @@ describe("IpToken", () => {
 
     it("should emit event", async () => {
         //given
-        const { ipToken, josephDai } = await preperateIpTokenCase010();
+        const { ipToken, josephDai } = await prepareIpTokenCase010();
         await ipToken.setJoseph(await admin.getAddress());
         //when
         await expect(ipToken.mint(await userOne.getAddress(), TC_TOTAL_AMOUNT_10_000_18DEC))
@@ -237,7 +237,7 @@ describe("IpToken", () => {
 
     it("should contain 18 decimals", async () => {
         //given
-        const { ipToken, josephDai } = await preperateIpTokenCase010();
+        const { ipToken, josephDai } = await prepareIpTokenCase010();
         const expectedDecimals = BigNumber.from("18");
 
         await ipToken.setJoseph(await admin.getAddress());
@@ -255,7 +255,7 @@ describe("IpToken", () => {
 
     it("should contain correct underlying token address", async () => {
         //given
-        const { ipToken, tokenDai } = await preperateIpTokenCase010();
+        const { ipToken, tokenDai } = await prepareIpTokenCase010();
         const expectedUnderlyingTokenAddress = tokenDai.address;
 
         //when
@@ -270,7 +270,7 @@ describe("IpToken", () => {
 
     it("should not sent ETH to IpToken DAI", async () => {
         //given
-        const { ipToken } = await preperateIpTokenCase010();
+        const { ipToken } = await prepareIpTokenCase010();
 
         await assertError(
             //when
