@@ -5,7 +5,6 @@ import { MockSpreadModel } from "../../types";
 import {
     N1__0_18DEC,
     N0__001_18DEC,
-    N0__000_1_18DEC,
     N0__000_01_18DEC,
     N0__000_001_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -15,12 +14,11 @@ import {
     ZERO,
     N0__01_18DEC,
 } from "../utils/Constants";
-import { prepareMockSpreadModel, prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
+import { prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
 describe("MiltonSpreadRecFixed", () => {
-    let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -29,7 +27,6 @@ describe("MiltonSpreadRecFixed", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-        miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("[!] should calculate Quote Value Receive Fixed Value - Spread Premiums negative, |Spread Premium| < IPOR Index, EMA > Quote Value", async () => {

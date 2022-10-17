@@ -351,13 +351,13 @@ export const openSwapReceiveFixed = async (testData: TestData, params: Params) =
     }
 };
 
-export const preprareSwapPayFixedStruct18DecSimpleCase1 = async (userTwo: Signer) => {
+export const prepareSwapPayFixedStruct18DecSimpleCase1 = (buyerAddress: String) => {
     const openingTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
     const closeSwapTimestamp = openingTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
     return {
         state: 0,
-        buyer: await userTwo.getAddress(),
+        buyer: buyerAddress,
         openTimestamp: openingTimestamp,
         endTimestamp: closeSwapTimestamp,
         id: BigNumber.from("1"),

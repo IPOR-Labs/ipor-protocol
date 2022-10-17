@@ -1,10 +1,9 @@
 import hre from "hardhat";
 import chai from "chai";
-import { Signer, BigNumber } from "ethers";
+import {  BigNumber } from "ethers";
 import {
     N0__01_18DEC,
     ZERO,
-    YEAR_IN_SECONDS,
     PERIOD_25_DAYS_IN_SECONDS,
     N1__0_18DEC,
 } from "./utils/Constants";

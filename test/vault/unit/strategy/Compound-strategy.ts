@@ -3,7 +3,6 @@ import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
 import {
-    StrategyAave,
     ERC20,
     MockWhitePaper,
     MockComptroller,
@@ -21,13 +20,10 @@ const stableTotalSupply18Decimals = "1000000000000000000000000000000";
 const totalSupply6Decimals = "100000000000000000000";
 
 const ZERO = BigNumber.from("0");
-const ONE = BigNumber.from("1");
-const TC_1_USD_18DEC = BigNumber.from("1000000000000000000");
 const TC_500_USD_18DEC = BigNumber.from("500000000000000000000");
 const TC_1000_USD_18DEC = BigNumber.from("1000000000000000000000");
 const TC_9_500_USD_18DEC = BigNumber.from("9500000000000000000000");
 const TC_10_000_USD_18DEC = BigNumber.from("10000000000000000000000");
-const TC_9_999_USD_18DEC = BigNumber.from("9999999999999999999999");
 
 const TC_9_000_USD_6DEC = BigNumber.from("9000000000");
 const TC_10_000_USD_6DEC = BigNumber.from("10000000000");
@@ -45,8 +41,6 @@ describe("Compound strategy", () => {
     let COMP: ERC20;
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let comptroller: MockComptroller;
-    // let comptrollerUSDC: MockComptroller;
-    // let comptrollerUSDT: MockComptroller;
 
     beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
@@ -54,7 +48,7 @@ describe("Compound strategy", () => {
         const MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
 
         // #################################################################################
-        // #####################        USDC / aUSDC     ###################################
+        // #####################        USDC / aUSDC     ###################################
         // #################################################################################
 
         const MockedCToken = await hre.ethers.getContractFactory("UsdcMockedToken");
@@ -69,7 +63,7 @@ describe("Compound strategy", () => {
         )) as MockCToken;
 
         // #################################################################################
-        // #####################        USDT / aUSDT     ###################################
+        // #####################        USDT / aUSDT     ###################################
         // #################################################################################
 
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
@@ -83,7 +77,7 @@ describe("Compound strategy", () => {
         )) as MockCToken;
 
         // #################################################################################
-        // #####################         DAI / aDAI      ###################################
+        // #####################         DAI / aDAI      ###################################
         // #################################################################################
 
         const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");

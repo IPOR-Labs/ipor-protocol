@@ -12,7 +12,6 @@ describe("IporSwapLogic calculateQuasiInterestFloating", () => {
     before(async () => {
         const MockIporSwapLogic = await hre.ethers.getContractFactory("MockIporSwapLogic");
         iporSwapLogic = (await MockIporSwapLogic.deploy()) as MockIporSwapLogic;
-        iporSwapLogic.deployed();
     });
 
     it("Calculate Interest Floating Case", async () => {
