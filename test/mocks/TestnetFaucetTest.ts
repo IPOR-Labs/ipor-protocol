@@ -147,7 +147,7 @@ describe("TestnetFaucet", () => {
         expect(balanceAfter).to.be.equal(BigNumber.from("10000000000000001").mul(N1__0_18DEC));
     });
 
-    it("Should be able to add new asset", async () => {
+    it("Should be able to add new asset(WETH)", async () => {
         //    given
         const WethMockedToken = await hre.ethers.getContractFactory("WethMockedToken");
         const tokenWeth = (await WethMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18)) as WethMockedToken;
@@ -166,7 +166,7 @@ describe("TestnetFaucet", () => {
     });
 
 
-    it("Should be able to claim new asset", async () => {
+    it("Should be able to claim new asset(WETH)", async () => {
         //    given
         const WethMockedToken = await hre.ethers.getContractFactory("WethMockedToken");
         const tokenWeth = (await WethMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18)) as WethMockedToken;
