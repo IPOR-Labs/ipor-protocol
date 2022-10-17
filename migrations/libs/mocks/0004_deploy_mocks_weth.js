@@ -5,12 +5,12 @@ module.exports = async function (
     deployer,
     _network,
     addresses,
-    WethMockedToken
+    MockTestnetTokenWeth
 ) {
-    let stableTotalSupply18Decimals = "1000000000000000000000000000000";
+    const stableTotalSupply18Decimals = "1000000000000000000000000000000";
 
-    await deployer.deploy(WethMockedToken, stableTotalSupply18Decimals);
-    const mockedWeth = await WethMockedToken.deployed();
+    await deployer.deploy(MockTestnetTokenWeth, stableTotalSupply18Decimals);
+    const mockedWeth = await MockTestnetTokenWeth.deployed();
     await func.update(keys.WETH, mockedWeth.address);
 
 
