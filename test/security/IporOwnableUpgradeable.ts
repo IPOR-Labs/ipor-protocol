@@ -11,9 +11,11 @@ describe("IporOwnableUpgradeable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let iporOwnable: IporOwnableUpgradeable;
 
-    beforeEach(async () => {
+    before(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
+    })
 
+    beforeEach(async () => {
         const IporOwnableUpgradeable = await hre.ethers.getContractFactory(
             "MockIporOwnableUpgradeable"
         );
@@ -31,7 +33,7 @@ describe("IporOwnableUpgradeable", () => {
     it("Should deployer be owner of contract", async () => {
         // given
         // @ts-ignore
-        iporOwnable.initialize();
+        await iporOwnable.initialize();
         // when
         // then
         const owner = await iporOwnable.owner();
@@ -41,7 +43,7 @@ describe("IporOwnableUpgradeable", () => {
     it("Should not be possible to transfer 0x00 address", async () => {
         // given
         // @ts-ignore
-        iporOwnable.initialize();
+        await iporOwnable.initialize();
         // when
         await expect(
             iporOwnable.transferOwnership(constants.AddressZero),
@@ -52,7 +54,7 @@ describe("IporOwnableUpgradeable", () => {
     it("should not be possible to confirm the transfer ownership for different address", async () => {
         // given
         // @ts-ignore
-        iporOwnable.initialize();
+        await iporOwnable.initialize();
         await iporOwnable.transferOwnership(await userOne.getAddress());
         await expect(
             iporOwnable.connect(userTwo).confirmTransferOwnership(),
@@ -63,7 +65,7 @@ describe("IporOwnableUpgradeable", () => {
     it("Should be able to transfer ownership to userOne", async () => {
         // when
         // @ts-ignore
-        iporOwnable.initialize();
+        await iporOwnable.initialize();
         await iporOwnable.transferOwnership(await userOne.getAddress());
         await iporOwnable.connect(userOne).confirmTransferOwnership();
         // then

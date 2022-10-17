@@ -5,7 +5,6 @@ import { ItfIporOracle, MockCase8MiltonDai, MockSpreadModel } from "../../types"
 import {
     N1__0_18DEC,
     N0__01_18DEC,
-    N0__001_18DEC,
     USD_28_000_6DEC,
     USD_10_000_18DEC,
     ZERO,
@@ -379,7 +378,7 @@ describe("Milton - Should Not Open Position", () => {
 
     it("should NOT open position because Liquidity Pool balance is to low", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -450,6 +449,8 @@ describe("Milton - Should Not Open Position", () => {
             //then
             "IPOR_320"
         );
+        //Restore default value
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
     });
 
     it("should NOT open pay fixed position, DAI, leverage too low", async () => {
@@ -545,7 +546,7 @@ describe("Milton - Should Not Open Position", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
-        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
@@ -576,7 +577,7 @@ describe("Milton - Should Not Open Position", () => {
             [admin, userOne, userTwo, userThree, liquidityProvider],
             miltonSpreadModel
         );
-        const { tokenDai, josephDai, iporOracle, miltonDai, miltonStorageDai } = testData;
+        const { tokenDai, josephDai, miltonDai, miltonStorageDai } = testData;
         if (
             tokenDai === undefined ||
             josephDai === undefined ||
