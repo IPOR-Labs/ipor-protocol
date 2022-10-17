@@ -1,7 +1,7 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
-import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet } from "../../types";
+import { UsdtMockedToken, DaiMockedToken, UsdcMockedToken, TestnetFaucet, WethMockedToken } from "../../types";
 import {
     N1__0_18DEC,
     N1__0_6DEC,
@@ -145,5 +145,81 @@ describe("TestnetFaucet", () => {
 
         expect(balanceBefore).to.be.equal(BigNumber.from("10000000000000000").mul(N1__0_18DEC));
         expect(balanceAfter).to.be.equal(BigNumber.from("10000000000000001").mul(N1__0_18DEC));
+    });
+
+    it("Should be able to add new asset", async () => {
+        //    given
+        const WethMockedToken = await hre.ethers.getContractFactory("WethMockedToken");
+        const tokenWeth = (await WethMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18)) as WethMockedToken;
+        const isAssetActiveBefore = await testnetFaucet.isAssetActive(tokenWeth.address);
+
+        //    when
+        await testnetFaucet.addAsset(tokenWeth.address);
+
+        //    then
+
+        const isAssetActiveAfter = await testnetFaucet.isAssetActive(tokenWeth.address);
+
+        expect(isAssetActiveBefore).to.be.false;
+        expect(isAssetActiveAfter).to.be.true;
+
+    });
+
+
+    it("Should be able to claim new asset", async () => {
+        //    given
+        const WethMockedToken = await hre.ethers.getContractFactory("WethMockedToken");
+        const tokenWeth = (await WethMockedToken.deploy(TOTAL_SUPPLY_18_DECIMALS, 18)) as WethMockedToken;
+        await testnetFaucet.addAsset(tokenWeth.address);
+        await tokenWeth.setupInitialAmount(testnetFaucet.address, USER_SUPPLY_10MLN_18DEC);
+        const wethUserOneBalanceBefore = await tokenWeth.balanceOf(await userOne.getAddress());
+
+        //    when
+
+        await testnetFaucet.connect(userOne).claim();
+
+        //    then
+
+        const wethUserOneBalanceAfter = await tokenWeth.balanceOf(await userOne.getAddress());
+
+
+        expect(wethUserOneBalanceBefore).to.be.equal(ZERO)
+        expect(wethUserOneBalanceAfter).to.be.equal(N1__0_18DEC.mul(N10_000))
+
+    });
+
+    it("Should remove asset", async () => {
+        //    given
+        const isAssetActiveBefore = await testnetFaucet.isAssetActive(tokenDai.address);
+
+        //    when
+        await testnetFaucet.removeAsset(tokenDai.address);
+
+        //    then
+        const isAssetActiveAfter = await testnetFaucet.isAssetActive(tokenDai.address);
+
+        expect(isAssetActiveBefore).to.be.true;
+        expect(isAssetActiveAfter).to.be.false;
+
+    });
+
+    it("Should not transfer tokens when asset is removed", async () => {
+        //    given
+
+        await testnetFaucet.removeAsset(tokenDai.address);
+        const wethUserOneBalanceBefore = await tokenDai.balanceOf(await userOne.getAddress());
+
+        //    when
+
+        await testnetFaucet.connect(userOne).claim();
+
+        //    then
+
+        const wethUserOneBalanceAfter = await tokenDai.balanceOf(await userOne.getAddress());
+
+
+        expect(wethUserOneBalanceBefore).to.be.equal(ZERO);
+        expect(wethUserOneBalanceAfter).to.be.equal(ZERO);
+
     });
 });
