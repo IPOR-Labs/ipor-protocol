@@ -56,14 +56,16 @@ export default ({ drizzle, drizzleState }) => {
                         <th scope="col">USDT</th>
                         <th scope="col">USDC</th>
                         <th scope="col">DAI</th>
+                        <th scope="col">WETH</th>
                     </tr>
                     <tr>
                         <td>
                             <strong>ERC20 Token Address</strong>
                         </td>
-                        <td>{drizzle.contracts.DrizzleUsdt.address}</td>
-                        <td>{drizzle.contracts.DrizzleUsdc.address}</td>
-                        <td>{drizzle.contracts.DrizzleDai.address}</td>
+                        <td><small>{drizzle.contracts.DrizzleUsdt.address}</small></td>
+                        <td><small>{drizzle.contracts.DrizzleUsdc.address}</small></td>
+                        <td><small>{drizzle.contracts.DrizzleDai.address}</small></td>
+                        <td><small>{drizzle.contracts.DrizzleWeth.address}</small></td>
                     </tr>
                 </table>
             </div>

@@ -341,6 +341,13 @@ export default ({ drizzle, drizzleState }) => (
                 <td>NONE</td>
             </tr>
             <tr>
+                <td>WETH</td>
+                <td>{drizzle.contracts.DrizzleWeth.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
+            </tr>
+            <tr>
                 <td>ipUSDT</td>
                 <td>{drizzle.contracts.IpTokenUsdt.address}</td>
                 <td>
@@ -414,6 +421,32 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="IpTokenDai"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>ipWeth</td>
+                <td>{drizzle.contracts.IpTokenWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="IpTokenWeth"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="IpTokenWeth"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="IpTokenWeth"
                         method="confirmTransferOwnership"
                     />
                 </td>
