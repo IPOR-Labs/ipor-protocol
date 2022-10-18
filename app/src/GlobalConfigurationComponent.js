@@ -108,6 +108,18 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
+                <td>MiltonStorageWeth</td>
+                <td>{drizzle.contracts.MiltonStorageWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
+                        method="getVersion"
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>JosephUsdt</td>
                 <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
@@ -635,6 +647,32 @@ export default ({ drizzle, drizzleState }) => (
                     />
                 </td>
             </tr>
+            <tr>
+                <td>Milton Spread Model WETH</td>
+                <td>{drizzle.contracts.MiltonSpreadModelWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonSpreadModelWeth"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonSpreadModelWeth"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonSpreadModelWeth"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
 
             <tr>
                 <td>MiltonUsdt</td>
@@ -945,6 +983,32 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="MiltonStorageDai"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>MiltonStorageWeth</td>
+                <td>{drizzle.contracts.MiltonStorageWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageWeth"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="MiltonStorageWeth"
                         method="confirmTransferOwnership"
                     />
                 </td>

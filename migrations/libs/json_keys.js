@@ -34,6 +34,8 @@ module.exports = {
     MiltonStorageImplUsdc: "MiltonStorageImplUsdc",
     MiltonStorageProxyDai: "MiltonStorageProxyDai",
     MiltonStorageImplDai: "MiltonStorageImplDai",
+    MiltonStorageProxyWeth: "MiltonStorageProxyWeth",
+    MiltonStorageImplWeth: "MiltonStorageImplWeth",
     AaveStrategyProxyUsdt: "AaveStrategyProxyUsdt",
     AaveStrategyImplUsdt: "AaveStrategyImplUsdt",
     AaveStrategyProxyUsdc: "AaveStrategyProxyUsdc",

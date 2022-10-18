@@ -18,6 +18,7 @@ import IporOracle from "./contracts/IporOracle.json";
 import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
 import MiltonStorageDai from "./contracts/MiltonStorageDai.json";
+import MiltonStorageWeth from "./contracts/MiltonStorageWeth.json";
 
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
@@ -234,6 +235,7 @@ let options = {
         MiltonStorageUsdt,
         MiltonStorageUsdc,
         MiltonStorageDai,
+        MiltonStorageWeth,
 
         DrizzleMiltonUsdt,
         DrizzleMiltonUsdc,

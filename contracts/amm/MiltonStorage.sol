@@ -963,3 +963,5 @@ contract MiltonStorageUsdt is MiltonStorage {}
 contract MiltonStorageUsdc is MiltonStorage {}
 
 contract MiltonStorageDai is MiltonStorage {}
+
+contract MiltonStorageWeth is MiltonStorage {}
