@@ -71,6 +71,20 @@ contract CockpitDataProvider is
         return 2;
     }
 
+    function addAsset(address asset) external {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        _assets.push(asset);
+
+//        TODO: ADD new configuration
+//        _assetConfig[asset] = CockpitTypes.AssetConfig(
+//            miltons[i],
+//            miltonStorages[i],
+//            josephs[i],
+//            ipTokens[i],
+//            ivTokens[i]
+//        );
+    }
+
     function getIndexes() external view override returns (CockpitTypes.IporFront[] memory) {
         CockpitTypes.IporFront[] memory indexes = new CockpitTypes.IporFront[](_assets.length);
 
