@@ -123,6 +123,7 @@ export const prepareTestData = async (
     let stanleyUsdt: MockStanley | undefined;
     let stanleyUsdc: MockStanley | undefined;
     let stanleyDai: MockStanley | undefined;
+
     const IpToken = await ethers.getContractFactory("IpToken");
     const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
     const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
@@ -133,6 +134,7 @@ export const prepareTestData = async (
     const lastUpdateTimestamps: BigNumber[] = [];
     const exponentialMovingAverages: BigNumber[] = [];
     const exponentialWeightedMovingVariances: BigNumber[] = [];
+
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
             tokenUsdt = (await UsdtMockedToken.deploy(
@@ -172,6 +174,7 @@ export const prepareTestData = async (
             exponentialMovingAverages.push(TC_DEFAULT_EMA_18DEC);
         }
     }
+
     const iporOracle =
         iporOracleOption ||
         (await prepareIporOracle(
@@ -181,6 +184,7 @@ export const prepareTestData = async (
             exponentialMovingAverages,
             exponentialWeightedMovingVariances
         ));
+
     if (tokenUsdt) {
         stanleyUsdt = await getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
         ipTokenUsdt = (await IpToken.deploy("IP USDT", "ipUSDT", tokenUsdt.address)) as IpToken;
@@ -296,6 +300,7 @@ export const prepareTestData = async (
         miltonStorageDai = (await upgrades.deployProxy(MiltonStorage, [], {
             kind: "uups",
         })) as MiltonStorage;
+
         const MiltonDAI = await ethers.getContractFactory(miltonDaiCase);
         miltonDai = (await upgrades.deployProxy(
             MiltonDAI,

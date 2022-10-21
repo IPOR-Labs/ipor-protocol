@@ -1,4 +1,5 @@
 import hre, { upgrades } from "hardhat";
+const keccak256 = require("keccak256");
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
@@ -119,6 +120,7 @@ describe("Stanley -> StrategyChanged", () => {
 
         it("Should not setup new strategy when pass zero address", async () => {
             //given
+            const NewStrategyAave = await hre.ethers.getContractFactory("MockStrategy");
             await expect(
                 //when
                 stanley.setStrategyAave(constants.AddressZero)

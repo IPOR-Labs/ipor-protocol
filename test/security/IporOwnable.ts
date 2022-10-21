@@ -11,11 +11,9 @@ describe("IporOwnable", () => {
     let admin: Signer, userOne: Signer, userTwo: Signer;
     let iporOwnable: IporOwnable;
 
-    before(async () => {
-        [admin, userOne, userTwo] = await hre.ethers.getSigners();
-    })
-
     beforeEach(async () => {
+        [admin, userOne, userTwo] = await hre.ethers.getSigners();
+
         const IporOwnable = await hre.ethers.getContractFactory("IporOwnable");
         iporOwnable = await IporOwnable.deploy();
     });

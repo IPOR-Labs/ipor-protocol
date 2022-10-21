@@ -1,4 +1,5 @@
 import hre, { upgrades } from "hardhat";
+const keccak256 = require("keccak256");
 import chai from "chai";
 import { BigNumber, Signer, constants } from "ethers";
 import { solidity } from "ethereum-waffle";
@@ -248,6 +249,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        // stanley.setMilton(await userOne.getAddress());
         //when
         await stanley.pause();
         //then
@@ -298,6 +300,7 @@ describe("Stanley -> constructor", () => {
             "IVT",
             USDt.address
         )) as IvToken;
+        ivTokenUsdt;
         await USDt.setDecimals(BigNumber.from("6"));
         const StrategyAave = await hre.ethers.getContractFactory("MockStrategy");
         const strategyAaveUsdt = (await StrategyAave.deploy()) as MockStrategy;

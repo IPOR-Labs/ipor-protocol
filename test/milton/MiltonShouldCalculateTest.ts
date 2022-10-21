@@ -16,7 +16,7 @@ import {
     PERCENTAGE_5_18DEC,
     PERCENTAGE_120_18DEC,
     PERIOD_50_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS, N0__1_18DEC,
+    PERIOD_14_DAYS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     MiltonUsdcCase,
@@ -50,9 +50,6 @@ describe("Milton should calculate income - Core", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-    });
-
-    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(
             BigNumber.from(4).mul(N0__01_18DEC),
             BigNumber.from("2").mul(N0__01_18DEC),
@@ -62,9 +59,9 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee 5%, receive fixed, not owner, Milton loses, user earns, |I| < D", async () => {
-        const quote = N0__1_18DEC
+        const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -130,7 +127,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 5%, pay fixed, Milton loses, user earns, |I| > D", async () => {
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -197,7 +194,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 5%, pay fixed, Milton earns, user loses, |I| < D", async () => {
         const quote = BigNumber.from("121").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -261,7 +258,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 5%, receive fixed, Milton earns, user loses, |I| > D", async () => {
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -324,7 +321,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 100%, receive fixed, Milton loses, user earns, |I| < D, after maturity", async () => {
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -388,7 +385,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 100%, pay fixed, Milton loses, user earns, |I| > D, before maturity", async () => {
         const quote = BigNumber.from("6").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -454,7 +451,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 100%, pay fixed, Milton earns, user loses, |I| < D, before maturity", async () => {
         const quote = BigNumber.from("121").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -518,7 +515,7 @@ describe("Milton should calculate income - Core", () => {
     it("should calculate income fee 100%, receive fixed, Milton earns, user loses, |I| > D, after maturity", async () => {
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -580,7 +577,7 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate Pay Fixed Position Value - simple case 1", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
 
         //given
         const testData = await prepareComplexTestDataDaiCase000(

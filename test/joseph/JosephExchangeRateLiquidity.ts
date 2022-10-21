@@ -300,7 +300,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         const actualLiquidityPoolBalance = balance.liquidityPool;
 
         //when
-        const actualExchangeRate = await josephDai.itfCalculateExchangeRate(params.openTimestamp);
+        let actualExchangeRate = await josephDai.itfCalculateExchangeRate(params.openTimestamp);
         //then
         expect(expectedIpTokenDaiBalance).to.be.equal(actualIpTokenDaiBalance);
         expect(actualLiquidityPoolBalance).to.be.gte(ZERO);

@@ -1,4 +1,5 @@
 import hre, { upgrades } from "hardhat";
+const keccak256 = require("keccak256");
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";

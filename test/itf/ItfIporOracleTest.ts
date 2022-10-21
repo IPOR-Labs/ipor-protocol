@@ -25,7 +25,7 @@ describe("ItfIporOracle", () => {
         userThree: Signer,
         liquidityProvider: Signer;
 
-    beforeEach(async () => {
+    before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
         miltonSpreadModel = (await prepareMockSpreadModel(
             ZERO,
@@ -33,6 +33,9 @@ describe("ItfIporOracle", () => {
             ZERO,
             ZERO
         )) as MockSpreadModel;
+    });
+
+    beforeEach(async () => {
         const testData = (await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree],

@@ -1,6 +1,6 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
-import { BigNumber, Signer } from "ethers";
+import { BigNumber, Signer, constants } from "ethers";
 import {
     UsdtMockedToken,
     DaiMockedToken,
@@ -17,6 +17,7 @@ import {
     TOTAL_SUPPLY_6_DECIMALS,
     USER_SUPPLY_10MLN_18DEC,
     USER_SUPPLY_6_DECIMALS,
+    ZERO,
 } from "../utils/Constants";
 
 const { expect } = chai;
@@ -29,6 +30,7 @@ describe("MockStrategyTestnet Aave / Compound", () => {
     let strategyDai: MockTestnetStrategyAaveDai;
     let strategyUsdc: MockTestnetStrategyAaveUsdc;
     let strategyUsdt: MockTestnetStrategyAaveUsdt;
+    const N100_000 = BigNumber.from("100000");
     const N10_000 = BigNumber.from("10000");
     const yearInSeconds = 31536000;
 
@@ -66,23 +68,23 @@ describe("MockStrategyTestnet Aave / Compound", () => {
             tokenUsdc.address,
             shareToken6DEC.address,
         ])) as MockTestnetStrategyAaveUsdc;
-        await strategyUsdc.setStanley(adminAddress);
+        strategyUsdc.setStanley(adminAddress);
         strategyUsdt = (await upgrades.deployProxy(MockStrategyTestnetFactory, [
             tokenUsdt.address,
             shareToken18DEC.address,
         ])) as MockTestnetStrategyAaveUsdt;
-        await strategyUsdt.setStanley(adminAddress);
+        strategyUsdt.setStanley(adminAddress);
 
         await tokenDai.approve(strategyDai.address, TOTAL_SUPPLY_18_DECIMALS);
         await tokenUsdc.approve(strategyUsdc.address, TOTAL_SUPPLY_6_DECIMALS);
         await tokenUsdt.approve(strategyUsdt.address, TOTAL_SUPPLY_6_DECIMALS);
 
-        await tokenDai.setupInitialAmount(strategyDai.address, USER_SUPPLY_10MLN_18DEC);
-        await tokenUsdc.setupInitialAmount(strategyUsdc.address, USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(strategyUsdt.address, USER_SUPPLY_6_DECIMALS);
-        await tokenDai.setupInitialAmount(adminAddress, USER_SUPPLY_10MLN_18DEC);
-        await tokenUsdc.setupInitialAmount(adminAddress, USER_SUPPLY_6_DECIMALS);
-        await tokenUsdt.setupInitialAmount(adminAddress, USER_SUPPLY_6_DECIMALS);
+        tokenDai.setupInitialAmount(strategyDai.address, USER_SUPPLY_10MLN_18DEC);
+        tokenUsdc.setupInitialAmount(strategyUsdc.address, USER_SUPPLY_6_DECIMALS);
+        tokenUsdt.setupInitialAmount(strategyUsdt.address, USER_SUPPLY_6_DECIMALS);
+        tokenDai.setupInitialAmount(adminAddress, USER_SUPPLY_10MLN_18DEC);
+        tokenUsdc.setupInitialAmount(adminAddress, USER_SUPPLY_6_DECIMALS);
+        tokenUsdt.setupInitialAmount(adminAddress, USER_SUPPLY_6_DECIMALS);
     });
 
     it("Should return 3.5% APR", async () => {

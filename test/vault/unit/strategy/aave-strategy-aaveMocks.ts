@@ -1,7 +1,9 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
-import { BigNumber, Signer } from "ethers";
+const keccak256 = require("keccak256");
+import { constants, BigNumber, Signer } from "ethers";
 
+const { MaxUint256 } = constants;
 import { solidity } from "ethereum-waffle";
 import {
     StrategyAave,
@@ -46,7 +48,7 @@ describe("AAVE strategy", () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
         // #################################################################################
-        // #####################        USDC / aUSDC     ###################################
+        // #####################        USDC / aUSDC     ###################################
         // #################################################################################
 
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");
@@ -55,7 +57,7 @@ describe("AAVE strategy", () => {
         aUSDC = (await AUSDCFactory.deploy()) as ERC20;
 
         // #################################################################################
-        // #####################        USDT / aUSDT     ###################################
+        // #####################        USDT / aUSDT     ###################################
         // #################################################################################
 
         const UsdtMockedToken = await hre.ethers.getContractFactory("UsdtMockedToken");
@@ -64,7 +66,7 @@ describe("AAVE strategy", () => {
         aUSDT = (await AUSDTFactory.deploy()) as ERC20;
 
         // #################################################################################
-        // #####################         DAI / aDAI      ###################################
+        // #####################         DAI / aDAI      ###################################
         // #################################################################################
 
         const DAIFactory = await hre.ethers.getContractFactory("DaiMockedToken");
@@ -80,7 +82,7 @@ describe("AAVE strategy", () => {
         await AAVE.deployed();
 
         // #################################################################################
-        // #####################         AAVE MOCK       ###################################
+        // #####################         AAVE MOCK       ###################################
         // #################################################################################
 
         const MockLendingPoolAave = await hre.ethers.getContractFactory("MockLendingPoolAave");
@@ -110,7 +112,7 @@ describe("AAVE strategy", () => {
         )) as MockAaveIncentivesController;
 
         // #################################################################################
-        // #####################         AAVE Strategy   ###################################
+        // #####################         AAVE Strategy   ###################################
         // #################################################################################
 
         const StrategyAaveInstance = await hre.ethers.getContractFactory("StrategyAave");

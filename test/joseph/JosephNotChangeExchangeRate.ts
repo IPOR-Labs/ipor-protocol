@@ -312,10 +312,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .connect(userThree)
             .itfRedeem(BigNumber.from("874999999999999999854"), params.openTimestamp);
 
-        const actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
+        let actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
             await userThree.getAddress()
         );
-        const actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
+        let actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
         //then
         expect(
             expectedIpTokenBalanceForUserThree,
@@ -413,10 +413,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .connect(userThree)
             .itfRedeem(BigNumber.from("871111000099999999854"), params.openTimestamp);
 
-        const actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
+        let actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
             await userThree.getAddress()
         );
-        const actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
+        let actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
         //then
         expect(
             expectedIpTokenBalanceForUserThree,
@@ -514,10 +514,10 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             .connect(userThree)
             .itfRedeem(BigNumber.from("871110090000000999854"), params.openTimestamp);
 
-        const actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
+        let actualIpTokenBalanceForUserThree = await ipTokenUsdt.balanceOf(
             await userThree.getAddress()
         );
-        const actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
+        let actualExchangeRate = await josephUsdt.itfCalculateExchangeRate(params.openTimestamp);
         //then
         expect(
             expectedIpTokenBalanceForUserThree,

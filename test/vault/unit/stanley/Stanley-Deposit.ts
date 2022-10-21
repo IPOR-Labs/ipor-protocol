@@ -1,5 +1,6 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
+const keccak256 = require("keccak256");
 import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
@@ -78,6 +79,7 @@ describe("Stanley -> Deposit", () => {
         aDAI = (await MockADAIFactory.deploy(DAI.address, await admin.getAddress())) as MockADAI;
         DAI.mint(aDAI.address, one.mul(10000));
         AAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
+        const stkAAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolProvider"
         );
@@ -223,6 +225,7 @@ describe("Stanley -> Deposit", () => {
         //given
         const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
+        // await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when

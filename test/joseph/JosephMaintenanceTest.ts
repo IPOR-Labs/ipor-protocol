@@ -609,6 +609,8 @@ describe("Joseph Maintenance", () => {
 
     it("should not change milton Stanley Balance Ratio when new ratio = 0", async () => {
         //given
+        const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
+
         const { josephDai } = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -637,6 +639,8 @@ describe("Joseph Maintenance", () => {
 
     it("should not change milton Stanley Balance Ratio when new ratio >= 1", async () => {
         //given
+        const newRatio = BigNumber.from("50").mul(N0__01_18DEC);
+
         const { josephDai } = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

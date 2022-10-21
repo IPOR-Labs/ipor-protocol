@@ -224,7 +224,6 @@ describe("Milton Maintenance", () => {
         await miltonDai.connect(admin).pause();
 
         //then
-        const miltonIsPause = await miltonDai.paused();
         await miltonDai.connect(userOne).getVersion();
         await miltonDai.connect(userOne).getAccruedBalance();
         await miltonDai.connect(userOne).calculateSpread();
@@ -244,7 +243,6 @@ describe("Milton Maintenance", () => {
         await miltonDai.connect(userOne).getMaxLeverage();
         await miltonDai.connect(userOne).getMinLeverage();
         await miltonDai.connect(userOne).getJoseph();
-        expect(miltonIsPause).to.be.true;
     });
 
     it("should NOT pause Smart Contract, sender is NOT an admin", async () => {

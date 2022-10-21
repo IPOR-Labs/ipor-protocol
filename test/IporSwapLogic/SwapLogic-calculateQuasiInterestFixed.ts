@@ -17,6 +17,7 @@ describe("IporSwapLogic calculateQuasiInterestFixed", () => {
     before(async () => {
         const MockIporSwapLogic = await hre.ethers.getContractFactory("MockIporSwapLogic");
         iporSwapLogic = (await MockIporSwapLogic.deploy()) as MockIporSwapLogic;
+        iporSwapLogic.deployed();
     });
 
     it("Calculate Interest Fixed Case 1", async () => {

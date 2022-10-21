@@ -54,8 +54,6 @@ describe("Milton SOAP", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-    });
-    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
@@ -103,8 +101,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, pay fixed, add position, calculate now", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
-        const testData = await prepareTestData(
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        let testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -173,7 +171,7 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, pay fixed, add position, calculate after 25 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -244,8 +242,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, rec fixed, add position, calculate now", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -316,8 +314,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, rec fixed, add position, calculate after 25 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -387,8 +385,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, pay fixed, add and remove position", async () => {
         // given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -465,8 +463,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI, rec fixed, add and remove position", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -525,7 +523,7 @@ describe("Milton SOAP", () => {
         await openSwapReceiveFixed(testData, derivativeParams);
 
         const expectedSoap = ZERO;
-        const endTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        let endTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //we expecting that Milton loose his money, so we add some cash to liquidity pool
         await josephDai
@@ -546,9 +544,9 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, 18 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
-        const testData = await prepareTestData(
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        let testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -580,9 +578,9 @@ describe("Milton SOAP", () => {
             return;
         }
 
-        const openerUser = userTwo;
-        const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
-        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        let openerUser = userTwo;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const firstDerivativeParams = {
             asset: tokenDai.address,
@@ -626,8 +624,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, USDT add pay fixed, USDT add rec fixed, 6 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -661,9 +659,9 @@ describe("Milton SOAP", () => {
             tokenUsdt
         );
 
-        const openerUser = userTwo;
-        const iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
-        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        let openerUser = userTwo;
+        let iporValueBeforOpenSwap = PERCENTAGE_3_18DEC;
+        let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const firstDerivativeParams = {
             asset: tokenUsdt.address,
@@ -707,9 +705,9 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, USDT add pay fixed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(ZERO);
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
-        const testData = await prepareTestData(
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        let testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI", "USDT"],
@@ -757,12 +755,12 @@ describe("Milton SOAP", () => {
             tokenUsdt
         );
 
-        const openerUser = userTwo;
+        let openerUser = userTwo;
 
-        const iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
-        const iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapDAI = PERCENTAGE_3_18DEC;
+        let iporValueBeforOpenSwapUSDT = PERCENTAGE_3_18DEC;
 
-        const openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
+        let openTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         const derivativeDAIParams = {
             asset: tokenDai.address,
@@ -807,9 +805,9 @@ describe("Milton SOAP", () => {
         await openSwapPayFixed(testData, derivativeUSDTParams);
 
         //then
-        const expectedDAISoap = BigNumber.from("-68267191075554066594");
+        let expectedDAISoap = BigNumber.from("-68267191075554066594");
 
-        const expectedUSDTSoap = BigNumber.from("-68267191075554066594");
+        let expectedUSDTSoap = BigNumber.from("-68267191075554066594");
 
         const soapDAIParams = {
             asset: tokenDai.address,
@@ -830,8 +828,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, close rec fixed position", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -915,9 +913,9 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, DAI add rec fixed, remove pay fixed position after 25 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
-        const testData = await prepareTestData(
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        let testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
             ["DAI"],
@@ -980,7 +978,7 @@ describe("Milton SOAP", () => {
         await openSwapPayFixed(testData, payFixDerivativeParams);
         await openSwapReceiveFixed(testData, recFixDerivativeParams);
 
-        const endTimestamp = recFixDerivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        let endTimestamp = recFixDerivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
         await miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
@@ -1000,8 +998,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, USDT add rec fixed, remove rec fixed position after 25 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1108,7 +1106,7 @@ describe("Milton SOAP", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_10_000_6DEC, openTimestamp);
 
-        const endTimestamp = recFixDerivativeUSDTParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        let endTimestamp = recFixDerivativeUSDTParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
         await miltonUsdt.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
@@ -1128,8 +1126,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 18 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
 
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1177,7 +1175,7 @@ describe("Milton SOAP", () => {
             from: openerUser,
         };
 
-        const calculationTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        let calculationTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephDai
             .connect(liquidityProvider)
@@ -1218,8 +1216,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, USDT add pay fixed, change ibtPrice, wait 25 days and then calculate soap, 6 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1308,8 +1306,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, change ibtPrice, calculate soap after 28 days and after 50 days and compare", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1356,11 +1354,11 @@ describe("Milton SOAP", () => {
             from: openerUser,
         };
 
-        const calculationTimestamp25days =
+        let calculationTimestamp25days =
             derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
-        const calculationTimestamp28days =
+        let calculationTimestamp28days =
             derivativeParams.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams.openTimestamp.add(PERIOD_50_DAYS_IN_SECONDS);
 
         await josephDai
@@ -1409,8 +1407,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, wait 25 days, DAI add pay fixed, wait 25 days and then calculate soap", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1498,8 +1496,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed, wait 25 days, update IPOR and DAI add pay fixed, wait 25 days update IPOR and then calculate soap", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1552,7 +1550,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
         await josephDai
             .connect(liquidityProvider)
@@ -1597,8 +1595,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate EXACTLY the same SOAP with and without update IPOR Index with the same indexValue, DAI add pay fixed, 25 and 50 days period", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1711,8 +1709,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate NEGATIVE SOAP, DAI add pay fixed, wait 25 days, update ibtPrice after swap opened, soap should be negative right after opened position and updated ibtPrice", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1806,8 +1804,8 @@ describe("Milton SOAP", () => {
 
     it("should calculate soap, DAI add pay fixed x2, wait 50 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1905,8 +1903,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, DAI, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, complex total amounts", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1951,7 +1949,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
@@ -2015,8 +2013,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, DAI, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, simple total amounts", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2061,7 +2059,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1040000000000000000000"),
@@ -2125,8 +2123,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, DAI, IPOR 6%, open PayFixed, IPOR 3% after 25 days, open PayFixed, IPOR 3% after 50 days, close all swaps after 75 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("7").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("7").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2171,7 +2169,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("41683900567904584"));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("41683900567904584"));
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
@@ -2235,8 +2233,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, DAI, IPOR 3%, open ReceiveFixed, IPOR 5% after 25 days, open ReceiveFixed, IPOR 6% after 50 days, close all swaps after 75 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2281,7 +2279,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("38877399621396944"));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("38877399621396944"));
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
@@ -2290,7 +2288,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephDai
@@ -2345,8 +2343,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, DAI, IPOR 6%, open ReceiveFixed, IPOR 3% after 25 days, open ReceiveFixed, IPOR 3% after 50 days, close all swaps after 75 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("5").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("5").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2391,7 +2389,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const derivativeParams25days = {
             asset: tokenDai.address,
             totalAmount: BigNumber.from("1492747383748202058744"),
@@ -2400,7 +2398,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephDai
@@ -2455,8 +2453,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, USDT, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, simple total amounts", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2502,7 +2500,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const derivativeParams25days = {
             asset: tokenUsdt.address,
             totalAmount: BigNumber.from("1040000000"),
@@ -2511,7 +2509,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephUsdt
@@ -2566,8 +2564,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, USDT, IPOR 3%, open PayFixed, IPOR 5% after 25 days, open PayFixed, IPOR 6% after 50 days, close all swaps after 75 days, complex total amounts", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2612,7 +2610,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const derivativeParams25days = {
             asset: tokenUsdt.address,
             totalAmount: BigNumber.from("1492747383"),
@@ -2621,7 +2619,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephUsdt
@@ -2676,8 +2674,8 @@ describe("Milton SOAP", () => {
 
     it("[!] should calculate soap = 0, USDT, IPOR 3%, open ReceiveFixed, IPOR 5% after 25 days, open ReceiveFixed, IPOR 6% after 50 days, close all swaps after 75 days", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("0").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2723,7 +2721,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp,
             from: openerUser,
         };
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("38877399621396944"));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("38877399621396944"));
         const derivativeParams25days = {
             asset: tokenUsdt.address,
             totalAmount: BigNumber.from("1492747383"),
@@ -2732,7 +2730,7 @@ describe("Milton SOAP", () => {
             openTimestamp: openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS),
             from: openerUser,
         };
-        const calculationTimestamp50days =
+        let calculationTimestamp50days =
             derivativeParams25days.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await josephUsdt

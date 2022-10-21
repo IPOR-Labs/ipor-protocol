@@ -1,11 +1,13 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
+import { MockBaseMiltonSpreadModelDai } from "../../types";
+import { prepareMockMiltonSpreadModelDai, prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
 
 const { expect } = chai;
 
 describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", () => {
+    let miltonSpreadModel: MockBaseMiltonSpreadModelDai;
     let admin: Signer,
         userOne: Signer,
         userTwo: Signer,
@@ -16,6 +18,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
+        miltonSpreadModel = await prepareMockMiltonSpreadModelDai();
     });
 
     it("should calculate spread - Volatility And Mean Reversion - Pay Fixed - Simple Case 1", async () => {

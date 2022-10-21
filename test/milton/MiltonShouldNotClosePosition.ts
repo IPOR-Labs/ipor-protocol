@@ -59,15 +59,12 @@ describe("Milton - not close position", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-    });
-
-    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should NOT close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -115,7 +112,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, not owner, pay fixed, Milton lost, User earned < Collateral, 7 hours before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -163,7 +160,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, not owner, pay fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("121").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -212,7 +209,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -261,7 +258,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, 7 hours before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("119").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -310,7 +307,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, before maturity", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -358,7 +355,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, because incorrect swap Id", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -409,7 +406,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, because swap has incorrect status - pay fixed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -475,7 +472,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, because swap has incorrect status - receive fixed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -566,7 +563,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, pay fixed, single id function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -624,7 +621,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, pay fixed, multiple ids function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -682,7 +679,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, receive fixed, single id function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -740,7 +737,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, receive fixed, multiple ids function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -798,7 +795,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, pay fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -856,7 +853,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, pay fixed, single id emergency function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -914,7 +911,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, receive fixed, multiple ids emergency function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -971,7 +968,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position, receive fixed, single id emergency function, DAI, when contract is paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1029,7 +1026,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1087,7 +1084,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position by owner, pay fixed, single id emergency function, DAI, when contract is not paused", async () => {
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1145,7 +1142,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position by owner, receive fixed, multiple ids emergency function, DAI, when contract is not paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1203,7 +1200,7 @@ describe("Milton - not close position", () => {
     });
 
     it("should NOT close position by owner, receive fixed, single id emergency function, DAI, when contract is not paused", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1262,7 +1259,7 @@ describe("Milton - not close position", () => {
 
     it("should NOT close position, DAI, when ERC20: amount exceeds balance milton on DAI token", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1298,6 +1295,7 @@ describe("Milton - not close position", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
 
+        // await miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp);
         await hre.network.provider.send("hardhat_setBalance", [
             miltonDai.address,
             "0x500000000000000000000",

@@ -28,7 +28,7 @@ describe("#AmMath division", () => {
         { numerator: "100", denominator: "2", result: "50" },
     ];
 
-    before(async () => {
+    beforeEach(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
         const AmMathMock = await hre.ethers.getContractFactory("MockIporMath");
         amMath = await AmMathMock.deploy();
@@ -39,7 +39,7 @@ describe("#AmMath division", () => {
             //when
             amMath.division(BigNumber.from("1"), BigNumber.from("0"))
             //then
-        ).to.reverted;
+        ).to.revertedWith("Division or modulo division by zero");
     });
 
     itParam(
@@ -58,14 +58,14 @@ describe("#AmMath division", () => {
         }
     );
 
-    it("Should add extra zeros when convert to asset decimals", async () => {
+    it("Should add extra zeros wken convert to asset decimals", async () => {
         // when
         const result = await amMath.convertWadToAssetDecimals(N1__0_18DEC, BigNumber.from("20"));
         // then
         expect(result).to.be.equal(N1__0_18DEC.mul(BigNumber.from("100")));
     });
 
-    it("Should add extra zeros when convert to asset decimals", async () => {
+    it("Should add extra zeros wken convert to asset decimals", async () => {
         // when
         const result = await amMath.convertToWad(N1__0_18DEC, BigNumber.from("20"));
         // then

@@ -24,11 +24,10 @@ describe("Joseph Treasury", () => {
         userThree: Signer,
         liquidityProvider: Signer;
 
-
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
         miltonSpreadModel = await prepareMockSpreadModel(
-            BigNumber.from("4").mul(N0__01_18DEC),
+            BigNumber.from(4).mul(N0__01_18DEC),
             BigNumber.from("2").mul(N0__01_18DEC),
             ZERO,
             ZERO
@@ -396,7 +395,7 @@ describe("Joseph Treasury", () => {
         );
 
         const { josephDai, ipTokenDai, tokenDai, miltonDai } = testData;
-        if(
+        if (
             josephDai === undefined ||
             ipTokenDai === undefined ||
             tokenDai == undefined ||

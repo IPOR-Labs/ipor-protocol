@@ -26,6 +26,7 @@ describe("IporLogic", () => {
         [admin] = await hre.ethers.getSigners();
         const MockIporLogic = await hre.ethers.getContractFactory("MockIporLogic");
         iporLogic = (await MockIporLogic.deploy()) as MockIporLogic;
+        await iporLogic.deployed();
     });
 
     it("Should accrue Ibt Price Decimals 18", async () => {

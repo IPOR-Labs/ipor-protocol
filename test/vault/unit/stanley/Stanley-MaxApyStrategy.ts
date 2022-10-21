@@ -1,9 +1,10 @@
 import hre, { upgrades } from "hardhat";
+const keccak256 = require("keccak256");
 import chai from "chai";
 import { BigNumber, Signer } from "ethers";
 import { solidity } from "ethereum-waffle";
 
-import { MockStrategy, ItfStanleyDai, TestERC20 } from "../../../../types";
+import { MockStrategy, ItfStanleyDai, TestERC20, MockCDAI } from "../../../../types";
 
 chai.use(solidity);
 const { expect } = chai;

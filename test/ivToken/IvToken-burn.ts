@@ -45,12 +45,12 @@ describe("#IvToken burn function tests", () => {
     it("should not be able to burn when pass zero address", async () => {
         //given
         const mockIporVaultAddress = await userOne.getAddress();
-        const amount = N1__0_18DEC;
+        const amount = ZERO;
 
         await ivToken.setStanley(mockIporVaultAddress);
         await expect(
             //when
-            ivToken.connect(userOne).burn(constants.AddressZero, amount)
+            ivToken.connect(userOne).burn(constants.AddressZero, N1__0_18DEC)
             //then
         ).to.be.revertedWith("ERC20: burn from the zero address");
     });
