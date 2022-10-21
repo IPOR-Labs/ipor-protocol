@@ -84,11 +84,3 @@ contract IpTokenDai is IpToken {
         address asset
     ) IpToken(name, symbol, asset) {}
 }
-
-contract IpTokenWeth is IpToken {
-    constructor(
-        string memory name,
-        string memory symbol,
-        address asset
-    ) IpToken(name, symbol, asset) {}
-}

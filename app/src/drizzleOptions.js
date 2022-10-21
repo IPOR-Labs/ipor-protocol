@@ -3,7 +3,6 @@ import Migrations from "./contracts/Migrations.json";
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
 import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
 import IpTokenDai from "./contracts/IpTokenDai.json";
-import IpTokenWeth from "./contracts/IpTokenWeth.json";
 
 import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
 import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
@@ -58,7 +57,6 @@ import MockTestnetShareTokenCompoundDai from "./contracts/MockTestnetShareTokenC
 import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
 import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
 import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
-import MockTestnetTokenWeth from "./contracts/MockTestnetTokenWeth.json";
 
 import StrategyAaveUsdt from "./contracts/StrategyAaveUsdt.json";
 import StrategyAaveUsdc from "./contracts/StrategyAaveUsdc.json";
@@ -91,7 +89,6 @@ const addresses = require("./" + process.env.REACT_APP_ENV_PROFILE + "-docker-ip
 const DrizzleUsdt = MockTestnetTokenUsdt;
 const DrizzleUsdc = MockTestnetTokenUsdc;
 const DrizzleDai = MockTestnetTokenDai;
-const DrizzleWeth = MockTestnetTokenWeth;
 
 let DrizzleIporOracle;
 let DrizzleMiltonUsdt;
@@ -124,7 +121,6 @@ if (process.env.REACT_APP_ENV_PROFILE === "mainnet.ipor.io") {
     DrizzleUsdt.networks[networkId] = {address: addresses.USDT};
     DrizzleUsdc.networks[networkId] = {address: addresses.USDC};
     DrizzleDai.networks[networkId] = {address: addresses.DAI};
-    DrizzleWeth.networks[networkId] = {address: addresses.WETH};
     DrizzleShareTokenAaveUsdt.networks[networkId] = {address: addresses.aUSDT};
     DrizzleShareTokenAaveUsdc.networks[networkId] = {address: addresses.aUSDC};
     DrizzleShareTokenAaveDai.networks[networkId] = {address: addresses.aDAI};
@@ -178,7 +174,6 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
 DrizzleUsdt.contractName = "DrizzleUsdt";
 DrizzleUsdc.contractName = "DrizzleUsdc";
 DrizzleDai.contractName = "DrizzleDai";
-DrizzleWeth.contractName = "DrizzleWeth";
 
 DrizzleIporOracle.contractName = "DrizzleIporOracle";
 DrizzleMiltonUsdt.contractName = "DrizzleMiltonUsdt";
@@ -214,12 +209,10 @@ let options = {
         DrizzleUsdt,
         DrizzleUsdc,
         DrizzleDai,
-        DrizzleWeth,
 
         IpTokenUsdt,
         IpTokenUsdc,
         IpTokenDai,
-        IpTokenWeth,
         IvTokenUsdt,
         IvTokenUsdc,
         IvTokenDai,
