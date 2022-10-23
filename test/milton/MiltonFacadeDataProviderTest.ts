@@ -1,7 +1,7 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { MockSpreadModel } from "../../types";
+import {WethMockedToken, MockSpreadModel, MiltonStorage} from "../../types";
 import {
     ZERO,
     N0__1_18DEC,
@@ -13,7 +13,7 @@ import {
     LEVERAGE_18DEC,
     TC_TOTAL_AMOUNT_10_000_18DEC,
     USD_10_000_6DEC,
-    USD_28_000_6DEC,
+    USD_28_000_6DEC, TOTAL_SUPPLY_18_DECIMALS,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -34,6 +34,7 @@ import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "..
 import { openSwapPayFixed } from "../utils/SwapUtils";
 
 const { expect } = chai;
+const { ethers } = hre;
 
 describe("MiltonFacadeDataProvider", () => {
     let miltonSpreadModel: MockSpreadModel;
@@ -237,6 +238,95 @@ describe("MiltonFacadeDataProvider", () => {
                 configs[i].maxLpUtilizationPerLegRate
             );
         }
+    });
+
+    it.only("should add new asset", async () => {
+        //given
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(1).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from(1).mul(N0__01_18DEC));
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
+            ["DAI", "USDC", "USDT"],
+            [PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC, PERCENTAGE_5_18DEC],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE0,
+            MiltonUsdtCase.CASE0,
+            MiltonDaiCase.CASE0,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        const {
+            tokenUsdc,
+            tokenUsdt,
+            tokenDai,
+            iporOracle,
+            josephDai,
+            josephUsdc,
+            josephUsdt,
+            miltonUsdt,
+            miltonUsdc,
+            miltonDai,
+            miltonStorageUsdt,
+            miltonStorageUsdc,
+            miltonStorageDai,
+        } = testData;
+
+        if (
+            tokenUsdc === undefined ||
+            tokenUsdt === undefined ||
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            josephUsdc === undefined ||
+            josephUsdt === undefined ||
+            miltonDai === undefined ||
+            miltonUsdt === undefined ||
+            miltonUsdc === undefined ||
+            miltonStorageUsdt === undefined ||
+            miltonStorageUsdc === undefined ||
+            miltonStorageDai === undefined
+        ) {
+            expect(true).to.be.false;
+            return;
+        }
+
+
+        const MiltonFacadeDataProvider = await hre.ethers.getContractFactory(
+            "MiltonFacadeDataProvider"
+        );
+
+        const miltonFacadeDataProvider = await upgrades.deployProxy(
+            MiltonFacadeDataProvider,
+            [
+                iporOracle.address,
+                [tokenDai.address, tokenUsdt.address, tokenUsdc.address],
+                [miltonDai.address, miltonUsdt.address, miltonUsdc.address],
+                [miltonStorageDai.address, miltonStorageUsdt.address, miltonStorageUsdc.address],
+                [josephDai.address, josephUsdt.address, josephUsdc.address],
+            ],
+            {
+                kind: "uups",
+            }
+        );
+        const WethMockedToken = await ethers.getContractFactory("WethMockedToken");
+        const tokenWeth = (await WethMockedToken.deploy(
+            TOTAL_SUPPLY_18_DECIMALS,
+            18
+        )) as WethMockedToken;
+
+        await iporOracle.addAsset(tokenWeth.address, 0,0,0)
+
+        //when
+        // random addresses
+        await miltonFacadeDataProvider.addAssetConfig(tokenWeth.address, miltonDai.address, miltonStorageDai.address, josephDai.address)
+
+        //then
+        const configuration = await miltonFacadeDataProvider.getConfiguration();
+        expect(configuration.length).to.be.equal(4);
+
     });
 
     it("should list correct number DAI, USDC, USDT items", async () => {

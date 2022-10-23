@@ -25,6 +25,11 @@ export default ({ drizzle, drizzleState }) => (
                     <br />
                     <small>{drizzle.contracts.DrizzleDai.address}</small>
                 </th>
+                <th scope="col">
+                    DAI
+                    <br />
+                    <small>{drizzle.contracts.DrizzleWeth.address}</small>
+                </th>
             </tr>
             <tr>
                 <td>Liquidity Pool Balance</td>
@@ -67,6 +72,22 @@ export default ({ drizzle, drizzleState }) => (
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
                         methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
                         render={(value) => (
                             <div>
                                 {value.liquidityPool / 1000000000000000000}
@@ -127,6 +148,22 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
+                        render={(value) => (
+                            <div>
+                                {value.totalNotionalPayFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalNotionalPayFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Receive Fixed Total Notional Balance</td>
@@ -169,6 +206,22 @@ export default ({ drizzle, drizzleState }) => (
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
                         methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                        render={(value) => (
+                            <div>
+                                {value.totalNotionalReceiveFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalNotionalReceiveFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
                         render={(value) => (
                             <div>
                                 {value.totalNotionalReceiveFixed / 1000000000000000000}
@@ -229,6 +282,22 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
+                        render={(value) => (
+                            <div>
+                                {value.totalCollateralPayFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalCollateralPayFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Receive Fixed Total Collateral Balance</td>
@@ -271,6 +340,22 @@ export default ({ drizzle, drizzleState }) => (
                         contract="MiltonFacadeDataProvider"
                         method="getBalance"
                         methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                        render={(value) => (
+                            <div>
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalCollateralReceiveFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getBalance"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
                         render={(value) => (
                             <div>
                                 {value.totalCollateralReceiveFixed / 1000000000000000000}
@@ -331,6 +416,22 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonFacadeDataProvider"
+                        method="getIpTokenExchangeRate"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
+                        render={(value) => (
+                            <div>
+                                {value / 1000000000000000000}
+                                <br />
+                                <small>{value}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
         </table>
 
@@ -369,6 +470,15 @@ export default ({ drizzle, drizzleState }) => (
             contract="MiltonFacadeDataProvider"
             method="getMySwaps"
             methodArgs={[drizzle.contracts.DrizzleDai.address, 0, 50]}
+            render={FrontendPositions}
+        />
+        <h5>My Positions - WETH</h5>
+        <ContractData
+            drizzle={drizzle}
+            drizzleState={drizzleState}
+            contract="MiltonFacadeDataProvider"
+            method="getMySwaps"
+            methodArgs={[drizzle.contracts.DrizzleWeth.address, 0, 50]}
             render={FrontendPositions}
         />
     </div>

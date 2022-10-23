@@ -16,6 +16,7 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">USDT</th>
                 <th scope="col">USDC</th>
                 <th scope="col">DAI</th>
+                <th scope="col">WETH</th>
             </tr>
             <tr>
                 <td>Pay Fixed Derivatives</td>
@@ -54,6 +55,21 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonStorageDai"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.totalCollateralPayFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalCollateralPayFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
@@ -112,6 +128,21 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.totalCollateralReceiveFixed / 1000000000000000000}
+                                <br />
+                                <small>{value.totalCollateralReceiveFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Liquidity Pool (including part of Opening Fee)</td>
@@ -150,6 +181,21 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonStorageDai"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
@@ -214,6 +260,21 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonWeth"
+                        method="getAccruedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.liquidityPool / 1000000000000000000}
+                                <br />
+                                <small>{value.liquidityPool}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Ipor Publication Fee</td>
@@ -252,6 +313,21 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonStorageDai"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.iporPublicationFee / 1000000000000000000}
+                                <br />
+                                <small>{value.iporPublicationFee}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>
@@ -310,6 +386,21 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.treasury / 1000000000000000000}
+                                <br />
+                                <small>{value.treasury}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>
@@ -355,6 +446,21 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="MiltonStorageDai"
+                        method="getExtendedBalance"
+                        render={(value) => (
+                            <div>
+                                {value.vault / 1000000000000000000}
+                                <br />
+                                <small>{value.vault}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
                         method="getExtendedBalance"
                         render={(value) => (
                             <div>

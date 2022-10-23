@@ -23,10 +23,12 @@ import MiltonStorageWeth from "./contracts/MiltonStorageWeth.json";
 import MiltonUsdt from "./contracts/MiltonUsdt.json";
 import MiltonUsdc from "./contracts/MiltonUsdc.json";
 import MiltonDai from "./contracts/MiltonDai.json";
+import MiltonWeth from "./contracts/MiltonWeth.json";
 
 import JosephUsdt from "./contracts/JosephUsdt.json";
 import JosephUsdc from "./contracts/JosephUsdc.json";
 import JosephDai from "./contracts/JosephDai.json";
+import JosephWeth from "./contracts/JosephWeth.json";
 
 import StanleyUsdt from "./contracts/StanleyUsdt.json";
 import StanleyUsdc from "./contracts/StanleyUsdc.json";
@@ -40,9 +42,11 @@ import ItfIporOracle from "./contracts/ItfIporOracle.json";
 import ItfMiltonUsdt from "./contracts/ItfMiltonUsdt.json";
 import ItfMiltonUsdc from "./contracts/ItfMiltonUsdc.json";
 import ItfMiltonDai from "./contracts/ItfMiltonDai.json";
+import ItfMiltonWeth from "./contracts/ItfMiltonWeth.json";
 import ItfJosephUsdt from "./contracts/ItfJosephUsdt.json";
 import ItfJosephUsdc from "./contracts/ItfJosephUsdc.json";
 import ItfJosephDai from "./contracts/ItfJosephDai.json";
+import ItfJosephWeth from "./contracts/ItfJosephWeth.json";
 import ItfStanleyUsdt from "./contracts/ItfStanleyUsdt.json";
 import ItfStanleyUsdc from "./contracts/ItfStanleyUsdc.json";
 import ItfStanleyDai from "./contracts/ItfStanleyDai.json";
@@ -99,9 +103,11 @@ let DrizzleIporOracle;
 let DrizzleMiltonUsdt;
 let DrizzleMiltonUsdc;
 let DrizzleMiltonDai;
+let DrizzleMiltonWeth;
 let DrizzleJosephUsdt;
 let DrizzleJosephUsdc;
 let DrizzleJosephDai;
+let DrizzleJosephWeth;
 let DrizzleStanleyUsdt;
 let DrizzleStanleyUsdc;
 let DrizzleStanleyDai;
@@ -157,9 +163,11 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
     DrizzleMiltonUsdt = ItfMiltonUsdt;
     DrizzleMiltonUsdc = ItfMiltonUsdc;
     DrizzleMiltonDai = ItfMiltonDai;
+    DrizzleMiltonWeth = ItfMiltonWeth;
     DrizzleJosephUsdt = ItfJosephUsdt;
     DrizzleJosephUsdc = ItfJosephUsdc;
     DrizzleJosephDai = ItfJosephDai;
+    DrizzleJosephWeth = ItfJosephWeth;
     DrizzleStanleyUsdt = ItfStanleyUsdt;
     DrizzleStanleyUsdc = ItfStanleyUsdc;
     DrizzleStanleyDai = ItfStanleyDai;
@@ -168,9 +176,11 @@ if (process.env.REACT_APP_ITF_ENABLED === "true") {
     DrizzleMiltonUsdt = MiltonUsdt;
     DrizzleMiltonUsdc = MiltonUsdc;
     DrizzleMiltonDai = MiltonDai;
+    DrizzleMiltonWeth = MiltonWeth;
     DrizzleJosephUsdt = JosephUsdt;
     DrizzleJosephUsdc = JosephUsdc;
     DrizzleJosephDai = JosephDai;
+    DrizzleJosephWeth = JosephWeth;
 
     DrizzleStanleyUsdt = StanleyUsdt;
     DrizzleStanleyUsdc = StanleyUsdc;
@@ -186,9 +196,11 @@ DrizzleIporOracle.contractName = "DrizzleIporOracle";
 DrizzleMiltonUsdt.contractName = "DrizzleMiltonUsdt";
 DrizzleMiltonUsdc.contractName = "DrizzleMiltonUsdc";
 DrizzleMiltonDai.contractName = "DrizzleMiltonDai";
+DrizzleMiltonWeth.contractName = "DrizzleMiltonWeth";
 DrizzleJosephUsdt.contractName = "DrizzleJosephUsdt";
 DrizzleJosephUsdc.contractName = "DrizzleJosephUsdc";
 DrizzleJosephDai.contractName = "DrizzleJosephDai";
+DrizzleJosephWeth.contractName = "DrizzleJosephWeth";
 DrizzleStanleyUsdt.contractName = "DrizzleStanleyUsdt";
 DrizzleStanleyUsdc.contractName = "DrizzleStanleyUsdc";
 DrizzleStanleyDai.contractName = "DrizzleStanleyDai";
@@ -240,9 +252,11 @@ let options = {
         DrizzleMiltonUsdt,
         DrizzleMiltonUsdc,
         DrizzleMiltonDai,
+        DrizzleMiltonWeth,
         DrizzleJosephUsdt,
         DrizzleJosephUsdc,
         DrizzleJosephDai,
+        DrizzleJosephWeth,
         DrizzleStanleyUsdt,
         DrizzleStanleyUsdc,
         DrizzleStanleyDai,

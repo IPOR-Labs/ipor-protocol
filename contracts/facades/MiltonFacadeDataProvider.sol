@@ -64,6 +64,20 @@ contract MiltonFacadeDataProvider is
         _assets = assets;
     }
 
+    function addAssetConfig(address asset, address milton, address miltonStorage, address  joseph) external {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        require(milton != address(0), IporErrors.WRONG_ADDRESS);
+        require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
+        require(joseph != address(0), IporErrors.WRONG_ADDRESS);
+
+        _assetConfig[asset] = MiltonFacadeTypes.AssetConfig(
+            milton,
+            miltonStorage,
+            joseph
+        );
+        _assets.push(asset);
+    }
+
     function getVersion() external pure override returns (uint256) {
         return 2;
     }

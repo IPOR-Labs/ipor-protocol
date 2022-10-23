@@ -11,6 +11,7 @@ module.exports = {
     ivUSDT: "ivUSDT",
     ivUSDC: "ivUSDC",
     ivDAI: "ivDAI",
+    ivWETH: "ivWETH",
     AAVE: "AAVE",
     aUSDT: "aUSDT",
     aUSDC: "aUSDC",

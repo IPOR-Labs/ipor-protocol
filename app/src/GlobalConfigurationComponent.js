@@ -72,6 +72,18 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
+                <td>MiltonWeth</td>
+                <td>{drizzle.contracts.DrizzleMiltonWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonWeth"
+                        method="getVersion"
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>MiltonStorageUsdt</td>
                 <td>{drizzle.contracts.MiltonStorageUsdt.address}</td>
                 <td>
@@ -151,6 +163,18 @@ export default ({ drizzle, drizzleState }) => (
                         drizzle={drizzle}
                         drizzleState={drizzleState}
                         contract="DrizzleJosephDai"
+                        method="getVersion"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>JosephWeth</td>
+                <td>{drizzle.contracts.DrizzleJosephWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephWeth"
                         method="getVersion"
                     />
                 </td>
@@ -753,6 +777,32 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
+                <td>MiltonWeth</td>
+                <td>{drizzle.contracts.DrizzleMiltonWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonWeth"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
                 <td>JosephUsdt</td>
                 <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
@@ -826,6 +876,32 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="DrizzleJosephDai"
+                        method="confirmTransferOwnership"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td>JosephWeth</td>
+                <td>{drizzle.contracts.DrizzleJosephWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephWeth"
+                        method="owner"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephWeth"
+                        method="transferOwnership"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleJosephWeth"
                         method="confirmTransferOwnership"
                     />
                 </td>
@@ -1394,6 +1470,24 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
             </tr>
             <tr>
+                <td>MiltonWeth</td>
+                <td>{drizzle.contracts.DrizzleMiltonWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleMiltonWeth"
+                        method="paused"
+                    />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonWeth" method="pause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="DrizzleMiltonWeth" method="unpause" />
+                </td>
+            </tr>
+            <tr>
                 <td>JosephUsdt</td>
                 <td>{drizzle.contracts.DrizzleJosephUsdt.address}</td>
                 <td>
@@ -1445,6 +1539,24 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
                 <td>
                     <ContractForm drizzle={drizzle} contract="DrizzleJosephDai" method="unpause" />
+                </td>
+            </tr>
+            <tr>
+                <td>JosephWeth</td>
+                <td>{drizzle.contracts.DrizzleJosephWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleJosephWeth"
+                        method="paused"
+                    />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephWeth" method="pause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="DrizzleJosephWeth" method="unpause" />
                 </td>
             </tr>
 
@@ -1562,6 +1674,24 @@ export default ({ drizzle, drizzleState }) => (
                 </td>
                 <td>
                     <ContractForm drizzle={drizzle} contract="MiltonStorageDai" method="unpause" />
+                </td>
+            </tr>
+            <tr>
+                <td>MiltonStorageWeth</td>
+                <td>{drizzle.contracts.MiltonStorageWeth.address}</td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="MiltonStorageWeth"
+                        method="paused"
+                    />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageWeth" method="pause" />
+                </td>
+                <td>
+                    <ContractForm drizzle={drizzle} contract="MiltonStorageWeth" method="unpause" />
                 </td>
             </tr>
 

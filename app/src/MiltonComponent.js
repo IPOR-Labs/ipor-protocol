@@ -19,21 +19,28 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">
                     USDT
                     <br />
-                    {drizzle.contracts.DrizzleUsdt.address}
+                    <small>{drizzle.contracts.DrizzleUsdt.address}</small>
                     <br />
                     <br />
                 </th>
                 <th scope="col">
                     USDC
                     <br />
-                    {drizzle.contracts.DrizzleUsdc.address}
+                    <small>{drizzle.contracts.DrizzleUsdc.address}</small>
                     <br />
                     <br />
                 </th>
                 <th scope="col">
                     DAI
                     <br />
-                    {drizzle.contracts.DrizzleDai.address}
+                    <small>{drizzle.contracts.DrizzleDai.address}</small>
+                    <br />
+                    <br />
+                </th>
+                <th scope="col">
+                    WETH
+                    <br />
+                    <small>{drizzle.contracts.DrizzleWeth.address}</small>
                     <br />
                     <br />
                 </th>
@@ -61,6 +68,13 @@ export default ({ drizzle, drizzleState }) => (
                         method="openSwapPayFixed"
                     />
                 </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
+                        method="openSwapPayFixed"
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Open Receive Fixed Swap</td>
@@ -82,6 +96,13 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="DrizzleMiltonDai"
+                        method="openSwapReceiveFixed"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
                         method="openSwapReceiveFixed"
                     />
                 </td>
@@ -109,6 +130,13 @@ export default ({ drizzle, drizzleState }) => (
                         method="closeSwapPayFixed"
                     />
                 </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
+                        method="closeSwapPayFixed"
+                    />
+                </td>
             </tr>
             <tr>
                 <td>Close Receive Fixed Swap</td>
@@ -130,6 +158,13 @@ export default ({ drizzle, drizzleState }) => (
                     <ContractForm
                         drizzle={drizzle}
                         contract="DrizzleMiltonDai"
+                        method="closeSwapReceiveFixed"
+                    />
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleMiltonWeth"
                         method="closeSwapReceiveFixed"
                     />
                 </td>

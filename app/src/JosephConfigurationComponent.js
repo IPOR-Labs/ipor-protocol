@@ -3,6 +3,10 @@ import {newContextComponents} from "@drizzle/react-components";
 
 const {ContractData, ContractForm} = newContextComponents;
 
+const small = {
+    fontSize: '0.8rem'
+}
+
 export default ({drizzle, drizzleState}) => (
     <div>
         <div className="row">
@@ -12,21 +16,28 @@ export default ({drizzle, drizzleState}) => (
                     <th scope="col">
                         USDT
                         <br/>
-                        {drizzle.contracts.DrizzleUsdt.address}
+                        <small>{drizzle.contracts.DrizzleUsdt.address}</small>
                         <br/>
                         <br/>
                     </th>
                     <th scope="col">
                         USDC
                         <br/>
-                        {drizzle.contracts.DrizzleUsdc.address}
+                        <small>{drizzle.contracts.DrizzleUsdc.address}</small>
                         <br/>
                         <br/>
                     </th>
                     <th scope="col">
                         DAI
                         <br/>
-                        {drizzle.contracts.DrizzleDai.address}
+                        <small>{drizzle.contracts.DrizzleDai.address}</small>
+                        <br/>
+                        <br/>
+                    </th>
+                    <th scope="col">
+                        WETH
+                        <br/>
+                        <small>{drizzle.contracts.DrizzleWeth.address}</small>
                         <br/>
                         <br/>
                     </th>
@@ -71,6 +82,21 @@ export default ({drizzle, drizzleState}) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="DrizzleJosephDai"
+                            method="getRedeemLpMaxUtilizationRate"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br/>
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephWeth"
                             method="getRedeemLpMaxUtilizationRate"
                             render={(value) => (
                                 <div>
@@ -150,6 +176,26 @@ export default ({drizzle, drizzleState}) => (
                             method="setMiltonStanleyBalanceRatio"
                         />
                     </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephWeth"
+                            method="getMiltonStanleyBalanceRatio"
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br/>
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                        <ContractForm
+                            drizzle={drizzle}
+                            contract="DrizzleJosephWeth"
+                            method="setMiltonStanleyBalanceRatio"
+                        />
+                    </td>
                 </tr>
 
                 <tr>
@@ -158,7 +204,7 @@ export default ({drizzle, drizzleState}) => (
                         <br/>
                         <small>Publication fee</small>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -173,7 +219,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -188,7 +234,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -199,6 +245,21 @@ export default ({drizzle, drizzleState}) => (
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
+                                method="setCharlieTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td style={small}>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getCharlieTreasury"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
                                 method="setCharlieTreasury"
                             />
                         </div>
@@ -211,7 +272,7 @@ export default ({drizzle, drizzleState}) => (
                         <br/>
                         <small>Income fee, part of opening fee</small>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -226,7 +287,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -241,7 +302,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -252,6 +313,21 @@ export default ({drizzle, drizzleState}) => (
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
+                                method="setTreasury"
+                            />
+                        </div>
+                    </td>
+                    <td style={small}>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getTreasury"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
                                 method="setTreasury"
                             />
                         </div>
@@ -262,7 +338,7 @@ export default ({drizzle, drizzleState}) => (
                     <td>
                         <strong>Charlie Treasury Manager</strong>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -277,7 +353,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -292,7 +368,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -303,6 +379,21 @@ export default ({drizzle, drizzleState}) => (
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
+                                method="setCharlieTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td style={small}>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getCharlieTreasuryManager"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
                                 method="setCharlieTreasuryManager"
                             />
                         </div>
@@ -313,7 +404,7 @@ export default ({drizzle, drizzleState}) => (
                     <td>
                         <strong>Treasury Manager</strong>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -328,7 +419,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -343,7 +434,7 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
-                    <td>
+                    <td style={small}>
                         <div>
                             <ContractData
                                 drizzle={drizzle}
@@ -354,6 +445,21 @@ export default ({drizzle, drizzleState}) => (
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
+                                method="setTreasuryManager"
+                            />
+                        </div>
+                    </td>
+                    <td style={small}>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getTreasuryManager"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -411,6 +517,21 @@ export default ({drizzle, drizzleState}) => (
                             />
                         </div>
                     </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getMaxLiquidityPoolBalance"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
+                                method="setMaxLiquidityPoolBalance"
+                            />
+                        </div>
+                    </td>
                 </tr>
 
                 <tr>
@@ -460,6 +581,21 @@ export default ({drizzle, drizzleState}) => (
                             <ContractForm
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
+                                method="setMaxLpAccountContribution"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephWeth"
+                                method="getMaxLpAccountContribution"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephWeth"
                                 method="setMaxLpAccountContribution"
                             />
                         </div>

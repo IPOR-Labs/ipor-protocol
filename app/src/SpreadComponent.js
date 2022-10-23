@@ -11,6 +11,7 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">USDT</th>
                 <th scope="col">USDC</th>
                 <th scope="col">DAI</th>
+                <th scope="col">WETH</th>
             </tr>
             <tr>
                 <td>SPREAD Pay Fixed</td>
@@ -62,6 +63,22 @@ export default ({ drizzle, drizzleState }) => (
                         )}
                     />
                 </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="CockpitDataProvider"
+                        method="calculateSpread"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
+                        render={(item) => (
+                            <div>
+                                {item.spreadPayFixed / 1000000000000000000}
+                                <br />
+                                <small>{item.spreadPayFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
             </tr>
             <tr>
                 <td>SPREAD Receive Fixed</td>
@@ -104,6 +121,22 @@ export default ({ drizzle, drizzleState }) => (
                         contract="CockpitDataProvider"
                         method="calculateSpread"
                         methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                        render={(item) => (
+                            <div>
+                                {item.spreadReceiveFixed / 1000000000000000000}
+                                <br />
+                                <small>{item.spreadReceiveFixed}</small>
+                            </div>
+                        )}
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="CockpitDataProvider"
+                        method="calculateSpread"
+                        methodArgs={[drizzle.contracts.DrizzleWeth.address]}
                         render={(item) => (
                             <div>
                                 {item.spreadReceiveFixed / 1000000000000000000}
