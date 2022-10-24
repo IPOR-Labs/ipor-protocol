@@ -240,7 +240,7 @@ describe("MiltonFacadeDataProvider", () => {
         }
     });
 
-    it.only("should add new asset", async () => {
+    it("should add new asset", async () => {
         //given
         await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(1).mul(N0__01_18DEC));
         await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from(1).mul(N0__01_18DEC));
