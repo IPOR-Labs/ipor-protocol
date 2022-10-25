@@ -12,27 +12,11 @@ interface ITestnetFaucet {
     /// @return number of seconds user have to wait till he will be able to claim new stable
     function couldClaimInSeconds() external view returns (uint256);
 
-    /// @notice Checks balance of faucet
-    /// @param asset address for which one want to get balance
-    /// @return balance of faucet for the asset
     function balanceOf(address asset) external view returns (uint256);
 
     /// @notice Check if user has calim stables before
-    /// @return true if user claim before and false otherwise
+    /// @return true if user calim before and false otherwise
     function hasClaimBefore() external view returns (bool);
-
-    /// @notice Add new asset to faucet
-    /// @param asset address.
-    function addAsset(address asset) external;
-
-    /// @notice removes asset from faucet
-    /// @param asset address.
-    function removeAsset(address asset) external;
-
-    /// @notice Checks if asset is active in the faucet
-    /// @param asset address.
-    /// @return true if asset is active and false otherwise
-    function isAssetActive(address asset) external view returns(bool);
 
     event Claim(
         /// @notice address to which stable were transfer
