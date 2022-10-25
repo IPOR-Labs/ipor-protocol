@@ -106,4 +106,5 @@ module.exports = {
     ItfLiquidatorUsdt: "ItfLiquidatorUsdt",
     ItfLiquidatorUsdc: "ItfLiquidatorUsdc",
     ItfLiquidatorDai: "ItfLiquidatorDai",
+    Multicall: "Multicall",
 };
