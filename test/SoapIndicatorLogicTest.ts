@@ -377,7 +377,7 @@ describe("SoapIndicatorLogic", () => {
         );
     });
 
-    it.only("should rebalance SOAP Indicators when open two positions with fixed rate = ZERO and close one position - 18 decimals", async () => {
+    it("should rebalance SOAP Indicators when open two positions with fixed rate = ZERO and close one position - 18 decimals", async () => {
         /// @dev In this test we simulate situation when every opened swap has fixed rate = 0, so that average interest rate is equal zero.
         //given
         const soapIndicator = await prepareInitialDefaultSoapIndicator(
