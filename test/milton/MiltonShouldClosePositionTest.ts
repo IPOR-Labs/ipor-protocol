@@ -79,9 +79,9 @@ describe("Milton - close position", () => {
         userThree: Signer,
         liquidityProvider: Signer;
 
-    before( async () => {
+    before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-    })
+    });
 
     beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(
@@ -2034,7 +2034,7 @@ describe("Milton - close position", () => {
         ).to.be.eq(actualPayoff);
     });
 
-    it("should close single pay fixed position using multicall function, DAI", async () => {
+    it("should close single pay fixed position using function with array, DAI", async () => {
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2088,7 +2088,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close two pay fixed position using multicall function, DAI", async () => {
+    it("should close two pay fixed position using function with array, DAI", async () => {
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2142,7 +2142,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close single receive fixed position using multicall function, DAI", async () => {
+    it("should close single receive fixed position using function with array, DAI", async () => {
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2196,7 +2196,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close two receive fixed position using multicall function, DAI", async () => {
+    it("should close two receive fixed position using function with array, DAI", async () => {
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2655,7 +2655,7 @@ describe("Milton - close position", () => {
             .add(TC_OPENING_FEE_18DEC);
 
         //given
-        const localOpenTimestamp =  BigNumber.from(Math.floor(Date.now() / 1000));
+        const localOpenTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
         const params = {
             asset: tokenDai.address,
             totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -2907,8 +2907,10 @@ describe("Milton - close position", () => {
             );
     });
 
-    it("should close two receive fixed position using multicall function when one of is is not valid, DAI", async () => {
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+    it("should close two receive fixed position using function with array when one of is is not valid, DAI", async () => {
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("4").mul(N0__01_18DEC)
+        );
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -2961,7 +2963,7 @@ describe("Milton - close position", () => {
         );
     });
 
-    it("should close two pay fixed position using multicall function when one of is is not valid, DAI", async () => {
+    it("should close two pay fixed position using function with array when one of is is not valid, DAI", async () => {
         await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -4053,7 +4055,9 @@ describe("Milton - close position", () => {
 
     it("[!] should commit transaction try to close 2 pay fixed, 2 receive fixed positions in one transaction - all positions already closed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("4").mul(N0__01_18DEC)
+        );
         await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
