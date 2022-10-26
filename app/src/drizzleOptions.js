@@ -160,57 +160,76 @@ let DrizzleStanleyDai;
 
 if (process.env.REACT_APP_ITF_ENABLED === "true") {
     DrizzleIporOracle = ItfIporOracle;
+    DrizzleIporOracle.networks[networkId] = { address: addresses.ItfIporOracleProxy };
+
     DrizzleMiltonUsdt = ItfMiltonUsdt;
+    DrizzleMiltonUsdt.networks[networkId] = { address: addresses.ItfMiltonProxyUsdt };
+
     DrizzleMiltonUsdc = ItfMiltonUsdc;
+    DrizzleMiltonUsdc.networks[networkId] = { address: addresses.ItfMiltonProxyUsdc };
+
     DrizzleMiltonDai = ItfMiltonDai;
+    DrizzleMiltonDai.networks[networkId] = { address: addresses.ItfMiltonProxyDai };
+
     DrizzleJosephUsdt = ItfJosephUsdt;
+    DrizzleJosephUsdt.networks[networkId] = { address: addresses.ItfJosephProxyUsdt };
+
     DrizzleJosephUsdc = ItfJosephUsdc;
+    DrizzleJosephUsdc.networks[networkId] = { address: addresses.ItfJosephProxyUsdc };
+
     DrizzleJosephDai = ItfJosephDai;
+    DrizzleJosephDai.networks[networkId] = { address: addresses.ItfJosephProxyDai };
+
     DrizzleStanleyUsdt = ItfStanleyUsdt;
+    DrizzleStanleyUsdt.networks[networkId] = { address: addresses.ItfStanleyProxyUsdt };
+
     DrizzleStanleyUsdc = ItfStanleyUsdc;
+    DrizzleStanleyUsdc.networks[networkId] = { address: addresses.ItfStanleyProxyUsdc };
+
     DrizzleStanleyDai = ItfStanleyDai;
+    DrizzleStanleyDai.networks[networkId] = { address: addresses.StanleyProxyDai };
 } else {
     DrizzleIporOracle = IporOracle;
+    DrizzleIporOracle.networks[networkId] = { address: addresses.IporOracleProxy };
+
     DrizzleMiltonUsdt = MiltonUsdt;
+    DrizzleMiltonUsdt.networks[networkId] = { address: addresses.MiltonProxyUsdt };
+
     DrizzleMiltonUsdc = MiltonUsdc;
+    DrizzleMiltonUsdc.networks[networkId] = { address: addresses.MiltonProxyUsdc };
+
     DrizzleMiltonDai = MiltonDai;
+    DrizzleMiltonDai.networks[networkId] = { address: addresses.MiltonProxyDai };
+
     DrizzleJosephUsdt = JosephUsdt;
+    DrizzleJosephUsdt.networks[networkId] = { address: addresses.JosephProxyUsdt };
+
     DrizzleJosephUsdc = JosephUsdc;
+    DrizzleJosephUsdc.networks[networkId] = { address: addresses.JosephProxyUsdc };
+
     DrizzleJosephDai = JosephDai;
+    DrizzleJosephDai.networks[networkId] = { address: addresses.JosephProxyDai };
+
     DrizzleStanleyUsdt = StanleyUsdt;
+    DrizzleStanleyUsdt.networks[networkId] = { address: addresses.StanleyProxyUsdt };
+
     DrizzleStanleyUsdc = StanleyUsdc;
+    DrizzleStanleyUsdc.networks[networkId] = { address: addresses.StanleyProxyUsdc };
+
     DrizzleStanleyDai = StanleyDai;
+    DrizzleStanleyDai.networks[networkId] = { address: addresses.StanleyProxyDai };
 }
 
 DrizzleIporOracle.contractName = "DrizzleIporOracle";
-DrizzleIporOracle.networks[networkId] = { address: addresses.IporOracleProxy };
-
 DrizzleMiltonUsdt.contractName = "DrizzleMiltonUsdt";
-DrizzleMiltonUsdt.networks[networkId] = { address: addresses.MiltonProxyUsdt };
-
 DrizzleMiltonUsdc.contractName = "DrizzleMiltonUsdc";
-DrizzleMiltonUsdc.networks[networkId] = { address: addresses.MiltonProxyUsdc };
-
 DrizzleMiltonDai.contractName = "DrizzleMiltonDai";
-DrizzleMiltonDai.networks[networkId] = { address: addresses.MiltonProxyDai };
-
 DrizzleJosephUsdt.contractName = "DrizzleJosephUsdt";
-DrizzleJosephUsdt.networks[networkId] = { address: addresses.JosephProxyUsdt };
-
 DrizzleJosephUsdc.contractName = "DrizzleJosephUsdc";
-DrizzleJosephUsdc.networks[networkId] = { address: addresses.JosephProxyUsdc };
-
 DrizzleJosephDai.contractName = "DrizzleJosephDai";
-DrizzleJosephDai.networks[networkId] = { address: addresses.JosephProxyDai };
-
 DrizzleStanleyUsdt.contractName = "DrizzleStanleyUsdt";
-DrizzleStanleyUsdt.networks[networkId] = { address: addresses.StanleyProxyUsdt };
-
 DrizzleStanleyUsdc.contractName = "DrizzleStanleyUsdc";
-DrizzleStanleyUsdc.networks[networkId] = { address: addresses.StanleyProxyUsdc };
-
 DrizzleStanleyDai.contractName = "DrizzleStanleyDai";
-DrizzleStanleyDai.networks[networkId] = { address: addresses.StanleyProxyDai };
 
 let options = {
     web3: web3,
