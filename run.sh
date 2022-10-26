@@ -969,6 +969,14 @@ if [ $IS_MIGRATE_SC = "YES" ]; then
 fi
 
 if [ $IS_MIGRATE_WITH_CLEAN_SC = "YES" ]; then
+  if [ $ETH_BC_NETWORK_ID = 1 ]; then
+    echo "ERROR! You cannot use migration with clean on Mainnet environment!"	
+	exit 1
+  fi
+  if [ $ETH_BC_NETWORK_ID = 5 ]; then
+    echo "ERROR! You cannot use migration with clean on Goerli environment!"	
+	exit 1
+  fi
   run_clean_smart_contract_migrations
 fi
 
