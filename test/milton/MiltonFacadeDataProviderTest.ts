@@ -47,13 +47,16 @@ describe("MiltonFacadeDataProvider", () => {
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
+    });
+
+    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(ZERO, ZERO, ZERO, ZERO);
     });
 
     it("should list configuration DAI, USDC, USDT", async () => {
         //given
-        miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(1).mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from(1).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(1).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateSpreadReceiveFixed(BigNumber.from(1).mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
@@ -238,7 +241,7 @@ describe("MiltonFacadeDataProvider", () => {
 
     it("should list correct number DAI, USDC, USDT items", async () => {
         //given
-        miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(6).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateSpreadPayFixed(BigNumber.from(6).mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
@@ -469,8 +472,8 @@ describe("MiltonFacadeDataProvider", () => {
     });
 
     it("should receive limited swap array", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000047708334227"));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000047708334227"));
         await testCasePagination(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             BigNumber.from("11"),
@@ -483,8 +486,8 @@ describe("MiltonFacadeDataProvider", () => {
     });
 
     it("should receive limited swap array with offset", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000023854167113"));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000023854167113"));
         await testCasePagination(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             BigNumber.from("22"),
@@ -497,8 +500,8 @@ describe("MiltonFacadeDataProvider", () => {
     });
 
     it("should receive rest of swaps only", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000023854167113"));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("20000023854167113"));
         await testCasePagination(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             BigNumber.from("22"),
@@ -511,8 +514,8 @@ describe("MiltonFacadeDataProvider", () => {
     });
 
     it("should receive empty list of swaps when offset is equal to number of swaps", async () => {
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from(2).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from(6).mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from(2).mul(N0__01_18DEC));
         await testCasePagination(
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             BigNumber.from("20"),

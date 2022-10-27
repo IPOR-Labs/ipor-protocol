@@ -500,7 +500,6 @@ export const executeCloseSwapsTestCase = async function (
     } else {
         acceptableFixedInterestRate = BigNumber.from("9").mul(N0__1_18DEC);
     }
-
     const params = {
         asset: asset,
         totalAmount: totalAmount,
