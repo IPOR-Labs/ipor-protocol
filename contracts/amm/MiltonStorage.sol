@@ -445,7 +445,7 @@ contract MiltonStorage is
             currentVaultBalance <= (vaultBalance - depositAmount),
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
-		
+
         uint256 interest = currentVaultBalance > 0
             ? (vaultBalance - currentVaultBalance - depositAmount)
             : 0;
@@ -658,8 +658,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -667,8 +667,8 @@ contract MiltonStorage is
             liquidator,
             swap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
