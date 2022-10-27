@@ -23,7 +23,6 @@ describe("IporSwapLogic calculateQuasiInterest", () => {
     before(async () => {
         const MockIporSwapLogic = await hre.ethers.getContractFactory("MockIporSwapLogic");
         iporSwapLogic = (await MockIporSwapLogic.deploy()) as MockIporSwapLogic;
-        iporSwapLogic.deployed();
         [admin] = await hre.ethers.getSigners();
     });
 
@@ -100,7 +99,7 @@ describe("IporSwapLogic calculateQuasiInterest", () => {
         const fixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
         const swap = await prepareSwapPayFixedCase1(fixedInterestRate, admin);
         //when
-        expect(
+        await expect(
             iporSwapLogic.calculateQuasiInterest(
                 swap,
                 swap.openTimestamp.sub(BigNumber.from(60 * 60 * 24 * 28)),

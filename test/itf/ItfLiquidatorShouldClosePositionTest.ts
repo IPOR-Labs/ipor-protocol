@@ -30,7 +30,7 @@ import {
     PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
     USD_10_000_18DEC,
     LEVERAGE_18DEC,
-    PERIOD_14_DAYS_IN_SECONDS,
+    PERIOD_14_DAYS_IN_SECONDS, N0__1_18DEC,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -68,6 +68,9 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
+    })
+
+    beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(
             BigNumber.from("6").mul(N0__01_18DEC),
             BigNumber.from("4").mul(N0__01_18DEC),
@@ -209,7 +212,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close 10 pay fixed, 10 receive fixed positions in one transaction - case 1, all are opened", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -308,7 +311,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     
     it("should close 5 pay fixed swaps and leave another 5 open, and close 5 receive fixed and leave another 5 open in one transaction - case 2, some of them are already closed and some expired", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -440,7 +443,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close 5 pay fixed, 5 receive fixed positions in one transaction - case 2, some of them are already closed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -548,7 +551,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close 10 pay fixed, 10 receive fixed positions in one transaction - liquidation deposit amount not transferred to liquidator", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -644,7 +647,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close 2 pay fixed, 0 receive fixed positions in one transaction - all receive fixed positions already closed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -746,7 +749,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close 0 pay fixed, 2 receive fixed positions in one transaction - all pay fixed positions already closed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -849,8 +852,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("Should commit transaction try to close 2 pay fixed, 2 receive fixed positions in one transaction - all positions already closed", async () => {
         //given
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -961,7 +964,6 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should commit transaction even if lists for closing are empty", async () => {
         //given
-        miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1004,9 +1006,9 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator lost, User earned > Collateral, before maturity", async () => {
         //given
-        const quote = BigNumber.from("1").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const quote = N0__01_18DEC;
+        const acceptableFixedInterestRate = N0__01_18DEC;
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1054,9 +1056,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         //given
-        const quote = BigNumber.from("6").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("6").mul(N0__01_18DEC);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1106,7 +1106,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         //given
         const quote = BigNumber.from("10").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1153,9 +1153,9 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     });
 
     it("should close DAI position pay fixed, Liquidator lost, User earned > Collateral, after maturity", async () => {
-        const quote = BigNumber.from("1").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const quote = N0__01_18DEC;
+        const acceptableFixedInterestRate = N0__01_18DEC;
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1201,9 +1201,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     });
 
     it("should close DAI position pay fixed, Liquidator lost, User earned < Collateral, after maturity", async () => {
-        const quote = BigNumber.from("6").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("6").mul(N0__01_18DEC);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1250,8 +1248,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator earned, User lost > Collateral, before maturity", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("161").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1297,8 +1295,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
         const quote = BigNumber.from("151").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("151").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1343,9 +1341,9 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     });
 
     it("should close DAI position pay fixed, Liquidator earned, User lost < Collateral, after maturity", async () => {
-        const quote = BigNumber.from("10").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const quote = N0__1_18DEC
+        const acceptableFixedInterestRate = N0__1_18DEC;
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1391,8 +1389,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator earned, User lost < Collateral, 5 hours before maturity", async () => {
         const quote = BigNumber.from("121").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("121").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1438,8 +1436,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position pay fixed, Liquidator earned, User lost > Collateral, after maturity", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuotePayFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("161").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -1485,8 +1483,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position receive fixed, Liquidator lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         const quote = BigNumber.from("150").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("150").mul(N0__01_18DEC);;
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1534,8 +1532,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     it("should close DAI position receive fixed, Liquidator earned, User lost > Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1581,8 +1579,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     it("should close DAI position receive fixed, Liquidator earned, 100% Collateral > User lost > 99% Collateral, before maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1628,8 +1626,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     it("should close DAI position receive fixed, Liquidator lost, User earned > Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("159").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1676,9 +1674,9 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position receive fixed, Liquidator lost, User earned < Collateral, after maturity", async () => {
         //given
-        const quote = BigNumber.from("10").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const quote = N0__1_18DEC;
+        const acceptableFixedInterestRate = N0__1_18DEC;
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1726,8 +1724,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     it("should close DAI position receive fixed, Liquidator earned, User lost > Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -1773,8 +1771,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     it("should close DAI position receive fixed, Liquidator earned, User lost < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = quote;
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
+        const acceptableFixedInterestRate = BigNumber.from("4").mul(N0__01_18DEC);
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],

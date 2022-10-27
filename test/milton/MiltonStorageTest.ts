@@ -34,7 +34,7 @@ import {
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 import {
-    preprareSwapPayFixedStruct18DecSimpleCase1,
+    prepareSwapPayFixedStruct18DecSimpleCase1,
     openSwapPayFixed,
     testCasePaginationPayFixed,
     testCasePaginationReceiveFixed,
@@ -310,7 +310,7 @@ describe("MiltonStorage", () => {
         await miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenOpenSwapPayFixed(
-                await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo),
+                prepareSwapPayFixedStruct18DecSimpleCase1(await userTwo.getAddress()),
                 await miltonDai.getIporPublicationFee()
             );
         //then
@@ -336,7 +336,7 @@ describe("MiltonStorage", () => {
             expect(true).to.be.false;
             return;
         }
-        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo);
+        const derivativeStruct = prepareSwapPayFixedStruct18DecSimpleCase1(await userTwo.getAddress());
         await assertError(
             //when
             miltonStorageDai
@@ -493,7 +493,6 @@ describe("MiltonStorage", () => {
             expect(true).to.be.false;
             return;
         }
-        const derivativeStruct = await preprareSwapPayFixedStruct18DecSimpleCase1(userTwo);
         await miltonStorageDai.setJoseph(await admin.getAddress());
         await assertError(
             //when
@@ -505,7 +504,7 @@ describe("MiltonStorage", () => {
 
     it("should update Milton Storage when close position, caller has rights to update, DAI 18 decimals", async () => {
         //given
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
@@ -652,8 +651,8 @@ describe("MiltonStorage", () => {
             .itfProvideLiquidity(USD_28_000_6DEC, derivativeParams.openTimestamp);
 
         await openSwapPayFixed(testData, derivativeParams);
-        let derivativeItem = await miltonStorageUsdt.getSwapPayFixed(1);
-        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        const derivativeItem = await miltonStorageUsdt.getSwapPayFixed(1);
+        const closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         await miltonStorageUsdt.setMilton(await miltonStorageAddress.getAddress());
 
@@ -675,7 +674,7 @@ describe("MiltonStorage", () => {
 
     it("should NOT update Milton Storage when close position, caller don't have rights to update", async () => {
         // given
-        let testData = await prepareTestData(
+        const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress],
             ["DAI"],
@@ -733,8 +732,8 @@ describe("MiltonStorage", () => {
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
 
         await openSwapPayFixed(testData, derivativeParams);
-        let derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
-        let closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        const derivativeItem = await miltonStorageDai.getSwapPayFixed(1);
+        const closeSwapTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
         await assertError(

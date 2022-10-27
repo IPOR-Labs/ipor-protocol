@@ -18,7 +18,6 @@ describe("IporSwapLogic calculatePayoffPayFixed", () => {
     before(async () => {
         const MockIporSwapLogic = await hre.ethers.getContractFactory("MockIporSwapLogic");
         iporSwapLogic = (await MockIporSwapLogic.deploy()) as MockIporSwapLogic;
-        iporSwapLogic.deployed();
         [admin] = await hre.ethers.getSigners();
     });
 
