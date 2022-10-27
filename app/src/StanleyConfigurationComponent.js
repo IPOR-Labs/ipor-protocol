@@ -1,9 +1,9 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
             <h4>Stanley: Setup new Milton address</h4>
@@ -210,14 +210,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="setStanley"
                             />
                         </div>
@@ -227,14 +227,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="setStanley"
                             />
                         </div>
@@ -244,14 +244,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="setStanley"
                             />
                         </div>
@@ -267,14 +267,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="setStanley"
                             />
                         </div>
@@ -284,14 +284,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="setStanley"
                             />
                         </div>
@@ -301,14 +301,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="getStanley"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="setStanley"
                             />
                         </div>
@@ -334,14 +334,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -351,14 +351,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -368,14 +368,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -391,14 +391,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -408,14 +408,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -425,14 +425,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="getTreasuryManager"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="setTreasuryManager"
                             />
                         </div>
@@ -457,14 +457,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="setTreasury"
                             />
                         </div>
@@ -474,14 +474,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="setTreasury"
                             />
                         </div>
@@ -491,14 +491,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="setTreasury"
                             />
                         </div>
@@ -514,14 +514,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="setTreasury"
                             />
                         </div>
@@ -531,14 +531,14 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="setTreasury"
                             />
                         </div>
@@ -548,22 +548,20 @@ export default ({drizzle, drizzleState}) => (
                             <ContractData
                                 drizzle={drizzle}
                                 drizzleState={drizzleState}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="getTreasury"
                             />
                         </div>
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="setTreasury"
                             />
                         </div>
                     </td>
                 </tr>
             </table>
-
-
         </div>
     </div>
 );
