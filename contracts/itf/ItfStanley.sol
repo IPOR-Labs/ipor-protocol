@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "../vault/Stanley.sol";
 
@@ -8,9 +8,9 @@ abstract contract ItfStanley is Stanley {
         external
         view
         returns (
-            IStrategy strategyMaxApy,
-            IStrategy strategyAave,
-            IStrategy strategyCompound
+            address strategyMaxApy,
+            address strategyAave,
+            address strategyCompound
         )
     {
         return _getMaxApyStrategy();

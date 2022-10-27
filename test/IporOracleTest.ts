@@ -101,7 +101,7 @@ describe("IporOracle", () => {
     it("should return contract version", async () => {
         const version = await _iporOracle["getVersion()"]();
         // then
-        expect(version).to.be.equal(BigNumber.from("1"));
+        expect(version).to.be.equal(BigNumber.from("2"));
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {

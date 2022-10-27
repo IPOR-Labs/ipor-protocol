@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 /// @title Structs used in comunication with data consumers such as off-chain applications or other smart contracts.
 /// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
