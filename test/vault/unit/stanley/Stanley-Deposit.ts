@@ -1,6 +1,5 @@
 import hre, { upgrades } from "hardhat";
 import chai from "chai";
-const keccak256 = require("keccak256");
 import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
@@ -79,7 +78,6 @@ describe("Stanley -> Deposit", () => {
         aDAI = (await MockADAIFactory.deploy(DAI.address, await admin.getAddress())) as MockADAI;
         DAI.mint(aDAI.address, one.mul(10000));
         AAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
-        const stkAAVE = (await tokenFactory.deploy(BigNumber.from(2).pow(255))) as TestERC20;
         const MockAaveLendingPoolProvider = await hre.ethers.getContractFactory(
             "MockAaveLendingPoolProvider"
         );
@@ -180,7 +178,7 @@ describe("Stanley -> Deposit", () => {
         //                        Stanley
         //##############################################################
         const StanleyDai = await hre.ethers.getContractFactory("StanleyDai");
-        stanley = (await await upgrades.deployProxy(StanleyDai, [
+        stanley = (await upgrades.deployProxy(StanleyDai, [
             DAI.address,
             ivToken.address,
             aaveNewStartegyInstance.address,
@@ -223,9 +221,8 @@ describe("Stanley -> Deposit", () => {
 
     it("Should accept deposit and transfer tokens into AAVE", async () => {
         //given
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
-        // await DAI.approve(await admin.getAddress(), one.mul(10000));
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -244,7 +241,7 @@ describe("Stanley -> Deposit", () => {
 
     it("Should accept deposit and transfer tokens into Compound", async () => {
         //given
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -261,7 +258,7 @@ describe("Stanley -> Deposit", () => {
     });
 
     it("Should accept deposits and transfer tokens into AAVE 2 times when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await DAI.approve(stanley.address, one.mul(10000));
 
@@ -281,7 +278,7 @@ describe("Stanley -> Deposit", () => {
     });
     it("Should accept deposits and transfer tokens into Compound 2 times when one user make deposits", async () => {
         //given
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -298,7 +295,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
     it("Should accept deposits and transfer tokens first into AAVE second into Compound when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await DAI.approve(stanley.address, one.mul(10000));
 
@@ -320,7 +317,7 @@ describe("Stanley -> Deposit", () => {
         expect(balanceOfIporeVault).to.be.equal(BigNumber.from("0"));
     });
     it("Should accept deposits and transfer tokens first into Compound second into AAVE when one user make deposits", async () => {
-        const adminAddress = await await admin.getAddress();
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
 
         //when
@@ -460,8 +457,8 @@ describe("Stanley -> Deposit", () => {
         expect(exchangeRate).to.be.equal(one);
     });
 
-    it("Should migrate all asset from compound to AAVE", async () => {
-        const adminAddress = await await admin.getAddress();
+    it("Should migrate all asset from Compound to AAVE", async () => {
+        const adminAddress = await admin.getAddress();
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into compound
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
@@ -479,8 +476,8 @@ describe("Stanley -> Deposit", () => {
         expect(userIvToken).to.be.equal(one.mul(10));
     });
 
-    it("Should migrate all asset from AAVE to compound", async () => {
-        const adminAddress = await await admin.getAddress();
+    it("Should migrate all asset from AAVE to Compound", async () => {
+        const adminAddress = await admin.getAddress();
         await lendingPool.setCurrentLiquidityRate(oneRay.div("100").mul("10"));
         await DAI.approve(stanley.address, one.mul(10000));
         await stanley.deposit(one.mul(10)); // into aave
@@ -498,4 +495,7 @@ describe("Stanley -> Deposit", () => {
         expect(compoundBalance).to.be.equal(one.mul(10));
         expect(userIvToken).to.be.equal(one.mul(10));
     });
+
+    it("Should rebalance when earlier migrated all assets from AAVE to Compound", async () => {});
+    it("Should rebalance when earlier migrated all assets from Compound to AAVE", async () => {});
 });

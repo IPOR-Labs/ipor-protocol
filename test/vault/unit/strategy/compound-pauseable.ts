@@ -4,7 +4,6 @@ import { BigNumber, Signer } from "ethers";
 
 import { solidity } from "ethereum-waffle";
 import {
-    StrategyAave,
     ERC20,
     MockWhitePaper,
     MockComptroller,
@@ -42,7 +41,7 @@ describe("COMPOUND strategy pauseable", () => {
         const MockWhitePaperInstance = (await MockWhitePaper.deploy()) as MockWhitePaper;
 
         // #################################################################################
-        // #####################        USDC / aUSDC     ###################################
+        // #####################        USDC / aUSDC     ###################################
         // #################################################################################
 
         const UsdcMockedToken = await hre.ethers.getContractFactory("UsdcMockedToken");

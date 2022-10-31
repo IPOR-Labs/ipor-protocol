@@ -101,4 +101,8 @@ module.exports = {
     ItfCockpitDataProviderImpl: "ItfCockpitDataProviderImpl",
     ItfDataProviderProxy: "ItfDataProviderProxy",
     ItfDataProviderImpl: "ItfDataProviderImpl",
+    ItfLiquidatorUsdt: "ItfLiquidatorUsdt",
+    ItfLiquidatorUsdc: "ItfLiquidatorUsdc",
+    ItfLiquidatorDai: "ItfLiquidatorDai",
+    Multicall: "Multicall",
 };

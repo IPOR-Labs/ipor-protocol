@@ -101,7 +101,7 @@ describe("IporOracle", () => {
     it("should return contract version", async () => {
         const version = await _iporOracle["getVersion()"]();
         // then
-        expect(version).to.be.equal(BigNumber.from("1"));
+        expect(version).to.be.equal(BigNumber.from("2"));
     });
 
     it("should pause Smart Contract, sender is an admin", async () => {
@@ -162,12 +162,6 @@ describe("IporOracle", () => {
 
     it("should NOT pause Smart Contract specific methods when paused", async () => {
         //given
-        const assets = [_tokenUsdc.address, _tokenDai.address, _tokenUsdt.address];
-        const indexValues = [
-            BigNumber.from("7").mul(N0__01_18DEC),
-            BigNumber.from("7").mul(N0__01_18DEC),
-            BigNumber.from("7").mul(N0__01_18DEC),
-        ];
         const timestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
         await _iporOracle.addUpdater(await userOne.getAddress());

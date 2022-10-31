@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -59,7 +59,7 @@ contract MiltonStorage is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 1;
+        return 2;
     }
 
     function getLastSwapId() external view override returns (uint256) {
@@ -418,14 +418,16 @@ contract MiltonStorage is
         onlyMilton
     {
         uint256 currentVaultBalance = _balances.vault;
-        // We nedd this becouse for compound if we deposit and withdraw we could get negative intrest based on rounds
+        // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
         require(
             vaultBalance + withdrawnAmount >= currentVaultBalance,
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
+
         uint256 interest = vaultBalance + withdrawnAmount - currentVaultBalance;
 
         uint256 liquidityPoolBalance = _balances.liquidityPool + interest;
+
         _balances.liquidityPool = liquidityPoolBalance.toUint128();
         _balances.vault = vaultBalance.toUint128();
     }
@@ -443,6 +445,7 @@ contract MiltonStorage is
             currentVaultBalance <= (vaultBalance - depositAmount),
             MiltonErrors.INTEREST_FROM_STRATEGY_BELOW_ZERO
         );
+
         uint256 interest = currentVaultBalance > 0
             ? (vaultBalance - currentVaultBalance - depositAmount)
             : 0;
@@ -655,8 +658,8 @@ contract MiltonStorage is
         address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
+        uint256 incomeFeeValue,
         uint256 closingTimestamp,
-        uint256 cfgIncomeFeeRate,
         uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
         uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
     ) internal {
@@ -664,8 +667,8 @@ contract MiltonStorage is
             liquidator,
             swap,
             payoff,
+            incomeFeeValue,
             closingTimestamp,
-            cfgIncomeFeeRate,
             cfgMinLiquidationThresholdToCloseBeforeMaturity,
             cfgSecondsBeforeMaturityWhenPositionCanBeClosed
         );
@@ -728,13 +731,17 @@ contract MiltonStorage is
         _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
+            /// @dev Buyer earns, Milton (LP) looses
             require(
                 _balances.liquidityPool >= absPayoff,
                 MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
+            /// @dev When Milton (LP) looses, then  always substract all payoff,
+            /// income fee is added in separate balance - treasury
             _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
+            /// @dev Milton earns, Buyer looses,
             _balances.liquidityPool =
                 _balances.liquidityPool +
                 (absPayoff - incomeFeeValue).toUint128();

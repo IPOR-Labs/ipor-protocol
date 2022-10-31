@@ -21,8 +21,7 @@ module.exports = {
             network_id: process.env.ETH_BC_NETWORK_ID,
             skipDryRun: true,
             networkCheckTimeout: 600000, //10 min
-            gas: 10000000,
-            gasPrice: 20000000000,
+            gasPrice: 100000000000,
             confirmations: process.env.SC_MIGRATION_CONFIRMATION,
         },
         develop: {
@@ -42,9 +41,8 @@ module.exports = {
     },
     compilers: {
         solc: {
-            version: "0.8.15", // Fetch exact version from solc-bin (default: truffle's version)
-            // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-
+            version: "0.8.16",
+            docker: false,
             settings: {
                 // See the solidity docs for advice about optimization and evmVersion
                 optimizer: {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 /// @title Interface for interaction with Joseph - smart contract responsible
 /// for managing ipTokens and ERC20 tokens in IPOR Protocol.
@@ -25,7 +25,7 @@ interface IJoseph {
     /// @notice Returns reserve ratio of Milton Asset Balance / (Milton Asset Balance + Stanley Asset Balance) for a given asset.
     /// Resere ratio is the ratio between ERC20 asset kept on hand by Milton, not delegated to Stanley and total amount of asset.
     /// @return reserves ratio, represented in 18 decimals
-    function checkVaultReservesRatio() external returns (uint256);
+    function checkVaultReservesRatio() external view returns (uint256);
 
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
     event ProvideLiquidity(

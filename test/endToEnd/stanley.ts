@@ -11,7 +11,7 @@ export const stanleyDaiFactory = async (
 ): Promise<StanleyDai> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyDai", admin);
-    return (await await upgrades.deployProxy(
+    return (await upgrades.deployProxy(
         stanleyFactory,
         [daiAddress, ivTokenDaiAddress, strategyAaveDaiAddress, strategyCompoundDaiAddress],
         {
@@ -27,7 +27,7 @@ export const stanleyUsdcFactory = async (
 ): Promise<StanleyUsdc> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyUsdc", admin);
-    return (await await upgrades.deployProxy(
+    return (await upgrades.deployProxy(
         stanleyFactory,
         [usdcAddress, ivTokenUsdcAddress, strategyAaveUsdcAddress, strategyCompoundUsdcAddress],
         {
@@ -43,7 +43,7 @@ export const stanleyUsdtFactory = async (
 ): Promise<StanleyUsdt> => {
     const [admin] = await hre.ethers.getSigners();
     const stanleyFactory = await hre.ethers.getContractFactory("StanleyUsdt", admin);
-    return (await await upgrades.deployProxy(
+    return (await upgrades.deployProxy(
         stanleyFactory,
         [usdtAddress, ivTokenUsdtAddress, strategyAaveUsdtAddress, strategyCompoundUsdtAddress],
         {

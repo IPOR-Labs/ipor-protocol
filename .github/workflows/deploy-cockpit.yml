@@ -10,7 +10,6 @@ on:
         type: choice
         options:
           - ipor-dev-cockpit
-          - ipor-rinkeby-cockpit
           - ipor-goerli-cockpit
 
 jobs:

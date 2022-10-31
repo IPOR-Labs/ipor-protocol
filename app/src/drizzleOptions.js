@@ -1,5 +1,9 @@
 import Migrations from "./contracts/Migrations.json";
 
+import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
+import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
+import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
+
 import IpTokenUsdt from "./contracts/IpTokenUsdt.json";
 import IpTokenUsdc from "./contracts/IpTokenUsdc.json";
 import IpTokenDai from "./contracts/IpTokenDai.json";
@@ -8,10 +12,11 @@ import IvTokenUsdt from "./contracts/IvTokenUsdt.json";
 import IvTokenUsdc from "./contracts/IvTokenUsdc.json";
 import IvTokenDai from "./contracts/IvTokenDai.json";
 
+import IporOracle from "./contracts/IporOracle.json";
+
 import MiltonSpreadModelUsdt from "./contracts/MiltonSpreadModelUsdt.json";
 import MiltonSpreadModelUsdc from "./contracts/MiltonSpreadModelUsdc.json";
 import MiltonSpreadModelDai from "./contracts/MiltonSpreadModelDai.json";
-import IporOracle from "./contracts/IporOracle.json";
 
 import MiltonStorageUsdt from "./contracts/MiltonStorageUsdt.json";
 import MiltonStorageUsdc from "./contracts/MiltonStorageUsdc.json";
@@ -42,12 +47,15 @@ import MiltonFacadeDataProvider from "./contracts/MiltonFacadeDataProvider.json"
 import IporOracleFacadeDataProvider from "./contracts/IporOracleFacadeDataProvider.json";
 
 import ItfIporOracle from "./contracts/ItfIporOracle.json";
+
 import ItfMiltonUsdt from "./contracts/ItfMiltonUsdt.json";
 import ItfMiltonUsdc from "./contracts/ItfMiltonUsdc.json";
 import ItfMiltonDai from "./contracts/ItfMiltonDai.json";
+
 import ItfJosephUsdt from "./contracts/ItfJosephUsdt.json";
 import ItfJosephUsdc from "./contracts/ItfJosephUsdc.json";
 import ItfJosephDai from "./contracts/ItfJosephDai.json";
+
 import ItfStanleyUsdt from "./contracts/ItfStanleyUsdt.json";
 import ItfStanleyUsdc from "./contracts/ItfStanleyUsdc.json";
 import ItfStanleyDai from "./contracts/ItfStanleyDai.json";
@@ -62,18 +70,6 @@ import MockTestnetShareTokenCompoundUsdt from "./contracts/MockTestnetShareToken
 import MockTestnetShareTokenCompoundUsdc from "./contracts/MockTestnetShareTokenCompoundUsdc.json";
 import MockTestnetShareTokenCompoundDai from "./contracts/MockTestnetShareTokenCompoundDai.json";
 
-import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
-import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
-import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
-
-import MockTestnetStrategyAaveUsdt from "./contracts/MockTestnetStrategyAaveUsdt.json";
-import MockTestnetStrategyAaveUsdc from "./contracts/MockTestnetStrategyAaveUsdc.json";
-import MockTestnetStrategyAaveDai from "./contracts/MockTestnetStrategyAaveDai.json";
-
-import MockTestnetStrategyCompoundUsdt from "./contracts/MockTestnetStrategyCompoundUsdt.json";
-import MockTestnetStrategyCompoundUsdc from "./contracts/MockTestnetStrategyCompoundUsdc.json";
-import MockTestnetStrategyCompoundDai from "./contracts/MockTestnetStrategyCompoundDai.json";
-
 require("dotenv").config({ path: "../../.env" });
 
 const Web3 = require("web3");
@@ -83,17 +79,73 @@ web3.fallback = {
     url: "ws://127.0.0.1:8545",
 };
 
-const abiERC20 = require("./contracts/ERC20.json");
-const abiShareTokenAaveUsdt = require("./contracts/ERC20.json");
-const abiShareTokenAaveUsdc = require("./contracts/ERC20.json");
-const abiShareTokenAaveDai = require("./contracts/ERC20.json");
-const abiShareTokenCompoundUsdt = require("./contracts/ERC20.json");
-const abiShareTokenCompoundUsdc = require("./contracts/ERC20.json");
-const abiShareTokenCompoundDai = require("./contracts/ERC20.json");
+const networkId = process.env.REACT_APP_ETH_BC_NETWORK_ID;
+const addresses = require("./" + process.env.REACT_APP_ENV_PROFILE + "-docker-ipor-addresses.json");
 
-let DrizzleUsdt;
-let DrizzleUsdc;
-let DrizzleDai;
+const DrizzleUsdt = MockTestnetTokenUsdt;
+DrizzleUsdt.contractName = "DrizzleUsdt";
+DrizzleUsdt.networks[networkId] = { address: addresses.USDT };
+
+const DrizzleUsdc = MockTestnetTokenUsdc;
+DrizzleUsdc.contractName = "DrizzleUsdc";
+DrizzleUsdc.networks[networkId] = { address: addresses.USDC };
+
+const DrizzleDai = MockTestnetTokenDai;
+DrizzleDai.contractName = "DrizzleDai";
+DrizzleDai.networks[networkId] = { address: addresses.DAI };
+
+IpTokenUsdt.networks[networkId] = { address: addresses.ipUSDT };
+IpTokenUsdc.networks[networkId] = { address: addresses.ipUSDC };
+IpTokenDai.networks[networkId] = { address: addresses.ipDAI };
+
+IvTokenUsdt.networks[networkId] = { address: addresses.ivUSDT };
+IvTokenUsdc.networks[networkId] = { address: addresses.ivUSDC };
+IvTokenDai.networks[networkId] = { address: addresses.ivDAI };
+
+MiltonSpreadModelUsdt.networks[networkId] = { address: addresses.MiltonSpreadModelUsdt };
+MiltonSpreadModelUsdc.networks[networkId] = { address: addresses.MiltonSpreadModelUsdc };
+MiltonSpreadModelDai.networks[networkId] = { address: addresses.MiltonSpreadModelDai };
+
+MiltonStorageUsdt.networks[networkId] = { address: addresses.MiltonStorageProxyUsdt };
+MiltonStorageUsdc.networks[networkId] = { address: addresses.MiltonStorageProxyUsdc };
+MiltonStorageDai.networks[networkId] = { address: addresses.MiltonStorageProxyDai };
+
+CockpitDataProvider.networks[networkId] = { address: addresses.CockpitDataProviderProxy };
+MiltonFacadeDataProvider.networks[networkId] = { address: addresses.MiltonFacadeDataProviderProxy };
+IporOracleFacadeDataProvider.networks[networkId] = {
+    address: addresses.IporOracleFacadeDataProviderProxy,
+};
+
+const DrizzleShareTokenAaveUsdt = MockTestnetShareTokenAaveUsdt;
+DrizzleShareTokenAaveUsdt.contractName = "DrizzleShareTokenAaveUsdt";
+DrizzleShareTokenAaveUsdt.networks[networkId] = { address: addresses.aUSDT };
+
+const DrizzleShareTokenAaveUsdc = MockTestnetShareTokenAaveUsdc;
+DrizzleShareTokenAaveUsdc.contractName = "DrizzleShareTokenAaveUsdc";
+DrizzleShareTokenAaveUsdc.networks[networkId] = { address: addresses.aUSDC };
+
+const DrizzleShareTokenAaveDai = MockTestnetShareTokenAaveDai;
+DrizzleShareTokenAaveDai.contractName = "DrizzleShareTokenAaveDai";
+DrizzleShareTokenAaveDai.networks[networkId] = { address: addresses.aDAI };
+
+const DrizzleShareTokenCompoundUsdt = MockTestnetShareTokenCompoundUsdt;
+DrizzleShareTokenCompoundUsdt.contractName = "DrizzleShareTokenCompoundUsdt";
+DrizzleShareTokenCompoundUsdt.networks[networkId] = { address: addresses.cUSDT };
+
+const DrizzleShareTokenCompoundUsdc = MockTestnetShareTokenCompoundUsdc;
+DrizzleShareTokenCompoundUsdc.contractName = "DrizzleShareTokenCompoundUsdc";
+DrizzleShareTokenCompoundUsdc.networks[networkId] = { address: addresses.cUSDC };
+
+const DrizzleShareTokenCompoundDai = MockTestnetShareTokenCompoundDai;
+DrizzleShareTokenCompoundDai.contractName = "DrizzleShareTokenCompoundDai";
+DrizzleShareTokenCompoundDai.networks[networkId] = { address: addresses.cDAI };
+
+StrategyAaveUsdt.networks[networkId] = { address: addresses.AaveStrategyProxyUsdt };
+StrategyAaveUsdc.networks[networkId] = { address: addresses.AaveStrategyProxyUsdc };
+StrategyAaveDai.networks[networkId] = { address: addresses.AaveStrategyProxyDai };
+StrategyCompoundUsdt.networks[networkId] = { address: addresses.CompoundStrategyProxyUsdt };
+StrategyCompoundUsdc.networks[networkId] = { address: addresses.CompoundStrategyProxyUsdc };
+StrategyCompoundDai.networks[networkId] = { address: addresses.CompoundStrategyProxyDai };
 
 let DrizzleIporOracle;
 let DrizzleMiltonUsdt;
@@ -106,146 +158,67 @@ let DrizzleStanleyUsdt;
 let DrizzleStanleyUsdc;
 let DrizzleStanleyDai;
 
-let DrizzleShareTokenAaveUsdt;
-let DrizzleShareTokenAaveUsdc;
-let DrizzleShareTokenAaveDai;
-let DrizzleShareTokenCompoundUsdt;
-let DrizzleShareTokenCompoundUsdc;
-let DrizzleShareTokenCompoundDai;
-
-let DrizzleStrategyAaveUsdt;
-let DrizzleStrategyAaveUsdc;
-let DrizzleStrategyAaveDai;
-let DrizzleStrategyCompoundUsdt;
-let DrizzleStrategyCompoundUsdc;
-let DrizzleStrategyCompoundDai;
-
-if (process.env.REACT_APP_ENV_PROFILE === "mainnet") {
-    //Mainnet
-    const usdt = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
-    const usdc = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
-    const dai = "0x6B175474E89094C44Da98b954EedeAC495271d0F";
-
-    const aUsdt = "0x3Ed3B47Dd13EC9a98b44e6204A523E766B225811";
-    const aUsdc = "0xBcca60bB61934080951369a648Fb03DF4F96263C";
-    const aDai = "0x028171bCA77440897B824Ca71D1c56caC55b68A3";
-
-    const cUsdt = "0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9";
-    const cUsdc = "0x39aa39c021dfbae8fac545936693ac917d5e7563";
-    const cDai = "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643";
-
-    const MainnetStableUsdt = {
-        contractName: "DrizzleUsdt",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, usdt),
-    };
-
-    const MainnetStableUsdc = {
-        contractName: "DrizzleUsdc",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, usdc),
-    };
-
-    const MainnetStableDai = {
-        contractName: "DrizzleDai",
-        web3Contract: new web3.eth.Contract(abiERC20.abi, dai),
-    };
-
-    const MainnetShareTokenAaveUsdt = {
-        contractName: "DrizzleShareTokenAaveUsdt",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveUsdt.abi, aUsdt),
-    };
-
-    const MainnetShareTokenAaveUsdc = {
-        contractName: "DrizzleShareTokenAaveUsdc",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveUsdc.abi, aUsdc),
-    };
-
-    const MainnetShareTokenAaveDai = {
-        contractName: "DrizzleShareTokenAaveDai",
-        web3Contract: new web3.eth.Contract(abiShareTokenAaveDai.abi, aDai),
-    };
-
-    const MainnetShareTokenCompoundUsdt = {
-        contractName: "DrizzleShareTokenCompoundUsdt",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundUsdt.abi, cUsdt),
-    };
-
-    const MainnetShareTokenCompoundUsdc = {
-        contractName: "DrizzleShareTokenCompoundUsdc",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundUsdc.abi, cUsdc),
-    };
-
-    const MainnetShareTokenCompoundDai = {
-        contractName: "DrizzleShareTokenCompoundDai",
-        web3Contract: new web3.eth.Contract(abiShareTokenCompoundDai.abi, cDai),
-    };
-
-    DrizzleUsdt = MainnetStableUsdt;
-    DrizzleUsdc = MainnetStableUsdc;
-    DrizzleDai = MainnetStableDai;
-
-    DrizzleShareTokenAaveUsdt = MainnetShareTokenAaveUsdt;
-    DrizzleShareTokenAaveUsdc = MainnetShareTokenAaveUsdc;
-    DrizzleShareTokenAaveDai = MainnetShareTokenAaveDai;
-    DrizzleShareTokenCompoundUsdt = MainnetShareTokenCompoundUsdt;
-    DrizzleShareTokenCompoundUsdc = MainnetShareTokenCompoundUsdc;
-    DrizzleShareTokenCompoundDai = MainnetShareTokenCompoundDai;
-
-    DrizzleStrategyAaveUsdt = StrategyAaveUsdt;
-    DrizzleStrategyAaveUsdc = StrategyAaveUsdc;
-    DrizzleStrategyAaveDai = StrategyAaveDai;
-
-    DrizzleStrategyCompoundUsdt = StrategyCompoundUsdt;
-    DrizzleStrategyCompoundUsdc = StrategyCompoundUsdc;
-    DrizzleStrategyCompoundDai = StrategyCompoundDai;
-} else {
-    //Other than Mainnet
-    DrizzleUsdt = MockTestnetTokenUsdt;
-    DrizzleUsdc = MockTestnetTokenUsdc;
-    DrizzleDai = MockTestnetTokenDai;
-
-    DrizzleShareTokenAaveUsdt = MockTestnetShareTokenAaveUsdt;
-    DrizzleShareTokenAaveUsdc = MockTestnetShareTokenAaveUsdc;
-    DrizzleShareTokenAaveDai = MockTestnetShareTokenAaveDai;
-    DrizzleShareTokenCompoundUsdt = MockTestnetShareTokenCompoundUsdt;
-    DrizzleShareTokenCompoundUsdc = MockTestnetShareTokenCompoundUsdc;
-    DrizzleShareTokenCompoundDai = MockTestnetShareTokenCompoundDai;
-
-    DrizzleStrategyAaveUsdt = MockTestnetStrategyAaveUsdt;
-    DrizzleStrategyAaveUsdc = MockTestnetStrategyAaveUsdc;
-    DrizzleStrategyAaveDai = MockTestnetStrategyAaveDai;
-
-    DrizzleStrategyCompoundUsdt = MockTestnetStrategyCompoundUsdt;
-    DrizzleStrategyCompoundUsdc = MockTestnetStrategyCompoundUsdc;
-    DrizzleStrategyCompoundDai = MockTestnetStrategyCompoundDai;
-}
-
 if (process.env.REACT_APP_ITF_ENABLED === "true") {
     DrizzleIporOracle = ItfIporOracle;
+    DrizzleIporOracle.networks[networkId] = { address: addresses.ItfIporOracleProxy };
+
     DrizzleMiltonUsdt = ItfMiltonUsdt;
+    DrizzleMiltonUsdt.networks[networkId] = { address: addresses.ItfMiltonProxyUsdt };
+
     DrizzleMiltonUsdc = ItfMiltonUsdc;
+    DrizzleMiltonUsdc.networks[networkId] = { address: addresses.ItfMiltonProxyUsdc };
+
     DrizzleMiltonDai = ItfMiltonDai;
+    DrizzleMiltonDai.networks[networkId] = { address: addresses.ItfMiltonProxyDai };
+
     DrizzleJosephUsdt = ItfJosephUsdt;
+    DrizzleJosephUsdt.networks[networkId] = { address: addresses.ItfJosephProxyUsdt };
+
     DrizzleJosephUsdc = ItfJosephUsdc;
+    DrizzleJosephUsdc.networks[networkId] = { address: addresses.ItfJosephProxyUsdc };
+
     DrizzleJosephDai = ItfJosephDai;
+    DrizzleJosephDai.networks[networkId] = { address: addresses.ItfJosephProxyDai };
+
     DrizzleStanleyUsdt = ItfStanleyUsdt;
+    DrizzleStanleyUsdt.networks[networkId] = { address: addresses.ItfStanleyProxyUsdt };
+
     DrizzleStanleyUsdc = ItfStanleyUsdc;
+    DrizzleStanleyUsdc.networks[networkId] = { address: addresses.ItfStanleyProxyUsdc };
+
     DrizzleStanleyDai = ItfStanleyDai;
+    DrizzleStanleyDai.networks[networkId] = { address: addresses.StanleyProxyDai };
 } else {
     DrizzleIporOracle = IporOracle;
-    DrizzleMiltonUsdt = MiltonUsdt;
-    DrizzleMiltonUsdc = MiltonUsdc;
-    DrizzleMiltonDai = MiltonDai;
-    DrizzleJosephUsdt = JosephUsdt;
-    DrizzleJosephUsdc = JosephUsdc;
-    DrizzleJosephDai = JosephDai;
-    DrizzleStanleyUsdt = StanleyUsdt;
-    DrizzleStanleyUsdc = StanleyUsdc;
-    DrizzleStanleyDai = StanleyDai;
-}
+    DrizzleIporOracle.networks[networkId] = { address: addresses.IporOracleProxy };
 
-DrizzleUsdt.contractName = "DrizzleUsdt";
-DrizzleUsdc.contractName = "DrizzleUsdc";
-DrizzleDai.contractName = "DrizzleDai";
+    DrizzleMiltonUsdt = MiltonUsdt;
+    DrizzleMiltonUsdt.networks[networkId] = { address: addresses.MiltonProxyUsdt };
+
+    DrizzleMiltonUsdc = MiltonUsdc;
+    DrizzleMiltonUsdc.networks[networkId] = { address: addresses.MiltonProxyUsdc };
+
+    DrizzleMiltonDai = MiltonDai;
+    DrizzleMiltonDai.networks[networkId] = { address: addresses.MiltonProxyDai };
+
+    DrizzleJosephUsdt = JosephUsdt;
+    DrizzleJosephUsdt.networks[networkId] = { address: addresses.JosephProxyUsdt };
+
+    DrizzleJosephUsdc = JosephUsdc;
+    DrizzleJosephUsdc.networks[networkId] = { address: addresses.JosephProxyUsdc };
+
+    DrizzleJosephDai = JosephDai;
+    DrizzleJosephDai.networks[networkId] = { address: addresses.JosephProxyDai };
+
+    DrizzleStanleyUsdt = StanleyUsdt;
+    DrizzleStanleyUsdt.networks[networkId] = { address: addresses.StanleyProxyUsdt };
+
+    DrizzleStanleyUsdc = StanleyUsdc;
+    DrizzleStanleyUsdc.networks[networkId] = { address: addresses.StanleyProxyUsdc };
+
+    DrizzleStanleyDai = StanleyDai;
+    DrizzleStanleyDai.networks[networkId] = { address: addresses.StanleyProxyDai };
+}
 
 DrizzleIporOracle.contractName = "DrizzleIporOracle";
 DrizzleMiltonUsdt.contractName = "DrizzleMiltonUsdt";
@@ -257,21 +230,6 @@ DrizzleJosephDai.contractName = "DrizzleJosephDai";
 DrizzleStanleyUsdt.contractName = "DrizzleStanleyUsdt";
 DrizzleStanleyUsdc.contractName = "DrizzleStanleyUsdc";
 DrizzleStanleyDai.contractName = "DrizzleStanleyDai";
-
-DrizzleShareTokenAaveUsdt.contractName = "DrizzleShareTokenAaveUsdt";
-DrizzleShareTokenAaveUsdc.contractName = "DrizzleShareTokenAaveUsdc";
-DrizzleShareTokenAaveDai.contractName = "DrizzleShareTokenAaveDai";
-DrizzleShareTokenCompoundUsdt.contractName = "DrizzleShareTokenCompoundUsdt";
-DrizzleShareTokenCompoundUsdc.contractName = "DrizzleShareTokenCompoundUsdc";
-DrizzleShareTokenCompoundDai.contractName = "DrizzleShareTokenCompoundDai";
-
-DrizzleStrategyAaveUsdt.contractName = "DrizzleStrategyAaveUsdt";
-DrizzleStrategyAaveUsdc.contractName = "DrizzleStrategyAaveUsdc";
-DrizzleStrategyAaveDai.contractName = "DrizzleStrategyAaveDai";
-
-DrizzleStrategyCompoundUsdt.contractName = "DrizzleStrategyCompoundUsdt";
-DrizzleStrategyCompoundUsdc.contractName = "DrizzleStrategyCompoundUsdc";
-DrizzleStrategyCompoundDai.contractName = "DrizzleStrategyCompoundDai";
 
 let options = {
     web3: web3,
@@ -292,12 +250,12 @@ let options = {
         MiltonSpreadModelUsdt,
         MiltonSpreadModelUsdc,
         MiltonSpreadModelDai,
-        DrizzleIporOracle,
 
         MiltonStorageUsdt,
         MiltonStorageUsdc,
         MiltonStorageDai,
 
+        DrizzleIporOracle,
         DrizzleMiltonUsdt,
         DrizzleMiltonUsdc,
         DrizzleMiltonDai,
@@ -311,15 +269,18 @@ let options = {
         DrizzleShareTokenAaveUsdt,
         DrizzleShareTokenAaveUsdc,
         DrizzleShareTokenAaveDai,
+
         DrizzleShareTokenCompoundUsdt,
         DrizzleShareTokenCompoundUsdc,
         DrizzleShareTokenCompoundDai,
-        DrizzleStrategyAaveUsdt,
-        DrizzleStrategyAaveUsdc,
-        DrizzleStrategyAaveDai,
-        DrizzleStrategyCompoundUsdt,
-        DrizzleStrategyCompoundUsdc,
-        DrizzleStrategyCompoundDai,
+
+        StrategyAaveUsdt,
+        StrategyAaveUsdc,
+        StrategyAaveDai,
+
+        StrategyCompoundUsdt,
+        StrategyCompoundUsdc,
+        StrategyCompoundDai,
 
         CockpitDataProvider,
         MiltonFacadeDataProvider,
@@ -327,7 +288,7 @@ let options = {
     ],
 };
 
-if (process.env.REACT_APP_ENV_PROFILE !== "mainnet") {
+if (process.env.REACT_APP_ENV_PROFILE !== "mainnet.ipor.io") {
     options.contracts.push(TestnetFaucet);
 }
 

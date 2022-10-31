@@ -73,18 +73,18 @@ export const transferFromFaucetTo = async (
     testnetFaucet: TestnetFaucet,
     asset: ERC20,
     to: string,
-    amound: BigNumber
+    amount: BigNumber
 ) => {
     if (asset.address === daiAddress) {
-        await transferDaiToAddress(testnetFaucet.address, to, amound);
+        await transferDaiToAddress(testnetFaucet.address, to, amount);
         return;
     }
     if (asset.address === usdcAddress) {
-        await transferUsdcToAddress(testnetFaucet.address, to, amound);
+        await transferUsdcToAddress(testnetFaucet.address, to, amount);
         return;
     }
     if (asset.address === usdtAddress) {
-        await transferUsdtToAddress(testnetFaucet.address, to, amound);
+        await transferUsdtToAddress(testnetFaucet.address, to, amount);
         return;
     }
 };

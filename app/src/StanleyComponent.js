@@ -27,7 +27,7 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>Exchange Rate</strong>
+                        <strong>IvToken Exchange Rate</strong>
                     </td>
                     <td>
                         <ContractData
@@ -77,15 +77,14 @@ export default ({ drizzle, drizzleState }) => (
                 </tr>
                 <tr>
                     <td>
-                        <strong>My IvToken Balance</strong>
+                        <strong>IvToken Total Supply</strong>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            contract="IvTokenUsdt"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -99,9 +98,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            contract="IvTokenUsdc"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -115,9 +113,8 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="CockpitDataProvider"
-                            method="getMyIvTokenBalance"
-                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
+                            contract="IvTokenDai"
+                            method="totalSupply"
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -171,6 +168,59 @@ export default ({ drizzle, drizzleState }) => (
                             contract="IvTokenDai"
                             method="balanceOf"
                             methodArgs={[drizzle.contracts.DrizzleMiltonDai.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>My IvToken Balance</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdt.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleUsdc.address]}
+                            render={(value) => (
+                                <div>
+                                    {value / 1000000000000000000}
+                                    <br />
+                                    <small>{value}</small>
+                                </div>
+                            )}
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="CockpitDataProvider"
+                            method="getMyIvTokenBalance"
+                            methodArgs={[drizzle.contracts.DrizzleDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -262,7 +312,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenAaveUsdt"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveUsdt.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveUsdt.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -278,7 +328,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenAaveUsdc"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveUsdc.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveUsdc.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -294,7 +344,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenAaveDai"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveDai.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -386,7 +436,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenCompoundUsdt"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundUsdt.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundUsdt.address]}
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
@@ -402,7 +452,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenCompoundUsdc"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundUsdc.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundUsdc.address]}
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
@@ -418,7 +468,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleShareTokenCompoundDai"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundDai.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 100000000}
@@ -442,6 +492,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Stanley Asset Balance</strong>
+                        <br />
+                        <small>IvToken Exchange Rate * Volume of IvToken on Milton</small>
                     </td>
                     <td>
                         <ContractData
@@ -496,12 +548,19 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Aave Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in AAVE protocol.
+                            <br /> It is a aToken volume in 1:1 relation with asset.
+                            <br />
+                            Balance is accrued when new block is mined.
+                        </small>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveUsdt"
+                            contract="StrategyAaveUsdt"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -516,7 +575,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveUsdc"
+                            contract="StrategyAaveUsdc"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -531,7 +590,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveDai"
+                            contract="StrategyAaveDai"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -546,12 +605,20 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound Asset Balance</strong>
+                        <br />
+                        <small>
+                            Deposited and accrued asset amount in Compound protocol. <br />
+                            In calculation is taken in consideration exchange rate and volume of
+                            cToken.
+                            <br />
+                            Balance is accrued when method accrueInterest() in cToken is executed.
+                        </small>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundUsdt"
+                            contract="StrategyCompoundUsdt"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -561,12 +628,20 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdt"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundUsdc"
+                            contract="StrategyCompoundUsdc"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -576,12 +651,20 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundUsdc"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundDai"
+                            contract="StrategyCompoundDai"
                             method="balanceOf"
                             render={(value) => (
                                 <div>
@@ -591,12 +674,22 @@ export default ({ drizzle, drizzleState }) => (
                                 </div>
                             )}
                         />
+                        <div>
+                            <strong>Accrue interest</strong>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleShareTokenCompoundDai"
+                                method="accrueInterest"
+                            />
+                        </div>
                     </td>
                 </tr>
 
                 <tr>
                     <td>
                         <strong>Strategy Aave ERC20 Token Balance</strong>
+                        <br />
+                        <small>Most time should be equal 0</small>
                     </td>
                     <td>
                         <ContractData
@@ -604,7 +697,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleUsdt"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveUsdt.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveUsdt.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -620,7 +713,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleUsdc"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveUsdc.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveUsdc.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -636,7 +729,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleDai"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyAaveDai.address]}
+                            methodArgs={[drizzle.contracts.StrategyAaveDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -650,6 +743,8 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Strategy Compound ERC20 Token Balance</strong>
+                        <br />
+                        <small>Most time should be equal 0.</small>
                     </td>
                     <td>
                         <ContractData
@@ -657,7 +752,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleUsdt"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundUsdt.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundUsdt.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -673,7 +768,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleUsdc"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundUsdc.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundUsdc.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000}
@@ -689,7 +784,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleDai"
                             method="balanceOf"
-                            methodArgs={[drizzle.contracts.DrizzleStrategyCompoundDai.address]}
+                            methodArgs={[drizzle.contracts.StrategyCompoundDai.address]}
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
@@ -718,7 +813,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveUsdt"
+                            contract="StrategyAaveUsdt"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -733,7 +828,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveUsdc"
+                            contract="StrategyAaveUsdc"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -748,7 +843,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyAaveDai"
+                            contract="StrategyAaveDai"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -768,7 +863,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundUsdt"
+                            contract="StrategyCompoundUsdt"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -783,7 +878,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundUsdc"
+                            contract="StrategyCompoundUsdc"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -798,7 +893,7 @@ export default ({ drizzle, drizzleState }) => (
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
-                            contract="DrizzleStrategyCompoundDai"
+                            contract="StrategyCompoundDai"
                             method="getApr"
                             render={(value) => (
                                 <div>
@@ -834,7 +929,7 @@ export default ({ drizzle, drizzleState }) => (
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.DrizzleStanleyUsdt.address,
-                                    drizzle.contracts.DrizzleStrategyAaveUsdt.address,
+                                    drizzle.contracts.StrategyAaveUsdt.address,
                                 ]}
                                 render={(value) => (
                                     <div>
@@ -855,7 +950,7 @@ export default ({ drizzle, drizzleState }) => (
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.DrizzleStanleyUsdc.address,
-                                    drizzle.contracts.DrizzleStrategyAaveUsdc.address,
+                                    drizzle.contracts.StrategyAaveUsdc.address,
                                 ]}
                                 render={(value) => (
                                     <div>
@@ -876,7 +971,7 @@ export default ({ drizzle, drizzleState }) => (
                                 method="allowance"
                                 methodArgs={[
                                     drizzle.contracts.DrizzleStanleyDai.address,
-                                    drizzle.contracts.DrizzleStrategyAaveDai.address,
+                                    drizzle.contracts.StrategyAaveDai.address,
                                 ]}
                                 render={(value) => (
                                     <div>
@@ -908,7 +1003,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="doClaim"
                             />
                         </div>
@@ -917,7 +1012,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="doClaim"
                             />
                         </div>
@@ -926,7 +1021,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="doClaim"
                             />
                         </div>
@@ -941,7 +1036,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdt"
+                                contract="StrategyCompoundUsdt"
                                 method="doClaim"
                             />
                         </div>
@@ -950,7 +1045,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundUsdc"
+                                contract="StrategyCompoundUsdc"
                                 method="doClaim"
                             />
                         </div>
@@ -959,7 +1054,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyCompoundDai"
+                                contract="StrategyCompoundDai"
                                 method="doClaim"
                             />
                         </div>
@@ -983,7 +1078,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdt"
+                                contract="StrategyAaveUsdt"
                                 method="beforeClaim"
                             />
                         </div>
@@ -992,7 +1087,7 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveUsdc"
+                                contract="StrategyAaveUsdc"
                                 method="beforeClaim"
                             />
                         </div>
@@ -1001,14 +1096,52 @@ export default ({ drizzle, drizzleState }) => (
                         <div>
                             <ContractForm
                                 drizzle={drizzle}
-                                contract="DrizzleStrategyAaveDai"
+                                contract="StrategyAaveDai"
                                 method="beforeClaim"
                             />
                         </div>
                     </td>
                 </tr>
             </table>
-            
+
+            <h4>Stanley - migrate assets to strategy with MAX APR</h4>
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdt"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyUsdc"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleStanleyDai"
+                                method="migrateAssetToStrategyWithMaxApr"
+                            />
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
     </div>
 );

@@ -29,7 +29,7 @@ describe("ItfDataProvider - smoke tests", () => {
     let testData: TestData;
     let itfDataProvider: ItfDataProvider;
 
-    before(async () => {
+    beforeEach(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider, miltonStorageAddress] =
             await hre.ethers.getSigners();
         miltonSpreadModel = await prepareMockMiltonSpreadModelDai();

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 import "./types/IporTypes.sol";
 import "./types/CockpitTypes.sol";
@@ -7,6 +7,7 @@ import "./types/CockpitTypes.sol";
 /// @title Interface of IPOR Protocol for interaction with external diagnostics web applications
 interface ICockpitDataProvider {
     /// @notice Returns current version of Cockpit Data Provider
+    /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current Cockpit Data Provider version
     function getVersion() external pure returns (uint256);
 

@@ -1,6 +1,6 @@
 //solhint-disable
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.15;
+pragma solidity 0.8.16;
 
 // interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -65,7 +65,8 @@ contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
         address asset,
         uint256 amount,
         address to
-    ) external override {
+    ) external override returns (uint256) {
         AToken(_aDai).burn(msg.sender, to, amount, 0);
+        return amount;
     }
 }
