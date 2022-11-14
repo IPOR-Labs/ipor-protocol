@@ -201,7 +201,7 @@ describe("MiltonConfiguration", () => {
         //when
         const actualValue = await miltonConfiguration.getMaxLpUtilizationPerLegRate();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("10").mul(N0__01_18DEC));
+        expect(actualValue).to.be.eq(BigNumber.from("3").mul(N0__01_18DEC));
     });
 
     it("should setup init value for Income Fee Percentage", async () => {
