@@ -22,9 +22,7 @@ contract ItfLiquidator {
     )
         external
         returns (
-            uint256 payoutForLiquidatorPayFixed,
             MiltonTypes.IporSwapClosingResult[] memory payFixedClosedSwaps,
-            uint256 payoutForLiquidatorReceiveFixed,
             MiltonTypes.IporSwapClosingResult[] memory receiveFixedClosedSwaps
         )
     {
