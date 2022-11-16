@@ -32,9 +32,9 @@ contract ItfLiquidator {
         IMiltonStorage miltonStorage = _miltonStorage;
         uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
         uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
+        uint256 swapId; 
         if (payFixedSwapIdsLength > 0) {
             payFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
-            uint256 swapId; 
             for (uint256 i; i < payFixedSwapIdsLength; ++i) {
                 swapId = payFixedSwapIds[i];
                 IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
@@ -53,7 +53,6 @@ contract ItfLiquidator {
             receiveFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](
                 receiveFixedSwapIdsLength
             );
-            uint256 swapId;
             for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
                 swapId = receiveFixedSwapIds[i];
                 IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(
