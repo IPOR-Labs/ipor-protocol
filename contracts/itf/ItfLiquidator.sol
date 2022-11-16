@@ -30,8 +30,8 @@ contract ItfLiquidator {
     {
         ItfMilton milton = _milton;
         IMiltonStorage miltonStorage = _miltonStorage;
-        payFixedSwapIdsLength = payFixedSwapIds.length;
-        receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
+        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
+        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
         if (payFixedSwapIdsLength > 0) {
             payFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
             uint256 swapId; 
