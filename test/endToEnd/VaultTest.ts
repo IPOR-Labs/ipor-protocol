@@ -167,7 +167,7 @@ describe("End to End tests on mainnet fork", function () {
         ).to.be.true;
     });
 
-    it.skip("Should not be able to withdraw from stanley Usdt", async () => {
+    it("Should not be able to withdraw from stanley Usdt", async () => {
         // given
         await transferFromFaucetTo(
             testnetFaucet,
