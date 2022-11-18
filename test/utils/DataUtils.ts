@@ -37,6 +37,7 @@ import {
     MockMiltonStorage,
     MockSpreadModel,
     MiltonSpreadModel,
+    IporToken,
 } from "../../types";
 
 import {
@@ -88,6 +89,17 @@ export type TestData = {
     stanleyUsdc?: MockStanley;
     stanleyDai?: MockStanley;
     iporOracle: ItfIporOracle;
+};
+
+export type TestDataMining = {
+    executionTimestamp: BigNumber;
+    tokenDai?: DaiMockedToken;
+    tokenUsdt?: UsdtMockedToken;
+    tokenUsdc?: UsdcMockedToken;
+    ipTokenUsdt?: IpToken;
+    ipTokenUsdc?: IpToken;
+    ipTokenDai?: IpToken;
+    iporToken?: IporToken;
 };
 
 export const prepareTestData = async (
@@ -362,6 +374,93 @@ export const prepareTestData = async (
         stanleyUsdt,
         stanleyUsdc,
         stanleyDai,
+    };
+};
+
+export const prepareTestDataForMining = async (
+    executionTimestamp: BigNumber,
+    accounts: Signer[],
+    assets: AssetsType[]
+): Promise<TestDataMining> => {
+    let tokenDai: DaiMockedToken | undefined;
+    let tokenUsdt: UsdtMockedToken | undefined;
+    let tokenUsdc: UsdcMockedToken | undefined;
+    let ipTokenUsdt: IpToken | undefined;
+    let ipTokenUsdc: IpToken | undefined;
+    let ipTokenDai: IpToken | undefined;
+    let iporToken: IporToken | undefined;
+
+    const IpToken = await ethers.getContractFactory("IpToken");
+    const IporToken = await ethers.getContractFactory("IporToken");
+    const UsdtMockedToken = await ethers.getContractFactory("UsdtMockedToken");
+    const UsdcMockedToken = await ethers.getContractFactory("UsdcMockedToken");
+    const DaiMockedToken = await ethers.getContractFactory("DaiMockedToken");
+
+    const assetsAddr: string[] = [];
+    const lastUpdateTimestamps: BigNumber[] = [];
+
+    for (let k = 0; k < assets.length; k++) {
+        if (assets[k] === "USDT") {
+            tokenUsdt = (await UsdtMockedToken.deploy(
+                TOTAL_SUPPLY_6_DECIMALS,
+                6
+            )) as UsdtMockedToken;
+            await tokenUsdt.deployed();
+            assetsAddr.push(tokenUsdt.address);
+            lastUpdateTimestamps.push(executionTimestamp);
+        }
+        if (assets[k] === "USDC") {
+            tokenUsdc = (await UsdcMockedToken.deploy(
+                TOTAL_SUPPLY_6_DECIMALS,
+                6
+            )) as UsdcMockedToken;
+            await tokenUsdc.deployed();
+            assetsAddr.push(tokenUsdc.address);
+            lastUpdateTimestamps.push(executionTimestamp);
+        }
+
+        if (assets[k] === "DAI") {
+            tokenDai = (await DaiMockedToken.deploy(
+                TOTAL_SUPPLY_18_DECIMALS,
+                18
+            )) as DaiMockedToken;
+            await tokenDai.deployed();
+            assetsAddr.push(tokenDai.address);
+            lastUpdateTimestamps.push(executionTimestamp);
+        }
+    }
+
+    iporToken = (await IporToken.deploy(
+        "IPOR Token",
+        "IPOR",
+        await accounts[0].getAddress()
+    )) as IporToken;
+
+    if (tokenUsdt) {
+        ipTokenUsdt = (await IpToken.deploy("IP USDT", "ipUSDT", tokenUsdt.address)) as IpToken;
+        await ipTokenUsdt.setJoseph(await accounts[0].getAddress());
+    }
+
+    if (tokenUsdc) {
+        ipTokenUsdc = (await IpToken.deploy("IP USDC", "ipUSDC", tokenUsdc.address)) as IpToken;
+
+        await ipTokenUsdc.setJoseph(await accounts[0].getAddress());
+    }
+
+    if (tokenDai) {
+        ipTokenDai = (await IpToken.deploy("IP DAI", "ipDAI", tokenDai.address)) as IpToken;
+        await ipTokenDai.setJoseph(await accounts[0].getAddress());
+    }
+
+    return {
+        executionTimestamp,
+        tokenDai,
+        tokenUsdt,
+        tokenUsdc,
+        ipTokenUsdt,
+        ipTokenUsdc,
+        ipTokenDai,
+        iporToken,
     };
 };
 
