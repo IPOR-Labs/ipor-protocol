@@ -66,12 +66,4 @@ iporErrorList.json
 ### ETH dumps ###
 /containers/eth-bc/eth-bc-dump
 
-/contracts/facades/artifacts/
-/contracts/facades/cockpit/artifacts/
-/contracts/amm/pool/artifacts/
-/contracts/amm/spread/artifacts/
-/contracts/mocks/artifacts/
-/contracts/mocks/stanley/artifacts/
-/contracts/mocks/tokens/artifacts/
-/contracts/vault/artifacts/
-/contracts/vault/strategies/artifacts/
+/contracts/**/artifacts/
