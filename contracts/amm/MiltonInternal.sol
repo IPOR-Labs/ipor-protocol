@@ -42,7 +42,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MAX_LP_UTILIZATION_RATE = 8 * 1e17;
 
-    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 3 * 1e16;
+    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 48 * 1e16;
 
     uint256 internal constant _INCOME_TAX_RATE = 1e17;
 
@@ -79,7 +79,7 @@ abstract contract MiltonInternal is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 2;
     }
 
     function getAsset() external view override returns (address) {

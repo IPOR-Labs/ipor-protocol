@@ -697,7 +697,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await miltonUsdc
             .connect(admin)
             .openSwapPayFixed(
-                BigNumber.from("5000").mul(N1__0_6DEC),
+                BigNumber.from("100000").mul(N1__0_6DEC),
                 BigNumber.from("90000000000000000"),
                 BigNumber.from("1000000000000000000000")
             );
