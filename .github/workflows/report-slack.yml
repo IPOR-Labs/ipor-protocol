@@ -23,11 +23,13 @@ on:
         description: 'Slack channel name used for jobs statuses'
         type: string
         default: github-ci
+        required: false
 
       alarms-slack-channel-name:
         description: 'Slack channel name used for jobs alarms'
         type: string
         default: alarms-github
+        required: false
 
     outputs:
 
