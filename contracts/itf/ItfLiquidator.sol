@@ -16,25 +16,28 @@ contract ItfLiquidator {
     }
 
     function itfLiquidate(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds,
+        uint256[] calldata payFixedSwapIds,
+        uint256[] calldata receiveFixedSwapIds,
         uint256 closeTimestamp
     )
         external
         returns (
-            uint256 payoutForLiquidatorPayFixed,
             MiltonTypes.IporSwapClosingResult[] memory payFixedClosedSwaps,
-            uint256 payoutForLiquidatorReceiveFixed,
             MiltonTypes.IporSwapClosingResult[] memory receiveFixedClosedSwaps
         )
     {
-        if (payFixedSwapIds.length > 0) {
-            payFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](payFixedSwapIds.length);
-            for (uint256 i = 0; i < payFixedSwapIds.length; i++) {
-                uint256 swapId = payFixedSwapIds[i];
-                IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapPayFixed(swapId);
+        ItfMilton milton = _milton;
+        IMiltonStorage miltonStorage = _miltonStorage;
+        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
+        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
+        uint256 swapId; 
+        if (payFixedSwapIdsLength > 0) {
+            payFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
+            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
+                swapId = payFixedSwapIds[i];
+                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
                 if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                    try _milton.itfCloseSwapPayFixed(swapId, closeTimestamp) {
+                    try milton.itfCloseSwapPayFixed(swapId, closeTimestamp) {
                         payFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, true);
                     } catch {
                         payFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
@@ -44,17 +47,17 @@ contract ItfLiquidator {
                 }
             }
         }
-        if (receiveFixedSwapIds.length > 0) {
+        if (receiveFixedSwapIdsLength > 0) {
             receiveFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](
-                receiveFixedSwapIds.length
+                receiveFixedSwapIdsLength
             );
-            for (uint256 i = 0; i < receiveFixedSwapIds.length; i++) {
-                uint256 swapId = receiveFixedSwapIds[i];
+            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
+                swapId = receiveFixedSwapIds[i];
                 IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(
                     swapId
                 );
                 if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                    try _milton.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
+                    try milton.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
                         receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
                             swapId,
                             true
