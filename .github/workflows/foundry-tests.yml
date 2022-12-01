@@ -34,7 +34,9 @@ jobs:
 
       - name: Install Foundry
         # from tag: v1.0.7
-        uses: foundry-rs/foundry-toolchain@94d5f83a5a5bd1fea18cec186b65f3c739e1fef4
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: 1.0.7
 
       - name: Run Forge build
         run: |
