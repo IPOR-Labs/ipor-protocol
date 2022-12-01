@@ -33,9 +33,7 @@ jobs:
         run: npm install
 
       - name: Install Foundry
-        uses: foundry-rs/foundry-toolchain@8998d1bcb5bb77567257de4205516c9a0cc8e973
-        with:
-          version: nightly
+        uses: foundry-rs/foundry-toolchain@94d5f83a5a5bd1fea18cec186b65f3c739e1fef4
 
       - name: Run Forge build
         run: |
