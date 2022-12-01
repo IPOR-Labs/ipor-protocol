@@ -17,6 +17,10 @@ jobs:
         secrets:
             HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
 
+    foundry-tests:
+        needs: notify
+        uses: ./.github/workflows/foundry-tests.yml
+
     build-java:
         needs: notify
         uses: ./.github/workflows/build-java.yml

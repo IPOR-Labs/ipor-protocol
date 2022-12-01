@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "../../amm/spread/MiltonSpreadModelDai.sol";
 
 contract MockBaseMiltonSpreadModelDai is MiltonSpreadModelDai {
-    function testCalculateSpreadPremiumsPayFixed(
+    function mockTestCalculateSpreadPremiumsPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
@@ -19,7 +19,7 @@ contract MockBaseMiltonSpreadModelDai is MiltonSpreadModelDai {
         return _calculateSpreadPremiumsPayFixed(accruedIpor, balance);
     }
 
-    function testCalculateSpreadPremiumsRecFixed(
+    function mockTestCalculateSpreadPremiumsRecFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         uint256 liquidityPoolBalance,
         uint256 totalCollateralPayFixedBalance,
@@ -34,42 +34,42 @@ contract MockBaseMiltonSpreadModelDai is MiltonSpreadModelDai {
         return _calculateSpreadPremiumsReceiveFixed(accruedIpor, balance);
     }
 
-    function testCalculateVolatilityAndMeanReversionPayFixed(
+    function mockTestCalculateVolatilityAndMeanReversionPayFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {
         return _calculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
     }
 
-    function testCalculateVolatilityAndMeanReversionReceiveFixed(
+    function mockTestCalculateVolatilityAndMeanReversionReceiveFixed(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {
         return _calculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionPayFixedRegionOne(
+    function mockTestVolatilityAndMeanReversionPayFixedRegionOne(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {
         return _volatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionReceiveFixedRegionOne(
+    function mockTestVolatilityAndMeanReversionReceiveFixedRegionOne(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {
         return _volatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionPayFixedRegionTwo(
+    function mockTestVolatilityAndMeanReversionPayFixedRegionTwo(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {
         return _volatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
     }
 
-    function testVolatilityAndMeanReversionReceiveFixedRegionTwo(
+    function mockTestVolatilityAndMeanReversionReceiveFixedRegionTwo(
         uint256 emaVar,
         int256 diffIporIndexEma
     ) public view returns (int256) {

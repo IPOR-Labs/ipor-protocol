@@ -28,7 +28,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
+            .mockTestCalculateVolatilityAndMeanReversionPayFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(expectedResult, `Incorrect Volatility and Mean Reversion, Pay Fixed leg`).to.be.eq(
@@ -46,7 +46,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
+            .mockTestCalculateVolatilityAndMeanReversionReceiveFixed(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -65,7 +65,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
+            .mockTestVolatilityAndMeanReversionPayFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -84,7 +84,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
+            .mockTestVolatilityAndMeanReversionReceiveFixedRegionOne(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -103,7 +103,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
+            .mockTestVolatilityAndMeanReversionPayFixedRegionTwo(emaVar, diffIporIndexEma);
         //then
 
         expect(
@@ -122,7 +122,7 @@ describe("MiltonSpreadModel - Spread Premium - Volatility And Mean Reversion", (
         //when
         const actualResult = await miltonSpread
             .connect(liquidityProvider)
-            .testVolatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
+            .mockTestVolatilityAndMeanReversionReceiveFixedRegionTwo(emaVar, diffIporIndexEma);
         //then
 
         expect(
