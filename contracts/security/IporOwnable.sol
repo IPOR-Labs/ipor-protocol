@@ -20,6 +20,11 @@ contract IporOwnable is Ownable {
         _transferOwnership(_msgSender());
     }
 
+    function renounceOwnership() public virtual override onlyOwner {
+        _transferOwnership(address(0));
+        _appointedOwner = address(0);
+    }
+
     modifier onlyAppointedOwner() {
         require(_appointedOwner == _msgSender(), IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
