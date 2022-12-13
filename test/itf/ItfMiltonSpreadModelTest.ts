@@ -4,7 +4,7 @@ import { ItfMiltonSpreadModelDai } from "../../types";
 import {N0__01_18DEC, ZERO} from "../utils/Constants";
 const { expect } = chai;
 
-describe.only("ITF MiltonSpreadModel", () => {
+describe("ITF MiltonSpreadModel", () => {
     let miltonSpreadModelDai: ItfMiltonSpreadModelDai;
 
     beforeEach(async () => {
