@@ -16,6 +16,12 @@ interface IMiltonInternal {
     /// @return asset's address
     function getAsset() external view returns (address);
 
+    function getIporOracle() external view returns (address);
+
+    function getMiltonStorage() external view returns (address);
+
+    function getStanley() external view returns (address);
+
     /// @notice Gets max swap's collateral amount value.
     /// @dev Param used in swap validation.
     /// @return max swap's collateral amount represented in 18 decimals

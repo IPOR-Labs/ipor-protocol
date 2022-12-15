@@ -12,6 +12,14 @@ interface IJosephInternal {
     /// @return ERC20 token address
     function getAsset() external view returns (address);
 
+    function getStanley() external view returns (address);
+
+    function getMiltonStorage() external view returns (address);
+
+    function getMilton() external view returns (address);
+
+    function getIpToken() external view returns (address);
+
     /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
     /// @return redeem fee rate represented in 18 decimals
     function getRedeemFeeRate() external pure returns (uint256);
