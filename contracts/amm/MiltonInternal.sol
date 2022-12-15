@@ -309,12 +309,24 @@ abstract contract MiltonInternal is
         return _iporOracle;
     }
 
+    function getIporOracle() external view override returns (address) {
+        return address(_iporOracle);
+    }
+
     function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
         return _miltonStorage;
     }
 
+    function getMiltonStorage() external view override returns (address) {
+        return address(_miltonStorage);
+    }
+
     function _getStanley() internal view virtual returns (IStanley) {
         return _stanley;
+    }
+
+    function getStanley() exteral view override returns(address){
+        return address(_stanley);
     }
 
     function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
