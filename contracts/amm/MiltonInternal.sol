@@ -309,7 +309,7 @@ abstract contract MiltonInternal is
         return _iporOracle;
     }
 
-    function getIporOracle() external view override returns (address) {
+    function getIporOracle() external view returns (address) {
         return address(_iporOracle);
     }
 
@@ -317,7 +317,7 @@ abstract contract MiltonInternal is
         return _miltonStorage;
     }
 
-    function getMiltonStorage() external view override returns (address) {
+    function getMiltonStorage() external view returns (address) {
         return address(_miltonStorage);
     }
 
@@ -325,7 +325,7 @@ abstract contract MiltonInternal is
         return _stanley;
     }
 
-    function getStanley() exteral view override returns(address){
+    function getStanley() external view returns(address){
         return address(_stanley);
     }
 

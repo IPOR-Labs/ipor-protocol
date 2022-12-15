@@ -133,15 +133,15 @@ abstract contract JosephInternal is
         return _stanley;
     }
 
-    function getStanley() external view override returns (address) {
-        return _stanley;
+    function getStanley() external view returns (address) {
+        return address(_stanley);
     }
 
     function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
         return _miltonStorage;
     }
 
-    function getMiltonStorage() external view override returns(address) {
+    function getMiltonStorage() external view returns(address) {
         return address(_miltonStorage);
     }
 
@@ -149,7 +149,7 @@ abstract contract JosephInternal is
         return _milton;
     }
 
-    function getMilton() external view override returns (address) {
+    function getMilton() external view returns (address) {
         return address(_milton);
     }
 
@@ -157,7 +157,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function getIpToken() external view override returns (address) {
+    function getIpToken() external view returns (address) {
         return address(_ipToken);
     }
 

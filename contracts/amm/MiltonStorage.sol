@@ -66,11 +66,11 @@ contract MiltonStorage is
         return _lastSwapId;
     }
 
-    function getMilton() external view override returns (address) {
+    function getMilton() external view returns (address) {
         return _milton;
     }
 
-    function getJoseph() external view override returns (address) {
+    function getJoseph() external view returns (address) {
         return _joseph;
     }
 
