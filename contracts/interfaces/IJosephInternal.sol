@@ -28,7 +28,7 @@ interface IJosephInternal {
     function getMilton() external view returns (address);
 
 	/// @notice Gets address of IpToken
-    /// @retun IpToken address
+    /// @return IpToken address
     function getIpToken() external view returns (address);
 
     /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
