@@ -16,6 +16,8 @@ interface IStanleyInternal {
     /// @return Milton address
     function getMilton() external view returns (address);
 
+    /// @notice Gets IvToken address
+    /// @return IvToken address
     function getIvToken() external view returns (address);
 
     /// @notice Gets Strategy Aave address
