@@ -5,18 +5,145 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "../TestCommons.sol";
-import "../../contracts/tokens/IvToken";
+import "../../contracts/tokens/IvToken.sol";
+import "../../contracts/mocks/tokens/DaiMockedToken.sol";
 
 contract IvTokenTest is Test, TestCommons {
     IvToken internal _ivToken;
+    DaiMockedToken internal _daiMockedToken;
     address internal _admin;
     address internal _userOne;
     address internal _userTwo;
 
     function setUp() public {
-        _ivToken = new IvToken();
+        _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F));
+        _daiMockedToken = new DaiMockedToken(1000000000000000000000000, 18);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
     }
+
+    function testShouldNotBeAbleToSetupVaultAddressWhenNotOwner () public {
+        // given
+        vm.prank(_userOne);
+        // when
+        // then
+        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        _ivToken.setStanley(address(0x6B175474E89094C44Da98b954EedeAC495271d0F));
+    }
+
+    function testShouldIvTokenContain18Decimals() public {
+        // given
+        uint8 decimals = _ivToken.decimals();
+        // when
+        // then
+        assertEq(decimals, 18);
+    }
+
+    function testShouldIvTokenDaiContain18Decimals() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        uint8 decimals = ivTokenDai.decimals();
+        // when
+        // then
+        assertEq(decimals, 18);
+    }
+
+    function testShouldTransferOwnership() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address ownerBefore = ivTokenDai.owner();
+        // when
+        ivTokenDai.transferOwnership(_userOne);
+        vm.prank(_userOne);
+        ivTokenDai.confirmTransferOwnership();
+        // then
+        address ownerAfter = ivTokenDai.owner();
+        assertEq(ownerBefore, _admin);
+        assertEq(ownerAfter, _userOne);
+    }
+
+    function testShouldNotTransferOwnershipWhenSenderNotCurrentOwner() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address ownerBefore = ivTokenDai.owner();
+        // when
+        vm.prank(_userOne);
+        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        ivTokenDai.transferOwnership(_userOne);
+        // then
+        address ownerAfter = ivTokenDai.owner();
+        assertEq(ownerBefore, _admin);
+        assertEq(ownerAfter, _admin);
+    }
+
+    function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address ownerBefore = ivTokenDai.owner();
+        // when 
+        ivTokenDai.transferOwnership(_userOne);
+        vm.prank(_userTwo);
+        vm.expectRevert(abi.encodePacked("IPOR_007"));
+        ivTokenDai.confirmTransferOwnership();
+        // then
+        address ownerAfter = ivTokenDai.owner();
+        assertEq(ownerBefore, _admin);
+        assertEq(ownerAfter, _admin);
+    }
+
+    function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address ownerBefore = ivTokenDai.owner();
+        ivTokenDai.transferOwnership(_userOne);
+        vm.prank(_userOne);
+        ivTokenDai.confirmTransferOwnership();
+        // when
+        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        ivTokenDai.transferOwnership(_userOne);
+        // then
+        address ownerAfter = ivTokenDai.owner();
+        assertEq(ownerBefore, _admin);
+        assertEq(ownerAfter, _userOne);
+    }
+
+    function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address ownerBefore = ivTokenDai.owner();
+        // when 
+        ivTokenDai.transferOwnership(_userOne);
+        vm.prank(_userOne);
+        ivTokenDai.confirmTransferOwnership();
+        // then
+        vm.prank(_admin);
+        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
+        ivTokenDai.transferOwnership(_userOne);
+        address ownerAfter = ivTokenDai.owner();
+        assertEq(ownerBefore, _admin);
+        assertEq(ownerAfter, _userOne);
+    }
+
+    function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        ivTokenDai.transferOwnership(_userOne);
+        // when
+        ivTokenDai.transferOwnership(_userOne);
+        // then 
+        address actualOwner = ivTokenDai.owner();
+        assertEq(actualOwner, _admin);
+    }
+
+    function testShouldContainCorrectUnderlyingTokenAddress() public {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        address expectedUnderlyingTokenAddress = address(_daiMockedToken);
+        // when
+        address actualUnderlyingTokenAddress = ivTokenDai.getAsset();
+        // then
+        assertEq(actualUnderlyingTokenAddress, expectedUnderlyingTokenAddress);
+    }
+
 }
