@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/mocks/tokens/DaiMockedToken.sol";
 
 contract IvTokenMintTest is Test, TestCommons {
     IvToken internal _ivToken;
