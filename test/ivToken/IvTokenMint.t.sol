@@ -6,7 +6,7 @@ import "../TestCommons.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/mocks/tokens/DaiMockedToken.sol";
 
-contract IvTokenTest is Test, TestCommons {
+contract IvTokenMintTest is Test, TestCommons {
     IvToken internal _ivToken;
     address internal _admin;
     address internal _userOne;
