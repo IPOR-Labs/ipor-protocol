@@ -194,6 +194,22 @@ export const prepareMiltonSpreadBaseDai = async () => {
     return miltonSpread;
 };
 
+export const prepareMiltonSpreadBaseUsdt = async () => {
+    const MockBaseMiltonSpreadModelUsdt = await ethers.getContractFactory(
+        "MockBaseMiltonSpreadModelUsdt"
+    );
+    const miltonSpread = await MockBaseMiltonSpreadModelUsdt.deploy();
+    return miltonSpread;
+};
+
+export const prepareMiltonSpreadBaseUsdc = async () => {
+    const MockBaseMiltonSpreadModelUsdc = await ethers.getContractFactory(
+        "MockBaseMiltonSpreadModelUsdc"
+    );
+    const miltonSpread = await MockBaseMiltonSpreadModelUsdc.deploy();
+    return miltonSpread;
+};
+
 export const testCaseWhenMiltonEarnAndUserLost = async function (
     testData: TestData,
     asset: string,
