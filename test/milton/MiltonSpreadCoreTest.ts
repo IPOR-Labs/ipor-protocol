@@ -1,7 +1,11 @@
 import hre from "hardhat";
 import chai from "chai";
 import { Signer, BigNumber } from "ethers";
-import { prepareMiltonSpreadBaseDai } from "../utils/MiltonUtils";
+import {
+    prepareMiltonSpreadBaseDai,
+    prepareMiltonSpreadBaseUsdt,
+    prepareMiltonSpreadBaseUsdc,
+} from "../utils/MiltonUtils";
 
 import { assertError } from "../utils/AssertUtils";
 
@@ -18,94 +22,132 @@ describe("MiltonSpreadModel - Core", () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
     });
 
-    it("should transfer ownership - simple case 1", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
-        const expectedNewOwner = userTwo;
+    it("Should return proper constant for USDT", async () => {
+        // given
+        const miltonSpread = await prepareMiltonSpreadBaseUsdt();
 
-        //when
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        // when
+        const payFixedRegionOneBase = await miltonSpread.getPayFixedRegionOneBase();
+        const payFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionOneSlopeForVolatility();
+        const payFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionOneSlopeForMeanReversion();
+        const payFixedRegionTwoBase = await miltonSpread.getPayFixedRegionTwoBase();
+        const payFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionTwoSlopeForVolatility();
+        const payFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionTwoSlopeForMeanReversion();
+        const receiveFixedRegionOneBase = await miltonSpread.getReceiveFixedRegionOneBase();
+        const receiveFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForVolatility();
+        const receiveFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForMeanReversion();
+        const receiveFixedRegionTwoBase = await miltonSpread.getReceiveFixedRegionTwoBase();
+        const receiveFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForVolatility();
+        const receiveFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
-        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
+        // then
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("52734899"));
 
-        //then
-        const actualNewOwner = await miltonSpread.connect(userOne).owner();
-        expect(await expectedNewOwner.getAddress()).to.be.equal(actualNewOwner);
-    });
+        expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("14420251537169199104")
+        );
 
-    it("should NOT transfer ownership - sender not current owner", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
-        const expectedNewOwner = userTwo;
+        expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-1242450165256140032")
+        );
 
-        //when
-        await assertError(
-            miltonSpread.connect(userThree).transferOwnership(await expectedNewOwner.getAddress()),
-            //then
-            "Ownable: caller is not the owner"
+        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("0"));
+
+        expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(BigNumber.from("91"));
+
+        expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(BigNumber.from("-3"));
+
+        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("-653622053554807"));
+
+        expect(receiveFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("879558312553575296")
+        );
+
+        expect(receiveFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("54807065624269344")
+        );
+
+        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-884495153628362"));
+
+        expect(receiveFixedRegionTwoSlopeForVolatility).to.be.equal(
+            BigNumber.from("175497432169175456")
+        );
+
+        expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-995660609325833088")
         );
     });
 
-    it("should NOT confirm transfer ownership - sender not appointed owner", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
-        const expectedNewOwner = userTwo;
+    it("Should return proper constant for USDC", async () => {
+        // given
+        const miltonSpread = await prepareMiltonSpreadBaseUsdc();
 
-        //when
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        // when
+        const payFixedRegionOneBase = await miltonSpread.getPayFixedRegionOneBase();
+        const payFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionOneSlopeForVolatility();
+        const payFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionOneSlopeForMeanReversion();
+        const payFixedRegionTwoBase = await miltonSpread.getPayFixedRegionTwoBase();
+        const payFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getPayFixedRegionTwoSlopeForVolatility();
+        const payFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getPayFixedRegionTwoSlopeForMeanReversion();
+        const receiveFixedRegionOneBase = await miltonSpread.getReceiveFixedRegionOneBase();
+        const receiveFixedRegionOneSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForVolatility();
+        const receiveFixedRegionOneSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionOneSlopeForMeanReversion();
+        const receiveFixedRegionTwoBase = await miltonSpread.getReceiveFixedRegionTwoBase();
+        const receiveFixedRegionTwoSlopeForVolatility =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForVolatility();
+        const receiveFixedRegionTwoSlopeForMeanReversion =
+            await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
-        await assertError(
-            miltonSpread.connect(userThree).confirmTransferOwnership(),
-            //then
-            "IPOR_007"
+        // then
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("246221635508210"));
+
+        expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("7175545968273476608")
         );
-    });
 
-    it("should NOT confirm transfer ownership twice - sender not appointed owner", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
-        const expectedNewOwner = userTwo;
-
-        //when
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
-
-        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
-
-        await assertError(
-            miltonSpread.connect(expectedNewOwner).confirmTransferOwnership(),
-            "IPOR_007"
+        expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("-998967008815501824")
         );
-    });
 
-    it("should NOT transfer ownership - sender already lost ownership", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
-        const expectedNewOwner = userTwo;
+        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("250000000000000"));
 
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
-
-        await miltonSpread.connect(expectedNewOwner).confirmTransferOwnership();
-
-        //when
-        await assertError(
-            miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress()),
-            //then
-            "Ownable: caller is not the owner"
+        expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(
+            BigNumber.from("600000002394766180352")
         );
-    });
 
-    it("should have rights to transfer ownership - sender still have rights", async () => {
-        //given
-        const miltonSpread = await prepareMiltonSpreadBaseDai();
+        expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(BigNumber.from("0"));
 
-        const expectedNewOwner = userTwo;
+        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("-250000000201288"));
 
-        //when
-        await miltonSpread.connect(admin).transferOwnership(await expectedNewOwner.getAddress());
+        expect(receiveFixedRegionOneSlopeForVolatility).to.be.equal(
+            BigNumber.from("-2834673328995")
+        );
 
-        //then
-        const actualNewOwner = await miltonSpread.connect(userOne).owner();
-        expect(await admin.getAddress()).to.be.equal(actualNewOwner);
+        expect(receiveFixedRegionOneSlopeForMeanReversion).to.be.equal(
+            BigNumber.from("999999997304907264")
+        );
+
+        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-250000000000000"));
+
+        expect(receiveFixedRegionTwoSlopeForVolatility).to.be.equal(
+            BigNumber.from("-600000000289261748224")
+        );
+
+        expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(BigNumber.from("0"));
     });
 
     it("Should return proper constant for DAI", async () => {
@@ -135,33 +177,29 @@ describe("MiltonSpreadModel - Core", () => {
             await miltonSpread.getReceiveFixedRegionTwoSlopeForMeanReversion();
 
         // then
-        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("223452028860278"));
+        expect(payFixedRegionOneBase).to.be.equal(BigNumber.from("313550690114778"));
         expect(payFixedRegionOneSlopeForVolatility).to.be.equal(
-            BigNumber.from("66176612458519781376")
+            BigNumber.from("5881342150134894592")
         );
         expect(payFixedRegionOneSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-1186134254033851648")
+            BigNumber.from("-1067399359265083392")
         );
-        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("145660962344800"));
+        expect(payFixedRegionTwoBase).to.be.equal(BigNumber.from("250000000000000"));
         expect(payFixedRegionTwoSlopeForVolatility).to.be.equal(
-            BigNumber.from("213838820626510938112")
+            BigNumber.from("600000001445265276928")
         );
-        expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-963243845920214784")
-        );
-        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("-86557160865515"));
+        expect(payFixedRegionTwoSlopeForMeanReversion).to.be.equal(BigNumber.from("0"));
+        expect(receiveFixedRegionOneBase).to.be.equal(BigNumber.from("-250000000349912"));
         expect(receiveFixedRegionOneSlopeForVolatility).to.be.equal(
-            BigNumber.from("-37390455427043344384")
+            BigNumber.from("-1961227517387")
         );
         expect(receiveFixedRegionOneSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("-1129730689647621632")
+            BigNumber.from("999999997838885760")
         );
-        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-55994330424481"));
+        expect(receiveFixedRegionTwoBase).to.be.equal(BigNumber.from("-250000000000000"));
         expect(receiveFixedRegionTwoSlopeForVolatility).to.be.equal(
-            BigNumber.from("-89741154814986338304")
+            BigNumber.from("-600000001299204145152")
         );
-        expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(
-            BigNumber.from("37480678662666200")
-        );
+        expect(receiveFixedRegionTwoSlopeForMeanReversion).to.be.equal(BigNumber.from("0"));
     });
 });

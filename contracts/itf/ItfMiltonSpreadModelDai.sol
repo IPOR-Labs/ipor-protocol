@@ -35,7 +35,7 @@ contract ItfMiltonSpreadModelDai is MiltonSpreadModelDai {
         int256 receiveFixedRegionTwoBase,
         int256 receiveFixedRegionTwoSlopeForVolatility,
         int256 receiveFixedRegionTwoSlopeForMeanReversion
-    ) external onlyOwner {
+    ) external {
         _overrideParams = true;
         _payFixedRegionOneBase = payFixedRegionOneBase;
         _payFixedRegionOneSlopeForVolatility = payFixedRegionOneSlopeForVolatility;
