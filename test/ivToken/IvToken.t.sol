@@ -3,7 +3,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/mocks/tokens/DaiMockedToken.sol";
@@ -144,6 +143,15 @@ contract IvTokenTest is Test, TestCommons {
         address actualUnderlyingTokenAddress = ivTokenDai.getAsset();
         // then
         assertEq(actualUnderlyingTokenAddress, expectedUnderlyingTokenAddress);
+    }
+
+    function testShouldNotSendEthToIvTokenDai() public payable {
+        // given
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        // when
+        // then
+        vm.expectRevert(abi.encodePacked("Transaction reverted: function selector was not recognized and there's no fallback nor receive function"));
+        address(ivTokenDai).call{value: msg.value}("");
     }
 
 }
