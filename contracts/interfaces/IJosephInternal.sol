@@ -12,6 +12,25 @@ interface IJosephInternal {
     /// @return ERC20 token address
     function getAsset() external view returns (address);
 
+    /// @notice Gets address of Stanley used by Joseph
+    /// @dev Stanley is used by Joseph to calculate Milton's balance
+    /// @return Stanley address used by Joseph
+    function getStanley() external view returns (address);
+
+    /// @notice Gets address of Stanley used by Joseph
+    /// @dev MiltonStorage is used by Joseph to update balances after transfers to Treasury and CharlieTreasury
+    /// @return MiltonStorage address used by Joseph
+    function getMiltonStorage() external view returns (address);
+
+    /// @notice Gets address of Milton used by Joseph
+    /// @dev Milton is used by Joseph to rebalance (deposit/withdraw) asset to/from Stanley
+    /// @return Milton address used by Joseph
+    function getMilton() external view returns (address);
+
+	/// @notice Gets address of IpToken
+    /// @return IpToken address
+    function getIpToken() external view returns (address);
+
     /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
     /// @return redeem fee rate represented in 18 decimals
     function getRedeemFeeRate() external pure returns (uint256);

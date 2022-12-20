@@ -12,6 +12,10 @@ interface IMiltonStorage {
     /// @return current Milton Storage version, integer
     function getVersion() external pure returns (uint256);
 
+    function getMilton() external view returns (address);
+
+    function getJoseph() external view returns (address);
+
     /// @notice Gets last swap ID.
     /// @dev swap ID is incremented when new position is opened, last swap ID is used in Pay Fixed and Receive Fixed swaps.
     /// @return last swap ID, integer
