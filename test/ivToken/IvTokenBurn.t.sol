@@ -15,7 +15,7 @@ contract IvTokenBurnTest is Test, TestCommons {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
-        _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F));
+        _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -26,7 +26,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 		// when
 		// then
 		vm.expectRevert(abi.encodePacked("IPOR_501"));
-		_ivToken.burn(_userOne, 1000000000000000000000000);
+		_ivToken.burn(_userOne, 1*10**18);
 	}
 
 	function testShouldNotBurnIvTokenWhenAmountIsZero() public {
@@ -46,46 +46,48 @@ contract IvTokenBurnTest is Test, TestCommons {
 		_ivToken.setStanley(mockIporVaultAddress);
 		// when
 		vm.prank(_userOne);
-		// then
 		vm.expectRevert(abi.encodePacked("ERC20: burn from the zero address"));
-		_ivToken.burn(address(0), 1000000000000000000000000);
+		_ivToken.burn(address(0), 1*10**18);
 	}
 
 	function testShouldNotBurnWhenAmountExceedsBalance() public {
 		// given
 		address mockIporVaultAddress = _userOne;
 		_ivToken.setStanley(mockIporVaultAddress);
+		vm.prank(_userOne);
+		_ivToken.mint(_userOne, 1*10**18);
 		// when
 		vm.prank(_userOne);
-		// then
 		vm.expectRevert(abi.encodePacked("ERC20: burn amount exceeds balance"));
-		_ivToken.burn(mockIporVaultAddress, 1000000000000000000000001);
+		_ivToken.burn(mockIporVaultAddress, 1*10**18 + 1);
 	}
 
 	function testShouldBurnTokens() public {
 		// given
 		address mockIporVaultAddress = _userOne;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1000000000000000000000000;
+		uint256 amount = 1*10**18;
 		vm.prank(_userOne);
-		_ivToken.mint(_userOne, 1000000000000000000000000);
+		_ivToken.mint(_userOne, 1*10**18);
+		uint256 balanceBefore = _ivToken.balanceOf(_userOne);
 		//when
-		// then
 		vm.prank(_userOne);
 		vm.expectEmit(true, true, false, true);
 		emit Transfer(_userOne, address(0), amount);
 		vm.expectEmit(true, false, false, true);
 		emit Burn(_userOne, amount);
 		_ivToken.burn(_userOne, amount);
+		// then
+		uint256 balanceAfter = _ivToken.balanceOf(_userOne);
+		assertEq(balanceBefore - amount, balanceAfter);
 	}
 
-	function testShouldEmitEvent() public {
+	function testShouldEmitBurnEvent() public {
 		// given
 		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1000000000000000000000000;
+		uint256 amount = 1*10**18;
 		// when
-		// then
 		_ivToken.mint(_userOne, amount);
 		vm.expectEmit(true, false, false, true);
 		emit Burn(_userOne, amount);
