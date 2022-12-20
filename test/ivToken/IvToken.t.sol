@@ -1,22 +1,21 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/mocks/tokens/DaiMockedToken.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 
 contract IvTokenTest is Test, TestCommons {
     IvToken internal _ivToken;
-    DaiMockedToken internal _daiMockedToken;
+    MockTestnetTokenDai internal _mockTestnetTokenDai;
     address internal _admin;
     address internal _userOne;
     address internal _userTwo;
 
     function setUp() public {
-        _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F));
-        _daiMockedToken = new DaiMockedToken(1000000000000000000000000, 18);
+        _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
+        _mockTestnetTokenDai = new MockTestnetTokenDai(1000000000000000000000000);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -28,7 +27,7 @@ contract IvTokenTest is Test, TestCommons {
         // when
         // then
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _ivToken.setStanley(address(0x6B175474E89094C44Da98b954EedeAC495271d0F));
+        _ivToken.setStanley(address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
     }
 
     function testShouldIvTokenContain18Decimals() public {
@@ -41,7 +40,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldIvTokenDaiContain18Decimals() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         uint8 decimals = ivTokenDai.decimals();
         // when
         // then
@@ -50,7 +49,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldTransferOwnership() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
         // when
         ivTokenDai.transferOwnership(_userOne);
@@ -64,7 +63,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldNotTransferOwnershipWhenSenderNotCurrentOwner() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
         // when
         vm.prank(_userOne);
@@ -78,7 +77,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
         // when 
         ivTokenDai.transferOwnership(_userOne);
@@ -93,14 +92,15 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
         ivTokenDai.transferOwnership(_userOne);
         vm.prank(_userOne);
         ivTokenDai.confirmTransferOwnership();
         // when
-        vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        ivTokenDai.transferOwnership(_userOne);
+        vm.prank(_userOne);
+        vm.expectRevert(abi.encodePacked("IPOR_007"));
+        ivTokenDai.confirmTransferOwnership();
         // then
         address ownerAfter = ivTokenDai.owner();
         assertEq(ownerBefore, _admin);
@@ -109,16 +109,16 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
-        // when 
         ivTokenDai.transferOwnership(_userOne);
         vm.prank(_userOne);
         ivTokenDai.confirmTransferOwnership();
-        // then
+        // when 
         vm.prank(_admin);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         ivTokenDai.transferOwnership(_userOne);
+        // then
         address ownerAfter = ivTokenDai.owner();
         assertEq(ownerBefore, _admin);
         assertEq(ownerAfter, _userOne);
@@ -126,10 +126,10 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         ivTokenDai.transferOwnership(_userOne);
         // when
-        ivTokenDai.transferOwnership(_userOne);
+        ivTokenDai.transferOwnership(_userTwo);
         // then 
         address actualOwner = ivTokenDai.owner();
         assertEq(actualOwner, _admin);
@@ -137,8 +137,8 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldContainCorrectUnderlyingTokenAddress() public {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
-        address expectedUnderlyingTokenAddress = address(_daiMockedToken);
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
+        address expectedUnderlyingTokenAddress = address(_mockTestnetTokenDai);
         // when
         address actualUnderlyingTokenAddress = ivTokenDai.getAsset();
         // then
@@ -147,7 +147,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function testShouldNotSendEthToIvTokenDai() public payable {
         // given
-        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_daiMockedToken));
+        IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         // when
         // then
         vm.expectRevert(abi.encodePacked("Transaction reverted: function selector was not recognized and there's no fallback nor receive function"));
