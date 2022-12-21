@@ -8,7 +8,6 @@ import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract MiltonSpreadPayFixedTest is Test, TestCommons {
     MockBaseMiltonSpreadModelDai internal _miltonSpread;
-    address internal _admin;
     address internal _userOne;
 
     function setUp() public {
