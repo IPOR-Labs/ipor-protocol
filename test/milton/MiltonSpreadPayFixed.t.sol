@@ -13,7 +13,6 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 
     function setUp() public {
         _miltonSpread = new MockBaseMiltonSpreadModelDai();
-        _admin = address(this);
         _userOne = _getUserAddress(1);
     }
 
@@ -34,7 +33,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
-		uint256 expectedQuoteValue = 3222138708849583098;
+		uint256 expectedQuoteValue = 4630250241405252731;
 		// when
 		vm.prank(_userOne);
 		uint256 actualQuotedValue = _miltonSpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
@@ -60,7 +59,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
-		uint256 expectedQuoteValue = 3218095531900806724;
+		uint256 expectedQuoteValue = 4520250241405252731;
 		// when
 		vm.prank(_userOne);
 		uint256 actualQuotedValue = _miltonSpread.calculateQuotePayFixed(accruedIpor, accruedBalance);
