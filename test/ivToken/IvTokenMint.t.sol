@@ -30,10 +30,10 @@ contract IvTokenMintTest is Test, TestCommons {
 
 	function testShouldNotMintIvTokenWhenAmountIsZero() public {
 		// given
-		address mockIporVaultAddress = _userOne;
+		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
 		// when
-		vm.prank(_userOne);
+		_ivToken.mint(_userOne, 1*10**18);
 		vm.expectRevert(abi.encodePacked("IPOR_503"));
 		_ivToken.mint(_userOne, 0);
 	}
