@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/tokens/IvToken.sol";
 
 contract IvTokenMintTest is Test, TestCommons {
@@ -25,7 +26,7 @@ contract IvTokenMintTest is Test, TestCommons {
 		// given
 		// when
 		vm.expectRevert(abi.encodePacked("IPOR_501"));
-		_ivToken.mint(_userOne, 1*10**18);
+		_ivToken.mint(_userOne, Constants.D18);
 	}
 
 	function testShouldNotMintIvTokenWhenAmountIsZero() public {
@@ -33,7 +34,6 @@ contract IvTokenMintTest is Test, TestCommons {
 		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
 		// when
-		// _ivToken.mint(_userOne, 1*10**18);
 		vm.expectRevert(abi.encodePacked("IPOR_503"));
 		_ivToken.mint(_userOne, 0);
 	}
@@ -45,14 +45,14 @@ contract IvTokenMintTest is Test, TestCommons {
 		// when
 		vm.prank(_userOne);
 		vm.expectRevert(abi.encodePacked("ERC20: mint to the zero address"));
-		_ivToken.mint(address(0), 1*10**18);
+		_ivToken.mint(address(0), Constants.D18);
 	}
 
 	function testShouldMintNewTokens() public {
 		// given
 		address mockIporVaultAddress = _userOne;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1*10**18;
+		uint256 amount = Constants.D18;
 		// when
 		vm.prank(_userOne);
 		vm.expectEmit(true, true, false, true);
@@ -66,7 +66,7 @@ contract IvTokenMintTest is Test, TestCommons {
 		// given
 		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1*10**18;
+		uint256 amount = Constants.D18;
 		uint256 balanceBefore = _ivToken.balanceOf(_userOne);
 		// when
 		vm.expectEmit(true, false, false, true);

@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/tokens/IvToken.sol";
 
 contract IvTokenBurnTest is Test, TestCommons {
@@ -24,9 +25,8 @@ contract IvTokenBurnTest is Test, TestCommons {
 	function testShouldNotBurnIvTokenWhenNotStanley () public {
 		// given
 		// when
-		// then
 		vm.expectRevert(abi.encodePacked("IPOR_501"));
-		_ivToken.burn(_userOne, 1*10**18);
+		_ivToken.burn(_userOne, Constants.D18);
 	}
 
 	function testShouldNotBurnIvTokenWhenAmountIsZero() public {
@@ -47,7 +47,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 		// when
 		vm.prank(_userOne);
 		vm.expectRevert(abi.encodePacked("ERC20: burn from the zero address"));
-		_ivToken.burn(address(0), 1*10**18);
+		_ivToken.burn(address(0), Constants.D18);
 	}
 
 	function testShouldNotBurnWhenAmountExceedsBalance() public {
@@ -55,20 +55,20 @@ contract IvTokenBurnTest is Test, TestCommons {
 		address mockIporVaultAddress = _userOne;
 		_ivToken.setStanley(mockIporVaultAddress);
 		vm.prank(_userOne);
-		_ivToken.mint(_userOne, 1*10**18);
+		_ivToken.mint(_userOne, Constants.D18);
 		// when
 		vm.prank(_userOne);
 		vm.expectRevert(abi.encodePacked("ERC20: burn amount exceeds balance"));
-		_ivToken.burn(mockIporVaultAddress, 1*10**18 + 1);
+		_ivToken.burn(mockIporVaultAddress, Constants.D18 + 1);
 	}
 
 	function testShouldBurnTokens() public {
 		// given
 		address mockIporVaultAddress = _userOne;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1*10**18;
+		uint256 amount = Constants.D18;
 		vm.prank(_userOne);
-		_ivToken.mint(_userOne, 1*10**18);
+		_ivToken.mint(_userOne, Constants.D18);
 		uint256 balanceBefore = _ivToken.balanceOf(_userOne);
 		//when
 		vm.prank(_userOne);
@@ -86,7 +86,7 @@ contract IvTokenBurnTest is Test, TestCommons {
 		// given
 		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = 1*10**18;
+		uint256 amount = Constants.D18;
 		// when
 		_ivToken.mint(_userOne, amount);
 		vm.expectEmit(true, false, false, true);

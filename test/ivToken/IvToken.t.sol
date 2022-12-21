@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 
@@ -15,7 +16,7 @@ contract IvTokenTest is Test, TestCommons {
 
     function setUp() public {
         _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
-        _mockTestnetTokenDai = new MockTestnetTokenDai(1*10**18);
+        _mockTestnetTokenDai = new MockTestnetTokenDai(Constants.D18);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
