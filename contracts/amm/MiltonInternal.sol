@@ -86,6 +86,18 @@ abstract contract MiltonInternal is
         return _asset;
     }
 
+    function getIporOracle() external view returns (address) {
+        return address(_iporOracle);
+    }
+
+    function getMiltonStorage() external view returns (address) {
+        return address(_miltonStorage);
+    }
+
+    function getStanley() external view returns (address) {
+        return address(_stanley);
+    }
+
     function getMaxSwapCollateralAmount() external view override returns (uint256) {
         return _getMaxSwapCollateralAmount();
     }
@@ -228,7 +240,7 @@ abstract contract MiltonInternal is
         whenNotPaused
     {
         require(newMiltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
-        address oldMiltonSpreadModel = _getJoseph();
+        address oldMiltonSpreadModel = address(_miltonSpreadModel);
         _miltonSpreadModel = IMiltonSpreadModel(newMiltonSpreadModel);
         emit MiltonSpreadModelChanged(_msgSender(), oldMiltonSpreadModel, newMiltonSpreadModel);
     }
