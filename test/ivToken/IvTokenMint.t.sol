@@ -33,7 +33,7 @@ contract IvTokenMintTest is Test, TestCommons {
 		address mockIporVaultAddress = _admin;
 		_ivToken.setStanley(mockIporVaultAddress);
 		// when
-		_ivToken.mint(_userOne, 1*10**18);
+		// _ivToken.mint(_userOne, 1*10**18);
 		vm.expectRevert(abi.encodePacked("IPOR_503"));
 		_ivToken.mint(_userOne, 0);
 	}
