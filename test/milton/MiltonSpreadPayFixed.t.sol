@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
@@ -17,9 +18,9 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValuePayFixedSpreadPremiumsPositiveAndBiggerThanIpor() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			13 * 10**16, // indexValue: 13%
 			1 * 10**18, // ibtPrice: 1
@@ -27,8 +28,8 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 			15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
@@ -43,9 +44,9 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValuePayFixedSpreadPremiumsPositive() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			2 * 10**16, // indexValue: 2%
 			1 * 10**18, // ibtPrice: 1
@@ -53,8 +54,8 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 			15 * 10**15 // exponentialWeightedMovingVariance: 0.15%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
