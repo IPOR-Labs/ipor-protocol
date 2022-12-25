@@ -602,4 +602,26 @@ describe("Milton Maintenance", () => {
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
     });
+
+    it("should set milton spread model - check event", async () => {
+        //given
+        const { miltonDai } = await prepareTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_3_18DEC
+        );
+        if (miltonDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const oldMiltonSpreadModel = await miltonDai.getMiltonSpreadModel();
+        const newMiltonSpreadModel = await userThree.getAddress();
+
+		//when
+        await expect(miltonDai.connect(admin).setMiltonSpreadModel(newMiltonSpreadModel))
+			//then
+            .to.emit(miltonDai, "MiltonSpreadModelChanged")
+            .withArgs(await admin.getAddress(), oldMiltonSpreadModel, newMiltonSpreadModel);
+    });
 });

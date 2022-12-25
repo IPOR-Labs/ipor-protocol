@@ -87,6 +87,10 @@ abstract contract Stanley is
         return _asset;
     }
 
+    function getIvToken() external view returns(address) {
+        return address(_ivToken);
+    }
+
     function getMilton() external view override returns (address) {
         return _milton;
     }

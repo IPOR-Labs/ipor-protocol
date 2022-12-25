@@ -5,7 +5,7 @@ import "../amm/spread/MiltonSpreadModelUsdt.sol";
 import "hardhat/console.sol";
 
 contract ItfMiltonSpreadModelUsdt is MiltonSpreadModelUsdt {
-    bool  internal _overrideParams;
+    bool internal _overrideParams;
     int256 internal _payFixedRegionOneBase;
     int256 internal _payFixedRegionOneSlopeForVolatility;
     int256 internal _payFixedRegionOneSlopeForMeanReversion;
@@ -35,7 +35,7 @@ contract ItfMiltonSpreadModelUsdt is MiltonSpreadModelUsdt {
         int256 receiveFixedRegionTwoBase,
         int256 receiveFixedRegionTwoSlopeForVolatility,
         int256 receiveFixedRegionTwoSlopeForMeanReversion
-    ) external onlyOwner {
+    ) external {
         _overrideParams = true;
         _payFixedRegionOneBase = payFixedRegionOneBase;
         _payFixedRegionOneSlopeForVolatility = payFixedRegionOneSlopeForVolatility;

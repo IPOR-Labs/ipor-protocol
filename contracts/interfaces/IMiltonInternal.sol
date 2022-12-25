@@ -16,6 +16,21 @@ interface IMiltonInternal {
     /// @return asset's address
     function getAsset() external view returns (address);
 
+    /// @notice Gets address of IporOracle contract.
+    /// @dev IporOracle is used to calculate the AccruedIbtPrice that is used to come up with the payoffs of the pay/receive fixed leg.
+    /// @return IporOracle address
+    function getIporOracle() external view returns (address);
+
+    /// @notice Gets address of MiltonStorage
+    /// @dev MiltonSttrage is used to account for Milton's balances on Stanley deposits/withdrawals and to calculate the SOAP.
+    /// @return MiltonStorage address
+    function getMiltonStorage() external view returns (address);
+
+    /// @notice Gets address of Stanley used by Milton
+    /// @dev Stanley is Milton's asset manager (deposits/withdrawals into/from external money markets)
+    /// @return Stanley address used by Milton
+    function getStanley() external view returns (address);
+
     /// @notice Gets max swap's collateral amount value.
     /// @dev Param used in swap validation.
     /// @return max swap's collateral amount represented in 18 decimals

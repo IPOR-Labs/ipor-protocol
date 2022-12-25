@@ -1,7 +1,7 @@
-import hre from "hardhat";
+import hre, { ethers } from "hardhat";
 import chai from "chai";
 import { ItfMiltonSpreadModelDai } from "../../types";
-import {N0__01_18DEC, ZERO} from "../utils/Constants";
+import { N0__01_18DEC, ZERO } from "../utils/Constants";
 const { expect } = chai;
 
 describe("ITF MiltonSpreadModel", () => {
@@ -172,13 +172,11 @@ describe("ITF MiltonSpreadModel", () => {
         expect(payFixedRegionOneSlopeForMeanReversionBefore).to.be.not.equal(ZERO);
         expect(payFixedRegionTwoBaseBefore).to.be.not.equal(ZERO);
         expect(payFixedRegionTwoSlopeForVolatilityBefore).to.be.not.equal(ZERO);
-        expect(payFixedRegionTwoSlopeForMeanReversionBefore).to.be.not.equal(ZERO);
         expect(receiveFixedRegionOneBaseBefore).to.be.not.equal(ZERO);
         expect(receiveFixedRegionOneSlopeForVolatilityBefore).to.be.not.equal(ZERO);
         expect(receiveFixedRegionOneSlopeForMeanReversionBefore).to.be.not.equal(ZERO);
         expect(receiveFixedRegionTwoBaseBefore).to.be.not.equal(ZERO);
         expect(receiveFixedRegionTwoSlopeForVolatilityBefore).to.be.not.equal(ZERO);
-        expect(receiveFixedRegionTwoSlopeForMeanReversionBefore).to.be.not.equal(ZERO);
 
         expect(payFixedRegionOneBaseAfter).to.be.equal(ZERO);
         expect(payFixedRegionOneSlopeForVolatilityAfter).to.be.equal(ZERO);

@@ -3,25 +3,24 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
     MockBaseMiltonSpreadModelDai internal _miltonSpread;
-    address internal _admin;
     address internal _userOne;
 
     function setUp() public {
         _miltonSpread = new MockBaseMiltonSpreadModelDai();
-        _admin = address(this);
         _userOne = _getUserAddress(1);
     }
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndexAndEMAGreaterThanQuoteValue() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			3 * 10**16, // indexValue: 3%
 			1 * 10**18, // ibtPrice: 1
@@ -29,12 +28,12 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**13 // exponentialWeightedMovingVariance: 0.00001%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
-		uint256 expectedQuoteValue = 6944924491911620;
+		uint256 expectedQuoteValue = 10000000000000000;
 		// when
 		vm.prank(_userOne);
 		uint256 actualQuotedValue = _miltonSpread.calculateQuoteReceiveFixed(accruedIpor, accruedBalance);
@@ -46,9 +45,9 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterIporIndexAndNormalEmvarAndQuoteLowerThanZero() public{
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			9 * 10**16, // indexValue: 9%
 			1 * 10**18, // ibtPrice: 1
@@ -56,12 +55,12 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
-		uint256 expectedQuoteValue = 0;
+		uint256 expectedQuoteValue = 10000000000000000;
 		// when
 		vm.prank(_userOne);
 		uint256 actualQuotedValue = _miltonSpread.calculateQuoteReceiveFixed(accruedIpor, accruedBalance);
@@ -73,9 +72,9 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterThanIporIndex() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
 			1 * 10**18, // ibtPrice: 1
@@ -83,8 +82,8 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**15 // exponentialWeightedMovingVariance: 0.001%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
@@ -98,9 +97,9 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 
 	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndex() public {
 		// given
-		uint256 liquidityPoolBalance = 15000 * 10 ** 18;
-		uint256 swapCollateral = 10000 * 10 ** 18;
-		uint256 openingFee = 20 * 10 ** 18;
+		uint256 liquidityPoolBalance = 15000 * Constants.D18;
+		uint256 swapCollateral = 10000 * Constants.D18;
+		uint256 openingFee = 20 * Constants.D18;
 		IporTypes.AccruedIpor memory accruedIpor = IporTypes.AccruedIpor(
 			4 * 10**16, // indexValue: 4%
 			1 * 10**18, // ibtPrice: 1
@@ -108,12 +107,12 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 			1 * 10**12 // exponentialWeightedMovingVariance: 0.000001%
 		);
 		IporTypes.MiltonBalancesMemory memory accruedBalance = IporTypes.MiltonBalancesMemory(
-			10000 * 10 ** 18 + swapCollateral, // totalCollateralPayFixed 
-			13000 * 10 ** 18, // totalCollateralReceiveFixed
+			10000 * Constants.D18 + swapCollateral, // totalCollateralPayFixed 
+			13000 * Constants.D18, // totalCollateralReceiveFixed
 			liquidityPoolBalance + openingFee, // liquidityPool
 			0 // vault
 		);
-		uint256 expectedQuoteValue = 28578745487231226;
+		uint256 expectedQuoteValue = 30000000000000000;
 		// when
 		vm.prank(_userOne);
 		uint256 actualQuotedValue = _miltonSpread.calculateQuoteReceiveFixed(accruedIpor, accruedBalance);

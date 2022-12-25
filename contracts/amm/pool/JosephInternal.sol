@@ -115,6 +115,22 @@ abstract contract JosephInternal is
         return _asset;
     }
 
+    function getStanley() external view returns (address) {
+        return address(_stanley);
+    }
+
+    function getMiltonStorage() external view returns(address) {
+        return address(_miltonStorage);
+    }
+
+    function getMilton() external view returns (address) {
+        return address(_milton);
+    }
+
+    function getIpToken() external view returns (address) {
+        return address(_ipToken);
+    }
+
     function setMiltonStanleyBalanceRatio(uint256 newRatio) external onlyOwner {
         require(newRatio > 0, JosephErrors.MILTON_STANLEY_RATIO);
         require(newRatio < 1e18, JosephErrors.MILTON_STANLEY_RATIO);
