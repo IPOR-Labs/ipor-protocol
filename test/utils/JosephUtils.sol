@@ -16,7 +16,7 @@ import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
 contract JosephUtils is Test {
 
 	/// ---------------------- ITFJOSEPH ----------------------
-	function prepareItfJosephUsdt(
+	function getItfJosephUsdt(
 		address deployer,
 		address tokenUsdt, 
 		address ipTokenUsdt,
@@ -29,13 +29,20 @@ contract JosephUtils is Test {
 		ItfJosephUsdt  josephUsdtFactory = new ItfJosephUsdt();
 		address josephUsdtProxyAddress = josephUsdtProxy.deploy(address(josephUsdtFactory), deployer, abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdt, ipTokenUsdt, miltonUsdt, miltonStorageUsdt, stanleyUsdt));
 		ItfJosephUsdt itfJosephUsdt = ItfJosephUsdt(josephUsdtProxyAddress);
-		vm.prank(address(josephUsdtProxy));
-		itfJosephUsdt.setMaxLiquidityPoolBalance(10*10**6); // 10M, USD_10_000_000
-		vm.prank(address(josephUsdtProxy));
-		itfJosephUsdt.setMaxLpAccountContribution(1*10**6); // 1M, USD_1_000_000
 		return (josephUsdtProxy, itfJosephUsdt);
 	}
-	function prepareItfJosephUsdc(
+
+	function prepareItfJosephUsdt(
+		ItfJosephUsdt itfJosephUsdt,
+		address josephUsdtProxy 
+	) public {
+		vm.prank(josephUsdtProxy);
+		itfJosephUsdt.setMaxLiquidityPoolBalance(10*10**6); // 10M, USD_10_000_000
+		vm.prank(josephUsdtProxy);
+		itfJosephUsdt.setMaxLpAccountContribution(1*10**6); // 1M, USD_1_000_000
+	}
+
+	function getItfJosephUsdc(
 		address deployer,
 		address tokenUsdc, 
 		address ipTokenUsdc,
@@ -48,11 +55,17 @@ contract JosephUtils is Test {
 		ItfJosephUsdc  josephUsdcFactory = new ItfJosephUsdc();
 		address josephUsdcProxyAddress = josephUsdcProxy.deploy(address(josephUsdcFactory), deployer, abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
 		ItfJosephUsdc itfJosephUsdc = ItfJosephUsdc(josephUsdcProxyAddress);
-		vm.prank(address(josephUsdcProxy));
-		itfJosephUsdc.setMaxLiquidityPoolBalance(10*10**6); // 10M, USD_10_000_000
-		vm.prank(address(josephUsdcProxy));
-		itfJosephUsdc.setMaxLpAccountContribution(1*10**6); // 1M, USD_1_000_000
 		return (josephUsdcProxy, itfJosephUsdc);
+	}
+
+	function prepareItfJosephUsdc(
+		ItfJosephUsdc itfJosephUsdc,
+		address josephUsdcProxy 
+	) public {
+		vm.prank(josephUsdcProxy);
+		itfJosephUsdc.setMaxLiquidityPoolBalance(10*10**6); // 10M, USD_10_000_000
+		vm.prank(josephUsdcProxy);
+		itfJosephUsdc.setMaxLpAccountContribution(1*10**6); // 1M, USD_1_000_000
 	}
 
 	function getItfJosephDai(
