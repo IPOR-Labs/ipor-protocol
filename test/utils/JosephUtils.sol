@@ -14,7 +14,16 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
 
 contract JosephUtils is Test {
-
+	/// ------------------- JOSEPH -------------------
+	struct ItfJosephs {
+		ProxyTester itfJosephUsdtProxy;
+		ItfJosephUsdt itfJosephUsdt;
+		ProxyTester itfJosephUsdcProxy;
+		ItfJosephUsdc itfJosephUsdc;
+		ProxyTester itfJosephDaiProxy;
+		ItfJosephDai itfJosephDai;
+	}
+	/// ------------------- JOSEPH -------------------
 	/// ---------------------- ITFJOSEPH ----------------------
 	function getItfJosephUsdt(
 		address deployer,
@@ -92,6 +101,33 @@ contract JosephUtils is Test {
 		itfJosephDai.setMaxLiquidityPoolBalance(10*10**6); // 10M, USD_10_000_000
 		vm.prank(josephDaiProxy);
 		itfJosephDai.setMaxLpAccountContribution(1*10**6); // 1M, USD_1_000_000
+	}
+	
+	function getItfJosephAddresses(
+		address josephUsdt,
+		address josephUsdc,
+		address josephDai
+	) public pure returns(address[] memory) {
+		address[] memory josephs = new address[](3);
+		josephs[0] = josephUsdt;
+		josephs[1] = josephUsdc;
+		josephs[2] = josephDai;
+		return josephs;
+	}
+
+	function getItfJosephs (
+		address deployer,
+		address[] memory tokenAddresses,
+		address[] memory ipTokenAddresses,
+		address[] memory miltonAddresses,
+		address[] memory miltonStorageAddresses,
+		address[] memory stanleyAddresses
+	) public returns (ItfJosephs memory) {
+		ItfJosephs memory itfJosephs;
+		(itfJosephs.itfJosephUsdtProxy, itfJosephs.itfJosephUsdt) = getItfJosephUsdt(deployer, tokenAddresses[0], ipTokenAddresses[0], miltonAddresses[0], miltonStorageAddresses[0], stanleyAddresses[0]);
+		(itfJosephs.itfJosephUsdcProxy, itfJosephs.itfJosephUsdc) = getItfJosephUsdc(deployer, tokenAddresses[1], ipTokenAddresses[1], miltonAddresses[1], miltonStorageAddresses[1], stanleyAddresses[1]);
+		(itfJosephs.itfJosephDaiProxy, itfJosephs.itfJosephDai) = getItfJosephDai(deployer, tokenAddresses[2], ipTokenAddresses[2], miltonAddresses[2], miltonStorageAddresses[2], stanleyAddresses[2]);
+		return itfJosephs;
 	}
 	/// ---------------------- ITFJOSEPH ----------------------
 
