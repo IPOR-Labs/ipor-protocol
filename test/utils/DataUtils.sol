@@ -25,6 +25,18 @@ contract DataUtils is Test {
 		DaiMockedToken tokenDai =  new DaiMockedToken(10000000000000000 * Constants.D18, 18);
 		return tokenDai;
 	}
+
+	function getTokenAddresses(
+		address tokenUsdt, 
+		address tokenUsdc,
+		address tokenDai
+	) public pure returns(address[] memory) {
+		address[] memory tokenAddresses = new address[](3);
+		tokenAddresses[0] = tokenUsdt;
+		tokenAddresses[1] = tokenUsdc;
+		tokenAddresses[2] = tokenDai;
+		return tokenAddresses;
+	}
 	/// ---------------- MOCKED TOKENS  ----------------
 
 	/// ---------------- IP TOKENS  ----------------
@@ -54,6 +66,19 @@ contract DataUtils is Test {
 	function prepareIpTokenDai(IpToken ipTokenDai, address josephDai) public {
 		ipTokenDai.setJoseph(josephDai);
 	}
+
+	function getIpTokenAddresses(
+		address ipTokenUsdt, 
+		address ipTokenUsdc,
+		address ipTokenDai
+	) public pure returns(address[] memory) {
+		address[] memory ipTokenAddresses = new address[](3);
+		ipTokenAddresses[0] = ipTokenUsdt;
+		ipTokenAddresses[1] = ipTokenUsdc;
+		ipTokenAddresses[2] = ipTokenDai;
+		return ipTokenAddresses;
+	}
+
 	/// ---------------- IP TOKENS  ----------------
 	
 	/// ---------------- APPROVALS ----------------
@@ -100,4 +125,23 @@ contract DataUtils is Test {
 		}
 	}
 	/// ---------------- APPROVALS ----------------
+	
+	/// ---------------- USERS ----------------
+	function getUsers(
+		address admin,
+		address userOne,
+		address userTwo,
+		address userThree, 
+		address liquidityProvider
+	) public pure returns (address[] memory) {
+		address[] memory users = new address[](5);
+		users[0] = admin;
+		users[1] = userOne;
+		users[2] = userTwo;
+		users[3] = userThree;
+		users[4] = liquidityProvider;
+		return users;
+	}
+	/// ---------------- USERS ----------------
+	
 }
