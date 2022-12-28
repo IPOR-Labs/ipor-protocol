@@ -18,6 +18,34 @@ contract StanleyUtils {
 		MockCase1Stanley mockStanley = new MockCase1Stanley(asset);
 		return mockStanley;
 	}
+
+	function _getMockCase1Stanleys(
+		address tokenUsdt, 
+		address tokenUsdc, 
+		address tokenDai
+	) internal returns (MockCase1Stanley, MockCase1Stanley, MockCase1Stanley){
+		MockCase1Stanley mockStanleyUsdt = new MockCase1Stanley(tokenUsdt);
+		MockCase1Stanley mockStanleyUsdc = new MockCase1Stanley(tokenUsdc);
+		MockCase1Stanley mockStanleyDai = new MockCase1Stanley(tokenDai);
+		return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
+	}
+
+	function getMockCase1StanleyAddresses(
+		address tokenUsdt, 
+		address tokenUsdc, 
+		address tokenDai
+	) public returns (address[] memory){
+		(
+			MockCase1Stanley stanleyUsdt,
+			MockCase1Stanley stanleyUsdc,
+			MockCase1Stanley stanleyDai
+		) = _getMockCase1Stanleys(address(tokenUsdt), address(tokenUsdc), address(tokenDai));
+		address[] memory mockStanleyAddresses = new address[](3);
+		mockStanleyAddresses[0] = address(stanleyUsdt);
+		mockStanleyAddresses[1] = address(stanleyUsdc);
+		mockStanleyAddresses[2] = address(stanleyDai);
+		return mockStanleyAddresses;
+	}
 	
 	function getMockCase2Stanley(address asset) public returns (MockCase2Stanley){
 		MockCase2Stanley mockStanley = new MockCase2Stanley(asset);
