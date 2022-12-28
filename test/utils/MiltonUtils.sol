@@ -6,6 +6,7 @@ import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdt.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "../../contracts/facades/MiltonFacadeDataProvider.sol";
 import "../../contracts/itf/ItfMiltonUsdt.sol";
 import "../../contracts/itf/ItfMiltonUsdc.sol";
 import "../../contracts/itf/ItfMiltonDai.sol";
@@ -34,7 +35,18 @@ import "../../contracts/mocks/spread/MockSpreadModel.sol";
 
 contract MiltonUtils is Test {
 
- /// ------------------- Spread Model -------------------
+ /// ------------------- MILTON -------------------
+	struct ItfMiltons {
+		ProxyTester itfMiltonUsdtProxy;
+		ItfMiltonUsdt itfMiltonUsdt;
+		ProxyTester itfMiltonUsdcProxy;
+		ItfMiltonUsdc itfMiltonUsdc;
+		ProxyTester itfMiltonDaiProxy;
+		ItfMiltonDai itfMiltonDai;
+	}
+ /// ------------------- MILTON -------------------
+
+ /// ------------------- SPREAD MODEL -------------------
 	function prepareMockSpreadModel(
 		uint256 calculateQuotePayFixedValue,
 		uint256 calculateQuoteReceiveFixedValue,
@@ -49,7 +61,24 @@ contract MiltonUtils is Test {
 		);	
 		return miltonSpreadModel;
 	}
- /// ------------------- Spread Model -------------------
+ /// ------------------- SPREAD MODEL -------------------
+ /// ------------------- MILTON FACADE DATA PROVIDER -------------------
+	function getMiltonFacadeDataProvider(
+		address deployer,
+		address iporOracle,
+		address[] memory assets,
+		address[] memory miltons,
+		address[] memory miltonStorages,
+		address[] memory josephs
+	) public returns (ProxyTester, MiltonFacadeDataProvider){
+		ProxyTester miltonFacadeDataProviderProxy = new ProxyTester();
+		miltonFacadeDataProviderProxy.setType("uups");
+		MiltonFacadeDataProvider miltonFacadeDataProviderFactory = new MiltonFacadeDataProvider();
+		address miltonFacadeDataProviderProxyAddress = miltonFacadeDataProviderProxy.deploy(address(miltonFacadeDataProviderFactory), deployer, abi.encodeWithSignature("initialize(address,address[],address[],address[],address[])",iporOracle, assets, miltons, miltonStorages, josephs));
+		MiltonFacadeDataProvider miltonFacadeDataProvider = MiltonFacadeDataProvider(miltonFacadeDataProviderProxyAddress);
+		return (miltonFacadeDataProviderProxy, miltonFacadeDataProvider);
+	}
+ /// ------------------- MILTON FACADE DATA PROVIDER -------------------
 
  /// ------------------- ITFMILTON -------------------
 	function getItfMiltonUsdt(
@@ -141,6 +170,36 @@ contract MiltonUtils is Test {
 		vm.prank(miltonDaiProxy);
 		miltonDai.setupMaxAllowanceForAsset(stanleyDai);
 	}
+
+	function getItfMiltons (
+		address deployer,
+		address iporOracle, 
+		address miltonSpreadModel,
+		address tokenUsdt,
+		address tokenUsdc,
+		address tokenDai,
+		address[] memory miltonStorageAddresses, 
+		address[] memory stanleyAddresses
+	) public returns (ItfMiltons memory) {
+		ItfMiltons memory itfMiltons;
+		(itfMiltons.itfMiltonUsdtProxy, itfMiltons.itfMiltonUsdt) = getItfMiltonUsdt(deployer, tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0]);
+		(itfMiltons.itfMiltonUsdcProxy, itfMiltons.itfMiltonUsdc) = getItfMiltonUsdc(deployer, tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1]);
+		(itfMiltons.itfMiltonDaiProxy, itfMiltons.itfMiltonDai) = getItfMiltonDai(deployer, tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2]);
+		return itfMiltons;
+	}
+
+	function getItfMiltonAddresses(
+		address miltonUsdt,
+		address miltonUsdc,
+		address miltonDai
+	) public pure returns(address[] memory) {
+		address[] memory miltons = new address[](3);
+		miltons[0] = miltonUsdt;
+		miltons[1] = miltonUsdc;
+		miltons[2] = miltonDai;
+		return miltons;
+	}
+
  /// ------------------- ITFMILTON -------------------
 
  /// ------------------- Mock Cases Milton -------------------
