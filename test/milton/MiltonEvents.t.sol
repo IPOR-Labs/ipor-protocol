@@ -81,26 +81,16 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		_liquidityProvider = _getUserAddress(4);
     }
 
-	function prepareUsers() public returns(address[] memory) {
-		address[] memory users = new address[](5);
-		users[0] = _admin;
-		users[1] = _userOne;
-		users[2] = _userTwo;
-		users[3] = _userThree;
-		users[4] = _liquidityProvider;
-		return users;
-	}
-
 	function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		(ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(miltonDai), address(miltonStorageDai), address(stanleyDai));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
 		prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
@@ -129,7 +119,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 				liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
 			}), // money
 			block.timestamp, // openTimestamp
-			block.timestamp + 2419200, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			MiltonTypes.IporSwapIndicator({
 				iporIndexValue: 3 * 10**16, // iporIndexValue
 				ibtPrice: 1 * Constants.D18, // ibtPrice
@@ -148,13 +138,13 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 	function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		(ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(miltonDai), address(miltonStorageDai), address(stanleyDai));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
 		prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
@@ -183,7 +173,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 				liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
 			}), // money
 			block.timestamp, // openTimestamp
-			block.timestamp + 2419200, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS 
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS 
 			MiltonTypes.IporSwapIndicator({
 				iporIndexValue: 3 * 10**16, // iporIndexValue
 				ibtPrice: 1 * Constants.D18, // ibtPrice
@@ -202,13 +192,13 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 	function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
 		// given
 		UsdtMockedToken usdtMockedToken = getTokenUsdt();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(usdtMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(usdtMockedToken)); 
 		IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
 		MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
 		(ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
 		(ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(_admin, address(usdtMockedToken), address(iporOracle), address(miltonStorageUsdt), address(_miltonSpreadModel), address(stanleyUsdt));
 		(ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(_admin, address(usdtMockedToken), address(ipTokenUsdt), address(miltonUsdt), address(miltonStorageUsdt), address(stanleyUsdt));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
 		prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
 		prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
@@ -237,7 +227,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 				liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
 			}), // money
 			block.timestamp, // openTimestamp
-			block.timestamp + 2419200, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			MiltonTypes.IporSwapIndicator({
 				iporIndexValue: 3 * 10**16, // iporIndexValue
 				ibtPrice: 1 * Constants.D18, // ibtPrice
@@ -256,13 +246,13 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 	function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
 		// given
 		UsdtMockedToken usdtMockedToken = getTokenUsdt();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(usdtMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(usdtMockedToken)); 
 		IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
 		MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
 		(ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
 		(ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(_admin, address(usdtMockedToken), address(iporOracle), address(miltonStorageUsdt), address(_miltonSpreadModel), address(stanleyUsdt));
 		(ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(_admin, address(usdtMockedToken), address(ipTokenUsdt), address(miltonUsdt), address(miltonStorageUsdt), address(stanleyUsdt));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
 		prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
 		prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
@@ -291,7 +281,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 				liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
 			}), // money
 			block.timestamp, // openTimestamp
-			block.timestamp + 2419200, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			MiltonTypes.IporSwapIndicator({
 				iporIndexValue: 3 * 10**16, // iporIndexValue
 				ibtPrice: 1 * Constants.D18, // ibtPrice
@@ -310,13 +300,13 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 	function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		(ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(miltonDai), address(miltonStorageDai), address(stanleyDai));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
 		prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
@@ -342,7 +332,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		emit CloseSwap(
 			1, // swapId
 			address(daiMockedToken), // asset
-			block.timestamp + 2419200, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			_userTwo, // liquidator
 			18957318804358692392282, // transferredToBuyer
 			0, // transferredToLiquidator
@@ -350,20 +340,20 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		);
 		miltonDai.itfCloseSwapPayFixed(
 			1, // swapId
-			block.timestamp + 2419200 // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 		);
 	}
 	
 	function testShouldEmitEventWhenClosePayFixedSwap6Decimals() public {
 		// given
 		UsdtMockedToken usdtMockedToken = getTokenUsdt();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(usdtMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(usdtMockedToken)); 
 		IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
 		MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
 		(ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
 		(ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(_admin, address(usdtMockedToken), address(iporOracle), address(miltonStorageUsdt), address(_miltonSpreadModel), address(stanleyUsdt));
 		(ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(_admin, address(usdtMockedToken), address(ipTokenUsdt), address(miltonUsdt), address(miltonStorageUsdt), address(stanleyUsdt));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
 		prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
 		prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
@@ -389,7 +379,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		emit CloseSwap(
 			1, // swapId
 			address(usdtMockedToken), // asset
-			block.timestamp + 2419200, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			_userTwo, // liquidator
 			18957318804000000000000, // transferredToBuyer
 			0, // transferredToLiquidator
@@ -397,20 +387,20 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		);
 		miltonUsdt.itfCloseSwapPayFixed(
 			1, // swapId
-			block.timestamp + 2419200 // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 		);
 	}
 
 	function testShouldEmitEventWhenClosePayFixedSwap6DecimalsNotTakerClosedSwap() public {
 		// given
 		UsdtMockedToken usdtMockedToken = getTokenUsdt();
-		ItfIporOracle iporOracle = getIporOracle(_admin, _userOne, address(usdtMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(usdtMockedToken)); 
 		IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
 		MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
 		(ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
 		(ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(_admin, address(usdtMockedToken), address(iporOracle), address(miltonStorageUsdt), address(_miltonSpreadModel), address(stanleyUsdt));
 		(ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(_admin, address(usdtMockedToken), address(ipTokenUsdt), address(miltonUsdt), address(miltonStorageUsdt), address(stanleyUsdt));
-		address[] memory users = prepareUsers();
+		address[] memory users = getUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
 		prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
 		prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
@@ -436,7 +426,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		emit CloseSwap(
 			1, // swapId
 			address(usdtMockedToken), // asset
-			block.timestamp + 2419200, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 			_userThree, // liquidator
 			18957318804000000000000, // transferredToBuyer
 			20*Constants.D18, // transferredToLiquidator
@@ -444,7 +434,7 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 		);
 		miltonUsdt.itfCloseSwapPayFixed(
 			1, // swapId
-			block.timestamp + 2419200 // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 		);
 	}
 }
