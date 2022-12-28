@@ -15,12 +15,6 @@ import  {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/facades/MiltonFacadeDataProvider.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfJosephUsdt.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../contracts/itf/ItfMiltonDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/UsdtMockedToken.sol";
@@ -74,26 +68,26 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		address[] memory mockCase1StanleyAddresses = getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
 		MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
 		address[] memory miltonStorageAddresses = getMiltonStorageAddresses(address(miltonStorages.miltonStorageUsdt), address(miltonStorages.miltonStorageUsdc), address(miltonStorages.miltonStorageDai));
-		ItfMiltons memory itfMiltons = getItfMiltons(_admin, address(iporOracle), address(_miltonSpreadModel), address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken), miltonStorageAddresses, mockCase1StanleyAddresses);
-		address[] memory itfMiltonAddresses = getItfMiltonAddresses(address(itfMiltons.itfMiltonUsdt), address(itfMiltons.itfMiltonUsdc), address(itfMiltons.itfMiltonDai));
-		ItfJosephs memory itfJosephs = getItfJosephs(_admin, tokenAddresses, ipTokenAddresses, itfMiltonAddresses, miltonStorageAddresses, mockCase1StanleyAddresses);
-		address[] memory itfJosephAddresses = getItfJosephAddresses(address(itfJosephs.itfJosephUsdt), address(itfJosephs.itfJosephUsdc), address(itfJosephs.itfJosephDai));
-		prepareApproveForUsersUsdt(users, _usdtMockedToken, address(itfJosephs.itfJosephUsdt), address(itfMiltons.itfMiltonUsdt));
-		prepareApproveForUsersUsdc(users, _usdcMockedToken, address(itfJosephs.itfJosephUsdc), address(itfMiltons.itfMiltonUsdc));
-		prepareApproveForUsersDai(users, _daiMockedToken, address(itfJosephs.itfJosephDai), address(itfMiltons.itfMiltonDai));
-		prepareMiltonStorage(miltonStorages.miltonStorageUsdt, miltonStorages.miltonStorageUsdtProxy, address(itfJosephs.itfJosephUsdt), address(itfMiltons.itfMiltonUsdt));
-		prepareMiltonStorage(miltonStorages.miltonStorageUsdc, miltonStorages.miltonStorageUsdcProxy, address(itfJosephs.itfJosephUsdc), address(itfMiltons.itfMiltonUsdc));
-		prepareMiltonStorage(miltonStorages.miltonStorageDai, miltonStorages.miltonStorageDaiProxy, address(itfJosephs.itfJosephDai), address(itfMiltons.itfMiltonDai));
-		prepareItfMiltonUsdt(itfMiltons.itfMiltonUsdt, address(itfMiltons.itfMiltonUsdtProxy), address(itfJosephs.itfJosephUsdt), mockCase1StanleyAddresses[0]);
-		prepareItfMiltonUsdc(itfMiltons.itfMiltonUsdc, address(itfMiltons.itfMiltonUsdcProxy), address(itfJosephs.itfJosephUsdc), mockCase1StanleyAddresses[1]);
-		prepareItfMiltonDai(itfMiltons.itfMiltonDai, address(itfMiltons.itfMiltonDaiProxy), address(itfJosephs.itfJosephDai), mockCase1StanleyAddresses[2]);
-		prepareItfJosephUsdt(itfJosephs.itfJosephUsdt, address(itfJosephs.itfJosephUsdtProxy));
-		prepareItfJosephUsdc(itfJosephs.itfJosephUsdc, address(itfJosephs.itfJosephUsdcProxy));
-		prepareItfJosephDai(itfJosephs.itfJosephDai, address(itfJosephs.itfJosephDaiProxy));
-		prepareIpTokenUsdt(_ipTokenUsdt, itfJosephAddresses[0]);
-		prepareIpTokenUsdc(_ipTokenUsdc, itfJosephAddresses[1]);
-		prepareIpTokenDai(_ipTokenDai, itfJosephAddresses[2]);
-		(ProxyTester miltonFacadeDataProviderProxy, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, itfMiltonAddresses, miltonStorageAddresses, itfJosephAddresses);	
+		MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(_admin, address(iporOracle), address(_miltonSpreadModel), address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken), miltonStorageAddresses, mockCase1StanleyAddresses);
+		address[] memory mockCase0MiltonAddresses = getMockCase0MiltonAddresses(address(mockCase0Miltons.mockCase0MiltonUsdt), address(mockCase0Miltons.mockCase0MiltonUsdc), address(mockCase0Miltons.mockCase0MiltonDai));
+		MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(_admin, tokenAddresses, ipTokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase1StanleyAddresses);
+		address[] memory mockCase0JosephAddresses = getMockCase0JosephAddresses(address(mockCase0Josephs.mockCase0JosephUsdt), address(mockCase0Josephs.mockCase0JosephUsdc), address(mockCase0Josephs.mockCase0JosephDai));
+		prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0Josephs.mockCase0JosephUsdt), address(mockCase0Miltons.mockCase0MiltonUsdt));
+		prepareApproveForUsersUsdc(users, _usdcMockedToken, address(mockCase0Josephs.mockCase0JosephUsdc), address(mockCase0Miltons.mockCase0MiltonUsdc));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0Josephs.mockCase0JosephDai), address(mockCase0Miltons.mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorages.miltonStorageUsdt, miltonStorages.miltonStorageUsdtProxy, address(mockCase0Josephs.mockCase0JosephUsdt), address(mockCase0Miltons.mockCase0MiltonUsdt));
+		prepareMiltonStorage(miltonStorages.miltonStorageUsdc, miltonStorages.miltonStorageUsdcProxy, address(mockCase0Josephs.mockCase0JosephUsdc), address(mockCase0Miltons.mockCase0MiltonUsdc));
+		prepareMiltonStorage(miltonStorages.miltonStorageDai, miltonStorages.miltonStorageDaiProxy, address(mockCase0Josephs.mockCase0JosephDai), address(mockCase0Miltons.mockCase0MiltonDai));
+		prepareMockCase0MiltonUsdt(mockCase0Miltons.mockCase0MiltonUsdt, address(mockCase0Miltons.mockCase0MiltonUsdtProxy), address(mockCase0Josephs.mockCase0JosephUsdt), mockCase1StanleyAddresses[0]);
+		prepareMockCase0MiltonUsdc(mockCase0Miltons.mockCase0MiltonUsdc, address(mockCase0Miltons.mockCase0MiltonUsdcProxy), address(mockCase0Josephs.mockCase0JosephUsdc), mockCase1StanleyAddresses[1]);
+		prepareMockCase0MiltonDai(mockCase0Miltons.mockCase0MiltonDai, address(mockCase0Miltons.mockCase0MiltonDaiProxy), address(mockCase0Josephs.mockCase0JosephDai), mockCase1StanleyAddresses[2]);
+		prepareMockCase0JosephUsdt(mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy));
+		prepareMockCase0JosephUsdc(mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy));
+		prepareMockCase0JosephDai(mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy));
+		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+		(ProxyTester miltonFacadeDataProviderProxy, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -101,11 +95,11 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_liquidityProvider);
-		itfJosephs.itfJosephUsdt.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
+		mockCase0Josephs.mockCase0JosephUsdt.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		itfJosephs.itfJosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
+		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		itfJosephs.itfJosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_6DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_6DEC
 		// when
 		vm.prank(address(miltonFacadeDataProviderProxy));
 		MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider.getConfiguration();
