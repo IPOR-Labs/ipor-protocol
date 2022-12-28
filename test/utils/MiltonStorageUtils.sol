@@ -7,7 +7,18 @@ import "../../contracts/libraries/Constants.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 
 contract MiltonStorageUtils is Test {
-	
+
+ /// ------------------- MILTONSTORAGE -------------------
+	struct MiltonStorages {
+		ProxyTester miltonStorageUsdtProxy;
+		MiltonStorage miltonStorageUsdt;
+		ProxyTester miltonStorageUsdcProxy;
+		MiltonStorage miltonStorageUsdc;
+		ProxyTester miltonStorageDaiProxy;
+		MiltonStorage miltonStorageDai;
+	}
+ /// ------------------- MILTONSTORAGE -------------------
+
 	function prepareMiltonStorage(
 		MiltonStorage miltonStorage,
 		ProxyTester miltonStorageProxy,
@@ -28,6 +39,26 @@ contract MiltonStorageUtils is Test {
 		address miltonStorageProxyAddress = miltonStorageProxy.deploy(address(miltonStorageFactory), deployer, abi.encodeWithSignature("initialize()", ""));
 		MiltonStorage miltonStorage = MiltonStorage(miltonStorageProxyAddress);
 		return (miltonStorageProxy, miltonStorage);
+	}
+
+	function getMiltonStorages(address deployer) public returns (MiltonStorages memory) {
+		MiltonStorages memory miltonStorages;
+		(miltonStorages.miltonStorageUsdtProxy, miltonStorages.miltonStorageUsdt) = getMiltonStorage(deployer);
+		(miltonStorages.miltonStorageUsdcProxy, miltonStorages.miltonStorageUsdc) = getMiltonStorage(deployer);
+		(miltonStorages.miltonStorageDaiProxy, miltonStorages.miltonStorageDai) = getMiltonStorage(deployer);
+		return miltonStorages;
+	}
+
+	function getMiltonStorageAddresses(
+		address miltonStorageUsdt, 
+		address miltonStorageUsdc,
+		address miltonStorageDai
+	) public pure returns (address[] memory) {
+		address[] memory miltonStorageAddresses = new address[](3);
+		miltonStorageAddresses[0] = miltonStorageUsdt;
+		miltonStorageAddresses[1] = miltonStorageUsdc;
+		miltonStorageAddresses[2] = miltonStorageDai;
+		return miltonStorageAddresses;
 	}
 
 }
