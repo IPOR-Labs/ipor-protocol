@@ -96,7 +96,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		// when
 		vm.prank(address(miltonFacadeDataProviderProxy));
 		MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider.getConfiguration();
@@ -144,7 +144,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -156,7 +156,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		// when
 		vm.prank(_userTwo);
 		mockCase0Miltons.mockCase0MiltonUsdt.itfOpenSwapPayFixed(
@@ -227,7 +227,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -239,10 +239,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 0, 10000*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 0, 10000*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		vm.expectRevert(abi.encodePacked("IPOR_009"));
@@ -295,7 +295,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -307,10 +307,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 0, 10000*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 0, 10000*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		vm.expectRevert(abi.encodePacked("IPOR_010"));
@@ -363,7 +363,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -375,10 +375,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 0, 10000*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 0, 10000*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		(uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 0, 10);
@@ -428,7 +428,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -440,10 +440,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(28000*10**6, block.timestamp) ; // USD_28_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*10**18, block.timestamp) ; // USD_28_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp) ; // USD_28_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 0, 10000*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 0, 10000*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 0, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		(uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 10, 10);
@@ -495,7 +495,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -507,10 +507,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(50000*10**6, block.timestamp) ; // USD_50_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*10**18, block.timestamp) ; // USD_50_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*Constants.D18, block.timestamp) ; // USD_50_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 11, 100*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 11, 100*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 11, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 11, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		(uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 0, 10);
@@ -559,7 +559,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -571,10 +571,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(50000*10**6, block.timestamp) ; // USD_50_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*10**18, block.timestamp) ; // USD_50_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*Constants.D18, block.timestamp) ; // USD_50_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 22, 100*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 22, 100*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		(uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 10, 10);
@@ -623,7 +623,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
 		prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
 		prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
-		MiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProviderImplementation(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
+		(, MiltonFacadeDataProvider miltonFacadeDataProvider) = getMiltonFacadeDataProvider(_admin, address(iporOracle), tokenAddresses, mockCase0MiltonAddresses, miltonStorageAddresses, mockCase0JosephAddresses);	
 		vm.prank(_userOne);
 		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
 		vm.prank(_userOne);
@@ -635,10 +635,10 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, MiltonUtils, MiltonS
 		vm.prank(_liquidityProvider);
 		mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(50000*10**6, block.timestamp) ; // USD_50_000_6DEC
 		vm.prank(_liquidityProvider);
-		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*10**18, block.timestamp) ; // USD_50_000_18DEC
+		mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(50000*Constants.D18, block.timestamp) ; // USD_50_000_18DEC
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdt, 22, 100*10**6, 10 * Constants.D18);
 		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonUsdc, 22, 100*10**6, 10 * Constants.D18);
-		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, 100*10**18, 10 * Constants.D18);
+		iterateOpenSwapsPayFixed(_userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, 100*Constants.D18, 10 * Constants.D18);
 		// when
 		vm.prank(_userTwo);
 		(uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) = miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 20, 10);

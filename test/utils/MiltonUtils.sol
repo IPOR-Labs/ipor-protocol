@@ -88,21 +88,6 @@ contract MiltonUtils is Test {
 		return (miltonFacadeDataProviderProxy, miltonFacadeDataProvider);
 	}
 
-	function getMiltonFacadeDataProviderImplementation(
-		address deployer,
-		address iporOracle,
-		address[] memory assets,
-		address[] memory miltons,
-		address[] memory miltonStorages,
-		address[] memory josephs
-	) public returns (MiltonFacadeDataProvider){
-		ProxyTester miltonFacadeDataProviderProxy = new ProxyTester();
-		miltonFacadeDataProviderProxy.setType("uups");
-		MiltonFacadeDataProvider miltonFacadeDataProviderFactory = new MiltonFacadeDataProvider();
-		address miltonFacadeDataProviderProxyAddress = miltonFacadeDataProviderProxy.deploy(address(miltonFacadeDataProviderFactory), deployer, abi.encodeWithSignature("initialize(address,address[],address[],address[],address[])",iporOracle, assets, miltons, miltonStorages, josephs));
-		MiltonFacadeDataProvider miltonFacadeDataProvider = MiltonFacadeDataProvider(miltonFacadeDataProviderProxyAddress);
-		return miltonFacadeDataProvider;
-	}
  /// ------------------- MILTON FACADE DATA PROVIDER -------------------
 
  /// ------------------- ITFMILTON -------------------
