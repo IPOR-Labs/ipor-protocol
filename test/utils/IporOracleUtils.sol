@@ -71,7 +71,7 @@ contract IporOracleUtils is Test {
 		uint32 updateTimestamp,
 		uint64 exponentialMovingAverage, 
 		uint64 exponentialWeightedMovingVariance
-	) internal returns (OracleParams memory) {
+	) internal pure returns (OracleParams memory) {
 		OracleParams memory oracleParams;
 		uint32[] memory updateTimestamps = new uint32[](3);	
 		uint64[] memory exponentialMovingAverages = new uint64[](3);
