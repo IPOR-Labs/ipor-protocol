@@ -127,19 +127,37 @@ contract DataUtils is Test {
 	/// ---------------- APPROVALS ----------------
 	
 	/// ---------------- USERS ----------------
-	function getUsers(
-		address admin,
+	function getFiveUsers(
 		address userOne,
 		address userTwo,
-		address userThree, 
-		address liquidityProvider
+		address userThree,
+		address userFour, 
+		address userFive
 	) public pure returns (address[] memory) {
 		address[] memory users = new address[](5);
-		users[0] = admin;
-		users[1] = userOne;
-		users[2] = userTwo;
-		users[3] = userThree;
-		users[4] = liquidityProvider;
+		users[0] = userOne;
+		users[1] = userTwo;
+		users[2] = userThree;
+		users[3] = userFour;
+		users[4] = userFive;
+		return users;
+	}
+
+	function getSixUsers(
+		address userOne,
+		address userTwo,
+		address userThree,
+		address userFour, 
+		address userFive,
+		address userSix
+	) public pure returns (address[] memory) {
+		address[] memory users = new address[](5);
+		users[0] = userOne;
+		users[1] = userTwo;
+		users[2] = userThree;
+		users[3] = userFour;
+		users[4] = userFive;
+		users[5] = userSix;
 		return users;
 	}
 	/// ---------------- USERS ----------------
