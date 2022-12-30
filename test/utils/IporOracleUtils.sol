@@ -34,7 +34,7 @@ contract IporOracleUtils is Test {
 		return iporOracle;
 	}
 
-	function getIporOracleOneAsset(address deployer, address updater, address asset) public returns (ItfIporOracle) {
+	function getIporOracleOneAsset(address deployer, address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
 		address[] memory accounts = new address[](2);
 		accounts[0] = deployer;
 		accounts[1] = updater;
@@ -43,7 +43,7 @@ contract IporOracleUtils is Test {
 		uint32[] memory updateTimestamps = new uint32[](1);
 		updateTimestamps[0] = uint32(block.timestamp);
 		uint64[] memory exponentialMovingAverages = new uint64[](1);
-		exponentialMovingAverages[0] = 0;
+		exponentialMovingAverages[0] = ema;
 		uint64[] memory exponentialWeightedMovingVariances = new uint64[](1);
 		exponentialWeightedMovingVariances[0] = 0;
 		ItfIporOracle iporOracle = _prepareIporOracle(accounts, assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances);

@@ -62,7 +62,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
 		//given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -90,7 +90,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldPauseSmartContractSpecificMethods() public {
 		//given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -155,7 +155,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
 		//given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -229,7 +229,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
 		//given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -242,7 +242,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
 		//given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -277,7 +277,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -300,7 +300,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldTransferOwnershipSimpleCase1() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -318,7 +318,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -339,7 +339,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -355,7 +355,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotTransferOwnershipWhenSenderNotCurrentOwner() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -367,7 +367,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointerdOwner() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -382,7 +382,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -399,7 +399,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -416,7 +416,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
 		// given
 		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
