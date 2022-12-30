@@ -71,6 +71,12 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
         /// @notice incomeFeeValue value transferred to treasury
         uint256 incomeFeeValue
     );
+	   
+    event MiltonSpreadModelChanged(
+        address indexed changedBy,
+        address indexed oldMiltonSpreadModel,
+        address indexed newMiltonSpreadModel
+    );
 
     function setUp() public {
 		_miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
@@ -437,4 +443,22 @@ contract MiltonEventsTest is Test, TestCommons, MiltonUtils, JosephUtils, Milton
 			block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
 		);
 	}
+	
+	function testShouldEmitMiltonSpreadModelChanged() public {
+		// given
+		DaiMockedToken daiMockedToken = getTokenDai();
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken)); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		vm.prank(address(miltonDaiProxy));
+		address oldMiltonSpreadModel = miltonDai.getMiltonSpreadModel();
+		address newMiltonSpreadModel = address(_userThree);
+		// when
+		vm.expectEmit(true, true, true, false);
+		emit MiltonSpreadModelChanged(address(miltonDaiProxy), oldMiltonSpreadModel, newMiltonSpreadModel);
+		vm.prank(address(miltonDaiProxy));
+		miltonDai.setMiltonSpreadModel(newMiltonSpreadModel);
+	}
+
 }
