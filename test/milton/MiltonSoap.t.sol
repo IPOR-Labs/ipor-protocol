@@ -14,7 +14,6 @@ import  {StanleyUtils} from "../utils/StanleyUtils.sol";
 import  {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import  {SwapUtils} from "../utils/SwapUtils.sol";
 import "../../contracts/libraries/Constants.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
