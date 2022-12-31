@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/amm/MiltonStorage.sol";
+import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract MiltonStorageUtils is Test {
 
@@ -61,4 +62,18 @@ contract MiltonStorageUtils is Test {
 		return miltonStorageAddresses;
 	}
 
+
+	function prepareSwapPayFixedStruct18DecSimpleCase1(address buyer) public view returns (AmmTypes.NewSwap memory) {
+		AmmTypes.NewSwap memory newSwap;
+		newSwap.buyer = buyer;
+		newSwap.openTimestamp = block.timestamp;
+		newSwap.collateral = 1000 * Constants.D18;
+		newSwap.notional = 50000 * Constants.D18;
+		newSwap.ibtQuantity = 123;
+		newSwap.fixedInterestRate = 234;
+		newSwap.liquidationDepositAmount = 20;
+		newSwap.openingFeeLPAmount = 1500 * Constants.D18;
+		newSwap.openingFeeTreasuryAmount = 1500 * Constants.D18;
+		return newSwap;
+	}
 }
