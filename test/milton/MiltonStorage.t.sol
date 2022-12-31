@@ -46,7 +46,7 @@ contract MiltonStorageTest is Test, TestCommons, MiltonUtils, MiltonStorageUtils
 
     function setUp() public {
 		_miltonSpreadModel = prepareMockSpreadModel(
-			6*10**16, // 0%
+			6*10**16, // 6%
 			4*10**16, // 4%
 			0, // 0%
 			0 // 0%
