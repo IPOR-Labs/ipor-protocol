@@ -61,21 +61,19 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
 		//given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_userOne);
-		iporOracle.itfUpdateIndex(address(daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // USD_28_000_18DEC
 		// when
@@ -89,25 +87,23 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldPauseSmartContractSpecificMethods() public {
 		//given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		uint256[] memory swapIds = new uint256[](2);
 		swapIds[0] = 1;
 		swapIds[1] = 2;
 		uint256[] memory emptySwapIds = new uint256[](0);
 		vm.prank(_userOne);
-		iporOracle.itfUpdateIndex(address(daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // USD_28_000_18DEC
 		// simulate that _userTwo is Joseph
@@ -154,21 +150,19 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
 		//given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_userOne);
-		iporOracle.itfUpdateIndex(address(daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 3*10**16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(50000*Constants.D18, block.timestamp); // USD_50_000_18DEC
 		vm.prank(_userTwo);
@@ -228,11 +222,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 	
 	function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
 		//given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when
 		vm.expectRevert("Ownable: caller is not the owner");
 		vm.prank(address(_userThree));
@@ -241,21 +234,19 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
 		//given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_userOne);
-		iporOracle.itfUpdateIndex(address(daiMockedToken), 3*10**16, block.timestamp); // 3%, PER
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 3*10**16, block.timestamp); // 3%, PER
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(50000*Constants.D18, block.timestamp); // USD_50_000_18DEC
 		vm.prank(address(mockCase0MiltonDaiProxy));
@@ -276,19 +267,17 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.pause();
 		// when 
@@ -299,11 +288,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldTransferOwnershipSimpleCase1() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
@@ -317,19 +305,17 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
-		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(daiMockedToken), address(ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
 		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-		prepareApproveForUsersDai(users, daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
 		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
-		prepareIpTokenDai(ipTokenDai, address(mockCase0JosephDai));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		// when
 		vm.expectRevert("Ownable: caller is not the owner");
 		vm.prank(_userThree);
@@ -338,11 +324,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
@@ -354,23 +339,22 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotTransferOwnershipWhenSenderNotCurrentOwner() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.expectRevert("Ownable: caller is not the owner");
 		vm.prank(_userThree);
 		mockCase0MiltonDai.transferOwnership(_userTwo);
 	}
+
 	function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointerdOwner() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
@@ -381,11 +365,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
@@ -398,11 +381,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
@@ -415,11 +397,10 @@ contract MiltonMaintenanceTest is Test, TestCommons, MiltonUtils, MiltonStorageU
 
 	function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
 		// given
-		DaiMockedToken daiMockedToken = getTokenDai();
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0); 
-		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
 		// when 
 		vm.prank(address(mockCase0MiltonDaiProxy));
 		mockCase0MiltonDai.transferOwnership(_userTwo);
