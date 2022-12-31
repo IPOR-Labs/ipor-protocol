@@ -44,25 +44,14 @@ contract SwapUtils is Test {
 		uint256 leverage
 	) public {
 		for (uint256 i = 0; i < numberIterations; i++) {
-			if (i % 2 == 0) {
-				uint256 acceptableFixedInterestRate = 1 * 10**16;
-				vm.prank(user);
-				milton.itfOpenSwapPayFixed(
-					block.timestamp, // openTimestamp
-					totalAmount, // totalAmount
-					acceptableFixedInterestRate, // acceptableFixedInterestRate 
-					leverage // leverage LEVERAGE_18DEC
-				);
-			} else {
-				uint256 acceptableFixedInterestRate = 1 * 10**17; // N0__1_18DEC
-				vm.prank(user);
-				milton.itfOpenSwapReceiveFixed(
-					block.timestamp, // openTimestamp
-					totalAmount, // totalAmount
-					acceptableFixedInterestRate, // acceptableFixedInterestRate
-					leverage // leverage LEVERAGE_18DEC
-				);
-			}
+			uint256 acceptableFixedInterestRate = 1 * 10**16;
+			vm.prank(user);
+			milton.itfOpenSwapReceiveFixed(
+				block.timestamp, // openTimestamp
+				totalAmount, // totalAmount
+				acceptableFixedInterestRate, // acceptableFixedInterestRate 
+				leverage // leverage LEVERAGE_18DEC
+			);
 		}
 	}
 
