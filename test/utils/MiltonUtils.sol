@@ -54,15 +54,6 @@ contract MiltonUtils is Test {
 		MockCase0MiltonDai mockCase0MiltonDai;
 	}
 
-	struct MockCase6Miltons {
-		ProxyTester mockCase6MiltonUsdtProxy;
-		MockCase6MiltonUsdt mockCase6MiltonUsdt;
-		ProxyTester mockCase6MiltonUsdcProxy;
-		MockCase6MiltonUsdc mockCase6MiltonUsdc;
-		ProxyTester mockCase6MiltonDaiProxy;
-		MockCase6MiltonDai mockCase6MiltonDai;
-	}
-
  /// ------------------- MILTON -------------------
 
  /// ------------------- SPREAD MODEL -------------------
@@ -81,6 +72,7 @@ contract MiltonUtils is Test {
 		return miltonSpreadModel;
 	}
  /// ------------------- SPREAD MODEL -------------------
+
  /// ------------------- MILTON FACADE DATA PROVIDER -------------------
 	function getMiltonFacadeDataProvider(
 		address deployer,
@@ -352,127 +344,97 @@ contract MiltonUtils is Test {
 
 	/// ------------------------------------------------------------------------------------
 
-	function getMockCase2MiltonUsdt() public returns (MockCase2MiltonUsdt){
-		MockCase2MiltonUsdt mockCase2MiltonUsdt = new MockCase2MiltonUsdt();
-		return mockCase2MiltonUsdt;
+	function getMockCase2MiltonUsdt(
+		address deployer,
+		address tokenUsdt,
+		address iporOracle,
+		address miltonStorageUsdt,
+		address miltonSpreadModel,
+		address stanleyUsdt
+	) public returns (ProxyTester, MockCase2MiltonUsdt){
+		ProxyTester miltonUsdtProxy = new ProxyTester();
+		miltonUsdtProxy.setType("uups");
+		MockCase2MiltonUsdt mockCase2MiltonUsdtFactory = new MockCase2MiltonUsdt();
+		address miltonUsdtProxyAddress = miltonUsdtProxy.deploy(address(mockCase2MiltonUsdtFactory), deployer, abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
+		MockCase2MiltonUsdt mockCase2MiltonUsdt = MockCase2MiltonUsdt(miltonUsdtProxyAddress);
+		return (miltonUsdtProxy, mockCase2MiltonUsdt);
 	}
 
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase3MiltonUsdt() public returns (MockCase3MiltonUsdt){
-		MockCase3MiltonUsdt mockCase3MiltonUsdt = new MockCase3MiltonUsdt();
-		return mockCase3MiltonUsdt;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase4MiltonUsdt() public returns (MockCase4MiltonUsdt){
-		MockCase4MiltonUsdt mockCase4MiltonUsdt = new MockCase4MiltonUsdt();
-		return mockCase4MiltonUsdt;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase5MiltonUsdt() public returns (MockCase5MiltonUsdt){
-		MockCase5MiltonUsdt mockCase5MiltonUsdt = new MockCase5MiltonUsdt();
-		return mockCase5MiltonUsdt;
-	}
-
-	function getMockCase6MiltonUsdt() public returns (MockCase6MiltonUsdt){
-		MockCase6MiltonUsdt mockCase6MiltonUsdt = new MockCase6MiltonUsdt();
-		return mockCase6MiltonUsdt;
-	}
-
-	function getMockCase0MiltonUsdc() public returns (MockCase0MiltonUsdc){
-		MockCase0MiltonUsdc mockCase0MiltonUsdc = new MockCase0MiltonUsdc();
-		return mockCase0MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase1MiltonUsdc() public returns (MockCase1MiltonUsdc){
-		MockCase1MiltonUsdc mockCase1MiltonUsdc = new MockCase1MiltonUsdc();
-		return mockCase1MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase2MiltonUsdc() public returns (MockCase2MiltonUsdc){
-		MockCase2MiltonUsdc mockCase2MiltonUsdc = new MockCase2MiltonUsdc();
-		return mockCase2MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase3MiltonUsdc() public returns (MockCase3MiltonUsdc){
-		MockCase3MiltonUsdc mockCase3MiltonUsdc = new MockCase3MiltonUsdc();
-		return mockCase3MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase4MiltonUsdc() public returns (MockCase4MiltonUsdc){
-		MockCase4MiltonUsdc mockCase4MiltonUsdc = new MockCase4MiltonUsdc();
-		return mockCase4MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase5MiltonUsdc() public returns (MockCase5MiltonUsdc){
-		MockCase5MiltonUsdc mockCase5MiltonUsdc = new MockCase5MiltonUsdc();
-		return mockCase5MiltonUsdc;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase6MiltonUsdc() public returns (MockCase6MiltonUsdc){
-		MockCase6MiltonUsdc mockCase6MiltonUsdc = new MockCase6MiltonUsdc();
-		return mockCase6MiltonUsdc;
+	function prepareMockCase2MiltonUsdt(
+		MockCase2MiltonUsdt miltonUsdt,
+		address miltonUsdtProxy,
+		address josephUsdt,
+		address stanleyUsdt
+	) public {
+		vm.prank(miltonUsdtProxy);	
+		miltonUsdt.setJoseph(josephUsdt);
+		vm.prank(miltonUsdtProxy);
+		miltonUsdt.setupMaxAllowanceForAsset(josephUsdt);
+		vm.prank(miltonUsdtProxy);
+		miltonUsdt.setupMaxAllowanceForAsset(stanleyUsdt);
 	}
 	
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase0MiltonDai() public returns (MockCase0MiltonDai){
-		MockCase0MiltonDai mockCase0MiltonDai = new MockCase0MiltonDai();
-		return mockCase0MiltonDai;
+	function getMockCase2MiltonUsdc(
+		address deployer,
+		address tokenUsdc,
+		address iporOracle,
+		address miltonStorageUsdc,
+		address miltonSpreadModel,
+		address stanleyUsdc
+	) public returns (ProxyTester, MockCase2MiltonUsdc){
+		ProxyTester miltonUsdcProxy = new ProxyTester();
+		miltonUsdcProxy.setType("uups");
+		MockCase2MiltonUsdc mockCase2MiltonUsdcFactory = new MockCase2MiltonUsdc();
+		address miltonUsdcProxyAddress = miltonUsdcProxy.deploy(address(mockCase2MiltonUsdcFactory), deployer, abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
+		MockCase2MiltonUsdc mockCase2MiltonUsdc = MockCase2MiltonUsdc(miltonUsdcProxyAddress);
+		return (miltonUsdcProxy, mockCase2MiltonUsdc);
 	}
 
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase1MiltonDai() public returns (MockCase1MiltonDai){
-		MockCase1MiltonDai mockCase1MiltonDai = new MockCase1MiltonDai();
-		return mockCase1MiltonDai;
+	function prepareMockCase2MiltonUsdc(
+		MockCase2MiltonUsdc miltonUsdc,
+		address miltonUsdcProxy,
+		address josephUsdc,
+		address stanleyUsdc
+	) public {
+		vm.prank(miltonUsdcProxy);	
+		miltonUsdc.setJoseph(josephUsdc);
+		vm.prank(miltonUsdcProxy);
+		miltonUsdc.setupMaxAllowanceForAsset(josephUsdc);
+		vm.prank(miltonUsdcProxy);
+		miltonUsdc.setupMaxAllowanceForAsset(stanleyUsdc);
 	}
 
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase2MiltonDai() public returns (MockCase2MiltonDai){
-		MockCase2MiltonDai mockCase2MiltonDai = new MockCase2MiltonDai();
-		return mockCase2MiltonDai;
+	function getMockCase2MiltonDai(
+		address deployer,
+		address tokenDai,
+		address iporOracle,
+		address miltonStorageDai,
+		address miltonSpreadModel,
+		address stanleyDai
+	) public returns (ProxyTester, MockCase2MiltonDai){
+		ProxyTester miltonDaiProxy = new ProxyTester();
+		miltonDaiProxy.setType("uups");
+		MockCase2MiltonDai mockCase2MiltonDaiFactory = new MockCase2MiltonDai();
+		address miltonDaiProxyAddress = miltonDaiProxy.deploy(address(mockCase2MiltonDaiFactory), deployer, abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+		MockCase2MiltonDai mockCase2MiltonDai = MockCase2MiltonDai(miltonDaiProxyAddress);
+		return (miltonDaiProxy, mockCase2MiltonDai);
 	}
 
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase3MiltonDai() public returns (MockCase3MiltonDai){
-		MockCase3MiltonDai mockCase3MiltonDai = new MockCase3MiltonDai();
-		return mockCase3MiltonDai;
+	function prepareMockCase2MiltonDai(
+		MockCase2MiltonDai miltonDai,
+		address miltonDaiProxy,
+		address josephDai,
+		address stanleyDai
+	) public {
+		vm.prank(miltonDaiProxy);	
+		miltonDai.setJoseph(josephDai);
+		vm.prank(miltonDaiProxy);
+		miltonDai.setupMaxAllowanceForAsset(josephDai);
+		vm.prank(miltonDaiProxy);
+		miltonDai.setupMaxAllowanceForAsset(stanleyDai);
 	}
 
-	/// ------------------------------------------------------------------------------------
 
-	function getMockCase4MiltonDai() public returns (MockCase4MiltonDai){
-		MockCase4MiltonDai mockCase4MiltonDai = new MockCase4MiltonDai();
-		return mockCase4MiltonDai;
-	}
-
-	/// ------------------------------------------------------------------------------------
-
-	function getMockCase5MiltonDai() public returns (MockCase5MiltonDai){
-		MockCase5MiltonDai mockCase5MiltonDai = new MockCase5MiltonDai();
-		return mockCase5MiltonDai;
-	}
-
-	
 	/// ------------------------------------------------------------------------------------
 
 	function getMockCase6MiltonUsdt(
@@ -565,34 +527,6 @@ contract MiltonUtils is Test {
 		miltonDai.setupMaxAllowanceForAsset(stanleyDai);
 	}
 
-	function getMockCase6Miltons (
-		address deployer,
-		address iporOracle, 
-		address miltonSpreadModel,
-		address tokenUsdt,
-		address tokenUsdc,
-		address tokenDai,
-		address[] memory miltonStorageAddresses, 
-		address[] memory stanleyAddresses
-	) public returns (MockCase6Miltons memory) {
-		MockCase6Miltons memory mockCase6Miltons;
-		(mockCase6Miltons.mockCase6MiltonUsdtProxy, mockCase6Miltons.mockCase6MiltonUsdt) = getMockCase6MiltonUsdt(deployer, tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0]);
-		(mockCase6Miltons.mockCase6MiltonUsdcProxy, mockCase6Miltons.mockCase6MiltonUsdc) = getMockCase6MiltonUsdc(deployer, tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1]);
-		(mockCase6Miltons.mockCase6MiltonDaiProxy, mockCase6Miltons.mockCase6MiltonDai) = getMockCase6MiltonDai(deployer, tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2]);
-		return mockCase6Miltons;
-	}
-
-	function getMockCase6MiltonAddresses(
-		address miltonUsdt,
-		address miltonUsdc,
-		address miltonDai
-	) public pure returns(address[] memory) {
-		address[] memory miltons = new address[](3);
-		miltons[0] = miltonUsdt;
-		miltons[1] = miltonUsdc;
-		miltons[2] = miltonDai;
-		return miltons;
-	}
 /// ------------------- Mock Cases Milton -------------------
 
 /// ------------------- Mock Cases Milton Spread -------------------
@@ -611,4 +545,28 @@ contract MiltonUtils is Test {
 		return mockBaseMiltonSpreadModelDai;
 	}
 /// ------------------- Mock Cases Milton Spread -------------------
+
+/// ------------------- Milton Test Cases -------------------
+
+	struct TestCaseWhenMiltonLostAndUserEarnedDai {
+		uint256 openerUserLost;
+		uint256 expectedMiltonUnderlyingTokenBalance;
+		uint256 expectedOpenerUserUnderlyingTokenBalanceAfterClose;
+		uint256 expectedCloserUserUnderlyingTokenBalanceAfterClose;
+	}
+
+	function getTestCaseWhenMiltonLostAndUserEarnedDai(
+		uint256 openerUserLost,
+		uint256 expectedMiltonUnderlyingTokenBalance,
+		uint256 expectedOpenerUserUnderlyingTokenBalanceAfterClose,
+		uint256 expectedCloserUserUnderlyingTokenBalanceAfterClose
+	) public pure returns (TestCaseWhenMiltonLostAndUserEarnedDai memory) {
+		TestCaseWhenMiltonLostAndUserEarnedDai memory testCaseWhenMiltonLostAndUserEarned;
+		testCaseWhenMiltonLostAndUserEarned.openerUserLost = openerUserLost;
+		testCaseWhenMiltonLostAndUserEarned.expectedMiltonUnderlyingTokenBalance = expectedMiltonUnderlyingTokenBalance;
+		testCaseWhenMiltonLostAndUserEarned.expectedOpenerUserUnderlyingTokenBalanceAfterClose = expectedOpenerUserUnderlyingTokenBalanceAfterClose;
+		testCaseWhenMiltonLostAndUserEarned.expectedCloserUserUnderlyingTokenBalanceAfterClose = expectedCloserUserUnderlyingTokenBalanceAfterClose;
+		return testCaseWhenMiltonLostAndUserEarned;
+	}
+
 }
