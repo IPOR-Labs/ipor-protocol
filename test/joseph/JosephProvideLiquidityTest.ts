@@ -267,27 +267,6 @@ describe("Joseph - provide liquidity", () => {
         );
     });
 
-    it("Should throw error when stanley balance is zero", async () => {
-        //given
-        const { josephDai } = await prepareTestDataDaiCase001(
-            BigNumber.from(Math.floor(Date.now() / 1000)),
-            [admin, userOne, userTwo, userThree, liquidityProvider],
-            miltonSpreadModel
-        );
-        if (josephDai === undefined) {
-            expect(true).to.be.false;
-            return;
-        }
-
-        //when
-        await assertError(
-            //when
-            josephDai.checkVaultReservesRatio(),
-            //then
-            "IPOR_408"
-        );
-    });
-
     it("should NOT provide liquidity because Max Liquidity Pool Balance exceeded", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(

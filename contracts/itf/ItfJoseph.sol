@@ -12,7 +12,7 @@ import "../amm/pool/Joseph.sol";
 
 abstract contract ItfJoseph is Joseph {
     function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
-        return _calculateExchangeRate(timestamp);
+        return _calculateExchangeRate(timestamp, _getMilton(), _getIpToken());
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken

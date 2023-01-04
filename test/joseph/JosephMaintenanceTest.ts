@@ -162,7 +162,6 @@ describe("Joseph Maintenance", () => {
 
         //then
         await josephDai.connect(userOne).getVersion();
-        await josephDai.connect(userOne).checkVaultReservesRatio();
         await josephDai.connect(userOne).getCharlieTreasury();
         await josephDai.connect(userOne).getTreasury();
         await josephDai.connect(userOne).getCharlieTreasuryManager();

@@ -27,7 +27,7 @@ interface IJosephInternal {
     /// @return Milton address used by Joseph
     function getMilton() external view returns (address);
 
-	/// @notice Gets address of IpToken
+    /// @notice Gets address of IpToken
     /// @return IpToken address
     function getIpToken() external view returns (address);
 
@@ -136,6 +136,16 @@ interface IJosephInternal {
     /// @dev Value represented without decimals.
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
+    /// @notice Gets auto rebalance threshold
+    /// @return auto rebalance threshold
+    /// @dev Value represented without decimals.
+    function getAutoRebalanceThreshold() external view returns (uint256);
+
+    /// @notice Sets auto rebalance threshold
+    /// @param newAutoRebalanceThreshold new auto rebalance threshold
+    /// @dev Value represented without decimals.
+    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) external;
+
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
     /// @param oldCharlieTreasury old Charlie Treasury address
@@ -194,5 +204,14 @@ interface IJosephInternal {
         address indexed changedBy,
         uint256 indexed oldMaxLpAccountContribution,
         uint256 indexed newMaxLpAccountContribution
+    );
+    /// @notice Emmited after the auto rebalance threshold has changed
+    /// @param changedBy account address that changed auto rebalance threshold
+    /// @param oldAutoRebalanceThreshold Old auto rebalance threshold, represented in 18 decimals
+    /// @param newAutoRebalanceThreshold New auto rebalance threshold, represented in 18 decimals
+    event AutoRebalanceThresholdChanged(
+        address indexed changedBy,
+        uint256 indexed oldAutoRebalanceThreshold,
+        uint256 indexed newAutoRebalanceThreshold
     );
 }
