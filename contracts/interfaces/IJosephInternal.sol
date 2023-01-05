@@ -41,6 +41,7 @@ interface IJosephInternal {
     function getRedeemLpMaxUtilizationRate() external pure returns (uint256);
 
     /// @notice Gets balance ratio config param presented ratio in 18 decimals between Milton and Stanley
+    /// @dev Value describe what percentage stay on Milton when rebalance cash between Milton and Stanley
     /// @return gets balance ratio config param between Milton and Stanley
     function getMiltonStanleyBalanceRatio() external view returns (uint256);
 

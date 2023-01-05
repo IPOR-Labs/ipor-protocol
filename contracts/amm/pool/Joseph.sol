@@ -6,6 +6,7 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
+import "../libraries/types/JosephTypes.sol";
 import "../../interfaces/IJoseph.sol";
 import "./JosephInternal.sol";
 
@@ -15,7 +16,14 @@ abstract contract Joseph is JosephInternal, IJoseph {
     using SafeCast for int256;
 
     function calculateExchangeRate() external view override returns (uint256) {
-        return _calculateExchangeRate(block.timestamp, _getMilton(), _getIpToken());
+        IMiltonInternal milton = _getMilton();
+        return
+            _calculateExchangeRate(
+                block.timestamp,
+                milton,
+                _getIpToken(),
+                milton.getAccruedBalance().liquidityPool
+            );
     }
 
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
@@ -29,11 +37,12 @@ abstract contract Joseph is JosephInternal, IJoseph {
     function _calculateExchangeRate(
         uint256 calculateTimestamp,
         IMiltonInternal milton,
-        IIpToken ipToken
+        IIpToken ipToken,
+        uint256 liquidityPoolBalance
     ) internal view returns (uint256) {
         (, , int256 soap) = milton.calculateSoapAtTimestamp(calculateTimestamp);
 
-        int256 balance = milton.getAccruedBalance().liquidityPool.toInt256() - soap;
+        int256 balance = liquidityPoolBalance.toInt256() - soap;
 
         require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
@@ -52,10 +61,18 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 timestamp
     ) internal nonReentrant {
         address msgSender = _msgSender();
+        address asset = _getAsset();
         IMiltonInternal milton = _getMilton();
         IIpToken ipToken = _getIpToken();
 
-        uint256 exchangeRate = _calculateExchangeRate(timestamp, milton, ipToken);
+        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
+
+        uint256 exchangeRate = _calculateExchangeRate(
+            timestamp,
+            milton,
+            ipToken,
+            balance.liquidityPool
+        );
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
@@ -68,11 +85,13 @@ abstract contract Joseph is JosephInternal, IJoseph {
             _maxLpAccountContribution * Constants.D18
         );
 
-        IERC20Upgradeable(_asset).safeTransferFrom(msgSender, address(milton), assetAmount);
+        IERC20Upgradeable(asset).safeTransferFrom(msgSender, address(milton), assetAmount);
 
         uint256 ipTokenAmount = IporMath.division(wadAssetAmount * Constants.D18, exchangeRate);
 
         ipToken.mint(msgSender, ipTokenAmount);
+
+        _rebalanceIfNeededWhenProvideLiquidity(milton, asset, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
             timestamp,
@@ -92,48 +111,56 @@ abstract contract Joseph is JosephInternal, IJoseph {
         );
         IMiltonInternal milton = _getMilton();
 
-        uint256 exchangeRate = _calculateExchangeRate(timestamp, milton, ipToken);
+        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
+
+        uint256 exchangeRate = _calculateExchangeRate(
+            timestamp,
+            milton,
+            ipToken,
+            balance.liquidityPool
+        );
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
-
-        uint256 wadRedeemFee = IporMath.division(
-            wadAssetAmount * _getRedeemFeeRate(),
-            Constants.D18
+        JosephTypes.RedeemMoney memory redeemMoney = _calculateRedeemMoney(
+            ipTokenAmount,
+            exchangeRate
         );
 
-        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(
-            wadAssetAmount - wadRedeemFee,
+        uint256 wadMiltonErc20Balance = IporMath.convertToWad(
+            IERC20Upgradeable(_getAsset()).balanceOf(address(milton)),
             _getDecimals()
         );
 
-        uint256 wadRedeemAmount = IporMath.convertToWad(redeemAmount, _getDecimals());
+        require(
+            wadMiltonErc20Balance + balance.vault > redeemMoney.wadRedeemAmount,
+            JosephErrors.INSUFFICIENT_ERC20_BALANCE
+        );
 
-        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
-
-        //TODO: check auto rebalance threshold
-        /// check if wadRedeemAmount is lower than erc20 balance of milton
-
-        //uint256 miltonErc20Balance = IERC20Upgradeable(_getAsset()).balanceOf(address(milton));
+        _rebalanceIfNeededWhenRedeem(
+            milton,
+            wadMiltonErc20Balance,
+            balance.vault,
+            redeemMoney.wadRedeemAmount
+        );
 
         require(
             _calculateRedeemedUtilizationRate(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
-                wadRedeemAmount
+                redeemMoney.wadRedeemAmount
             ) <= _getRedeemLpMaxUtilizationRate(),
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
         ipToken.burn(_msgSender(), ipTokenAmount);
 
-        _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
+        _getMiltonStorage().subtractLiquidity(redeemMoney.wadRedeemAmount);
 
         IERC20Upgradeable(_getAsset()).safeTransferFrom(
             address(milton),
             _msgSender(),
-            redeemAmount
+            redeemMoney.redeemAmount
         );
 
         emit Redeem(
@@ -141,10 +168,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
             address(milton),
             _msgSender(),
             exchangeRate,
-            wadAssetAmount,
+            redeemMoney.wadAssetAmount,
             ipTokenAmount,
-            wadRedeemFee,
-            wadRedeemAmount
+            redeemMoney.wadRedeemFee,
+            redeemMoney.wadRedeemAmount
         );
     }
 
@@ -163,5 +190,136 @@ abstract contract Joseph is JosephInternal, IJoseph {
         } else {
             return Constants.MAX_VALUE;
         }
+    }
+
+    /// @dev Calculate redeem money
+    /// @param ipTokenAmount Amount of ipToken to redeem
+    /// @param exchangeRate Exchange rate of ipToken
+    /// @return redeemMoney Redeem money struct
+    function _calculateRedeemMoney(uint256 ipTokenAmount, uint256 exchangeRate)
+        internal
+        pure
+        returns (JosephTypes.RedeemMoney memory redeemMoney)
+    {
+        uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
+
+        uint256 wadRedeemFee = IporMath.division(
+            wadAssetAmount * _getRedeemFeeRate(),
+            Constants.D18
+        );
+
+        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(
+            wadAssetAmount - wadRedeemFee,
+            _getDecimals()
+        );
+
+        return
+            JosephTypes.RedeemMoney({
+                wadAssetAmount: wadAssetAmount,
+                wadRedeemFee: wadRedeemFee,
+                redeemAmount: redeemAmount,
+                wadRedeemAmount: IporMath.convertToWad(redeemAmount, _getDecimals())
+            });
+    }
+
+    function _rebalanceIfNeededWhenRedeem(
+        IMiltonInternal milton,
+        uint256 wadMiltonErc20Balance,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal {
+        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D18;
+
+        if (wadOperationAmount > autoRebalanceThreshold) {
+            _withdrawFromStanleyForRedeem(
+                milton,
+                wadMiltonErc20Balance,
+                vaultBalance,
+                wadOperationAmount
+            );
+        } else {
+            if (wadOperationAmount > wadMiltonErc20Balance) {
+                _withdrawFromStanleyForRedeem(
+                    milton,
+                    wadMiltonErc20Balance,
+                    vaultBalance,
+                    wadOperationAmount
+                );
+            }
+        }
+    }
+
+    function _rebalanceIfNeededWhenProvideLiquidity(
+        IMiltonInternal milton,
+        address asset,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal {
+        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D18;
+
+        if (wadOperationAmount > autoRebalanceThreshold) {
+            uint256 wadMiltonErc20Balance = IporMath.convertToWad(
+                IERC20Upgradeable(asset).balanceOf(address(milton)),
+                _getDecimals()
+            );
+            int256 rebalanceAmount = _calculateRebalanceAmountForProvideLiquidity(
+                wadMiltonErc20Balance,
+                vaultBalance,
+                wadOperationAmount
+            );
+
+            if (rebalanceAmount > 0) {
+                milton.depositToStanley(
+                    (rebalanceAmount > 0 ? rebalanceAmount : -rebalanceAmount).toUint256()
+                );
+            }
+        }
+    }
+
+    function _withdrawFromStanleyForRedeem(
+        IMiltonInternal milton,
+        uint256 wadMiltonErc20Balance,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal {
+        int256 rebalanceAmount = _calculateRebalanceAmountForRedeem(
+            wadMiltonErc20Balance,
+            vaultBalance,
+            wadOperationAmount
+        );
+
+        if (rebalanceAmount < 0) {
+            milton.withdrawFromStanley(
+                (rebalanceAmount > 0 ? rebalanceAmount : -rebalanceAmount).toUint256()
+            );
+        }
+    }
+
+    function _calculateRebalanceAmountForRedeem(
+        uint256 wadMiltonErc20Balance,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal returns (int256) {
+        return
+            IporMath.divisionInt(
+                (wadMiltonErc20Balance.toInt256() +
+                    vaultBalance.toInt256() -
+                    wadOperationAmount.toInt256()) *
+                    (Constants.D18_INT - _miltonStanleyBalanceRatio.toInt256()),
+                Constants.D18_INT
+            ) - vaultBalance.toInt256();
+    }
+
+    function _calculateRebalanceAmountForProvideLiquidity(
+        uint256 wadMiltonErc20Balance,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal returns (int256) {
+        return
+            IporMath.divisionInt(
+                (wadMiltonErc20Balance + vaultBalance + wadOperationAmount).toInt256() *
+                    (Constants.D18_INT - _miltonStanleyBalanceRatio.toInt256()),
+                Constants.D18_INT
+            ) - vaultBalance.toInt256();
     }
 }
