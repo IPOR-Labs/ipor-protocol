@@ -138,7 +138,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
             JosephErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededWhenRedeem(
+        _rebalanceIfNeededBeforeRedeem(
             milton,
             wadMiltonErc20Balance,
             balance.vault,
@@ -223,7 +223,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
             });
     }
 
-    function _rebalanceIfNeededWhenRedeem(
+    function _rebalanceIfNeededBeforeRedeem(
         IMiltonInternal milton,
         uint256 wadMiltonErc20Balance,
         uint256 vaultBalance,
@@ -232,7 +232,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D18;
 
         if (wadOperationAmount > autoRebalanceThreshold) {
-            _withdrawFromStanleyForRedeem(
+            _withdrawFromStanleyBeforeRedeem(
                 milton,
                 wadMiltonErc20Balance,
                 vaultBalance,
@@ -240,7 +240,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
             );
         } else {
             if (wadOperationAmount > wadMiltonErc20Balance) {
-                _withdrawFromStanleyForRedeem(
+                _withdrawFromStanleyBeforeRedeem(
                     milton,
                     wadMiltonErc20Balance,
                     vaultBalance,
@@ -271,33 +271,31 @@ abstract contract Joseph is JosephInternal, IJoseph {
         }
     }
 
-    function _withdrawFromStanleyForRedeem(
+    function _withdrawFromStanleyBeforeRedeem(
         IMiltonInternal milton,
-        uint256 wadMiltonErc20Balance,
+        uint256 wadMiltonErc20BalanceBeforeRedeem,
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        int256 rebalanceAmount = _calculateRebalanceAmountForRedeem(
-            wadMiltonErc20Balance,
+        int256 rebalanceAmount = _calculateRebalanceAmountBeforeRedeem(
+            wadMiltonErc20BalanceBeforeRedeem,
             vaultBalance,
             wadOperationAmount
         );
 
         if (rebalanceAmount < 0) {
-            milton.withdrawFromStanley(
-                (rebalanceAmount > 0 ? rebalanceAmount : -rebalanceAmount).toUint256()
-            );
+            milton.withdrawFromStanley((-rebalanceAmount).toUint256());
         }
     }
 
-    function _calculateRebalanceAmountForRedeem(
-        uint256 wadMiltonErc20Balance,
+    function _calculateRebalanceAmountBeforeRedeem(
+        uint256 wadMiltonErc20BalanceBeforeRedeem,
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal view returns (int256) {
         return
             IporMath.divisionInt(
-                (wadMiltonErc20Balance.toInt256() +
+                (wadMiltonErc20BalanceBeforeRedeem.toInt256() +
                     vaultBalance.toInt256() -
                     wadOperationAmount.toInt256()) *
                     (Constants.D18_INT - _miltonStanleyBalanceRatio.toInt256()),
