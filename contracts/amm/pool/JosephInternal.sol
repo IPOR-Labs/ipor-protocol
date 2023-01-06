@@ -50,6 +50,7 @@ abstract contract JosephInternal is
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
 
+	///TODO: assume 1000x
     uint32 internal _autoRebalanceThreshold;
 
     modifier onlyCharlieTreasuryManager() {

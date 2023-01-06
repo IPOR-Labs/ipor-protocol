@@ -91,7 +91,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         ipToken.mint(msgSender, ipTokenAmount);
 
-        _rebalanceIfNeededWhenProvideLiquidity(milton, asset, balance.vault, wadAssetAmount);
+        /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
+        _rebalanceIfNeededAfterProvideLiquidity(milton, asset, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
             timestamp,
@@ -249,29 +250,23 @@ abstract contract Joseph is JosephInternal, IJoseph {
         }
     }
 
-    function _rebalanceIfNeededWhenProvideLiquidity(
+    function _rebalanceIfNeededAfterProvideLiquidity(
         IMiltonInternal milton,
         address asset,
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D18;
-
-        if (wadOperationAmount > autoRebalanceThreshold) {
-            uint256 wadMiltonErc20Balance = IporMath.convertToWad(
-                IERC20Upgradeable(asset).balanceOf(address(milton)),
-                _getDecimals()
-            );
-            int256 rebalanceAmount = _calculateRebalanceAmountForProvideLiquidity(
-                wadMiltonErc20Balance,
-                vaultBalance,
-                wadOperationAmount
+        if (wadOperationAmount > _getAutoRebalanceThreshold() * Constants.D18) {
+            int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
+                IporMath.convertToWad(
+                    IERC20Upgradeable(asset).balanceOf(address(milton)),
+                    _getDecimals()
+                ),
+                vaultBalance
             );
 
             if (rebalanceAmount > 0) {
-                milton.depositToStanley(
-                    (rebalanceAmount > 0 ? rebalanceAmount : -rebalanceAmount).toUint256()
-                );
+                milton.depositToStanley(rebalanceAmount.toUint256());
             }
         }
     }
@@ -299,7 +294,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 wadMiltonErc20Balance,
         uint256 vaultBalance,
         uint256 wadOperationAmount
-    ) internal returns (int256) {
+    ) internal view returns (int256) {
         return
             IporMath.divisionInt(
                 (wadMiltonErc20Balance.toInt256() +
@@ -310,14 +305,16 @@ abstract contract Joseph is JosephInternal, IJoseph {
             ) - vaultBalance.toInt256();
     }
 
-    function _calculateRebalanceAmountForProvideLiquidity(
-        uint256 wadMiltonErc20Balance,
-        uint256 vaultBalance,
-        uint256 wadOperationAmount
-    ) internal returns (int256) {
+    /// @notice Calculate rebalance amount for provide liquidity
+    /// @param wadMiltonErc20BalanceAfterDeposit Milton erc20 balance in wad, Notice: this is balance after provide liquidity operation!
+    /// @param vaultBalance Vault balance in wad, Stanley's accrued balance.
+    function _calculateRebalanceAmountAfterProvideLiquidity(
+        uint256 wadMiltonErc20BalanceAfterDeposit,
+        uint256 vaultBalance
+    ) internal view returns (int256) {
         return
             IporMath.divisionInt(
-                (wadMiltonErc20Balance + vaultBalance + wadOperationAmount).toInt256() *
+                (wadMiltonErc20BalanceAfterDeposit + vaultBalance).toInt256() *
                     (Constants.D18_INT - _miltonStanleyBalanceRatio.toInt256()),
                 Constants.D18_INT
             ) - vaultBalance.toInt256();
