@@ -137,8 +137,6 @@ async function main() {
         deployer
     );
 
-    const TestnetFaucetFactory = await ethers.getContractFactory("TestnetFaucet", deployer);
-
     const IpTokenUsdtFactory = await ethers.getContractFactory("IpTokenUsdt", deployer);
     const IpTokenUsdcFactory = await ethers.getContractFactory("IpTokenUsdc", deployer);
     const IpTokenDaiFactory = await ethers.getContractFactory("IpTokenDai", deployer);
@@ -302,16 +300,6 @@ async function main() {
     )) as MockTestnetStrategyCompoundDai;
     await mockTestnetStrategyCompoundDaiProxy.deployed();
 
-    const testnetFaucetProxy = (await upgrades.deployProxy(
-        TestnetFaucetFactory,
-        [mockedDai.address, mockedUsdc.address, mockedUsdt.address],
-        {
-            initializer: "initialize",
-            kind: "uups",
-        }
-    )) as TestnetFaucet;
-    await testnetFaucetProxy.deployed();
-
     const ipTokenUsdt = (await IpTokenUsdtFactory.deploy(
         "IP USDT",
         "ipUSDT",
@@ -353,6 +341,24 @@ async function main() {
         mockedDai.address
     )) as IvTokenDai;
     await ivTokenDai.deployed();
+
+    const iporToken = (await IporTokenFactory.deploy(
+        "IPOR Token",
+        "IPOR",
+        deployer.address
+    )) as IporToken;
+    await iporToken.deployed();
+
+    const TestnetFaucetFactory = await ethers.getContractFactory("TestnetFaucet", deployer);
+    const testnetFaucetProxy = (await upgrades.deployProxy(
+        TestnetFaucetFactory,
+        [mockedDai.address, mockedUsdc.address, mockedUsdt.address, iporToken.address],
+        {
+            initializer: "initialize",
+            kind: "uups",
+        }
+    )) as TestnetFaucet;
+    await testnetFaucetProxy.deployed();
 
     const miltonSpreadModelUsdt =
         (await MiltonSpreadModelUsdtFactory.deploy()) as MiltonSpreadModelUsdt;
@@ -600,13 +606,6 @@ async function main() {
 
     const multicall = (await Multicall2Factory.deploy()) as Multicall2;
     await multicall.deployed();
-
-    const iporToken = (await IporTokenFactory.deploy(
-        "IPOR Token",
-        "IPOR",
-        deployer.address
-    )) as IporToken;
-    await iporToken.deployed();
 
     await ipTokenUsdt.setJoseph(josephUsdtProxy.address);
     await ipTokenUsdc.setJoseph(josephUsdcProxy.address);

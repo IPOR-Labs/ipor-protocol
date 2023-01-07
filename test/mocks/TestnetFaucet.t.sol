@@ -168,7 +168,7 @@ contract TestnetFaucetTest is Test, TestCommons {
         testnetFaucet.transfer(address(0), 1e18);
     }
 
-    function testShouldBeAbleToTransferWithTransfer() public{
+    function testShouldBeAbleToTransferAssetWhenSenderIsOwner() public{
         // given
         ITestnetFaucet testnetFaucet = ITestnetFaucet(address(_testnetFaucetProxy));
         uint256 daiUserBalanceBefore = _daiTestnetToken.balanceOf(address(this));

@@ -47,8 +47,8 @@ contract TestnetFaucet is
         address usdt,
         address ipor
     ) public initializer {
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init_unchained();
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);
@@ -125,6 +125,13 @@ contract TestnetFaucet is
 
     function addAsset(address asset, uint256 amount) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        uint256 assetsLength = _assets.length;
+        for(uint256 i; i < assetsLength; ++i) {
+            if(_assets[i] == asset) {
+                _amountToTransfer[asset] = amount;
+                return;
+            }
+        }
         _assets.push(asset);
         _amountToTransfer[asset] = amount;
     }
@@ -133,7 +140,7 @@ contract TestnetFaucet is
         _amountToTransfer[asset] = amount;
     }
 
-    function amountToTransfer(address asset) external view override returns (uint256) {
+    function getAmountToTransfer(address asset) external view override returns (uint256) {
         return _amountToTransfer[asset];
     }
 

@@ -48,11 +48,11 @@ contract MockOldTestnetFaucet is
         _usdt = usdt;
     }
 
-//    //solhint-disable no-empty-blocks
-//    fallback() external payable {}
-//
-//    //solhint-disable no-empty-blocks
-//    receive() external payable {}
+    //solhint-disable no-empty-blocks
+    fallback() external payable {}
+
+    //solhint-disable no-empty-blocks
+    receive() external payable {}
 
     function getVersion() external pure virtual returns (uint256) {
         return 2;
@@ -132,7 +132,7 @@ contract MockOldTestnetFaucet is
 
     function updateAmountToTransfer(address asset, uint256 amount) external override {}
 
-    function amountToTransfer(address asset) external view override returns (uint256) {
+    function getAmountToTransfer(address asset) external view override returns (uint256) {
     return 0;
     }
 }

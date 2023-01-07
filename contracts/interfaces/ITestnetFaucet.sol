@@ -34,7 +34,7 @@ interface ITestnetFaucet {
 
     /// @notice amount of asset to transfer when user claim
     /// @param asset address of asset to add to faucet
-    function amountToTransfer(address asset) external view returns (uint256);
+    function getAmountToTransfer(address asset) external view returns (uint256);
 
     /// @notice transfer amount from faucet to user on asset, can be call only by owner
     /// @param asset address of asset to transfer from faucet
