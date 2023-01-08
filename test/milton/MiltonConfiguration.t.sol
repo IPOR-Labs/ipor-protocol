@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../TestCommons.sol";
-import "../../contracts/libraries/Constants.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/MiltonUsdc.sol";
 import "../../contracts/amm/MiltonUsdt.sol";
@@ -167,35 +167,35 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxSwapCollateralAmount();
         // then
-        assertEq(actualValue, 100000 * Constants.D18);
+        assertEq(actualValue, TestConstants.USD_100_000_18DEC);
     }
 
     function testShouldSetupInitValueForMaxLpUtilizationPercentage() public {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxLpUtilizationRate();
         // then
-        assertEq(actualValue, 8 * 10 ** 17);
+        assertEq(actualValue, 8 * TestConstants.D17);
     }
 
     function testShouldSetupInitValueForMaxLpUtilizationPerLegPercentage() public {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxLpUtilizationPerLegRate();
         // then
-        assertEq(actualValue, 48 * 10 ** 16);
+        assertEq(actualValue, 48 * TestConstants.D16);
     }
 
     function testShouldSetupInitValueForIncomeFeePercentage() public {
         // when
         uint256 actualValue = _miltonConfiguration.getIncomeFeeRate();
         // then
-        assertEq(actualValue, 1 * 10 ** 17);
+        assertEq(actualValue, 1 * TestConstants.D17);
     }
 
     function testShouldSetupInitValueForOpeningFeePercentage() public {
         // when
         uint256 actualValue = _miltonConfiguration.getOpeningFeeRate();
         // then
-        assertEq(actualValue, 1 * 10 ** 16);
+        assertEq(actualValue, 1 * TestConstants.D16);
     }
 
     function testShouldSetupInitValueForOpeningFeeTreasuryPercentage() public {
@@ -209,7 +209,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonConfiguration.getIporPublicationFee();
         // then
-        assertEq(actualValue, 10 * Constants.D18);
+        assertEq(actualValue, 10 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForLiquidationDepositAmountMethodOne() public {
@@ -223,34 +223,34 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonConfiguration.getWadLiquidationDepositAmount();
         // then
-        assertEq(actualValue, 25 * Constants.D18);
+        assertEq(actualValue, 25 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMaxLeverageValue() public {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxLeverage();
         // then
-        assertEq(actualValue, 1000 * Constants.D18);
+        assertEq(actualValue, 1000 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {
         // when
         uint256 actualValue = _miltonConfiguration.getMinLeverage();
         // then
-        assertEq(actualValue, 10 * Constants.D18);
+        assertEq(actualValue, 10 * TestConstants.D18);
     }
 
     function testShouldInitValueForOpeningFeeTreasuryPercentageLowerThanOneHundredPercent() public {
         // when
         uint256 actualValue = _miltonConfiguration.getOpeningFeeTreasuryPortionRate();
         // then
-        assertLe(actualValue, 100 * 10 ** 16);
+        assertLe(actualValue, TestConstants.PERCENTAGE_100_18DEC);
     }
 
     function testShouldInitValueForIncomeFeePercentageLowerThanHundredPercent() public {
         // when
         uint256 actualValue = _miltonConfiguration.getIncomeFeeRate();
         // then
-        assertLe(actualValue, 100 * 10 ** 16);
+        assertLe(actualValue, TestConstants.PERCENTAGE_100_18DEC);
     }
 }
