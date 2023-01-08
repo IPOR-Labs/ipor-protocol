@@ -64,7 +64,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		_liquidityProvider = _getUserAddress(4);
     }
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollaterallBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(161*10**16); // 161%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 160*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -109,7 +109,54 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostMoreThanCollaterallBeforeMaturity6Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(161*10**16); // 161%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 160*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 161*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 9967009897030890732780; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 2160000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9967009897030890732780 - 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+
+	function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(400*10**16); // 400%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 160*10**16); 
 		MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
@@ -154,7 +201,53 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollaterallBeforeMaturity18Decimals() public {
+	function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(400*10**16); // 400%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 160*10**16); 
+		MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
+		(ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonUsdtProxy, MockCase0MiltonUsdt mockCase0MiltonUsdt) = getMockCase0MiltonUsdt(_admin, address(_usdtMockedToken), address(iporOracle), address(miltonStorageUsdt), address(_miltonSpreadModel), address(stanleyUsdt));
+		(ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(_admin, address(_usdtMockedToken), address(_ipTokenUsdt), address(mockCase0MiltonUsdt), address(miltonStorageUsdt), address(stanleyUsdt));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+		prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+		prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0MiltonUsdtProxy), address(mockCase0JosephUsdt), address(stanleyUsdt));
+		prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+		prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephUsdt.itfProvideLiquidity(28000*10**6, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*10**6, 400*10**16, 10*Constants.D18, mockCase0MiltonUsdt);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_usdtMockedToken), 3*10**16, block.timestamp); // PERCENTAGE_3_18DEC
+		int256 openerUserLost = 2990103 + 10*10**6 + 20*10**6 + 9967009897; // TC_OPENING_FEE_6DEC + TC_IPOR_PUBLICATION_AMOUNT_6DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC + expectedPayoffAbs 
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonUsdt.itfCalculateSwapPayFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonUsdt.itfCloseSwapPayFixed(1, block.timestamp + 2160000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonUsdt.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageUsdtProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageUsdt.getExtendedBalance();
+		vm.prank(address(miltonStorageUsdtProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageUsdt.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonUsdt);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -9967009897030890732780); // expectedPayoffWad
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)), 28000*10**6 + 2990103 + 10*10**6 + 9967009897); // TC_LP_BALANCE_BEFORE_CLOSE_6DEC + TC_OPENING_FEE_6DEC + TC_IPOR_PUBLICATION_AMOUNT_6DEC + expectedPayoffAbs
+		assertEq(int256(_usdtMockedToken.balanceOf(_userTwo)), 10*10**6*10**6 + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_usdtMockedToken.balanceOf(_userThree)), 10*10**6*10**6 + 20*10**6 - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9967009897030890732780 - 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_6DEC + TC_OPENING_FEE_18DEC + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 996700989703089073278); // expectedIncomeFeeValueWad
+		assertEq(28000*10**6 + 10000000*10**6 + 10000000*10**6, _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt))  + _usdtMockedToken.balanceOf(_userTwo) + _usdtMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(121*10**16); // 121%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -199,7 +292,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostLessThanCollaterallBeforeMaturity6Decimals() public {
+	function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity6DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(10*10**16); // 10%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 120*10**16); 
 		MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
@@ -244,7 +337,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollaterallAfterMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(10*10**16); // 10%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -289,7 +382,54 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollaterallBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(10*10**16); // 10%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 161*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 682671910755540429745; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 4320000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 4320000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 4320000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -682671910755540429745); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 68267191075554042975); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 682671910755540429745); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 682671910755540429745 - 68267191075554042975); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 68267191075554042975);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(1*10**16); // 1%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -334,7 +474,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedMoreThanCollaterallBeforeMaturity6Decimals() public {
+	function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity6DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(1*10**16); // 1%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 5*10**16); 
 		MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
@@ -379,7 +519,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollaterallBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(6*10**16); // 6%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -424,7 +564,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedLessThanCollaterallBeforeMaturity6Decimals() public {
+	function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity6DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(3*10**16); // 3%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 5*10**16); 
 		MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
@@ -469,7 +609,54 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollaterallAfterMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(1*10**16); // 1%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 6*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 160*10**16, block.timestamp); // PERCENTAGE_160_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT - 9967009897030890732780 + 996700989703089073278; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 2160000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, 9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 - 9967009897030890732780 + 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 - 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE - expectedPayoffWadAbs 
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(1*10**16); // 1%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -514,7 +701,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollaterallAfterMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndSameUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(6*10**16); // 6%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -559,7 +746,53 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollaterallAfterBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(6*10**16); // 6%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 6*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 50*10**16, block.timestamp); // PERCENTAGE_50_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT - 6007512814648756073133 + 600751281464875607313; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 4320000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 4320000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 4320000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, 6007512814648756073133); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 600751281464875607313); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 - 6007512814648756073133 + 600751281464875607313); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 - 6007512814648756073133); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE - expectedPayoffWadAbs 
+		assertEq(balance.treasury, 600751281464875607313);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralAfterBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(1*10**16); // 1%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -605,7 +838,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedBetween99And100PercentOfCollaterallAfterBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedBetween99And100PercentOfCollateralAfterBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuotePayFixed(6*10**16); // 6%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -651,7 +884,145 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedLessThanCollateralFiveHoursBeforeMaturity18Decimals() public {
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostBetween99And100PercentOfCollateralBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(151*10**16); // 151%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 150*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 151*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 6*10**16, block.timestamp); // PERCENTAGE_6_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 9898742705955336727624; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs 
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 2160000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -9898742705955336727624); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 989874270595533672762); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 9898742705955336727624); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9898742705955336727624 - 989874270595533672762); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 989874270595533672762);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralFiveHoursBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(121*10**16); // 121%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 121*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 8803281846496279452160 ; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 2401200, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 2401200);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2401200, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -8803281846496279452160); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 880328184649627945216); // expectedIncomeFeeValueWad
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 8803281846496279452160); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC - expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 8803281846496279452160 - 880328184649627945216); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 880328184649627945216);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralAfterMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(161*10**16); // 161%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 160*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 161*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 9967009897030890732780; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 4320000, 1);
+		vm.prank(_userThree); // closerUser
+		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 4320000);
+		vm.prank(_userThree); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 4320000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9967009897030890732780 - 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedLessThanCollateralFiveHoursBeforeMaturity18DecimalsAndDifferentUserOpensAndCloses() public {
 		_miltonSpreadModel.setCalculateQuoteReceiveFixed(10*10**16); // 10%
 		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -697,9 +1068,9 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		assertEq(soap, 0);
 	}
 
-	function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostBetween99And100PercentOfCollaterallBeforeMaturity18Decimals() public {
-		_miltonSpreadModel.setCalculateQuotePayFixed(151*10**16); // 151%
-		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 150*10**16); 
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuoteReceiveFixed(159*10**16); // 159%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 160*10**16); 
 		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
 		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
@@ -712,16 +1083,16 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
-		openSwapPayFixed(_userTwo, block.timestamp, 10000*Constants.D18, 151*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		openSwapReceiveFixed(_userTwo, block.timestamp, 10000*Constants.D18, 159*10**16, 10*Constants.D18, mockCase0MiltonDai);
 		vm.prank(_userOne);
-		iporOracle.itfUpdateIndex(address(_daiMockedToken), 6*10**16, block.timestamp); // PERCENTAGE_6_18DEC
-		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 9898742705955336727624; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs 
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT - 9967009897030890732780 + 996700989703089073278; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
 		// when
 		vm.prank(_userTwo); // openerUser
-		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapPayFixedValue(block.timestamp + 2160000, 1);
-		vm.prank(_userThree); // closerUser
-		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + 2160000);
-		vm.prank(_userThree); // closerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapReceiveFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userTwo); // closerUser
+		mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + 2160000);
+		vm.prank(_userTwo); // closerUser
 		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
 		// then
 		vm.prank(address(miltonStorageDaiProxy));
@@ -730,16 +1101,195 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, MiltonUtils, Milton
 		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
         (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
 		assertEq(0, swaps.length);
-		assertEq(actualPayoff, -9898742705955336727624); // expectedPayoff
-		assertEq(actualIncomeFeeValue, 989874270595533672762); // expectedIncomeFeeValue
-		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 9898742705955336727624); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
-		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 0 - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
-		assertEq(int256(_daiMockedToken.balanceOf(_userThree)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - 0); // USER_SUPPLY_10MLN_18_DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - closerUserLost
+		assertEq(actualPayoff, 9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 - 9967009897030890732780 + 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
 		assertEq(balance.totalCollateralPayFixed, 0); 
 		assertEq(balance.iporPublicationFee, 10*Constants.D18);
-		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9898742705955336727624 - 989874270595533672762); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
-		assertEq(balance.treasury, 989874270595533672762);
-		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo) + _daiMockedToken.balanceOf(_userThree)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 - 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE - expectedPayoffWadAbs 
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndClosesAndIpor6Percent() public {
+		_miltonSpreadModel.setCalculateQuoteReceiveFixed(1*10**16); // 1%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapReceiveFixed(_userTwo, block.timestamp, 10000*Constants.D18, 1*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 6*10**16, block.timestamp); // PERCENTAGE_6_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 341335955377770189613; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapReceiveFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userTwo); // closerUser
+		mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + 2160000);
+		vm.prank(_userTwo); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -341335955377770189613); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 34133595537777018961); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 341335955377770189613); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 341335955377770189613 - 34133595537777018961); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 34133595537777018961);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndClosesAndIpor160Percent() public {
+		_miltonSpreadModel.setCalculateQuotePayFixed(4*10**16); // 4%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapReceiveFixed(_userTwo, block.timestamp, 10000*Constants.D18, 4*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 160*10**16, block.timestamp); // PERCENTAGE_160_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 9967009897030890732780; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapReceiveFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userTwo); // closerUser
+		mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + 2160000);
+		vm.prank(_userTwo); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 9967009897030890732780 - 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndSameUserOpensAndClosesAndIpor120Percent() public {
+		_miltonSpreadModel.setCalculateQuoteReceiveFixed(4*10**16); // 4%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapReceiveFixed(_userTwo, block.timestamp, 10000*Constants.D18, 4*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 120*10**16, block.timestamp); // PERCENTAGE_120_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT + 7918994164764269327486; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC + expectedPayoffAbs
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapReceiveFixedValue(block.timestamp + 2160000, 1);
+		vm.prank(_userTwo); // closerUser
+		mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + 2160000);
+		vm.prank(_userTwo); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 2160000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, -7918994164764269327486); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 791899416476426932749); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 + 7918994164764269327486); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + expectedPayoffAbs
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 + 7918994164764269327486 - 791899416476426932749); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE + expectedPayoffWadAbs - expectedIncomeFeeValueWad
+		assertEq(balance.treasury, 791899416476426932749);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
+		assertEq(soap, 0);
+	}
+
+	function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndSameUserOpensAndCloses() public {
+		_miltonSpreadModel.setCalculateQuoteReceiveFixed(159*10**16); // 159%
+		ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 160*10**16); 
+		MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+		(ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+		(ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(_admin, address(_daiMockedToken), address(iporOracle), address(miltonStorageDai), address(_miltonSpreadModel), address(stanleyDai));
+		(ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(_admin, address(_daiMockedToken), address(_ipTokenDai), address(mockCase0MiltonDai), address(miltonStorageDai), address(stanleyDai));
+		address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+		prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0MiltonDaiProxy), address(mockCase0JosephDai), address(stanleyDai));
+		prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		vm.prank(_liquidityProvider);
+		mockCase0JosephDai.itfProvideLiquidity(28000*Constants.D18, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
+		openSwapReceiveFixed(_userTwo, block.timestamp, 10000*Constants.D18, 159*10**16, 10*Constants.D18, mockCase0MiltonDai);
+		vm.prank(_userOne);
+		iporOracle.itfUpdateIndex(address(_daiMockedToken), 5*10**16, block.timestamp); // PERCENTAGE_5_18DEC
+		int256 openerUserLost = 2990102969109267220 + 10*Constants.D18_INT + 20*Constants.D18_INT - 9967009897030890732780 + 996700989703089073278; // TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		// when
+		vm.prank(_userTwo); // openerUser
+		int256 actualPayoff = mockCase0MiltonDai.itfCalculateSwapReceiveFixedValue(block.timestamp + 4320000, 1);
+		vm.prank(_userTwo); // closerUser
+		mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + 4320000);
+		vm.prank(_userTwo); // closerUser
+		uint256 actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+		// then
+		vm.prank(address(miltonStorageDaiProxy));
+		MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+		vm.prank(address(miltonStorageDaiProxy));
+		(, IporTypes.IporSwapMemory[] memory swaps) = miltonStorageDai.getSwapsPayFixed(_userTwo, 0, 50);
+        (,, int256 soap) =  calculateSoap(_userTwo, block.timestamp + 4320000, mockCase0MiltonDai);
+		assertEq(0, swaps.length);
+		assertEq(actualPayoff, 9967009897030890732780); // expectedPayoff
+		assertEq(actualIncomeFeeValue, 996700989703089073278); // expectedIncomeFeeValue
+		assertEq(_daiMockedToken.balanceOf(address(mockCase0MiltonDai)), 28000*Constants.D18 + 2990102969109267220 + 10*Constants.D18 - 9967009897030890732780 + 996700989703089073278); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC + TC_IPOR_PUBLICATION_AMOUNT_18DEC - expectedPayoffAbs + expectedIncomeFeeValue
+		assertEq(int256(_daiMockedToken.balanceOf(_userTwo)), 10*10**6*Constants.D18_INT + 20*Constants.D18_INT - openerUserLost); // USER_SUPPLY_10MLN_18_DEC + openerUserEarned - openerUserLost
+		assertEq(balance.totalCollateralPayFixed, 0); 
+		assertEq(balance.iporPublicationFee, 10*Constants.D18);
+		assertEq(balance.liquidityPool, 28000*Constants.D18 + 2990102969109267220 - 9967009897030890732780); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC + TC_OPENING_FEE_18DEC - expectedPayoffWadAbs
+		assertEq(balance.treasury, 996700989703089073278);
+		assertEq(28000*Constants.D18 + 10*10**6*Constants.D18, _daiMockedToken.balanceOf(address(mockCase0MiltonDai))  + _daiMockedToken.balanceOf(_userTwo)); // expectedSumOfBalancesBeforePayout(miltonBalanceBeforePayout + openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceBeforePayout) vs actualSumOfBalancesBeforePayout(openerUserUnderlyingTokenBalanceBeforePayout + closeUserUnderlyingTokenBalanceAfterPayout + closerUserUnderlyingTokenBalanceAfterPayout + miltonUnderlyingTokenBalanceAfterPayout)
 		assertEq(soap, 0);
 	}
 
