@@ -11,7 +11,7 @@ import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
-import "../../contracts/libraries/Constants.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/itf/ItfJosephUsdt.sol";
 import "../../contracts/itf/ItfJosephDai.sol";
@@ -86,7 +86,7 @@ contract MiltonEventsTest is
     );
 
     function setUp() public {
-        _miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+        _miltonSpreadModel = prepareMockSpreadModel(TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -124,11 +124,11 @@ contract MiltonEventsTest is
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
-        _miltonSpreadModel.setCalculateQuotePayFixed(4 * 10 ** 16); // 4%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); // 3%, PERCENTAGE_3_18DEC
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit OpenSwap(
@@ -137,28 +137,28 @@ contract MiltonEventsTest is
             address(daiMockedToken), // asset
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
-                totalAmount: 10000 * Constants.D18, // totalAmount
-                collateral: 9967009897030890732780, // collateral
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: 99670098970308907327800, // notional
-                openingFeeLPAmount: 2990102969109267220, // openingFeeLPAmount
-                openingFeeTreasuryAmount: 0, // openingFeeTreasuryAmount
-                iporPublicationFee: 10 * Constants.D18, // iporPublicationFee
-                liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
             }), // money
             block.timestamp, // openTimestamp
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             MiltonTypes.IporSwapIndicator({
-                iporIndexValue: 3 * 10 ** 16, // iporIndexValue
-                ibtPrice: 1 * Constants.D18, // ibtPrice
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: 99670098970308907327800, // ibtQuantity
-                fixedInterestRate: 4 * 10 ** 16 // fixedInterestRate, 4%
+                fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
             }) // indicator
         );
         miltonDai.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * Constants.D18, // totalAmount
-            6 * 10 ** 16, // acceptableFixedInterestRate, 6%
-            10 * Constants.D18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_18DEC, // totalAmount
+            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
+            TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC // leverage, LEVERAGE_18DEC
         );
     }
 
@@ -192,11 +192,11 @@ contract MiltonEventsTest is
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(2 * 10 ** 16); // 2%
+        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); // 3%, PERCENTAGE_3_18DEC
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit OpenSwap(
@@ -205,28 +205,28 @@ contract MiltonEventsTest is
             address(daiMockedToken), // asset
             MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
-                totalAmount: 10000 * Constants.D18, // totalAmount
-                collateral: 9967009897030890732780, // collateral
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: 99670098970308907327800, // notional
-                openingFeeLPAmount: 2990102969109267220, // openingFeeLPAmount
-                openingFeeTreasuryAmount: 0, // openingFeeTreasuryAmount
-                iporPublicationFee: 10 * Constants.D18, // iporPublicationFee
-                liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
             }), // money
             block.timestamp, // openTimestamp
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             MiltonTypes.IporSwapIndicator({
-                iporIndexValue: 3 * 10 ** 16, // iporIndexValue
-                ibtPrice: 1 * Constants.D18, // ibtPrice
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: 99670098970308907327800, // ibtQuantity
-                fixedInterestRate: 2 * 10 ** 16 // fixedInterestRate, 2%
+                fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
             }) // indicator
         );
         miltonDai.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * Constants.D18, // totalAmount
-            1 * 10 ** 16, // acceptableFixedInterestRate, 1%
-            10 * Constants.D18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_18DEC, // totalAmount
+            TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
+            TestConstants.LEVERAGE_18DEC // leverage
         );
     }
 
@@ -260,11 +260,11 @@ contract MiltonEventsTest is
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
-        _miltonSpreadModel.setCalculateQuotePayFixed(4 * 10 ** 16); // 4%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); // 3%, PERCENTAGE_3_18DEC
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(28000 * 10 ** 6, block.timestamp); // USD_28_000_6DEC
+        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit OpenSwap(
@@ -273,28 +273,28 @@ contract MiltonEventsTest is
             address(usdtMockedToken), // asset
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
-                totalAmount: 10000 * Constants.D18, // totalAmount
-                collateral: 9967009897030890732780, // collateral
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: 99670098970308907327800, // notional
-                openingFeeLPAmount: 2990102969109267220, // openingFeeLPAmount
-                openingFeeTreasuryAmount: 0, // openingFeeTreasuryAmount
-                iporPublicationFee: 10 * Constants.D18, // iporPublicationFee
-                liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
             }), // money
             block.timestamp, // openTimestamp
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             MiltonTypes.IporSwapIndicator({
-                iporIndexValue: 3 * 10 ** 16, // iporIndexValue
-                ibtPrice: 1 * Constants.D18, // ibtPrice
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: 99670098970308907327800, // ibtQuantity
-                fixedInterestRate: 4 * 10 ** 16 // fixedInterestRate, 4%
+                fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
             }) // indicator
         );
         miltonUsdt.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * 10 ** 6, // totalAmount, USD_10_000_6DEC
-            6 * 10 ** 16, // acceptableFixedInterestRate, 6%
-            10 * 10 ** 18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_6DEC, // totalAmount
+            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
+            TestConstants.LEVERAGE_18DEC // leverage
         );
     }
 
@@ -328,11 +328,11 @@ contract MiltonEventsTest is
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(2 * 10 ** 16); // 2%
+        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); // 3%, PERCENTAGE_3_18DEC
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(28000 * 10 ** 6, block.timestamp); // USD_28_000_6DEC
+        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit OpenSwap(
@@ -341,28 +341,28 @@ contract MiltonEventsTest is
             address(usdtMockedToken), // asset
             MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
-                totalAmount: 10000 * Constants.D18, // totalAmount
-                collateral: 9967009897030890732780, // collateral
+                totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
+                collateral: TestConstants.TC_COLLATERAL_18DEC, // collateral
                 notional: 99670098970308907327800, // notional
-                openingFeeLPAmount: 2990102969109267220, // openingFeeLPAmount
-                openingFeeTreasuryAmount: 0, // openingFeeTreasuryAmount
-                iporPublicationFee: 10 * Constants.D18, // iporPublicationFee
-                liquidationDepositAmount: 20 * Constants.D18 // liquidationDepositAmount
+                openingFeeLPAmount: TestConstants.TC_OPENING_FEE_18DEC, // openingFeeLPAmount
+                openingFeeTreasuryAmount: TestConstants.ZERO, // openingFeeTreasuryAmount
+                iporPublicationFee: TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, // iporPublicationFee
+                liquidationDepositAmount: TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // liquidationDepositAmount
             }), // money
             block.timestamp, // openTimestamp
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // endTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             MiltonTypes.IporSwapIndicator({
-                iporIndexValue: 3 * 10 ** 16, // iporIndexValue
-                ibtPrice: 1 * Constants.D18, // ibtPrice
+                iporIndexValue: TestConstants.PERCENTAGE_3_18DEC, // iporIndexValue
+                ibtPrice: 1 * TestConstants.D18, // ibtPrice
                 ibtQuantity: 99670098970308907327800, // ibtQuantity
-                fixedInterestRate: 2 * 10 ** 16 // fixedInterestRate, 2%
+                fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
             }) // indicator
         );
         miltonUsdt.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * 10 ** 6, // totalAmount, USD_10_000_6DEC
-            1 * 10 ** 16, // acceptableFixedInterestRate, 1%
-            10 * 10 ** 18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_6DEC, // totalAmount
+            TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
+            TestConstants.LEVERAGE_18DEC // leverage
         );
     }
 
@@ -396,34 +396,34 @@ contract MiltonEventsTest is
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
-        _miltonSpreadModel.setCalculateQuotePayFixed(6 * 10 ** 16); // 6%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(daiMockedToken), 5 * 10 ** 16, block.timestamp); // 5%, PERCENTAGE_5_18DEC
+        iporOracle.itfUpdateIndex(address(daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp); // 5%, PERCENTAGE_5_18DEC
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
         vm.prank(_userTwo);
         miltonDai.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * Constants.D18, // totalAmount
-            6 * 10 ** 16, // acceptableFixedInterestRate, 6%
-            10 * Constants.D18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_18DEC, // totalAmount
+            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
+            TestConstants.LEVERAGE_18DEC // leverage
         );
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(daiMockedToken), 160 * 10 ** 16, block.timestamp); // PERCENTAGE_160_18DEC
+        iporOracle.itfUpdateIndex(address(daiMockedToken), TestConstants.PERCENTAGE_160_18DEC, block.timestamp); // PERCENTAGE_160_18DEC
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit CloseSwap(
             1, // swapId
             address(daiMockedToken), // asset
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             18957318804358692392282, // transferredToBuyer
-            0, // transferredToLiquidator
-            996700989703089073278 // incomeFeeValue
+            TestConstants.ZERO, // transferredToLiquidator
+            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
         );
         miltonDai.itfCloseSwapPayFixed(
             1, // swapId
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
     }
 
@@ -457,34 +457,34 @@ contract MiltonEventsTest is
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
-        _miltonSpreadModel.setCalculateQuotePayFixed(6 * 10 ** 16); // 6%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 5 * 10 ** 16, block.timestamp); // 5%, PERCENTAGE_5_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp); // 5%, PERCENTAGE_5_18DEC
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(28000 * 10 ** 6, block.timestamp); // USD_28_000_6DEC
+        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
         vm.prank(_userTwo);
         miltonUsdt.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * 10 ** 6, // totalAmount, USD_10_000_6DEC
-            6 * 10 ** 16, // acceptableFixedInterestRate, 6%
-            10 * Constants.D18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
+            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
+            TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC // leverage
         );
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 160 * 10 ** 16, block.timestamp); // PERCENTAGE_160_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_160_18DEC, block.timestamp); // PERCENTAGE_160_18DEC
         vm.prank(_userTwo);
         vm.expectEmit(true, true, false, false);
         emit CloseSwap(
             1, // swapId
             address(usdtMockedToken), // asset
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             18957318804000000000000, // transferredToBuyer
-            0, // transferredToLiquidator
-            996700989703089073278 // incomeFeeValue
+            TestConstants.ZERO, // transferredToLiquidator
+            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
         );
         miltonUsdt.itfCloseSwapPayFixed(
             1, // swapId
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
     }
 
@@ -518,34 +518,34 @@ contract MiltonEventsTest is
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
-        _miltonSpreadModel.setCalculateQuotePayFixed(6 * 10 ** 16); // 6%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 5 * 10 ** 16, block.timestamp); // 5%, PERCENTAGE_5_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp); // 5%, PERCENTAGE_5_18DEC
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(28000 * 10 ** 6, block.timestamp); // USD_28_000_6DEC
+        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
         vm.prank(_userTwo);
         miltonUsdt.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
-            10000 * 10 ** 6, // totalAmount, USD_10_000_6DEC
-            6 * 10 ** 16, // acceptableFixedInterestRate, 6%
-            10 * Constants.D18 // leverage, LEVERAGE_18DEC
+            TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
+            TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
+            TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC // leverage, LEVERAGE_18DEC
         );
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(usdtMockedToken), 160 * 10 ** 16, block.timestamp); // PERCENTAGE_160_18DEC
+        iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_160_18DEC, block.timestamp); // PERCENTAGE_160_18DEC
         vm.prank(_userThree);
         vm.expectEmit(true, true, false, false);
         emit CloseSwap(
             1, // swapId
             address(usdtMockedToken), // asset
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
             18957318804000000000000, // transferredToBuyer
-            20 * Constants.D18, // transferredToLiquidator
-            996700989703089073278 // incomeFeeValue
+            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // transferredToLiquidator
+            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
         );
         miltonUsdt.itfCloseSwapPayFixed(
             1, // swapId
-            block.timestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
     }
 
