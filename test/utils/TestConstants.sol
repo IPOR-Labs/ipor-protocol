@@ -86,6 +86,7 @@ library TestConstants {
 	uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007512814648756073133;
 
     int256 public constant D18_INT = 1e18;
+    int256 public constant D16_INT = 1e16;
     int256 public constant ZERO_INT = 0;
 
     uint256 public constant ZERO = 0;
@@ -104,6 +105,7 @@ library TestConstants {
 
 	uint256 public constant USD_10_000_000 = 10000000;
 	uint256 public constant USD_1_000_000 = 1000000;
+	uint256 public constant USD_100_6DEC = 100000000;
 	uint256 public constant USD_10_000_6DEC = 10000*1000000;
 	uint256 public constant USD_14_000_6DEC = 14000*1000000;
 	uint256 public constant USD_28_000_6DEC = 28000*1000000;
