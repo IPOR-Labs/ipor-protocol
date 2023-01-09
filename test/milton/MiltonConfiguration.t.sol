@@ -202,7 +202,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonConfiguration.getOpeningFeeTreasuryPortionRate();
         // then
-        assertEq(actualValue, 0);
+        assertEq(actualValue, TestConstants.ZERO);
     }
 
     function testShouldSetupInitValueForIporPublicationFeeAmount() public {
