@@ -372,13 +372,13 @@ contract MiltonFacadeDataProviderTest is
         );
         vm.prank(_userTwo);
         (uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) =
-            miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), 0, 50);
+            miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), TestConstants.ZERO, 50);
         vm.prank(_userTwo);
         (uint256 totalCountUsdc, MiltonFacadeTypes.IporSwap[] memory swapsUsdc) =
-            miltonFacadeDataProvider.getMySwaps(address(_usdcMockedToken), 0, 50);
+            miltonFacadeDataProvider.getMySwaps(address(_usdcMockedToken), TestConstants.ZERO, 50);
         vm.prank(_userTwo);
         (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 0, 50);
+            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), TestConstants.ZERO, 50);
         // then
         assertEq(totalCountUsdt, 1);
         assertEq(totalCountUsdc, 1);
