@@ -12,7 +12,7 @@ import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
-import "../../contracts/libraries/Constants.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
@@ -55,7 +55,7 @@ contract MiltonUtilisationRateTest is
     address internal _liquidityProvider;
 
     function setUp() public {
-        _miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+        _miltonSpreadModel = prepareMockSpreadModel(TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT);
         _usdtMockedToken = getTokenUsdt();
         _usdcMockedToken = getTokenUsdc();
         _daiMockedToken = getTokenDai();
@@ -73,7 +73,7 @@ contract MiltonUtilisationRateTest is
         public
     {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(4 * 10 ** 16); // 4%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -104,19 +104,19 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, 10000 * Constants.D18, 6 * 10 ** 16, 10 * 10 ** 18);
+        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
         public
     {
         // given
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(2 * 10 ** 16); // 2%
+        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -147,19 +147,19 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 10000 * Constants.D18, 1 * 10 ** 16, 10 * 10 ** 18);
+        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
         public
     {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(4 * 10 ** 16); // 4%
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -190,19 +190,19 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); 
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(100000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp); 
         // when
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, 10000 * Constants.D18, 6 * 10 ** 16, 10 * 10 ** 18);
+        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
         public
     {
         // given
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(2 * 10 ** 16); // 2%
+        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
@@ -233,12 +233,12 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(100000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp); 
         // when
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 10000 * Constants.D18, 1 * 10 ** 16, 10 * 10 ** 18);
+        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
@@ -275,13 +275,13 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, 14000 * Constants.D18, 6 * 10 ** 16, 10 * 10 ** 18);
+        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
@@ -318,13 +318,13 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, 10000 * Constants.D18, 6 * 10 ** 16, 10 * 10 ** 18);
+        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
@@ -361,13 +361,13 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 14000 * Constants.D18, 1 * 10 ** 16, 10 * 10 ** 18);
+        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
@@ -404,12 +404,12 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), 3 * 10 ** 16, block.timestamp); // 3%, PERCENTAGE_3_18DEC
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(28000 * Constants.D18, block.timestamp); // USD_28_000_18DEC
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 10000 * Constants.D18, 1 * 10 ** 16, 10 * 10 ** 18);
+        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
     }
 }
