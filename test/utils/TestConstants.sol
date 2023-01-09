@@ -34,6 +34,7 @@ library TestConstants {
 	uint256 public constant USD_100_000_18DEC = 100000*1e18;
 	uint256 public constant USD_1_000_000_18DEC = 1000000*1e18;
 	uint256 public constant USD_10_000_000_18DEC = 10000000*1e18;
+	int256 public constant USD_10_000_000_18DEC_INT = 10000000*1e18;
 
 	uint256 public constant PERCENTAGE_1_18DEC = 1*1e16;
 	uint256 public constant PERCENTAGE_2_18DEC = 2*1e16;
@@ -47,6 +48,7 @@ library TestConstants {
 	uint256 public constant PERCENTAGE_6_18DEC = 6*1e16;
 	uint256 public constant PERCENTAGE_7_18DEC = 7*1e16;
 	uint256 public constant PERCENTAGE_8_18DEC = 8*1e16;
+	uint256 public constant PERCENTAGE_10_18DEC = 10*1e16;
 	uint256 public constant PERCENTAGE_50_18DEC = 50*1e16;
 	uint256 public constant PERCENTAGE_95_18DEC = 95*1e16;
 	uint256 public constant PERCENTAGE_119_18DEC = 119*1e16;
@@ -58,10 +60,12 @@ library TestConstants {
 	uint256 public constant PERCENTAGE_151_18DEC = 151*1e16;
 	uint256 public constant PERCENTAGE_152_18DEC = 152*1e16;
 	uint256 public constant PERCENTAGE_155_18DEC = 155*1e16;
+	uint256 public constant PERCENTAGE_159_18DEC = 159*1e16;
 	uint256 public constant PERCENTAGE_160_18DEC = 160*1e16;
 	uint256 public constant PERCENTAGE_161_18DEC = 161*1e16;
 	uint256 public constant PERCENTAGE_365_18DEC = 365*1e16;
 	uint256 public constant PERCENTAGE_366_18DEC = 366*1e16;
+	uint256 public constant PERCENTAGE_400_18DEC = 400*1e16;
 
 	// #################################################################################
 	//                              18 decimals
@@ -71,21 +75,27 @@ library TestConstants {
 	uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000*1e18;
 	uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
 	uint256 public constant TC_OPENING_FEE_18DEC = 2990102969109267220;
+	int256 public constant TC_OPENING_FEE_18DEC_INT = 2990102969109267220;
 	uint256 public constant TC_LP_BALANCE_BEFORE_CLOSE_18DEC = 28000*1e18;
 	uint256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC = 20*1e18;
+	int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT = 20*1e18;
 	uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC = 10*1e18;
+	int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10*1e18;
 	uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
 
 	uint256 public constant TOTAL_SUPPLY_18_DECIMALS =10000000000000000*1e18;
 	uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000*1e18;
+	int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000*1e18;
 
 	uint256 public constant LEVERAGE_18DEC = 10*1e18;
+	int256 public constant LEVERAGE_18DEC_INT = 10*1e18;
 	uint256 public constant LEVERAGE_1000_18DEC = 1000*1e18;
 
 	uint256 public constant SPECIFIC_INCOME_TAX_CASE_1 = 600751281464875607313;
 	uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007512814648756073133;
 
     int256 public constant D18_INT = 1e18;
+    int256 public constant D17_INT = 1e17;
     int256 public constant D16_INT = 1e16;
     int256 public constant ZERO_INT = 0;
 
@@ -112,6 +122,7 @@ library TestConstants {
 	uint256 public constant USD_50_000_6DEC = 50000*1000000;
 	uint256 public constant USD_100_000_6DEC = 50000*1000000;
 	uint256 public constant USD_10_000_000_6DEC = 10000000*1000000;
+	int256 public constant USD_10_000_000_6DEC_INT = 10000000*1000000;
 
 	uint256 public constant PERCENTAGE_3_6DEC = 3*10000;
 	uint256 public constant PERCENTAGE_6_6DEC = 6*10000;
@@ -125,8 +136,11 @@ library TestConstants {
 	uint256 public constant TC_TOTAL_AMOUNT_10_000_6DEC = 10000*1000000;
 	uint256 public constant TC_LP_BALANCE_BEFORE_CLOSE_6DEC = 28000*1000000;
 	uint256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC = 20*1000000;
+	int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC_INT = 20*1000000;
 	uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC = 10*1000000;
+	int256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT = 10*1000000;
 	uint256 public constant TC_OPENING_FEE_6DEC = 2990103;
+	int256 public constant TC_OPENING_FEE_6DEC_INT = 2990103;
 	uint256 public constant TC_COLLATERAL_6DEC = 9967009897;
 
 	uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000*1000000;
@@ -147,6 +161,5 @@ library TestConstants {
 	uint256 public constant PERIOD_27_DAYS_19_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 19;
 	uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
 	uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
-
     uint256 public constant MAX_CHUNK_SIZE = 50;
 }
