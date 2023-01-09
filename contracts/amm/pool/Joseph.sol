@@ -256,7 +256,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        if (wadOperationAmount > _getAutoRebalanceThreshold() * Constants.D18) {
+        if (wadOperationAmount >= _getAutoRebalanceThreshold() * Constants.D18) {
             int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
                 IporMath.convertToWad(
                     IERC20Upgradeable(asset).balanceOf(address(milton)),
