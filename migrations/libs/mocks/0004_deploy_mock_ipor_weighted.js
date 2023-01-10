@@ -3,7 +3,12 @@ const func = require("../json_func.js");
 const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, MockIporWeighted) {
-    const iporOracleProxyAddress = await func.getValue(keys.IporOracleProxy);
+    let iporOracleProxyAddress;
+    if (process.env.ITF_ENABLED === "true") {
+        iporOracleProxyAddress = await func.getValue(keys.ItfIporOracleProxy);
+    } else {
+        iporOracleProxyAddress = await func.getValue(keys.IporOracleProxy);
+    }
     const iporAlgorithmProxy = await deployProxy(
         MockIporWeighted,
         [iporOracleProxyAddress],

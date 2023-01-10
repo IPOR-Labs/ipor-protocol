@@ -6,8 +6,8 @@ const MockIporWeighted = artifacts.require("MockIporWeighted");
 
 module.exports = async function (deployer, _network, addresses) {
     await script(deployer, _network, addresses, MockIporWeighted);
-    let iporOracleProxyAddress;
     const iporAlgorithmProxy = await func.getValue(keys.IporAlgorithmProxy);
+    let iporOracleProxyAddress;
     if (process.env.ITF_ENABLED === "true") {
         iporOracleProxyAddress = await func.getValue(keys.ItfIporOracleProxy);
     } else {
