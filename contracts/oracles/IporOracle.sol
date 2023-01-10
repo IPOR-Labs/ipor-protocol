@@ -34,7 +34,7 @@ contract IporOracle is
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
-    address internal _iporAlgorithmAddress;
+    address internal _iporAlgorithmFacade;
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -116,13 +116,13 @@ contract IporOracle is
         );
     }
 
-    function getAlgorithmAddress() external view override returns (address) {
-        return _iporAlgorithmAddress;
+    function getIporAlgorithmFacade() external view override returns (address) {
+        return _iporAlgorithmFacade;
     }
 
-    function setAlgorithmAddress(address algorithmAddress) external onlyOwner {
-        require(algorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
-        _iporAlgorithmAddress = algorithmAddress;
+    function setIporAlgorithm(address newAlgorithmAddress) external onlyOwner {
+        require(newAlgorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
+        _iporAlgorithmFacade = newAlgorithmAddress;
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
@@ -148,7 +148,7 @@ contract IporOracle is
         _updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateAndFetchIndex(address asset)
+    function updateIndex(address asset)
         external
         override
         whenNotPaused
@@ -162,9 +162,9 @@ contract IporOracle is
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
-        require(_iporAlgorithmAddress != address(0), IporOracleErrors.ALGORITHM_ADDRESS_NOT_SET);
+        require(_iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
 
-        uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmAddress).calculateIpor(asset);
+        uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmFacade).calculateIpor(asset);
         (
             indexValue,
             ibtPrice,

@@ -39,7 +39,7 @@ interface IIporOracle {
         returns (IporTypes.AccruedIpor memory accruedIpor);
 
     /// @notice Gets IporAlgorithm address.
-    function getAlgorithmAddress() external view returns (address);
+    function getIporAlgorithmFacade() external view returns (address);
 
     /// @notice Calculates accrued Interest Bearing Token price for a given asset and timestamp.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
@@ -53,7 +53,7 @@ interface IIporOracle {
     /// @notice Updates IPOR Index for a given asset based on value returned from iporAlgorithm.
     /// @dev Emmits {IporIndexUpdate} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    function updateAndFetchIndex(address asset)
+    function updateIndex(address asset)
         external
         returns (
             uint256 indexValue,
@@ -89,8 +89,8 @@ interface IIporOracle {
     function isUpdater(address account) external view returns (uint256);
 
     /// @notice setup ipor algorithm address
-    /// @param algorithmAddress ipor algorithm address
-    function setAlgorithmAddress(address algorithmAddress) external;
+    /// @param newAlgorithmAddress ipor algorithm address
+    function setIporAlgorithm(address newAlgorithmAddress) external;
 
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address

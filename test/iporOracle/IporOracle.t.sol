@@ -139,7 +139,7 @@ contract IporOracleTest is Test, TestCommons {
         _iporOracle.removeAsset(address(_daiTestnetToken));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporOracle.updateAndFetchIndex(address(_daiTestnetToken));
+        _iporOracle.updateIndex(address(_daiTestnetToken));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporOracle.addUpdater(address(this));
@@ -821,7 +821,7 @@ contract IporOracleTest is Test, TestCommons {
         assertTrue(!status);
     }
 
-    //   tests for updateAndFetchIndex
+    //   tests for updateIndex
 
     function testShouldNotBeAbleToUpdateWhenAssetNotSupported() public {
         // given
@@ -834,15 +834,15 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.ASSET_NOT_SUPPORTED));
-        _iporOracle.updateAndFetchIndex(address(notSupportedAsset));
+        _iporOracle.updateIndex(address(notSupportedAsset));
 
         // then
     }
 
     function testShouldNotBeAbleToUpdateWhenIporAlgorithmNotSetup() public {
         // when
-        vm.expectRevert(abi.encodePacked(IporOracleErrors.ALGORITHM_ADDRESS_NOT_SET));
-        _iporOracle.updateAndFetchIndex(address(_daiTestnetToken));
+        vm.expectRevert(abi.encodePacked(IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET));
+        _iporOracle.updateIndex(address(_daiTestnetToken));
     }
 
     function testShouldFetchNewIporIndexFromAlgorithmContract() public {
@@ -852,14 +852,14 @@ contract IporOracleTest is Test, TestCommons {
             address(algorithmImplementation),
             abi.encodeWithSignature("initialize(address)", address(_iporOracle))
         );
-        _iporOracle.setAlgorithmAddress(address(algorithmProxy));
+        _iporOracle.setIporAlgorithm(address(algorithmProxy));
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 7e16, _blockTimestamp);
         (uint256 indexValueBefore, , , , ) = _iporOracle.getIndex(address(_daiTestnetToken));
         _blockTimestamp += 24 * 60 * 60;
         vm.warp(_blockTimestamp);
 
         // when
-        (uint256 indexValueFetch, , , , ) = _iporOracle.updateAndFetchIndex(
+        (uint256 indexValueFetch, , , , ) = _iporOracle.updateIndex(
             address(_daiTestnetToken)
         );
         (uint256 indexValueAfter, , , , ) = _iporOracle.getIndex(address(_daiTestnetToken));
@@ -937,7 +937,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         MockOldIporOracleV2(proxyAddress).upgradeTo(address(newIporOracleImplementation));
-        ItfIporOracle(proxyAddress).setAlgorithmAddress(address(algorithmProxy));
+        ItfIporOracle(proxyAddress).setIporAlgorithm(address(algorithmProxy));
 
         (uint256 indexValueDaiAfterUpdateImplementation, , , , ) = ItfIporOracle(proxyAddress)
             .getIndex(address(_daiTestnetToken));
@@ -946,9 +946,9 @@ contract IporOracleTest is Test, TestCommons {
         (uint256 indexValueUsdtAfterUpdateImplementation, , , , ) = ItfIporOracle(proxyAddress)
             .getIndex(address(_usdtTestnetToken));
 
-        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_daiTestnetToken));
-        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_usdcTestnetToken));
-        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_usdtTestnetToken));
+        ItfIporOracle(proxyAddress).updateIndex(address(_daiTestnetToken));
+        ItfIporOracle(proxyAddress).updateIndex(address(_usdcTestnetToken));
+        ItfIporOracle(proxyAddress).updateIndex(address(_usdtTestnetToken));
 
         // then
 
