@@ -79,56 +79,6 @@ contract DataUtils is Test {
         return ipTokenAddresses;
     }
 
-    /// ---------------- IP TOKENS  ----------------
-
-    /// ---------------- APPROVALS ----------------
-    // function prepareApproveForUsersUsdt(
-    //     address[] memory users,
-    //     MockTestnetTokenUsdt tokenUsdt,
-    //     address josephUsdt,
-    //     address miltonUsdt
-    // ) public {
-    //     for (uint256 i = 0; i < users.length; ++i) {
-    //         vm.prank(users[i]);
-    //         tokenUsdt.approve(address(josephUsdt), 1 * 10**14 * 1 * 10**6); // TOTAL_SUPPLY_6_DECIMALS
-    //         vm.prank(users[i]);
-    //         tokenUsdt.approve(address(miltonUsdt), 1 * 10**14 * 1 * 10**6); // TOTAL_SUPPLY_6_DECIMALS
-    //         tokenUsdt.setupInitialAmount(address(users[i]), 1 * 10**7 * 10**6); // USER_SUPPLY_6_DECIMALS
-    //     }
-    // }
-
-    // function prepareApproveForUsersUsdc(
-    //     address[] memory users,
-    //     UsdcMockedToken tokenUsdc,
-    //     address josephUsdc,
-    //     address miltonUsdc
-    // ) public {
-    //     for (uint256 i = 0; i < users.length; ++i) {
-    //         vm.prank(users[i]);
-    //         tokenUsdc.approve(address(josephUsdc), 1 * 10**14 * 1 * 10**6); // TOTAL_SUPPLY_6_DECIMALS
-    //         vm.prank(users[i]);
-    //         tokenUsdc.approve(address(miltonUsdc), 1 * 10**14 * 1 * 10**6); // TOTAL_SUPPLY_6_DECIMALS
-    //         tokenUsdc.setupInitialAmount(address(users[i]), 1 * 10**7 * 10**6); // USER_SUPPLY_6_DECIMALS
-    //     }
-    // }
-
-    // function prepareApproveForUsersDai(
-    //     address[] memory users,
-    //     DaiMockedToken tokenDai,
-    //     address josephDai,
-    //     address miltonDai
-    // ) public {
-    //     for (uint256 i = 0; i < users.length; ++i) {
-    //         vm.prank(users[i]);
-    //         tokenDai.approve(address(josephDai), 1 * 10**16 * 1 * 10**18); // TOTAL_SUPPLY_18_DECIMALS
-    //         vm.prank(users[i]);
-    //         tokenDai.approve(address(miltonDai), 1 * 10**16 * 1 * 10**18); // TOTAL_SUPPLY_18_DECIMALS
-    //         tokenDai.setupInitialAmount(address(users[i]), 1 * 10**7 * 10**18); // USER_SUPPLY_10MLN_18DEC
-    //     }
-    // }
-
-    /// ---------------- APPROVALS ----------------
-
     /// ---------------- USERS ----------------
     function getFiveUsers(
         address userOne,
