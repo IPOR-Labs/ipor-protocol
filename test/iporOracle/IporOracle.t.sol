@@ -7,6 +7,8 @@ import "../TestCommons.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
 import "forge-std/console2.sol";
+import "./MockOldIporOracleV2.sol";
+import "./MockItfIporOracleV2.sol";
 
 contract IporOracleTest is Test, TestCommons {
     using stdStorage for StdStorage;
@@ -124,7 +126,7 @@ contract IporOracleTest is Test, TestCommons {
         _iporOracle.removeAsset(address(_daiTestnetToken));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporOracle.updateAndGetIndex(address(_daiTestnetToken));
+        _iporOracle.updateAndFetchIndex(address(_daiTestnetToken));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
         _iporOracle.addUpdater(address(this));
@@ -316,11 +318,11 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldNotUpdateIporIndexWhenSenderIsNotAnUpdater() public {
         // given
-         (uint256 iporIndexBefore,,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexBefore,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked(IporOracleErrors.CALLER_NOT_UPDATER));
-        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 1000, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 1000, _blockTimestamp + 60 * 60);
         // then
         (uint256 iporIndexAfter,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
 
@@ -331,10 +333,10 @@ contract IporOracleTest is Test, TestCommons {
     function testShouldNotUpdateIporIndexWhenUpdatersWasRemoved() public {
         // given
         _iporOracle.removeUpdater(address(this));
-        (uint256 iporIndexBefore,,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexBefore,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.CALLER_NOT_UPDATER));
-        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 1000, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 1000, _blockTimestamp + 60 * 60);
         // then
         (uint256 iporIndexAfter,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
 
@@ -345,7 +347,7 @@ contract IporOracleTest is Test, TestCommons {
     function testShouldUpdateIporIndexDAI() public {
         // given
         uint256 expectedIndexValue = 5e16;
-        (uint256 iporIndexBefore,uint256 ibtPriceBefore,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexBefore,uint256 ibtPriceBefore,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
         // when
         _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValue);
         // then
@@ -369,17 +371,17 @@ contract IporOracleTest is Test, TestCommons {
         indexValues[1] = expectedIndexValue;
         indexValues[2] = expectedIndexValue;
 
-        (uint256 iporIndexDaiBefore,,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
-        (uint256 iporIndexUsdcBefore,,,,)= _iporOracle.getIndex(address(_usdcTestnetToken));
+        (uint256 iporIndexDaiBefore,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexUsdcBefore,,,,) = _iporOracle.getIndex(address(_usdcTestnetToken));
         (uint256 iporIndexUsdtBefore,,,,) = _iporOracle.getIndex(address(_usdtTestnetToken));
 
         // when
-        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp + 60 * 60);
 
         // then
 
-        (uint256 iporIndexDaiAfter,,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
-        (uint256 iporIndexUsdcAfter,,,,)= _iporOracle.getIndex(address(_usdcTestnetToken));
+        (uint256 iporIndexDaiAfter,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexUsdcAfter,,,,) = _iporOracle.getIndex(address(_usdcTestnetToken));
         (uint256 iporIndexUsdtAfter,,,,) = _iporOracle.getIndex(address(_usdtTestnetToken));
 
         assertEq(iporIndexDaiBefore, 0);
@@ -447,7 +449,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValueOne);
-        (uint256 iporIndexBefore,,,,)= _iporOracle.getIndex(address(_daiTestnetToken));
+        (uint256 iporIndexBefore,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
         _iporOracle.updateIndex(address(_daiTestnetToken), expectedIndexValueTwo);
 
         // then
@@ -461,7 +463,7 @@ contract IporOracleTest is Test, TestCommons {
         // given
         uint256 iporIndexValue = 5e16;
         // when
-        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), iporIndexValue, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), iporIndexValue, _blockTimestamp + 60 * 60);
         // then
         (uint256 iporIndexAfter,uint256 ibtPriceAfter,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
 
@@ -471,11 +473,11 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldCalculateNextInterestBearingTokenPriceOneYearPeriod() public {
         // given
-        uint256 updateDate = _blockTimestamp+60*60;
+        uint256 updateDate = _blockTimestamp + 60 * 60;
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 51e15;
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), indexValueOne, updateDate);
-        updateDate += 365 *24*60*60;
+        updateDate += 365 * 24 * 60 * 60;
 
         // when
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), indexValueTwo, updateDate);
@@ -490,11 +492,11 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldCalculateNextInterestBearingTokenPriceOneMonthPeriod() public {
         // given
-        uint256 updateDate = _blockTimestamp+60*60;
+        uint256 updateDate = _blockTimestamp + 60 * 60;
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 51e15;
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), indexValueOne, updateDate);
-        updateDate += 30 *24*60*60;
+        updateDate += 30 * 24 * 60 * 60;
 
         // when
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), indexValueTwo, updateDate);
@@ -509,7 +511,7 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue6DecimalsAsset() public {
         // given
-        uint256 updateDate = _blockTimestamp+60*60;
+        uint256 updateDate = _blockTimestamp + 60 * 60;
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 5e16;
         _iporOracle.itfUpdateIndex(address(_usdcTestnetToken), indexValueOne, updateDate);
@@ -533,7 +535,7 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldCalculateDifferentInterestBearingTokenPriceOneSecondPeriodSameIporIndexValue18DecimalsAsset() public {
         // given
-        uint256 updateDate = _blockTimestamp+60*60;
+        uint256 updateDate = _blockTimestamp + 60 * 60;
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 5e16;
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), indexValueOne, updateDate);
@@ -555,15 +557,15 @@ contract IporOracleTest is Test, TestCommons {
 
     function testShouldCalculateNextAfterNextInterestBearingTokenPriceHalfYearAndThreeMonthsSnapshots() public {
         // given
-        uint256 updateDate = _blockTimestamp+60*60;
+        uint256 updateDate = _blockTimestamp + 60 * 60;
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 6e16;
         uint256 iporIndexThirdValue = 7e16;
         uint256 expectedIbtPrice = 104e16;
         _iporOracle.itfUpdateIndex(address(_usdtTestnetToken), indexValueOne, updateDate);
-        updateDate+= 365 *24*60*60/2;
+        updateDate += 365 * 24 * 60 * 60 / 2;
         _iporOracle.itfUpdateIndex(address(_usdtTestnetToken), indexValueTwo, updateDate);
-        updateDate+= 365 *24*60*60/4;
+        updateDate += 365 * 24 * 60 * 60 / 4;
 
         // when
         _iporOracle.itfUpdateIndex(address(_usdtTestnetToken), iporIndexThirdValue, updateDate);
@@ -587,7 +589,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         vm.expectRevert(abi.encodePacked(IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH));
-        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp + 60 * 60);
     }
 
     function testShouldNotUpdateIporIndexWhenAssetNotSupported() public {
@@ -601,7 +603,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.ASSET_NOT_SUPPORTED));
-        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp + 60 * 60);
     }
 
     function testShouldNotUpdateIporIndexWhenAccrueTimestampLowerThanCurrentIporIndexTimestamp() public {
@@ -614,7 +616,7 @@ contract IporOracleTest is Test, TestCommons {
         _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp);
         // when
         vm.expectRevert(abi.encodePacked(IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP));
-        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp-1);
+        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp - 1);
     }
 
     function testShouldUpdateIporIndexWhenCorrectInputArrays() public {
@@ -630,7 +632,7 @@ contract IporOracleTest is Test, TestCommons {
         indexValues[2] = 6e16;
 
         // when
-        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp + 60 * 60);
 
         // then
         (uint256 iporIndexDaiAfter,,,,) = _iporOracle.getIndex(address(_daiTestnetToken));
@@ -677,7 +679,7 @@ contract IporOracleTest is Test, TestCommons {
         indexValues[2] = 7e16;
 
         uint256 expectedExpoMovingAverage = 7e16;
-        _blockTimestamp+=25*24*60*60;
+        _blockTimestamp += 25 * 24 * 60 * 60;
         _iporOracle.itfUpdateIndexes(assets, indexValues, _blockTimestamp);
 
         // when
@@ -687,7 +689,7 @@ contract IporOracleTest is Test, TestCommons {
         assertEq(expoMovingAverage, expectedExpoMovingAverage);
     }
 
-    function testShouldCalculateInitialExponentialMovingAverageWhen2xIporIndexUpdates18decimals() public{
+    function testShouldCalculateInitialExponentialMovingAverageWhen2xIporIndexUpdates18decimals() public {
         // given
         address[] memory assets = new address[](3);
         assets[0] = address(_daiTestnetToken);
@@ -707,14 +709,15 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
 
-        _iporOracle.itfUpdateIndexes(assets, firstIndexValues, _blockTimestamp+24*60*60);
-        _iporOracle.itfUpdateIndexes(assets, secondIndexValues, _blockTimestamp+24*60*60);
+        _iporOracle.itfUpdateIndexes(assets, firstIndexValues, _blockTimestamp + 24 * 60 * 60);
+        _iporOracle.itfUpdateIndexes(assets, secondIndexValues, _blockTimestamp + 24 * 60 * 60);
 
         // then
         (,,uint256 expoMovingAverage,,) = _iporOracle.getIndex(address(_daiTestnetToken));
         assertEq(expoMovingAverage, expectedExpoMovingAverage);
     }
-    function testShouldCalculateInitialExponentialMovingAverageWhen2xIporIndexUpdates6decimals() public{
+
+    function testShouldCalculateInitialExponentialMovingAverageWhen2xIporIndexUpdates6decimals() public {
         // given
         ItfIporOracle iporOracleImplementation = new ItfIporOracle();
         address[] memory assets = new address[](1);
@@ -739,7 +742,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         _iporOracle.itfUpdateIndexes(assets, firstIndexValues, _blockTimestamp);
-        _iporOracle.itfUpdateIndexes(assets, secondIndexValues, _blockTimestamp+60*60);
+        _iporOracle.itfUpdateIndexes(assets, secondIndexValues, _blockTimestamp + 60 * 60);
 
         // then
         (,,uint256 expoMovingAverage,,) = _iporOracle.getIndex(address(_usdcTestnetToken));
@@ -751,7 +754,124 @@ contract IporOracleTest is Test, TestCommons {
         // when
         // then
         vm.expectRevert(abi.encodePacked("Transaction reverted: function selector was not recognized and there's no fallback nor receive function"));
-        address(_iporOracle).call{value: msg.value}("");
+        (bool status,) = address(_iporOracle).call{value : msg.value}("");
+        assertTrue(!status);
+    }
+
+
+    //   tests for updateAndFetchIndex
+
+    function testShouldNotBeAbleToUpdateWhenAssetNotSupported() public {
+        // given
+        MockTestnetToken notSupportedAsset = new MockTestnetToken("Not supported", "Not", 100_000_000 * 1e18, uint8(18));
+
+        // when
+        vm.expectRevert(abi.encodePacked(IporOracleErrors.ASSET_NOT_SUPPORTED));
+        _iporOracle.updateAndFetchIndex(address(notSupportedAsset));
+
+        // then
+    }
+
+    function testShouldNotBeAbleToUpdateWhenIporAlgorithmNotSetup() public {
+        // when
+        vm.expectRevert(abi.encodePacked(IporOracleErrors.ALGORITHM_ADDRESS_NOT_SET));
+        _iporOracle.updateAndFetchIndex(address(_daiTestnetToken));
+    }
+
+    function testShouldFetchNewIporIndexFromAlgorithmContract() public {
+        // given
+        MockIporWeighted algorithmImplementation = new MockIporWeighted();
+        ERC1967Proxy algorithmProxy = new ERC1967Proxy(address(algorithmImplementation), abi.encodeWithSignature("initialize(address)", address(_iporOracle)));
+        _iporOracle.setAlgorithmAddress(address(algorithmProxy));
+        _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 7e16, _blockTimestamp);
+        (uint256 indexValueBefore, , , ,) = _iporOracle.getIndex(address(_daiTestnetToken));
+        _blockTimestamp += 24 * 60 * 60;
+        vm.warp(_blockTimestamp);
+
+        // when
+        (uint256 indexValueFetch, , , ,) = _iporOracle.updateAndFetchIndex(address(_daiTestnetToken));
+        (uint256 indexValueAfter, , , ,) = _iporOracle.getIndex(address(_daiTestnetToken));
+
+        // then
+        assertEq(indexValueBefore, 7e16);
+        assertEq(indexValueFetch != 7e16, true);
+        assertEq(indexValueFetch, indexValueAfter);
+    }
+
+    function testShouldUpdateImplementationOnProxy() public {
+        // given
+        address[] memory assets = new address[](3);
+        assets[0] = address(_daiTestnetToken);
+        assets[1] = address(_usdcTestnetToken);
+        assets[2] = address(_usdtTestnetToken);
+
+        uint32[] memory updateTimestamps = new uint32[](3);
+        updateTimestamps[0] = uint32(_blockTimestamp);
+        updateTimestamps[1] = uint32(_blockTimestamp);
+        updateTimestamps[2] = uint32(_blockTimestamp);
+
+        uint64[] memory exponentialMovingAverages = new uint64[](3);
+        exponentialMovingAverages[0] = uint64(3e16);
+        exponentialMovingAverages[1] = uint64(3e16);
+        exponentialMovingAverages[2] = uint64(3e16);
+
+        uint64[] memory exponentialWeightedMovingVariances = new uint64[](3);
+
+        exponentialWeightedMovingVariances[0] = uint64(0);
+        exponentialWeightedMovingVariances[1] = uint64(0);
+        exponentialWeightedMovingVariances[2] = uint64(0);
+
+        uint256[] memory firstIndexValues = new uint256[](3);
+        firstIndexValues[0] = 7e16;
+        firstIndexValues[1] = 7e16;
+        firstIndexValues[2] = 7e16;
+
+        MockItfIporOracleV2 oldIporOracleImplementation = new MockItfIporOracleV2();
+        ItfIporOracle newIporOracleImplementation = new ItfIporOracle();
+        ERC1967Proxy iporOracleProxy = new ERC1967Proxy(address(oldIporOracleImplementation), abi.encodeWithSignature("initialize(address[],uint32[],uint64[],uint64[])", assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances));
+        address proxyAddress = address(iporOracleProxy);
+        MockItfIporOracleV2(proxyAddress).addUpdater(address(this));
+
+
+
+        MockIporWeighted algorithmImplementation = new MockIporWeighted();
+        ERC1967Proxy algorithmProxy = new ERC1967Proxy(address(algorithmImplementation), abi.encodeWithSignature("initialize(address)", address(_iporOracle)));
+
+        MockItfIporOracleV2(proxyAddress).itfUpdateIndexes(assets, firstIndexValues, _blockTimestamp);
+
+        (uint256 indexValueDaiBefore, , , ,) = MockOldIporOracleV2(proxyAddress).getIndex(address(_daiTestnetToken));
+        (uint256 indexValueUsdcBefore, , , ,) = MockOldIporOracleV2(proxyAddress).getIndex(address(_usdcTestnetToken));
+        (uint256 indexValueUsdtBefore, , , ,) = MockOldIporOracleV2(proxyAddress).getIndex(address(_usdtTestnetToken));
+
+        // when
+        MockOldIporOracleV2(proxyAddress).upgradeTo(address(newIporOracleImplementation));
+        ItfIporOracle(proxyAddress).setAlgorithmAddress(address(algorithmProxy));
+
+        (uint256 indexValueDaiAfterUpdateImplementation, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_daiTestnetToken));
+        (uint256 indexValueUsdcAfterUpdateImplementation, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_usdcTestnetToken));
+        (uint256 indexValueUsdtAfterUpdateImplementation, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_usdtTestnetToken));
+
+        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_daiTestnetToken));
+        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_usdcTestnetToken));
+        ItfIporOracle(proxyAddress).updateAndFetchIndex(address(_usdtTestnetToken));
+
+        // then
+
+        (uint256 indexValueDaiAfterUpdateIndex, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_daiTestnetToken));
+        (uint256 indexValueUsdcAfterUpdateIndex, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_usdcTestnetToken));
+        (uint256 indexValueUsdtAfterUpdateIndex, , , ,) = ItfIporOracle(proxyAddress).getIndex(address(_usdtTestnetToken));
+
+        assertEq(indexValueDaiBefore, 7e16);
+        assertEq(indexValueUsdcBefore, 7e16);
+        assertEq(indexValueUsdtBefore, 7e16);
+        assertEq(indexValueDaiAfterUpdateImplementation, indexValueDaiBefore);
+        assertEq(indexValueUsdcAfterUpdateImplementation, indexValueUsdcBefore);
+        assertEq(indexValueUsdtAfterUpdateImplementation, indexValueUsdtBefore);
+        assertTrue(indexValueDaiAfterUpdateIndex != indexValueDaiAfterUpdateImplementation);
+        assertTrue(indexValueUsdcAfterUpdateIndex != indexValueUsdcAfterUpdateImplementation);
+        assertTrue(indexValueUsdtAfterUpdateIndex != indexValueUsdtAfterUpdateImplementation);
+
+
     }
 
 

@@ -53,7 +53,7 @@ interface IIporOracle {
     /// @notice Updates IPOR Index for a given asset based on value returned from iporAlgorithm.
     /// @dev Emmits {IporIndexUpdate} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    function updateAndGetIndex(address asset)
+    function updateAndFetchIndex(address asset)
     external
     returns (
         uint256 indexValue,
