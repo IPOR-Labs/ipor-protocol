@@ -50,7 +50,7 @@ abstract contract JosephInternal is
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
 
-	///TODO: assume 1000x
+    /// @dev The threshold for auto-rebalancing the pool. Assume x1000 in calculation.
     uint32 internal _autoRebalanceThreshold;
 
     modifier onlyCharlieTreasuryManager() {
@@ -108,7 +108,7 @@ abstract contract JosephInternal is
         _miltonStanleyBalanceRatio = 85e16;
         _maxLiquidityPoolBalance = 3_000_000;
         _maxLpAccountContribution = 50_000;
-        _autoRebalanceThreshold = 50_000;
+        _autoRebalanceThreshold = 50;
     }
 
     function getVersion() external pure virtual override returns (uint256) {

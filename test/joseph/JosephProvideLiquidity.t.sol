@@ -12,6 +12,8 @@ import {MiltonUtils} from "../utils/MiltonUtils.sol";
 import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import "../../contracts/libraries/math/IporMath.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/itf/ItfMiltonUsdt.sol";
 import "../../contracts/itf/ItfMiltonUsdc.sol";
@@ -65,12 +67,12 @@ contract JosephProvideLiquidity is
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
+
         _usdt = getTokenUsdt();
         _dai = getTokenDai();
 
-        _ipTokenUsdt = getIpTokenUsdt(address(_usdt));
-        _ipTokenDai = getIpTokenDai(address(_dai));
         _miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+
         (_miltonStorageUsdtProxy, _miltonStorageUsdt) = getMiltonStorage();
         (_miltonStorageDaiProxy, _miltonStorageDai) = getMiltonStorage();
 
@@ -85,11 +87,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e6;
+        uint256 userPosition = 210000 * 1e6;
 
         uint256 expectedMiltonBalance = 242000 * 1e6;
         uint256 expectedStanleyBalance = 968000 * 1e18;
@@ -99,7 +101,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -109,11 +111,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e6;
+        uint256 userPosition = 150000 * 1e6;
 
         uint256 expectedMiltonBalance = 230000 * 1e6;
         uint256 expectedStanleyBalance = 920000 * 1e18;
@@ -123,7 +125,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -133,11 +135,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 50000;
+        uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 50000 * 1e6;
+        uint256 userPosition = 50000 * 1e6;
 
         uint256 expectedMiltonBalance = 210000 * 1e6;
         uint256 expectedStanleyBalance = 840000 * 1e18;
@@ -147,7 +149,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -157,11 +159,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e6;
+        uint256 userPosition = 850000 * 1e6;
 
         uint256 expectedMiltonBalance = 370000 * 1e6;
         uint256 expectedStanleyBalance = 1480000 * 1e18;
@@ -171,7 +173,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -181,11 +183,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e6;
+        uint256 userPosition = 150000 * 1e6;
 
         uint256 expectedMiltonBalance = 172500 * 1e6;
         uint256 expectedStanleyBalance = 977500 * 1e18;
@@ -195,7 +197,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -205,11 +207,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e6;
+        uint256 userPosition = 210000 * 1e6;
 
         uint256 expectedMiltonBalance = 181500 * 1e6;
         uint256 expectedStanleyBalance = 1028500 * 1e18;
@@ -219,7 +221,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -229,11 +231,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e6;
+        uint256 userPosition = 850000 * 1e6;
 
         uint256 expectedMiltonBalance = 277500 * 1e6;
         uint256 expectedStanleyBalance = 1572500 * 1e18;
@@ -243,7 +245,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -253,11 +255,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e6;
+        uint256 userPosition = 150000 * 1e6;
 
         uint256 expectedMiltonBalance = 287500 * 1e6;
         uint256 expectedStanleyBalance = 862500 * 1e18;
@@ -267,7 +269,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -277,11 +279,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e6;
+        uint256 userPosition = 210000 * 1e6;
 
         uint256 expectedMiltonBalance = 302500 * 1e6;
         uint256 expectedStanleyBalance = 907500 * 1e18;
@@ -291,7 +293,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -301,11 +303,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e6;
+        uint256 userPosition = 850000 * 1e6;
 
         uint256 expectedMiltonBalance = 462500 * 1e6;
         uint256 expectedStanleyBalance = 1387500 * 1e18;
@@ -315,7 +317,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -325,11 +327,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e6;
+        uint256 userPosition = 150000 * 1e6;
 
         uint256 expectedMiltonBalance = 57500 * 1e6;
         uint256 expectedStanleyBalance = 1092500 * 1e18;
@@ -339,7 +341,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -349,11 +351,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
         uint256 miltonInitPool = 1000000 * 1e6;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e6;
+        uint256 userPosition = 150000 * 1e6;
 
         uint256 expectedMiltonBalance = 350000 * 1e6;
         uint256 expectedStanleyBalance = 800000 * 1e18;
@@ -363,7 +365,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -373,11 +375,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsUsdt();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
         uint256 miltonInitPool = 3000 * 1e6;
         uint256 stanleyInitBalance = 0;
-        uint256 userInitBalance = 100000 * 1e6;
+        uint256 userPosition = 100000 * 1e6;
 
         uint256 expectedMiltonBalance = 1030 * 1e6;
         uint256 expectedStanleyBalance = 101970 * 1e18;
@@ -387,7 +389,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -397,11 +399,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
 
         uint256 expectedMiltonBalance = 242000 * 1e18;
         uint256 expectedStanleyBalance = 968000 * 1e18;
@@ -411,7 +413,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -421,11 +423,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
 
         uint256 expectedMiltonBalance = 230000 * 1e18;
         uint256 expectedStanleyBalance = 920000 * 1e18;
@@ -435,7 +437,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -445,11 +447,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 50000;
+        uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 50000 * 1e18;
+        uint256 userPosition = 50000 * 1e18;
 
         uint256 expectedMiltonBalance = 210000 * 1e18;
         uint256 expectedStanleyBalance = 840000 * 1e18;
@@ -459,7 +461,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -469,11 +471,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
 
         uint256 expectedMiltonBalance = 370000 * 1e18;
         uint256 expectedStanleyBalance = 1480000 * 1e18;
@@ -483,7 +485,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -493,11 +495,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
 
         uint256 expectedMiltonBalance = 172500 * 1e18;
         uint256 expectedStanleyBalance = 977500 * 1e18;
@@ -507,7 +509,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -517,11 +519,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
 
         uint256 expectedMiltonBalance = 181500 * 1e18;
         uint256 expectedStanleyBalance = 1028500 * 1e18;
@@ -531,7 +533,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -541,11 +543,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
 
         uint256 expectedMiltonBalance = 277500 * 1e18;
         uint256 expectedStanleyBalance = 1572500 * 1e18;
@@ -555,7 +557,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -565,11 +567,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
 
         uint256 expectedMiltonBalance = 287500 * 1e18;
         uint256 expectedStanleyBalance = 862500 * 1e18;
@@ -579,7 +581,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -589,11 +591,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 210000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
 
         uint256 expectedMiltonBalance = 302500 * 1e18;
         uint256 expectedStanleyBalance = 907500 * 1e18;
@@ -603,7 +605,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -613,11 +615,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 850000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
 
         uint256 expectedMiltonBalance = 462500 * 1e18;
         uint256 expectedStanleyBalance = 1387500 * 1e18;
@@ -627,7 +629,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -637,11 +639,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
 
         uint256 expectedMiltonBalance = 57500 * 1e18;
         uint256 expectedStanleyBalance = 1092500 * 1e18;
@@ -651,7 +653,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -661,11 +663,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
         uint256 miltonInitPool = 1000000 * 1e18;
         uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userInitBalance = 150000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
 
         uint256 expectedMiltonBalance = 350000 * 1e18;
         uint256 expectedStanleyBalance = 800000 * 1e18;
@@ -675,7 +677,7 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
@@ -685,11 +687,11 @@ contract JosephProvideLiquidity is
         //given
         _clearAndSetupSmartContractsDai();
 
-        uint256 autoRebalanceThreshold = 100000;
+        uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
         uint256 miltonInitPool = 3000 * 1e18;
         uint256 stanleyInitBalance = 0;
-        uint256 userInitBalance = 100000 * 1e18;
+        uint256 userPosition = 100000 * 1e18;
 
         uint256 expectedMiltonBalance = 1030 * 1e18;
         uint256 expectedStanleyBalance = 101970 * 1e18;
@@ -699,13 +701,643 @@ contract JosephProvideLiquidity is
             miltonStanleyRatio,
             miltonInitPool,
             stanleyInitBalance,
-            userInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase01() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e6;
+
+        uint256 expectedMiltonBalance = 158210 * 1e6;
+        uint256 expectedStanleyBalance = 632840 * 1e18;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase02() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e6;
+
+        uint256 expectedMiltonBalance = 170150 * 1e6;
+        uint256 expectedStanleyBalance = 680600 * 1e18;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase03() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 40;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 50000 * 1e6;
+
+        uint256 expectedMiltonBalance = 190050 * 1e6;
+        uint256 expectedStanleyBalance = 760200 * 1e18;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase04() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e6;
+
+        uint256 expectedMiltonBalance = 30850 * 1e6;
+        uint256 expectedStanleyBalance = 123400 * 1e18;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase05() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e6;
+
+        uint256 expectedMiltonBalance = 1276125 * 1e5;
+        uint256 expectedStanleyBalance = 7231375 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase06() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e6;
+
+        uint256 expectedMiltonBalance = 1186575 * 1e5;
+        uint256 expectedStanleyBalance = 6723925 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase07() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e6;
+
+        uint256 expectedMiltonBalance = 231375 * 1e5;
+        uint256 expectedStanleyBalance = 1311125 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase08() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e6;
+
+        uint256 expectedMiltonBalance = 2126875 * 1e5;
+        uint256 expectedStanleyBalance = 6380625 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase09() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e6;
+
+        uint256 expectedMiltonBalance = 1977625 * 1e5;
+        uint256 expectedStanleyBalance = 5932875 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase10() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e6;
+
+        uint256 expectedMiltonBalance = 385625 * 1e5;
+        uint256 expectedStanleyBalance = 1156875 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndNoRebalanceUsdtCase11() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 50000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e6;
+
+        // will stay because treshold is not achieved and Milton has cash for redeem
+        uint256 redeemFee = 750 * 1e6;
+        uint256 expectedMiltonBalance = 50000 * 1e6 + redeemFee;
+        uint256 expectedStanleyBalance = stanleyInitBalance;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceUsdtCase12() public {
+        //given
+        _clearAndSetupSmartContractsUsdt();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 950000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e6;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e6;
+
+        uint256 expectedMiltonBalance = 8082125 * 1e5;
+        uint256 expectedStanleyBalance = 425375 * 1e17;
+
+        _executeRedeemUsdt(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase01() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
+
+        uint256 expectedMiltonBalance = 158210 * 1e18;
+        uint256 expectedStanleyBalance = 632840 * 1e18;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase02() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
+
+        uint256 expectedMiltonBalance = 170150 * 1e18;
+        uint256 expectedStanleyBalance = 680600 * 1e18;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase03() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 40;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 50000 * 1e18;
+
+        uint256 expectedMiltonBalance = 190050 * 1e18;
+        uint256 expectedStanleyBalance = 760200 * 1e18;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase04() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
+
+        uint256 expectedMiltonBalance = 30850 * 1e18;
+        uint256 expectedStanleyBalance = 123400 * 1e18;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase05() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
+
+        uint256 expectedMiltonBalance = 1276125 * 1e17;
+        uint256 expectedStanleyBalance = 7231375 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase06() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
+
+        uint256 expectedMiltonBalance = 1186575 * 1e17;
+        uint256 expectedStanleyBalance = 6723925 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase07() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
+
+        uint256 expectedMiltonBalance = 231375 * 1e17;
+        uint256 expectedStanleyBalance = 1311125 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase08() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
+
+        uint256 expectedMiltonBalance = 2126875 * 1e17;
+        uint256 expectedStanleyBalance = 6380625 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase09() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 210000 * 1e18;
+
+        uint256 expectedMiltonBalance = 1977625 * 1e17;
+        uint256 expectedStanleyBalance = 5932875 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase10() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 250000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 850000 * 1e18;
+
+        uint256 expectedMiltonBalance = 385625 * 1e17;
+        uint256 expectedStanleyBalance = 1156875 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndNoRebalanceDaiCase11() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 50000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
+
+        // will stay because treshold is not achieved and Milton has cash for redeem
+        uint256 redeemFee = 750 * 1e18;
+        uint256 expectedMiltonBalance = 50000 * 1e18 + redeemFee;
+        uint256 expectedStanleyBalance = stanleyInitBalance;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCase12() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 100;
+        uint256 miltonStanleyRatio = 950000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 150000 * 1e18;
+
+        uint256 expectedMiltonBalance = 8082125 * 1e17;
+        uint256 expectedStanleyBalance = 425375 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndRebalanceDaiCaseBigValues() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 10000;
+        uint256 miltonStanleyRatio = 150000000000000000;
+        uint256 miltonInitPool = 1000000000 * 1e18;
+        uint256 stanleyInitBalance = 800000000 * 1e18;
+        uint256 userPosition = 150000000 * 1e18;
+
+        uint256 expectedMiltonBalance = 1276125000 * 1e17;
+        uint256 expectedStanleyBalance = 7231375000 * 1e17;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
+            expectedStanleyBalance,
+            expectedMiltonBalance
+        );
+    }
+
+    function testRedeemAndNoRebalanceDaiCaseBelowTresholdBecauseOfFee() public {
+        //given
+        _clearAndSetupSmartContractsDai();
+
+        uint256 autoRebalanceThreshold = 50;
+        uint256 miltonStanleyRatio = 200000000000000000;
+        uint256 miltonInitPool = 1000000 * 1e18;
+        uint256 stanleyInitBalance = 800000 * 1e18;
+        uint256 userPosition = 50000 * 1e18;
+
+        uint256 expectedMiltonBalance = 150250 * 1e18;
+        uint256 expectedStanleyBalance = 800000 * 1e18;
+
+        _executeRedeemDai(
+            autoRebalanceThreshold,
+            miltonStanleyRatio,
+            miltonInitPool,
+            stanleyInitBalance,
+            userPosition,
             expectedStanleyBalance,
             expectedMiltonBalance
         );
     }
 
     function _clearAndSetupSmartContractsUsdt() private {
+        _ipTokenUsdt = getIpTokenUsdt(address(_usdt));
+
         _stanleyUsdt = getMockCase0Stanley(address(_usdt));
 
         (_miltonUsdtProxy, _itfMiltonUsdt) = getItfMiltonUsdt(
@@ -728,10 +1360,12 @@ contract JosephProvideLiquidity is
 
         _ipTokenUsdt.setJoseph(address(_josephUsdtProxy));
         _miltonStorageUsdt.setMilton(address(_miltonUsdtProxy));
-        _itfJosephUsdt.setMaxLpAccountContribution(1000000);
+        _itfJosephUsdt.setMaxLpAccountContribution(1000000000);
+        _itfJosephUsdt.setMaxLiquidityPoolBalance(1000000000);
     }
 
     function _clearAndSetupSmartContractsDai() private {
+        _ipTokenDai = getIpTokenDai(address(_dai));
         _stanleyDai = getMockCase0Stanley(address(_dai));
 
         (_miltonDaiProxy, _itfMiltonDai) = getItfMiltonDai(
@@ -754,7 +1388,8 @@ contract JosephProvideLiquidity is
 
         _ipTokenDai.setJoseph(address(_josephDaiProxy));
         _miltonStorageDai.setMilton(address(_miltonDaiProxy));
-        _itfJosephDai.setMaxLpAccountContribution(1000000);
+        _itfJosephDai.setMaxLpAccountContribution(1000000000);
+        _itfJosephDai.setMaxLiquidityPoolBalance(1000000000);
     }
 
     function _executeProvideLiquidityUsdt(
@@ -762,28 +1397,29 @@ contract JosephProvideLiquidity is
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
         uint256 stanleyInitBalance,
-        uint256 userInitBalance,
+        uint256 userPosition,
         uint256 expectedStanleyBalance,
         uint256 expectedMiltonBalance
     ) internal {
         _itfJosephUsdt.setAutoRebalanceThreshold(autoRebalanceThreshold);
         _itfJosephUsdt.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+
         deal(address(_usdt), address(_itfMiltonUsdt), miltonInitPool);
 
         vm.startPrank(address(_itfMiltonUsdt));
         _stanleyUsdt.deposit(stanleyInitBalance);
         vm.stopPrank();
 
-        deal(address(_usdt), address(_userOne), userInitBalance);
+        deal(address(_usdt), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        _usdt.approve(address(_itfJosephUsdt), userInitBalance);
+        _usdt.approve(address(_itfJosephUsdt), userPosition);
 
         //when
-        _itfJosephUsdt.provideLiquidity(userInitBalance);
+        _itfJosephUsdt.provideLiquidity(userPosition);
+        vm.stopPrank();
 
         //then
-        vm.stopPrank();
 
         assertEq(_stanleyUsdt.totalBalance(address(_itfMiltonUsdt)), expectedStanleyBalance);
         assertEq(_usdt.balanceOf(address(_itfMiltonUsdt)), expectedMiltonBalance);
@@ -794,29 +1430,115 @@ contract JosephProvideLiquidity is
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
         uint256 stanleyInitBalance,
-        uint256 userInitBalance,
+        uint256 userPosition,
         uint256 expectedStanleyBalance,
         uint256 expectedMiltonBalance
     ) internal {
         _itfJosephDai.setAutoRebalanceThreshold(autoRebalanceThreshold);
         _itfJosephDai.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+
         deal(address(_dai), address(_itfMiltonDai), miltonInitPool);
 
-        vm.startPrank(address(_itfMiltonDai));
-        _stanleyDai.deposit(stanleyInitBalance);
-        vm.stopPrank();
+        vm.prank(address(_itfJosephDai));
+        _itfMiltonDai.depositToStanley(stanleyInitBalance);
 
-        deal(address(_dai), address(_userOne), userInitBalance);
+        deal(address(_dai), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        _dai.approve(address(_itfJosephDai), userInitBalance);
+        _dai.approve(address(_itfJosephDai), userPosition);
 
         //when
-        _itfJosephDai.provideLiquidity(userInitBalance);
-
-        //then
+        _itfJosephDai.provideLiquidity(userPosition);
         vm.stopPrank();
 
+        //then
+
+        assertEq(_stanleyDai.totalBalance(address(_itfMiltonDai)), expectedStanleyBalance);
+        assertEq(_dai.balanceOf(address(_itfMiltonDai)), expectedMiltonBalance);
+    }
+
+    function _executeRedeemUsdt(
+        uint256 autoRebalanceThreshold,
+        uint256 miltonStanleyRatio,
+        uint256 miltonInitPool,
+        uint256 stanleyInitBalance,
+        uint256 userPosition,
+        uint256 expectedStanleyBalance,
+        uint256 expectedMiltonBalance
+    ) internal {
+        uint256 wadUserPosition = userPosition * 1e12;
+
+        deal(address(_usdt), address(_userOne), miltonInitPool);
+
+        _itfJosephUsdt.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+
+        vm.startPrank(address(_userOne));
+
+        _usdt.approve(address(_itfJosephUsdt), miltonInitPool);
+        _itfJosephUsdt.provideLiquidity(miltonInitPool);
+
+        vm.stopPrank();
+        _itfJosephUsdt.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _itfJosephUsdt.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+
+        vm.prank(address(_itfJosephUsdt));
+        _itfMiltonUsdt.depositToStanley(stanleyInitBalance);
+
+        uint256 exchangeRate = _itfJosephUsdt.calculateExchangeRate();
+
+        uint256 userPositionCalculated = IporMath.division(
+            wadUserPosition * Constants.D18,
+            exchangeRate
+        );
+
+        //when
+        vm.prank(address(_userOne));
+        _itfJosephUsdt.redeem(userPositionCalculated);
+
+        //then
+        assertEq(_stanleyUsdt.totalBalance(address(_itfMiltonUsdt)), expectedStanleyBalance);
+        assertEq(_usdt.balanceOf(address(_itfMiltonUsdt)), expectedMiltonBalance);
+    }
+
+    function _executeRedeemDai(
+        uint256 autoRebalanceThreshold,
+        uint256 miltonStanleyRatio,
+        uint256 miltonInitPool,
+        uint256 stanleyInitBalance,
+        uint256 userPosition,
+        uint256 expectedStanleyBalance,
+        uint256 expectedMiltonBalance
+    ) internal {
+        uint256 wadUserPosition = userPosition;
+
+        deal(address(_dai), address(_userOne), miltonInitPool);
+
+        _itfJosephDai.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+
+        vm.startPrank(address(_userOne));
+
+        _dai.approve(address(_itfJosephDai), miltonInitPool);
+        _itfJosephDai.provideLiquidity(miltonInitPool);
+
+        vm.stopPrank();
+
+        _itfJosephDai.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _itfJosephDai.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+
+        vm.prank(address(_itfJosephDai));
+        _itfMiltonDai.depositToStanley(stanleyInitBalance);
+
+        uint256 exchangeRate = _itfJosephDai.calculateExchangeRate();
+        uint256 userPositionCalculated = IporMath.division(
+            wadUserPosition * Constants.D18,
+            exchangeRate
+        );
+
+        //when
+        vm.prank(address(_userOne));
+        _itfJosephDai.redeem(userPositionCalculated);
+
+        //then
         assertEq(_stanleyDai.totalBalance(address(_itfMiltonDai)), expectedStanleyBalance);
         assertEq(_dai.balanceOf(address(_itfMiltonDai)), expectedMiltonBalance);
     }

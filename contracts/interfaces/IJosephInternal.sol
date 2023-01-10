@@ -138,13 +138,14 @@ interface IJosephInternal {
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
     /// @notice Gets auto rebalance threshold
-    /// @return auto rebalance threshold
-    /// @dev Value represented without decimals.
+    /// @dev Auto rebalance threshold is a value which is used to determine if rebalance should be executed.
+    /// @return auto rebalance threshold, value without multiplication by 1000x and represented without decimals.
+    /// @dev Stored value multiplied by 1000 and represented without decimals.
     function getAutoRebalanceThreshold() external view returns (uint256);
 
     /// @notice Sets auto rebalance threshold
     /// @param newAutoRebalanceThreshold new auto rebalance threshold
-    /// @dev Value represented without decimals.
+    /// @dev Value in IPOR Protocol logic multiplied by 1000x and represented without decimals. In storage saved without 1000x multiplication.
     function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) external;
 
     /// @notice Emmited when Charlie Treasury address changed to new one
