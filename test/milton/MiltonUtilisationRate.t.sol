@@ -55,7 +55,9 @@ contract MiltonUtilisationRateTest is
     address internal _liquidityProvider;
 
     function setUp() public {
-        _miltonSpreadModel = prepareMockSpreadModel(TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT);
+        _miltonSpreadModel = prepareMockSpreadModel(
+            TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT
+        );
         _usdtMockedToken = getTokenUsdt();
         _usdcMockedToken = getTokenUsdc();
         _daiMockedToken = getTokenDai();
@@ -109,7 +111,12 @@ contract MiltonUtilisationRateTest is
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase0MiltonDai.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
@@ -152,7 +159,12 @@ contract MiltonUtilisationRateTest is
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase0MiltonDai.itfOpenSwapReceiveFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_1_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
@@ -190,12 +202,17 @@ contract MiltonUtilisationRateTest is
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); 
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp); 
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase6MiltonDai.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndCustomUtilization()
@@ -235,10 +252,15 @@ contract MiltonUtilisationRateTest is
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp); 
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
         // when
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase6MiltonDai.itfOpenSwapReceiveFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_1_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
@@ -281,7 +303,9 @@ contract MiltonUtilisationRateTest is
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapPayFixed(block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase0MiltonDai.itfOpenSwapPayFixed(
+            block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldNotOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
@@ -324,7 +348,12 @@ contract MiltonUtilisationRateTest is
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapPayFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase6MiltonDai.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndDefaultUtilization()
@@ -367,7 +396,9 @@ contract MiltonUtilisationRateTest is
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase0MiltonDai.itfOpenSwapReceiveFixed(
+            block.timestamp, 14000 * TestConstants.D18, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC
+        );
     }
 
     function testShouldNotOpenReceiveFixedPositionWhenLiquidityPoolUtilizationPerLegIsExceededAndCustomUtilization()
@@ -410,6 +441,11 @@ contract MiltonUtilisationRateTest is
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        mockCase6MiltonDai.itfOpenSwapReceiveFixed(block.timestamp, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC);
+        mockCase6MiltonDai.itfOpenSwapReceiveFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.PERCENTAGE_1_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
     }
 }

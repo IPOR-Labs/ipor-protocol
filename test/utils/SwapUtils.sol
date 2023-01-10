@@ -15,22 +15,22 @@ contract SwapUtils is Test {
     ) public {
         for (uint256 i = 0; i < numberIterations; i++) {
             if (i % 2 == 0) {
-                uint256 acceptableFixedInterestRate = 9 * TestConstants.D17; 
+                uint256 acceptableFixedInterestRate = 9 * TestConstants.D17;
                 vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
-                    leverage // leverage 
+                    leverage // leverage
                 );
             } else {
-                uint256 acceptableFixedInterestRate = 1 * TestConstants.D17; 
+                uint256 acceptableFixedInterestRate = 1 * TestConstants.D17;
                 vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
-                    leverage // leverage 
+                    leverage // leverage
                 );
             }
         }
@@ -50,7 +50,7 @@ contract SwapUtils is Test {
                 block.timestamp, // openTimestamp
                 totalAmount, // totalAmount
                 acceptableFixedInterestRate, // acceptableFixedInterestRate
-                leverage // leverage 
+                leverage // leverage
             );
         }
     }
@@ -77,7 +77,7 @@ contract SwapUtils is Test {
             openTimestamp, // openTimestamp
             totalAmount, // totalAmount
             acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage 
+            leverage // leverage
         );
     }
 
@@ -94,7 +94,7 @@ contract SwapUtils is Test {
             openTimestamp, // openTimestamp
             totalAmount, // totalAmount
             acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage 
+            leverage // leverage
         );
     }
 }

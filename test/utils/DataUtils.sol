@@ -89,11 +89,10 @@ contract DataUtils is Test {
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
             vm.prank(users[i]);
-            tokenUsdt.approve(address(josephUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS); 
+            tokenUsdt.approve(address(josephUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             vm.prank(users[i]);
-            tokenUsdt.approve(address(miltonUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS); 
+            tokenUsdt.approve(address(miltonUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             deal(address(tokenUsdt), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
-
         }
     }
 
