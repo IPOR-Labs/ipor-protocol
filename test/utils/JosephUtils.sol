@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfJosephUsdt.sol";
 import "../../contracts/itf/ItfJosephUsdc.sol";
 import "../../contracts/itf/ItfJosephDai.sol";
@@ -65,9 +66,9 @@ contract JosephUtils is Test {
 
     function prepareItfJosephUsdt(ItfJosephUsdt itfJosephUsdt, address josephUsdtProxy) public {
         vm.prank(josephUsdtProxy);
-        itfJosephUsdt.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        itfJosephUsdt.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephUsdtProxy);
-        itfJosephUsdt.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        itfJosephUsdt.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getItfJosephUsdc(
@@ -100,9 +101,9 @@ contract JosephUtils is Test {
 
     function prepareItfJosephUsdc(ItfJosephUsdc itfJosephUsdc, address josephUsdcProxy) public {
         vm.prank(josephUsdcProxy);
-        itfJosephUsdc.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        itfJosephUsdc.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephUsdcProxy);
-        itfJosephUsdc.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        itfJosephUsdc.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getItfJosephDai(
@@ -135,9 +136,9 @@ contract JosephUtils is Test {
 
     function prepareItfJosephDai(ItfJosephDai itfJosephDai, address josephDaiProxy) public {
         vm.prank(josephDaiProxy);
-        itfJosephDai.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        itfJosephDai.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephDaiProxy);
-        itfJosephDai.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        itfJosephDai.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getItfJosephAddresses(address josephUsdt, address josephUsdc, address josephDai)
@@ -220,9 +221,9 @@ contract JosephUtils is Test {
 
     function prepareMockCase0JosephUsdt(MockCase0JosephUsdt mockCase0JosephUsdt, address josephUsdtProxy) public {
         vm.prank(josephUsdtProxy);
-        mockCase0JosephUsdt.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        mockCase0JosephUsdt.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephUsdtProxy);
-        mockCase0JosephUsdt.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        mockCase0JosephUsdt.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getMockCase0JosephUsdc(
@@ -255,9 +256,9 @@ contract JosephUtils is Test {
 
     function prepareMockCase0JosephUsdc(MockCase0JosephUsdc mockCase0JosephUsdc, address josephUsdcProxy) public {
         vm.prank(josephUsdcProxy);
-        mockCase0JosephUsdc.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        mockCase0JosephUsdc.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephUsdcProxy);
-        mockCase0JosephUsdc.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        mockCase0JosephUsdc.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getMockCase0JosephDai(
@@ -290,9 +291,9 @@ contract JosephUtils is Test {
 
     function prepareMockCase0JosephDai(MockCase0JosephDai mockCase0JosephDai, address josephDaiProxy) public {
         vm.prank(josephDaiProxy);
-        mockCase0JosephDai.setMaxLiquidityPoolBalance(10 * 10 ** 6); // 10M, USD_10_000_000
+        mockCase0JosephDai.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
         vm.prank(josephDaiProxy);
-        mockCase0JosephDai.setMaxLpAccountContribution(1 * 10 ** 6); // 1M, USD_1_000_000
+        mockCase0JosephDai.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getMockCase0JosephAddresses(address josephUsdt, address josephUsdc, address josephDai)

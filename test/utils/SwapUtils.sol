@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfMilton.sol";
 
 contract SwapUtils is Test {
@@ -14,22 +15,22 @@ contract SwapUtils is Test {
     ) public {
         for (uint256 i = 0; i < numberIterations; i++) {
             if (i % 2 == 0) {
-                uint256 acceptableFixedInterestRate = 9 * 10 ** 17; // 9 * N0__1_18DEC
+                uint256 acceptableFixedInterestRate = 9 * TestConstants.D17; 
                 vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
-                    leverage // leverage LEVERAGE_18DEC
+                    leverage // leverage 
                 );
             } else {
-                uint256 acceptableFixedInterestRate = 1 * 10 ** 17; // N0__1_18DEC
+                uint256 acceptableFixedInterestRate = 1 * TestConstants.D17; 
                 vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
-                    leverage // leverage LEVERAGE_18DEC
+                    leverage // leverage 
                 );
             }
         }
@@ -43,13 +44,13 @@ contract SwapUtils is Test {
         uint256 leverage
     ) public {
         for (uint256 i = 0; i < numberIterations; i++) {
-            uint256 acceptableFixedInterestRate = 1 * 10 ** 16;
+            uint256 acceptableFixedInterestRate = 1 * TestConstants.D16;
             vm.prank(user);
             milton.itfOpenSwapReceiveFixed(
                 block.timestamp, // openTimestamp
                 totalAmount, // totalAmount
                 acceptableFixedInterestRate, // acceptableFixedInterestRate
-                leverage // leverage LEVERAGE_18DEC
+                leverage // leverage 
             );
         }
     }
@@ -76,7 +77,7 @@ contract SwapUtils is Test {
             openTimestamp, // openTimestamp
             totalAmount, // totalAmount
             acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage LEVERAGE_18DEC
+            leverage // leverage 
         );
     }
 
@@ -93,7 +94,7 @@ contract SwapUtils is Test {
             openTimestamp, // openTimestamp
             totalAmount, // totalAmount
             acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage LEVERAGE_18DEC
+            leverage // leverage 
         );
     }
 }
