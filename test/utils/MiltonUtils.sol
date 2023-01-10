@@ -416,128 +416,71 @@ contract MiltonUtils is Test {
     /// ------------------------------------------------------------------------------------
 
     function getMockCase6MiltonUsdt(
-        address deployer,
         address tokenUsdt,
         address iporOracle,
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt
-    ) public returns (ProxyTester, MockCase6MiltonUsdt) {
-        ProxyTester miltonUsdtProxy = new ProxyTester();
-        miltonUsdtProxy.setType("uups");
-        MockCase6MiltonUsdt mockCase6MiltonUsdtFactory = new MockCase6MiltonUsdt();
-        address miltonUsdtProxyAddress = miltonUsdtProxy.deploy(
-            address(mockCase6MiltonUsdtFactory),
-            deployer,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                tokenUsdt,
-                iporOracle,
-                miltonStorageUsdt,
-                miltonSpreadModel,
-                stanleyUsdt
-            )
-        );
-        MockCase6MiltonUsdt mockCase6MiltonUsdt = MockCase6MiltonUsdt(miltonUsdtProxyAddress);
-        return (miltonUsdtProxy, mockCase6MiltonUsdt);
+    ) public returns (MockCase6MiltonUsdt) {
+        MockCase6MiltonUsdt mockCase6MiltonUsdtImplementation = new MockCase6MiltonUsdt();
+        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(address(mockCase6MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
+        MockCase6MiltonUsdt miltonUsdt = MockCase6MiltonUsdt(address(miltonUsdtProxy));
+        return miltonUsdt;
     }
 
     function prepareMockCase6MiltonUsdt(
         MockCase6MiltonUsdt miltonUsdt,
-        address miltonUsdtProxy,
         address josephUsdt,
         address stanleyUsdt
     ) public {
-        vm.prank(miltonUsdtProxy);
         miltonUsdt.setJoseph(josephUsdt);
-        vm.prank(miltonUsdtProxy);
         miltonUsdt.setupMaxAllowanceForAsset(josephUsdt);
-        vm.prank(miltonUsdtProxy);
         miltonUsdt.setupMaxAllowanceForAsset(stanleyUsdt);
     }
 
     function getMockCase6MiltonUsdc(
-        address deployer,
         address tokenUsdc,
         address iporOracle,
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc
-    ) public returns (ProxyTester, MockCase6MiltonUsdc) {
-        ProxyTester miltonUsdcProxy = new ProxyTester();
-        miltonUsdcProxy.setType("uups");
-        MockCase6MiltonUsdc mockCase6MiltonUsdcFactory = new MockCase6MiltonUsdc();
-        address miltonUsdcProxyAddress = miltonUsdcProxy.deploy(
-            address(mockCase6MiltonUsdcFactory),
-            deployer,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                tokenUsdc,
-                iporOracle,
-                miltonStorageUsdc,
-                miltonSpreadModel,
-                stanleyUsdc
-            )
-        );
-        MockCase6MiltonUsdc mockCase6MiltonUsdc = MockCase6MiltonUsdc(miltonUsdcProxyAddress);
-        return (miltonUsdcProxy, mockCase6MiltonUsdc);
+    ) public returns (MockCase6MiltonUsdc) {
+        MockCase6MiltonUsdc mockCase6MiltonUsdcImplementation = new MockCase6MiltonUsdc();
+        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(address(mockCase6MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
+        MockCase6MiltonUsdc miltonUsdc = MockCase6MiltonUsdc(address(miltonUsdcProxy));
+        return miltonUsdc;
     }
 
     function prepareMockCase6MiltonUsdc(
         MockCase6MiltonUsdc miltonUsdc,
-        address miltonUsdcProxy,
         address josephUsdc,
         address stanleyUsdc
     ) public {
-        vm.prank(miltonUsdcProxy);
         miltonUsdc.setJoseph(josephUsdc);
-        vm.prank(miltonUsdcProxy);
         miltonUsdc.setupMaxAllowanceForAsset(josephUsdc);
-        vm.prank(miltonUsdcProxy);
         miltonUsdc.setupMaxAllowanceForAsset(stanleyUsdc);
     }
 
     function getMockCase6MiltonDai(
-        address deployer,
         address tokenDai,
         address iporOracle,
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai
-    ) public returns (ProxyTester, MockCase6MiltonDai) {
-        ProxyTester miltonDaiProxy = new ProxyTester();
-        miltonDaiProxy.setType("uups");
-        MockCase6MiltonDai mockCase6MiltonDaiFactory = new MockCase6MiltonDai();
-        address miltonDaiProxyAddress = miltonDaiProxy.deploy(
-            address(mockCase6MiltonDaiFactory),
-            deployer,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                tokenDai,
-                iporOracle,
-                miltonStorageDai,
-                miltonSpreadModel,
-                stanleyDai
-            )
-        );
-        MockCase6MiltonDai mockCase6MiltonDai = MockCase6MiltonDai(miltonDaiProxyAddress);
-        return (miltonDaiProxy, mockCase6MiltonDai);
+    ) public returns (MockCase6MiltonDai) {
+        MockCase6MiltonDai mockCase6MiltonDaiImplementation = new MockCase6MiltonDai();
+        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        MockCase6MiltonDai miltonDai = MockCase6MiltonDai(address(miltonDaiProxy));
+        return miltonDai;
     }
 
     function prepareMockCase6MiltonDai(
         MockCase6MiltonDai miltonDai,
-        address miltonDaiProxy,
         address josephDai,
         address stanleyDai
     ) public {
-        vm.prank(miltonDaiProxy);
         miltonDai.setJoseph(josephDai);
-        vm.prank(miltonDaiProxy);
         miltonDai.setupMaxAllowanceForAsset(josephDai);
-        vm.prank(miltonDaiProxy);
         miltonDai.setupMaxAllowanceForAsset(stanleyDai);
     }
 
