@@ -101,7 +101,7 @@ describe("Open/Close Swap", function () {
 
         it("ProvideLiquidity for 50000 dai", async () => {
             //given
-
+            await josephDai.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_18.mul("50000");
             await transferDaiToAddress(
                 "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
@@ -190,7 +190,7 @@ describe("Open/Close Swap", function () {
 
         it("ProvideLiquidity for 50000 usdc", async () => {
             //given
-
+            await josephUsdc.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_6.mul("50000");
             await transferUsdcToAddress(
                 testnetFaucet.address,
@@ -292,7 +292,7 @@ describe("Open/Close Swap", function () {
 
         it("ProvideLiquidity for 50000 usdt", async () => {
             //given
-
+            await josephUsdt.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_6.mul("50000");
             await transferUsdtToAddress(
                 testnetFaucet.address,
@@ -311,6 +311,7 @@ describe("Open/Close Swap", function () {
 
         it("Should rebalance and deposit(usdt) into vault (compound)", async () => {
             //given
+            await josephUsdt.connect(admin).setAutoRebalanceThreshold(0);
             const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
             //when
             await josephUsdt.rebalance();

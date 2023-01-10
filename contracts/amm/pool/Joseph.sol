@@ -230,21 +230,23 @@ abstract contract Joseph is JosephInternal, IJoseph {
     ) internal {
         uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D21;
 
-        if (wadOperationAmount >= autoRebalanceThreshold) {
-            _withdrawFromStanleyBeforeRedeem(
-                milton,
-                wadMiltonErc20Balance,
-                vaultBalance,
-                wadOperationAmount
-            );
-        } else {
-            if (wadOperationAmount > wadMiltonErc20Balance) {
+        if (autoRebalanceThreshold > 0) {
+            if (wadOperationAmount >= autoRebalanceThreshold) {
                 _withdrawFromStanleyBeforeRedeem(
                     milton,
                     wadMiltonErc20Balance,
                     vaultBalance,
                     wadOperationAmount
                 );
+            } else {
+                if (wadOperationAmount > wadMiltonErc20Balance) {
+                    _withdrawFromStanleyBeforeRedeem(
+                        milton,
+                        wadMiltonErc20Balance,
+                        vaultBalance,
+                        wadOperationAmount
+                    );
+                }
             }
         }
     }
@@ -255,7 +257,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        if (wadOperationAmount >= _getAutoRebalanceThreshold() * Constants.D21) {
+        uint256 autoRebalanceTreshold = _getAutoRebalanceThreshold() * Constants.D21;
+
+        if (autoRebalanceTreshold > 0 && wadOperationAmount >= autoRebalanceTreshold) {
             int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
                 IporMath.convertToWad(
                     IERC20Upgradeable(asset).balanceOf(address(milton)),
