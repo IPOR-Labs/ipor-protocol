@@ -17,8 +17,6 @@ import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
-import "forge-std/console2.sol";
-
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -74,7 +72,7 @@ contract IporOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 2;
     }
 
     function getIndex(address asset)

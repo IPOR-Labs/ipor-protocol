@@ -43,7 +43,7 @@ import {
     MiltonFacadeDataProvider,
     CockpitDataProvider,
     Multicall2,
-    IporToken,
+    IporToken, MockIporWeighted,
 } from "../types";
 
 async function main() {
@@ -159,6 +159,7 @@ async function main() {
     );
 
     const IporOracleFactory = await ethers.getContractFactory("IporOracle", deployer);
+    const MockIporWeightedFactory = await ethers.getContractFactory("MockIporWeighted", deployer);
 
     const MiltonStorageUsdtFactory = await ethers.getContractFactory("MiltonStorageUsdt", deployer);
     const MiltonStorageUsdcFactory = await ethers.getContractFactory("MiltonStorageUsdc", deployer);
@@ -386,6 +387,17 @@ async function main() {
         }
     )) as IporOracle;
     await iporOracleProxy.deployed();
+
+    const iporAlgorithmProxy = (await upgrades.deployProxy(
+        MockIporWeightedFactory,
+        [iporOracleProxy],
+        {
+            initializer: "initialize",
+            kind: "uups",
+        }
+    )) as MockIporWeighted;
+
+    await iporAlgorithmProxy.deployed();
 
     const miltonStorageUsdtProxy = (await upgrades.deployProxy(MiltonStorageUsdtFactory, [], {
         initializer: "initialize",
@@ -641,6 +653,7 @@ async function main() {
     await stanleyDaiProxy.setMilton(miltonDaiProxy.address);
 
     await iporOracleProxy.addUpdater(await deployer.getAddress());
+    await iporOracleProxy.setAlgorithmAddress(iporAlgorithmProxy.address)
 
     await mockTestnetStrategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
     await mockTestnetStrategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
