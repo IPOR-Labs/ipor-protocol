@@ -7,11 +7,6 @@ import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
-import {MiltonUtils} from "../utils/MiltonUtils.sol";
-import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
-import {JosephUtils} from "../utils/JosephUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import "../../contracts/libraries/math/IporMath.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
@@ -28,24 +23,13 @@ import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
-contract JosephProvideLiquidity is
-    Test,
-    TestCommons,
-    DataUtils,
-    IporOracleUtils,
-    MiltonUtils,
-    MiltonStorageUtils,
-    JosephUtils,
-    StanleyUtils
-{
+contract JosephProvideLiquidity is Test, TestCommons, DataUtils {
     MockSpreadModel internal _miltonSpreadModel;
     ItfIporOracle private _iporOracle;
 
     MockTestnetTokenUsdt private _usdt;
     IpToken private _ipTokenUsdt;
-    ERC1967Proxy private _josephUsdtProxy;
-    ERC1967Proxy private _miltonUsdtProxy;
-    ERC1967Proxy private _miltonStorageUsdtProxy;
+
     ItfMiltonUsdt private _itfMiltonUsdt;
     ItfJosephUsdt private _itfJosephUsdt;
     MiltonStorage private _miltonStorageUsdt;
@@ -53,9 +37,6 @@ contract JosephProvideLiquidity is
 
     MockTestnetTokenDai private _dai;
     IpToken private _ipTokenDai;
-    ERC1967Proxy private _josephDaiProxy;
-    ERC1967Proxy private _miltonDaiProxy;
-    ERC1967Proxy private _miltonStorageDaiProxy;
     ItfMiltonDai private _itfMiltonDai;
     ItfJosephDai private _itfJosephDai;
     MiltonStorage private _miltonStorageDai;
@@ -72,9 +53,6 @@ contract JosephProvideLiquidity is
         _dai = getTokenDai();
 
         _miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
-
-        (_miltonStorageUsdtProxy, _miltonStorageUsdt) = getMiltonStorage();
-        (_miltonStorageDaiProxy, _miltonStorageDai) = getMiltonStorage();
 
         address[] memory tokenAddresses = new address[](2);
         tokenAddresses[0] = address(_usdt);
@@ -1336,60 +1314,57 @@ contract JosephProvideLiquidity is
     }
 
     function _clearAndSetupSmartContractsUsdt() private {
+        _miltonStorageUsdt = getMiltonStorage();
+
         _ipTokenUsdt = getIpTokenUsdt(address(_usdt));
 
         _stanleyUsdt = getMockCase0Stanley(address(_usdt));
 
-        (_miltonUsdtProxy, _itfMiltonUsdt) = getItfMiltonUsdt(
+        _itfMiltonUsdt = getItfMiltonUsdt(
             address(_usdt),
             address(_iporOracle),
-            address(_miltonStorageUsdtProxy),
+            address(_miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(_stanleyUsdt)
         );
 
-        (_josephUsdtProxy, _itfJosephUsdt) = getItfJosephUsdt(
+        _itfJosephUsdt = getItfJosephUsdt(
             address(_usdt),
             address(_ipTokenUsdt),
-            address(_miltonUsdtProxy),
-            address(_miltonStorageUsdtProxy),
+            address(_itfMiltonUsdt),
+            address(_miltonStorageUsdt),
             address(_stanleyUsdt)
         );
 
-        prepareItfMiltonUsdt(_itfMiltonUsdt, address(_josephUsdtProxy), address(_stanleyUsdt));
-
-        _ipTokenUsdt.setJoseph(address(_josephUsdtProxy));
-        _miltonStorageUsdt.setMilton(address(_miltonUsdtProxy));
-        _itfJosephUsdt.setMaxLpAccountContribution(1000000000);
-        _itfJosephUsdt.setMaxLiquidityPoolBalance(1000000000);
+        prepareIpTokenUsdt(_ipTokenUsdt, address(_itfJosephUsdt));
+        prepareJoseph(_itfJosephUsdt);
+        prepareMilton(_itfMiltonUsdt, address(_itfJosephUsdt), address(_stanleyUsdt));
     }
 
     function _clearAndSetupSmartContractsDai() private {
+        _miltonStorageDai = getMiltonStorage();
         _ipTokenDai = getIpTokenDai(address(_dai));
         _stanleyDai = getMockCase0Stanley(address(_dai));
 
-        (_miltonDaiProxy, _itfMiltonDai) = getItfMiltonDai(
+        _itfMiltonDai = getItfMiltonDai(
             address(_dai),
             address(_iporOracle),
-            address(_miltonStorageDaiProxy),
+            address(_miltonStorageDai),
             address(_miltonSpreadModel),
             address(_stanleyDai)
         );
 
-        (_josephDaiProxy, _itfJosephDai) = getItfJosephDai(
+        _itfJosephDai = getItfJosephDai(
             address(_dai),
             address(_ipTokenDai),
-            address(_miltonDaiProxy),
-            address(_miltonStorageDaiProxy),
+            address(_itfMiltonDai),
+            address(_miltonStorageDai),
             address(_stanleyDai)
         );
 
-        prepareItfMiltonDai(_itfMiltonDai, address(_josephDaiProxy), address(_stanleyDai));
-
-        _ipTokenDai.setJoseph(address(_josephDaiProxy));
-        _miltonStorageDai.setMilton(address(_miltonDaiProxy));
-        _itfJosephDai.setMaxLpAccountContribution(1000000000);
-        _itfJosephDai.setMaxLiquidityPoolBalance(1000000000);
+        prepareIpTokenDai(_ipTokenDai, address(_itfJosephDai));
+        prepareJoseph(_itfJosephDai);
+        prepareMilton(_itfMiltonDai, address(_itfJosephDai), address(_stanleyDai));
     }
 
     function _executeProvideLiquidityUsdt(
