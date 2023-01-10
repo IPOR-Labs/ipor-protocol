@@ -17,6 +17,7 @@ import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
+
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -152,25 +153,23 @@ contract IporOracle is
         external
         override
         whenNotPaused
-        returns (
-            uint256 indexValue,
-            uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-            uint256 lastUpdateTimestamp
-        )
+        returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
-        require(_iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
+        require(
+            _iporAlgorithmFacade != address(0),
+            IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET
+        );
 
         uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmFacade).calculateIpor(asset);
+
         (
-            indexValue,
-            ibtPrice,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
-            lastUpdateTimestamp
+            accruedIpor.indexValue,
+            accruedIpor.ibtPrice,
+            accruedIpor.exponentialMovingAverage,
+            accruedIpor.exponentialWeightedMovingVariance,
+            
         ) = _updateIndex(asset, newIndexValue, block.timestamp);
     }
 

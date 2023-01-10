@@ -200,6 +200,14 @@ interface IMiltonInternal {
     /// @param newMiltonSpreadModel new Milton Spread Model address
     function setMiltonSpreadModel(address newMiltonSpreadModel) external;
 
+    /// @notice Sets new treshold for auto update of ipor index. Function available only to the Owner.
+    /// @param newTreshold new treshold for auto update of IPOR Index
+    function setAutoUpdateIporIndexTreshold(uint256 newTreshold) external;
+
+    /// @notice Gets treshold for auto update of ipor index.
+    /// @return treshold for auto update of IPOR Index
+    function getAutoUpdateIporIndexTreshold() external view returns (uint256);
+
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
     /// @param oldJoseph Joseph's old address
@@ -218,5 +226,15 @@ interface IMiltonInternal {
         address indexed changedBy,
         address indexed oldMiltonSpreadModel,
         address indexed newMiltonSpreadModel
+    );
+
+    /// @notice Emmited when AutoUpdateIporIndexTreshold is changed by its owner.
+    /// @param changedBy account address that has changed AutoUpdateIporIndexTreshold
+    /// @param oldAutoUpdateIporIndexTreshold AutoUpdateIporIndexTreshold's old value
+    /// @param newAutoUpdateIporIndexTreshold AutoUpdateIporIndexTreshold's new value
+    event AutoUpdateIporIndexTresholdChanged(
+        address indexed changedBy,
+        uint256 indexed oldAutoUpdateIporIndexTreshold,
+        uint256 indexed newAutoUpdateIporIndexTreshold
     );
 }

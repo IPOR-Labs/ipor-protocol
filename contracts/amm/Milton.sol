@@ -287,7 +287,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 leverage
-    ) internal view returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
+    ) internal returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
         require(
@@ -333,6 +333,14 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
+        IporTypes.AccruedIpor memory accruedIndex;
+
+        if (collateral != 0 && collateral > _autoUpdateIporIndexTreshold * Constants.D21) {
+            accruedIndex = _iporOracle.updateIndex(_asset);
+        } else {
+            accruedIndex = _iporOracle.getAccruedIndex(openTimestamp, _asset);
+        }
+
         return
             AmmMiltonTypes.BeforeOpenSwapStruct(
                 wadTotalAmount,
@@ -342,7 +350,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 openingFeeTreasuryAmount,
                 _getIporPublicationFee(),
                 liquidationDepositAmount,
-                _iporOracle.getAccruedIndex(openTimestamp, _asset)
+                accruedIndex
             );
     }
 
