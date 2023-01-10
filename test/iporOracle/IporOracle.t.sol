@@ -2,11 +2,11 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
+import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
-import "forge-std/console2.sol";
 import "./MockOldIporOracleV2.sol";
 import "./MockItfIporOracleV2.sol";
 
@@ -543,9 +543,7 @@ contract IporOracleTest is Test, TestCommons {
         uint256 indexValueOne = 5e16;
         uint256 indexValueTwo = 5e16;
         _iporOracle.itfUpdateIndex(address(_usdcTestnetToken), indexValueOne, updateDate);
-        console2.log("updateDate ", updateDate);
         updateDate++;
-        console2.log("updateDate+", updateDate);
         (uint256 iporIndexBefore, uint256 ibtPriceBefore, , , ) = _iporOracle.getIndex(
             address(_usdcTestnetToken)
         );
