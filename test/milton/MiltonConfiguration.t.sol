@@ -2,13 +2,15 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/MiltonUsdc.sol";
 import "../../contracts/amm/MiltonUsdt.sol";
 import "../../contracts/mocks/stanley/aave/TestERC20.sol";
+import "../../contracts/interfaces/IMiltonInternal.sol";
 
 contract MiltonConfiguration is Test, TestCommons {
     MiltonDai internal _miltonConfiguration;
@@ -21,146 +23,62 @@ contract MiltonConfiguration is Test, TestCommons {
 
     function testShouldCreateMiltonUsdt() public {
         // when
-        ProxyTester miltonUsdtProxy = new ProxyTester();
-        miltonUsdtProxy.setType("uups");
-        MiltonUsdt miltonUsdtFactory = new MiltonUsdt();
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(6);
-        address miltonUsdtAddress = miltonUsdtProxy.deploy(
-            address(miltonUsdtFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(usdt),
-                address(usdt),
-                address(usdt),
-                address(usdt),
-                address(usdt)
-            )
-        );
-        MiltonUsdt miltonUsdt = MiltonUsdt(miltonUsdtAddress);
-        vm.prank(address(miltonUsdtProxy));
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
+        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(address(miltonUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdt), address(usdt), address(usdt), address(usdt), address(usdt)));
+        IMiltonInternal miltonUsdt = IMiltonInternal(address(miltonUsdtProxy));
         assertEq(miltonUsdt.getAsset(), address(usdt));
     }
 
     function testShouldCreateMiltonUsdc() public {
         // when
-        ProxyTester miltonUsdcProxy = new ProxyTester();
-        miltonUsdcProxy.setType("uups");
-        MiltonUsdc miltonUsdcFactory = new MiltonUsdc();
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(6);
-        address miltonUsdcAddress = miltonUsdcProxy.deploy(
-            address(miltonUsdcFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(usdc),
-                address(usdc),
-                address(usdc),
-                address(usdc),
-                address(usdc)
-            )
-        );
-        MiltonUsdc miltonUsdc = MiltonUsdc(miltonUsdcAddress);
-        vm.prank(address(miltonUsdcProxy));
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
+        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(address(miltonUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdc), address(usdc), address(usdc), address(usdc), address(usdc)));
+        IMiltonInternal miltonUsdc = IMiltonInternal(address(miltonUsdcProxy));
         assertEq(miltonUsdc.getAsset(), address(usdc));
     }
 
     function testShouldCreateMiltonDai() public {
         // when
-        ProxyTester miltonDaiProxy = new ProxyTester();
-        miltonDaiProxy.setType("uups");
-        MiltonDai miltonDaiFactory = new MiltonDai();
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(18);
-        address miltonDaiAddress = miltonDaiProxy.deploy(
-            address(miltonDaiFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(dai),
-                address(dai),
-                address(dai),
-                address(dai),
-                address(dai)
-            )
-        );
-        MiltonDai miltonDai = MiltonDai(miltonDaiAddress);
-        vm.prank(address(miltonDaiProxy));
+        MiltonDai miltonDaiImplementation = new MiltonDai();
+        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(address(miltonDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(dai), address(dai), address(dai), address(dai), address(dai)));
+        IMiltonInternal miltonDai = IMiltonInternal(address(miltonDaiProxy));
         assertEq(miltonDai.getAsset(), address(dai));
     }
 
     function testShouldRevertInitializerUsdtWhenMismatchAssetAndMiltonDecimals() public {
         // when
-        ProxyTester miltonUsdtProxy = new ProxyTester();
-        miltonUsdtProxy.setType("uups");
-        MiltonUsdt miltonUsdtFactory = new MiltonUsdt();
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(8);
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        miltonUsdtProxy.deploy(
-            address(miltonUsdtFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(usdt),
-                address(usdt),
-                address(usdt),
-                address(usdt),
-                address(usdt)
-            )
-        );
+        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(address(miltonUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdt), address(usdt), address(usdt), address(usdt), address(usdt)));
+        IMiltonInternal(address(miltonUsdtProxy));
     }
 
     function testShouldRevertInitializeUsdcWhenMismatchAssetAndMiltonDecimals() public {
         // when
-        ProxyTester miltonUsdcProxy = new ProxyTester();
-        miltonUsdcProxy.setType("uups");
-        MiltonUsdc miltonUsdcFactory = new MiltonUsdc();
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(8);
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        miltonUsdcProxy.deploy(
-            address(miltonUsdcFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(usdc),
-                address(usdc),
-                address(usdc),
-                address(usdc),
-                address(usdc)
-            )
-        );
+        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(address(miltonUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdc), address(usdc), address(usdc), address(usdc), address(usdc)));
+        IMiltonInternal(address(miltonUsdcProxy));
     }
 
     function testShouldRevertInitializerDaiWhenMismatchAssetAndMiltonDecimals() public {
         // when
-        ProxyTester miltonDaiProxy = new ProxyTester();
-        miltonDaiProxy.setType("uups");
-        MiltonDai miltonDaiFactory = new MiltonDai();
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(8);
+        MiltonDai miltonDaiImplementation = new MiltonDai();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        miltonDaiProxy.deploy(
-            address(miltonDaiFactory),
-            _admin,
-            abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
-                false,
-                address(dai),
-                address(dai),
-                address(dai),
-                address(dai),
-                address(dai)
-            )
-        );
+        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(address(miltonDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(dai), address(dai), address(dai), address(dai), address(dai)));
+        IMiltonInternal(address(miltonDaiProxy));
     }
 
     function testShouldSetupInitValueForMaxSwapTotalAmount() public {
