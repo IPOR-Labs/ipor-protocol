@@ -16,9 +16,9 @@ import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/UsdtMockedToken.sol";
-import "../../contracts/mocks/tokens/UsdcMockedToken.sol";
-import "../../contracts/mocks/tokens/DaiMockedToken.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase6MiltonDai.sol";
@@ -42,9 +42,9 @@ contract MiltonUtilisationRateTest is
     StanleyUtils
 {
     MockSpreadModel internal _miltonSpreadModel;
-    UsdtMockedToken internal _usdtMockedToken;
-    UsdcMockedToken internal _usdcMockedToken;
-    DaiMockedToken internal _daiMockedToken;
+    MockTestnetTokenUsdt internal _usdtMockedToken;
+    MockTestnetTokenUsdc internal _usdcMockedToken;
+    MockTestnetTokenDai internal _daiMockedToken;
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;

@@ -3,25 +3,25 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../../contracts/libraries/Constants.sol";
-import "../../contracts/mocks/tokens/UsdtMockedToken.sol";
-import "../../contracts/mocks/tokens/UsdcMockedToken.sol";
-import "../../contracts/mocks/tokens/DaiMockedToken.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
+import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 
 contract DataUtils is Test {
     /// ---------------- MOCKED TOKENS  ----------------
-    function getTokenUsdt() public returns (UsdtMockedToken) {
-        UsdtMockedToken tokenUsdt = new UsdtMockedToken(100000000000000 * 10 ** 6, 6);
+    function getTokenUsdt() public returns (MockTestnetTokenUsdt) {
+        MockTestnetTokenUsdt tokenUsdt = new MockTestnetTokenUsdt(100000000000000 * 10 ** 6);
         return tokenUsdt;
     }
 
-    function getTokenUsdc() public returns (UsdcMockedToken) {
-        UsdcMockedToken tokenUsdc = new UsdcMockedToken(100000000000000 * 10 ** 6, 6);
+    function getTokenUsdc() public returns (MockTestnetTokenUsdc) {
+        MockTestnetTokenUsdc tokenUsdc = new MockTestnetTokenUsdc(100000000000000 * 10 ** 6);
         return tokenUsdc;
     }
 
-    function getTokenDai() public returns (DaiMockedToken) {
-        DaiMockedToken tokenDai = new DaiMockedToken(10000000000000000 * Constants.D18, 18);
+    function getTokenDai() public returns (MockTestnetTokenDai) {
+        MockTestnetTokenDai tokenDai = new MockTestnetTokenDai(10000000000000000 * Constants.D18);
         return tokenDai;
     }
 
@@ -83,7 +83,7 @@ contract DataUtils is Test {
     /// ---------------- APPROVALS ----------------
     function prepareApproveForUsersUsdt(
         address[] memory users,
-        UsdtMockedToken tokenUsdt,
+        MockTestnetTokenUsdt tokenUsdt,
         address josephUsdt,
         address miltonUsdt
     ) public {
@@ -92,13 +92,14 @@ contract DataUtils is Test {
             tokenUsdt.approve(address(josephUsdt), 1 * 10 ** 14 * 1 * 10 ** 6); // TOTAL_SUPPLY_6_DECIMALS
             vm.prank(users[i]);
             tokenUsdt.approve(address(miltonUsdt), 1 * 10 ** 14 * 1 * 10 ** 6); // TOTAL_SUPPLY_6_DECIMALS
-            tokenUsdt.setupInitialAmount(address(users[i]), 1 * 10 ** 7 * 10 ** 6); // USER_SUPPLY_6_DECIMALS
+            deal(address(tokenUsdt), users[i], 1 * 10 ** 7 * 10 ** 6); // USER_SUPPLY_6_DECIMALS
+
         }
     }
 
     function prepareApproveForUsersUsdc(
         address[] memory users,
-        UsdcMockedToken tokenUsdc,
+        MockTestnetTokenUsdc tokenUsdc,
         address josephUsdc,
         address miltonUsdc
     ) public {
@@ -107,13 +108,13 @@ contract DataUtils is Test {
             tokenUsdc.approve(address(josephUsdc), 1 * 10 ** 14 * 1 * 10 ** 6); // TOTAL_SUPPLY_6_DECIMALS
             vm.prank(users[i]);
             tokenUsdc.approve(address(miltonUsdc), 1 * 10 ** 14 * 1 * 10 ** 6); // TOTAL_SUPPLY_6_DECIMALS
-            tokenUsdc.setupInitialAmount(address(users[i]), 1 * 10 ** 7 * 10 ** 6); // USER_SUPPLY_6_DECIMALS
+            deal(address(tokenUsdc), users[i], 1 * 10 ** 7 * 10 ** 6); // USER_SUPPLY_6_DECIMALS
         }
     }
 
     function prepareApproveForUsersDai(
         address[] memory users,
-        DaiMockedToken tokenDai,
+        MockTestnetTokenDai tokenDai,
         address josephDai,
         address miltonDai
     ) public {
@@ -122,7 +123,7 @@ contract DataUtils is Test {
             tokenDai.approve(address(josephDai), 1 * 10 ** 16 * 1 * 10 ** 18); // TOTAL_SUPPLY_18_DECIMALS
             vm.prank(users[i]);
             tokenDai.approve(address(miltonDai), 1 * 10 ** 16 * 1 * 10 ** 18); // TOTAL_SUPPLY_18_DECIMALS
-            tokenDai.setupInitialAmount(address(users[i]), 1 * 10 ** 7 * 10 ** 18); // USER_SUPPLY_10MLN_18DEC
+            deal(address(tokenDai), users[i], 1 * 10 ** 7 * 10 ** 18); // USER_SUPPLY_10MLN_18DEC
         }
     }
     /// ---------------- APPROVALS ----------------
