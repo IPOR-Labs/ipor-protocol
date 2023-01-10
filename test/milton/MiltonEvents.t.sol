@@ -103,8 +103,7 @@ contract MiltonEventsTest is
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(
-            _admin,
+        ItfMiltonDai miltonDai = getItfMiltonDai(
             address(daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -122,7 +121,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
+        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
@@ -171,8 +170,7 @@ contract MiltonEventsTest is
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(
-            _admin,
+        ItfMiltonDai miltonDai = getItfMiltonDai(
             address(daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -190,7 +188,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
+        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
@@ -239,8 +237,7 @@ contract MiltonEventsTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(
-            _admin,
+        ItfMiltonUsdt miltonUsdt = getItfMiltonUsdt(
             address(usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -258,7 +255,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
+        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
@@ -307,8 +304,7 @@ contract MiltonEventsTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(
-            _admin,
+        ItfMiltonUsdt miltonUsdt = getItfMiltonUsdt(
             address(usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -326,7 +322,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
+        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
@@ -375,8 +371,7 @@ contract MiltonEventsTest is
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(
-            _admin,
+        ItfMiltonDai miltonDai = getItfMiltonDai(
             address(daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -394,7 +389,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, miltonStorageDaiProxy, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(miltonDaiProxy), address(josephDai), address(stanleyDai));
+        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
         prepareItfJosephDai(josephDai, address(josephDaiProxy));
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
@@ -436,8 +431,7 @@ contract MiltonEventsTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(
-            _admin,
+        ItfMiltonUsdt miltonUsdt = getItfMiltonUsdt(
             address(usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -455,7 +449,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
+        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
@@ -497,8 +491,7 @@ contract MiltonEventsTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester miltonUsdtProxy, ItfMiltonUsdt miltonUsdt) = getItfMiltonUsdt(
-            _admin,
+        ItfMiltonUsdt miltonUsdt = getItfMiltonUsdt(
             address(usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -516,7 +509,7 @@ contract MiltonEventsTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, miltonStorageUsdtProxy, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(miltonUsdtProxy), address(josephUsdt), address(stanleyUsdt));
+        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
@@ -557,21 +550,18 @@ contract MiltonEventsTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         (, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester miltonDaiProxy, ItfMiltonDai miltonDai) = getItfMiltonDai(
-            _admin,
+        ItfMiltonDai miltonDai = getItfMiltonDai(
             address(daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        vm.prank(address(miltonDaiProxy));
         address oldMiltonSpreadModel = miltonDai.getMiltonSpreadModel();
         address newMiltonSpreadModel = address(_userThree);
         // when
         vm.expectEmit(true, true, true, false);
-        emit MiltonSpreadModelChanged(address(miltonDaiProxy), oldMiltonSpreadModel, newMiltonSpreadModel);
-        vm.prank(address(miltonDaiProxy));
+        emit MiltonSpreadModelChanged(_admin, oldMiltonSpreadModel, newMiltonSpreadModel);
         miltonDai.setMiltonSpreadModel(newMiltonSpreadModel);
     }
 }

@@ -74,8 +74,7 @@ contract MiltonSoapTest is
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
 
         (, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -92,8 +91,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -113,12 +111,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -145,8 +138,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -166,12 +158,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -200,8 +187,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -221,12 +207,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -254,8 +235,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -275,12 +255,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -309,8 +284,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -330,12 +304,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -366,8 +335,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -387,12 +355,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -426,8 +389,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -447,12 +409,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -490,8 +447,7 @@ contract MiltonSoapTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
         MockCase1Stanley mockCase1StanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonUsdtProxy, MockCase0MiltonUsdt mockCase0MiltonUsdt) = getMockCase0MiltonUsdt(
-            _admin,
+        MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -511,12 +467,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
-        prepareMockCase0MiltonUsdt(
-            mockCase0MiltonUsdt,
-            address(mockCase0MiltonUsdtProxy),
-            address(mockCase0JosephUsdt),
-            address(mockCase1StanleyUsdt)
-        );
+        prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
@@ -565,7 +516,6 @@ contract MiltonSoapTest is
             address(miltonStorages.miltonStorageDai)
         );
         MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            _admin,
             address(iporOracle),
             address(_miltonSpreadModel),
             address(_usdtMockedToken),
@@ -618,13 +568,11 @@ contract MiltonSoapTest is
         );
         prepareMockCase0MiltonUsdt(
             mockCase0Miltons.mockCase0MiltonUsdt,
-            address(mockCase0Miltons.mockCase0MiltonUsdtProxy),
             address(mockCase0Josephs.mockCase0JosephUsdt),
             mockCase1StanleyAddresses[0]
         );
         prepareMockCase0MiltonDai(
             mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Miltons.mockCase0MiltonDaiProxy),
             address(mockCase0Josephs.mockCase0JosephDai),
             mockCase1StanleyAddresses[2]
         );
@@ -679,8 +627,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -700,12 +647,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -744,8 +686,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -765,12 +706,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase1StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -824,7 +760,6 @@ contract MiltonSoapTest is
             address(miltonStorages.miltonStorageDai)
         );
         MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            _admin,
             address(iporOracle),
             address(_miltonSpreadModel),
             address(_usdtMockedToken),
@@ -877,13 +812,11 @@ contract MiltonSoapTest is
         );
         prepareMockCase0MiltonUsdt(
             mockCase0Miltons.mockCase0MiltonUsdt,
-            address(mockCase0Miltons.mockCase0MiltonUsdtProxy),
             address(mockCase0Josephs.mockCase0JosephUsdt),
             mockCase1StanleyAddresses[0]
         );
         prepareMockCase0MiltonDai(
             mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Miltons.mockCase0MiltonDaiProxy),
             address(mockCase0Josephs.mockCase0JosephDai),
             mockCase1StanleyAddresses[2]
         );
@@ -950,8 +883,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -971,12 +903,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -1016,8 +943,7 @@ contract MiltonSoapTest is
         IpToken ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
         MockCase1Stanley mockCase1StanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonUsdtProxy, MockCase0MiltonUsdt mockCase0MiltonUsdt) = getMockCase0MiltonUsdt(
-            _admin,
+        MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
             address(iporOracle),
             address(miltonStorageUsdt),
@@ -1037,12 +963,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
-        prepareMockCase0MiltonUsdt(
-            mockCase0MiltonUsdt,
-            address(mockCase0MiltonUsdtProxy),
-            address(mockCase0JosephUsdt),
-            address(mockCase1StanleyUsdt)
-        );
+        prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
         prepareIpTokenUsdt(ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
@@ -1056,7 +977,7 @@ contract MiltonSoapTest is
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonUsdt
-        ); //
+        );
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -1080,8 +1001,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1101,12 +1021,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
@@ -1148,8 +1063,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1169,12 +1083,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1212,8 +1121,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1233,12 +1141,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1288,8 +1191,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1309,12 +1211,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1361,8 +1258,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1382,12 +1278,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1422,8 +1313,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1443,12 +1333,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1498,8 +1383,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1519,12 +1403,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1579,8 +1458,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1600,12 +1478,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1660,8 +1533,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1681,12 +1553,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1741,8 +1608,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1762,12 +1628,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(38877399621396944);
@@ -1822,8 +1683,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1843,12 +1703,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
@@ -1903,8 +1758,7 @@ contract MiltonSoapTest is
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        (ProxyTester mockCase0MiltonDaiProxy, MockCase0MiltonDai mockCase0MiltonDai) = getMockCase0MiltonDai(
-            _admin,
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -1924,12 +1778,7 @@ contract MiltonSoapTest is
         prepareMiltonStorage(
             miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
-        prepareMockCase0MiltonDai(
-            mockCase0MiltonDai,
-            address(mockCase0MiltonDaiProxy),
-            address(mockCase0JosephDai),
-            address(mockCase0StanleyDai)
-        );
+        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
