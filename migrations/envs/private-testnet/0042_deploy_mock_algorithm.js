@@ -1,7 +1,6 @@
 const func = require("../../libs/json_func.js");
 const script = require("../../libs/mocks/0004_deploy_mock_ipor_weighted.js");
 const keys = require("../../libs/json_keys.js");
-const itfScript = require("../../libs/itf/deploy/itf_liquidator/dai/0001_initial_deploy.js");
 const IporOracle = artifacts.require("IporOracle");
 const MockIporWeighted = artifacts.require("MockIporWeighted");
 
