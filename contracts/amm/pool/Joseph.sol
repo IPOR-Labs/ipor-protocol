@@ -26,7 +26,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
     }
 
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
-        _provideLiquidity(assetAmount, _getDecimals(), block.timestamp);
+        _provideLiquidity(assetAmount, block.timestamp);
     }
 
     function redeem(uint256 ipTokenAmount) external override whenNotPaused {
@@ -54,11 +54,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         }
     }
 
-    function _provideLiquidity(
-        uint256 assetAmount,
-        uint256 assetDecimals,
-        uint256 timestamp
-    ) internal nonReentrant {
+    function _provideLiquidity(uint256 assetAmount, uint256 timestamp) internal nonReentrant {
         address msgSender = _msgSender();
         address asset = _getAsset();
         IMiltonInternal milton = _getMilton();
@@ -75,7 +71,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
-        uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, assetDecimals);
+        uint256 wadAssetAmount = IporMath.convertToWad(assetAmount, _getDecimals());
 
         _getMiltonStorage().addLiquidity(
             msgSender,
