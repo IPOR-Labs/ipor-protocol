@@ -23,10 +23,10 @@ import "../../contracts/oracles/libraries/DecayFactorCalculation.sol";
  * @author IPOR Labs
  */
 contract MockOldIporOracleV2 is
-Initializable,
-PausableUpgradeable,
-UUPSUpgradeable,
-IporOwnableUpgradeable
+    Initializable,
+    PausableUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable
 {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
@@ -75,32 +75,32 @@ IporOwnableUpgradeable
     }
 
     function getIndex(address asset)
-    external
-    view
-    returns (
-        uint256 indexValue,
-        uint256 ibtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
-        uint256 lastUpdateTimestamp
-    )
+        external
+        view
+        returns (
+            uint256 indexValue,
+            uint256 ibtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+            uint256 lastUpdateTimestamp
+        )
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         return (
-        indexValue = ipor.indexValue,
-        ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
-        exponentialMovingAverage = ipor.exponentialMovingAverage,
-        exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
-        lastUpdateTimestamp = ipor.lastUpdateTimestamp
+            indexValue = ipor.indexValue,
+            ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
+            exponentialMovingAverage = ipor.exponentialMovingAverage,
+            exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
+            lastUpdateTimestamp = ipor.lastUpdateTimestamp
         );
     }
 
     function getAccruedIndex(uint256 calculateTimestamp, address asset)
-    external
-    view
-    virtual
-    returns (IporTypes.AccruedIpor memory accruedIpor)
+        external
+        view
+        virtual
+        returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
@@ -114,18 +114,14 @@ IporOwnableUpgradeable
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
-    external
-    view
-    returns (uint256)
+        external
+        view
+        returns (uint256)
     {
         return _calculateAccruedIbtPrice(calculateTimestamp, asset);
     }
 
-    function updateIndex(address asset, uint256 indexValue)
-    external
-    onlyUpdater
-    whenNotPaused
-    {
+    function updateIndex(address asset, uint256 indexValue) external onlyUpdater whenNotPaused {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
@@ -135,9 +131,9 @@ IporOwnableUpgradeable
     }
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues)
-    external
-    onlyUpdater
-    whenNotPaused
+        external
+        onlyUpdater
+        whenNotPaused
     {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
@@ -228,12 +224,12 @@ IporOwnableUpgradeable
         );
 
         uint256 newExponentialWeightedMovingVariance = IporLogic
-        .calculateExponentialWeightedMovingVariance(
-            ipor.exponentialWeightedMovingVariance,
-            newExponentialMovingAverage,
-            indexValue,
-            _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-        );
+            .calculateExponentialWeightedMovingVariance(
+                ipor.exponentialWeightedMovingVariance,
+                newExponentialMovingAverage,
+                indexValue,
+                _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
+            );
 
         uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
@@ -256,24 +252,24 @@ IporOwnableUpgradeable
     }
 
     function _decayFactorValue(uint256 timeFromLastPublication)
-    internal
-    view
-    virtual
-    returns (uint256)
+        internal
+        view
+        virtual
+        returns (uint256)
     {
         return DecayFactorCalculation.calculate(timeFromLastPublication);
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)
-    internal
-    view
-    returns (uint256)
+        internal
+        view
+        returns (uint256)
     {
         return
-        IporMath.division(
-            _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),
-            Constants.YEAR_IN_SECONDS
-        );
+            IporMath.division(
+                _indexes[asset].accrueQuasiIbtPrice(calculateTimestamp),
+                Constants.YEAR_IN_SECONDS
+            );
     }
 
     //solhint-disable no-empty-blocks
@@ -319,4 +315,3 @@ IporOwnableUpgradeable
     /// @param asset asset address
     event IporIndexRemoveAsset(address asset);
 }
-

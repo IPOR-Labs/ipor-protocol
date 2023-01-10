@@ -151,16 +151,16 @@ contract IporOracle is
     }
 
     function updateAndFetchIndex(address asset)
-    external
-    override
-    whenNotPaused
-    returns (
-        uint256 indexValue,
-        uint256 ibtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
-        uint256 lastUpdateTimestamp
-    )
+        external
+        override
+        whenNotPaused
+        returns (
+            uint256 indexValue,
+            uint256 ibtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+            uint256 lastUpdateTimestamp
+        )
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
@@ -168,13 +168,12 @@ contract IporOracle is
 
         uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmAddress).calculateIpor(asset);
         (
-        indexValue,
-        ibtPrice,
-        exponentialMovingAverage,
-        exponentialWeightedMovingVariance,
-        lastUpdateTimestamp
+            indexValue,
+            ibtPrice,
+            exponentialMovingAverage,
+            exponentialWeightedMovingVariance,
+            lastUpdateTimestamp
         ) = _updateIndex(asset, newIndexValue, block.timestamp);
-
     }
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues)
@@ -261,13 +260,16 @@ contract IporOracle is
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
-    ) internal returns (
-        uint256 newIndexValue,
-        uint256 newIbtPrice,
-        uint256 newExponentialMovingAverage,
-        uint256 newExponentialWeightedMovingVariance,
-        uint256 lastUpdateTimestamp
-    ){
+    )
+        internal
+        returns (
+            uint256 newIndexValue,
+            uint256 newIbtPrice,
+            uint256 newExponentialMovingAverage,
+            uint256 newExponentialWeightedMovingVariance,
+            uint256 lastUpdateTimestamp
+        )
+    {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         require(
@@ -281,8 +283,7 @@ contract IporOracle is
             _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
         );
 
-        newExponentialWeightedMovingVariance = IporLogic
-            .calculateExponentialWeightedMovingVariance(
+        newExponentialWeightedMovingVariance = IporLogic.calculateExponentialWeightedMovingVariance(
                 ipor.exponentialWeightedMovingVariance,
                 newExponentialMovingAverage,
                 indexValue,

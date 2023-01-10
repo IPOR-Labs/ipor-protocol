@@ -54,14 +54,14 @@ interface IIporOracle {
     /// @dev Emmits {IporIndexUpdate} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     function updateAndFetchIndex(address asset)
-    external
-    returns (
-        uint256 indexValue,
-        uint256 ibtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
-        uint256 lastUpdateTimestamp
-    );
+        external
+        returns (
+            uint256 indexValue,
+            uint256 ibtPrice,
+            uint256 exponentialMovingAverage,
+            uint256 exponentialWeightedMovingVariance,
+            uint256 lastUpdateTimestamp
+        );
 
     /// @notice Updates IPOR Index for a given asset. Function available only for Updater
     /// @dev Emmits {IporIndexUpdate} event.

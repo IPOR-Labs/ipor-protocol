@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "./MockOldIporOracleV2.sol";
 
 contract MockItfIporOracleV2 is MockOldIporOracleV2 {
-
     function itfUpdateIndex(
         address asset,
         uint256 indexValue,

@@ -8,12 +8,7 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
 
 /// @title MockIporWeighted calculation algorithm.
-contract MockIporWeighted is
-    IporOwnableUpgradeable,
-    UUPSUpgradeable,
-    IIporAlgorithm
-{
-
+contract MockIporWeighted is IporOwnableUpgradeable, UUPSUpgradeable, IIporAlgorithm {
     address internal _iporOracleAddress;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -34,13 +29,9 @@ contract MockIporWeighted is
     /// @notice return modify ipor index from oracle.
     /// @param asset Asset address
     /// @return iporIndex IPOR index value represented in 18 decimals
-    function calculateIpor(address asset)
-        external
-        view
-        returns (uint256 iporIndex)
-    {
+    function calculateIpor(address asset) external view returns (uint256 iporIndex) {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        (uint256 value,,,,) = IIporOracle(_iporOracleAddress).getIndex(asset);
+        (uint256 value, , , , ) = IIporOracle(_iporOracleAddress).getIndex(asset);
 
         return value + _randomModifier();
     }
@@ -54,13 +45,9 @@ contract MockIporWeighted is
     }
 
     function _randomModifier() internal view returns (uint256) {
-        return
-            uint256(
-               block.number
-            ) % 10;
+        return uint256(block.number) % 10;
     }
 
-
     //solhint-disable no-empty-blocks
-    function _authorizeUpgrade(address) internal override view onlyOwner {}
+    function _authorizeUpgrade(address) internal view override onlyOwner {}
 }
