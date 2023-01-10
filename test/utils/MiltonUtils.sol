@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../../contracts/interfaces/IMiltonFacadeDataProvider.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdt.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
