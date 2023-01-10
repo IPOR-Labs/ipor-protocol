@@ -27,4 +27,6 @@ library JosephErrors {
     string public constant STANLEY_BALANCE_IS_EMPTY = "IPOR_408";
 
     string public constant MILTON_STANLEY_RATIO = "IPOR_409";
+
+    string public constant CALLER_NOT_REBALANCE_APPOINTER = "IPOR_410";
 }

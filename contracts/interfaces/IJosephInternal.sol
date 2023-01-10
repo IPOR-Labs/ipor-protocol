@@ -27,7 +27,7 @@ interface IJosephInternal {
     /// @return Milton address used by Joseph
     function getMilton() external view returns (address);
 
-	/// @notice Gets address of IpToken
+    /// @notice Gets address of IpToken
     /// @return IpToken address
     function getIpToken() external view returns (address);
 
@@ -136,6 +136,17 @@ interface IJosephInternal {
     /// @dev Value represented without decimals.
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
+    /// @notice adds new address allowed to rebalance Milton
+    /// @param appointed new address allowed to rebalance Milton
+    function addAppointedToRebalance(address appointed) external;
+
+    /// @notice deactivate address allowed to rebalance Milton
+    /// @param appointed address to deactivate
+    function removeAppointedToRebalance(address appointed) external;
+
+    /// @notice check if address is allowed to rebalance Milton
+    function isAppointedToRebalance(address appointed)  external view returns (bool);
+
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
     /// @param oldCharlieTreasury old Charlie Treasury address
@@ -195,4 +206,12 @@ interface IJosephInternal {
         uint256 indexed oldMaxLpAccountContribution,
         uint256 indexed newMaxLpAccountContribution
     );
+
+    /// @notice Emmited after the new address has been added/removed to the list of addresses allowed to rebalance Milton
+    /// @param changedBy account address that changed the list of addresses allowed to rebalance Milton
+    /// @param appointed address that has been added/removed to the list of addresses allowed to rebalance Milton
+    /// @param status true if address has been added to the list of addresses allowed to rebalance Milton,
+    ///        false if address has been removed from the list of addresses allowed to rebalance Milton
+    event AppointedToRebalanceChanged(address indexed changedBy,address indexed appointed, bool status);
+
 }

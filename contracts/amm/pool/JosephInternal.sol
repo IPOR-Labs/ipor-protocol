@@ -49,6 +49,7 @@ abstract contract JosephInternal is
     uint256 internal _miltonStanleyBalanceRatio;
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
+    mapping(address => bool) internal _appointedToRebalance;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -60,6 +61,11 @@ abstract contract JosephInternal is
 
     modifier onlyTreasuryManager() {
         require(_msgSender() == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+        _;
+    }
+
+    modifier onlyRebalance() {
+        require(_appointedToRebalance[_msgSender()], JosephErrors.CALLER_NOT_REBALANCE_APPOINTER);
         _;
     }
 
@@ -76,9 +82,9 @@ abstract contract JosephInternal is
         address miltonStorage,
         address stanley
     ) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __Pausable_init_unchained();
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init_unchained();
 
         require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
@@ -161,7 +167,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function rebalance() external override onlyOwner whenNotPaused {
+    function rebalance() external override onlyRebalance whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -372,6 +378,34 @@ abstract contract JosephInternal is
 
     function getMiltonStanleyBalanceRatio() external view override returns (uint256) {
         return _miltonStanleyBalanceRatio;
+    }
+
+    function addAppointedToRebalance(address appointed)
+        external
+        override
+        onlyOwner
+    {
+        require(appointed != address(0), IporErrors.WRONG_ADDRESS);
+        _appointedToRebalance[appointed] = true;
+        emit AppointedToRebalanceChanged(_msgSender(), appointed, true);
+    }
+
+    function removeAppointedToRebalance(address appointed)
+        external
+        override
+        onlyOwner
+    {
+        _appointedToRebalance[appointed] = false;
+        emit AppointedToRebalanceChanged(_msgSender(), appointed, false);
+    }
+
+    function isAppointedToRebalance(address appointed)
+        external
+        view
+        override
+        returns (bool)
+    {
+        return _appointedToRebalance[appointed];
     }
 
     function _getDecimals() internal pure virtual returns (uint256);
