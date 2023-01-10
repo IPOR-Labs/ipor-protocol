@@ -10,9 +10,9 @@ module.exports = async function (deployer, _network, addresses) {
     let iporOracleProxyAddress;
     const iporAlgorithmProxy = await func.getValue(keys.IporAlgorithmProxy);
     if (process.env.ITF_ENABLED === "true") {
-        iporOracleProxyAddress = await func.getValue(keys.IporOracleProxy);
-    } else {
         iporOracleProxyAddress = await func.getValue(keys.ItfIporOracleProxy);
+    } else {
+        iporOracleProxyAddress = await func.getValue(keys.IporOracleProxy);
     }
 
     const iporOracleInstance = await IporOracle.at(iporOracleProxyAddress);
