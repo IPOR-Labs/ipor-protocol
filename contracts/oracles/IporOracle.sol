@@ -120,7 +120,7 @@ contract IporOracle is
         return _iporAlgorithmFacade;
     }
 
-    function setIporAlgorithm(address newAlgorithmAddress) external onlyOwner {
+    function setIporAlgorithmFacade(address newAlgorithmAddress) external onlyOwner {
         require(newAlgorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
         _iporAlgorithmFacade = newAlgorithmAddress;
     }
