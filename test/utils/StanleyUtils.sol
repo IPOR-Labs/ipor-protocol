@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/stanley/MockCase2Stanley.sol";

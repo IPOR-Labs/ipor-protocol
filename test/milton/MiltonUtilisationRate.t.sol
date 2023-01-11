@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {MiltonUtils} from "../utils/MiltonUtils.sol";
@@ -86,8 +85,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -100,7 +98,7 @@ contract MiltonUtilisationRateTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -131,8 +129,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -145,7 +142,7 @@ contract MiltonUtilisationRateTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -176,8 +173,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase6MiltonDai),
@@ -192,7 +188,7 @@ contract MiltonUtilisationRateTest is
         prepareMockCase6MiltonDai(
             mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai)
         );
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -223,8 +219,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase6MiltonDai),
@@ -239,7 +234,7 @@ contract MiltonUtilisationRateTest is
         prepareMockCase6MiltonDai(
             mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai)
         );
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -269,8 +264,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -283,7 +277,7 @@ contract MiltonUtilisationRateTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -311,8 +305,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase6MiltonDai),
@@ -327,7 +320,7 @@ contract MiltonUtilisationRateTest is
         prepareMockCase6MiltonDai(
             mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai)
         );
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -358,8 +351,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -372,7 +364,7 @@ contract MiltonUtilisationRateTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -400,8 +392,7 @@ contract MiltonUtilisationRateTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase6MiltonDai),
@@ -416,7 +407,7 @@ contract MiltonUtilisationRateTest is
         prepareMockCase6MiltonDai(
             mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai)
         );
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);

@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {MiltonUtils} from "../utils/MiltonUtils.sol";
@@ -253,8 +252,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -267,7 +265,7 @@ contract MiltonStorageTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -310,8 +308,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -324,7 +321,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenDai(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -367,8 +364,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -381,7 +377,7 @@ contract MiltonStorageTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -423,8 +419,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -437,7 +432,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -466,8 +461,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -480,7 +474,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -510,8 +504,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -524,7 +517,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -552,8 +545,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -566,7 +558,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -594,8 +586,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -608,7 +599,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -636,8 +627,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -650,7 +640,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -680,8 +670,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -694,7 +683,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -722,8 +711,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -736,7 +724,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -767,8 +755,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -781,7 +768,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -811,8 +798,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -825,7 +811,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -855,8 +841,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -869,7 +854,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -899,8 +884,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -913,7 +897,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -941,8 +925,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -955,7 +938,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -983,8 +966,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -997,7 +979,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1027,8 +1009,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1041,7 +1022,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1071,8 +1052,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1085,7 +1065,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1114,8 +1094,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1128,7 +1107,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1156,8 +1135,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1170,7 +1148,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1197,8 +1175,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1211,7 +1188,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1240,8 +1217,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1254,7 +1230,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1281,8 +1257,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1295,7 +1270,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1326,8 +1301,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1340,7 +1314,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1370,8 +1344,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1384,7 +1357,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1413,8 +1386,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1427,7 +1399,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1456,8 +1428,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1470,7 +1441,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1499,8 +1470,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1513,7 +1483,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1540,8 +1510,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1554,7 +1523,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1586,8 +1555,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1600,7 +1568,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1631,8 +1599,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1645,7 +1612,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1678,8 +1645,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1692,7 +1658,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1725,8 +1691,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1739,7 +1704,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1772,8 +1737,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1786,7 +1750,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1818,8 +1782,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1832,7 +1795,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -1863,8 +1826,7 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1877,7 +1839,7 @@ contract MiltonStorageTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);

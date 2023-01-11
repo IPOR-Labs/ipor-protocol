@@ -99,7 +99,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -160,13 +159,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -240,7 +239,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -301,13 +299,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -408,7 +406,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -469,13 +466,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -579,7 +576,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -640,13 +636,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -746,7 +742,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -807,13 +802,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -910,7 +905,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -971,13 +965,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -1076,7 +1070,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -1137,13 +1130,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -1231,7 +1224,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -1292,13 +1284,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
@@ -1386,7 +1378,6 @@ contract MiltonFacadeDataProviderTest is
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
         MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            _admin,
             tokenAddresses,
             ipTokenAddresses,
             mockCase0MiltonAddresses,
@@ -1447,13 +1438,13 @@ contract MiltonFacadeDataProviderTest is
             mockCase1StanleyAddresses[2]
         );
         prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt, address(mockCase0Josephs.mockCase0JosephUsdtProxy)
+            mockCase0Josephs.mockCase0JosephUsdt
         );
         prepareMockCase0JosephUsdc(
-            mockCase0Josephs.mockCase0JosephUsdc, address(mockCase0Josephs.mockCase0JosephUsdcProxy)
+            mockCase0Josephs.mockCase0JosephUsdc
         );
         prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai, address(mockCase0Josephs.mockCase0JosephDaiProxy)
+           mockCase0Josephs.mockCase0JosephDai
         );
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);

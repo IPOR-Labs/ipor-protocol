@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../TestCommons.sol";
 import "../../contracts/interfaces/types/MiltonFacadeTypes.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -88,8 +87,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -102,7 +100,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -175,8 +173,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -189,7 +186,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -268,8 +265,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -282,7 +278,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
@@ -355,8 +351,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -369,7 +364,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
@@ -447,8 +442,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -461,7 +455,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -534,8 +528,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -548,7 +541,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
@@ -621,8 +614,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -635,7 +627,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -708,8 +700,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -722,7 +713,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -802,8 +793,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -816,7 +806,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
@@ -888,8 +878,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -902,7 +891,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
@@ -974,8 +963,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -988,7 +976,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
@@ -1060,8 +1048,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester mockCase0JosephUsdtProxy, MockCase0JosephUsdt mockCase0JosephUsdt) = getMockCase0JosephUsdt(
-            _admin,
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
             address(_ipTokenUsdt),
             address(mockCase0MiltonUsdt),
@@ -1074,7 +1061,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
-        prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
+        prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
@@ -1146,8 +1133,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1160,7 +1146,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1237,8 +1223,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1251,7 +1236,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1323,8 +1308,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1337,7 +1321,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1408,8 +1392,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1422,7 +1405,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1500,8 +1483,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1514,7 +1496,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1592,8 +1574,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1606,7 +1587,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
@@ -1683,8 +1664,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1697,7 +1677,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1775,8 +1755,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1789,7 +1768,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1869,8 +1848,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1883,7 +1861,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -1962,8 +1940,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -1976,7 +1953,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -2057,8 +2034,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -2071,7 +2047,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -2143,8 +2119,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -2157,7 +2132,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -2230,8 +2205,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -2244,7 +2218,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -2317,8 +2291,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -2331,7 +2304,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
@@ -2404,8 +2377,7 @@ contract MiltonShouldClosePositionTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester mockCase0JosephDaiProxy, MockCase0JosephDai mockCase0JosephDai) = getMockCase0JosephDai(
-            _admin,
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -2418,7 +2390,7 @@ contract MiltonShouldClosePositionTest is
             miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
+        prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);

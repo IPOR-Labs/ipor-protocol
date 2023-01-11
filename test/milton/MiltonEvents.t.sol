@@ -3,7 +3,6 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "forge-std/console2.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {MiltonUtils} from "../utils/MiltonUtils.sol";
@@ -110,8 +109,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(
-            _admin,
+        ItfJosephDai josephDai = getItfJosephDai(
             address(daiMockedToken),
             address(ipTokenDai),
             address(miltonDai),
@@ -122,7 +120,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
         prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai, address(josephDaiProxy));
+        prepareItfJosephDai(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
@@ -177,8 +175,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(
-            _admin,
+        ItfJosephDai josephDai = getItfJosephDai(
             address(daiMockedToken),
             address(ipTokenDai),
             address(miltonDai),
@@ -189,7 +186,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
         prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai, address(josephDaiProxy));
+        prepareItfJosephDai(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
@@ -244,8 +241,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(
-            _admin,
+        ItfJosephUsdt josephUsdt = getItfJosephUsdt(
             address(usdtMockedToken),
             address(ipTokenUsdt),
             address(miltonUsdt),
@@ -256,7 +252,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
         prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
+        prepareItfJosephUsdt(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
@@ -311,8 +307,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(
-            _admin,
+        ItfJosephUsdt josephUsdt = getItfJosephUsdt(
             address(usdtMockedToken),
             address(ipTokenUsdt),
             address(miltonUsdt),
@@ -323,7 +318,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
         prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
+        prepareItfJosephUsdt(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
@@ -378,8 +373,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        (ProxyTester josephDaiProxy, ItfJosephDai josephDai) = getItfJosephDai(
-            _admin,
+        ItfJosephDai josephDai = getItfJosephDai(
             address(daiMockedToken),
             address(ipTokenDai),
             address(miltonDai),
@@ -390,7 +384,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
         prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai, address(josephDaiProxy));
+        prepareItfJosephDai(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
@@ -438,8 +432,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(
-            _admin,
+        ItfJosephUsdt josephUsdt = getItfJosephUsdt(
             address(usdtMockedToken),
             address(ipTokenUsdt),
             address(miltonUsdt),
@@ -450,7 +443,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
         prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
+        prepareItfJosephUsdt(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
@@ -498,8 +491,7 @@ contract MiltonEventsTest is
             address(_miltonSpreadModel),
             address(stanleyUsdt)
         );
-        (ProxyTester josephUsdtProxy, ItfJosephUsdt josephUsdt) = getItfJosephUsdt(
-            _admin,
+        ItfJosephUsdt josephUsdt = getItfJosephUsdt(
             address(usdtMockedToken),
             address(ipTokenUsdt),
             address(miltonUsdt),
@@ -510,7 +502,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
         prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt, address(josephUsdtProxy));
+        prepareItfJosephUsdt(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
