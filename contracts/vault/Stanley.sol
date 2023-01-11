@@ -87,7 +87,7 @@ abstract contract Stanley is
         return _asset;
     }
 
-    function getIvToken() external view returns(address) {
+    function getIvToken() external view returns (address) {
         return address(_ivToken);
     }
 
@@ -115,7 +115,7 @@ abstract contract Stanley is
 
     /**
      * @dev to deposit asset in higher apy strategy.
-     * @notice only owner can deposit.
+     * @notice only Milton can deposit
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount)

@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "../amm/spread/MiltonSpreadModelUsdt.sol";
-import "hardhat/console.sol";
 
 contract ItfMiltonSpreadModelUsdt is MiltonSpreadModelUsdt {
     bool internal _overrideParams;
