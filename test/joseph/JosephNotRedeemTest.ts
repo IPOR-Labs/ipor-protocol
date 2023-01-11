@@ -422,7 +422,7 @@ describe("Joseph Treasury", () => {
                 .connect(liquidityProvider)
                 .itfRedeem(params.totalAmount, params.openTimestamp),
             //then
-            "IPOR_402"
+            "IPOR_410"
         );
     });
     it("should NOT redeem ipTokens because redeem amount is to low", async () => {

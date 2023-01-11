@@ -106,4 +106,6 @@ module.exports = {
     ItfLiquidatorDai: "ItfLiquidatorDai",
     Multicall: "Multicall",
     IPOR: "IPOR",
+    IporAlgorithmProxy: "IporAlgorithmProxy",
+    IporAlgorithmImpl: "IporAlgorithmImpl",
 };

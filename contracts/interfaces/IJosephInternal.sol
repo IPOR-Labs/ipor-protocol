@@ -36,11 +36,12 @@ interface IJosephInternal {
     function getRedeemFeeRate() external pure returns (uint256);
 
     /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
-    /// Liquidity Pool utilization rate treshold during redemption of ipTokens by the trader.
+    /// Liquidity Pool utilization rate threshold during redemption of ipTokens by the trader.
     /// @return redeem Liquidity Pool max utilization rate
     function getRedeemLpMaxUtilizationRate() external pure returns (uint256);
 
     /// @notice Gets balance ratio config param presented ratio in 18 decimals between Milton and Stanley
+    /// @dev Value describe what percentage stay on Milton when rebalance cash between Milton and Stanley
     /// @return gets balance ratio config param between Milton and Stanley
     function getMiltonStanleyBalanceRatio() external view returns (uint256);
 
@@ -147,6 +148,15 @@ interface IJosephInternal {
     /// @notice check if address is allowed to rebalance Milton
     function isAppointedToRebalance(address appointed)  external view returns (bool);
 
+    /// @notice Gets auto rebalance threshold
+    /// @dev Auto rebalance threshold is a value which is used to determine if rebalance between Milton and Stanley should be executed.
+    /// @return auto rebalance threshold, represented in 18 decimals.
+    function getAutoRebalanceThreshold() external view returns (uint256);
+
+    /// @notice Sets auto rebalance threshold between Milton and Stanley.
+    /// @param newAutoRebalanceThreshold new auto rebalance threshold. Notice! Value represented without decimals. The value represents multiples of 1000.
+    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) external;
+
     /// @notice Emmited when Charlie Treasury address changed to new one
     /// @param changedBy account address who changed Charlie Treasury address
     /// @param oldCharlieTreasury old Charlie Treasury address
@@ -214,4 +224,13 @@ interface IJosephInternal {
     ///        false if address has been removed from the list of addresses allowed to rebalance Milton
     event AppointedToRebalanceChanged(address indexed changedBy,address indexed appointed, bool status);
 
+    /// @notice Emmited after the auto rebalance threshold has changed
+    /// @param changedBy account address that changed auto rebalance threshold
+    /// @param oldAutoRebalanceThresholdInThousands Old auto rebalance threshold, represented in 18 decimals
+    /// @param newAutoRebalanceThresholdInThousands New auto rebalance threshold, represented in 18 decimals
+    event AutoRebalanceThresholdChanged(
+        address indexed changedBy,
+        uint256 indexed oldAutoRebalanceThresholdInThousands,
+        uint256 indexed newAutoRebalanceThresholdInThousands
+    );
 }
