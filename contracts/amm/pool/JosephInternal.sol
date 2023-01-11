@@ -425,8 +425,6 @@ abstract contract JosephInternal is
         return _appointedToRebalance[appointed];
     }
 
-    function _getDecimals() internal pure virtual returns (uint256);
-
     function _getIporTotalBalance()
         internal
         view

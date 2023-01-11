@@ -124,6 +124,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         amm.joseph.setTreasuryManager(userTwo);
         amm.joseph.setCharlieTreasury(userTwo);
         amm.joseph.setCharlieTreasuryManager(userTwo);
+        amm.joseph.addAppointedToRebalance(userTwo);
 
         // then
 
@@ -140,6 +141,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         assertEq(amm.joseph.getCharlieTreasury(), userTwo);
         assertEq(charlieTreasuryManager, userOne);
         assertEq(amm.joseph.getCharlieTreasuryManager(), userTwo);
+        assertTrue(amm.joseph.isAppointedToRebalance(userTwo));
 
         assertEq(josephVersionBefore, 0);
         assertEq(amm.joseph.getVersion(), 2);
