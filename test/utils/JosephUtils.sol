@@ -22,7 +22,7 @@ contract JosephUtils is Test {
         address miltonUsdt,
         address miltonStorageUsdt,
         address stanleyUsdt
-    ) public returns (ItfJosephUsdt) {
+    ) public returns (ItfJoseph) {
         ItfJosephUsdt josephUsdtImpl = new ItfJosephUsdt();
 
         ERC1967Proxy josephUsdtProxy = new ERC1967Proxy(
@@ -38,7 +38,7 @@ contract JosephUtils is Test {
             )
         );
 
-        return ItfJosephUsdt(address(josephUsdtProxy));
+        return ItfJoseph(address(josephUsdtProxy));
     }
 
     function getItfJosephUsdc(
@@ -47,7 +47,7 @@ contract JosephUtils is Test {
         address miltonUsdc,
         address miltonStorageUsdc,
         address stanleyUsdc
-    ) public returns (ItfJosephUsdc) {
+    ) public returns (ItfJoseph) {
         ItfJosephUsdc josephUsdcImpl = new ItfJosephUsdc();
 
         ERC1967Proxy josephUsdcProxy = new ERC1967Proxy(
@@ -63,7 +63,7 @@ contract JosephUtils is Test {
             )
         );
 
-        return ItfJosephUsdc(address(josephUsdcProxy));
+        return ItfJoseph(address(josephUsdcProxy));
     }
 
     function getItfJosephDai(
@@ -72,7 +72,7 @@ contract JosephUtils is Test {
         address miltonDai,
         address miltonStorageDai,
         address stanleyDai
-    ) public returns (ItfJosephDai) {
+    ) public returns (ItfJoseph) {
         ItfJosephDai josephDaiImpl = new ItfJosephDai();
 
         ERC1967Proxy josephDaiProxy = new ERC1967Proxy(
@@ -88,7 +88,7 @@ contract JosephUtils is Test {
             )
         );
 
-        return ItfJosephDai(address(josephDaiProxy));
+        return ItfJoseph(address(josephDaiProxy));
     }
 
     function prepareJoseph(IJosephInternal joseph) public {
