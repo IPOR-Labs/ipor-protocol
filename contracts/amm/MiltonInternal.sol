@@ -73,7 +73,7 @@ abstract contract MiltonInternal is
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
 
-    uint32 internal _autoUpdateIporIndexTreshold;
+    uint32 internal _autoUpdateIporIndexThreshold;
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -251,19 +251,19 @@ abstract contract MiltonInternal is
         return address(_miltonSpreadModel);
     }
 
-    function setAutoUpdateIporIndexTreshold(uint256 newTreshold)
+    function setAutoUpdateIporIndexThreshold(uint256 newThreshold)
         external
         override
         onlyOwner
         whenNotPaused
     {
-        uint256 oldTreshold = _autoUpdateIporIndexTreshold;
-        _autoUpdateIporIndexTreshold = newTreshold.toUint32();
-        emit AutoUpdateIporIndexTresholdChanged(_msgSender(), oldTreshold, newTreshold);
+        uint256 oldThreshold = _autoUpdateIporIndexThreshold;
+        _autoUpdateIporIndexThreshold = newThreshold.toUint32();
+        emit AutoUpdateIporIndexThresholdChanged(_msgSender(), oldThreshold, newThreshold);
     }
 
-    function getAutoUpdateIporIndexTreshold() external view override returns (uint256) {
-        return _autoUpdateIporIndexTreshold;
+    function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
+        return _autoUpdateIporIndexThreshold;
     }
 
     function _getDecimals() internal pure virtual returns (uint256);

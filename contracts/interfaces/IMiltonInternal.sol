@@ -201,12 +201,12 @@ interface IMiltonInternal {
     function setMiltonSpreadModel(address newMiltonSpreadModel) external;
 
     /// @notice Sets new treshold for auto update of ipor index. Function available only to the Owner.
-    /// @param newTreshold new treshold for auto update of IPOR Index
-    function setAutoUpdateIporIndexTreshold(uint256 newTreshold) external;
+    /// @param newThreshold new treshold for auto update of IPOR Index
+    function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external;
 
     /// @notice Gets treshold for auto update of ipor index.
     /// @return treshold for auto update of IPOR Index
-    function getAutoUpdateIporIndexTreshold() external view returns (uint256);
+    function getAutoUpdateIporIndexThreshold() external view returns (uint256);
 
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
@@ -228,13 +228,13 @@ interface IMiltonInternal {
         address indexed newMiltonSpreadModel
     );
 
-    /// @notice Emmited when AutoUpdateIporIndexTreshold is changed by its owner.
-    /// @param changedBy account address that has changed AutoUpdateIporIndexTreshold
-    /// @param oldAutoUpdateIporIndexTreshold AutoUpdateIporIndexTreshold's old value
-    /// @param newAutoUpdateIporIndexTreshold AutoUpdateIporIndexTreshold's new value
-    event AutoUpdateIporIndexTresholdChanged(
+    /// @notice Emmited when AutoUpdateIporIndexThreshold is changed by its owner.
+    /// @param changedBy account address that has changed AutoUpdateIporIndexThreshold
+    /// @param oldAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's old value
+    /// @param newAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's new value
+    event AutoUpdateIporIndexThresholdChanged(
         address indexed changedBy,
-        uint256 indexed oldAutoUpdateIporIndexTreshold,
-        uint256 indexed newAutoUpdateIporIndexTreshold
+        uint256 indexed oldAutoUpdateIporIndexThreshold,
+        uint256 indexed newAutoUpdateIporIndexThreshold
     );
 }
