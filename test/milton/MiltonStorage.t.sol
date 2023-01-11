@@ -13,6 +13,7 @@ import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
+import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
@@ -24,7 +25,6 @@ import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
@@ -77,9 +77,8 @@ contract MiltonStorageTest is
 
     function testShouldTransferOwnershipSimpleCase1() public {
         // given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
         vm.prank(_userTwo);
         miltonStorageDai.confirmTransferOwnership();
@@ -91,7 +90,7 @@ contract MiltonStorageTest is
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        (, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userThree);
@@ -100,9 +99,8 @@ contract MiltonStorageTest is
 
     function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
         // given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
         // then
         vm.expectRevert("IPOR_007");
@@ -112,9 +110,8 @@ contract MiltonStorageTest is
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
         // given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
         vm.prank(_userTwo);
         miltonStorageDai.confirmTransferOwnership();
@@ -125,36 +122,32 @@ contract MiltonStorageTest is
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
         vm.prank(_userTwo);
         miltonStorageDai.confirmTransferOwnership();
         vm.expectRevert("Ownable: caller is not the owner");
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userThree);
     }
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         // when
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.transferOwnership(_userTwo);
         vm.prank(_userOne);
         // then
         address actualOwner = miltonStorageDai.owner();
-        assertEq(actualOwner, address(miltonStorageDaiProxy));
+        assertEq(actualOwner, _admin);
     }
 
     function testShouldUpdateMiltonStorageWhenOpenPositionAndCallerHasRightsToUpdate() public {
         // given
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -162,7 +155,6 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(mockCase0StanleyDai)
         );
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.setMilton(_miltonStorageAddress);
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
         uint256 iporPublicationFee = mockCase0MiltonDai.getIporPublicationFee();
@@ -177,7 +169,7 @@ contract MiltonStorageTest is
         // given
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -185,7 +177,6 @@ contract MiltonStorageTest is
             address(_miltonSpreadModel),
             address(stanleyDai)
         );
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.setMilton(_miltonStorageAddress);
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
         uint256 iporPublicationFee = mockCase0MiltonDai.getIporPublicationFee();
@@ -197,8 +188,7 @@ contract MiltonStorageTest is
 
     function testShouldNotAddLiquidityWhenAssetAmountIsZero() public {
         //given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        vm.prank(address(miltonStorageDaiProxy));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         miltonStorageDai.setJoseph(_liquidityProvider);
         // when
         vm.expectRevert("IPOR_328");
@@ -213,8 +203,7 @@ contract MiltonStorageTest is
 
     function testShouldNotUpdateStorageWhenTransferredAmountToTreasuryIsGreaterThanBalance() public {
         //given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        vm.prank(address(miltonStorageDaiProxy));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         miltonStorageDai.setJoseph(_liquidityProvider);
         // when
         vm.expectRevert("IPOR_330");
@@ -224,8 +213,7 @@ contract MiltonStorageTest is
 
     function testShouldNotUpdateStorageWhenVaultBalanceIsLowerThanDepositAmount() public {
         //given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        vm.prank(address(miltonStorageDaiProxy));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         miltonStorageDai.setMilton(_miltonStorageAddress);
         // when
         vm.expectRevert("IPOR_329");
@@ -235,8 +223,7 @@ contract MiltonStorageTest is
 
     function testShouldNotUpdateStorageWhenTransferredAmountToCharliesGreaterThanBalacer() public {
         //given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        vm.prank(address(miltonStorageDaiProxy));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         miltonStorageDai.setJoseph(_liquidityProvider);
         // when
         vm.expectRevert("IPOR_326");
@@ -246,8 +233,7 @@ contract MiltonStorageTest is
 
     function testShouldNotUpdateStorageWhenSendZero() public {
         //given
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
-        vm.prank(address(miltonStorageDaiProxy));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         miltonStorageDai.setJoseph(_liquidityProvider);
         // when
         vm.expectRevert("IPOR_006");
@@ -259,7 +245,7 @@ contract MiltonStorageTest is
         //given
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -278,7 +264,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -295,7 +281,6 @@ contract MiltonStorageTest is
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.setMilton(_miltonStorageAddress);
         vm.prank(address(mockCase0MiltonDai));
         IporTypes.IporSwapMemory memory derivativeItem = miltonStorageDai.getSwapPayFixed(1);
@@ -310,7 +295,6 @@ contract MiltonStorageTest is
             95 * TestConstants.D16,
             TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.setMilton(address(mockCase0MiltonDai));
     }
 
@@ -318,7 +302,7 @@ contract MiltonStorageTest is
         //given
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
             address(iporOracle),
@@ -337,7 +321,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -354,7 +338,6 @@ contract MiltonStorageTest is
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonUsdt
         );
-        vm.prank(address(miltonStorageUsdtProxy));
         miltonStorageUsdt.setMilton(_miltonStorageAddress);
         vm.prank(address(mockCase0MiltonUsdt));
         IporTypes.IporSwapMemory memory derivativeItem = miltonStorageUsdt.getSwapPayFixed(1);
@@ -369,7 +352,6 @@ contract MiltonStorageTest is
             95 * TestConstants.D16,
             TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
-        vm.prank(address(miltonStorageUsdtProxy));
         miltonStorageUsdt.setMilton(address(mockCase0MiltonUsdt));
     }
 
@@ -377,7 +359,7 @@ contract MiltonStorageTest is
         //given
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -396,7 +378,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase0MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
         );
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -413,7 +395,6 @@ contract MiltonStorageTest is
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(address(miltonStorageDaiProxy));
         miltonStorageDai.setMilton(_miltonStorageAddress);
         vm.prank(address(mockCase0MiltonDai));
         IporTypes.IporSwapMemory memory derivativeItem = miltonStorageDai.getSwapPayFixed(1);
@@ -433,7 +414,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -453,7 +434,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -467,7 +448,6 @@ contract MiltonStorageTest is
         );
         // when
         vm.expectRevert("IPOR_009");
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
         // then
@@ -477,7 +457,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -497,7 +477,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -510,7 +490,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -522,7 +501,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -542,7 +521,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -555,7 +534,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, 10, 10);
         // then
@@ -565,7 +543,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffsetZeroAndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -585,7 +563,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -598,7 +576,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 11, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -608,7 +585,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -628,7 +605,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -641,7 +618,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, 10, 10);
         // then
@@ -651,7 +627,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -671,7 +647,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -684,7 +660,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, 20, 10);
         // then
@@ -696,7 +671,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -716,7 +691,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -729,7 +704,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 20, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsPayFixed(_userTwo, 20, 10);
         // then
@@ -739,7 +713,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -759,7 +733,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -773,7 +747,6 @@ contract MiltonStorageTest is
         );
         // when
         vm.expectRevert("IPOR_009");
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
         // then
@@ -785,7 +758,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -805,7 +778,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -818,7 +791,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 0, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -830,7 +802,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -850,7 +822,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -863,7 +835,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, 10, 10);
         // then
@@ -875,7 +846,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -895,7 +866,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -908,7 +879,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 11, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, 10, 10);
         // then
@@ -920,7 +890,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -940,7 +910,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -953,7 +923,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, 10, 10);
         // then
@@ -963,7 +932,7 @@ contract MiltonStorageTest is
 
     function testGetSwapsReceiveFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -983,7 +952,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -996,7 +965,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageUsdt.getSwapsReceiveFixed(_userTwo, 20, 10);
         // then
@@ -1006,7 +974,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1026,7 +994,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1040,7 +1008,6 @@ contract MiltonStorageTest is
         );
         // when
         vm.expectRevert("IPOR_009");
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapPayFixedIds(_userTwo, 0, 0);
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1051,7 +1018,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1071,7 +1038,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1084,7 +1051,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) =
             miltonStorageUsdt.getSwapPayFixedIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1096,7 +1062,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1116,7 +1082,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1129,7 +1095,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapPayFixedIds(_userTwo, 10, 10);
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1140,7 +1105,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1160,7 +1125,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1173,7 +1138,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 11, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) =
             miltonStorageUsdt.getSwapPayFixedIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1183,7 +1147,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1203,7 +1167,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1216,7 +1180,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapPayFixedIds(_userTwo, 10, 10);
         // then
         assertEq(totalCount, 22);
@@ -1225,7 +1188,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1245,7 +1208,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1258,7 +1221,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapPayFixedIds(_userTwo, 20, 10);
         // then
         assertEq(totalCount, 22);
@@ -1269,7 +1231,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1289,7 +1251,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1302,7 +1264,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 20, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapPayFixedIds(_userTwo, 20, 10);
         // then
         assertEq(totalCount, 20);
@@ -1311,7 +1272,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1331,7 +1292,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1345,7 +1306,6 @@ contract MiltonStorageTest is
         );
         // when
         vm.expectRevert("IPOR_009");
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) =
             miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
         // then
@@ -1357,7 +1317,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1377,7 +1337,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1390,7 +1350,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) =
             miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1402,7 +1361,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1422,7 +1381,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1435,7 +1394,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, 10, 10);
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1446,7 +1404,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1466,7 +1424,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1479,7 +1437,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 11, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, 10, 10);
         // then
         assertEq(totalCount, 11);
@@ -1490,7 +1447,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1510,7 +1467,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1523,7 +1480,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, 10, 10);
         // then
         assertEq(totalCount, 22);
@@ -1534,7 +1490,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1554,7 +1510,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1567,7 +1523,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 22, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, uint256[] memory ids) = miltonStorageUsdt.getSwapReceiveFixedIds(_userTwo, 20, 10);
         // then
         assertEq(totalCount, 22);
@@ -1576,7 +1531,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1596,7 +1551,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1613,7 +1568,6 @@ contract MiltonStorageTest is
         );
         // when
         vm.expectRevert("IPOR_009");
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
         // then
@@ -1623,7 +1577,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1643,7 +1597,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1659,7 +1613,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1669,7 +1622,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1689,7 +1642,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1705,7 +1658,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, 10, 10);
         // then
@@ -1717,7 +1669,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1737,7 +1689,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1753,7 +1705,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, TestConstants.ZERO, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1765,7 +1716,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1785,7 +1736,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1801,7 +1752,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 5, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1813,7 +1763,7 @@ contract MiltonStorageTest is
         public
     {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1833,7 +1783,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1849,7 +1799,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 3, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1860,7 +1809,7 @@ contract MiltonStorageTest is
     function testGetSwapIdsShouldReturnLimited10SwapsWhenUserHas9PayFixedSwapsAnd12ReceiveFixedSwapsAndOffsetZeroAndPageSize10(
     ) public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1880,7 +1829,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1896,7 +1845,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 12, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, TestConstants.ZERO, 10);
         // then
@@ -1906,7 +1854,7 @@ contract MiltonStorageTest is
 
     function testGetSwapIdsShouldReturnEmptyArrayWhenUserHasMoreSwapsThanPageSizeAndOffset80AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_usdtMockedToken), 0);
-        (ProxyTester miltonStorageUsdtProxy, MiltonStorage miltonStorageUsdt) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -1926,7 +1874,7 @@ contract MiltonStorageTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMiltonStorage(
-            miltonStorageUsdt, miltonStorageUsdtProxy, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
+            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
         );
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt, address(mockCase0JosephUsdtProxy));
@@ -1942,7 +1890,6 @@ contract MiltonStorageTest is
             _userTwo, mockCase0MiltonUsdt, 12, TestConstants.USD_100_6DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
-        vm.prank(address(miltonStorageUsdtProxy));
         (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) =
             miltonStorageUsdt.getSwapIds(_userTwo, 80, 10);
         // then

@@ -2,52 +2,44 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../utils/TestConstants.sol";
+import "../../contracts/interfaces/IMiltonStorage.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract MiltonStorageUtils is Test {
     /// ------------------- MILTONSTORAGE -------------------
     struct MiltonStorages {
-        ProxyTester miltonStorageUsdtProxy;
         MiltonStorage miltonStorageUsdt;
-        ProxyTester miltonStorageUsdcProxy;
         MiltonStorage miltonStorageUsdc;
-        ProxyTester miltonStorageDaiProxy;
         MiltonStorage miltonStorageDai;
     }
     /// ------------------- MILTONSTORAGE -------------------
 
     function prepareMiltonStorage(
         MiltonStorage miltonStorage,
-        ProxyTester miltonStorageProxy,
         address joseph,
         address milton
     ) public returns (MiltonStorage) {
-        vm.prank(address(miltonStorageProxy));
         miltonStorage.setJoseph(joseph);
-        vm.prank(address(miltonStorageProxy));
         miltonStorage.setMilton(milton);
         return miltonStorage;
     }
 
-    function getMiltonStorage(address deployer) public returns (ProxyTester, MiltonStorage) {
-        ProxyTester miltonStorageProxy = new ProxyTester();
-        miltonStorageProxy.setType("uups");
-        MiltonStorage miltonStorageFactory = new MiltonStorage();
-        address miltonStorageProxyAddress = miltonStorageProxy.deploy(
-            address(miltonStorageFactory), deployer, abi.encodeWithSignature("initialize()", "")
-        );
-        MiltonStorage miltonStorage = MiltonStorage(miltonStorageProxyAddress);
-        return (miltonStorageProxy, miltonStorage);
+    function getMiltonStorage() public returns (MiltonStorage) {
+        MiltonStorage miltonStorageImplementation = new MiltonStorage();
+        ERC1967Proxy miltonStorageProxy = new ERC1967Proxy(address(miltonStorageImplementation), abi.encodeWithSignature( "initialize()", ""));
+        MiltonStorage miltonStorage = MiltonStorage(address(miltonStorageProxy));
+        return miltonStorage;
     }
 
-    function getMiltonStorages(address deployer) public returns (MiltonStorages memory) {
+    function getMiltonStorages() public returns (MiltonStorages memory) {
         MiltonStorages memory miltonStorages;
-        (miltonStorages.miltonStorageUsdtProxy, miltonStorages.miltonStorageUsdt) = getMiltonStorage(deployer);
-        (miltonStorages.miltonStorageUsdcProxy, miltonStorages.miltonStorageUsdc) = getMiltonStorage(deployer);
-        (miltonStorages.miltonStorageDaiProxy, miltonStorages.miltonStorageDai) = getMiltonStorage(deployer);
+        miltonStorages.miltonStorageUsdt = getMiltonStorage();
+        miltonStorages.miltonStorageUsdc = getMiltonStorage();
+        miltonStorages.miltonStorageDai = getMiltonStorage();
         return miltonStorages;
     }
 

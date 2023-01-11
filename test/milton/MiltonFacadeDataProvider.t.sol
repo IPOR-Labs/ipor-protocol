@@ -78,7 +78,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -131,19 +131,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -222,7 +219,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -275,19 +272,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -393,7 +387,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -446,19 +440,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -567,7 +558,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -620,19 +611,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -737,7 +725,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -790,19 +778,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -904,7 +889,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -957,19 +942,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -1073,7 +1055,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -1126,19 +1108,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -1231,7 +1210,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -1284,19 +1263,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
@@ -1389,7 +1365,7 @@ contract MiltonFacadeDataProviderTest is
             getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        MiltonStorages memory miltonStorages = getMiltonStorages(_admin);
+        MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = getMiltonStorageAddresses(
             address(miltonStorages.miltonStorageUsdt),
             address(miltonStorages.miltonStorageUsdc),
@@ -1442,19 +1418,16 @@ contract MiltonFacadeDataProviderTest is
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdt,
-            miltonStorages.miltonStorageUsdtProxy,
             address(mockCase0Josephs.mockCase0JosephUsdt),
             address(mockCase0Miltons.mockCase0MiltonUsdt)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageUsdc,
-            miltonStorages.miltonStorageUsdcProxy,
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Miltons.mockCase0MiltonUsdc)
         );
         prepareMiltonStorage(
             miltonStorages.miltonStorageDai,
-            miltonStorages.miltonStorageDaiProxy,
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );

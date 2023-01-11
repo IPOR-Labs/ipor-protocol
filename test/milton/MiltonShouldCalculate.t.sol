@@ -14,6 +14,9 @@ import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
+import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/facades/MiltonFacadeDataProvider.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
@@ -27,8 +30,6 @@ import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/milton/MockCase2MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
 contract MiltonShouldCalculateTest is
     Test,
@@ -80,7 +81,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(1 * TestConstants.D17);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -99,7 +100,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase2MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase2MiltonDai)
         );
         prepareMockCase2MiltonDai(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -129,9 +130,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -175,7 +174,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -194,7 +193,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase2MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase2MiltonDai)
         );
         prepareMockCase2MiltonDai(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -224,9 +223,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -270,7 +267,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -289,7 +286,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase2MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase2MiltonDai)
         );
         prepareMockCase2MiltonDai(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -319,9 +316,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -362,7 +357,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(4 * 10 ** 16);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -381,7 +376,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase2MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase2MiltonDai)
         );
         prepareMockCase2MiltonDai(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -411,9 +406,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -454,7 +447,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(10 * 10 ** 16);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -473,7 +466,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase3MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase3MiltonDai)
         );
         prepareMockCase3MiltonDai(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -503,9 +496,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -549,7 +540,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -568,7 +559,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase3MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase3MiltonDai)
         );
         prepareMockCase3MiltonDai(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -598,9 +589,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -644,7 +633,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuotePayFixed(121 * 10 ** 16);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -663,7 +652,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase3MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase3MiltonDai)
         );
         prepareMockCase3MiltonDai(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -693,9 +682,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userTwo); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
@@ -734,7 +721,7 @@ contract MiltonShouldCalculateTest is
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(4 * 10 ** 16);
         ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        (ProxyTester miltonStorageDaiProxy, MiltonStorage miltonStorageDai) = getMiltonStorage(_admin);
+        MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -753,7 +740,7 @@ contract MiltonShouldCalculateTest is
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMiltonStorage(
-            miltonStorageDai, miltonStorageDaiProxy, address(mockCase0JosephDai), address(mockCase3MiltonDai)
+            miltonStorageDai, address(mockCase0JosephDai), address(mockCase3MiltonDai)
         );
         prepareMockCase3MiltonDai(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai, address(mockCase0JosephDaiProxy));
@@ -783,9 +770,7 @@ contract MiltonShouldCalculateTest is
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
-        vm.prank(address(miltonStorageDaiProxy));
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
-        vm.prank(address(miltonStorageDaiProxy));
         (, IporTypes.IporSwapMemory[] memory swaps) =
             miltonStorageDai.getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (,, int256 soap) =
