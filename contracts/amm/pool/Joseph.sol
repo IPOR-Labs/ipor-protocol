@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
+
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/errors/JosephErrors.sol";
@@ -242,9 +243,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceTreshold = _getAutoRebalanceThreshold() * Constants.D21;
+        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold();
 
-        if (autoRebalanceTreshold > 0 && wadOperationAmount >= autoRebalanceTreshold) {
+        if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
                 IporMath.convertToWad(
                     IERC20Upgradeable(asset).balanceOf(address(milton)),

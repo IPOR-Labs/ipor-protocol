@@ -51,7 +51,7 @@ abstract contract JosephInternal is
     uint32 internal _maxLpAccountContribution;
 
     /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals. Value represents multiplication of 1000.
-    uint32 internal _autoRebalanceThreshold;
+    uint32 internal _autoRebalanceThresholdInThousands;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -108,7 +108,7 @@ abstract contract JosephInternal is
         _miltonStanleyBalanceRatio = 85e16;
         _maxLiquidityPoolBalance = 3_000_000;
         _maxLpAccountContribution = 50_000;
-        _autoRebalanceThreshold = 50;
+        _autoRebalanceThresholdInThousands = 50;
     }
 
     function getVersion() external pure virtual override returns (uint256) {
@@ -407,16 +407,16 @@ abstract contract JosephInternal is
     }
 
     function _getAutoRebalanceThreshold() internal view returns (uint256) {
-        return _autoRebalanceThreshold * Constants.D21
+        return _autoRebalanceThresholdInThousands * Constants.D21;
     }
 
-    function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) internal {
-        uint256 oldAutoRebalanceThreshold = _autoRebalanceThreshold;
-        _autoRebalanceThreshold = newAutoRebalanceThreshold.toUint32();
+    function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThresholdInThousands) internal {
+        uint256 oldAutoRebalanceThresholdInThousands = _autoRebalanceThresholdInThousands;
+        _autoRebalanceThresholdInThousands = newAutoRebalanceThresholdInThousands.toUint32();
         emit AutoRebalanceThresholdChanged(
             _msgSender(),
-            oldAutoRebalanceThreshold * Constants.D18,
-            newAutoRebalanceThreshold * Constants.D18
+            oldAutoRebalanceThresholdInThousands * Constants.D18,
+            newAutoRebalanceThresholdInThousands * Constants.D18
         );
     }
 

@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
@@ -373,7 +372,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testProvideLiquidityAndNOTRebalanceUsdtCaseBelowTreshold() public {
+    function testProvideLiquidityAndNOTRebalanceUsdtCaseBelowThreshold() public {
         //given
         _setupSmartContractsUsdt();
 
@@ -397,7 +396,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testProvideLiquidityAndNOTRebalanceUsdtCaseAutoRebalanceTresholdZERO() public {
+    function testProvideLiquidityAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZERO() public {
         //given
         _setupSmartContractsUsdt();
 
@@ -983,7 +982,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 stanleyInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e6;
 
-        // will stay because treshold is not achieved and Milton has cash for redeem
+        // will stay because threshold is not achieved and Milton has cash for redeem
         uint256 redeemFee = 750 * 1e6;
         uint256 expectedMiltonBalance = 50000 * 1e6 + redeemFee;
         uint256 expectedStanleyBalance = stanleyInitBalance;
@@ -1273,7 +1272,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 stanleyInitBalance = 800000 * 1e18;
         uint256 userPosition = 150000 * 1e18;
 
-        // will stay because treshold is not achieved and Milton has cash for redeem
+        // will stay because threshold is not achieved and Milton has cash for redeem
         uint256 redeemFee = 750 * 1e18;
         uint256 expectedMiltonBalance = 50000 * 1e18 + redeemFee;
         uint256 expectedStanleyBalance = stanleyInitBalance;
@@ -1337,7 +1336,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testRedeemAndNoRebalanceDaiCaseBelowTresholdBecauseOfFee() public {
+    function testRedeemAndNoRebalanceDaiCaseBelowThresholdBecauseOfFee() public {
         //given
         _setupSmartContractsDai();
 
@@ -1361,7 +1360,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseBelowTresholdMiltonBalanceIsOK() public {
+    function testRedeemAndNOTRebalanceUsdtCaseBelowThresholdMiltonBalanceIsOK() public {
         //given
         _setupSmartContractsUsdt();
 
@@ -1385,7 +1384,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testRedeemAndRebalanceUsdtCaseBelowTresholdButMiltonBalanceTooLow() public {
+    function testRedeemAndRebalanceUsdtCaseBelowThresholdButMiltonBalanceTooLow() public {
         //given
         _setupSmartContractsUsdt();
 
@@ -1409,7 +1408,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceTresholdZEROMiltonBalanceTooLow()
+    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceTooLow()
         public
     {
         //given
@@ -1461,7 +1460,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         assertEq(_usdt.balanceOf(address(_itfMiltonUsdt)), expectedMiltonBalance);
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceTresholdZEROMiltonBalanceIsOK() public {
+    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceIsOK() public {
         //given
         _setupSmartContractsUsdt();
 

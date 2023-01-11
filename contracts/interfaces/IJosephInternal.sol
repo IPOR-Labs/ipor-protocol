@@ -36,7 +36,7 @@ interface IJosephInternal {
     function getRedeemFeeRate() external pure returns (uint256);
 
     /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
-    /// Liquidity Pool utilization rate treshold during redemption of ipTokens by the trader.
+    /// Liquidity Pool utilization rate threshold during redemption of ipTokens by the trader.
     /// @return redeem Liquidity Pool max utilization rate
     function getRedeemLpMaxUtilizationRate() external pure returns (uint256);
 
@@ -207,11 +207,11 @@ interface IJosephInternal {
     );
     /// @notice Emmited after the auto rebalance threshold has changed
     /// @param changedBy account address that changed auto rebalance threshold
-    /// @param oldAutoRebalanceThreshold Old auto rebalance threshold, represented in 18 decimals
-    /// @param newAutoRebalanceThreshold New auto rebalance threshold, represented in 18 decimals
+    /// @param oldAutoRebalanceThresholdInThousands Old auto rebalance threshold, represented in 18 decimals
+    /// @param newAutoRebalanceThresholdInThousands New auto rebalance threshold, represented in 18 decimals
     event AutoRebalanceThresholdChanged(
         address indexed changedBy,
-        uint256 indexed oldAutoRebalanceThreshold,
-        uint256 indexed newAutoRebalanceThreshold
+        uint256 indexed oldAutoRebalanceThresholdInThousands,
+        uint256 indexed newAutoRebalanceThresholdInThousands
     );
 }
