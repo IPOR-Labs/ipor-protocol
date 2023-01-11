@@ -50,6 +50,7 @@ const cUSDT = "0xf650c3d88d12db855b8bf7d11be6c55a4e07dcc9";
 const cUSDC = "0x39aa39c021dfbae8fac545936693ac917d5e7563";
 const cDAI = "0x5d3a536e4d6dbd6114cc1ead35777bab948e3643";
 const comptroller = "0x3d9819210a31b4961b30ef54be2aed79b9c9cd3b";
+const iporAlgorithm = "0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140";
 
 async function main() {
     const [deployer] = await ethers.getSigners();
@@ -499,6 +500,7 @@ async function main() {
     await stanleyDaiProxy.setMilton(miltonDaiProxy.address);
 
     await iporOracleProxy.addUpdater(await deployer.getAddress());
+    await iporOracleProxy.setAlgorithmAddress(iporAlgorithm);
 
     await strategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
     await strategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
