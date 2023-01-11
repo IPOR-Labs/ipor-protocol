@@ -106,9 +106,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -152,9 +150,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -200,9 +196,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -247,9 +241,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -295,9 +287,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -345,9 +335,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -398,9 +386,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -455,9 +441,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-        prepareMiltonStorage(
-            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
-        );
+        prepareMiltonStorage(miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -564,12 +548,8 @@ contract MiltonSoapTest is
             address(mockCase0Josephs.mockCase0JosephDai),
             mockCase1StanleyAddresses[2]
         );
-        prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt
-        );
-        prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai
-        );
+        prepareMockCase0JosephUsdt(mockCase0Josephs.mockCase0JosephUsdt);
+        prepareMockCase0JosephDai(mockCase0Josephs.mockCase0JosephDai);
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
         vm.prank(_userOne);
@@ -631,9 +611,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -689,9 +667,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -803,12 +779,8 @@ contract MiltonSoapTest is
             address(mockCase0Josephs.mockCase0JosephDai),
             mockCase1StanleyAddresses[2]
         );
-        prepareMockCase0JosephUsdt(
-            mockCase0Josephs.mockCase0JosephUsdt
-        );
-        prepareMockCase0JosephDai(
-            mockCase0Josephs.mockCase0JosephDai
-        );
+        prepareMockCase0JosephUsdt(mockCase0Josephs.mockCase0JosephUsdt);
+        prepareMockCase0JosephDai(mockCase0Josephs.mockCase0JosephDai);
         prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
         prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
         vm.prank(_userOne);
@@ -882,9 +854,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -941,9 +911,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-        prepareMiltonStorage(
-            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
-        );
+        prepareMiltonStorage(miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -998,9 +966,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1059,9 +1025,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1116,9 +1080,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1185,9 +1147,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1251,9 +1211,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1305,9 +1263,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1374,9 +1330,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1448,9 +1402,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1522,9 +1474,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1596,9 +1546,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1670,9 +1618,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1744,9 +1690,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(
-            miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai)
-        );
+        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareMockCase0JosephDai(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
@@ -1799,7 +1743,7 @@ contract MiltonSoapTest is
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 3 * 10**16);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1818,9 +1762,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-        prepareMiltonStorage(
-            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
-        );
+        prepareMiltonStorage(miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -1873,7 +1815,7 @@ contract MiltonSoapTest is
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 3 * 10**16);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 3 * 10 ** 16);
         MockCase0Stanley mockCase0StanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1892,9 +1834,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-        prepareMiltonStorage(
-            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
-        );
+        prepareMiltonStorage(miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -1966,9 +1906,7 @@ contract MiltonSoapTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-        prepareMiltonStorage(
-            miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt)
-        );
+        prepareMiltonStorage(miltonStorageUsdt, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMockCase0MiltonUsdt(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareMockCase0JosephUsdt(mockCase0JosephUsdt);
         prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -2015,5 +1953,4 @@ contract MiltonSoapTest is
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
         assertEq(soap75Days, 0);
     }
-
 }

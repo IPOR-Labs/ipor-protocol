@@ -23,16 +23,14 @@ contract IporOracleUtils is Test {
         uint64[] memory exponentialWeightedMovingVariances
     ) internal returns (ItfIporOracle) {
         ItfIporOracle iporOracleImplementation = new ItfIporOracle();
-        ERC1967Proxy iporOracleProxy = new ERC1967Proxy(address(iporOracleImplementation), abi.encodeWithSignature("initialize(address[],uint32[],uint64[],uint64[])", tokenAddresses, lastUpdateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances));
+        ERC1967Proxy iporOracleProxy =
+        new ERC1967Proxy(address(iporOracleImplementation), abi.encodeWithSignature("initialize(address[],uint32[],uint64[],uint64[])", tokenAddresses, lastUpdateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances));
         ItfIporOracle iporOracle = ItfIporOracle(address(iporOracleProxy));
         iporOracle.addUpdater(updater);
         return iporOracle;
     }
 
-    function getIporOracleOneAsset(address updater, address asset, uint64 ema)
-        public
-        returns (ItfIporOracle)
-    {
+    function getIporOracleOneAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
         address[] memory assets = new address[](1);
         assets[0] = asset;
         uint32[] memory updateTimestamps = new uint32[](1);

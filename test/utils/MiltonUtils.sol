@@ -422,16 +422,15 @@ contract MiltonUtils is Test {
         address stanleyUsdt
     ) public returns (MockCase6MiltonUsdt) {
         MockCase6MiltonUsdt mockCase6MiltonUsdtImplementation = new MockCase6MiltonUsdt();
-        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(address(mockCase6MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
+        ERC1967Proxy miltonUsdtProxy =
+        new ERC1967Proxy(address(mockCase6MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         MockCase6MiltonUsdt miltonUsdt = MockCase6MiltonUsdt(address(miltonUsdtProxy));
         return miltonUsdt;
     }
 
-    function prepareMockCase6MiltonUsdt(
-        MockCase6MiltonUsdt miltonUsdt,
-        address josephUsdt,
-        address stanleyUsdt
-    ) public {
+    function prepareMockCase6MiltonUsdt(MockCase6MiltonUsdt miltonUsdt, address josephUsdt, address stanleyUsdt)
+        public
+    {
         miltonUsdt.setJoseph(josephUsdt);
         miltonUsdt.setupMaxAllowanceForAsset(josephUsdt);
         miltonUsdt.setupMaxAllowanceForAsset(stanleyUsdt);
@@ -445,16 +444,15 @@ contract MiltonUtils is Test {
         address stanleyUsdc
     ) public returns (MockCase6MiltonUsdc) {
         MockCase6MiltonUsdc mockCase6MiltonUsdcImplementation = new MockCase6MiltonUsdc();
-        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(address(mockCase6MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
+        ERC1967Proxy miltonUsdcProxy =
+        new ERC1967Proxy(address(mockCase6MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         MockCase6MiltonUsdc miltonUsdc = MockCase6MiltonUsdc(address(miltonUsdcProxy));
         return miltonUsdc;
     }
 
-    function prepareMockCase6MiltonUsdc(
-        MockCase6MiltonUsdc miltonUsdc,
-        address josephUsdc,
-        address stanleyUsdc
-    ) public {
+    function prepareMockCase6MiltonUsdc(MockCase6MiltonUsdc miltonUsdc, address josephUsdc, address stanleyUsdc)
+        public
+    {
         miltonUsdc.setJoseph(josephUsdc);
         miltonUsdc.setupMaxAllowanceForAsset(josephUsdc);
         miltonUsdc.setupMaxAllowanceForAsset(stanleyUsdc);
@@ -468,16 +466,13 @@ contract MiltonUtils is Test {
         address stanleyDai
     ) public returns (MockCase6MiltonDai) {
         MockCase6MiltonDai mockCase6MiltonDaiImplementation = new MockCase6MiltonDai();
-        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         MockCase6MiltonDai miltonDai = MockCase6MiltonDai(address(miltonDaiProxy));
         return miltonDai;
     }
 
-    function prepareMockCase6MiltonDai(
-        MockCase6MiltonDai miltonDai,
-        address josephDai,
-        address stanleyDai
-    ) public {
+    function prepareMockCase6MiltonDai(MockCase6MiltonDai miltonDai, address josephDai, address stanleyDai) public {
         miltonDai.setJoseph(josephDai);
         miltonDai.setupMaxAllowanceForAsset(josephDai);
         miltonDai.setupMaxAllowanceForAsset(stanleyDai);
