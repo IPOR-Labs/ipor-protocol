@@ -50,7 +50,7 @@ abstract contract JosephInternal is
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
 
-    /// @dev The threshold for auto-rebalancing the pool. Assume x1000 in calculation.
+    /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals. Value represents multiplication of 1000.
     uint32 internal _autoRebalanceThreshold;
 
     modifier onlyCharlieTreasuryManager() {
@@ -407,7 +407,7 @@ abstract contract JosephInternal is
     }
 
     function _getAutoRebalanceThreshold() internal view returns (uint256) {
-        return _autoRebalanceThreshold;
+        return _autoRebalanceThreshold * Constants.D21
     }
 
     function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) internal {

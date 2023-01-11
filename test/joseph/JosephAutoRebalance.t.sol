@@ -24,7 +24,7 @@ import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
-    MockSpreadModel internal _miltonSpreadModel;
+    MockSpreadModel private _miltonSpreadModel;
     ItfIporOracle private _iporOracle;
 
     MockTestnetTokenUsdt private _usdt;
@@ -42,8 +42,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     MiltonStorage private _miltonStorageDai;
     MockCase0Stanley private _stanleyDai;
 
-    address internal _admin;
-    address internal _userOne;
+    address private _admin;
+    address private _userOne;
 
     function setUp() public {
         _admin = address(this);
@@ -63,7 +63,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase01() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -87,7 +87,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase02() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -111,7 +111,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase03() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -135,7 +135,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase04() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -159,7 +159,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase05() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -183,7 +183,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase06() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -207,7 +207,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase07() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -231,7 +231,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase08() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -255,7 +255,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase09() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -279,7 +279,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase10() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -303,7 +303,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase11() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -327,7 +327,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase12() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -351,7 +351,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase13() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
@@ -375,7 +375,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndNOTRebalanceUsdtCaseBelowTreshold() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -399,7 +399,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndNOTRebalanceUsdtCaseAutoRebalanceTresholdZERO() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -423,7 +423,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase01() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -447,7 +447,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase02() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -471,7 +471,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase03() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -495,7 +495,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase04() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -519,7 +519,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase05() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -543,7 +543,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase06() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -567,7 +567,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase07() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -591,7 +591,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase08() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -615,7 +615,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase09() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -639,7 +639,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase10() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -663,7 +663,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase11() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -687,7 +687,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase12() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -711,7 +711,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase13() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
@@ -735,7 +735,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase01() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -759,7 +759,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase02() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -783,7 +783,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase03() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -807,7 +807,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase04() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -831,7 +831,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase05() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -855,7 +855,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase06() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -879,7 +879,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase07() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -903,7 +903,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase08() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -927,7 +927,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase09() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -951,7 +951,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase10() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -975,7 +975,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceUsdtCase11() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -1001,7 +1001,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase12() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -1025,7 +1025,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase01() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1049,7 +1049,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase02() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1073,7 +1073,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase03() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1097,7 +1097,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase04() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1121,7 +1121,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase05() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1145,7 +1145,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase06() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1169,7 +1169,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase07() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1193,7 +1193,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase08() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1217,7 +1217,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase09() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1241,7 +1241,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase10() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1265,7 +1265,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceDaiCase11() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -1291,7 +1291,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase12() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -1315,7 +1315,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCaseBigValues() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 10000;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1339,7 +1339,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceDaiCaseBelowTresholdBecauseOfFee() public {
         //given
-        _clearAndSetupSmartContractsDai();
+        _setupSmartContractsDai();
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1363,7 +1363,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNOTRebalanceUsdtCaseBelowTresholdMiltonBalanceIsOK() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1387,7 +1387,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCaseBelowTresholdButMiltonBalanceTooLow() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1413,7 +1413,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1463,7 +1463,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceTresholdZEROMiltonBalanceIsOK() public {
         //given
-        _clearAndSetupSmartContractsUsdt();
+        _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1485,7 +1485,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function _clearAndSetupSmartContractsUsdt() private {
+    function _setupSmartContractsUsdt() private {
         _miltonStorageUsdt = getMiltonStorage();
 
         _ipTokenUsdt = getIpTokenUsdt(address(_usdt));
@@ -1513,7 +1513,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         prepareMilton(_itfMiltonUsdt, address(_itfJosephUsdt), address(_stanleyUsdt));
     }
 
-    function _clearAndSetupSmartContractsDai() private {
+    function _setupSmartContractsDai() private {
         _miltonStorageDai = getMiltonStorage();
         _ipTokenDai = getIpTokenDai(address(_dai));
         _stanleyDai = getMockCase0Stanley(address(_dai));
@@ -1553,9 +1553,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         deal(address(_usdt), address(_itfMiltonUsdt), miltonInitPool);
 
-        vm.startPrank(address(_itfMiltonUsdt));
+        vm.prank(address(_itfMiltonUsdt));
         _stanleyUsdt.deposit(stanleyInitBalance);
-        vm.stopPrank();
 
         deal(address(_usdt), address(_userOne), userPosition);
 

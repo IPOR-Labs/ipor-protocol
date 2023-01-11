@@ -16,13 +16,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
     function calculateExchangeRate() external view override returns (uint256) {
         IMiltonInternal milton = _getMilton();
+        (, , int256 soap) = milton.calculateSoapAtTimestamp(block.timestamp);
         return
-            _calculateExchangeRate(
-                block.timestamp,
-                milton,
-                _getIpToken(),
-                milton.getAccruedBalance().liquidityPool
-            );
+            _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
     }
 
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
@@ -34,13 +30,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
     }
 
     function _calculateExchangeRate(
-        uint256 calculateTimestamp,
-        IMiltonInternal milton,
+        int256 soap,
         IIpToken ipToken,
         uint256 liquidityPoolBalance
     ) internal view returns (uint256) {
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(calculateTimestamp);
-
         int256 balance = liquidityPoolBalance.toInt256() - soap;
 
         require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
@@ -57,17 +50,14 @@ abstract contract Joseph is JosephInternal, IJoseph {
     function _provideLiquidity(uint256 assetAmount, uint256 timestamp) internal nonReentrant {
         address msgSender = _msgSender();
         address asset = _getAsset();
-        IMiltonInternal milton = _getMilton();
         IIpToken ipToken = _getIpToken();
+        IMiltonInternal milton = _getMilton();
 
         IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
 
-        uint256 exchangeRate = _calculateExchangeRate(
-            timestamp,
-            milton,
-            ipToken,
-            balance.liquidityPool
-        );
+        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+
+        uint256 exchangeRate = _calculateExchangeRate(soap, ipToken, balance.liquidityPool);
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
@@ -100,7 +90,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
     }
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
+        address asset = _getAsset();
         IIpToken ipToken = _getIpToken();
+
         require(
             ipTokenAmount > 0 && ipTokenAmount <= ipToken.balanceOf(_msgSender()),
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
@@ -109,12 +101,9 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
 
-        uint256 exchangeRate = _calculateExchangeRate(
-            timestamp,
-            milton,
-            ipToken,
-            balance.liquidityPool
-        );
+        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+
+        uint256 exchangeRate = _calculateExchangeRate(soap, ipToken, balance.liquidityPool);
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 
@@ -124,7 +113,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         );
 
         uint256 wadMiltonErc20Balance = IporMath.convertToWad(
-            IERC20Upgradeable(_getAsset()).balanceOf(address(milton)),
+            IERC20Upgradeable(asset).balanceOf(address(milton)),
             _getDecimals()
         );
 
@@ -153,7 +142,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
 
         _getMiltonStorage().subtractLiquidity(redeemMoney.wadRedeemAmount);
 
-        IERC20Upgradeable(_getAsset()).safeTransferFrom(
+        IERC20Upgradeable(asset).safeTransferFrom(
             address(milton),
             _msgSender(),
             redeemMoney.redeemAmount
@@ -224,7 +213,7 @@ abstract contract Joseph is JosephInternal, IJoseph {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold() * Constants.D21;
+        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold();
 
         if (autoRebalanceThreshold > 0) {
             if (wadOperationAmount >= autoRebalanceThreshold) {
