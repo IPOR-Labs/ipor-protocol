@@ -25,6 +25,15 @@ import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     IporProtocol private _iporProtocol;
 
+    event IporIndexUpdate(
+        address asset,
+        uint256 indexValue,
+        uint256 quasiIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 updateTimestamp
+    );
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -37,7 +46,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        milton.setAutoUpdateIporIndexThreshold(100);
+        milton.setAutoUpdateIporIndexThreshold(1);
 
         uint256 liquidityAmount = 100000 * 10**6;
         uint256 totalAmount = 10000 * 10**6;
@@ -46,38 +55,95 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         asset.approve(address(joseph), liquidityAmount);
         asset.approve(address(milton), totalAmount);
-		//257638
-		//271410
-		//257638
-		//261861
+
         joseph.provideLiquidity(liquidityAmount);
+
+        //then
+        vm.expectEmit(true, true, false, false);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
-
-        //then
     }
 
-    // function testOpenSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
-    //     //given
-    //     _iporProtocol = setupIporProtocolForUsdt();
-    //     //when
-    //     //then
-    // }
+    function testOpenSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
+        //given
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
 
-    // function testOpenSwapPayFixedDaiAndAutoUpdateIndex() public {
-    //     //given
-    //     _iporProtocol = setupIporProtocolForDai();
+        milton.setAutoUpdateIporIndexThreshold(1);
 
-    //     //when
-    //     //then
-    // }
+        uint256 liquidityAmount = 100000 * 10**6;
+        uint256 totalAmount = 10000 * 10**6;
+        uint256 acceptableFixedInterestRate = 0;
+        uint256 leverage = 500 * 10**18;
 
-    // function testOpenSwapReceiveFixedDaiAndAutoUpdateIndex() public {
-    //     //given
-    //     _iporProtocol = setupIporProtocolForDai();
+        asset.approve(address(joseph), liquidityAmount);
+        asset.approve(address(milton), totalAmount);
 
-    //     //when
-    //     //then
-    // }
+        joseph.provideLiquidity(liquidityAmount);
+
+        //then
+        vm.expectEmit(true, true, false, false);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+
+        //when
+        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+    }
+
+    function testOpenSwapPayFixedDaiAndAutoUpdateIndex() public {
+        //given
+        _iporProtocol = setupIporProtocolForDai();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        milton.setAutoUpdateIporIndexThreshold(1);
+
+        uint256 liquidityAmount = 100000 * 10**18;
+        uint256 totalAmount = 10000 * 10**18;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 500 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        asset.approve(address(milton), totalAmount);
+
+        joseph.provideLiquidity(liquidityAmount);
+
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+
+        //when
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+    }
+
+    function testOpenSwapReceiveFixedDaiAndAutoUpdateIndex() public {
+        //given
+        _iporProtocol = setupIporProtocolForDai();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        milton.setAutoUpdateIporIndexThreshold(1);
+
+        uint256 liquidityAmount = 100000 * 10**18;
+        uint256 totalAmount = 10000 * 10**18;
+        uint256 acceptableFixedInterestRate = 0;
+        uint256 leverage = 500 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        asset.approve(address(milton), totalAmount);
+
+        joseph.provideLiquidity(liquidityAmount);
+
+        //then
+        vm.expectEmit(true, true, true, true);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+
+        //when
+        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+    }
 }

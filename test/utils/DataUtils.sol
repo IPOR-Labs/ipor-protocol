@@ -111,6 +111,9 @@ contract DataUtils is
 
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
+        MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+
         ItfMilton itfMilton = getItfMiltonDai(
             address(asset),
             address(iporOracle),
