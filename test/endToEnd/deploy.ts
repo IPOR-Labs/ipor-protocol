@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber, Signer } from "ethers";
 
 import {
     ERC20,
@@ -123,7 +123,7 @@ export type DeployType = {
     josephUsdt: JosephUsdt;
 };
 
-export const deploy = async (): Promise<DeployType> => {
+export const deploy = async (admin:Signer): Promise<DeployType> => {
     const testnetFaucet = await testnetFaucetFactory();
 
     const aUsdc = await aUsdcFactory();
@@ -263,6 +263,9 @@ export const deploy = async (): Promise<DeployType> => {
         josephDai,
         iporOracle
     );
+    await josephDai.addAppointedToRebalance(await admin.getAddress());
+    await josephUsdc.addAppointedToRebalance(await admin.getAddress());
+    await josephUsdt.addAppointedToRebalance(await admin.getAddress());
     return {
         dai,
         usdc,
