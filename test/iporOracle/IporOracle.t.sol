@@ -852,7 +852,7 @@ contract IporOracleTest is Test, TestCommons {
             address(algorithmImplementation),
             abi.encodeWithSignature("initialize(address)", address(_iporOracle))
         );
-        _iporOracle.setIporAlgorithm(address(algorithmProxy));
+        _iporOracle.setIporAlgorithmFacade(address(algorithmProxy));
         _iporOracle.itfUpdateIndex(address(_daiTestnetToken), 7e16, _blockTimestamp);
         (uint256 indexValueBefore, , , , ) = _iporOracle.getIndex(address(_daiTestnetToken));
         _blockTimestamp += 24 * 60 * 60;
@@ -937,7 +937,7 @@ contract IporOracleTest is Test, TestCommons {
 
         // when
         MockOldIporOracleV2(proxyAddress).upgradeTo(address(newIporOracleImplementation));
-        ItfIporOracle(proxyAddress).setIporAlgorithm(address(algorithmProxy));
+        ItfIporOracle(proxyAddress).setIporAlgorithmFacade(address(algorithmProxy));
 
         (uint256 indexValueDaiAfterUpdateImplementation, , , , ) = ItfIporOracle(proxyAddress)
             .getIndex(address(_daiTestnetToken));

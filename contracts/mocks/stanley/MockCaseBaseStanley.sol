@@ -42,34 +42,43 @@ contract MockCaseBaseStanley is IStanley {
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
-    function deposit(uint256 assetAmount)
+    function deposit(uint256 wadAssetAmount)
         external
         override
         returns (uint256 balance, uint256 depositedAmount)
     {
-        balance = _balance[msg.sender] + assetAmount;
+        balance = _balance[msg.sender] + wadAssetAmount;
 
         _balance[msg.sender] = balance;
 
+        uint256 decimals = IERC20Metadata(address(_asset)).decimals();
+
+        uint256 assetAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount, decimals);
+
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
-        depositedAmount = IporMath.convertToWad(
-            assetAmount,
-            IERC20Metadata(address(_asset)).decimals()
-        );
+
+        depositedAmount = IporMath.convertToWad(assetAmount, decimals);
     }
 
-    function withdraw(uint256 assetAmount)
+    function withdraw(uint256 wadAssetAmount)
         external
         override
         returns (uint256 withdrawnAmount, uint256 balance)
     {
-        uint256 finalAssetAmount = IporMath.division(assetAmount * _withdrawRate(), Constants.D18);
+        uint256 wadFinalAssetAmount = IporMath.division(
+            wadAssetAmount * _withdrawRate(),
+            Constants.D18
+        );
 
-        balance = _balance[msg.sender] - finalAssetAmount;
-        withdrawnAmount = finalAssetAmount;
+        balance = _balance[msg.sender] - wadFinalAssetAmount;
+        withdrawnAmount = wadFinalAssetAmount;
 
         _balance[msg.sender] = balance;
 
+        uint256 finalAssetAmount = IporMath.convertWadToAssetDecimals(
+            wadFinalAssetAmount,
+            IERC20Metadata(address(_asset)).decimals()
+        );
         _asset.safeTransfer(msg.sender, finalAssetAmount);
     }
 

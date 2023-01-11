@@ -15,6 +15,6 @@ module.exports = async function (deployer, _network, addresses) {
     }
 
     const iporOracleInstance = await IporOracle.at(iporOracleProxyAddress);
-    await iporOracleInstance.setIporAlgorithm(iporAlgorithmProxy);
+    await iporOracleInstance.setIporAlgorithmFacade(iporAlgorithmProxy);
     await func.updateLastCompletedMigration();
 };

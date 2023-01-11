@@ -82,7 +82,7 @@ interface IIporOracle {
 
     /// @notice setup ipor algorithm address
     /// @param newAlgorithmAddress ipor algorithm address
-    function setIporAlgorithm(address newAlgorithmAddress) external;
+    function setIporAlgorithmFacade(address newAlgorithmAddress) external;
 
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address

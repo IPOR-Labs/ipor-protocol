@@ -17,7 +17,6 @@ import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
-
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -121,7 +120,7 @@ contract IporOracle is
         return _iporAlgorithmFacade;
     }
 
-    function setIporAlgorithm(address newAlgorithmAddress) external onlyOwner {
+    function setIporAlgorithmFacade(address newAlgorithmAddress) external onlyOwner {
         require(newAlgorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
         _iporAlgorithmFacade = newAlgorithmAddress;
     }
@@ -169,7 +168,7 @@ contract IporOracle is
             accruedIpor.ibtPrice,
             accruedIpor.exponentialMovingAverage,
             accruedIpor.exponentialWeightedMovingVariance,
-            
+
         ) = _updateIndex(asset, newIndexValue, block.timestamp);
     }
 
