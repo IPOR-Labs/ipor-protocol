@@ -33,31 +33,51 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     function testOpenSwapPayFixedUsdtAndAutoUpdateIndex() public {
         //given
         _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        milton.setAutoUpdateIporIndexThreshold(100);
+
+        uint256 liquidityAmount = 100000 * 10**6;
+        uint256 totalAmount = 10000 * 10**6;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 500 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        asset.approve(address(milton), totalAmount);
+		//257638
+		//271410
+		//257638
+		//261861
+        joseph.provideLiquidity(liquidityAmount);
 
         //when
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
         //then
     }
 
-    function testOpenSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
-        //given
-        _iporProtocol = setupIporProtocolForUsdt();
-        //when
-        //then
-    }
+    // function testOpenSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
+    //     //given
+    //     _iporProtocol = setupIporProtocolForUsdt();
+    //     //when
+    //     //then
+    // }
 
-    function testOpenSwapPayFixedDaiAndAutoUpdateIndex() public {
-        //given
-        _iporProtocol = setupIporProtocolForDai();
+    // function testOpenSwapPayFixedDaiAndAutoUpdateIndex() public {
+    //     //given
+    //     _iporProtocol = setupIporProtocolForDai();
 
-        //when
-        //then
-    }
+    //     //when
+    //     //then
+    // }
 
-    function testOpenSwapReceiveFixedDaiAndAutoUpdateIndex() public {
-        //given
-        _iporProtocol = setupIporProtocolForDai();
+    // function testOpenSwapReceiveFixedDaiAndAutoUpdateIndex() public {
+    //     //given
+    //     _iporProtocol = setupIporProtocolForDai();
 
-        //when
-        //then
-    }
+    //     //when
+    //     //then
+    // }
 }

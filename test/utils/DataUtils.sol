@@ -20,6 +20,7 @@ import "../../contracts/itf/ItfMilton.sol";
 import "../../contracts/itf/ItfJoseph.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
+import "../../contracts/mocks/MockIporWeighted.sol";
 
 contract DataUtils is
     Test,
@@ -59,6 +60,10 @@ contract DataUtils is
             1
         );
 
+        MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
+
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
         ItfMilton itfMilton = getItfMiltonUsdt(
@@ -80,6 +85,8 @@ contract DataUtils is
         prepareIpToken(ipToken, address(itfJoseph));
         prepareJoseph(itfJoseph);
         prepareMilton(itfMilton, address(itfJoseph), address(stanley));
+
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
         return IporProtocol(asset, ipToken, stanley, miltonStorage, itfMilton, itfJoseph);
     }
