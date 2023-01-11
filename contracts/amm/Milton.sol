@@ -404,9 +404,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
-            openTimestamp,
-            bosStruct.notional,
+        MiltonTypes.IporSwapIndicator memory indicator = MiltonTypes.IporSwapIndicator(
+            bosStruct.accruedIpor.indexValue,
+            bosStruct.accruedIpor.ibtPrice,
+            IporMath.division(bosStruct.notional * Constants.D18, bosStruct.accruedIpor.ibtPrice),
             quoteValue
         );
 
@@ -475,9 +476,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
         );
 
-        MiltonTypes.IporSwapIndicator memory indicator = _calculateSwapIndicators(
-            openTimestamp,
-            bosStruct.notional,
+        MiltonTypes.IporSwapIndicator memory indicator = MiltonTypes.IporSwapIndicator(
+            bosStruct.accruedIpor.indexValue,
+            bosStruct.accruedIpor.ibtPrice,
+            IporMath.division(bosStruct.notional * Constants.D18, bosStruct.accruedIpor.ibtPrice),
             quoteValue
         );
 
@@ -571,24 +573,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             newSwap.openTimestamp,
             newSwap.openTimestamp + Constants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
             indicator
-        );
-    }
-
-    function _calculateSwapIndicators(
-        uint256 calculateTimestamp,
-        uint256 notional,
-        uint256 quoteValue
-    ) internal view returns (MiltonTypes.IporSwapIndicator memory indicator) {
-        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
-            calculateTimestamp,
-            _asset
-        );
-
-        indicator = MiltonTypes.IporSwapIndicator(
-            accruedIpor.indexValue,
-            accruedIpor.ibtPrice,
-            IporMath.division(notional * Constants.D18, accruedIpor.ibtPrice),
-            quoteValue
         );
     }
 
