@@ -2,7 +2,8 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import {ProxyTester} from "foundry-upgrades/ProxyTester.sol";
+import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 
 contract IporOracleUtils is Test {
@@ -21,25 +22,10 @@ contract IporOracleUtils is Test {
         uint64[] memory exponentialMovingAverages,
         uint64[] memory exponentialWeightedMovingVariances
     ) internal returns (ItfIporOracle) {
-        ProxyTester iporOracleProxy = new ProxyTester();
-        iporOracleProxy.setType("uups");
-        ItfIporOracle iporOracleFactory = new ItfIporOracle();
-        address iporOracleProxyAddress = iporOracleProxy.deploy(
-            address(iporOracleFactory),
-            accounts[0],
-            abi.encodeWithSignature(
-                "initialize(address[],uint32[],uint64[],uint64[])",
-                tokenAddresses,
-                lastUpdateTimestamps,
-                exponentialMovingAverages,
-                exponentialWeightedMovingVariances
-            )
-        );
-        ItfIporOracle iporOracle = ItfIporOracle(iporOracleProxyAddress);
-        if (accounts[1] != address(0)) {
-            vm.prank(address(iporOracleProxy));
-            iporOracle.addUpdater(accounts[1]);
-        }
+        ItfIporOracle iporOracleImplementation = new ItfIporOracle();
+        ERC1967Proxy iporOracleProxy = new ERC1967Proxy(address(iporOracleImplementation), abi.encodeWithSignature("initialize(address[],uint32[],uint64[],uint64[])", tokenAddresses, lastUpdateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances));
+        ItfIporOracle iporOracle = ItfIporOracle(address(iporOracleProxy));
+        iporOracle.addUpdater(accounts[1]);
         return iporOracle;
     }
 
