@@ -70,7 +70,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -111,7 +111,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldPauseSmartContractSpecificMethods() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -187,7 +187,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -281,7 +281,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -299,7 +299,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -348,7 +348,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -382,7 +382,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldTransferOwnershipSimpleCase1() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
 
@@ -406,7 +406,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -439,7 +439,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointedOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -459,7 +459,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotTransferOwnershipWhenSenderNotCurrentOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -477,7 +477,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotConfirmTransferOwnershipWhenSenderNotAppointerdOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -496,7 +496,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderNotAppointedOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -517,7 +517,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -537,7 +537,7 @@ contract MiltonMaintenanceTest is
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_admin, _userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -560,7 +560,7 @@ contract MiltonMaintenanceTest is
         address[] memory tokenAddresses =
             getTokenAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         ItfIporOracle iporOracle =
-            getIporOracleThreeAssets(_admin, _userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
+            getIporOracleThreeAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5 * 10 ** 16, 0);
         address[] memory mockCase1StanleyAddresses =
             getMockCase1StanleyAddresses(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         MiltonStorages memory miltonStorages = getMiltonStorages();

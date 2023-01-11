@@ -16,7 +16,7 @@ contract IporOracleUtils is Test {
     /// ------------------- ORACLE PARAMS -------------------
 
     function _prepareIporOracle(
-        address[] memory accounts,
+        address updater,
         address[] memory tokenAddresses,
         uint32[] memory lastUpdateTimestamps,
         uint64[] memory exponentialMovingAverages,
@@ -25,17 +25,14 @@ contract IporOracleUtils is Test {
         ItfIporOracle iporOracleImplementation = new ItfIporOracle();
         ERC1967Proxy iporOracleProxy = new ERC1967Proxy(address(iporOracleImplementation), abi.encodeWithSignature("initialize(address[],uint32[],uint64[],uint64[])", tokenAddresses, lastUpdateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances));
         ItfIporOracle iporOracle = ItfIporOracle(address(iporOracleProxy));
-        iporOracle.addUpdater(accounts[1]);
+        iporOracle.addUpdater(updater);
         return iporOracle;
     }
 
-    function getIporOracleOneAsset(address deployer, address updater, address asset, uint64 ema)
+    function getIporOracleOneAsset(address updater, address asset, uint64 ema)
         public
         returns (ItfIporOracle)
     {
-        address[] memory accounts = new address[](2);
-        accounts[0] = deployer;
-        accounts[1] = updater;
         address[] memory assets = new address[](1);
         assets[0] = asset;
         uint32[] memory updateTimestamps = new uint32[](1);
@@ -45,13 +42,12 @@ contract IporOracleUtils is Test {
         uint64[] memory exponentialWeightedMovingVariances = new uint64[](1);
         exponentialWeightedMovingVariances[0] = 0;
         ItfIporOracle iporOracle = _prepareIporOracle(
-            accounts, assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances
+            updater, assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances
         );
         return iporOracle;
     }
 
     function getIporOracleThreeAssets(
-        address deployer,
         address updater,
         address[] memory tokenAddresses,
         uint32 updateTimestamp,
@@ -61,11 +57,8 @@ contract IporOracleUtils is Test {
         OracleParams memory oracleParams = _getSameIporOracleParamsForEachAsset(
             updateTimestamp, exponentialMovingAverage, exponentialWeightedMovingVariance
         );
-        address[] memory accounts = new address[](2);
-        accounts[0] = deployer;
-        accounts[1] = updater;
         ItfIporOracle iporOracle = _prepareIporOracle(
-            accounts,
+            updater,
             tokenAddresses,
             oracleParams.updateTimestamps,
             oracleParams.exponentialMovingAverages,
