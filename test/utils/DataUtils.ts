@@ -236,6 +236,7 @@ export const prepareTestData = async (
 
         await josephUsdt.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephUsdt.setMaxLpAccountContribution(USD_1_000_000);
+        await josephUsdt.addAppointedToRebalance(accounts[0].address);
 
         await miltonStorageUsdt.setJoseph(josephUsdt.address);
         await miltonStorageUsdt.setMilton(miltonUsdt.address);
@@ -290,6 +291,7 @@ export const prepareTestData = async (
 
         await josephUsdc.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephUsdc.setMaxLpAccountContribution(USD_1_000_000);
+        await josephUsdc.addAppointedToRebalance(accounts[0].address);
 
         await miltonStorageUsdc.setJoseph(josephUsdc.address);
         await miltonStorageUsdc.setMilton(miltonUsdc.address);
@@ -343,6 +345,7 @@ export const prepareTestData = async (
 
         await josephDai.setMaxLiquidityPoolBalance(USD_10_000_000);
         await josephDai.setMaxLpAccountContribution(USD_1_000_000);
+        await josephDai.addAppointedToRebalance(accounts[0].address);
 
         await miltonStorageDai.setJoseph(josephDai.address);
         await miltonStorageDai.setMilton(miltonDai.address);

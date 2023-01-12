@@ -67,7 +67,7 @@ describe("Open/Close Swap", function () {
     before(async () => {
         [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
-        const deployed: DeployType = await deploy();
+        const deployed: DeployType = await deploy(admin);
         ({
             testnetFaucet,
             usdc,
