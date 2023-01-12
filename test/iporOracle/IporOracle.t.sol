@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
+import {IporTypes} from "../../contracts/interfaces/types/IporTypes.sol";
 import "./MockOldIporOracleV2.sol";
 import "./MockItfIporOracleV2.sol";
 
@@ -859,15 +860,13 @@ contract IporOracleTest is Test, TestCommons {
         vm.warp(_blockTimestamp);
 
         // when
-        (uint256 indexValueFetch, , , , ) = _iporOracle.updateIndex(
-            address(_daiTestnetToken)
-        );
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.updateIndex(address(_daiTestnetToken));
         (uint256 indexValueAfter, , , , ) = _iporOracle.getIndex(address(_daiTestnetToken));
 
         // then
         assertEq(indexValueBefore, 7e16);
-        assertEq(indexValueFetch != 7e16, true);
-        assertEq(indexValueFetch, indexValueAfter);
+        assertEq(accruedIpor.indexValue != 7e16, true);
+        assertEq(accruedIpor.indexValue, indexValueAfter);
     }
 
     function testShouldUpdateImplementationOnProxy() public {

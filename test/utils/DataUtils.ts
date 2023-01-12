@@ -193,6 +193,7 @@ export const prepareTestData = async (
             exponentialMovingAverages,
             exponentialWeightedMovingVariances
         ));
+
     if (tokenUsdt) {
         stanleyUsdt = await getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
         ipTokenUsdt = (await IpToken.deploy("IP USDT", "ipUSDT", tokenUsdt.address)) as IpToken;

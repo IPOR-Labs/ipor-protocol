@@ -29,20 +29,17 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     MockTestnetTokenUsdt private _usdt;
     IpToken private _ipTokenUsdt;
 
-    ItfMiltonUsdt private _itfMiltonUsdt;
-    ItfJosephUsdt private _itfJosephUsdt;
+    ItfMilton private _itfMiltonUsdt;
+    ItfJoseph private _itfJosephUsdt;
     MiltonStorage private _miltonStorageUsdt;
     MockCase0Stanley private _stanleyUsdt;
 
     MockTestnetTokenDai private _dai;
     IpToken private _ipTokenDai;
-    ItfMiltonDai private _itfMiltonDai;
-    ItfJosephDai private _itfJosephDai;
+    ItfMilton private _itfMiltonDai;
+    ItfJoseph private _itfJosephDai;
     MiltonStorage private _miltonStorageDai;
     MockCase0Stanley private _stanleyDai;
-
-    address private _admin;
-    address private _userOne;
 
     function setUp() public {
         _admin = address(this);
@@ -1507,7 +1504,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
             address(_stanleyUsdt)
         );
 
-        prepareIpTokenUsdt(_ipTokenUsdt, address(_itfJosephUsdt));
+        prepareIpToken(_ipTokenUsdt, address(_itfJosephUsdt));
         prepareJoseph(_itfJosephUsdt);
         prepareMilton(_itfMiltonUsdt, address(_itfJosephUsdt), address(_stanleyUsdt));
     }
@@ -1533,7 +1530,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
             address(_stanleyDai)
         );
 
-        prepareIpTokenDai(_ipTokenDai, address(_itfJosephDai));
+        prepareIpToken(_ipTokenDai, address(_itfJosephDai));
         prepareJoseph(_itfJosephDai);
         prepareMilton(_itfMiltonDai, address(_itfJosephDai), address(_stanleyDai));
     }
