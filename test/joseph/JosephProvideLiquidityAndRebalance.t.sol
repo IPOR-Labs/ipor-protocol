@@ -38,6 +38,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
         uint256 miltonBalanceBefore = iporProtocol.asset.balanceOf(address(iporProtocol.milton));
 
+        iporProtocol.joseph.addAppointedToRebalance(address(this));
+
         //when
         iporProtocol.joseph.rebalance();
 
@@ -73,6 +75,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
             address(iporProtocol.milton)
         );
         uint256 miltonBalanceBefore = iporProtocol.asset.balanceOf(address(iporProtocol.milton));
+
+        iporProtocol.joseph.addAppointedToRebalance(address(this));
 
         //when
         vm.warp(101);
@@ -110,6 +114,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
+        iporProtocol.joseph.addAppointedToRebalance(address(this));
         iporProtocol.joseph.rebalance();
 
         //when
@@ -147,6 +152,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
+        iporProtocol.joseph.addAppointedToRebalance(address(this));
         iporProtocol.joseph.rebalance();
 
         //when
