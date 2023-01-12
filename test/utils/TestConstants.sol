@@ -75,6 +75,7 @@ library TestConstants {
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
     uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
+    int256 public constant TC_COLLATERAL_18DEC_INT = 9967009897030890732780;
     uint256 public constant TC_OPENING_FEE_18DEC = 2990102969109267220;
     int256 public constant TC_OPENING_FEE_18DEC_INT = 2990102969109267220;
     uint256 public constant TC_LP_BALANCE_BEFORE_CLOSE_18DEC = 28000 * 1e18;
