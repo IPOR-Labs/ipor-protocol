@@ -11,23 +11,21 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "../../libraries/errors/JosephErrors.sol";
-import "../../libraries/Constants.sol";
-import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IIpToken.sol";
-import "../../interfaces/IJosephInternal.sol";
-import "../../interfaces/IMiltonInternal.sol";
-import "../../interfaces/IMiltonStorage.sol";
-import "../../interfaces/IStanley.sol";
-import "../../security/IporOwnableUpgradeable.sol";
+import "../../contracts/libraries/errors/JosephErrors.sol";
+import "../../contracts/libraries/Constants.sol";
+import "../../contracts/libraries/math/IporMath.sol";
+import "../../contracts/interfaces/IIpToken.sol";
+import "../../contracts/interfaces/IMiltonInternal.sol";
+import "../../contracts/interfaces/IMiltonStorage.sol";
+import "../../contracts/interfaces/IStanley.sol";
+import "../../contracts/security/IporOwnableUpgradeable.sol";
 
-abstract contract JosephInternal is
+abstract contract MockJosephInternal is
     Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IJosephInternal
+    IporOwnableUpgradeable
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
@@ -49,7 +47,6 @@ abstract contract JosephInternal is
     uint256 internal _miltonStanleyBalanceRatio;
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
-    mapping(address => bool) internal _appointedToRebalance;
 
     /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals. Value represents multiplication of 1000.
     uint32 internal _autoRebalanceThresholdInThousands;
@@ -67,14 +64,6 @@ abstract contract JosephInternal is
         _;
     }
 
-    modifier onlyAppointedToRebalance() {
-        require(
-            _appointedToRebalance[_msgSender()],
-            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
-        );
-        _;
-    }
-
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -88,9 +77,9 @@ abstract contract JosephInternal is
         address miltonStorage,
         address stanley
     ) public initializer {
-        __Pausable_init_unchained();
-        __Ownable_init_unchained();
-        __UUPSUpgradeable_init_unchained();
+        __Pausable_init();
+        __Ownable_init();
+        __UUPSUpgradeable_init();
 
         require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
@@ -120,11 +109,11 @@ abstract contract JosephInternal is
         _autoRebalanceThresholdInThousands = 50;
     }
 
-    function getVersion() external pure virtual override returns (uint256) {
-        return 2;
+    function getVersion() external pure virtual returns (uint256) {
+        return 0;
     }
 
-    function getAsset() external view override returns (address) {
+    function getAsset() external view returns (address) {
         return _getAsset();
     }
 
@@ -174,7 +163,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function rebalance() external override onlyAppointedToRebalance whenNotPaused {
+    function rebalance() external onlyOwner whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -197,24 +186,23 @@ abstract contract JosephInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function depositToStanley(uint256 assetAmount) external override onlyOwner whenNotPaused {
+    function depositToStanley(uint256 assetAmount) external onlyOwner whenNotPaused {
         _getMilton().depositToStanley(assetAmount);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetAmount) external override onlyOwner whenNotPaused {
+    function withdrawFromStanley(uint256 assetAmount) external onlyOwner whenNotPaused {
         _getMilton().withdrawFromStanley(assetAmount);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawAllFromStanley() external override onlyOwner whenNotPaused {
+    function withdrawAllFromStanley() external onlyOwner whenNotPaused {
         _getMilton().withdrawAllFromStanley();
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
     function transferToTreasury(uint256 assetAmount)
         external
-        override
         nonReentrant
         whenNotPaused
         onlyTreasuryManager
@@ -241,7 +229,6 @@ abstract contract JosephInternal is
     //@param assetAmount underlying token amount represented in 18 decimals
     function transferToCharlieTreasury(uint256 assetAmount)
         external
-        override
         nonReentrant
         whenNotPaused
         onlyCharlieTreasuryManager
@@ -266,153 +253,106 @@ abstract contract JosephInternal is
         );
     }
 
-    function pause() external override onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() external override onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
-    function getCharlieTreasury() external view override returns (address) {
+    function getCharlieTreasury() external view returns (address) {
         return _charlieTreasury;
     }
 
-    function setCharlieTreasury(address newCharlieTreasury)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setCharlieTreasury(address newCharlieTreasury) external onlyOwner whenNotPaused {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         address oldCharlieTreasury = _charlieTreasury;
         _charlieTreasury = newCharlieTreasury;
-        emit CharlieTreasuryChanged(_msgSender(), oldCharlieTreasury, newCharlieTreasury);
     }
 
-    function getTreasury() external view override returns (address) {
+    function getTreasury() external view returns (address) {
         return _treasury;
     }
 
-    function setTreasury(address newTreasury) external override onlyOwner whenNotPaused {
+    function setTreasury(address newTreasury) external onlyOwner whenNotPaused {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
         address oldTreasury = _treasury;
         _treasury = newTreasury;
-        emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
     }
 
-    function getCharlieTreasuryManager() external view override returns (address) {
+    function getCharlieTreasuryManager() external view returns (address) {
         return _charlieTreasuryManager;
     }
 
     function setCharlieTreasuryManager(address newCharlieTreasuryManager)
         external
-        override
         onlyOwner
         whenNotPaused
     {
         require(address(0) != newCharlieTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldCharlieTreasuryManager = _charlieTreasuryManager;
         _charlieTreasuryManager = newCharlieTreasuryManager;
-        emit CharlieTreasuryManagerChanged(
-            _msgSender(),
-            oldCharlieTreasuryManager,
-            newCharlieTreasuryManager
-        );
     }
 
-    function getTreasuryManager() external view override returns (address) {
+    function getTreasuryManager() external view returns (address) {
         return _treasuryManager;
     }
 
-    function setTreasuryManager(address newTreasuryManager)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setTreasuryManager(address newTreasuryManager) external onlyOwner whenNotPaused {
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldTreasuryManager = _treasuryManager;
         _treasuryManager = newTreasuryManager;
-        emit TreasuryManagerChanged(_msgSender(), oldTreasuryManager, newTreasuryManager);
     }
 
-    function getMaxLiquidityPoolBalance() external view override returns (uint256) {
+    function getMaxLiquidityPoolBalance() external view returns (uint256) {
         return _maxLiquidityPoolBalance;
     }
 
     function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
         external
-        override
         onlyOwner
         whenNotPaused
     {
         uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
         _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
-        emit MaxLiquidityPoolBalanceChanged(
-            _msgSender(),
-            oldMaxLiquidityPoolBalance * Constants.D18,
-            newMaxLiquidityPoolBalance * Constants.D18
-        );
     }
 
-    function getMaxLpAccountContribution() external view override returns (uint256) {
+    function getMaxLpAccountContribution() external view returns (uint256) {
         return _maxLpAccountContribution;
     }
 
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution)
         external
-        override
         onlyOwner
         whenNotPaused
     {
         uint256 oldMaxLpAccountContribution = _maxLpAccountContribution;
         _maxLpAccountContribution = newMaxLpAccountContribution.toUint32();
-        emit MaxLpAccountContributionChanged(
-            _msgSender(),
-            oldMaxLpAccountContribution * Constants.D18,
-            newMaxLpAccountContribution * Constants.D18
-        );
     }
 
-    function getAutoRebalanceThreshold() external view override returns (uint256) {
+    function getAutoRebalanceThreshold() external view returns (uint256) {
         return _getAutoRebalanceThreshold();
     }
 
     function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold)
         external
-        override
         onlyOwner
         whenNotPaused
     {
         _setAutoRebalanceThreshold(newAutoRebalanceThreshold);
     }
 
-    function getRedeemFeeRate() external pure override returns (uint256) {
+    function getRedeemFeeRate() external pure returns (uint256) {
         return _getRedeemFeeRate();
     }
 
-    function getRedeemLpMaxUtilizationRate() external pure override returns (uint256) {
+    function getRedeemLpMaxUtilizationRate() external pure returns (uint256) {
         return _getRedeemLpMaxUtilizationRate();
     }
 
-    function getMiltonStanleyBalanceRatio() external view override returns (uint256) {
+    function getMiltonStanleyBalanceRatio() external view returns (uint256) {
         return _miltonStanleyBalanceRatio;
-    }
-
-    function addAppointedToRebalance(address appointed) external override onlyOwner {
-        require(appointed != address(0), IporErrors.WRONG_ADDRESS);
-        _appointedToRebalance[appointed] = true;
-        emit AppointedToRebalanceChanged(_msgSender(), appointed, true);
-    }
-
-    function removeAppointedToRebalance(address appointed) external override onlyOwner {
-        _appointedToRebalance[appointed] = false;
-        emit AppointedToRebalanceChanged(_msgSender(), appointed, false);
-    }
-
-    function isAppointedToRebalance(address appointed) external view override returns (bool) {
-        return _appointedToRebalance[appointed];
     }
 
     function _getIporTotalBalance()
@@ -437,11 +377,6 @@ abstract contract JosephInternal is
     function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThresholdInThousands) internal {
         uint256 oldAutoRebalanceThresholdInThousands = _autoRebalanceThresholdInThousands;
         _autoRebalanceThresholdInThousands = newAutoRebalanceThresholdInThousands.toUint32();
-        emit AutoRebalanceThresholdChanged(
-            _msgSender(),
-            oldAutoRebalanceThresholdInThousands * Constants.D18,
-            newAutoRebalanceThresholdInThousands * Constants.D18
-        );
     }
 
     function _getAsset() internal view virtual returns (address) {
