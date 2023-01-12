@@ -6,6 +6,7 @@ import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/libraries/math/IporMath.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
@@ -51,13 +52,18 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _usdt = getTokenUsdt();
         _dai = getTokenDai();
 
-        _miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+        _miltonSpreadModel = prepareMockSpreadModel(
+            TestConstants.ZERO,
+            TestConstants.ZERO,
+            TestConstants.ZERO_INT,
+            TestConstants.ZERO_INT
+        );
 
         address[] memory tokenAddresses = new address[](2);
         tokenAddresses[0] = address(_usdt);
         tokenAddresses[1] = address(_dai);
 
-        _iporOracle = getIporOracleForManyAssets(_admin, _userOne, tokenAddresses, 1, 1, 1);
+        _iporOracle = getIporOracleThreeAssets(_userOne, tokenAddresses, 1, 1, 1);
     }
 
     function testProvideLiquidityAndRebalanceUsdtCase01() public {
@@ -65,13 +71,13 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _setupSmartContractsUsdt();
 
         uint256 autoRebalanceThreshold = 100;
-        uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonStanleyRatio = 2 * TestConstants.D17;
+        uint256 miltonInitPool = TestConstants.USD_1_000_000_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 242000 * 1e6;
-        uint256 expectedStanleyBalance = 968000 * 1e18;
+        uint256 expectedMiltonBalance = 242000 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 968000 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -90,12 +96,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 230000 * 1e6;
-        uint256 expectedStanleyBalance = 920000 * 1e18;
+        uint256 expectedMiltonBalance = 230000 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 920000 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -114,12 +120,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 50000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 50000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 210000 * 1e6;
-        uint256 expectedStanleyBalance = 840000 * 1e18;
+        uint256 expectedMiltonBalance = 210000 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 840000 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -138,12 +144,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 370000 * 1e6;
-        uint256 expectedStanleyBalance = 1480000 * 1e18;
+        uint256 expectedMiltonBalance = 370000 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 1480000 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -162,12 +168,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 172500 * 1e6;
-        uint256 expectedStanleyBalance = 977500 * 1e18;
+        uint256 expectedMiltonBalance = 172500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 977500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -186,12 +192,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 181500 * 1e6;
-        uint256 expectedStanleyBalance = 1028500 * 1e18;
+        uint256 expectedMiltonBalance = 181500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 1028500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -210,12 +216,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 277500 * 1e6;
-        uint256 expectedStanleyBalance = 1572500 * 1e18;
+        uint256 expectedMiltonBalance = 277500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 1572500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -234,12 +240,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 287500 * 1e6;
-        uint256 expectedStanleyBalance = 862500 * 1e18;
+        uint256 expectedMiltonBalance = 287500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 862500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -258,12 +264,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 302500 * 1e6;
-        uint256 expectedStanleyBalance = 907500 * 1e18;
+        uint256 expectedMiltonBalance = 302500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 907500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -282,12 +288,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 462500 * 1e6;
-        uint256 expectedStanleyBalance = 1387500 * 1e18;
+        uint256 expectedMiltonBalance = 462500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 1387500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -306,12 +312,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 57500 * 1e6;
-        uint256 expectedStanleyBalance = 1092500 * 1e18;
+        uint256 expectedMiltonBalance = 57500 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 1092500 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -330,12 +336,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 350000 * 1e6;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedMiltonBalance = 350000 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 800000 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -354,12 +360,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
-        uint256 miltonInitPool = 3000 * 1e6;
+        uint256 miltonInitPool = 3000 * TestConstants.N1__0_6DEC;
         uint256 stanleyInitBalance = 0;
-        uint256 userPosition = 100000 * 1e6;
+        uint256 userPosition = 100000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 1030 * 1e6;
-        uint256 expectedStanleyBalance = 101970 * 1e18;
+        uint256 expectedMiltonBalance = 1030 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 101970 * TestConstants.D18;
 
         _executeProvideLiquidityUsdt(
             autoRebalanceThreshold,
@@ -378,11 +384,11 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6 + userPosition;
+        uint256 expectedMiltonBalance = 200000 * TestConstants.N1__0_6DEC + userPosition;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeProvideLiquidityUsdt(
@@ -402,11 +408,11 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6 + userPosition;
+        uint256 expectedMiltonBalance = 200000 * TestConstants.N1__0_6DEC + userPosition;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeProvideLiquidityUsdt(
@@ -426,12 +432,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 242000 * 1e18;
-        uint256 expectedStanleyBalance = 968000 * 1e18;
+        uint256 expectedMiltonBalance = 242000 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 968000 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -450,12 +456,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 230000 * 1e18;
-        uint256 expectedStanleyBalance = 920000 * 1e18;
+        uint256 expectedMiltonBalance = 230000 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 920000 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -474,12 +480,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 50000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 50000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 210000 * 1e18;
-        uint256 expectedStanleyBalance = 840000 * 1e18;
+        uint256 expectedMiltonBalance = 210000 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 840000 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -498,12 +504,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 370000 * 1e18;
-        uint256 expectedStanleyBalance = 1480000 * 1e18;
+        uint256 expectedMiltonBalance = 370000 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 1480000 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -522,12 +528,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 172500 * 1e18;
-        uint256 expectedStanleyBalance = 977500 * 1e18;
+        uint256 expectedMiltonBalance = 172500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 977500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -546,12 +552,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 181500 * 1e18;
-        uint256 expectedStanleyBalance = 1028500 * 1e18;
+        uint256 expectedMiltonBalance = 181500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 1028500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -570,12 +576,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 277500 * 1e18;
-        uint256 expectedStanleyBalance = 1572500 * 1e18;
+        uint256 expectedMiltonBalance = 277500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 1572500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -594,12 +600,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 287500 * 1e18;
-        uint256 expectedStanleyBalance = 862500 * 1e18;
+        uint256 expectedMiltonBalance = 287500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 862500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -618,12 +624,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 302500 * 1e18;
-        uint256 expectedStanleyBalance = 907500 * 1e18;
+        uint256 expectedMiltonBalance = 302500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 907500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -642,12 +648,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 462500 * 1e18;
-        uint256 expectedStanleyBalance = 1387500 * 1e18;
+        uint256 expectedMiltonBalance = 462500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 1387500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -666,12 +672,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 57500 * 1e18;
-        uint256 expectedStanleyBalance = 1092500 * 1e18;
+        uint256 expectedMiltonBalance = 57500 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 1092500 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -690,12 +696,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 350000 * 1e18;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedMiltonBalance = 350000 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 800000 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -714,12 +720,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
-        uint256 miltonInitPool = 3000 * 1e18;
+        uint256 miltonInitPool = 3000 * TestConstants.D18;
         uint256 stanleyInitBalance = 0;
-        uint256 userPosition = 100000 * 1e18;
+        uint256 userPosition = 100000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 1030 * 1e18;
-        uint256 expectedStanleyBalance = 101970 * 1e18;
+        uint256 expectedMiltonBalance = 1030 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 101970 * TestConstants.D18;
 
         _executeProvideLiquidityDai(
             autoRebalanceThreshold,
@@ -738,12 +744,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 158210 * 1e6;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedMiltonBalance = 158210 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 632840 * TestConstants.D18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -762,12 +768,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 170150 * 1e6;
-        uint256 expectedStanleyBalance = 680600 * 1e18;
+        uint256 expectedMiltonBalance = 170150 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 680600 * TestConstants.D18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -786,12 +792,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 50000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 50000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 190050 * 1e6;
-        uint256 expectedStanleyBalance = 760200 * 1e18;
+        uint256 expectedMiltonBalance = 190050 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 760200 * TestConstants.D18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -810,12 +816,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 30850 * 1e6;
-        uint256 expectedStanleyBalance = 123400 * 1e18;
+        uint256 expectedMiltonBalance = 30850 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 123400 * TestConstants.D18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -834,12 +840,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 1276125 * 1e5;
-        uint256 expectedStanleyBalance = 7231375 * 1e17;
+        uint256 expectedStanleyBalance = 7231375 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -858,12 +864,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 1186575 * 1e5;
-        uint256 expectedStanleyBalance = 6723925 * 1e17;
+        uint256 expectedStanleyBalance = 6723925 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -882,12 +888,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 231375 * 1e5;
-        uint256 expectedStanleyBalance = 1311125 * 1e17;
+        uint256 expectedStanleyBalance = 1311125 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -906,12 +912,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 2126875 * 1e5;
-        uint256 expectedStanleyBalance = 6380625 * 1e17;
+        uint256 expectedStanleyBalance = 6380625 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -930,12 +936,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 1977625 * 1e5;
-        uint256 expectedStanleyBalance = 5932875 * 1e17;
+        uint256 expectedStanleyBalance = 5932875 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -954,12 +960,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 385625 * 1e5;
-        uint256 expectedStanleyBalance = 1156875 * 1e17;
+        uint256 expectedStanleyBalance = 1156875 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -978,13 +984,13 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
         // will stay because threshold is not achieved and Milton has cash for redeem
-        uint256 redeemFee = 750 * 1e6;
-        uint256 expectedMiltonBalance = 50000 * 1e6 + redeemFee;
+        uint256 redeemFee = 750 * TestConstants.N1__0_6DEC;
+        uint256 expectedMiltonBalance = 50000 * TestConstants.N1__0_6DEC + redeemFee;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(
@@ -1004,12 +1010,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
         uint256 expectedMiltonBalance = 8082125 * 1e5;
-        uint256 expectedStanleyBalance = 425375 * 1e17;
+        uint256 expectedStanleyBalance = 425375 * TestConstants.D17;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -1028,12 +1034,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 158210 * 1e18;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedMiltonBalance = 158210 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 632840 * TestConstants.D18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1052,12 +1058,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 170150 * 1e18;
-        uint256 expectedStanleyBalance = 680600 * 1e18;
+        uint256 expectedMiltonBalance = 170150 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 680600 * TestConstants.D18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1076,12 +1082,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 50000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 50000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 190050 * 1e18;
-        uint256 expectedStanleyBalance = 760200 * 1e18;
+        uint256 expectedMiltonBalance = 190050 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 760200 * TestConstants.D18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1100,12 +1106,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 30850 * 1e18;
-        uint256 expectedStanleyBalance = 123400 * 1e18;
+        uint256 expectedMiltonBalance = 30850 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 123400 * TestConstants.D18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1124,12 +1130,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 1276125 * 1e17;
-        uint256 expectedStanleyBalance = 7231375 * 1e17;
+        uint256 expectedMiltonBalance = 1276125 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 7231375 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1148,12 +1154,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 1186575 * 1e17;
-        uint256 expectedStanleyBalance = 6723925 * 1e17;
+        uint256 expectedMiltonBalance = 1186575 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 6723925 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1172,12 +1178,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 231375 * 1e17;
-        uint256 expectedStanleyBalance = 1311125 * 1e17;
+        uint256 expectedMiltonBalance = 231375 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 1311125 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1196,12 +1202,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 2126875 * 1e17;
-        uint256 expectedStanleyBalance = 6380625 * 1e17;
+        uint256 expectedMiltonBalance = 2126875 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 6380625 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1220,12 +1226,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 1977625 * 1e17;
-        uint256 expectedStanleyBalance = 5932875 * 1e17;
+        uint256 expectedMiltonBalance = 1977625 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 5932875 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1244,12 +1250,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 850000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 850000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 385625 * 1e17;
-        uint256 expectedStanleyBalance = 1156875 * 1e17;
+        uint256 expectedMiltonBalance = 385625 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 1156875 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1268,13 +1274,13 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
         // will stay because threshold is not achieved and Milton has cash for redeem
-        uint256 redeemFee = 750 * 1e18;
-        uint256 expectedMiltonBalance = 50000 * 1e18 + redeemFee;
+        uint256 redeemFee = 750 * TestConstants.D18;
+        uint256 expectedMiltonBalance = 50000 * TestConstants.D18 + redeemFee;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemDai(
@@ -1294,12 +1300,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 8082125 * 1e17;
-        uint256 expectedStanleyBalance = 425375 * 1e17;
+        uint256 expectedMiltonBalance = 8082125 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 425375 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1318,12 +1324,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 10000;
         uint256 miltonStanleyRatio = 150000000000000000;
-        uint256 miltonInitPool = 1000000000 * 1e18;
-        uint256 stanleyInitBalance = 800000000 * 1e18;
-        uint256 userPosition = 150000000 * 1e18;
+        uint256 miltonInitPool = 1000000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000000 * TestConstants.D18;
+        uint256 userPosition = 150000000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 1276125000 * 1e17;
-        uint256 expectedStanleyBalance = 7231375000 * 1e17;
+        uint256 expectedMiltonBalance = 1276125000 * TestConstants.D17;
+        uint256 expectedStanleyBalance = 7231375000 * TestConstants.D17;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1342,12 +1348,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e18;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 50000 * 1e18;
+        uint256 miltonInitPool = 1000000 * TestConstants.D18;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 50000 * TestConstants.D18;
 
-        uint256 expectedMiltonBalance = 150250 * 1e18;
-        uint256 expectedStanleyBalance = 800000 * 1e18;
+        uint256 expectedMiltonBalance = 150250 * TestConstants.D18;
+        uint256 expectedStanleyBalance = 800000 * TestConstants.D18;
 
         _executeRedeemDai(
             autoRebalanceThreshold,
@@ -1366,11 +1372,11 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 50750 * 1e6;
+        uint256 expectedMiltonBalance = 50750 * TestConstants.N1__0_6DEC;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(
@@ -1390,12 +1396,12 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 158210 * 1e6;
-        uint256 expectedStanleyBalance = 632840 * 1e18;
+        uint256 expectedMiltonBalance = 158210 * TestConstants.N1__0_6DEC;
+        uint256 expectedStanleyBalance = 632840 * TestConstants.D18;
 
         _executeRedeemUsdt(
             autoRebalanceThreshold,
@@ -1416,11 +1422,11 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 210000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 210000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6;
+        uint256 expectedMiltonBalance = 200000 * TestConstants.N1__0_6DEC;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         uint256 wadUserPosition = userPosition * 1e12;
@@ -1466,11 +1472,11 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
-        uint256 miltonInitPool = 1000000 * 1e6;
-        uint256 stanleyInitBalance = 800000 * 1e18;
-        uint256 userPosition = 150000 * 1e6;
+        uint256 miltonInitPool = 1000000 * TestConstants.N1__0_6DEC;
+        uint256 stanleyInitBalance = 800000 * TestConstants.D18;
+        uint256 userPosition = 150000 * TestConstants.N1__0_6DEC;
 
-        uint256 expectedMiltonBalance = 50750 * 1e6;
+        uint256 expectedMiltonBalance = 50750 * TestConstants.N1__0_6DEC;
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(

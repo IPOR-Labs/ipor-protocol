@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/mocks/MockIporWeighted.sol";
 
 contract IporOracleUtils is Test {
     /// ------------------- ORACLE PARAMS -------------------
@@ -28,6 +29,15 @@ contract IporOracleUtils is Test {
         ItfIporOracle iporOracle = ItfIporOracle(address(iporOracleProxy));
         iporOracle.addUpdater(updater);
         return iporOracle;
+    }
+    
+    function _prepareIporWeighted(address iporOracle) internal returns (MockIporWeighted) {
+        MockIporWeighted iporWeightedImpl = new MockIporWeighted();
+        ERC1967Proxy iporWeightedProxy = new ERC1967Proxy(
+            address(iporWeightedImpl),
+            abi.encodeWithSignature("initialize(address)", iporOracle)
+        );
+        return MockIporWeighted(address(iporWeightedProxy));
     }
 
     function getIporOracleOneAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {

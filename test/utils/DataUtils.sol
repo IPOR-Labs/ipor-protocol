@@ -3,12 +3,17 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
+import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
+import {MiltonUtils} from "../utils/MiltonUtils.sol";
+import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
+import {JosephUtils} from "../utils/JosephUtils.sol";
+import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 
-contract DataUtils is Test {
+contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, JosephUtils, StanleyUtils {
     /// ---------------- MOCKED TOKENS  ----------------
     function getTokenUsdt() public returns (MockTestnetTokenUsdt) {
         MockTestnetTokenUsdt tokenUsdt = new MockTestnetTokenUsdt(TestConstants.TOTAL_SUPPLY_6_DECIMALS);

@@ -18,16 +18,6 @@ contract MiltonStorageUtils is Test {
     }
     /// ------------------- MILTONSTORAGE -------------------
 
-    function prepareMiltonStorage(
-        MiltonStorage miltonStorage,
-        address joseph,
-        address milton
-    ) public returns (MiltonStorage) {
-        miltonStorage.setJoseph(joseph);
-        miltonStorage.setMilton(milton);
-        return miltonStorage;
-    }
-
     function getMiltonStorage() public returns (MiltonStorage) {
         MiltonStorage miltonStorageImplementation = new MiltonStorage();
         ERC1967Proxy miltonStorageProxy = new ERC1967Proxy(address(miltonStorageImplementation), abi.encodeWithSignature( "initialize()", ""));

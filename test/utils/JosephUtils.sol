@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../../contracts/interfaces/IJosephInternal.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfJosephUsdt.sol";
 import "../../contracts/itf/ItfJosephUsdc.sol";
@@ -28,6 +29,11 @@ contract JosephUtils is Test {
         MockCase0JosephUsdc mockCase0JosephUsdc;
         MockCase0JosephDai mockCase0JosephDai;
     }
+
+    function prepareJoseph(IJosephInternal joseph) public {
+        joseph.setMaxLiquidityPoolBalance(1000000000);
+        joseph.setMaxLpAccountContribution(1000000000);
+    }
     /// ------------------- JOSEPH -------------------
     /// ---------------------- ITFJOSEPH ----------------------
 
@@ -45,11 +51,6 @@ contract JosephUtils is Test {
         return itfJosephUsdt;
     }
 
-    function prepareItfJosephUsdt(ItfJosephUsdt itfJosephUsdt) public {
-        itfJosephUsdt.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        itfJosephUsdt.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
-    }
-
     function getItfJosephUsdc(
         address tokenUsdc,
         address ipTokenUsdc,
@@ -64,11 +65,6 @@ contract JosephUtils is Test {
         return itfJosephUsdc;
     }
 
-    function prepareItfJosephUsdc(ItfJosephUsdc itfJosephUsdc) public {
-        itfJosephUsdc.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        itfJosephUsdc.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
-    }
-
     function getItfJosephDai(
         address tokenDai,
         address ipTokenDai,
@@ -81,11 +77,6 @@ contract JosephUtils is Test {
         new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
         ItfJosephDai itfJosephDai = ItfJosephDai(address(josephProxy));
         return itfJosephDai;
-    }
-
-    function prepareItfJosephDai(ItfJosephDai itfJosephDai) public {
-        itfJosephDai.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        itfJosephDai.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getItfJosephAddresses(address josephUsdt, address josephUsdc, address josephDai)
@@ -136,11 +127,6 @@ contract JosephUtils is Test {
         return mockCase0JosephUsdt;
     }
 
-    function prepareMockCase0JosephUsdt(MockCase0JosephUsdt mockCase0JosephUsdt) public {
-        mockCase0JosephUsdt.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        mockCase0JosephUsdt.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
-    }
-
     function getMockCase0JosephUsdc(
         address tokenUsdc,
         address ipTokenUsdc,
@@ -155,11 +141,6 @@ contract JosephUtils is Test {
         return mockCase0JosephUsdc;
     }
 
-    function prepareMockCase0JosephUsdc(MockCase0JosephUsdc mockCase0JosephUsdc) public {
-        mockCase0JosephUsdc.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        mockCase0JosephUsdc.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
-    }
-
     function getMockCase0JosephDai(
         address tokenDai,
         address ipTokenDai,
@@ -172,11 +153,6 @@ contract JosephUtils is Test {
         new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
         MockCase0JosephDai mockCase0JosephDai = MockCase0JosephDai(address(josephProxy));
         return mockCase0JosephDai;
-    }
-
-    function prepareMockCase0JosephDai(MockCase0JosephDai mockCase0JosephDai) public {
-        mockCase0JosephDai.setMaxLiquidityPoolBalance(TestConstants.USD_10_000_000);
-        mockCase0JosephDai.setMaxLpAccountContribution(TestConstants.USD_10_000_000);
     }
 
     function getMockCase0JosephAddresses(address josephUsdt, address josephUsdc, address josephDai)

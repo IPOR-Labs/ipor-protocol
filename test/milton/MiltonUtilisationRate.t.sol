@@ -5,11 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import {MiltonUtils} from "../utils/MiltonUtils.sol";
-import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
-import {JosephUtils} from "../utils/JosephUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
-import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
@@ -32,13 +27,8 @@ import "../../contracts/interfaces/types/IporTypes.sol";
 contract MiltonUtilisationRateTest is
     Test,
     TestCommons,
-    MiltonUtils,
-    MiltonStorageUtils,
-    JosephUtils,
-    IporOracleUtils,
     DataUtils,
-    SwapUtils,
-    StanleyUtils
+    SwapUtils
 {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
@@ -94,9 +84,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -136,9 +125,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -178,9 +166,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMockCase6MiltonDai(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -220,9 +207,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMockCase6MiltonDai(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -261,9 +247,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -300,9 +285,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMockCase6MiltonDai(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -342,9 +326,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMockCase0MiltonDai(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -381,9 +364,8 @@ contract MiltonUtilisationRateTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(mockCase0JosephDai), address(mockCase6MiltonDai));
-        prepareMockCase6MiltonDai(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareMockCase0JosephDai(mockCase0JosephDai);
+        prepareMilton(mockCase6MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
         prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);

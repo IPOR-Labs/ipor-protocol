@@ -5,11 +5,6 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import {MiltonUtils} from "../utils/MiltonUtils.sol";
-import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
-import {JosephUtils} from "../utils/JosephUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
-import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
@@ -28,12 +23,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 contract MiltonEventsTest is
     Test,
     TestCommons,
-    MiltonUtils,
-    JosephUtils,
-    MiltonStorageUtils,
-    IporOracleUtils,
-    DataUtils,
-    StanleyUtils
+    DataUtils
 {
     MockSpreadModel internal _miltonSpreadModel;
     address internal _admin;
@@ -118,9 +108,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai);
+        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
+        prepareJoseph(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
@@ -184,9 +173,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai);
+        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
+        prepareJoseph(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
@@ -250,9 +238,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
-        prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt);
+        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
+        prepareJoseph(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
@@ -316,9 +303,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
-        prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt);
+        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
+        prepareJoseph(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
@@ -382,9 +368,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMiltonStorage(miltonStorageDai, address(josephDai), address(miltonDai));
-        prepareItfMiltonDai(miltonDai, address(josephDai), address(stanleyDai));
-        prepareItfJosephDai(josephDai);
+        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
+        prepareJoseph(josephDai);
         prepareIpTokenDai(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
@@ -441,9 +426,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
-        prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt);
+        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
+        prepareJoseph(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
@@ -500,9 +484,8 @@ contract MiltonEventsTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
-        prepareMiltonStorage(miltonStorageUsdt, address(josephUsdt), address(miltonUsdt));
-        prepareItfMiltonUsdt(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareItfJosephUsdt(josephUsdt);
+        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
+        prepareJoseph(josephUsdt);
         prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
