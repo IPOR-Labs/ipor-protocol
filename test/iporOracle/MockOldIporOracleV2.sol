@@ -6,35 +6,34 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/IporOracleErrors.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/types/IporOracleTypes.sol";
-import "../libraries/Constants.sol";
-import "../libraries/math/IporMath.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporAlgorithm.sol";
-import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/IporLogic.sol";
-import "./libraries/DecayFactorCalculation.sol";
+import "../../contracts/libraries/errors/IporErrors.sol";
+import "../../contracts/libraries/errors/IporOracleErrors.sol";
+import "../../contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/interfaces/types/IporOracleTypes.sol";
+import "../../contracts/libraries/Constants.sol";
+import "../../contracts/libraries/math/IporMath.sol";
+import "../../contracts/interfaces/IIporOracle.sol";
+import "../../contracts/security/IporOwnableUpgradeable.sol";
+import "../../contracts/oracles/libraries/IporLogic.sol";
+import "../../contracts/oracles/libraries/DecayFactorCalculation.sol";
+
 /**
  * @title IPOR Index Oracle Contract
  *
  * @author IPOR Labs
  */
-contract IporOracle is
+contract MockOldIporOracleV2 is
     Initializable,
     PausableUpgradeable,
     UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IIporOracle
+    IporOwnableUpgradeable
 {
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
     mapping(address => uint256) internal _updaters;
+
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
-    address internal _iporAlgorithmFacade;
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -52,13 +51,13 @@ contract IporOracle is
         uint64[] memory exponentialMovingAverages,
         uint64[] memory exponentialWeightedMovingVariances
     ) public initializer {
-        __Pausable_init_unchained();
-        __Ownable_init_unchained();
-        __UUPSUpgradeable_init_unchained();
+        __Pausable_init();
+        __Ownable_init();
+        __UUPSUpgradeable_init();
 
         uint256 assetsLength = assets.length;
 
-        for (uint256 i; i != assetsLength; ++i) {
+        for (uint256 i = 0; i != assetsLength; i++) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
@@ -71,14 +70,13 @@ contract IporOracle is
         }
     }
 
-    function getVersion() external pure virtual override returns (uint256) {
+    function getVersion() external pure virtual returns (uint256) {
         return 2;
     }
 
     function getIndex(address asset)
         external
         view
-        override
         returns (
             uint256 indexValue,
             uint256 ibtPrice,
@@ -102,7 +100,6 @@ contract IporOracle is
         external
         view
         virtual
-        override
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
@@ -116,30 +113,15 @@ contract IporOracle is
         );
     }
 
-    function getIporAlgorithmFacade() external view override returns (address) {
-        return _iporAlgorithmFacade;
-    }
-
-    function setIporAlgorithmFacade(address newAlgorithmAddress) external onlyOwner {
-        require(newAlgorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
-        _iporAlgorithmFacade = newAlgorithmAddress;
-    }
-
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
         external
         view
-        override
         returns (uint256)
     {
         return _calculateAccruedIbtPrice(calculateTimestamp, asset);
     }
 
-    function updateIndex(address asset, uint256 indexValue)
-        external
-        override
-        onlyUpdater
-        whenNotPaused
-    {
+    function updateIndex(address asset, uint256 indexValue) external onlyUpdater whenNotPaused {
         uint256[] memory indexes = new uint256[](1);
         indexes[0] = indexValue;
         address[] memory assets = new address[](1);
@@ -148,52 +130,25 @@ contract IporOracle is
         _updateIndexes(assets, indexes, block.timestamp);
     }
 
-    function updateIndex(address asset)
-        external
-        override
-        whenNotPaused
-        returns (
-            uint256 indexValue,
-            uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-            uint256 lastUpdateTimestamp
-        )
-    {
-        IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
-        require(_iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
-
-        uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmFacade).calculateIpor(asset);
-        (
-            indexValue,
-            ibtPrice,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
-            lastUpdateTimestamp
-        ) = _updateIndex(asset, newIndexValue, block.timestamp);
-    }
-
     function updateIndexes(address[] memory assets, uint256[] memory indexValues)
         external
-        override
         onlyUpdater
         whenNotPaused
     {
         _updateIndexes(assets, indexValues, block.timestamp);
     }
 
-    function addUpdater(address updater) external override onlyOwner whenNotPaused {
+    function addUpdater(address updater) external onlyOwner whenNotPaused {
         _updaters[updater] = 1;
         emit IporIndexAddUpdater(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
+    function removeUpdater(address updater) external onlyOwner whenNotPaused {
         _updaters[updater] = 0;
         emit IporIndexRemoveUpdater(updater);
     }
 
-    function isUpdater(address updater) external view override returns (uint256) {
+    function isUpdater(address updater) external view returns (uint256) {
         return _updaters[updater];
     }
 
@@ -202,7 +157,7 @@ contract IporOracle is
         uint256 updateTimestamp,
         uint256 exponentialMovingAverage,
         uint256 exponentialWeightedMovingVariance
-    ) external override onlyOwner whenNotPaused {
+    ) external onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indexes[asset].quasiIbtPrice == 0,
@@ -223,22 +178,18 @@ contract IporOracle is
         );
     }
 
-    function removeAsset(address asset) external override onlyOwner whenNotPaused {
+    function removeAsset(address asset) external onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(_indexes[asset].quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
     }
 
-    function isAssetSupported(address asset) external view override returns (bool) {
-        return _indexes[asset].quasiIbtPrice > 0;
-    }
-
-    function pause() external override onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() external override onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
@@ -249,7 +200,7 @@ contract IporOracle is
     ) internal onlyUpdater {
         require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i; i != assets.length; ++i) {
+        for (uint256 i = 0; i != assets.length; i++) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
         }
     }
@@ -258,16 +209,7 @@ contract IporOracle is
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
-    )
-        internal
-        returns (
-            uint256 newIndexValue,
-            uint256 newIbtPrice,
-            uint256 newExponentialMovingAverage,
-            uint256 newExponentialWeightedMovingVariance,
-            uint256 lastUpdateTimestamp
-        )
-    {
+    ) internal {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         require(
@@ -275,35 +217,34 @@ contract IporOracle is
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
 
-        newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+        uint256 newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
             ipor.exponentialMovingAverage,
             indexValue,
             _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
         );
 
-        newExponentialWeightedMovingVariance = IporLogic.calculateExponentialWeightedMovingVariance(
+        uint256 newExponentialWeightedMovingVariance = IporLogic
+            .calculateExponentialWeightedMovingVariance(
                 ipor.exponentialWeightedMovingVariance,
                 newExponentialMovingAverage,
                 indexValue,
                 _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
 
-        newIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
+        uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
-            newIbtPrice.toUint128(),
+            newQuasiIbtPrice.toUint128(),
             newExponentialMovingAverage.toUint64(),
             newExponentialWeightedMovingVariance.toUint64(),
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
-        newIndexValue = indexValue;
-        lastUpdateTimestamp = updateTimestamp;
 
         emit IporIndexUpdate(
             asset,
             indexValue,
-            newIbtPrice,
+            newQuasiIbtPrice,
             newExponentialMovingAverage,
             newExponentialWeightedMovingVariance,
             updateTimestamp
@@ -333,4 +274,44 @@ contract IporOracle is
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    /// @notice Emmited when Charlie update IPOR Index.
+    /// @param asset underlying / stablecoin address
+    /// @param indexValue IPOR Index value represented in 18 decimals
+    /// @param quasiIbtPrice quasi Interest Bearing Token price represented in 18 decimals.
+    /// @param exponentialMovingAverage Exponential Moving Average represented in 18 decimals.
+    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance
+    /// @param updateTimestamp moment when IPOR Index was updated.
+    event IporIndexUpdate(
+        address asset,
+        uint256 indexValue,
+        uint256 quasiIbtPrice,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance,
+        uint256 updateTimestamp
+    );
+
+    /// @notice event emitted when IPOR Index Updater is added by Owner
+    /// @param newUpdater new Updater address
+    event IporIndexAddUpdater(address newUpdater);
+
+    /// @notice event emitted when IPOR Index Updater is removed by Owner
+    /// @param updater updater address
+    event IporIndexRemoveUpdater(address updater);
+
+    /// @notice event emitted when new asset is added by Owner to list of assets supported in IPOR Protocol.
+    /// @param newAsset new asset address
+    /// @param updateTimestamp update timestamp
+    /// @param exponentialMovingAverage Exponential Moving Average for asset
+    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance for asset
+    event IporIndexAddAsset(
+        address newAsset,
+        uint256 updateTimestamp,
+        uint256 exponentialMovingAverage,
+        uint256 exponentialWeightedMovingVariance
+    );
+
+    /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
+    /// @param asset asset address
+    event IporIndexRemoveAsset(address asset);
 }

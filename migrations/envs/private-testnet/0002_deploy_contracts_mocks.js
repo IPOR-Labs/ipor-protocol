@@ -2,8 +2,6 @@ const { exit } = require("process");
 const func = require("../../libs/json_func.js");
 const script = require("../../libs/mocks/0001_deploy_mocks_and_faucet.js");
 
-const TestnetFaucet = artifacts.require("TestnetFaucet");
-
 const MockTestnetTokenUsdt = artifacts.require("MockTestnetTokenUsdt");
 const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
 const MockTestnetTokenDai = artifacts.require("MockTestnetTokenDai");
@@ -26,7 +24,6 @@ const MockTestnetStrategyCompoundDai = artifacts.require("MockTestnetStrategyCom
 
 module.exports = async function (deployer, _network, addresses) {
     await script(deployer, _network, addresses, [
-        TestnetFaucet,
         MockTestnetTokenUsdt,
         MockTestnetTokenUsdc,
         MockTestnetTokenDai,

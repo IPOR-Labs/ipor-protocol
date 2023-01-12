@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import "../../contracts/security/IporOwnable.sol";
 import "../../contracts/libraries/errors/IporErrors.sol";

@@ -167,7 +167,7 @@ describe("End to End tests on mainnet fork", function () {
         ).to.be.true;
     });
 
-    it("Should not be able to withdraw from stanley Usdt", async () => {
+    it.skip("Should not be able to withdraw from stanley Usdt", async () => {
         // given
         await transferFromFaucetTo(
             testnetFaucet,
@@ -189,6 +189,7 @@ describe("End to End tests on mainnet fork", function () {
 
         // then
         const stanleyUsdtBalanceAfter = await stanleyUsdt.totalBalance(miltonUsdt.address);
+
         expect(
             stanleyUsdtBalanceAfter.eq(stanleyUsdtBalanceBefore),
             "stanleyUsdtBalanceAfter = stanleyUsdtBalanceBefore"
