@@ -67,8 +67,11 @@ abstract contract JosephInternal is
         _;
     }
 
-    modifier onlyRebalance() {
-        require(_appointedToRebalance[_msgSender()], JosephErrors.CALLER_NOT_REBALANCE_APPOINTER);
+    modifier onlyAppointedToRebalance() {
+        require(
+            _appointedToRebalance[_msgSender()],
+            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
+        );
         _;
     }
 
@@ -171,7 +174,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function rebalance() external override onlyRebalance whenNotPaused {
+    function rebalance() external override onlyAppointedToRebalance whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -397,31 +400,18 @@ abstract contract JosephInternal is
         return _miltonStanleyBalanceRatio;
     }
 
-    function addAppointedToRebalance(address appointed)
-        external
-        override
-        onlyOwner
-    {
+    function addAppointedToRebalance(address appointed) external override onlyOwner {
         require(appointed != address(0), IporErrors.WRONG_ADDRESS);
         _appointedToRebalance[appointed] = true;
         emit AppointedToRebalanceChanged(_msgSender(), appointed, true);
     }
 
-    function removeAppointedToRebalance(address appointed)
-        external
-        override
-        onlyOwner
-    {
+    function removeAppointedToRebalance(address appointed) external override onlyOwner {
         _appointedToRebalance[appointed] = false;
         emit AppointedToRebalanceChanged(_msgSender(), appointed, false);
     }
 
-    function isAppointedToRebalance(address appointed)
-        external
-        view
-        override
-        returns (bool)
-    {
+    function isAppointedToRebalance(address appointed) external view override returns (bool) {
         return _appointedToRebalance[appointed];
     }
 

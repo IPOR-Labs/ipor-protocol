@@ -137,8 +137,8 @@ interface IJosephInternal {
     /// @dev Value represented without decimals.
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external;
 
-    /// @notice adds new address allowed to rebalance Milton
-    /// @param appointed new address allowed to rebalance Milton
+    /// @notice adds new address allowed to rebalance Milton and Stanley
+    /// @param appointed new address allowed to rebalance Milton and Stanley
     function addAppointedToRebalance(address appointed) external;
 
     /// @notice deactivate address allowed to rebalance Milton
@@ -146,7 +146,7 @@ interface IJosephInternal {
     function removeAppointedToRebalance(address appointed) external;
 
     /// @notice check if address is allowed to rebalance Milton
-    function isAppointedToRebalance(address appointed)  external view returns (bool);
+    function isAppointedToRebalance(address appointed) external view returns (bool);
 
     /// @notice Gets auto rebalance threshold
     /// @dev Auto rebalance threshold is a value which is used to determine if rebalance between Milton and Stanley should be executed.
@@ -217,12 +217,16 @@ interface IJosephInternal {
         uint256 indexed newMaxLpAccountContribution
     );
 
-    /// @notice Emmited after the new address has been added/removed to the list of addresses allowed to rebalance Milton
+    /// @notice Emmited after the new address has been added/removed to the list of addresses allowed to rebalance betwee Milton and Stanley
     /// @param changedBy account address that changed the list of addresses allowed to rebalance Milton
     /// @param appointed address that has been added/removed to the list of addresses allowed to rebalance Milton
     /// @param status true if address has been added to the list of addresses allowed to rebalance Milton,
     ///        false if address has been removed from the list of addresses allowed to rebalance Milton
-    event AppointedToRebalanceChanged(address indexed changedBy,address indexed appointed, bool status);
+    event AppointedToRebalanceChanged(
+        address indexed changedBy,
+        address indexed appointed,
+        bool status
+    );
 
     /// @notice Emmited after the auto rebalance threshold has changed
     /// @param changedBy account address that changed auto rebalance threshold

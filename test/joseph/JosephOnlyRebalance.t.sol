@@ -27,12 +27,11 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     IpToken internal _ipDai;
     uint32 private _blockTimestamp = 1641701;
 
-
     function testShouldNotRebalanceWhenNotAppointedSender() public {
         // given
         Amm memory amm = _createAmmForDai();
         // when
-        vm.expectRevert(bytes(JosephErrors.CALLER_NOT_REBALANCE_APPOINTER));
+        vm.expectRevert(bytes(JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE));
         amm.joseph.rebalance();
     }
 
@@ -83,7 +82,6 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         uint256 josephVersionBefore = amm.joseph.getVersion();
         JosephDai newJosephImplementation = new JosephDai();
 
-
         // when
         amm.joseph.upgradeTo(address(newJosephImplementation));
         uint256 josephVersionAfter = amm.joseph.getVersion();
@@ -92,7 +90,6 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         assertEq(josephVersionBefore, 0);
         assertEq(josephVersionAfter, 2);
     }
-
 
     function testShouldSwitchImplementationOfJosephAndDontChangeValuesInStorage() public {
         // given
@@ -149,9 +146,22 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
     function _createAmmForDai() internal returns (Amm memory) {
         Amm memory amm;
-        amm.ammTokens.dai = new MockTestnetToken("Mocked DAI", "DAI", 100_000_000 * 1e18, uint8(18));
-        amm.ammTokens.ipDai = new IpToken("Interest bearing DAI", "ipDAI", address(amm.ammTokens.dai));
-        amm.ammTokens.ivDai = new IvTokenDai("Inverse interest bearing DAI", "ivDAI", address(amm.ammTokens.dai));
+        amm.ammTokens.dai = new MockTestnetToken(
+            "Mocked DAI",
+            "DAI",
+            100_000_000 * 1e18,
+            uint8(18)
+        );
+        amm.ammTokens.ipDai = new IpToken(
+            "Interest bearing DAI",
+            "ipDAI",
+            address(amm.ammTokens.dai)
+        );
+        amm.ammTokens.ivDai = new IvTokenDai(
+            "Inverse interest bearing DAI",
+            "ivDAI",
+            address(amm.ammTokens.dai)
+        );
         amm.ammTokens.iporToken = new IporToken("Ipor Token", "IPOR", address(this));
 
         amm.aaveStrategy = _createAaveStrategy(amm);
@@ -168,9 +178,22 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
     function _createAmmForOldJoseph() internal returns (Amm memory) {
         Amm memory amm;
-        amm.ammTokens.dai = new MockTestnetToken("Mocked DAI", "DAI", 100_000_000 * 1e18, uint8(18));
-        amm.ammTokens.ipDai = new IpToken("Interest bearing DAI", "ipDAI", address(amm.ammTokens.dai));
-        amm.ammTokens.ivDai = new IvTokenDai("Inverse interest bearing DAI", "ivDAI", address(amm.ammTokens.dai));
+        amm.ammTokens.dai = new MockTestnetToken(
+            "Mocked DAI",
+            "DAI",
+            100_000_000 * 1e18,
+            uint8(18)
+        );
+        amm.ammTokens.ipDai = new IpToken(
+            "Interest bearing DAI",
+            "ipDAI",
+            address(amm.ammTokens.dai)
+        );
+        amm.ammTokens.ivDai = new IvTokenDai(
+            "Inverse interest bearing DAI",
+            "ivDAI",
+            address(amm.ammTokens.dai)
+        );
         amm.ammTokens.iporToken = new IporToken("Ipor Token", "IPOR", address(this));
 
         amm.aaveStrategy = _createAaveStrategy(amm);
@@ -200,53 +223,147 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         amm.iporOracle.addUpdater(address(this));
         amm.aaveStrategy.setStanley(address(amm.stanley));
         amm.compoundStrategy.setStanley(address(amm.stanley));
-
     }
 
     function _createJoseph(Amm memory amm) internal returns (Joseph) {
         JosephDai josephImplementation = new JosephDai();
-        return Joseph(address(new ERC1967Proxy(address(josephImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(amm.ammTokens.dai), address(amm.ammTokens.ivDai), address(amm.milton), address(amm.miltonStorage), address(amm.stanley)))));
+        return
+            Joseph(
+                address(
+                    new ERC1967Proxy(
+                        address(josephImplementation),
+                        abi.encodeWithSignature(
+                            "initialize(bool,address,address,address,address,address)",
+                            false,
+                            address(amm.ammTokens.dai),
+                            address(amm.ammTokens.ivDai),
+                            address(amm.milton),
+                            address(amm.miltonStorage),
+                            address(amm.stanley)
+                        )
+                    )
+                )
+            );
     }
 
     function _createMockJoseph(Amm memory amm) internal returns (Joseph) {
         MockJosephDai josephImplementation = new MockJosephDai();
-        return Joseph(address(new ERC1967Proxy(address(josephImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(amm.ammTokens.dai), address(amm.ammTokens.ivDai), address(amm.milton), address(amm.miltonStorage), address(amm.stanley)))));
+        return
+            Joseph(
+                address(
+                    new ERC1967Proxy(
+                        address(josephImplementation),
+                        abi.encodeWithSignature(
+                            "initialize(bool,address,address,address,address,address)",
+                            false,
+                            address(amm.ammTokens.dai),
+                            address(amm.ammTokens.ivDai),
+                            address(amm.milton),
+                            address(amm.miltonStorage),
+                            address(amm.stanley)
+                        )
+                    )
+                )
+            );
     }
 
     function _createMilton(Amm memory amm) internal returns (Milton) {
         MiltonDai miltonImplementation = new MiltonDai();
-        return Milton(address(new ERC1967Proxy(address(miltonImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(amm.ammTokens.dai), address(amm.iporOracle), address(amm.miltonStorage), address(amm.miltonSpreadModel), address(amm.stanley)))));
+        return
+            Milton(
+                address(
+                    new ERC1967Proxy(
+                        address(miltonImplementation),
+                        abi.encodeWithSignature(
+                            "initialize(bool,address,address,address,address,address)",
+                            false,
+                            address(amm.ammTokens.dai),
+                            address(amm.iporOracle),
+                            address(amm.miltonStorage),
+                            address(amm.miltonSpreadModel),
+                            address(amm.stanley)
+                        )
+                    )
+                )
+            );
     }
 
     function _createStanley(Amm memory amm) internal returns (Stanley) {
         StanleyDai stanleyImplementation = new StanleyDai();
-        return Stanley(address(new ERC1967Proxy(address(stanleyImplementation), abi.encodeWithSignature("initialize(address,address,address,address)", address(amm.ammTokens.dai), address(amm.ammTokens.ivDai), address(amm.aaveStrategy), address(amm.compoundStrategy)))));
+        return
+            Stanley(
+                address(
+                    new ERC1967Proxy(
+                        address(stanleyImplementation),
+                        abi.encodeWithSignature(
+                            "initialize(address,address,address,address)",
+                            address(amm.ammTokens.dai),
+                            address(amm.ammTokens.ivDai),
+                            address(amm.aaveStrategy),
+                            address(amm.compoundStrategy)
+                        )
+                    )
+                )
+            );
     }
-
 
     function _createStorage() internal returns (MiltonStorage) {
         MiltonStorageDai miltonStorageImplementation = new MiltonStorageDai();
-        return MiltonStorage(address(new ERC1967Proxy(address(miltonStorageImplementation), abi.encodeWithSignature("initialize()"))));
+        return
+            MiltonStorage(
+                address(
+                    new ERC1967Proxy(
+                        address(miltonStorageImplementation),
+                        abi.encodeWithSignature("initialize()")
+                    )
+                )
+            );
     }
 
     function _createAaveStrategy(Amm memory amm) internal returns (MockTestnetStrategy) {
-        MockTestnetShareTokenAaveDai mockTestnetShareTokenAaveDai = new MockTestnetShareTokenAaveDai(0);
+        MockTestnetShareTokenAaveDai mockTestnetShareTokenAaveDai = new MockTestnetShareTokenAaveDai(
+                0
+            );
         MockTestnetStrategyAaveDai mockTestnetStrategyAaveDaiImpl = new MockTestnetStrategyAaveDai();
-        return MockTestnetStrategy(address(new ERC1967Proxy(address(mockTestnetStrategyAaveDaiImpl), abi.encodeWithSignature("initialize(address,address)", address(amm.ammTokens.dai), address(mockTestnetShareTokenAaveDai)))));
-
+        return
+            MockTestnetStrategy(
+                address(
+                    new ERC1967Proxy(
+                        address(mockTestnetStrategyAaveDaiImpl),
+                        abi.encodeWithSignature(
+                            "initialize(address,address)",
+                            address(amm.ammTokens.dai),
+                            address(mockTestnetShareTokenAaveDai)
+                        )
+                    )
+                )
+            );
     }
 
     function _createCompoundStrategy(Amm memory amm) internal returns (MockTestnetStrategy) {
-        MockTestnetShareTokenCompoundDai mockTestnetShareTokenCompoundDai = new MockTestnetShareTokenCompoundDai(0);
+        MockTestnetShareTokenCompoundDai mockTestnetShareTokenCompoundDai = new MockTestnetShareTokenCompoundDai(
+                0
+            );
         MockTestnetStrategyCompoundDai mockTestnetStrategyCompoundDaiImpl = new MockTestnetStrategyCompoundDai();
-        return MockTestnetStrategy(address(new ERC1967Proxy(address(mockTestnetStrategyCompoundDaiImpl), abi.encodeWithSignature("initialize(address,address)", address(amm.ammTokens.dai), address(mockTestnetShareTokenCompoundDai)))));
+        return
+            MockTestnetStrategy(
+                address(
+                    new ERC1967Proxy(
+                        address(mockTestnetStrategyCompoundDaiImpl),
+                        abi.encodeWithSignature(
+                            "initialize(address,address)",
+                            address(amm.ammTokens.dai),
+                            address(mockTestnetShareTokenCompoundDai)
+                        )
+                    )
+                )
+            );
     }
 
     function _createIporOracleDai(address dai) internal returns (IporOracle) {
         ItfIporOracle iporOracleImplementation = new ItfIporOracle();
         address[] memory assets = new address[](1);
         assets[0] = address(dai);
-
 
         uint32[] memory updateTimestamps = new uint32[](1);
         updateTimestamps[0] = uint32(_blockTimestamp);
@@ -258,17 +375,21 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
         exponentialWeightedMovingVariances[0] = uint64(0);
 
-        return IporOracle(address(new ERC1967Proxy(
-                address(iporOracleImplementation),
-                abi.encodeWithSignature(
-                    "initialize(address[],uint32[],uint64[],uint64[])",
-                    assets,
-                    updateTimestamps,
-                    exponentialMovingAverages,
-                    exponentialWeightedMovingVariances
+        return
+            IporOracle(
+                address(
+                    new ERC1967Proxy(
+                        address(iporOracleImplementation),
+                        abi.encodeWithSignature(
+                            "initialize(address[],uint32[],uint64[],uint64[])",
+                            assets,
+                            updateTimestamps,
+                            exponentialMovingAverages,
+                            exponentialWeightedMovingVariances
+                        )
+                    )
                 )
-            )));
-
+            );
     }
 
     struct AmmTokens {

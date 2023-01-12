@@ -21,11 +21,11 @@ import "../../contracts/interfaces/IStanley.sol";
 import "../../contracts/security/IporOwnableUpgradeable.sol";
 
 abstract contract MockJosephInternal is
-Initializable,
-PausableUpgradeable,
-ReentrancyGuardUpgradeable,
-UUPSUpgradeable,
-IporOwnableUpgradeable
+    Initializable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeCast for uint256;
@@ -109,11 +109,11 @@ IporOwnableUpgradeable
         _autoRebalanceThresholdInThousands = 50;
     }
 
-    function getVersion() external pure virtual  returns (uint256) {
+    function getVersion() external pure virtual returns (uint256) {
         return 0;
     }
 
-    function getAsset() external view  returns (address) {
+    function getAsset() external view returns (address) {
         return _getAsset();
     }
 
@@ -163,7 +163,7 @@ IporOwnableUpgradeable
         return _ipToken;
     }
 
-    function rebalance() external  onlyOwner whenNotPaused {
+    function rebalance() external onlyOwner whenNotPaused {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -174,7 +174,7 @@ IporOwnableUpgradeable
 
         if (ratio > miltonStanleyBalanceRatio) {
             uint256 assetAmount = wadMiltonAssetBalance -
-            IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
+                IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
             _getMilton().depositToStanley(assetAmount);
         } else {
             uint256 assetAmount = IporMath.division(
@@ -186,27 +186,26 @@ IporOwnableUpgradeable
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function depositToStanley(uint256 assetAmount) external  onlyOwner whenNotPaused {
+    function depositToStanley(uint256 assetAmount) external onlyOwner whenNotPaused {
         _getMilton().depositToStanley(assetAmount);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetAmount) external  onlyOwner whenNotPaused {
+    function withdrawFromStanley(uint256 assetAmount) external onlyOwner whenNotPaused {
         _getMilton().withdrawFromStanley(assetAmount);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawAllFromStanley() external  onlyOwner whenNotPaused {
+    function withdrawAllFromStanley() external onlyOwner whenNotPaused {
         _getMilton().withdrawAllFromStanley();
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
     function transferToTreasury(uint256 assetAmount)
-    external
-    
-    nonReentrant
-    whenNotPaused
-    onlyTreasuryManager
+        external
+        nonReentrant
+        whenNotPaused
+        onlyTreasuryManager
     {
         address treasury = _treasury;
         require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
@@ -229,11 +228,10 @@ IporOwnableUpgradeable
 
     //@param assetAmount underlying token amount represented in 18 decimals
     function transferToCharlieTreasury(uint256 assetAmount)
-    external
-    
-    nonReentrant
-    whenNotPaused
-    onlyCharlieTreasuryManager
+        external
+        nonReentrant
+        whenNotPaused
+        onlyCharlieTreasuryManager
     {
         address charlieTreasury = _charlieTreasury;
 
@@ -255,126 +253,112 @@ IporOwnableUpgradeable
         );
     }
 
-    function pause() external  onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() external  onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
     }
 
-    function getCharlieTreasury() external view  returns (address) {
+    function getCharlieTreasury() external view returns (address) {
         return _charlieTreasury;
     }
 
-    function setCharlieTreasury(address newCharlieTreasury)
-    external
-    
-    onlyOwner
-    whenNotPaused
-    {
+    function setCharlieTreasury(address newCharlieTreasury) external onlyOwner whenNotPaused {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         address oldCharlieTreasury = _charlieTreasury;
         _charlieTreasury = newCharlieTreasury;
     }
 
-    function getTreasury() external view  returns (address) {
+    function getTreasury() external view returns (address) {
         return _treasury;
     }
 
-    function setTreasury(address newTreasury) external  onlyOwner whenNotPaused {
+    function setTreasury(address newTreasury) external onlyOwner whenNotPaused {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
         address oldTreasury = _treasury;
         _treasury = newTreasury;
     }
 
-    function getCharlieTreasuryManager() external view  returns (address) {
+    function getCharlieTreasuryManager() external view returns (address) {
         return _charlieTreasuryManager;
     }
 
     function setCharlieTreasuryManager(address newCharlieTreasuryManager)
-    external
-    
-    onlyOwner
-    whenNotPaused
+        external
+        onlyOwner
+        whenNotPaused
     {
         require(address(0) != newCharlieTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldCharlieTreasuryManager = _charlieTreasuryManager;
         _charlieTreasuryManager = newCharlieTreasuryManager;
     }
 
-    function getTreasuryManager() external view  returns (address) {
+    function getTreasuryManager() external view returns (address) {
         return _treasuryManager;
     }
 
-    function setTreasuryManager(address newTreasuryManager)
-    external
-    
-    onlyOwner
-    whenNotPaused
-    {
+    function setTreasuryManager(address newTreasuryManager) external onlyOwner whenNotPaused {
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldTreasuryManager = _treasuryManager;
         _treasuryManager = newTreasuryManager;
     }
 
-    function getMaxLiquidityPoolBalance() external view  returns (uint256) {
+    function getMaxLiquidityPoolBalance() external view returns (uint256) {
         return _maxLiquidityPoolBalance;
     }
 
     function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
-    external
-    
-    onlyOwner
-    whenNotPaused
+        external
+        onlyOwner
+        whenNotPaused
     {
         uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
         _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
     }
 
-    function getMaxLpAccountContribution() external view  returns (uint256) {
+    function getMaxLpAccountContribution() external view returns (uint256) {
         return _maxLpAccountContribution;
     }
 
     function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution)
-    external
-    
-    onlyOwner
-    whenNotPaused
+        external
+        onlyOwner
+        whenNotPaused
     {
         uint256 oldMaxLpAccountContribution = _maxLpAccountContribution;
         _maxLpAccountContribution = newMaxLpAccountContribution.toUint32();
     }
 
-    function getAutoRebalanceThreshold() external view  returns (uint256) {
+    function getAutoRebalanceThreshold() external view returns (uint256) {
         return _getAutoRebalanceThreshold();
     }
 
     function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold)
-    external
-    
-    onlyOwner
-    whenNotPaused
+        external
+        onlyOwner
+        whenNotPaused
     {
         _setAutoRebalanceThreshold(newAutoRebalanceThreshold);
     }
 
-    function getRedeemFeeRate() external pure  returns (uint256) {
+    function getRedeemFeeRate() external pure returns (uint256) {
         return _getRedeemFeeRate();
     }
 
-    function getRedeemLpMaxUtilizationRate() external pure  returns (uint256) {
+    function getRedeemLpMaxUtilizationRate() external pure returns (uint256) {
         return _getRedeemLpMaxUtilizationRate();
     }
 
-    function getMiltonStanleyBalanceRatio() external view  returns (uint256) {
+    function getMiltonStanleyBalanceRatio() external view returns (uint256) {
         return _miltonStanleyBalanceRatio;
     }
 
     function _getIporTotalBalance()
-    internal
-    view
-    returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
+        internal
+        view
+        returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
     {
         address miltonAddr = address(_getMilton());
 

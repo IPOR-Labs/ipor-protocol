@@ -2,7 +2,7 @@ import { BigNumber, Signer } from "ethers";
 
 import {
     ERC20,
-	MockCUSDT,
+    MockCUSDT,
     IpToken,
     IvToken,
     TestnetFaucet,
@@ -123,7 +123,7 @@ export type DeployType = {
     josephUsdt: JosephUsdt;
 };
 
-export const deploy = async (admin:Signer): Promise<DeployType> => {
+export const deploy = async (admin: Signer): Promise<DeployType> => {
     const testnetFaucet = await testnetFaucetFactory();
 
     const aUsdc = await aUsdcFactory();
@@ -325,7 +325,7 @@ export const setup = async (deployed: DeployType) => {
         ivTokenUsdc,
         ivTokenDai,
         strategyAaveDai,
-		strategyAaveDaiV2,
+        strategyAaveDaiV2,
         strategyAaveUsdc,
         strategyAaveUsdt,
         strategyCompoundDai,
@@ -367,7 +367,7 @@ export const setup = async (deployed: DeployType) => {
     await ivTokenSetup(ivTokenUsdt, stanleyUsdt.address);
 
     await strategyAaveSetup(strategyAaveDai, stanleyDai.address);
-	await strategyAaveSetup(strategyAaveDaiV2, stanleyDai.address);
+    await strategyAaveSetup(strategyAaveDaiV2, stanleyDai.address);
     await strategyAaveSetup(strategyAaveUsdc, stanleyUsdc.address);
     await strategyAaveSetup(strategyAaveUsdt, stanleyUsdt.address);
 

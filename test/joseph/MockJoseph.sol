@@ -13,19 +13,19 @@ abstract contract MockJoseph is MockJosephInternal {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    function calculateExchangeRate() external view  returns (uint256) {
+    function calculateExchangeRate() external view returns (uint256) {
         return _calculateExchangeRate(block.timestamp);
     }
 
-    function provideLiquidity(uint256 assetAmount) external  whenNotPaused {
+    function provideLiquidity(uint256 assetAmount) external whenNotPaused {
         _provideLiquidity(assetAmount, _getDecimals(), block.timestamp);
     }
 
-    function redeem(uint256 ipTokenAmount) external  whenNotPaused {
+    function redeem(uint256 ipTokenAmount) external whenNotPaused {
         _redeem(ipTokenAmount, block.timestamp);
     }
 
-    function checkVaultReservesRatio() external view  returns (uint256) {
+    function checkVaultReservesRatio() external view returns (uint256) {
         return _checkVaultReservesRatio();
     }
 
@@ -167,48 +167,47 @@ abstract contract MockJoseph is MockJosephInternal {
         }
     }
 
-
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
     event ProvideLiquidity(
-    /// @notice moment when liquidity is provided by `from` account
+        /// @notice moment when liquidity is provided by `from` account
         uint256 timestamp,
-    /// @notice address that provides liquidity
+        /// @notice address that provides liquidity
         address from,
-    /// @notice Milton's address where liquidity is received
+        /// @notice Milton's address where liquidity is received
         address to,
-    /// @notice current ipToken exchange rate
-    /// @dev value represented in 18 decimals
+        /// @notice current ipToken exchange rate
+        /// @dev value represented in 18 decimals
         uint256 exchangeRate,
-    /// @notice amount of asset provided by user to Milton's liquidity pool
-    /// @dev value represented in 18 decimals
+        /// @notice amount of asset provided by user to Milton's liquidity pool
+        /// @dev value represented in 18 decimals
         uint256 assetAmount,
-    /// @notice amount of ipToken issued to represent user's share in the liquidity pool.
-    /// @dev value represented in 18 decimals
+        /// @notice amount of ipToken issued to represent user's share in the liquidity pool.
+        /// @dev value represented in 18 decimals
         uint256 ipTokenAmount
     );
 
     /// @notice Emitted when `to` accound executes redeem ipTokens
     event Redeem(
-    /// @notice moment in which ipTokens were redeemed by `to` account
+        /// @notice moment in which ipTokens were redeemed by `to` account
         uint256 timestamp,
-    /// @notice Milton's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
+        /// @notice Milton's address from which underlying asset - ERC20 Tokens, are transferred to `to` account
         address from,
-    /// @notice account where underlying asset tokens are transferred after redeem
+        /// @notice account where underlying asset tokens are transferred after redeem
         address to,
-    /// @notice ipToken exchange rate used for calculating `assetAmount`
-    /// @dev value represented in 18 decimals
+        /// @notice ipToken exchange rate used for calculating `assetAmount`
+        /// @dev value represented in 18 decimals
         uint256 exchangeRate,
-    /// @notice underlying asset value calculated based on `exchangeRate` and `ipTokenAmount`
-    /// @dev value represented in 18 decimals
+        /// @notice underlying asset value calculated based on `exchangeRate` and `ipTokenAmount`
+        /// @dev value represented in 18 decimals
         uint256 assetAmount,
-    /// @notice redeemed IP Token value
-    /// @dev value represented in 18 decimals
+        /// @notice redeemed IP Token value
+        /// @dev value represented in 18 decimals
         uint256 ipTokenAmount,
-    /// @notice underlying asset fee deducted when redeeming ipToken.
-    /// @dev value represented in 18 decimals
+        /// @notice underlying asset fee deducted when redeeming ipToken.
+        /// @dev value represented in 18 decimals
         uint256 redeemFee,
-    /// @notice net asset amount transferred from Milton to `to`/sender's account, reduced by the redeem fee
-    /// @dev value represented in 18 decimals
+        /// @notice net asset amount transferred from Milton to `to`/sender's account, reduced by the redeem fee
+        /// @dev value represented in 18 decimals
         uint256 redeemAmount
     );
 }

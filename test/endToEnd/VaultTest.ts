@@ -58,7 +58,7 @@ describe("End to End tests on mainnet fork", function () {
     let josephUsdt: JosephUsdt;
 
     before(async () => {
-        let admin:Signer
+        let admin: Signer;
         [admin] = await hre.ethers.getSigners();
         const deployd: DeployType = await deploy(admin);
         ({
