@@ -263,7 +263,11 @@ abstract contract MiltonInternal is
     }
 
     function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
-        return _autoUpdateIporIndexThreshold;
+        return _getAutoUpdateIporIndexThreshold();
+    }
+
+    function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
+        return _autoUpdateIporIndexThreshold * Constants.D21;
     }
 
     function _getDecimals() internal pure virtual returns (uint256);

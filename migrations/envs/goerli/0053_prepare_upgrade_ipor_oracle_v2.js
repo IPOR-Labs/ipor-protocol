@@ -1,5 +1,5 @@
 const func = require("../../libs/json_func.js");
-const script = require("../../libs/contracts/deploy/ipor_oracle/0002_deploy_ipor_oracle_implementation_v2.js");
+const script = require("../../libs/contracts/upgrade/ipor_oracle/0001_prepare_upgrade_v2.js");
 
 const IporOracle = artifacts.require("IporOracle");
 

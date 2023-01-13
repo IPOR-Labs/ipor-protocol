@@ -49,10 +49,9 @@ abstract contract JosephInternal is
     uint256 internal _miltonStanleyBalanceRatio;
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
-    mapping(address => bool) internal _appointedToRebalance;
-
     /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals. Value represents multiplication of 1000.
     uint32 internal _autoRebalanceThresholdInThousands;
+    mapping(address => bool) internal _appointedToRebalance;
 
     modifier onlyCharlieTreasuryManager() {
         require(

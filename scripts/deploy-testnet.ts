@@ -43,7 +43,8 @@ import {
     MiltonFacadeDataProvider,
     CockpitDataProvider,
     Multicall2,
-    IporToken, MockIporWeighted,
+    IporToken,
+    MockIporWeighted,
 } from "../types";
 
 async function main() {
@@ -630,14 +631,17 @@ async function main() {
     await miltonUsdtProxy.setJoseph(josephUsdtProxy.address);
     await miltonUsdtProxy.setupMaxAllowanceForAsset(josephUsdtProxy.address);
     await miltonUsdtProxy.setupMaxAllowanceForAsset(stanleyUsdtProxy.address);
+    await miltonUsdtProxy.setAutoUpdateIporIndexThreshold(50);
 
     await miltonUsdcProxy.setJoseph(josephUsdcProxy.address);
     await miltonUsdcProxy.setupMaxAllowanceForAsset(josephUsdcProxy.address);
     await miltonUsdcProxy.setupMaxAllowanceForAsset(stanleyUsdcProxy.address);
+    await miltonUsdcProxy.setAutoUpdateIporIndexThreshold(50);
 
     await miltonDaiProxy.setJoseph(josephDaiProxy.address);
     await miltonDaiProxy.setupMaxAllowanceForAsset(josephDaiProxy.address);
     await miltonDaiProxy.setupMaxAllowanceForAsset(stanleyDaiProxy.address);
+    await miltonDaiProxy.setAutoUpdateIporIndexThreshold(50);
 
     await miltonStorageUsdtProxy.setJoseph(josephUsdtProxy.address);
     await miltonStorageUsdtProxy.setMilton(miltonUsdtProxy.address);
@@ -653,7 +657,7 @@ async function main() {
     await stanleyDaiProxy.setMilton(miltonDaiProxy.address);
 
     await iporOracleProxy.addUpdater(await deployer.getAddress());
-    await iporOracleProxy.setAlgorithmAddress(iporAlgorithmProxy.address)
+    await iporOracleProxy.setIporAlgorithmFacade(iporAlgorithmProxy.address);
 
     await mockTestnetStrategyAaveUsdtProxy.setStanley(stanleyUsdtProxy.address);
     await mockTestnetStrategyAaveUsdcProxy.setStanley(stanleyUsdcProxy.address);
