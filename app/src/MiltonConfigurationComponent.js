@@ -31,6 +31,43 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
+                        <strong>Asset Address</strong>
+                        <small></small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdt"
+                                method="getAsset"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdc"
+                                method="getAsset"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonDai"
+                                method="getAsset"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Joseph Address</strong>
                         <small></small>
                     </td>
@@ -108,6 +145,150 @@ export default ({ drizzle, drizzleState }) => (
                             contract="DrizzleMiltonDai"
                             method="getMiltonSpreadModel"
                         />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Ipor Oracle Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdt"
+                            method="getIporOracle"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdc"
+                            method="getIporOracle"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonDai"
+                            method="getIporOracle"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Milton Storage Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdt"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdc"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonDai"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Stanley Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdt"
+                            method="getStanley"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdc"
+                            method="getStanley"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonDai"
+                            method="getStanley"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Auto Upate Ipor Index Threshold</strong>
+                        <br />
+                        <small>
+                            Notice! Don't use decimals. The value represents multiples of 1000.
+                        </small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdt"
+                                method="getAutoUpdateIporIndexThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonUsdt"
+                                method="setAutoUpdateIporIndexThreshold"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdc"
+                                method="getAutoUpdateIporIndexThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonUsdc"
+                                method="setAutoUpdateIporIndexThreshold"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonDai"
+                                method="getAutoUpdateIporIndexThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonDai"
+                                method="setAutoUpdateIporIndexThreshold"
+                            />
+                        </div>
                     </td>
                 </tr>
 
@@ -470,7 +651,7 @@ export default ({ drizzle, drizzleState }) => (
                 <tr>
                     <td>
                         <strong>Liquidation Deposit Amount</strong>
-                        <br/>
+                        <br />
                         <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
