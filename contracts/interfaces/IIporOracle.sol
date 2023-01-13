@@ -159,6 +159,6 @@ interface IIporOracle {
     event IporAlgorithmFacadeChanged(
         address indexed changedBy,
         address indexed oldIporAlgorithmFacade,
-        aaddress indexed newIporAlgorithmFacade
+        address indexed newIporAlgorithmFacade
     );
 }
