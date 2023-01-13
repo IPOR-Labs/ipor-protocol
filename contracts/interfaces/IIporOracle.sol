@@ -151,4 +151,14 @@ interface IIporOracle {
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
     /// @param asset asset address
     event IporIndexRemoveAsset(address asset);
+
+    /// @notice event emitted when ipor algorithm address is changed
+    /// @param changedBy address of the account that changed the ipor algorithm address
+    /// @param oldIporAlgorithmFacade old ipor algorithm address
+    /// @param newIporAlgorithmFacade new ipor algorithm address
+    event IporAlgorithmFacadeChanged(
+        address indexed changedBy,
+        address indexed oldIporAlgorithmFacade,
+        aaddress indexed newIporAlgorithmFacade
+    );
 }

@@ -335,12 +335,9 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.AccruedIpor memory accruedIndex;
 
-        uint256 autoUpdateIporIndexThreshold = _autoUpdateIporIndexThreshold;
+        uint256 autoUpdateIporIndexThreshold = _getAutoUpdateIporIndexThreshold();
 
-        if (
-            autoUpdateIporIndexThreshold != 0 &&
-            collateral > autoUpdateIporIndexThreshold * Constants.D21
-        ) {
+        if (autoUpdateIporIndexThreshold != 0 && collateral > autoUpdateIporIndexThreshold) {
             accruedIndex = _iporOracle.updateIndex(_asset);
         } else {
             accruedIndex = _iporOracle.getAccruedIndex(openTimestamp, _asset);

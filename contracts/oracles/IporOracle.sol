@@ -17,6 +17,7 @@ import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
+
 /**
  * @title IPOR Index Oracle Contract
  *
@@ -120,9 +121,15 @@ contract IporOracle is
         return _iporAlgorithmFacade;
     }
 
-    function setIporAlgorithmFacade(address newAlgorithmAddress) external onlyOwner {
-        require(newAlgorithmAddress != address(0), IporErrors.WRONG_ADDRESS);
-        _iporAlgorithmFacade = newAlgorithmAddress;
+    function setIporAlgorithmFacade(address newIporAlgorithmFacade) external onlyOwner {
+        require(newIporAlgorithmFacade != address(0), IporErrors.WRONG_ADDRESS);
+        address oldIporAlgorithmFacade = _iporAlgorithmFacade;
+        _iporAlgorithmFacade = newIporAlgorithmFacade;
+        emit IporAlgorithmFacadeChanged(
+            _msgSender(),
+            oldIporAlgorithmFacade,
+            newIporAlgorithmFacade
+        );
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
@@ -155,13 +162,14 @@ contract IporOracle is
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
-        require(
-            _iporAlgorithmFacade != address(0),
-            IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET
-        );
 
-        uint256 newIndexValue = IIporAlgorithm(_iporAlgorithmFacade).calculateIpor(asset);
+        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+
+        address iporAlgorithmFacade = _iporAlgorithmFacade;
+
+        require(iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
+
+        uint256 newIndexValue = IIporAlgorithm(iporAlgorithmFacade).calculateIpor(asset);
 
         (
             accruedIpor.indexValue,
@@ -267,7 +275,9 @@ contract IporOracle is
         )
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
+
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+
         require(
             ipor.lastUpdateTimestamp <= updateTimestamp,
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP

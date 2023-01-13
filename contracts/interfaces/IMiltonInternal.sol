@@ -201,11 +201,11 @@ interface IMiltonInternal {
     function setMiltonSpreadModel(address newMiltonSpreadModel) external;
 
     /// @notice Sets new treshold for auto update of ipor index. Function available only to the Owner.
-    /// @param newThreshold new treshold for auto update of IPOR Index
+    /// @param newThreshold new treshold for auto update of IPOR Index. Notice! Value represented without decimals. The value represents multiples of 1000.
     function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external;
 
     /// @notice Gets treshold for auto update of ipor index.
-    /// @return treshold for auto update of IPOR Index
+    /// @return treshold for auto update of IPOR Index. Represented in 18 decimals.
     function getAutoUpdateIporIndexThreshold() external view returns (uint256);
 
     /// @notice Emmited when Joseph's address is changed by its owner.
