@@ -72,7 +72,7 @@ export default ({ drizzle, drizzleState }) => {
                     <IporOracleComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
 
-                <Tab eventKey="miltonOverview" title="Milton">
+                 <Tab eventKey="miltonOverview" title="Milton">
                     <MiltonComponent drizzle={drizzle} drizzleState={drizzleState} />
                 </Tab>
 
@@ -114,7 +114,7 @@ export default ({ drizzle, drizzleState }) => {
 
                 <Tab eventKey="frontend" title="Frontend Data Provider">
                     <FrontendComponent drizzle={drizzle} drizzleState={drizzleState} />
-                </Tab>
+                </Tab> 
             </Tabs>
         </div>
     );

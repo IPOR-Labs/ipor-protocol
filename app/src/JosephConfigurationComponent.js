@@ -113,16 +113,16 @@ export default ({ drizzle, drizzleState }) => (
                     </td>
                 </tr>
 
-                <tr>
+				<tr>
                     <td>
-                        <strong>Ipor Oracle Address</strong>
+                        <strong>IpToken Address</strong>
                     </td>
                     <td>
                         <ContractData
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="DrizzleJosephUsdt"
-                            method="getIporOracle"
+                            method="getIpToken"
                         />
                     </td>
                     <td>
@@ -130,7 +130,7 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="DrizzleJosephUsdc"
-                            method="getIporOracle"
+                            method="getIpToken"
                         />
                     </td>
                     <td>
@@ -138,7 +138,37 @@ export default ({ drizzle, drizzleState }) => (
                             drizzle={drizzle}
                             drizzleState={drizzleState}
                             contract="DrizzleJosephDai"
-                            method="getIporOracle"
+                            method="getIpToken"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Milton Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getMilton"
                         />
                     </td>
                 </tr>

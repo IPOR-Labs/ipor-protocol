@@ -1,9 +1,7 @@
 require("dotenv").config({ path: "../../../../.env" });
 const keys = require("../../../json_keys.js");
 const func = require("../../../json_func.js");
-const {deployProxy, erc1967} = require("@openzeppelin/truffle-upgrades");
-
-const TestnetFaucet = artifacts.require("TestnetFaucet");
+const { deployProxy, erc1967 } = require("@openzeppelin/truffle-upgrades");
 
 const MockTestnetTokenUsdt = artifacts.require("MockTestnetTokenUsdt");
 const MockTestnetTokenUsdc = artifacts.require("MockTestnetTokenUsdc");
@@ -18,15 +16,11 @@ module.exports = async function (deployer, _network, addresses, TestnetFaucet) {
     const dai = await func.getValue(keys.DAI);
     const iporToken = await func.getValue(keys.IPOR);
 
-    const testnetFaucet = await deployProxy(
-        TestnetFaucet,
-        [dai, usdc, usdt, iporToken],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
+    const testnetFaucet = await deployProxy(TestnetFaucet, [dai, usdc, usdt, iporToken], {
+        deployer: deployer,
+        initializer: "initialize",
+        kind: "uups",
+    });
     const testnetFaucetImpl = await erc1967.getImplementationAddress(testnetFaucet.address);
     await func.update(keys.TestnetFaucetProxy, testnetFaucet.address);
     await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl);
@@ -41,8 +35,20 @@ module.exports = async function (deployer, _network, addresses, TestnetFaucet) {
         value: process.env.SC_MIGRATION_FAUCET_INITIAL_ETH,
     });
 
-    await usdtInstance.transfer(testnetFaucet.address, process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_6_DECIMALS);
-    await usdcInstance.transfer(testnetFaucet.address, process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_6_DECIMALS);
-    await daiInstance.transfer(testnetFaucet.address, process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_18_DECIMALS);
-    await iporTokenInstance.transfer(testnetFaucet.address, process.env.SC_MIGRATION_FAUCET_INITIAL_IPOR_TOKEN);
+    await usdtInstance.transfer(
+        testnetFaucet.address,
+        process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_6_DECIMALS
+    );
+    await usdcInstance.transfer(
+        testnetFaucet.address,
+        process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_6_DECIMALS
+    );
+    await daiInstance.transfer(
+        testnetFaucet.address,
+        process.env.SC_MIGRATION_FAUCET_INITIAL_STABLE_18_DECIMALS
+    );
+    await iporTokenInstance.transfer(
+        testnetFaucet.address,
+        process.env.SC_MIGRATION_FAUCET_INITIAL_IPOR_TOKEN
+    );
 };

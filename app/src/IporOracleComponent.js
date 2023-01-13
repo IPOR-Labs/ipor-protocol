@@ -24,7 +24,34 @@ export default ({ drizzle, drizzleState }) => (
                 />
             </div>
         </div>
-
+		<hr/>
+        <table className="table" align="center">
+            <tr>
+                <th scope="col">Parameter</th>
+                <th scope="col">Form</th>
+                <th scope="col">Value</th>
+            </tr>
+            <tr>
+                <td>
+                    <strong>IPOR Algorithm Facade Address</strong>
+                </td>
+                <td>
+                    <ContractForm
+                        drizzle={drizzle}
+                        contract="DrizzleIporOracle"
+                        method="setIporAlgorithmFacade"
+                    />
+                </td>
+                <td>
+                    <ContractData
+                        drizzle={drizzle}
+                        drizzleState={drizzleState}
+                        contract="DrizzleIporOracle"
+                        method="getIporAlgorithmFacade"
+                    />
+                </td>
+            </tr>
+        </table>
         <div>
             <hr />
             <p>

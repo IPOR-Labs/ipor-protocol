@@ -68,88 +68,6 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
-                        <strong>Joseph Address</strong>
-                        <small></small>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleMiltonUsdt"
-                                method="getJoseph"
-                            />
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleMiltonUsdt"
-                                method="setJoseph"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleMiltonUsdc"
-                                method="getJoseph"
-                            />
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleMiltonUsdc"
-                                method="setJoseph"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleMiltonDai"
-                                method="getJoseph"
-                            />
-                            <ContractForm
-                                drizzle={drizzle}
-                                contract="DrizzleMiltonDai"
-                                method="setJoseph"
-                            />
-                        </div>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
-                        <strong>Milton Spread Model Address</strong>
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="DrizzleMiltonUsdt"
-                            method="getMiltonSpreadModel"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="DrizzleMiltonUsdc"
-                            method="getMiltonSpreadModel"
-                        />
-                    </td>
-                    <td>
-                        <ContractData
-                            drizzle={drizzle}
-                            drizzleState={drizzleState}
-                            contract="DrizzleMiltonDai"
-                            method="getMiltonSpreadModel"
-                        />
-                    </td>
-                </tr>
-
-                <tr>
-                    <td>
                         <strong>Ipor Oracle Address</strong>
                     </td>
                     <td>
@@ -207,6 +125,59 @@ export default ({ drizzle, drizzleState }) => (
                         />
                     </td>
                 </tr>
+
+                <tr>
+                    <td>
+                        <strong>Joseph Address</strong>
+                        <small></small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdt"
+                                method="getJoseph"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonUsdt"
+                                method="setJoseph"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonUsdc"
+                                method="getJoseph"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonUsdc"
+                                method="setJoseph"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleMiltonDai"
+                                method="getJoseph"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleMiltonDai"
+                                method="setJoseph"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
                 <tr>
                     <td>
                         <strong>Stanley Address</strong>
@@ -233,6 +204,36 @@ export default ({ drizzle, drizzleState }) => (
                             drizzleState={drizzleState}
                             contract="DrizzleMiltonDai"
                             method="getStanley"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Milton Spread Model Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdt"
+                            method="getMiltonSpreadModel"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdc"
+                            method="getMiltonSpreadModel"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonDai"
+                            method="getMiltonSpreadModel"
                         />
                     </td>
                 </tr>
