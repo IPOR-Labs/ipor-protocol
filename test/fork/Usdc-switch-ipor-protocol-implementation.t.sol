@@ -10,11 +10,11 @@ import "../../contracts/security/IporOwnable.sol";
 import "../../contracts/libraries/errors/IporErrors.sol";
 import "../utils/IporOracleSnapshot.sol";
 
-contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
-    // forge test --match-path test/fork/* --fork-url https://eth-mainnet.g.alchemy.com/v2/YfDXHDZ3P5MKib-EPLiRuccxdhUxMTGE --fork-block-number 16406200
+contract UsdcSwitchIporProtocolImplementation is Test, TestCommons {
+    // forge test --match-path test/fork/Usdc-switch-ipor-protocol-implementation.t.sol --fork-url https://eth-mainnet.g.alchemy.com/v2/YfDXHDZ3P5MKib-EPLiRuccxdhUxMTGE --fork-block-number 16406200
 
     uint256 private constant FORK_BLOCK_NUMBER = 16406200;
-    address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address private _usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private _IporOracleOwner = 0xD92E9F039E4189c342b4067CC61f5d063960D248;
     address private _IporOracleUpdater = 0xC3A53976E9855d815A08f577C2BEef2a799470b7;
     address private _IporOracleProxy = 0x421C69EAa54646294Db30026aeE80D01988a6876;
@@ -22,18 +22,18 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
 
     uint256 private _newIndex = 27658918161141365;
     // without any actions
-    string private constant INIT_SNAPSHOT_FILE_NAME = "/iporOracleSnapshotStartDai.json";
-    string private constant CLEAN_AFTER_UPDATE_IMPLEMENTATION_SNAPSHOT_FILE_NAME = "/iporOracleSnapshotAfterUpdateImplDai.json";
+    string private constant INIT_SNAPSHOT_FILE_NAME = "/iporOracleSnapshotStartUsdc.json";
+    string private constant CLEAN_AFTER_UPDATE_IMPLEMENTATION_SNAPSHOT_FILE_NAME = "/iporOracleSnapshotAfterUpdateImplUsdc.json";
 
-    string private constant SNAPSHOT_AFTER_UPDATE_INDEX_OLD_IMPL_FILE_NAME = "/iporOracleSnapshotOldImplAfterUpdateIndexDai.json";
-    string private constant SNAPSHOT_AFTER_UPDATE_INDEX_New_IMPL_FILE_NAME = "/iporOracleSnapshotNiewImplAfterUpdateIndexDai.json";
+    string private constant SNAPSHOT_AFTER_UPDATE_INDEX_OLD_IMPL_FILE_NAME = "/iporOracleSnapshotOldImplAfterUpdateIndexUsdc.json";
+    string private constant SNAPSHOT_AFTER_UPDATE_INDEX_New_IMPL_FILE_NAME = "/iporOracleSnapshotNiewImplAfterUpdateIndexUsdc.json";
 
     function setUp() public {
     }
 
     function testShouldUpgradeImplementation() public {
         //Get snapshot of iporOracle before switch implementation
-        IporOracleSnapshot iporOracleSnapshotStart = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracleSnapshot iporOracleSnapshotStart = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         iporOracleSnapshotStart.snapshot();
         iporOracleSnapshotStart.toJson(INIT_SNAPSHOT_FILE_NAME);
 
@@ -43,7 +43,7 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
         IporOracle(_IporOracleProxy).upgradeTo(address(newIporOracle));
 
 
-        IporOracleSnapshot iporOracleSnapshotAfterUpgrade = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracleSnapshot iporOracleSnapshotAfterUpgrade = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         iporOracleSnapshotAfterUpgrade.snapshot();
         iporOracleSnapshotAfterUpgrade.toJson(CLEAN_AFTER_UPDATE_IMPLEMENTATION_SNAPSHOT_FILE_NAME);
         _assertTwoFile(INIT_SNAPSHOT_FILE_NAME, CLEAN_AFTER_UPDATE_IMPLEMENTATION_SNAPSHOT_FILE_NAME);
@@ -55,8 +55,8 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
     function testShouldUpdateIndexWhenUpgradeImplementation() public {
         // update index old implementation
         vm.prank(_IporOracleUpdater);
-        IporOracle(_IporOracleProxy).updateIndex(_dai, 27658918161141365);
-        IporOracleSnapshot cleanAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracle(_IporOracleProxy).updateIndex(_usdc, 27658918161141365);
+        IporOracleSnapshot cleanAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         cleanAfterUpdateIndex.snapshot();
         cleanAfterUpdateIndex.toJson(SNAPSHOT_AFTER_UPDATE_INDEX_OLD_IMPL_FILE_NAME);
 
@@ -66,8 +66,8 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
         vm.prank(_IporOracleOwner);
         IporOracle(_IporOracleProxy).upgradeTo(address(newIporOracle));
         vm.prank(_IporOracleUpdater);
-        IporOracle(_IporOracleProxy).updateIndex(_dai,27658918161141365);
-        IporOracleSnapshot newImplAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracle(_IporOracleProxy).updateIndex(_usdc,27658918161141365);
+        IporOracleSnapshot newImplAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         newImplAfterUpdateIndex.snapshot();
         newImplAfterUpdateIndex.toJson(SNAPSHOT_AFTER_UPDATE_INDEX_New_IMPL_FILE_NAME);
 
@@ -80,8 +80,8 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
         // update index old implementation
         vm.warp(block.timestamp + 60*60);
         vm.prank(_IporOracleUpdater);
-        IporOracle(_IporOracleProxy).updateIndex(_dai, 27658918161141365);
-        IporOracleSnapshot cleanAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracle(_IporOracleProxy).updateIndex(_usdc, 27658918161141365);
+        IporOracleSnapshot cleanAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _usdc);
 
         cleanAfterUpdateIndex.snapshot();
         cleanAfterUpdateIndex.toJson(SNAPSHOT_AFTER_UPDATE_INDEX_OLD_IMPL_FILE_NAME);
@@ -93,8 +93,8 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
         IporOracle(_IporOracleProxy).upgradeTo(address(newIporOracle));
         vm.warp(block.timestamp + 60*60);
         vm.prank(_IporOracleUpdater);
-        IporOracle(_IporOracleProxy).updateIndex(_dai,27658918161141365);
-        IporOracleSnapshot newImplAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracle(_IporOracleProxy).updateIndex(_usdc,27658918161141365);
+        IporOracleSnapshot newImplAfterUpdateIndex = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         newImplAfterUpdateIndex.snapshot();
         newImplAfterUpdateIndex.toJson(SNAPSHOT_AFTER_UPDATE_INDEX_New_IMPL_FILE_NAME);
 
@@ -103,9 +103,9 @@ contract DaiSwitchIporProtocolImplementation is Test, TestCommons {
     }
 
     function _assertTwoFile(string memory file1, string memory file2) internal {
-        IporOracleSnapshot iporOracleSnapshot1 = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracleSnapshot iporOracleSnapshot1 = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         iporOracleSnapshot1.fromJson(file1);
-        IporOracleSnapshot iporOracleSnapshot2 = new IporOracleSnapshot(_IporOracleProxy, _dai);
+        IporOracleSnapshot iporOracleSnapshot2 = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         iporOracleSnapshot2.fromJson(file2);
         iporOracleSnapshot1.consoleLog();
         iporOracleSnapshot2.consoleLog();
