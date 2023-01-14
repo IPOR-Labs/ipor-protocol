@@ -33,8 +33,9 @@ contract TestnetFaucet is
     /// @dev  need to stay because of proxy compatibility
     /// @dev deprecated
     address internal _usdt;
+
     address[] internal _assets;
-    mapping(address => uint256) _amountToTransfer;
+    mapping(address => uint256) internal _amountToTransfer;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -49,18 +50,23 @@ contract TestnetFaucet is
     ) public initializer {
         __Ownable_init_unchained();
         __UUPSUpgradeable_init_unchained();
+
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);
         require(ipor != address(0), IporErrors.WRONG_ADDRESS);
+
         _assets.push(dai);
-        _amountToTransfer[dai] = 10_000 * 10 ** uint256(IERC20MetadataUpgradeable(dai).decimals());
+        _amountToTransfer[dai] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(dai).decimals());
+
         _assets.push(usdt);
-        _amountToTransfer[usdt] = 10_000 * 10 ** uint256(IERC20MetadataUpgradeable(usdt).decimals());
+        _amountToTransfer[usdt] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(usdt).decimals());
+
         _assets.push(usdc);
-        _amountToTransfer[usdc] = 10_000 * 10 ** uint256(IERC20MetadataUpgradeable(usdc).decimals());
+        _amountToTransfer[usdc] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(usdc).decimals());
+
         _assets.push(ipor);
-        _amountToTransfer[ipor] = 1_000 * 10 ** uint256(IERC20MetadataUpgradeable(ipor).decimals());
+        _amountToTransfer[ipor] = 1_000 * 10**uint256(IERC20MetadataUpgradeable(ipor).decimals());
     }
 
     //solhint-disable no-empty-blocks
@@ -86,7 +92,7 @@ contract TestnetFaucet is
             )
         );
         uint256 lengthAssets = _assets.length;
-        for(uint256 i; i < lengthAssets; ++i) {
+        for (uint256 i; i < lengthAssets; ++i) {
             _transfer(_assets[i]);
         }
         _lastClaim[_msgSender()] = block.timestamp;
@@ -126,8 +132,8 @@ contract TestnetFaucet is
     function addAsset(address asset, uint256 amount) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         uint256 assetsLength = _assets.length;
-        for(uint256 i; i < assetsLength; ++i) {
-            if(_assets[i] == asset) {
+        for (uint256 i; i < assetsLength; ++i) {
+            if (_assets[i] == asset) {
                 _amountToTransfer[asset] = amount;
                 return;
             }
