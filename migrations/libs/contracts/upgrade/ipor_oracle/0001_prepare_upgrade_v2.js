@@ -1,5 +1,5 @@
-const keys = require("../../../../json_keys.js");
-const func = require("../../../../json_func.js");
+const keys = require("../../../json_keys.js");
+const func = require("../../../json_func.js");
 
 const { prepareUpgrade } = require("@openzeppelin/truffle-upgrades");
 

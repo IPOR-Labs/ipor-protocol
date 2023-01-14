@@ -76,7 +76,7 @@ contract TestnetFaucet is
     receive() external payable {}
 
     function getVersion() external pure virtual returns (uint256) {
-        return 3;
+        return 2;
     }
 
     function claim() external override nonReentrant {
