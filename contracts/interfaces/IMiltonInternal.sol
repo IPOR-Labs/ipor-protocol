@@ -16,6 +16,21 @@ interface IMiltonInternal {
     /// @return asset's address
     function getAsset() external view returns (address);
 
+    /// @notice Gets address of IporOracle contract.
+    /// @dev IporOracle is used to calculate the AccruedIbtPrice that is used to come up with the payoffs of the pay/receive fixed leg.
+    /// @return IporOracle address
+    function getIporOracle() external view returns (address);
+
+    /// @notice Gets address of MiltonStorage
+    /// @dev MiltonSttrage is used to account for Milton's balances on Stanley deposits/withdrawals and to calculate the SOAP.
+    /// @return MiltonStorage address
+    function getMiltonStorage() external view returns (address);
+
+    /// @notice Gets address of Stanley used by Milton
+    /// @dev Stanley is Milton's asset manager (deposits/withdrawals into/from external money markets)
+    /// @return Stanley address used by Milton
+    function getStanley() external view returns (address);
+
     /// @notice Gets max swap's collateral amount value.
     /// @dev Param used in swap validation.
     /// @return max swap's collateral amount represented in 18 decimals
@@ -185,6 +200,14 @@ interface IMiltonInternal {
     /// @param newMiltonSpreadModel new Milton Spread Model address
     function setMiltonSpreadModel(address newMiltonSpreadModel) external;
 
+    /// @notice Sets new treshold for auto update of ipor index. Function available only to the Owner.
+    /// @param newThreshold new treshold for auto update of IPOR Index. Notice! Value represented without decimals. The value represents multiples of 1000.
+    function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external;
+
+    /// @notice Gets treshold for auto update of ipor index.
+    /// @return treshold for auto update of IPOR Index. Represented in 18 decimals.
+    function getAutoUpdateIporIndexThreshold() external view returns (uint256);
+
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
     /// @param oldJoseph Joseph's old address
@@ -203,5 +226,15 @@ interface IMiltonInternal {
         address indexed changedBy,
         address indexed oldMiltonSpreadModel,
         address indexed newMiltonSpreadModel
+    );
+
+    /// @notice Emmited when AutoUpdateIporIndexThreshold is changed by its owner.
+    /// @param changedBy account address that has changed AutoUpdateIporIndexThreshold
+    /// @param oldAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's old value
+    /// @param newAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's new value
+    event AutoUpdateIporIndexThresholdChanged(
+        address indexed changedBy,
+        uint256 indexed oldAutoUpdateIporIndexThreshold,
+        uint256 indexed newAutoUpdateIporIndexThreshold
     );
 }

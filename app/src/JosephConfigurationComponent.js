@@ -1,9 +1,9 @@
 import React from "react";
-import {newContextComponents} from "@drizzle/react-components";
+import { newContextComponents } from "@drizzle/react-components";
 
-const {ContractData, ContractForm} = newContextComponents;
+const { ContractData, ContractForm } = newContextComponents;
 
-export default ({drizzle, drizzleState}) => (
+export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
             <table className="table" align="center">
@@ -11,24 +11,24 @@ export default ({drizzle, drizzleState}) => (
                     <th scope="col">Parameter</th>
                     <th scope="col">
                         USDT
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleUsdt.address}
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                     </th>
                     <th scope="col">
                         USDC
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleUsdc.address}
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                     </th>
                     <th scope="col">
                         DAI
-                        <br/>
+                        <br />
                         {drizzle.contracts.DrizzleDai.address}
-                        <br/>
-                        <br/>
+                        <br />
+                        <br />
                     </th>
                 </tr>
 
@@ -45,7 +45,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -60,7 +60,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -75,7 +75,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -85,10 +85,162 @@ export default ({drizzle, drizzleState}) => (
 
                 <tr>
                     <td>
+                        <strong>Asset Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getAsset"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getAsset"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getAsset"
+                        />
+                    </td>
+                </tr>
+
+				<tr>
+                    <td>
+                        <strong>IpToken Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getIpToken"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getIpToken"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Milton Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getMilton"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getMilton"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Milton Storage Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getMiltonStorage"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Stanley Address</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdt"
+                            method="getStanley"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephUsdc"
+                            method="getStanley"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleJosephDai"
+                            method="getStanley"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Milton Stanley Balance Rate</strong>
-                        <br/>
-                        <small>Value describe what percentage stay on Milton when rebalance cash between
-                            Milton and Stanley</small>
+                        <br />
+                        <small>
+                            Value describe what percentage stay on Milton when rebalance cash
+                            between Milton and Stanley
+                        </small>
                     </td>
                     <td>
                         <ContractData
@@ -99,7 +251,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -119,7 +271,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -139,7 +291,7 @@ export default ({drizzle, drizzleState}) => (
                             render={(value) => (
                                 <div>
                                     {value / 1000000000000000000}
-                                    <br/>
+                                    <br />
                                     <small>{value}</small>
                                 </div>
                             )}
@@ -155,7 +307,7 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Charlie Treasurer</strong>
-                        <br/>
+                        <br />
                         <small>Publication fee</small>
                     </td>
                     <td>
@@ -208,7 +360,7 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Treasury Treasurer</strong>
-                        <br/>
+                        <br />
                         <small>Income fee, part of opening fee</small>
                     </td>
                     <td>
@@ -363,7 +515,7 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Max Liquidity Pool Balance</strong>
-                        <br/>
+                        <br />
                         <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
@@ -416,7 +568,7 @@ export default ({drizzle, drizzleState}) => (
                 <tr>
                     <td>
                         <strong>Max Liquidity Pool Account Contribution</strong>
-                        <br/>
+                        <br />
                         <small>Notice! Don't use decimals.</small>
                     </td>
                     <td>
@@ -461,6 +613,61 @@ export default ({drizzle, drizzleState}) => (
                                 drizzle={drizzle}
                                 contract="DrizzleJosephDai"
                                 method="setMaxLpAccountContribution"
+                            />
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>Auto Rebalance Threshold in Thousands</strong>
+                        <br />
+                        <small>
+                            Notice! Don't use decimals. The value represents multiples of 1000.
+                        </small>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdt"
+                                method="getAutoRebalanceThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdt"
+                                method="setAutoRebalanceThreshold"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephUsdc"
+                                method="getAutoRebalanceThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephUsdc"
+                                method="setAutoRebalanceThreshold"
+                            />
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <ContractData
+                                drizzle={drizzle}
+                                drizzleState={drizzleState}
+                                contract="DrizzleJosephDai"
+                                method="getAutoRebalanceThreshold"
+                            />
+                            <ContractForm
+                                drizzle={drizzle}
+                                contract="DrizzleJosephDai"
+                                method="setAutoRebalanceThreshold"
                             />
                         </div>
                     </td>

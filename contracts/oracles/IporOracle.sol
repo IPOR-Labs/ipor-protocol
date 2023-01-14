@@ -13,6 +13,7 @@ import "../interfaces/types/IporOracleTypes.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
 import "./libraries/DecayFactorCalculation.sol";
@@ -33,8 +34,8 @@ contract IporOracle is
     using IporLogic for IporOracleTypes.IPOR;
 
     mapping(address => uint256) internal _updaters;
-
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
+    address internal _iporAlgorithmFacade;
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -52,13 +53,13 @@ contract IporOracle is
         uint64[] memory exponentialMovingAverages,
         uint64[] memory exponentialWeightedMovingVariances
     ) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __Pausable_init_unchained();
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init_unchained();
 
         uint256 assetsLength = assets.length;
 
-        for (uint256 i = 0; i != assetsLength; i++) {
+        for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
@@ -116,6 +117,21 @@ contract IporOracle is
         );
     }
 
+    function getIporAlgorithmFacade() external view override returns (address) {
+        return _iporAlgorithmFacade;
+    }
+
+    function setIporAlgorithmFacade(address newIporAlgorithmFacade) external onlyOwner {
+        require(newIporAlgorithmFacade != address(0), IporErrors.WRONG_ADDRESS);
+        address oldIporAlgorithmFacade = _iporAlgorithmFacade;
+        _iporAlgorithmFacade = newIporAlgorithmFacade;
+        emit IporAlgorithmFacadeChanged(
+            _msgSender(),
+            oldIporAlgorithmFacade,
+            newIporAlgorithmFacade
+        );
+    }
+
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
         external
         view
@@ -137,6 +153,31 @@ contract IporOracle is
         assets[0] = asset;
 
         _updateIndexes(assets, indexes, block.timestamp);
+    }
+
+    function updateIndex(address asset)
+        external
+        override
+        whenNotPaused
+        returns (IporTypes.AccruedIpor memory accruedIpor)
+    {
+        IporOracleTypes.IPOR memory ipor = _indexes[asset];
+
+        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+
+        address iporAlgorithmFacade = _iporAlgorithmFacade;
+
+        require(iporAlgorithmFacade != address(0), IporOracleErrors.IPOR_ALGORITHM_ADDRESS_NOT_SET);
+
+        uint256 newIndexValue = IIporAlgorithm(iporAlgorithmFacade).calculateIpor(asset);
+
+        (
+            accruedIpor.indexValue,
+            accruedIpor.ibtPrice,
+            accruedIpor.exponentialMovingAverage,
+            accruedIpor.exponentialWeightedMovingVariance,
+
+        ) = _updateIndex(asset, newIndexValue, block.timestamp);
     }
 
     function updateIndexes(address[] memory assets, uint256[] memory indexValues)
@@ -195,6 +236,10 @@ contract IporOracle is
         emit IporIndexRemoveAsset(asset);
     }
 
+    function isAssetSupported(address asset) external view override returns (bool) {
+        return _indexes[asset].quasiIbtPrice > 0;
+    }
+
     function pause() external override onlyOwner {
         _pause();
     }
@@ -210,7 +255,7 @@ contract IporOracle is
     ) internal onlyUpdater {
         require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
-        for (uint256 i = 0; i != assets.length; i++) {
+        for (uint256 i; i != assets.length; ++i) {
             _updateIndex(assets[i], indexValues[i], updateTimestamp);
         }
     }
@@ -219,42 +264,54 @@ contract IporOracle is
         address asset,
         uint256 indexValue,
         uint256 updateTimestamp
-    ) internal {
+    )
+        internal
+        returns (
+            uint256 newIndexValue,
+            uint256 newIbtPrice,
+            uint256 newExponentialMovingAverage,
+            uint256 newExponentialWeightedMovingVariance,
+            uint256 lastUpdateTimestamp
+        )
+    {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
+
         require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+
         require(
             ipor.lastUpdateTimestamp <= updateTimestamp,
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
 
-        uint256 newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
+        newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
             ipor.exponentialMovingAverage,
             indexValue,
             _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
         );
 
-        uint256 newExponentialWeightedMovingVariance = IporLogic
-            .calculateExponentialWeightedMovingVariance(
+        newExponentialWeightedMovingVariance = IporLogic.calculateExponentialWeightedMovingVariance(
                 ipor.exponentialWeightedMovingVariance,
                 newExponentialMovingAverage,
                 indexValue,
                 _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
 
-        uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
+        newIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
-            newQuasiIbtPrice.toUint128(),
+            newIbtPrice.toUint128(),
             newExponentialMovingAverage.toUint64(),
             newExponentialWeightedMovingVariance.toUint64(),
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
+        newIndexValue = indexValue;
+        lastUpdateTimestamp = updateTimestamp;
 
         emit IporIndexUpdate(
             asset,
             indexValue,
-            newQuasiIbtPrice,
+            newIbtPrice,
             newExponentialMovingAverage,
             newExponentialWeightedMovingVariance,
             updateTimestamp

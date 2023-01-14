@@ -38,6 +38,9 @@ interface IIporOracle {
         view
         returns (IporTypes.AccruedIpor memory accruedIpor);
 
+    /// @notice Gets IporAlgorithm address.
+    function getIporAlgorithmFacade() external view returns (address);
+
     /// @notice Calculates accrued Interest Bearing Token price for a given asset and timestamp.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol.
     /// @param calculateTimestamp time of accrued Interest Bearing Token price calculation
@@ -46,6 +49,11 @@ interface IIporOracle {
         external
         view
         returns (uint256);
+
+    /// @notice Updates IPOR Index for a given asset based on value returned from iporAlgorithm.
+    /// @dev Emmits {IporIndexUpdate} event.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    function updateIndex(address asset) external returns (IporTypes.AccruedIpor memory accruedIpor);
 
     /// @notice Updates IPOR Index for a given asset. Function available only for Updater
     /// @dev Emmits {IporIndexUpdate} event.
@@ -72,6 +80,10 @@ interface IIporOracle {
     /// @return 0 if account is not updater, 1 if account is updater.
     function isUpdater(address account) external view returns (uint256);
 
+    /// @notice setup ipor algorithm address
+    /// @param newAlgorithmAddress ipor algorithm address
+    function setIporAlgorithmFacade(address newAlgorithmAddress) external;
+
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address
     /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated
@@ -85,8 +97,12 @@ interface IIporOracle {
     ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
-    /// @param asset  underlying / stablecoin address which currenlty is supported by IPOR Protocol.
+    /// @param asset  underlying / stablecoin address which current is supported by IPOR Protocol.
     function removeAsset(address asset) external;
+
+    /// @notice Checks if given asset is supported by IPOR Protocol.
+    /// @param asset underlying / stablecoin address
+    function isAssetSupported(address asset) external view returns (bool);
 
     /// @notice Pauses current smart contract, it can be executed only by the Owner
     /// @dev Emits {Paused} event from IporOracle.
@@ -135,4 +151,14 @@ interface IIporOracle {
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
     /// @param asset asset address
     event IporIndexRemoveAsset(address asset);
+
+    /// @notice event emitted when ipor algorithm address is changed
+    /// @param changedBy address of the account that changed the ipor algorithm address
+    /// @param oldIporAlgorithmFacade old ipor algorithm address
+    /// @param newIporAlgorithmFacade new ipor algorithm address
+    event IporAlgorithmFacadeChanged(
+        address indexed changedBy,
+        address indexed oldIporAlgorithmFacade,
+        address indexed newIporAlgorithmFacade
+    );
 }

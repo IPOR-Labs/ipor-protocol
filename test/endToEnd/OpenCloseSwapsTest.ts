@@ -33,6 +33,8 @@ describe("Open/Close Swap", function () {
         return;
     }
     let admin: Signer;
+    let userOne: Signer;
+    let userTwo: Signer;
 
     let miltonDai: MiltonDai;
     let miltonUsdc: MiltonUsdc;
@@ -63,9 +65,9 @@ describe("Open/Close Swap", function () {
     let miltonFacadeDataProvider: MiltonFacadeDataProvider;
 
     before(async () => {
-        [admin] = await hre.ethers.getSigners();
+        [admin, userOne, userTwo] = await hre.ethers.getSigners();
 
-        const deployed: DeployType = await deploy();
+        const deployed: DeployType = await deploy(admin);
         ({
             testnetFaucet,
             usdc,
@@ -99,9 +101,9 @@ describe("Open/Close Swap", function () {
         let swapPayFixedId: BigNumber;
         let swapReceiveFixedId: BigNumber;
 
-        it("ProvideLiquidity for 50000 dai", async () => {
+        it("ProvideLiquidity for 50000 dai - no auto-rebalance threshold", async () => {
             //given
-
+            await josephDai.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_18.mul("50000");
             await transferDaiToAddress(
                 "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
@@ -116,6 +118,48 @@ describe("Open/Close Swap", function () {
             //then
             const daiMiltonBalanceAfter = await dai.balanceOf(miltonDai.address);
             expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(deposit);
+        });
+
+        it("ProvideLiquidity for 50000 dai - below auto-rebalance threshold", async () => {
+            //given
+            const deposit = ONE_18.mul("50000");
+            await josephDai.connect(admin).setAutoRebalanceThreshold(BigNumber.from("70"));
+            await transferDaiToAddress(
+                "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+                await userOne.getAddress(),
+                ONE_18.mul("500000")
+            );
+            await dai.connect(userOne).approve(josephDai.address, ONE_18.mul("500000"));
+            await dai.connect(userOne).approve(miltonDai.address, ONE_18.mul("500000"));
+            //when
+            await josephDai.connect(userOne).provideLiquidity(deposit);
+
+            //then
+            const daiMiltonBalanceAfter = await dai.balanceOf(miltonDai.address);
+            expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(
+                BigNumber.from("100000000000000000000000")
+            );
+        });
+
+        it("ProvideLiquidity for 50000 dai - above auto-rebalance threshold", async () => {
+            //given
+            await josephDai.connect(admin).setAutoRebalanceThreshold(BigNumber.from("40"));
+            const deposit = ONE_18.mul("50000");
+            await transferDaiToAddress(
+                "0xbebc44782c7db0a1a60cb6fe97d0b483032ff1c7",
+                await userTwo.getAddress(),
+                ONE_18.mul("500000")
+            );
+            await dai.connect(userTwo).approve(josephDai.address, ONE_18.mul("500000"));
+            await dai.connect(userTwo).approve(miltonDai.address, ONE_18.mul("500000"));
+            //when
+            await josephDai.connect(userTwo).provideLiquidity(deposit);
+
+            //then
+            const daiMiltonBalanceAfter = await dai.balanceOf(miltonDai.address);
+            expect(daiMiltonBalanceAfter, "daiMiltonBalanceAfter").to.be.equal(
+                BigNumber.from("127500000000000000000000")
+            );
         });
 
         it("Should open Swap Pay Fixed, DAI", async () => {
@@ -190,7 +234,7 @@ describe("Open/Close Swap", function () {
 
         it("ProvideLiquidity for 50000 usdc", async () => {
             //given
-
+            await josephUsdc.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_6.mul("50000");
             await transferUsdcToAddress(
                 testnetFaucet.address,
@@ -292,7 +336,7 @@ describe("Open/Close Swap", function () {
 
         it("ProvideLiquidity for 50000 usdt", async () => {
             //given
-
+            await josephUsdt.connect(admin).setAutoRebalanceThreshold(0);
             const deposit = ONE_6.mul("50000");
             await transferUsdtToAddress(
                 testnetFaucet.address,
@@ -311,6 +355,7 @@ describe("Open/Close Swap", function () {
 
         it("Should rebalance and deposit(usdt) into vault (compound)", async () => {
             //given
+            await josephUsdt.connect(admin).setAutoRebalanceThreshold(0);
             const strategyCompoundBefore = await strategyCompoundUsdt.balanceOf();
             //when
             await josephUsdt.rebalance();

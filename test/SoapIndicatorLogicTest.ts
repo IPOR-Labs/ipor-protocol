@@ -1,12 +1,7 @@
 import hre from "hardhat";
 import chai from "chai";
-import {  BigNumber } from "ethers";
-import {
-    N0__01_18DEC,
-    ZERO,
-    PERIOD_25_DAYS_IN_SECONDS,
-    N1__0_18DEC,
-} from "./utils/Constants";
+import { BigNumber } from "ethers";
+import { N0__01_18DEC, ZERO, PERIOD_25_DAYS_IN_SECONDS, N1__0_18DEC } from "./utils/Constants";
 
 import {
     prepareSoapIndicatorPayFixedCaseD18,
@@ -371,6 +366,77 @@ describe("SoapIndicatorLogic", () => {
             .mul(N1__0_18DEC)
             .mul(N1__0_18DEC)
             .mul(N1__0_18DEC);
+
+        await assertSoapIndicator(
+            actualSoapIndicatorAfterClose,
+            expectedRebalanceTimestamp,
+            expectedTotalNotional,
+            expectedTotalIbtQuantity,
+            expectedAverageInterestRate,
+            expectedHypotheticalInterestCumulative
+        );
+    });
+
+    it("should rebalance SOAP Indicators when open two positions with fixed rate = ZERO and close one position - 18 decimals", async () => {
+        /// @dev In this test we simulate situation when every opened swap has fixed rate = 0, so that average interest rate is equal zero.
+        //given
+        const soapIndicator = await prepareInitialDefaultSoapIndicator(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            0
+        );
+        const rebalanceTimestampFirst =
+            soapIndicator.rebalanceTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
+        const derivativeNotionalFirst = BigNumber.from("10000").mul(N1__0_18DEC);
+        const swapFixedInterestRateFirst = ZERO;
+        const derivativeIbtQuantityFirst = BigNumber.from("95").mul(N1__0_18DEC);
+
+        const soapIndicatorAfterOpenFirst = await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
+            soapIndicator,
+            rebalanceTimestampFirst,
+            derivativeNotionalFirst,
+            swapFixedInterestRateFirst,
+            derivativeIbtQuantityFirst
+        );
+
+        const averageInterestRateAfterFirstOpen = BigNumber.from(
+            soapIndicatorAfterOpenFirst.averageInterestRate
+        );
+
+        const rebalanceTimestampSecond = BigNumber.from(
+            soapIndicatorAfterOpenFirst.rebalanceTimestamp
+        ).add(PERIOD_25_DAYS_IN_SECONDS);
+        const derivativeNotionalSecond = BigNumber.from("20000").mul(N1__0_18DEC);
+        const swapFixedInterestRateSecond = ZERO;
+        const derivativeIbtQuantitySecond = BigNumber.from("173").mul(N1__0_18DEC);
+
+        const soapIndicatorAfterOpenSecond = await mockSoapIndicatorLogic.rebalanceWhenOpenSwap(
+            soapIndicatorAfterOpenFirst,
+            rebalanceTimestampSecond,
+            derivativeNotionalSecond,
+            swapFixedInterestRateSecond,
+            derivativeIbtQuantitySecond
+        );
+
+        const closeTimestamp = BigNumber.from(soapIndicatorAfterOpenSecond.rebalanceTimestamp).add(
+            PERIOD_25_DAYS_IN_SECONDS
+        );
+
+        //when
+        const actualSoapIndicatorAfterClose = await mockSoapIndicatorLogic.rebalanceWhenCloseSwap(
+            soapIndicatorAfterOpenSecond,
+            closeTimestamp,
+            rebalanceTimestampSecond,
+            derivativeNotionalSecond,
+            swapFixedInterestRateSecond,
+            derivativeIbtQuantitySecond
+        );
+
+        //then
+        const expectedRebalanceTimestamp = closeTimestamp;
+        const expectedTotalNotional = BigNumber.from("10000").mul(N1__0_18DEC);
+        const expectedTotalIbtQuantity = BigNumber.from("95").mul(N1__0_18DEC);
+        const expectedAverageInterestRate = averageInterestRateAfterFirstOpen;
+        const expectedHypotheticalInterestCumulative = ZERO;
 
         await assertSoapIndicator(
             actualSoapIndicatorAfterClose,

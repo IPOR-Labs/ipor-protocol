@@ -24,9 +24,18 @@ contract TestnetFaucet is
     uint256 private constant _SECONDS_IN_DAY = 60 * 60 * 24;
 
     mapping(address => uint256) internal _lastClaim;
+    /// @dev  need to stay because of proxy compatibility
+    /// @dev deprecated
     address internal _dai;
+    /// @dev  need to stay because of proxy compatibility
+    /// @dev deprecated
     address internal _usdc;
+    /// @dev  need to stay because of proxy compatibility
+    /// @dev deprecated
     address internal _usdt;
+
+    address[] internal _assets;
+    mapping(address => uint256) internal _amountToTransfer;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -36,16 +45,28 @@ contract TestnetFaucet is
     function initialize(
         address dai,
         address usdc,
-        address usdt
+        address usdt,
+        address ipor
     ) public initializer {
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init_unchained();
+
         require(dai != address(0), IporErrors.WRONG_ADDRESS);
         require(usdc != address(0), IporErrors.WRONG_ADDRESS);
         require(usdt != address(0), IporErrors.WRONG_ADDRESS);
-        _dai = dai;
-        _usdc = usdc;
-        _usdt = usdt;
+        require(ipor != address(0), IporErrors.WRONG_ADDRESS);
+
+        _assets.push(dai);
+        _amountToTransfer[dai] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(dai).decimals());
+
+        _assets.push(usdt);
+        _amountToTransfer[usdt] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(usdt).decimals());
+
+        _assets.push(usdc);
+        _amountToTransfer[usdc] = 10_000 * 10**uint256(IERC20MetadataUpgradeable(usdc).decimals());
+
+        _assets.push(ipor);
+        _amountToTransfer[ipor] = 1_000 * 10**uint256(IERC20MetadataUpgradeable(ipor).decimals());
     }
 
     //solhint-disable no-empty-blocks
@@ -70,9 +91,10 @@ contract TestnetFaucet is
                 )
             )
         );
-        _transfer(_dai);
-        _transfer(_usdc);
-        _transfer(_usdt);
+        uint256 lengthAssets = _assets.length;
+        for (uint256 i; i < lengthAssets; ++i) {
+            _transfer(_assets[i]);
+        }
         _lastClaim[_msgSender()] = block.timestamp;
     }
 
@@ -107,12 +129,39 @@ contract TestnetFaucet is
         return IERC20Upgradeable(asset).balanceOf(address(this));
     }
 
+    function addAsset(address asset, uint256 amount) external override onlyOwner {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        uint256 assetsLength = _assets.length;
+        for (uint256 i; i < assetsLength; ++i) {
+            if (_assets[i] == asset) {
+                _amountToTransfer[asset] = amount;
+                return;
+            }
+        }
+        _assets.push(asset);
+        _amountToTransfer[asset] = amount;
+    }
+
+    function updateAmountToTransfer(address asset, uint256 amount) external override onlyOwner {
+        _amountToTransfer[asset] = amount;
+    }
+
+    function getAmountToTransfer(address asset) external view override returns (uint256) {
+        return _amountToTransfer[asset];
+    }
+
     function _transfer(address asset) internal {
-        IERC20MetadataUpgradeable token = IERC20MetadataUpgradeable(asset);
-        uint256 value;
-        value = 10_000 * 10**token.decimals();
-        IERC20Upgradeable(asset).safeTransfer(msg.sender, value);
-        emit Claim(_msgSender(), address(asset), value);
+        uint256 amountToTransfer = _amountToTransfer[asset];
+        uint256 balanceOfFaucet = IERC20Upgradeable(asset).balanceOf(address(this));
+        if (amountToTransfer == 0) {
+            return;
+        }
+        if (balanceOfFaucet < amountToTransfer) {
+            emit TransferFailed(_msgSender(), address(asset), amountToTransfer);
+            return;
+        }
+        IERC20Upgradeable(asset).safeTransfer(_msgSender(), amountToTransfer);
+        emit Claim(_msgSender(), asset, amountToTransfer);
     }
 
     function _couldClaimInSeconds() internal view returns (uint256) {

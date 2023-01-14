@@ -1,7 +1,7 @@
 import hre, { upgrades } from "hardhat";
 import { BigNumber, Signer } from "ethers";
 
-import { ItfIporOracle } from "../../types";
+import { ItfIporOracle, MockIporWeighted } from "../../types";
 
 const { ethers } = hre;
 
@@ -30,6 +30,14 @@ export const prepareIporOracle = async (
             kind: "uups",
         }
     )) as ItfIporOracle;
+
+    const MockIporWeighted = await ethers.getContractFactory("MockIporWeighted");
+
+    const mockIporWeighted = (await upgrades.deployProxy(MockIporWeighted, [iporOracle.address], {
+        kind: "uups",
+    })) as MockIporWeighted;
+
+    await iporOracle.setIporAlgorithmFacade(mockIporWeighted.address);
 
     if (accounts[1]) {
         await iporOracle.addUpdater(await accounts[1].getAddress());

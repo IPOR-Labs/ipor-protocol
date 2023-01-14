@@ -17,6 +17,12 @@ jobs:
         secrets:
             HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
 
+    foundry-tests:
+        needs: notify
+        uses: ./.github/workflows/foundry-tests.yml
+        secrets:
+            HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+
     build-java:
         needs: notify
         uses: ./.github/workflows/build-java.yml
@@ -57,6 +63,7 @@ jobs:
         needs:
             - notify
             - build-sc
+            - foundry-tests
             - build-java
             - build-geth-itf
             - build-geth-s0-s12
@@ -64,5 +71,5 @@ jobs:
         secrets:
             SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
-            success: ${{ needs.build-sc.result == 'success' && needs.build-java.result == 'success' && needs.build-geth-itf.result == 'success' && needs.build-geth-s0-s12.result == 'success' }}
+            success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.build-java.result == 'success' && needs.build-geth-itf.result == 'success' && needs.build-geth-s0-s12.result == 'success' }}
             slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}

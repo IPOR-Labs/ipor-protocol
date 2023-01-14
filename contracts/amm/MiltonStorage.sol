@@ -66,6 +66,14 @@ contract MiltonStorage is
         return _lastSwapId;
     }
 
+    function getMilton() external view returns (address) {
+        return _milton;
+    }
+
+    function getJoseph() external view returns (address) {
+        return _joseph;
+    }
+
     function getBalance()
         external
         view

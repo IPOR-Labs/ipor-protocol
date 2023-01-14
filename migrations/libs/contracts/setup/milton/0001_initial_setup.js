@@ -53,5 +53,9 @@ module.exports = async function (deployer, _network, addresses) {
         await miltonUsdtInstance.setupMaxAllowanceForAsset(stanleyUsdt);
         await miltonUsdcInstance.setupMaxAllowanceForAsset(stanleyUsdc);
         await miltonDaiInstance.setupMaxAllowanceForAsset(stanleyDai);
+
+        await miltonUsdtInstance.setAutoUpdateIporIndexThreshold(50);
+        await miltonUsdcInstance.setAutoUpdateIporIndexThreshold(50);
+        await miltonDaiInstance.setAutoUpdateIporIndexThreshold(50);
     }
 };

@@ -7,7 +7,6 @@ module.exports = async function (
     _network,
     addresses,
     [
-        TestnetFaucet,
         MockTestnetTokenUsdt,
         MockTestnetTokenUsdc,
         MockTestnetTokenDai,
@@ -63,19 +62,6 @@ module.exports = async function (
     await deployer.deploy(MockTestnetShareTokenCompoundDai, 0);
     const mockTestnetShareTokenCompoundDai = await MockTestnetShareTokenCompoundDai.deployed();
     await func.update(keys.cDAI, mockTestnetShareTokenCompoundDai.address);
-
-    const testnetFaucetProxy = await deployProxy(
-        TestnetFaucet,
-        [mockedDai.address, mockedUsdc.address, mockedUsdt.address],
-        {
-            deployer: deployer,
-            initializer: "initialize",
-            kind: "uups",
-        }
-    );
-    const testnetFaucetImpl = await erc1967.getImplementationAddress(testnetFaucetProxy.address);
-    await func.update(keys.TestnetFaucetProxy, testnetFaucetProxy.address);
-    await func.update(keys.TestnetFaucetImpl, testnetFaucetImpl);
 
     const mockTestnetStrategyAaveUsdtProxy = await deployProxy(
         MockTestnetStrategyAaveUsdt,

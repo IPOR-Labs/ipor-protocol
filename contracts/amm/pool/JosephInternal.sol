@@ -49,6 +49,9 @@ abstract contract JosephInternal is
     uint256 internal _miltonStanleyBalanceRatio;
     uint32 internal _maxLiquidityPoolBalance;
     uint32 internal _maxLpAccountContribution;
+    /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals. Value represents multiplication of 1000.
+    uint32 internal _autoRebalanceThresholdInThousands;
+    mapping(address => bool) internal _appointedToRebalance;
 
     modifier onlyCharlieTreasuryManager() {
         require(
@@ -60,6 +63,14 @@ abstract contract JosephInternal is
 
     modifier onlyTreasuryManager() {
         require(_msgSender() == _treasuryManager, JosephErrors.CALLER_NOT_TREASURE_TRANSFERER);
+        _;
+    }
+
+    modifier onlyAppointedToRebalance() {
+        require(
+            _appointedToRebalance[_msgSender()],
+            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
+        );
         _;
     }
 
@@ -76,9 +87,9 @@ abstract contract JosephInternal is
         address miltonStorage,
         address stanley
     ) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __Pausable_init_unchained();
+        __Ownable_init_unchained();
+        __UUPSUpgradeable_init_unchained();
 
         require(initAsset != address(0), IporErrors.WRONG_ADDRESS);
         require(ipToken != address(0), IporErrors.WRONG_ADDRESS);
@@ -105,6 +116,7 @@ abstract contract JosephInternal is
         _miltonStanleyBalanceRatio = 85e16;
         _maxLiquidityPoolBalance = 3_000_000;
         _maxLpAccountContribution = 50_000;
+        _autoRebalanceThresholdInThousands = 50;
     }
 
     function getVersion() external pure virtual override returns (uint256) {
@@ -112,7 +124,23 @@ abstract contract JosephInternal is
     }
 
     function getAsset() external view override returns (address) {
-        return _asset;
+        return _getAsset();
+    }
+
+    function getStanley() external view returns (address) {
+        return address(_stanley);
+    }
+
+    function getMiltonStorage() external view returns (address) {
+        return address(_miltonStorage);
+    }
+
+    function getMilton() external view returns (address) {
+        return address(_milton);
+    }
+
+    function getIpToken() external view returns (address) {
+        return address(_ipToken);
     }
 
     function setMiltonStanleyBalanceRatio(uint256 newRatio) external onlyOwner {
@@ -145,7 +173,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function rebalance() external override onlyOwner whenNotPaused {
+    function rebalance() external override onlyAppointedToRebalance whenNotPaused nonReentrant {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
@@ -157,13 +185,17 @@ abstract contract JosephInternal is
         if (ratio > miltonStanleyBalanceRatio) {
             uint256 assetAmount = wadMiltonAssetBalance -
                 IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
-            _getMilton().depositToStanley(assetAmount);
+            if (assetAmount > 0) {
+                _getMilton().depositToStanley(assetAmount);
+            }
         } else {
             uint256 assetAmount = IporMath.division(
                 miltonStanleyBalanceRatio * totalBalance,
                 Constants.D18
             ) - wadMiltonAssetBalance;
-            _getMilton().withdrawFromStanley(assetAmount);
+            if (assetAmount > 0) {
+                _getMilton().withdrawFromStanley(assetAmount);
+            }
         }
     }
 
@@ -202,7 +234,7 @@ abstract contract JosephInternal is
 
         _getMiltonStorage().updateStorageWhenTransferToTreasury(wadAssetAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(
+        IERC20Upgradeable(_getAsset()).safeTransferFrom(
             address(_getMilton()),
             treasury,
             assetAmountAssetDecimals
@@ -230,7 +262,7 @@ abstract contract JosephInternal is
 
         _getMiltonStorage().updateStorageWhenTransferToCharlieTreasury(wadAssetAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(
+        IERC20Upgradeable(_getAsset()).safeTransferFrom(
             address(_getMilton()),
             charlieTreasury,
             assetAmountAssetDecimals
@@ -346,6 +378,19 @@ abstract contract JosephInternal is
         );
     }
 
+    function getAutoRebalanceThreshold() external view override returns (uint256) {
+        return _getAutoRebalanceThreshold();
+    }
+
+    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        _setAutoRebalanceThreshold(newAutoRebalanceThreshold);
+    }
+
     function getRedeemFeeRate() external pure override returns (uint256) {
         return _getRedeemFeeRate();
     }
@@ -358,7 +403,20 @@ abstract contract JosephInternal is
         return _miltonStanleyBalanceRatio;
     }
 
-    function _getDecimals() internal pure virtual returns (uint256);
+    function addAppointedToRebalance(address appointed) external override onlyOwner {
+        require(appointed != address(0), IporErrors.WRONG_ADDRESS);
+        _appointedToRebalance[appointed] = true;
+        emit AppointedToRebalanceChanged(_msgSender(), appointed, true);
+    }
+
+    function removeAppointedToRebalance(address appointed) external override onlyOwner {
+        _appointedToRebalance[appointed] = false;
+        emit AppointedToRebalanceChanged(_msgSender(), appointed, false);
+    }
+
+    function isAppointedToRebalance(address appointed) external view override returns (bool) {
+        return _appointedToRebalance[appointed];
+    }
 
     function _getIporTotalBalance()
         internal
@@ -368,12 +426,32 @@ abstract contract JosephInternal is
         address miltonAddr = address(_getMilton());
 
         wadMiltonAssetBalance = IporMath.convertToWad(
-            IERC20Upgradeable(_asset).balanceOf(miltonAddr),
+            IERC20Upgradeable(_getAsset()).balanceOf(miltonAddr),
             _getDecimals()
         );
 
         totalBalance = wadMiltonAssetBalance + _getStanley().totalBalance(miltonAddr);
     }
+
+    function _getAutoRebalanceThreshold() internal view returns (uint256) {
+        return _autoRebalanceThresholdInThousands * Constants.D21;
+    }
+
+    function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThresholdInThousands) internal {
+        uint256 oldAutoRebalanceThresholdInThousands = _autoRebalanceThresholdInThousands;
+        _autoRebalanceThresholdInThousands = newAutoRebalanceThresholdInThousands.toUint32();
+        emit AutoRebalanceThresholdChanged(
+            _msgSender(),
+            oldAutoRebalanceThresholdInThousands * Constants.D18,
+            newAutoRebalanceThresholdInThousands * Constants.D18
+        );
+    }
+
+    function _getAsset() internal view virtual returns (address) {
+        return _asset;
+    }
+
+    function _getDecimals() internal pure virtual returns (uint256);
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}

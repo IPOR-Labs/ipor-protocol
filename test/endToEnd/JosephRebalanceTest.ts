@@ -72,7 +72,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
     before(async () => {
         [admin] = await hre.ethers.getSigners();
 
-        const deployed: DeployType = await deploy();
+        const deployed: DeployType = await deploy(admin);
         ({
             testnetFaucet,
             usdc,
