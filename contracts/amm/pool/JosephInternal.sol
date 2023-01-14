@@ -173,7 +173,7 @@ abstract contract JosephInternal is
         return _ipToken;
     }
 
-    function rebalance() external override onlyAppointedToRebalance whenNotPaused {
+    function rebalance() external override onlyAppointedToRebalance whenNotPaused nonReentrant {
         (uint256 totalBalance, uint256 wadMiltonAssetBalance) = _getIporTotalBalance();
 
         require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
