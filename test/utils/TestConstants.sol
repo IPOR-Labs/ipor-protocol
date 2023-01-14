@@ -50,6 +50,7 @@ library TestConstants {
     uint256 public constant PERCENTAGE_6_18DEC = 6 * 1e16;
     uint256 public constant PERCENTAGE_7_18DEC = 7 * 1e16;
     uint256 public constant PERCENTAGE_8_18DEC = 8 * 1e16;
+    uint256 public constant PERCENTAGE_9_18DEC = 9 * 1e16;
     uint256 public constant PERCENTAGE_10_18DEC = 10 * 1e16;
     uint256 public constant PERCENTAGE_50_18DEC = 50 * 1e16;
     uint256 public constant PERCENTAGE_95_18DEC = 95 * 1e16;
@@ -85,6 +86,7 @@ library TestConstants {
     uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC = 10 * 1e18;
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
     uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
+    int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
@@ -95,7 +97,9 @@ library TestConstants {
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
 
     uint256 public constant SPECIFIC_INCOME_TAX_CASE_1 = 600751281464875607313;
+    int256 public constant SPECIFIC_INCOME_TAX_CASE_1_INT = 600751281464875607313;
     uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007512814648756073133;
+    int256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1_INT = 6007512814648756073133;
 
     int256 public constant D18_INT = 1e18;
     int256 public constant D17_INT = 1e17;
