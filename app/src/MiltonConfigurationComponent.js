@@ -31,6 +31,36 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>
+                        <strong>Version</strong>
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdt"
+                            method="getVersion"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonUsdc"
+                            method="getVersion"
+                        />
+                    </td>
+                    <td>
+                        <ContractData
+                            drizzle={drizzle}
+                            drizzleState={drizzleState}
+                            contract="DrizzleMiltonDai"
+                            method="getVersion"
+                        />
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
                         <strong>Asset Address</strong>
                         <small></small>
                     </td>
@@ -243,7 +273,8 @@ export default ({ drizzle, drizzleState }) => (
                         <strong>Auto Upate Ipor Index Threshold</strong>
                         <br />
                         <small>
-                            Notice! Don't use decimals. The value represents multiples of 1000.
+                            <strong>Notice when set new value!</strong> Don't use decimals. The
+                            value represents multiples of 1000.
                         </small>
                     </td>
                     <td>
@@ -253,6 +284,13 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="DrizzleMiltonUsdt"
                                 method="getAutoUpdateIporIndexThreshold"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
                             />
                             <ContractForm
                                 drizzle={drizzle}
@@ -268,6 +306,13 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="DrizzleMiltonUsdc"
                                 method="getAutoUpdateIporIndexThreshold"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
                             />
                             <ContractForm
                                 drizzle={drizzle}
@@ -283,6 +328,13 @@ export default ({ drizzle, drizzleState }) => (
                                 drizzleState={drizzleState}
                                 contract="DrizzleMiltonDai"
                                 method="getAutoUpdateIporIndexThreshold"
+                                render={(value) => (
+                                    <div>
+                                        {value / 1000000000000000000}
+                                        <br />
+                                        <small>{value}</small>
+                                    </div>
+                                )}
                             />
                             <ContractForm
                                 drizzle={drizzle}
