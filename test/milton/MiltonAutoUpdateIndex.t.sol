@@ -39,8 +39,10 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _userOne = _getUserAddress(1);
     }
 
-    function testOpenSwapPayFixedUsdtAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
         //given
+        vm.warp(100);
+
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
@@ -58,16 +60,24 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         joseph.provideLiquidity(liquidityAmount);
 
+        uint256 myBalanceBefore = _iporProtocol.asset.balanceOf(address(this));
+
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
+        assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function testOpenSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
         //given
+        vm.warp(100);
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
@@ -85,16 +95,24 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         joseph.provideLiquidity(liquidityAmount);
 
+        uint256 myBalanceBefore = _iporProtocol.asset.balanceOf(address(this));
+
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        milton.closeSwapReceiveFixed(1);
+
+        //then
+        uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
+        assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function testOpenSwapPayFixedDaiAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
         //given
+        vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
@@ -112,16 +130,24 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         joseph.provideLiquidity(liquidityAmount);
 
+        uint256 myBalanceBefore = _iporProtocol.asset.balanceOf(address(this));
+
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
+        assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366);
     }
 
-    function testOpenSwapReceiveFixedDaiAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
         //given
+        vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
@@ -139,11 +165,18 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         joseph.provideLiquidity(liquidityAmount);
 
+        uint256 myBalanceBefore = _iporProtocol.asset.balanceOf(address(this));
+
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 1);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        milton.closeSwapReceiveFixed(1);
+
+        //then
+        uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
+        assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366);
     }
 }
