@@ -33,7 +33,7 @@ contract MockIporWeighted is IporOwnableUpgradeable, UUPSUpgradeable, IIporAlgor
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         (uint256 value, , , , ) = IIporOracle(_iporOracleAddress).getIndex(asset);
 
-        return value + _randomModifier();
+        return value + 1;
     }
 
     function setIporOracleAddress(address iporOracleAddress) external onlyOwner {
@@ -42,10 +42,6 @@ contract MockIporWeighted is IporOwnableUpgradeable, UUPSUpgradeable, IIporAlgor
 
     function getIporOracleAddress() external view returns (address) {
         return _iporOracleAddress;
-    }
-
-    function _randomModifier() internal view returns (uint256) {
-        return uint256(block.number) % 10;
     }
 
     //solhint-disable no-empty-blocks
