@@ -296,22 +296,24 @@ contract IporOracle is
                 _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
             );
 
-        newIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
+        uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
-            newIbtPrice.toUint128(),
+            newQuasiIbtPrice.toUint128(),
             newExponentialMovingAverage.toUint64(),
             newExponentialWeightedMovingVariance.toUint64(),
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
+
         newIndexValue = indexValue;
+        newIbtPrice = IporMath.division(newQuasiIbtPrice, Constants.YEAR_IN_SECONDS);
         lastUpdateTimestamp = updateTimestamp;
 
         emit IporIndexUpdate(
             asset,
             indexValue,
-            newIbtPrice,
+            newQuasiIbtPrice,
             newExponentialMovingAverage,
             newExponentialWeightedMovingVariance,
             updateTimestamp
