@@ -5,7 +5,6 @@ const { prepareUpgrade } = require("@openzeppelin/truffle-upgrades");
 
 module.exports = async function (deployer, _network, addresses, TestnetFaucet) {
     const proxyAddress = await func.getValue(keys.TestnetFaucetProxy);
-
     const implAddress = await prepareUpgrade(proxyAddress, TestnetFaucet, {
         deployer: deployer,
         kind: "uups",
