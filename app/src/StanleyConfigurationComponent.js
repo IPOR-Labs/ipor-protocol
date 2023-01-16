@@ -16,70 +16,70 @@ export default ({ drizzle, drizzleState }) => (
 
                 <tr>
                     <td>Asset Address</td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyUsdt"
-                                method="getAsset"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyUsdc"
-                                method="getAsset"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyDai"
-                                method="getAsset"
-                            />
-                        </div>
-                    </td>
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdt"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdc"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyDai"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
                 </tr>
 
                 <tr>
                     <td>IvToken Address</td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyUsdt"
-                                method="getIvToken"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyUsdc"
-                                method="getIvToken"
-                            />
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <ContractData
-                                drizzle={drizzle}
-                                drizzleState={drizzleState}
-                                contract="DrizzleStanleyDai"
-                                method="getIvToken"
-                            />
-                        </div>
-                    </td>
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdt"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdc"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyDai"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
                 </tr>
             </table>
 
