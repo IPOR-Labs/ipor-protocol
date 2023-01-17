@@ -21,7 +21,6 @@ import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
@@ -1093,17 +1092,10 @@ contract MiltonShouldNotClosePositionTest is
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_6_18DEC, block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
-        deal(address(_daiMockedToken), address(mockCase0MiltonDai), 6044629098073145873530880); 
-		console2.log("Milton balance before transfer", _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
 		vm.prank(address(mockCase0MiltonDai));
-		_daiMockedToken.transfer(_admin, _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
 		// when
-		console2.log("Milton balance after transfer", _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
 		vm.expectRevert("ERC20: transfer amount exceeds balance");
-		console2.log("Milton balance before close swap", _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
-		vm.prank(_userTwo);
-		mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
-		console2.log("Milton balance after close swap", _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
+		_daiMockedToken.transfer(_admin, 6044629098073145873530880);
 	}
 
 }
