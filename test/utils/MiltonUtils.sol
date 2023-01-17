@@ -35,6 +35,8 @@ import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase4MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase5MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase6MiltonDai.sol";
+import "../../contracts/mocks/milton/MockCase7MiltonDai.sol";
+import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 
 contract MiltonUtils is Test {
@@ -382,6 +384,38 @@ contract MiltonUtils is Test {
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         MockCase6MiltonDai miltonDai = MockCase6MiltonDai(address(miltonDaiProxy));
+        return miltonDai;
+    }
+
+    /// ------------------------------------------------------------------------------------
+
+    function getMockCase7MiltonDai(
+        address tokenDai,
+        address iporOracle,
+        address miltonStorageDai,
+        address miltonSpreadModel,
+        address stanleyDai
+    ) public returns (MockCase7MiltonDai) {
+        MockCase7MiltonDai mockCase7MiltonDaiImplementation = new MockCase7MiltonDai();
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase7MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        MockCase7MiltonDai miltonDai = MockCase7MiltonDai(address(miltonDaiProxy));
+        return miltonDai;
+    }
+
+    /// ------------------------------------------------------------------------------------
+
+    function getMockCase8MiltonDai(
+        address tokenDai,
+        address iporOracle,
+        address miltonStorageDai,
+        address miltonSpreadModel,
+        address stanleyDai
+    ) public returns (MockCase8MiltonDai) {
+        MockCase8MiltonDai mockCase8MiltonDaiImplementation = new MockCase8MiltonDai();
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase8MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        MockCase8MiltonDai miltonDai = MockCase8MiltonDai(address(miltonDaiProxy));
         return miltonDai;
     }
 

@@ -52,6 +52,7 @@ library TestConstants {
     uint256 public constant PERCENTAGE_8_18DEC = 8 * 1e16;
     uint256 public constant PERCENTAGE_9_18DEC = 9 * 1e16;
     uint256 public constant PERCENTAGE_10_18DEC = 10 * 1e16;
+    uint256 public constant PERCENTAGE_16_18DEC = 16 * 1e16;
     uint256 public constant PERCENTAGE_50_18DEC = 50 * 1e16;
     uint256 public constant PERCENTAGE_95_18DEC = 95 * 1e16;
     uint256 public constant PERCENTAGE_119_18DEC = 119 * 1e16;
