@@ -45,5 +45,5 @@ jobs:
 
       - name: Run Forge tests
         run: |
-          forge test -vvv
+          forge test --no-match-path "test/fork/*" -vvv
         id: test
