@@ -1,5 +1,6 @@
 import Migrations from "./contracts/Migrations.json";
 
+import IporToken from "./contracts/IporToken.json";
 import MockTestnetTokenUsdt from "./contracts/MockTestnetTokenUsdt.json";
 import MockTestnetTokenUsdc from "./contracts/MockTestnetTokenUsdc.json";
 import MockTestnetTokenDai from "./contracts/MockTestnetTokenDai.json";
@@ -81,6 +82,10 @@ web3.fallback = {
 
 const networkId = process.env.REACT_APP_ETH_BC_NETWORK_ID;
 const addresses = require("./" + process.env.REACT_APP_ENV_PROFILE + "-docker-ipor-addresses.json");
+
+const DrizzleIporToken = IporToken;
+DrizzleIporToken.contractName = "DrizzleIporToken";
+DrizzleIporToken.networks[networkId] = { address: addresses.IPOR };
 
 const DrizzleUsdt = MockTestnetTokenUsdt;
 DrizzleUsdt.contractName = "DrizzleUsdt";
@@ -235,6 +240,8 @@ let options = {
     web3: web3,
     contracts: [
         Migrations,
+
+        DrizzleIporToken,
 
         DrizzleUsdt,
         DrizzleUsdc,

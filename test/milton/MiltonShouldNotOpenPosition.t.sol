@@ -40,12 +40,7 @@ contract MiltonShouldNotOpenPositionTest is
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
-    address internal _userThree;
-    address internal _liquidityProvider;
-
+   
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     function setUp() public {
@@ -91,7 +86,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -124,7 +119,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -157,7 +152,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -190,7 +185,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -223,7 +218,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
@@ -256,7 +251,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
-        prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
+        prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         vm.prank(_userOne);
@@ -289,7 +284,7 @@ contract MiltonShouldNotOpenPositionTest is
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
-        prepareIpTokenUsdt(_ipTokenUsdt, address(mockCase0JosephUsdt));
+        prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
         vm.prank(_liquidityProvider);
         mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         vm.prank(_userOne);
@@ -322,7 +317,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 		vm.prank(_userOne);
@@ -355,7 +350,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 		vm.prank(_userOne);
@@ -389,7 +384,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 		vm.prank(_userOne);
@@ -433,7 +428,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		vm.prank(_liquidityProvider);
 		mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 		vm.prank(_userOne);
@@ -472,7 +467,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
 		prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		// when
 		vm.expectRevert("IPOR_309");
 		vm.prank(_userTwo);
@@ -507,7 +502,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase7MiltonDai));
 		prepareMilton(mockCase7MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		// when
 		vm.expectRevert("IPOR_302");
 		vm.prank(_userTwo);
@@ -542,7 +537,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase8MiltonDai));
 		prepareMilton(mockCase8MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
 		// when
 		vm.expectRevert("IPOR_311");
 		vm.prank(_userTwo);
@@ -577,7 +572,7 @@ contract MiltonShouldNotOpenPositionTest is
 		prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase8MiltonDai));
 		prepareMilton(mockCase8MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
 		prepareJoseph(mockCase0JosephDai);
-		prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+		prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         MockMiltonStorage mockMiltonStorage = new MockMiltonStorage();
 		mockCase8MiltonDai.setMockMiltonStorage(address(mockMiltonStorage));
 		// when

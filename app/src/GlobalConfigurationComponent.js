@@ -320,6 +320,13 @@ export default ({ drizzle, drizzleState }) => (
                 <th scope="col">Confirm Transfer Ownership</th>
             </tr>
             <tr>
+                <td>IPOR</td>
+                <td>{drizzle.contracts.DrizzleIporToken.address}</td>
+                <td>NONE</td>
+                <td>NONE</td>
+                <td>NONE</td>
+            </tr>
+            <tr>
                 <td>USDT</td>
                 <td>{drizzle.contracts.DrizzleUsdt.address}</td>
                 <td>NONE</td>
@@ -521,7 +528,7 @@ export default ({ drizzle, drizzleState }) => (
                         method="confirmTransferOwnership"
                     />
                 </td>
-            </tr>            
+            </tr>
 
             <tr>
                 <td>MiltonUsdt</td>

@@ -1,6 +1,5 @@
-const { exit } = require("process");
 const func = require("../../libs/json_func.js");
-const script = require("../../libs/contracts/deploy/faucet/0001_deploy_faucet_implementation.js");
+const script = require("../../libs/contracts/upgrade/faucet/0001_prepare_upgrade_v2.js");
 
 const TestnetFaucet = artifacts.require("TestnetFaucet");
 

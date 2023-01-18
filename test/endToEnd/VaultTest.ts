@@ -1,5 +1,5 @@
 import hre from "hardhat";
-import { BigNumber } from "ethers";
+import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
 import {
     ERC20,
@@ -58,7 +58,9 @@ describe("End to End tests on mainnet fork", function () {
     let josephUsdt: JosephUsdt;
 
     before(async () => {
-        const deployd: DeployType = await deploy();
+        let admin: Signer;
+        [admin] = await hre.ethers.getSigners();
+        const deployd: DeployType = await deploy(admin);
         ({
             testnetFaucet,
             usdc,

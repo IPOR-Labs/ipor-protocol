@@ -53,15 +53,7 @@ interface IIporOracle {
     /// @notice Updates IPOR Index for a given asset based on value returned from iporAlgorithm.
     /// @dev Emmits {IporIndexUpdate} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    function updateIndex(address asset)
-        external
-        returns (
-            uint256 indexValue,
-            uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
-            uint256 lastUpdateTimestamp
-        );
+    function updateIndex(address asset) external returns (IporTypes.AccruedIpor memory accruedIpor);
 
     /// @notice Updates IPOR Index for a given asset. Function available only for Updater
     /// @dev Emmits {IporIndexUpdate} event.
@@ -159,4 +151,14 @@ interface IIporOracle {
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.
     /// @param asset asset address
     event IporIndexRemoveAsset(address asset);
+
+    /// @notice event emitted when ipor algorithm address is changed
+    /// @param changedBy address of the account that changed the ipor algorithm address
+    /// @param oldIporAlgorithmFacade old ipor algorithm address
+    /// @param newIporAlgorithmFacade new ipor algorithm address
+    event IporAlgorithmFacadeChanged(
+        address indexed changedBy,
+        address indexed oldIporAlgorithmFacade,
+        address indexed newIporAlgorithmFacade
+    );
 }

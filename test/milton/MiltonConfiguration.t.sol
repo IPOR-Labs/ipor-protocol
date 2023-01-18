@@ -14,11 +14,9 @@ import "../../contracts/interfaces/IMiltonInternal.sol";
 
 contract MiltonConfiguration is Test, TestCommons {
     MiltonDai internal _miltonConfiguration;
-    address internal _admin;
 
     function setUp() public {
         _miltonConfiguration = new MiltonDai();
-        _admin = address(this);
     }
 
     function testShouldCreateMiltonUsdt() public {

@@ -38,11 +38,6 @@ contract MiltonShouldCalculateTest is
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
-    address internal _userThree;
-    address internal _liquidityProvider;
 
     function setUp() public {
         _miltonSpreadModel = prepareMockSpreadModel(
@@ -89,7 +84,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMilton(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
         openSwapReceiveFixed(
@@ -178,7 +173,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMilton(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
         openSwapPayFixed(
@@ -267,7 +262,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMilton(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
         openSwapPayFixed(
@@ -353,7 +348,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase2MiltonDai));
         prepareMilton(mockCase2MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
         openSwapReceiveFixed(
@@ -439,7 +434,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMilton(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
         openSwapReceiveFixed(
@@ -528,7 +523,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMilton(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp); // TC_LP_BALANCE_BEFORE_CLOSE_18DEC
         openSwapPayFixed(
@@ -617,7 +612,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMilton(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
         openSwapPayFixed(
@@ -701,7 +696,7 @@ contract MiltonShouldCalculateTest is
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase3MiltonDai));
         prepareMilton(mockCase3MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
-        prepareIpTokenDai(_ipTokenDai, address(mockCase0JosephDai));
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
         openSwapReceiveFixed(

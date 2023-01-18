@@ -230,8 +230,8 @@ contract TestnetFaucetTest is Test, TestCommons {
 
         // then
         uint256 versionAfter = testnetFaucet.getVersion();
-        assertEq(versionBefore, 2);
-        assertEq(versionAfter, 3);
+        assertEq(versionBefore, 1);
+        assertEq(versionAfter, 2);
     }
 
     function testShouldNotBeAbleToClaimAfterUpdateImplementationWhenDontWait24h() public {

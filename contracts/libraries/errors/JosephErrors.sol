@@ -28,5 +28,7 @@ library JosephErrors {
 
     string public constant MILTON_STANLEY_RATIO = "IPOR_409";
 
-	string public constant INSUFFICIENT_ERC20_BALANCE = "IPOR_410";
+    string public constant INSUFFICIENT_ERC20_BALANCE = "IPOR_410";
+
+    string public constant CALLER_NOT_APPOINTED_TO_REBALANCE = "IPOR_411";
 }

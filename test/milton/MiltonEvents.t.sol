@@ -26,11 +26,6 @@ contract MiltonEventsTest is
     DataUtils
 {
     MockSpreadModel internal _miltonSpreadModel;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
-    address internal _userThree;
-    address internal _liquidityProvider;
 
     /// @notice Emmited when trader opens new swap.
     /// @notice swap ID.
@@ -110,7 +105,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
-        prepareIpTokenDai(ipTokenDai, address(josephDai));
+        prepareIpToken(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         vm.prank(_userOne);
@@ -175,7 +170,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
-        prepareIpTokenDai(ipTokenDai, address(josephDai));
+        prepareIpToken(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         vm.prank(_userOne);
@@ -240,7 +235,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
-        prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
+        prepareIpToken(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         vm.prank(_userOne);
@@ -305,7 +300,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
-        prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
+        prepareIpToken(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         vm.prank(_userOne);
@@ -370,7 +365,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
-        prepareIpTokenDai(ipTokenDai, address(josephDai));
+        prepareIpToken(ipTokenDai, address(josephDai));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);
@@ -428,7 +423,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
-        prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
+        prepareIpToken(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);
@@ -486,7 +481,7 @@ contract MiltonEventsTest is
         prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
-        prepareIpTokenUsdt(ipTokenUsdt, address(josephUsdt));
+        prepareIpToken(ipTokenUsdt, address(josephUsdt));
         // when
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         vm.prank(_userOne);

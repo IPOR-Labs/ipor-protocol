@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
+import "../../contracts/mocks/MockIporWeighted.sol";
 
 contract IporOracleUtils is Test {
     /// ------------------- ORACLE PARAMS -------------------
@@ -75,7 +76,31 @@ contract IporOracleUtils is Test {
         return iporOracle;
     }
 
-    /// ---------------- ORACLE PARAMS ----------------
+    function _prepareIporOracle(
+        address[] memory accounts,
+        address[] memory tokenAddresses,
+        uint32[] memory lastUpdateTimestamps,
+        uint64[] memory exponentialMovingAverages,
+        uint64[] memory exponentialWeightedMovingVariances
+    ) internal returns (ItfIporOracle) {
+        ItfIporOracle iporOracleImpl = new ItfIporOracle();
+        ERC1967Proxy iporOracleProxy = new ERC1967Proxy(
+            address(iporOracleImpl),
+            abi.encodeWithSignature(
+                "initialize(address[],uint32[],uint64[],uint64[])",
+                tokenAddresses,
+                lastUpdateTimestamps,
+                exponentialMovingAverages,
+                exponentialWeightedMovingVariances
+            )
+        );
+        ItfIporOracle iporOracle = ItfIporOracle(address(iporOracleProxy));
+        if (accounts[1] != address(0)) {
+            iporOracle.addUpdater(accounts[1]);
+        }
+        return iporOracle;
+    }
+
     function _getSameIporOracleParamsForEachAsset(
         uint32 updateTimestamp,
         uint64 exponentialMovingAverage,

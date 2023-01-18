@@ -8,13 +8,140 @@ import {MiltonUtils} from "../utils/MiltonUtils.sol";
 import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import "../../contracts/amm/MiltonStorage.sol";
+import "../../contracts/libraries/Constants.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
+import "../../contracts/mocks/spread/MockSpreadModel.sol";
+import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/itf/ItfMilton.sol";
+import "../../contracts/itf/ItfStanley.sol";
+import "../../contracts/itf/ItfJoseph.sol";
+import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
+import "../../contracts/mocks/MockIporWeighted.sol";
 
-contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, JosephUtils, StanleyUtils {
-    /// ---------------- MOCKED TOKENS  ----------------
+contract DataUtils is
+    Test,
+    IporOracleUtils,
+    MiltonUtils,
+    MiltonStorageUtils,
+    JosephUtils,
+    StanleyUtils
+{
+    struct IporProtocol {
+        MockTestnetToken asset;
+        IpToken ipToken;
+        ItfStanley stanley;
+        MiltonStorage miltonStorage;
+        ItfMilton milton;
+        ItfJoseph joseph;
+    }
+
+    address internal _admin;
+    address internal _userOne;
+    address internal _userTwo;
+    address internal _userThree;
+    address internal _liquidityProvider;
+
+    function setupIporProtocolForUsdt() public returns (IporProtocol memory iporProtocol) {
+        MockTestnetToken asset = getTokenUsdt();
+        IpToken ipToken = getIpTokenUsdt(address(asset));
+        ItfStanley stanley = getItfStanleyUsdt(address(asset));
+        MiltonStorage miltonStorage = getMiltonStorage();
+
+        address[] memory tokenAddresses = new address[](1);
+        tokenAddresses[0] = address(asset);
+
+        ItfIporOracle iporOracle = getIporOracleThreeAssets(
+            _userOne,
+            tokenAddresses,
+            1,
+            1,
+            1
+        );
+
+        MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
+
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+
+        MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+
+        ItfMilton milton = getItfMiltonUsdt(
+            address(asset),
+            address(iporOracle),
+            address(miltonStorage),
+            address(miltonSpreadModel),
+            address(stanley)
+        );
+
+        ItfJoseph joseph = getItfJosephUsdt(
+            address(asset),
+            address(ipToken),
+            address(milton),
+            address(miltonStorage),
+            address(stanley)
+        );
+
+        prepareIpToken(ipToken, address(joseph));
+        prepareJoseph(joseph);
+        prepareMilton(milton, address(joseph), address(stanley));
+
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+        stanley.setMilton(address(milton));
+
+        return IporProtocol(asset, ipToken, stanley, miltonStorage, milton, joseph);
+    }
+
+    function setupIporProtocolForDai() public returns (IporProtocol memory iporProtocol) {
+        MockTestnetToken asset = getTokenDai();
+        IpToken ipToken = getIpTokenDai(address(asset));
+        ItfStanley stanley = getItfStanleyDai(address(asset));
+        MiltonStorage miltonStorage = getMiltonStorage();
+
+        address[] memory tokenAddresses = new address[](1);
+        tokenAddresses[0] = address(asset);
+
+        ItfIporOracle iporOracle = getIporOracleThreeAssets(
+            _userOne,
+            tokenAddresses,
+            1,
+            1,
+            1
+        );
+
+        MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
+
+        MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+
+        ItfMilton milton = getItfMiltonDai(
+            address(asset),
+            address(iporOracle),
+            address(miltonStorage),
+            address(miltonSpreadModel),
+            address(stanley)
+        );
+
+        ItfJoseph joseph = getItfJosephDai(
+            address(asset),
+            address(ipToken),
+            address(milton),
+            address(miltonStorage),
+            address(stanley)
+        );
+
+        prepareIpToken(ipToken, address(joseph));
+        prepareJoseph(joseph);
+        prepareMilton(milton, address(joseph), address(stanley));
+
+        stanley.setMilton(address(milton));
+
+        return IporProtocol(asset, ipToken, stanley, miltonStorage, milton, joseph);
+    }
+
     function getTokenUsdt() public returns (MockTestnetTokenUsdt) {
         MockTestnetTokenUsdt tokenUsdt = new MockTestnetTokenUsdt(TestConstants.TOTAL_SUPPLY_6_DECIMALS);
         return tokenUsdt;
@@ -49,26 +176,8 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return ipTokenUsdt;
     }
 
-    function prepareIpTokenUsdt(IpToken ipTokenUsdt, address josephUsdt) public {
-        ipTokenUsdt.setJoseph(josephUsdt);
-    }
-
-    function getIpTokenUsdc(address tokenUsdc) public returns (IpToken) {
-        IpToken ipTokenUsdc = new IpToken("IP USDC", "ipUSDC", tokenUsdc);
-        return ipTokenUsdc;
-    }
-
-    function prepareIpTokenUsdc(IpToken ipTokenUsdc, address josephUsdc) public {
-        ipTokenUsdc.setJoseph(josephUsdc);
-    }
-
-    function getIpTokenDai(address tokenDai) public returns (IpToken) {
-        IpToken ipTokenDai = new IpToken("IP DAI", "ipDAI", tokenDai);
-        return ipTokenDai;
-    }
-
-    function prepareIpTokenDai(IpToken ipTokenDai, address josephDai) public {
-        ipTokenDai.setJoseph(josephDai);
+    function prepareIpToken(IpToken ipToken, address joseph) public {
+        ipToken.setJoseph(joseph);
     }
 
     function getIpTokenAddresses(address ipTokenUsdt, address ipTokenUsdc, address ipTokenDai)
@@ -81,6 +190,16 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         ipTokenAddresses[1] = ipTokenUsdc;
         ipTokenAddresses[2] = ipTokenDai;
         return ipTokenAddresses;
+    }
+    
+    function getIpTokenUsdc(address tokenUsdc) public returns (IpToken) {
+        IpToken ipTokenUsdc = new IpToken("IP USDC", "ipUSDC", tokenUsdc);
+        return ipTokenUsdc;
+    }
+
+    function getIpTokenDai(address tokenDai) public returns (IpToken) {
+        IpToken ipTokenDai = new IpToken("IP DAI", "ipDAI", tokenDai);
+        return ipTokenDai;
     }
 
     /// ---------------- IP TOKENS  ----------------

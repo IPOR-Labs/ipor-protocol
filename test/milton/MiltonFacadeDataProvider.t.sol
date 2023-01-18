@@ -30,11 +30,6 @@ contract MiltonFacadeDataProviderTest is
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
-    address internal _admin;
-    address internal _userOne;
-    address internal _userTwo;
-    address internal _userThree;
-    address internal _liquidityProvider;
     address internal _miltonStorageAddress;
 
     function setUp() public {
@@ -136,9 +131,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -255,9 +250,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -401,9 +396,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -550,9 +545,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -695,9 +690,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -837,9 +832,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -981,9 +976,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -1114,9 +1109,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,
@@ -1247,9 +1242,9 @@ contract MiltonFacadeDataProviderTest is
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
         prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
         prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpTokenUsdt(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpTokenUsdc(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpTokenDai(_ipTokenDai, mockCase0JosephAddresses[2]);
+        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
+        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
+        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
             address(iporOracle),
             tokenAddresses,

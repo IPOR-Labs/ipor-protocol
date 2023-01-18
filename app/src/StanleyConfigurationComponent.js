@@ -6,6 +6,83 @@ const { ContractData, ContractForm } = newContextComponents;
 export default ({ drizzle, drizzleState }) => (
     <div>
         <div className="row">
+            <table className="table" align="center">
+                <tr>
+                    <th scope="col">Parameter</th>
+                    <th scope="col">USDT</th>
+                    <th scope="col">USDC</th>
+                    <th scope="col">DAI</th>
+                </tr>
+
+                <tr>
+                    <td>Asset Address</td>
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdt"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdc"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyDai"*/}
+                    {/*            method="getAsset"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                </tr>
+
+                <tr>
+                    <td>IvToken Address</td>
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdt"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyUsdc"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                    {/*<td>*/}
+                    {/*    <div>*/}
+                    {/*        <ContractData*/}
+                    {/*            drizzle={drizzle}*/}
+                    {/*            drizzleState={drizzleState}*/}
+                    {/*            contract="DrizzleStanleyDai"*/}
+                    {/*            method="getIvToken"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
+                    {/*</td>*/}
+                </tr>
+            </table>
+
             <h4>Stanley: Setup new Milton address</h4>
             <table className="table" align="center">
                 <tr>
