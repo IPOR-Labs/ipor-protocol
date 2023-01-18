@@ -47,3 +47,9 @@ jobs:
         run: |
           forge test --no-match-path "test/fork/*" -vvv
         id: test
+
+
+      - name: Run Forge fork tests
+        run: |
+          forge test --match-path "test/fork/*" --fork-url ${{ secrets.HARDHAT_FORKING_URL }} --fork-block-number 16406200 -vvv
+        id: fort-test
