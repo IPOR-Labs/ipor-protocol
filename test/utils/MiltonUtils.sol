@@ -345,6 +345,38 @@ contract MiltonUtils is Test {
 
     /// ------------------------------------------------------------------------------------
 
+    function getMockCase4MiltonDai(
+        address tokenDai,
+        address iporOracle,
+        address miltonStorageDai,
+        address miltonSpreadModel,
+        address stanleyDai
+    ) public returns (MockCase4MiltonDai) {
+        MockCase4MiltonDai mockCase4MiltonDaiImplementation = new MockCase4MiltonDai();
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase4MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        MockCase4MiltonDai miltonDai = MockCase4MiltonDai(address(miltonDaiProxy));
+        return miltonDai;
+    }
+
+    /// ------------------------------------------------------------------------------------
+
+    function getMockCase5MiltonDai(
+        address tokenDai,
+        address iporOracle,
+        address miltonStorageDai,
+        address miltonSpreadModel,
+        address stanleyDai
+    ) public returns (MockCase5MiltonDai) {
+        MockCase5MiltonDai mockCase5MiltonDaiImplementation = new MockCase5MiltonDai();
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase5MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        MockCase5MiltonDai miltonDai = MockCase5MiltonDai(address(miltonDaiProxy));
+        return miltonDai;
+    }
+
+    /// ------------------------------------------------------------------------------------
+
     function getMockCase6MiltonUsdt(
         address tokenUsdt,
         address iporOracle,
