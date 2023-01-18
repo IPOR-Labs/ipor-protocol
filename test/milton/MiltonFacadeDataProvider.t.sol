@@ -17,12 +17,7 @@ import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 
-contract MiltonFacadeDataProviderTest is
-    Test,
-    TestCommons,
-    DataUtils,
-    SwapUtils
-{
+contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
     MockTestnetTokenUsdc internal _usdcMockedToken;

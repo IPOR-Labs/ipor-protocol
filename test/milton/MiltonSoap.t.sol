@@ -21,12 +21,7 @@ import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 
-contract MiltonSoapTest is
-    Test,
-    TestCommons,
-    DataUtils,
-    SwapUtils
-{
+contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
     MockTestnetTokenUsdc internal _usdcMockedToken;
@@ -34,7 +29,7 @@ contract MiltonSoapTest is
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
-  
+
     function setUp() public {
         _miltonSpreadModel = prepareMockSpreadModel(
             TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT
@@ -505,7 +500,7 @@ contract MiltonSoapTest is
             address(mockCase0Josephs.mockCase0JosephDai),
             address(mockCase0Miltons.mockCase0MiltonDai)
         );
-       
+
         prepareMilton(
             mockCase0Miltons.mockCase0MiltonUsdt,
             address(mockCase0Josephs.mockCase0JosephUsdt),

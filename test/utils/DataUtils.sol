@@ -23,14 +23,7 @@ import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
 
-contract DataUtils is
-    Test,
-    IporOracleUtils,
-    MiltonUtils,
-    MiltonStorageUtils,
-    JosephUtils,
-    StanleyUtils
-{
+contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, JosephUtils, StanleyUtils {
     struct IporProtocol {
         MockTestnetToken asset;
         IpToken ipToken;
@@ -55,13 +48,7 @@ contract DataUtils is
         address[] memory tokenAddresses = new address[](1);
         tokenAddresses[0] = address(asset);
 
-        ItfIporOracle iporOracle = getIporOracleThreeAssets(
-            _userOne,
-            tokenAddresses,
-            1,
-            1,
-            1
-        );
+        ItfIporOracle iporOracle = getIporOracleThreeAssets(_userOne, tokenAddresses, 1, 1, 1);
 
         MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
 
@@ -70,19 +57,11 @@ contract DataUtils is
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
         ItfMilton milton = getItfMiltonUsdt(
-            address(asset),
-            address(iporOracle),
-            address(miltonStorage),
-            address(miltonSpreadModel),
-            address(stanley)
+            address(asset), address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
         );
 
         ItfJoseph joseph = getItfJosephUsdt(
-            address(asset),
-            address(ipToken),
-            address(milton),
-            address(miltonStorage),
-            address(stanley)
+            address(asset), address(ipToken), address(milton), address(miltonStorage), address(stanley)
         );
 
         prepareIpToken(ipToken, address(joseph));
@@ -104,13 +83,7 @@ contract DataUtils is
         address[] memory tokenAddresses = new address[](1);
         tokenAddresses[0] = address(asset);
 
-        ItfIporOracle iporOracle = getIporOracleThreeAssets(
-            _userOne,
-            tokenAddresses,
-            1,
-            1,
-            1
-        );
+        ItfIporOracle iporOracle = getIporOracleThreeAssets(_userOne, tokenAddresses, 1, 1, 1);
 
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
@@ -118,20 +91,11 @@ contract DataUtils is
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
         ItfMilton milton = getItfMiltonDai(
-            address(asset),
-            address(iporOracle),
-            address(miltonStorage),
-            address(miltonSpreadModel),
-            address(stanley)
+            address(asset), address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
         );
 
-        ItfJoseph joseph = getItfJosephDai(
-            address(asset),
-            address(ipToken),
-            address(milton),
-            address(miltonStorage),
-            address(stanley)
-        );
+        ItfJoseph joseph =
+            getItfJosephDai(address(asset), address(ipToken), address(milton), address(miltonStorage), address(stanley));
 
         prepareIpToken(ipToken, address(joseph));
         prepareJoseph(joseph);
@@ -191,7 +155,7 @@ contract DataUtils is
         ipTokenAddresses[2] = ipTokenDai;
         return ipTokenAddresses;
     }
-    
+
     function getIpTokenUsdc(address tokenUsdc) public returns (IpToken) {
         IpToken ipTokenUsdc = new IpToken("IP USDC", "ipUSDC", tokenUsdc);
         return ipTokenUsdc;

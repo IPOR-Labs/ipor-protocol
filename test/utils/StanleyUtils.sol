@@ -82,10 +82,7 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockTestnetStrategyCompoundUsdt(address asset)
-        public
-        returns (MockTestnetStrategy)
-    {
+    function getMockTestnetStrategyCompoundUsdt(address asset) public returns (MockTestnetStrategy) {
         MockTestnetStrategyCompoundUsdt strategyImpl = new MockTestnetStrategyCompoundUsdt();
         MockTestnetShareTokenCompoundUsdt shareToken = new MockTestnetShareTokenCompoundUsdt(0);
 

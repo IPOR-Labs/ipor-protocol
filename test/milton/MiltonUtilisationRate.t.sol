@@ -24,12 +24,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
-contract MiltonUtilisationRateTest is
-    Test,
-    TestCommons,
-    DataUtils,
-    SwapUtils
-{
+contract MiltonUtilisationRateTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
     MockTestnetTokenUsdc internal _usdcMockedToken;

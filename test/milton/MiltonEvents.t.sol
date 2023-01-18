@@ -20,11 +20,7 @@ import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
-contract MiltonEventsTest is
-    Test,
-    TestCommons,
-    DataUtils
-{
+contract MiltonEventsTest is Test, TestCommons, DataUtils {
     MockSpreadModel internal _miltonSpreadModel;
 
     /// @notice Emmited when trader opens new swap.

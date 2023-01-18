@@ -25,12 +25,7 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/milton/MockCase2MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 
-contract MiltonShouldCalculateTest is
-    Test,
-    TestCommons,
-    DataUtils,
-    SwapUtils
-{
+contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
     MockTestnetTokenUsdc internal _usdcMockedToken;

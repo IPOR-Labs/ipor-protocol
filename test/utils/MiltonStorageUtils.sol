@@ -20,7 +20,8 @@ contract MiltonStorageUtils is Test {
 
     function getMiltonStorage() public returns (MiltonStorage) {
         MiltonStorage miltonStorageImplementation = new MiltonStorage();
-        ERC1967Proxy miltonStorageProxy = new ERC1967Proxy(address(miltonStorageImplementation), abi.encodeWithSignature( "initialize()", ""));
+        ERC1967Proxy miltonStorageProxy =
+            new ERC1967Proxy(address(miltonStorageImplementation), abi.encodeWithSignature( "initialize()", ""));
         MiltonStorage miltonStorage = MiltonStorage(address(miltonStorageProxy));
         return miltonStorage;
     }

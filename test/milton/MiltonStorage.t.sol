@@ -23,12 +23,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
-contract MiltonStorageTest is
-    Test,
-    TestCommons,
-    DataUtils,
-    SwapUtils
-{
+contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetTokenUsdt internal _usdtMockedToken;
     MockTestnetTokenUsdc internal _usdcMockedToken;
@@ -246,7 +241,7 @@ contract MiltonStorageTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersDai(users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-     
+
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -300,7 +295,7 @@ contract MiltonStorageTest is
         );
         address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         prepareApproveForUsersUsdt(users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
-    
+
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
         prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));

@@ -31,7 +31,7 @@ contract IporOracleUtils is Test {
         iporOracle.addUpdater(updater);
         return iporOracle;
     }
-    
+
     function _prepareIporWeighted(address iporOracle) internal returns (MockIporWeighted) {
         MockIporWeighted iporWeightedImpl = new MockIporWeighted();
         ERC1967Proxy iporWeightedProxy = new ERC1967Proxy(
