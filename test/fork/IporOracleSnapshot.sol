@@ -6,8 +6,9 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "forge-std/Test.sol";
 
-contract IporOracleSnapshot is Script {
+contract IporOracleSnapshot is Script, Test {
     using stdJson for string;
     address private _iporOracle;
     address private _asset;
@@ -230,5 +231,24 @@ contract IporOracleSnapshot is Script {
         console2.log("accruedIbtPrice", accruedIbtPrice);
         console2.log("accruedExponentialMovingAverage", accruedExponentialMovingAverage);
         console2.log("accruedExponentialWeightedMovingVariance", accruedExponentialWeightedMovingVariance);
+    }
+
+    function assert(IporOracleSnapshot iporOracleSnapshot1, IporOracleSnapshot iporOracleSnapshot2) external {
+        assertTrue(iporOracleSnapshot1.iporOracleVersion()!= iporOracleSnapshot2.iporOracleVersion());
+        assertTrue(iporOracleSnapshot1.iporOracleVersion()!= 0);
+        assertTrue(iporOracleSnapshot2.iporOracleVersion()!= 0);
+        assertEq(iporOracleSnapshot1.iporOracleOwner(), iporOracleSnapshot2.iporOracleOwner());
+        assertEq(iporOracleSnapshot1.iporOracleIsPaused(), iporOracleSnapshot2.iporOracleIsPaused());
+        assertEq(iporOracleSnapshot1.blockNumber(), iporOracleSnapshot2.blockNumber());
+        assertEq(iporOracleSnapshot1.timestamp(), iporOracleSnapshot2.timestamp());
+        assertEq(iporOracleSnapshot1.indexValue(), iporOracleSnapshot2.indexValue());
+        assertEq(iporOracleSnapshot1.ibtPrice(), iporOracleSnapshot2.ibtPrice());
+        assertEq(iporOracleSnapshot1.exponentialMovingAverage(), iporOracleSnapshot2.exponentialMovingAverage());
+        assertEq(iporOracleSnapshot1.exponentialWeightedMovingVariance(), iporOracleSnapshot2.exponentialWeightedMovingVariance());
+        assertEq(iporOracleSnapshot1.lastUpdateTimestamp(), iporOracleSnapshot2.lastUpdateTimestamp());
+        assertEq(iporOracleSnapshot1.accruedIndexValue(), iporOracleSnapshot2.accruedIndexValue());
+        assertEq(iporOracleSnapshot1.accruedIbtPrice(), iporOracleSnapshot2.accruedIbtPrice());
+        assertEq(iporOracleSnapshot1.accruedExponentialMovingAverage(), iporOracleSnapshot2.accruedExponentialMovingAverage());
+        assertEq(iporOracleSnapshot1.accruedExponentialWeightedMovingVariance(), iporOracleSnapshot2.accruedExponentialWeightedMovingVariance());
     }
 }

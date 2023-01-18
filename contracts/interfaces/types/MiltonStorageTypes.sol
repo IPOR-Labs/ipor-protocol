@@ -30,3 +30,4 @@ library MiltonStorageTypes {
         uint256 treasury;
     }
 }
+

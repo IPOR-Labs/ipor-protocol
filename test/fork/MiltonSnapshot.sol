@@ -8,8 +8,10 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/amm/Milton.sol";
 import "../../contracts/facades/MiltonFacadeDataProvider.sol";
+import "forge-std/Test.sol";
 
-contract MiltonSnapshot is Script {
+
+contract MiltonSnapshot is Script, Test {
     using stdJson for string;
     address private _milton;
     address public miltonJoseph;
@@ -212,68 +214,37 @@ contract MiltonSnapshot is Script {
         vm.writeJson(finalJson, string.concat(path, fileName));
     }
 
-    function fromJson(string memory fileName) public {
-//        TODO: fix problem with reading json
-//        string memory path = vm.projectRoot();
-//        console2.log("path", path);
-//        string memory pathToFile = string.concat(path, fileName);
-//        console2.log("pathToFile", pathToFile);
-//        string memory data = vm.readFile(pathToFile);
-////
-//        _milton = data.readAddress("milton");
-////        miltonJoseph = data.readAddress("miltonJoseph");
-////        miltonVersion = data.readString("miltonVersion");
-////        miltonSpreadModel = data.readAddress("miltonSpreadModel");
-////        miltonAsset = data.readAddress("miltonAsset");
-////        miltonOwner = data.readAddress("miltonOwner");
-////        miltonFacadeDataProviderOwner = data.readAddress("miltonFacadeDataProviderOwner");
-////        miltonFacadeDataProviderVersion = data.readUint("miltonFacadeDataProviderVersion");
-////        miltonMaxSwapCollateralAmount = data.readUint("miltonMaxSwapCollateralAmount");
-////        miltonMaxLpUtilizationRate = data.readUint(
-////            "miltonMaxLpUtilizationRate"
-////        );
-////        miltonMaxLpUtilizationPerLegRate = data.readUint(
-////            "miltonMaxLpUtilizationPerLegRate"
-////        );
-////        miltonIncomeFeeRate = data.readUint(
-////            "miltonIncomeFeeRate"
-////        );
-////        miltonOpeningFeeRate = data.readUint(
-////            "miltonOpeningFeeRate"
-////        );
-////        miltonOpeningFeeTreasuryPortionRate = data.readUint(
-////            "miltonOpeningFeeTreasuryPortionRate"
-////        );
-////        miltonIporPublicationFee = data.readUint(
-////            "miltonIporPublicationFee"
-////        );
-////
-////        miltonLiquidationDepositAmount = data.readUint(
-////            "miltonLiquidationDepositAmount"
-////        );
-////        miltonWadLiquidationDepositAmount = data.readUint(
-////            "miltonWadLiquidationDepositAmount"
-////        );
-////        miltonMaxLeverage = data.readUint(
-////            "miltonMaxLeverage"
-////        );
-////        miltonMinLeverage = data.readUint(
-////            "miltonMinLeverage"
-////        );
-////        miltonSpreadPayFixed = data.readInt(
-////            "miltonSpreadPayFixed"
-////        );
-////        miltonSpreadReceiveFixed = data.readInt(
-////            "miltonSpreadReceiveFixed"
-////        );
-////        miltonSoapPayFixed = data.readInt(
-////            "miltonSoapPayFixed");
-////
-////        totalCollateralPayFixed = data.readUint("totalCollateralPayFixed");
-////        totalCollateralReceiveFixed = data.readUint("totalCollateralReceiveFixed");
-////        liquidityPool = data.readUint("liquidityPool");
-//        console2.log( data.readString("vault"));
-////        miltonIsPaused = data.readBool("miltonIsPaused");
+    function assert(MiltonSnapshot  miltonSnapshot1, MiltonSnapshot  miltonSnapshot2) external {
+        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph());
+        assertEq(miltonSnapshot1.miltonSpreadModel(), miltonSnapshot2.miltonSpreadModel());
+        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner());
+        assertEq(miltonSnapshot1.miltonFacadeDataProviderOwner(), miltonSnapshot2.miltonFacadeDataProviderOwner());
+        assertTrue(miltonSnapshot1.miltonVersion()!=miltonSnapshot2.miltonVersion());
+        assertTrue(miltonSnapshot1.miltonVersion()!=0);
+        assertTrue(0!=miltonSnapshot2.miltonVersion());
+        assertEq(miltonSnapshot1.miltonMaxSwapCollateralAmount(), miltonSnapshot2.miltonMaxSwapCollateralAmount());
+        assertEq(miltonSnapshot1.miltonMaxLpUtilizationRate(), miltonSnapshot2.miltonMaxLpUtilizationRate());
+        assertEq(miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(), miltonSnapshot2.miltonMaxLpUtilizationPerLegRate());
+        assertEq(miltonSnapshot1.miltonIncomeFeeRate(), miltonSnapshot2.miltonIncomeFeeRate());
+        assertEq(miltonSnapshot1.miltonOpeningFeeRate(), miltonSnapshot2.miltonOpeningFeeRate());
+        assertEq(miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(), miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate());
+        assertEq(miltonSnapshot1.miltonIporPublicationFee(), miltonSnapshot2.miltonIporPublicationFee());
+        assertEq(miltonSnapshot1.miltonLiquidationDepositAmount(), miltonSnapshot2.miltonLiquidationDepositAmount());
+        assertEq(miltonSnapshot1.miltonWadLiquidationDepositAmount(), miltonSnapshot2.miltonWadLiquidationDepositAmount());
+        assertEq(miltonSnapshot1.miltonMaxLeverage(), miltonSnapshot2.miltonMaxLeverage());
+        assertEq(miltonSnapshot1.miltonMinLeverage(), miltonSnapshot2.miltonMinLeverage());
+        assertEq(miltonSnapshot1.miltonSpreadPayFixed(), miltonSnapshot2.miltonSpreadPayFixed());
+        assertEq(miltonSnapshot1.miltonSpreadReceiveFixed(), miltonSnapshot2.miltonSpreadReceiveFixed());
+        assertEq(miltonSnapshot1.miltonSoapPayFixed(), miltonSnapshot2.miltonSoapPayFixed());
+        assertEq(miltonSnapshot1.miltonSoapReceiveFixed(), miltonSnapshot2.miltonSoapReceiveFixed());
+        assertEq(miltonSnapshot1.miltonSoap(), miltonSnapshot2.miltonSoap());
+        assertEq(miltonSnapshot1.totalCollateralPayFixed(), miltonSnapshot2.totalCollateralPayFixed());
+        assertEq(miltonSnapshot1.totalCollateralReceiveFixed(), miltonSnapshot2.totalCollateralReceiveFixed());
+        assertEq(miltonSnapshot1.liquidityPool(), miltonSnapshot2.liquidityPool());
+        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault());
+        assertEq(miltonSnapshot1.miltonIsPaused(), miltonSnapshot2.miltonIsPaused());
+        assertEq(miltonSnapshot1.blockNumber(), miltonSnapshot2.blockNumber());
+        assertEq(miltonSnapshot1.blockTimestamp(), miltonSnapshot2.blockTimestamp());
     }
 
     function consoleLog() public {

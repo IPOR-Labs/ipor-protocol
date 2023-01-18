@@ -6,8 +6,9 @@ import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../../contracts/amm/pool/Joseph.sol";
+import "forge-std/Test.sol";
 
-contract JosephSnapshot is Script {
+contract JosephSnapshot is Script, Test {
     address private _joseph;
 
     address public josephAsset;
@@ -28,13 +29,13 @@ contract JosephSnapshot is Script {
     uint256 public blockNumber;
     uint256 public blockTimestamp;
 
+
     constructor(address joseph) {
         _joseph = joseph;
     }
 
     function snapshot() public {
         Joseph joseph = Joseph(_joseph);
-
         josephAsset = joseph.getAsset();
         josephTreasury = joseph.getTreasury();
         josephCharlieTreasuryManager = joseph
@@ -42,7 +43,6 @@ contract JosephSnapshot is Script {
         josephCharlieTreasury = joseph.getCharlieTreasury();
         josephTreasuryManager = joseph.getTreasuryManager();
         josephOwner = joseph.owner();
-
         josephVersion = joseph.getVersion();
         josephRedeemFeeRate = joseph.getRedeemFeeRate();
         josephRedeemLpMaxUtilizationRate = joseph
@@ -54,9 +54,7 @@ contract JosephSnapshot is Script {
         josephMaxLpAccountContribution = joseph
             .getMaxLpAccountContribution();
         josephExchangeRate = joseph.calculateExchangeRate();
-
         josephIsPaused = joseph.paused();
-
         blockNumber = block.number;
         blockTimestamp = block.timestamp;
     }
@@ -134,4 +132,25 @@ contract JosephSnapshot is Script {
         vm.writeJson(finalJson, string.concat(path, finalFileName));
         console2.log("END: Save Joseph data to json");
     }
+
+    function assert(JosephSnapshot josephSnapshot1, JosephSnapshot josephSnapshot2) external {
+        assertEq(josephSnapshot1.josephAsset(), josephSnapshot2.josephAsset(), "Wrong asset");
+        assertEq(josephSnapshot1.josephTreasury(), josephSnapshot2.josephTreasury());
+        assertEq(josephSnapshot1.josephCharlieTreasuryManager(), josephSnapshot2.josephCharlieTreasuryManager());
+        assertEq(josephSnapshot1.josephCharlieTreasury(), josephSnapshot2.josephCharlieTreasury());
+        assertEq(josephSnapshot1.josephTreasuryManager(), josephSnapshot2.josephTreasuryManager());
+        assertEq(josephSnapshot1.josephOwner(), josephSnapshot2.josephOwner());
+        assertTrue(josephSnapshot1.josephVersion()!= josephSnapshot2.josephVersion());
+        assertEq(josephSnapshot1.josephRedeemFeeRate(), josephSnapshot2.josephRedeemFeeRate());
+        assertEq(josephSnapshot1.josephRedeemLpMaxUtilizationRate(), josephSnapshot2.josephRedeemLpMaxUtilizationRate());
+        assertEq(josephSnapshot1.josephMiltonStanleyBalanceRatio(), josephSnapshot2.josephMiltonStanleyBalanceRatio());
+        assertEq(josephSnapshot1.josephMaxLiquidityPoolBalance(), josephSnapshot2.josephMaxLiquidityPoolBalance());
+        assertEq(josephSnapshot1.josephMaxLpAccountContribution(), josephSnapshot2.josephMaxLpAccountContribution());
+        assertEq(josephSnapshot1.josephExchangeRate(), josephSnapshot2.josephExchangeRate());
+        assertEq(josephSnapshot1.josephVaultReservesRatio(), josephSnapshot2.josephVaultReservesRatio());
+        assertEq(josephSnapshot1.josephIsPaused(), josephSnapshot2.josephIsPaused());
+        assertEq(josephSnapshot1.blockNumber(), josephSnapshot2.blockNumber());
+        assertEq(josephSnapshot1.blockTimestamp(), josephSnapshot2.blockTimestamp());
+    }
+
 }
