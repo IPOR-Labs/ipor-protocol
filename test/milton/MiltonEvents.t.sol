@@ -14,8 +14,7 @@ import "../../contracts/itf/ItfMiltonUsdt.sol";
 import "../../contracts/itf/ItfMiltonDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
@@ -78,7 +77,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
         // given
-        MockTestnetTokenDai daiMockedToken = getTokenDai();
+        MockTestnetToken daiMockedToken = getTokenDai();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(daiMockedToken), 0);
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -143,7 +142,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
         // given
-        MockTestnetTokenDai daiMockedToken = getTokenDai();
+        MockTestnetToken daiMockedToken = getTokenDai();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(daiMockedToken), 0);
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -208,7 +207,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
         // given
-        MockTestnetTokenUsdt usdtMockedToken = getTokenUsdt();
+        MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(usdtMockedToken), 0);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -273,7 +272,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
         // given
-        MockTestnetTokenUsdt usdtMockedToken = getTokenUsdt();
+        MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(usdtMockedToken), 0);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -338,7 +337,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
         // given
-        MockTestnetTokenDai daiMockedToken = getTokenDai();
+        MockTestnetToken daiMockedToken = getTokenDai();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(daiMockedToken), 0);
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -396,7 +395,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6Decimals() public {
         // given
-        MockTestnetTokenUsdt usdtMockedToken = getTokenUsdt();
+        MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(usdtMockedToken), 0);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -454,7 +453,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsNotTakerClosedSwap() public {
         // given
-        MockTestnetTokenUsdt usdtMockedToken = getTokenUsdt();
+        MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(usdtMockedToken), 0);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -512,7 +511,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitMiltonSpreadModelChanged() public {
         // given
-        MockTestnetTokenDai daiMockedToken = getTokenDai();
+        MockTestnetToken daiMockedToken = getTokenDai();
         ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();

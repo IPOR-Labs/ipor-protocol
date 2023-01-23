@@ -11,9 +11,7 @@ import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
@@ -29,9 +27,9 @@ import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
 contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
-    MockTestnetTokenUsdt internal _usdtMockedToken;
-    MockTestnetTokenUsdc internal _usdcMockedToken;
-    MockTestnetTokenDai internal _daiMockedToken;
+    MockTestnetToken internal _usdtMockedToken;
+    MockTestnetToken internal _usdcMockedToken;
+    MockTestnetToken internal _daiMockedToken;
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;

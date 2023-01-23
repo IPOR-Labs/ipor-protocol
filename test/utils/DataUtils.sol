@@ -10,9 +10,7 @@ import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/libraries/Constants.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
@@ -106,19 +104,16 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return IporProtocol(asset, ipToken, stanley, miltonStorage, milton, joseph);
     }
 
-    function getTokenUsdt() public returns (MockTestnetTokenUsdt) {
-        MockTestnetTokenUsdt tokenUsdt = new MockTestnetTokenUsdt(TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-        return tokenUsdt;
+    function getTokenUsdt() public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
     }
 
-    function getTokenUsdc() public returns (MockTestnetTokenUsdc) {
-        MockTestnetTokenUsdc tokenUsdc = new MockTestnetTokenUsdc(TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-        return tokenUsdc;
+    function getTokenUsdc() public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
     }
 
-    function getTokenDai() public returns (MockTestnetTokenDai) {
-        MockTestnetTokenDai tokenDai = new MockTestnetTokenDai(TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        return tokenDai;
+    function getTokenDai() public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
     }
 
     function getTokenAddresses(address tokenUsdt, address tokenUsdc, address tokenDai)
@@ -171,7 +166,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     /// ---------------- APPROVALS ----------------
     function prepareApproveForUsersUsdt(
         address[] memory users,
-        MockTestnetTokenUsdt tokenUsdt,
+        MockTestnetToken tokenUsdt,
         address josephUsdt,
         address miltonUsdt
     ) public {
@@ -186,7 +181,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
     function prepareApproveForUsersUsdc(
         address[] memory users,
-        MockTestnetTokenUsdc tokenUsdc,
+        MockTestnetToken tokenUsdc,
         address josephUsdc,
         address miltonUsdc
     ) public {
@@ -201,7 +196,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
     function prepareApproveForUsersDai(
         address[] memory users,
-        MockTestnetTokenDai tokenDai,
+        MockTestnetToken tokenDai,
         address josephDai,
         address miltonDai
     ) public {
