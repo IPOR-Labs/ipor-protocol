@@ -41,7 +41,7 @@ contract IporOracleUtils is Test {
         return MockIporWeighted(address(iporWeightedProxy));
     }
 
-    function getIporOracleOneAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
+    function getIporOracleAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
         address[] memory assets = new address[](1);
         assets[0] = asset;
         uint32[] memory updateTimestamps = new uint32[](1);
@@ -56,7 +56,7 @@ contract IporOracleUtils is Test {
         return iporOracle;
     }
 
-    function getIporOracleThreeAssets(
+    function getIporOracleAssets(
         address updater,
         address[] memory tokenAddresses,
         uint32 updateTimestamp,

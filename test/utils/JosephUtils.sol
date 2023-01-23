@@ -47,8 +47,7 @@ contract JosephUtils is Test {
         ItfJosephUsdt josephUsdtImplementation = new ItfJosephUsdt();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdt, ipTokenUsdt, miltonUsdt, miltonStorageUsdt, stanleyUsdt));
-        ItfJosephUsdt itfJosephUsdt = ItfJosephUsdt(address(josephProxy));
-        return itfJosephUsdt;
+        return ItfJosephUsdt(address(josephProxy));
     }
 
     function getItfJosephUsdc(
@@ -61,8 +60,7 @@ contract JosephUtils is Test {
         ItfJosephUsdc josephUsdcImplementation = new ItfJosephUsdc();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
-        ItfJosephUsdc itfJosephUsdc = ItfJosephUsdc(address(josephProxy));
-        return itfJosephUsdc;
+        return ItfJosephUsdc(address(josephProxy));
     }
 
     function getItfJosephDai(
@@ -75,8 +73,7 @@ contract JosephUtils is Test {
         ItfJosephDai josephDaiImplementation = new ItfJosephDai();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
-        ItfJosephDai itfJosephDai = ItfJosephDai(address(josephProxy));
-        return itfJosephDai;
+        return ItfJosephDai(address(josephProxy));
     }
 
     function getItfJosephAddresses(address josephUsdt, address josephUsdc, address josephDai)
@@ -123,8 +120,7 @@ contract JosephUtils is Test {
         MockCase0JosephUsdt josephUsdtImplementation = new MockCase0JosephUsdt();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdt, ipTokenUsdt, miltonUsdt, miltonStorageUsdt, stanleyUsdt));
-        MockCase0JosephUsdt mockCase0JosephUsdt = MockCase0JosephUsdt(address(josephProxy));
-        return mockCase0JosephUsdt;
+        return MockCase0JosephUsdt(address(josephProxy));
     }
 
     function getMockCase0JosephUsdc(
@@ -137,8 +133,7 @@ contract JosephUtils is Test {
         MockCase0JosephUsdc josephUsdcImplementation = new MockCase0JosephUsdc();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
-        MockCase0JosephUsdc mockCase0JosephUsdc = MockCase0JosephUsdc(address(josephProxy));
-        return mockCase0JosephUsdc;
+        return MockCase0JosephUsdc(address(josephProxy));
     }
 
     function getMockCase0JosephDai(
@@ -151,8 +146,7 @@ contract JosephUtils is Test {
         MockCase0JosephDai josephDaiImplementation = new MockCase0JosephDai();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
-        MockCase0JosephDai mockCase0JosephDai = MockCase0JosephDai(address(josephProxy));
-        return mockCase0JosephDai;
+        return MockCase0JosephDai(address(josephProxy));
     }
 
     function getMockCase0JosephAddresses(address josephUsdt, address josephUsdc, address josephDai)

@@ -147,8 +147,7 @@ contract StanleyUtils {
     }
 
     function getMockCase1Stanley(address asset) public returns (MockCase1Stanley) {
-        MockCase1Stanley mockStanley = new MockCase1Stanley(asset);
-        return mockStanley;
+        return new MockCase1Stanley(asset);
     }
 
     function _getMockCase1Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
@@ -175,7 +174,6 @@ contract StanleyUtils {
     }
 
     function getMockCase2Stanley(address asset) public returns (MockCase2Stanley) {
-        MockCase2Stanley mockStanley = new MockCase2Stanley(asset);
-        return mockStanley;
+        return new MockCase2Stanley(asset);
     }
 }

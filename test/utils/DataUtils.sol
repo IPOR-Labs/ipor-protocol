@@ -46,7 +46,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         address[] memory tokenAddresses = new address[](1);
         tokenAddresses[0] = address(asset);
 
-        ItfIporOracle iporOracle = getIporOracleThreeAssets(_userOne, tokenAddresses, 1, 1, 1);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, 1, 1, 1);
 
         MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
 
@@ -81,7 +81,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         address[] memory tokenAddresses = new address[](1);
         tokenAddresses[0] = address(asset);
 
-        ItfIporOracle iporOracle = getIporOracleThreeAssets(_userOne, tokenAddresses, 1, 1, 1);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, 1, 1, 1);
 
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
@@ -131,8 +131,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
     /// ---------------- IP TOKENS  ----------------
     function getIpTokenUsdt(address tokenUsdt) public returns (IpToken) {
-        IpToken ipTokenUsdt = new IpToken("IP USDT", "ipUSDT", tokenUsdt);
-        return ipTokenUsdt;
+        return new IpToken("IP USDT", "ipUSDT", tokenUsdt);
     }
 
     function prepareIpToken(IpToken ipToken, address joseph) public {
@@ -152,13 +151,11 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     }
 
     function getIpTokenUsdc(address tokenUsdc) public returns (IpToken) {
-        IpToken ipTokenUsdc = new IpToken("IP USDC", "ipUSDC", tokenUsdc);
-        return ipTokenUsdc;
+        return new IpToken("IP USDC", "ipUSDC", tokenUsdc);
     }
 
     function getIpTokenDai(address tokenDai) public returns (IpToken) {
-        IpToken ipTokenDai = new IpToken("IP DAI", "ipDAI", tokenDai);
-        return ipTokenDai;
+        return new IpToken("IP DAI", "ipDAI", tokenDai);
     }
 
     /// ---------------- IP TOKENS  ----------------

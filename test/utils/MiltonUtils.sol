@@ -83,9 +83,7 @@ contract MiltonUtils is Test {
         MiltonFacadeDataProvider miltonFacadeDataProviderImplementation = new MiltonFacadeDataProvider();
         ERC1967Proxy miltonFacadeDataProviderProxy =
         new ERC1967Proxy(address(miltonFacadeDataProviderImplementation), abi.encodeWithSignature( "initialize(address,address[],address[],address[],address[])", iporOracle, assets, miltons, miltonStorages, josephs));
-        IMiltonFacadeDataProvider miltonFacadeDataProvider =
-            IMiltonFacadeDataProvider(address(miltonFacadeDataProviderProxy));
-        return miltonFacadeDataProvider;
+        return IMiltonFacadeDataProvider(address(miltonFacadeDataProviderProxy));
     }
 
     /// ------------------- MILTON FACADE DATA PROVIDER -------------------
@@ -112,8 +110,7 @@ contract MiltonUtils is Test {
         ItfMiltonUsdt itfMiltonUsdtImplementation = new ItfMiltonUsdt();
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(itfMiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        ItfMiltonUsdt miltonUsdt = ItfMiltonUsdt(address(miltonUsdtProxy));
-        return miltonUsdt;
+        return ItfMiltonUsdt(address(miltonUsdtProxy));
     }
 
     function getItfMiltonUsdc(
@@ -126,8 +123,7 @@ contract MiltonUtils is Test {
         ItfMiltonUsdc itfMiltonUsdcImplementation = new ItfMiltonUsdc();
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(itfMiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        ItfMiltonUsdc miltonUsdc = ItfMiltonUsdc(address(miltonUsdcProxy));
-        return miltonUsdc;
+        return ItfMiltonUsdc(address(miltonUsdcProxy));
     }
 
     function getItfMiltonDai(
@@ -140,8 +136,7 @@ contract MiltonUtils is Test {
         ItfMiltonDai itfMiltonDaiImplementation = new ItfMiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(itfMiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        ItfMiltonDai miltonDai = ItfMiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return ItfMiltonDai(address(miltonDaiProxy));
     }
 
     function getItfMiltons(
@@ -189,8 +184,7 @@ contract MiltonUtils is Test {
         MockCase0MiltonUsdt mockCase0MiltonUsdtImplementation = new MockCase0MiltonUsdt();
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase0MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        MockCase0MiltonUsdt miltonUsdt = MockCase0MiltonUsdt(address(miltonUsdtProxy));
-        return miltonUsdt;
+        return MockCase0MiltonUsdt(address(miltonUsdtProxy));
     }
 
     function getMockCase0MiltonUsdc(
@@ -203,8 +197,7 @@ contract MiltonUtils is Test {
         MockCase0MiltonUsdc mockCase0MiltonUsdcImplementation = new MockCase0MiltonUsdc();
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase0MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        MockCase0MiltonUsdc miltonUsdc = MockCase0MiltonUsdc(address(miltonUsdcProxy));
-        return miltonUsdc;
+        return MockCase0MiltonUsdc(address(miltonUsdcProxy));
     }
 
     function getMockCase0MiltonDai(
@@ -217,8 +210,7 @@ contract MiltonUtils is Test {
         MockCase0MiltonDai mockCase0MiltonDaiImplementation = new MockCase0MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase0MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase0MiltonDai miltonDai = MockCase0MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase0MiltonDai(address(miltonDaiProxy));
     }
 
     function getMockCase0Miltons(
@@ -267,8 +259,7 @@ contract MiltonUtils is Test {
         MockCase2MiltonUsdt mockCase2MiltonUsdtImplementation = new MockCase2MiltonUsdt();
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase2MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        MockCase2MiltonUsdt miltonUsdt = MockCase2MiltonUsdt(address(miltonUsdtProxy));
-        return miltonUsdt;
+        return MockCase2MiltonUsdt(address(miltonUsdtProxy));
     }
 
     function getMockCase2MiltonUsdc(
@@ -281,8 +272,7 @@ contract MiltonUtils is Test {
         MockCase2MiltonUsdc mockCase2MiltonUsdcImplementation = new MockCase2MiltonUsdc();
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase2MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        MockCase2MiltonUsdc miltonUsdc = MockCase2MiltonUsdc(address(miltonUsdcProxy));
-        return miltonUsdc;
+        return MockCase2MiltonUsdc(address(miltonUsdcProxy));
     }
 
     function getMockCase2MiltonDai(
@@ -295,8 +285,7 @@ contract MiltonUtils is Test {
         MockCase2MiltonDai mockCase2MiltonDaiImplementation = new MockCase2MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase2MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase2MiltonDai miltonDai = MockCase2MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase2MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -311,8 +300,7 @@ contract MiltonUtils is Test {
         MockCase3MiltonUsdt mockCase3MiltonUsdtImplementation = new MockCase3MiltonUsdt();
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase3MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        MockCase3MiltonUsdt miltonUsdt = MockCase3MiltonUsdt(address(miltonUsdtProxy));
-        return miltonUsdt;
+        return MockCase3MiltonUsdt(address(miltonUsdtProxy));
     }
 
     function getMockCase3MiltonUsdc(
@@ -325,8 +313,7 @@ contract MiltonUtils is Test {
         MockCase3MiltonUsdc mockCase3MiltonUsdcImplementation = new MockCase3MiltonUsdc();
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase3MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        MockCase3MiltonUsdc miltonUsdc = MockCase3MiltonUsdc(address(miltonUsdcProxy));
-        return miltonUsdc;
+        return MockCase3MiltonUsdc(address(miltonUsdcProxy));
     }
 
     function getMockCase3MiltonDai(
@@ -339,8 +326,7 @@ contract MiltonUtils is Test {
         MockCase3MiltonDai mockCase3MiltonDaiImplementation = new MockCase3MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase3MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase3MiltonDai miltonDai = MockCase3MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase3MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -355,8 +341,7 @@ contract MiltonUtils is Test {
         MockCase4MiltonDai mockCase4MiltonDaiImplementation = new MockCase4MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase4MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase4MiltonDai miltonDai = MockCase4MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase4MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -371,8 +356,7 @@ contract MiltonUtils is Test {
         MockCase5MiltonDai mockCase5MiltonDaiImplementation = new MockCase5MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase5MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase5MiltonDai miltonDai = MockCase5MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase5MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -387,8 +371,7 @@ contract MiltonUtils is Test {
         MockCase6MiltonUsdt mockCase6MiltonUsdtImplementation = new MockCase6MiltonUsdt();
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase6MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        MockCase6MiltonUsdt miltonUsdt = MockCase6MiltonUsdt(address(miltonUsdtProxy));
-        return miltonUsdt;
+        return MockCase6MiltonUsdt(address(miltonUsdtProxy));
     }
 
     function getMockCase6MiltonUsdc(
@@ -401,8 +384,7 @@ contract MiltonUtils is Test {
         MockCase6MiltonUsdc mockCase6MiltonUsdcImplementation = new MockCase6MiltonUsdc();
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase6MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        MockCase6MiltonUsdc miltonUsdc = MockCase6MiltonUsdc(address(miltonUsdcProxy));
-        return miltonUsdc;
+        return MockCase6MiltonUsdc(address(miltonUsdcProxy));
     }
 
     function getMockCase6MiltonDai(
@@ -415,8 +397,7 @@ contract MiltonUtils is Test {
         MockCase6MiltonDai mockCase6MiltonDaiImplementation = new MockCase6MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase6MiltonDai miltonDai = MockCase6MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase6MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -431,8 +412,7 @@ contract MiltonUtils is Test {
         MockCase7MiltonDai mockCase7MiltonDaiImplementation = new MockCase7MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase7MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase7MiltonDai miltonDai = MockCase7MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase7MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------------------------------------------------------------------------
@@ -447,26 +427,22 @@ contract MiltonUtils is Test {
         MockCase8MiltonDai mockCase8MiltonDaiImplementation = new MockCase8MiltonDai();
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase8MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        MockCase8MiltonDai miltonDai = MockCase8MiltonDai(address(miltonDaiProxy));
-        return miltonDai;
+        return MockCase8MiltonDai(address(miltonDaiProxy));
     }
 
     /// ------------------- Mock Cases Milton -------------------
 
     /// ------------------- Mock Cases Milton Spread -------------------
     function prepareMiltonSpreadBaseUsdt() public returns (MockBaseMiltonSpreadModelUsdt) {
-        MockBaseMiltonSpreadModelUsdt mockBaseMiltonSpreadModelUsdt = new MockBaseMiltonSpreadModelUsdt();
-        return mockBaseMiltonSpreadModelUsdt;
+        return new MockBaseMiltonSpreadModelUsdt();
     }
 
     function prepareMiltonSpreadBaseUsdc() public returns (MockBaseMiltonSpreadModelUsdc) {
-        MockBaseMiltonSpreadModelUsdc mockBaseMiltonSpreadModelUsdc = new MockBaseMiltonSpreadModelUsdc();
-        return mockBaseMiltonSpreadModelUsdc;
+        return new MockBaseMiltonSpreadModelUsdc();
     }
 
     function prepareMiltonSpreadBaseDai() public returns (MockBaseMiltonSpreadModelDai) {
-        MockBaseMiltonSpreadModelDai mockBaseMiltonSpreadModelDai = new MockBaseMiltonSpreadModelDai();
-        return mockBaseMiltonSpreadModelDai;
+        return new MockBaseMiltonSpreadModelDai();
     }
     /// ------------------- Mock Cases Milton Spread -------------------
 

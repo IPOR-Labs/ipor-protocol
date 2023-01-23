@@ -57,7 +57,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC); // 161%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -140,7 +140,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC); // 161%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -229,7 +229,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(400 * 10 ** 16); // 400%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 160 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -312,7 +312,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity6DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_400_18DEC); // 400%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 160 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -400,7 +400,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC); // 121%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -483,7 +483,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionUSDTWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity6DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 120 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -566,7 +566,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -649,7 +649,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -739,7 +739,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -821,7 +821,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity6DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -903,7 +903,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -985,7 +985,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionUSDTWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity6DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_3_18DEC); // 3%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1067,7 +1067,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1154,7 +1154,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1236,7 +1236,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1317,7 +1317,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1405,7 +1405,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1493,7 +1493,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedBetween99And100PercentOfCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1580,7 +1580,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostBetween99And100PercentOfCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_151_18DEC); // 151%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 150 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 150 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1668,7 +1668,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostLessThanCollateralFiveHoursBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC); // 121%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1758,7 +1758,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC); // 161%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1841,7 +1841,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenPayFixedMiltonEarnedAndUserLostMoreThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC); // 161%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1930,7 +1930,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedLessThanCollateralFiveHoursBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2021,7 +2021,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC); // 159%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2103,7 +2103,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndOwnerAndIpor6Percent(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_1_18DEC); // 1%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2186,7 +2186,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndOwnerAndIpor160Percent(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2269,7 +2269,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralBeforeMaturity18DecimalsAndOwnerAndIpor120Percent(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2352,7 +2352,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC); // 159%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2434,7 +2434,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2516,7 +2516,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostMoreThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2599,7 +2599,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_3_18DEC); // 3%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2682,7 +2682,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC); // 159%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2770,7 +2770,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedBetween99And100PercentOfCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_150_18DEC); // 150%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 151 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 151 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2857,7 +2857,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostMoreThanCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 3%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -2946,7 +2946,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostBetween99And100PercentOfCollateralBeforeMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 150%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3034,7 +3034,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedMoreThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC); // 159%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 160 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3123,7 +3123,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonLostAndUserEarnedLessThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC); // 10%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3210,7 +3210,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostMoreThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 150%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3298,7 +3298,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionDAIWhenReceiveFixedMiltonEarnedAndUserLostLessThanCollateralAfterMaturity18DecimalsAndNotOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC); // 150%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3385,7 +3385,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldCalculatePayFixedPositionValueSimpleCase1() public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3432,7 +3432,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
         public
     {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3469,7 +3469,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldCloseDAITwoPayFixedPositionsUsingFunctionWithArray18DecimalsAndOwner() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3512,7 +3512,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
         public
     {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3551,7 +3551,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
         public
     {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3592,7 +3592,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldClosePositionByOwnerWhenPayFixedAndSingleIdWithEmergencyFunction() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3638,7 +3638,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldClosePositionByOwnerWhenPayFixedAndMultipleIDsWithEmergencyFunction() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3685,7 +3685,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldClosePositionByOwnerWhenReceiveFixedAndSingleIdWithEmergencyFunction() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3731,7 +3731,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldClosePositionByOwnerWhenReceiveFixedAndMultipleIDsWithEmergencyFunction() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -3779,7 +3779,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldOnlyCloseFirstPosition() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3833,7 +3833,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldOnlyCloseLastPosition() public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3888,7 +3888,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClosePositionWithAppropriateBalanceDAIWhenOwnerAndPayFixedAndMiltonLostAndUserEarnedLessThanCollateralAfterMaturityAndIPORIndexCalculatedBeforeClose(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -3979,7 +3979,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     }
 
     function testShouldClosePositionDAIReceiveFixedWithEmergencyFunctionMultipleIDsWhenContractIsPaused() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 0);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4022,7 +4022,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     }
 
     function testShouldTransferAllLiquidationDepositsInASingleTransferToLiquidatorWhenPayFixed() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -4067,7 +4067,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     }
 
     function testShouldTransferAllLiquidationDepositsInASingleTransferToLiquidatorWhenReceiveFixed() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -4113,7 +4113,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldCloseTwoPayFixedPositionsUsingFunctionWithArrayWhenOneOfThemIsNotValid() public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -4153,7 +4153,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
 
     function testShouldCloseTwoReceiveFixedPositionsUsingFunctionWithArrayWhenOneOfThemIsNotValid() public {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -4194,7 +4194,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClose10PayFixedAnd10ReceiveFixedPositionsInOneTransactionCaseOne() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4263,7 +4263,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClose5PayFixedAnd5ReceiveFixedPositionsInOneTransactionCase2SomeAreAlreadyClosed() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4336,7 +4336,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClose2PayFixedAnd2ReceiveFixedPositionsInOneTransactionCase4MixedLiquidators() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4422,7 +4422,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4499,7 +4499,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4562,7 +4562,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4623,7 +4623,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldClose10PayFixedAnd10ReceiveFixedPositionsInOneTransactionWhenVerifyBalances() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4690,7 +4690,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4766,7 +4766,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4840,7 +4840,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -4913,7 +4913,7 @@ contract MiltonShouldClosePositionTest is Test, TestCommons, DataUtils, SwapUtil
     function testShouldCommitTransactionEvenWhenListsForClosingSwapsAreEmpty() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(

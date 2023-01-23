@@ -56,7 +56,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldOpenPositionPayFixedDAIWhenOwnerSimpleCase18Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -119,7 +119,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldOpenPositionPayFixedUSDTWhenOwnerSimpleCase6Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -182,7 +182,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldOpenPositionPayFixedDAIWhenCustomOpeningFeeForTreasuryIs50Percent() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase4MiltonDai mockCase4MiltonDai = getMockCase4MiltonDai(
@@ -224,7 +224,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldOpenPositionPayFixedDAIWhenCustomOpeningFeeForTreasuryIs25Percent() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase5MiltonDai mockCase5MiltonDai = getMockCase5MiltonDai(
@@ -266,7 +266,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldOpenPayFixedDAIWhenCustomLeverageSimpleCase1() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -305,7 +305,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldArraysHaveCorrectStateWhenOneUserOpensManyPositions() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -371,7 +371,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldArraysHaveCorrectStateWhenTwoUsersOpenPositions() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -447,7 +447,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldPositionArraysHaveCorrectIdsWhenTwoUsersOpenPositionsAndOnePositionIsClosed() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -523,7 +523,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldPositionArraysHaveCorrectIdsWhenTwoUsersOpenPositionsAndAllExceptOnePositionAreClosed() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -599,7 +599,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldFixLastByteDifferenceWhenTwoPositionsAreOpenedAndClosedAndArithmeticOverflowCase1() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -667,7 +667,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
         public
     {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -733,7 +733,7 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
 
     function testShouldHaveLastByteDifferenceWhenTwoPositionsAreOpenedAndClosedAndArithmeticOverflowCase1() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3 * 10 ** 16);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(

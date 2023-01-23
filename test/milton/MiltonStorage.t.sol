@@ -122,7 +122,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldUpdateMiltonStorageWhenOpenPositionAndCallerHasRightsToUpdate() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -144,7 +144,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotUpdateMiltonStorageWhenOpenPositionAndCallerDoesNotHaveRightsToUpdate() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -220,7 +220,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateDAI18Decimals() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -274,7 +274,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateUSDT6Decimals() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -328,7 +328,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotUpdateMiltonStorageWhenClosePositionAndCallerDoesNotHaveRightsToUpdate() public {
         //given
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_daiMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 0);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -380,7 +380,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -419,7 +419,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -459,7 +459,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -497,7 +497,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffsetZeroAndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -535,7 +535,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -573,7 +573,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -613,7 +613,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsPayFixedShouldReceiveEmptyListOfSwapsOnlyWhen20NumberOfSwapsAndOffset20AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -651,7 +651,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -692,7 +692,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -732,7 +732,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -772,7 +772,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffset10AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -812,7 +812,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -850,7 +850,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapsReceiveFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -888,7 +888,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -928,7 +928,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -968,7 +968,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsPayFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1007,7 +1007,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffsetZeroAndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1045,7 +1045,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1082,7 +1082,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1121,7 +1121,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsPayFixedShouldReceiveEmptyListOfSwapsOnlyWhen20NumberOfSwapsAndOffset20AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1158,7 +1158,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1199,7 +1199,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1239,7 +1239,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1278,7 +1278,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffset10AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1317,7 +1317,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1356,7 +1356,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsReceiveFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1393,7 +1393,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1435,7 +1435,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1476,7 +1476,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1519,7 +1519,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsShouldReturnPayFixedSwapsWhenUserDoesNotHaveReceiveFixedSwapsAndOffsetZeroAndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1562,7 +1562,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsShouldReturnReceiveFixedSwapsWhenUserDoesNotHavePayFixedSwapsAndOffsetZeroAndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1605,7 +1605,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsShouldReturn6SwapsWhenUserHas3PayFixedSwapsAnd3ReceiveFixedSwapsAndOffsetZeroAndPageSize10()
         public
     {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1647,7 +1647,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldReturnLimited10SwapsWhenUserHas9PayFixedSwapsAnd12ReceiveFixedSwapsAndOffsetZeroAndPageSize10(
     ) public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1688,7 +1688,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testGetSwapIdsShouldReturnEmptyArrayWhenUserHasMoreSwapsThanPageSizeAndOffset80AndPageSize10() public {
-        ItfIporOracle iporOracle = getIporOracleOneAsset(_userOne, address(_usdtMockedToken), 0);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 0);
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
