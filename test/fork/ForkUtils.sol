@@ -18,6 +18,9 @@ contract ForkUtils is Test, TestCommons {
         uint256 assetDecimals = IERC20Metadata(asset).decimals();
         deal(asset, userOne, 1_000_000*10**assetDecimals);
 
+        vm.prank(owner);
+        Joseph(joseph).addAppointedToRebalance(owner);
+
         vm.startPrank(userOne);
         IAsset(asset).approve(joseph, 1_000_000*10**assetDecimals);
         IAsset(asset).approve(milton, 1_000_000*10**assetDecimals);

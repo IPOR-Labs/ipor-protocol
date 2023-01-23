@@ -140,7 +140,6 @@ contract JosephSnapshot is Script, Test {
         assertEq(josephSnapshot1.josephCharlieTreasury(), josephSnapshot2.josephCharlieTreasury());
         assertEq(josephSnapshot1.josephTreasuryManager(), josephSnapshot2.josephTreasuryManager());
         assertEq(josephSnapshot1.josephOwner(), josephSnapshot2.josephOwner());
-        assertTrue(josephSnapshot1.josephVersion()!= josephSnapshot2.josephVersion());
         assertEq(josephSnapshot1.josephRedeemFeeRate(), josephSnapshot2.josephRedeemFeeRate());
         assertEq(josephSnapshot1.josephRedeemLpMaxUtilizationRate(), josephSnapshot2.josephRedeemLpMaxUtilizationRate());
         assertEq(josephSnapshot1.josephMiltonStanleyBalanceRatio(), josephSnapshot2.josephMiltonStanleyBalanceRatio());

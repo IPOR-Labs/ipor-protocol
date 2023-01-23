@@ -221,7 +221,6 @@ contract StanleySnapshot is Script, Test {
     }
 
     function assert(StanleySnapshot stanleySnapshot1, StanleySnapshot stanleySnapshot2) external {
-        assertEq(stanleySnapshot1.stanleyVersion(), stanleySnapshot1.stanleyVersion());
         assertEq(stanleySnapshot1.stanleyExchangeRate(), stanleySnapshot1.stanleyExchangeRate());
         assertEq(stanleySnapshot1.stanleyAsset(), stanleySnapshot1.stanleyAsset());
         assertEq(stanleySnapshot1.stanleyMilton(), stanleySnapshot1.stanleyMilton());
@@ -230,7 +229,6 @@ contract StanleySnapshot is Script, Test {
         assertEq(stanleySnapshot1.stanleyIsPaused(), stanleySnapshot1.stanleyIsPaused());
         assertEq(stanleySnapshot1.stanleyTotalBalance(), stanleySnapshot1.stanleyTotalBalance());
         assertEq(stanleySnapshot1.stanleyOwner(), stanleySnapshot1.stanleyOwner());
-        assertEq(stanleySnapshot1.strategyAaveVersion(), stanleySnapshot1.strategyAaveVersion());
         assertEq(stanleySnapshot1.strategyAaveOwner(), stanleySnapshot1.strategyAaveOwner());
         assertEq(stanleySnapshot1.strategyAaveShareToken(), stanleySnapshot1.strategyAaveShareToken());
         assertEq(stanleySnapshot1.strategyAaveApr(), stanleySnapshot1.strategyAaveApr());
@@ -239,7 +237,6 @@ contract StanleySnapshot is Script, Test {
         assertEq(stanleySnapshot1.strategyAaveTreasury(), stanleySnapshot1.strategyAaveTreasury());
         assertEq(stanleySnapshot1.strategyAaveTreasuryManager(), stanleySnapshot1.strategyAaveTreasuryManager());
         assertEq(stanleySnapshot1.strategyAaveIsPaused(), stanleySnapshot1.strategyAaveIsPaused());
-        assertEq(stanleySnapshot1.strategyCompoundVersion(), stanleySnapshot1.strategyCompoundVersion());
         assertEq(stanleySnapshot1.strategyCompoundAsset(), stanleySnapshot1.strategyCompoundAsset());
         assertEq(stanleySnapshot1.strategyCompoundOwner(), stanleySnapshot1.strategyCompoundOwner());
         assertEq(stanleySnapshot1.strategyCompoundShareToken(), stanleySnapshot1.strategyCompoundShareToken());

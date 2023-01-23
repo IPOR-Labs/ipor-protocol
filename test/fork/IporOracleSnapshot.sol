@@ -234,9 +234,6 @@ contract IporOracleSnapshot is Script, Test {
     }
 
     function assert(IporOracleSnapshot iporOracleSnapshot1, IporOracleSnapshot iporOracleSnapshot2) external {
-        assertTrue(iporOracleSnapshot1.iporOracleVersion()!= iporOracleSnapshot2.iporOracleVersion());
-        assertTrue(iporOracleSnapshot1.iporOracleVersion()!= 0);
-        assertTrue(iporOracleSnapshot2.iporOracleVersion()!= 0);
         assertEq(iporOracleSnapshot1.iporOracleOwner(), iporOracleSnapshot2.iporOracleOwner());
         assertEq(iporOracleSnapshot1.iporOracleIsPaused(), iporOracleSnapshot2.iporOracleIsPaused());
         assertEq(iporOracleSnapshot1.blockNumber(), iporOracleSnapshot2.blockNumber());

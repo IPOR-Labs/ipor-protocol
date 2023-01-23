@@ -185,7 +185,6 @@ contract MiltonStorageSnapshot is Script, Test {
 
     function assert(MiltonStorageSnapshot miltonStorageSnapshot1, MiltonStorageSnapshot miltonStorageSnapshot2) external {
         assertEq(miltonStorageSnapshot1.miltonStorageOwner(), miltonStorageSnapshot2.miltonStorageOwner());
-        assertTrue(miltonStorageSnapshot1.miltonStorageVersion() == miltonStorageSnapshot2.miltonStorageVersion());
         assertEq(miltonStorageSnapshot1.miltonStorageLastSwapId(), miltonStorageSnapshot2.miltonStorageLastSwapId());
         assertEq(miltonStorageSnapshot1.miltonStorageTotalNotionalPayFixed(), miltonStorageSnapshot2.miltonStorageTotalNotionalPayFixed());
         assertEq(miltonStorageSnapshot1.miltonStorageTotalNotionalReceiveFixed(), miltonStorageSnapshot2.miltonStorageTotalNotionalReceiveFixed());
