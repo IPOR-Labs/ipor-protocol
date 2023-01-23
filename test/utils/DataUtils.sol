@@ -36,6 +36,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     address internal _userTwo;
     address internal _userThree;
     address internal _liquidityProvider;
+    address[] internal _users;
 
     function setupIporProtocolForUsdt() public returns (IporProtocol memory iporProtocol) {
         MockTestnetToken asset = getTokenUsdt();

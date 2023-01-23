@@ -73,6 +73,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
+        _users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
     }
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
@@ -96,8 +97,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
+        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
         prepareIpToken(ipTokenDai, address(josephDai));
@@ -161,8 +161,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
+        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
         prepareIpToken(ipTokenDai, address(josephDai));
@@ -226,8 +225,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageUsdt),
             address(stanleyUsdt)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
+        prepareApproveForUsersUsdt(_users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
         prepareIpToken(ipTokenUsdt, address(josephUsdt));
@@ -291,8 +289,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageUsdt),
             address(stanleyUsdt)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
+        prepareApproveForUsersUsdt(_users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
         prepareIpToken(ipTokenUsdt, address(josephUsdt));
@@ -356,8 +353,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersDai(users, daiMockedToken, address(josephDai), address(miltonDai));
+        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
         prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
         prepareJoseph(josephDai);
         prepareIpToken(ipTokenDai, address(josephDai));
@@ -414,8 +410,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageUsdt),
             address(stanleyUsdt)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
+        prepareApproveForUsersUsdt(_users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
         prepareIpToken(ipTokenUsdt, address(josephUsdt));
@@ -472,8 +467,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(miltonStorageUsdt),
             address(stanleyUsdt)
         );
-        address[] memory users = getFiveUsers(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        prepareApproveForUsersUsdt(users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
+        prepareApproveForUsersUsdt(_users, usdtMockedToken, address(josephUsdt), address(miltonUsdt));
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
         prepareIpToken(ipTokenUsdt, address(josephUsdt));
