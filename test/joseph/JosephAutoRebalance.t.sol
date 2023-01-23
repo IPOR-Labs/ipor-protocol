@@ -19,9 +19,6 @@ import "../../contracts/itf/ItfStanley.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     function setUp() public {
