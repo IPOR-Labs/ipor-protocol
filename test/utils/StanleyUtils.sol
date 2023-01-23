@@ -119,8 +119,11 @@ contract StanleyUtils {
     }
 
     function getMockCase0Stanley(address asset) public returns (MockCase0Stanley) {
-        MockCase0Stanley mockStanley = new MockCase0Stanley(asset);
-        return mockStanley;
+        return new MockCase0Stanley(asset);
+    }
+
+    function getMockCaseBaseStanley(address asset) public returns (MockCaseBaseStanley) {
+        return new MockCaseBaseStanley(asset);
     }
 
     function _getMockCase0Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
