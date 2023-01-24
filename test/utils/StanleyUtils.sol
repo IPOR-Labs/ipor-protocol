@@ -26,7 +26,7 @@ contract StanleyUtils {
 
         ItfStanleyUsdt itfStanleyImpl = new ItfStanleyUsdt();
 
-        ERC1967Proxy itfStanleyProxy = new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -35,13 +35,13 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        );
+        ));
 
-        ivToken.setStanley(address(itfStanleyProxy));
-        strategyAave.setStanley(address(itfStanleyProxy));
-        strategyCompound.setStanley(address(itfStanleyProxy));
+        ivToken.setStanley(itfStanleyProxyAddress);
+        strategyAave.setStanley(itfStanleyProxyAddress);
+        strategyCompound.setStanley(itfStanleyProxyAddress);
 
-        return ItfStanley(address(itfStanleyProxy));
+        return ItfStanley(itfStanleyProxyAddress);
     }
 
     function getItfStanleyDai(address asset) public returns (ItfStanley itfStanley) {
@@ -52,7 +52,7 @@ contract StanleyUtils {
 
         ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
 
-        ERC1967Proxy itfStanleyProxy = new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -61,13 +61,13 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        );
+        ));
 
-        ivToken.setStanley(address(itfStanleyProxy));
-        strategyAave.setStanley(address(itfStanleyProxy));
-        strategyCompound.setStanley(address(itfStanleyProxy));
+        ivToken.setStanley(itfStanleyProxyAddress);
+        strategyAave.setStanley(itfStanleyProxyAddress);
+        strategyCompound.setStanley(itfStanleyProxyAddress);
 
-        return ItfStanley(address(itfStanleyProxy));
+        return ItfStanley(itfStanleyProxyAddress);
     }
 
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
@@ -168,7 +168,7 @@ contract StanleyUtils {
         returns (address[] memory)
     {
         (MockCase1Stanley stanleyUsdt, MockCase1Stanley stanleyUsdc, MockCase1Stanley stanleyDai) =
-            _getMockCase1Stanleys(address(tokenUsdt), address(tokenUsdc), address(tokenDai));
+            _getMockCase1Stanleys(tokenUsdt, tokenUsdc, tokenDai);
         address[] memory mockStanleyAddresses = new address[](3);
         mockStanleyAddresses[0] = address(stanleyUsdt);
         mockStanleyAddresses[1] = address(stanleyUsdc);

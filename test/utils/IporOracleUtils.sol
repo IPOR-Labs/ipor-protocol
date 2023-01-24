@@ -9,13 +9,61 @@ import "../../contracts/mocks/MockIporWeighted.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
 
 contract IporOracleUtils is Test {
-    /// ------------------- ORACLE PARAMS -------------------
+
     struct OracleParams {
         uint32[] updateTimestamps;
         uint64[] exponentialMovingAverages;
         uint64[] exponentialWeightedMovingVariances;
     }
-    /// ------------------- ORACLE PARAMS -------------------
+
+    function getIporOracleAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
+        address[] memory assets = new address[](1);
+        assets[0] = asset;
+        uint32[] memory updateTimestamps = new uint32[](1);
+        updateTimestamps[0] = uint32(block.timestamp);
+        uint64[] memory exponentialMovingAverages = new uint64[](1);
+        exponentialMovingAverages[0] = ema;
+        uint64[] memory exponentialWeightedMovingVariances = new uint64[](1);
+        exponentialWeightedMovingVariances[0] = 0;
+        ItfIporOracle iporOracle = _prepareIporOracle(
+            updater, assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances
+        );
+        return iporOracle;
+    }
+
+    function getIporOracleAssets(
+        address updater,
+        address[] memory tokenAddresses,
+        uint32 updateTimestamp,
+        uint64 exponentialMovingAverage,
+        uint64 exponentialWeightedMovingVariance
+    ) public returns (ItfIporOracle) {
+        require(tokenAddresses.length > 0 && tokenAddresses.length <= 3, "tokenAddresses length must be 1, 2 or 3");
+        if(tokenAddresses.length == 1) {
+            return getIporOracleAsset(updater, tokenAddresses[0], exponentialMovingAverage);
+        }
+        else if(tokenAddresses.length == 2) {
+            OracleParams memory oracleParams = _getSameIporOracleParamsForTwoAssets(updateTimestamp, exponentialMovingAverage, exponentialWeightedMovingVariance);
+            return _prepareIporOracle(
+                updater,
+                tokenAddresses,
+                oracleParams.updateTimestamps,
+                oracleParams.exponentialMovingAverages,
+                oracleParams.exponentialWeightedMovingVariances
+            );
+        }
+        else if(tokenAddresses.length == 3) {
+            OracleParams memory oracleParams = _getSameIporOracleParamsForThreeAssets(updateTimestamp, exponentialMovingAverage, exponentialWeightedMovingVariance);
+            return _prepareIporOracle(
+                updater,
+                tokenAddresses,
+                oracleParams.updateTimestamps,
+                oracleParams.exponentialMovingAverages,
+                oracleParams.exponentialWeightedMovingVariances
+            );
+        }
+        
+    }
 
     function _prepareIporOracle(
         address updater,
@@ -41,40 +89,6 @@ contract IporOracleUtils is Test {
         return MockIporWeighted(address(iporWeightedProxy));
     }
 
-    function getIporOracleAsset(address updater, address asset, uint64 ema) public returns (ItfIporOracle) {
-        address[] memory assets = new address[](1);
-        assets[0] = asset;
-        uint32[] memory updateTimestamps = new uint32[](1);
-        updateTimestamps[0] = uint32(block.timestamp);
-        uint64[] memory exponentialMovingAverages = new uint64[](1);
-        exponentialMovingAverages[0] = ema;
-        uint64[] memory exponentialWeightedMovingVariances = new uint64[](1);
-        exponentialWeightedMovingVariances[0] = 0;
-        ItfIporOracle iporOracle = _prepareIporOracle(
-            updater, assets, updateTimestamps, exponentialMovingAverages, exponentialWeightedMovingVariances
-        );
-        return iporOracle;
-    }
-
-    function getIporOracleAssets(
-        address updater,
-        address[] memory tokenAddresses,
-        uint32 updateTimestamp,
-        uint64 exponentialMovingAverage,
-        uint64 exponentialWeightedMovingVariance
-    ) public returns (ItfIporOracle) {
-        OracleParams memory oracleParams = _getSameIporOracleParamsForEachAsset(
-            updateTimestamp, exponentialMovingAverage, exponentialWeightedMovingVariance
-        );
-        ItfIporOracle iporOracle = _prepareIporOracle(
-            updater,
-            tokenAddresses,
-            oracleParams.updateTimestamps,
-            oracleParams.exponentialMovingAverages,
-            oracleParams.exponentialWeightedMovingVariances
-        );
-        return iporOracle;
-    }
 
     function _prepareIporOracle(
         address[] memory accounts,
@@ -101,7 +115,28 @@ contract IporOracleUtils is Test {
         return iporOracle;
     }
 
-    function _getSameIporOracleParamsForEachAsset(
+    function _getSameIporOracleParamsForTwoAssets(
+        uint32 updateTimestamp,
+        uint64 exponentialMovingAverage,
+        uint64 exponentialWeightedMovingVariance
+    ) internal pure returns (OracleParams memory) {
+        OracleParams memory oracleParams;
+        uint32[] memory updateTimestamps = new uint32[](2);
+        uint64[] memory exponentialMovingAverages = new uint64[](2);
+        uint64[] memory exponentialWeightedMovingVariances = new uint64[](2);
+        updateTimestamps[0] = updateTimestamp;
+        updateTimestamps[1] = updateTimestamp;
+        exponentialMovingAverages[0] = exponentialMovingAverage;
+        exponentialMovingAverages[1] = exponentialMovingAverage;
+        exponentialWeightedMovingVariances[0] = exponentialWeightedMovingVariance;
+        exponentialWeightedMovingVariances[1] = exponentialWeightedMovingVariance;
+        oracleParams.updateTimestamps = updateTimestamps;
+        oracleParams.exponentialMovingAverages = exponentialMovingAverages;
+        oracleParams.exponentialWeightedMovingVariances = exponentialWeightedMovingVariances;
+        return oracleParams;
+    }
+
+    function _getSameIporOracleParamsForThreeAssets(
         uint32 updateTimestamp,
         uint64 exponentialMovingAverage,
         uint64 exponentialWeightedMovingVariance
@@ -124,5 +159,4 @@ contract IporOracleUtils is Test {
         oracleParams.exponentialWeightedMovingVariances = exponentialWeightedMovingVariances;
         return oracleParams;
     }
-    /// ---------------- ORACLE PARAMS ----------------
 }

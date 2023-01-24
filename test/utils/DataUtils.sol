@@ -39,13 +39,13 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     address[] internal _users;
 
     function setupIporProtocolForUsdt() public returns (IporProtocol memory iporProtocol) {
-        MockTestnetToken asset = getTokenUsdt();
-        IpToken ipToken = getIpTokenUsdt(address(asset));
-        ItfStanley stanley = getItfStanleyUsdt(address(asset));
+        address asset = address(getTokenUsdt());
+        IpToken ipToken = getIpTokenUsdt(asset);
+        ItfStanley stanley = getItfStanleyUsdt(asset);
         MiltonStorage miltonStorage = getMiltonStorage();
 
         address[] memory tokenAddresses = new address[](1);
-        tokenAddresses[0] = address(asset);
+        tokenAddresses[0] = asset;
 
         ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, 1, 1, 1);
 
@@ -56,11 +56,11 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
         ItfMilton milton = getItfMiltonUsdt(
-            address(asset), address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
+            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
         );
 
         ItfJoseph joseph = getItfJosephUsdt(
-            address(asset), address(ipToken), address(milton), address(miltonStorage), address(stanley)
+            asset, address(ipToken), address(milton), address(miltonStorage), address(stanley)
         );
 
         prepareIpToken(ipToken, address(joseph));
@@ -70,17 +70,17 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
         stanley.setMilton(address(milton));
 
-        return IporProtocol(asset, ipToken, stanley, miltonStorage, milton, joseph);
+        return IporProtocol(MockTestnetToken(asset), ipToken, stanley, miltonStorage, milton, joseph);
     }
 
     function setupIporProtocolForDai() public returns (IporProtocol memory iporProtocol) {
-        MockTestnetToken asset = getTokenDai();
-        IpToken ipToken = getIpTokenDai(address(asset));
-        ItfStanley stanley = getItfStanleyDai(address(asset));
+        address asset = address(getTokenDai());
+        IpToken ipToken = getIpTokenDai(asset);
+        ItfStanley stanley = getItfStanleyDai(asset);
         MiltonStorage miltonStorage = getMiltonStorage();
 
         address[] memory tokenAddresses = new address[](1);
-        tokenAddresses[0] = address(asset);
+        tokenAddresses[0] = asset;
 
         ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, 1, 1, 1);
 
@@ -90,11 +90,11 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
         ItfMilton milton = getItfMiltonDai(
-            address(asset), address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
+            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
         );
 
         ItfJoseph joseph =
-            getItfJosephDai(address(asset), address(ipToken), address(milton), address(miltonStorage), address(stanley));
+            getItfJosephDai(asset, address(ipToken), address(milton), address(miltonStorage), address(stanley));
 
         prepareIpToken(ipToken, address(joseph));
         prepareJoseph(joseph);
@@ -102,7 +102,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
         stanley.setMilton(address(milton));
 
-        return IporProtocol(asset, ipToken, stanley, miltonStorage, milton, joseph);
+        return IporProtocol(MockTestnetToken(asset), ipToken, stanley, miltonStorage, milton, joseph);
     }
 
     function getTokenUsdt() public returns (MockTestnetToken) {
@@ -131,10 +131,6 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     /// ---------------- MOCKED TOKENS  ----------------
 
     /// ---------------- IP TOKENS  ----------------
-    function getIpTokenUsdt(address tokenUsdt) public returns (IpToken) {
-        return new IpToken("IP USDT", "ipUSDT", tokenUsdt);
-    }
-
     function prepareIpToken(IpToken ipToken, address joseph) public {
         ipToken.setJoseph(joseph);
     }
@@ -151,6 +147,10 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return ipTokenAddresses;
     }
 
+    function getIpTokenUsdt(address tokenUsdt) public returns (IpToken) {
+        return new IpToken("IP USDT", "ipUSDT", tokenUsdt);
+    }
+
     function getIpTokenUsdc(address tokenUsdc) public returns (IpToken) {
         return new IpToken("IP USDC", "ipUSDC", tokenUsdc);
     }
@@ -158,7 +158,6 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     function getIpTokenDai(address tokenDai) public returns (IpToken) {
         return new IpToken("IP DAI", "ipDAI", tokenDai);
     }
-
     /// ---------------- IP TOKENS  ----------------
 
     /// ---------------- APPROVALS ----------------
@@ -169,9 +168,8 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         address miltonUsdt
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
-            vm.prank(users[i]);
+            vm.startPrank(users[i]);
             tokenUsdt.approve(address(josephUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            vm.prank(users[i]);
             tokenUsdt.approve(address(miltonUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             deal(address(tokenUsdt), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
         }
@@ -184,9 +182,8 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         address miltonUsdc
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
-            vm.prank(users[i]);
+            vm.startPrank(users[i]);
             tokenUsdc.approve(address(josephUsdc), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            vm.prank(users[i]);
             tokenUsdc.approve(address(miltonUsdc), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             deal(address(tokenUsdc), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
         }
@@ -199,9 +196,8 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         address miltonDai
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
-            vm.prank(users[i]);
+            vm.startPrank(users[i]);
             tokenDai.approve(address(josephDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-            vm.prank(users[i]);
             tokenDai.approve(address(miltonDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
             deal(address(tokenDai), users[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
         }
@@ -209,7 +205,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     /// ---------------- APPROVALS ----------------
 
     /// ---------------- USERS ----------------
-    function getFiveUsers(address userOne, address userTwo, address userThree, address userFour, address userFive)
+    function usersToArray(address userOne, address userTwo, address userThree, address userFour, address userFive)
         public
         pure
         returns (address[] memory)
@@ -223,7 +219,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return users;
     }
 
-    function getSixUsers(
+    function usersToArray(
         address userOne,
         address userTwo,
         address userThree,
