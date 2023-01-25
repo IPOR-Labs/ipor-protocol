@@ -809,7 +809,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 int256 rebalanceAmount = IJoseph(_joseph).calculateRebalanceAmountBeforeWithdraw(
                     wadMiltonErc20BalanceBeforeRedeem,
                     balance.vault,
-                    transferAmount
+                    transferAmount + liquidationDepositAmount
                 );
 
                 if (rebalanceAmount < 0) {
