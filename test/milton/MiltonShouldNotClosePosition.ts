@@ -20,9 +20,8 @@ import {
     PERCENTAGE_6_18DEC,
     PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
     USD_1_000_000_18DEC,
-    USD_10_000_000_18DEC,
     LEG_PAY_FIXED,
-    LEG_RECEIVE_FIXED, N1__0_18DEC,
+    LEG_RECEIVE_FIXED,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
