@@ -22,7 +22,7 @@ import {
     USD_1_000_000_18DEC,
     USD_10_000_000_18DEC,
     LEG_PAY_FIXED,
-    LEG_RECEIVE_FIXED,
+    LEG_RECEIVE_FIXED, N1__0_18DEC,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,

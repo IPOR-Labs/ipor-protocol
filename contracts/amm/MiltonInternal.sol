@@ -81,7 +81,7 @@ abstract contract MiltonInternal is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 4;
     }
 
     function getAsset() external view override returns (address) {
@@ -202,6 +202,13 @@ abstract contract MiltonInternal is
         nonReentrant
         onlyJoseph
         whenNotPaused
+    {
+        _withdrawFromStanley(assetAmount);
+    }
+
+    //@param assetAmount underlying token amount represented in 18 decimals
+    function _withdrawFromStanley(uint256 assetAmount)
+        internal
     {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
