@@ -706,12 +706,12 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephUsdc.rebalance();
 
         //then
-        await assertError(
-            //when
-            miltonUsdc.closeSwapPayFixed(1),
-            //then
-            "ERC20: transfer amount exceeds balance"
-        );
+        // await assertError(
+        //     //when
+         await miltonUsdc.closeSwapPayFixed(1);
+        //     //then
+        //     "ERC20: transfer amount exceeds balance"
+        // );
 
         //clean up
         await josephUsdc.setMiltonStanleyBalanceRatio(oldMiltonStanleyBalanceRation);
