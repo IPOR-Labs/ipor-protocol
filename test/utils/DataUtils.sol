@@ -117,34 +117,8 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
     }
 
-    function getTokenAddresses(address tokenUsdt, address tokenUsdc, address tokenDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory tokenAddresses = new address[](3);
-        tokenAddresses[0] = tokenUsdt;
-        tokenAddresses[1] = tokenUsdc;
-        tokenAddresses[2] = tokenDai;
-        return tokenAddresses;
-    }
-    /// ---------------- MOCKED TOKENS  ----------------
-
-    /// ---------------- IP TOKENS  ----------------
     function prepareIpToken(IpToken ipToken, address joseph) public {
         ipToken.setJoseph(joseph);
-    }
-
-    function getIpTokenAddresses(address ipTokenUsdt, address ipTokenUsdc, address ipTokenDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory ipTokenAddresses = new address[](3);
-        ipTokenAddresses[0] = ipTokenUsdt;
-        ipTokenAddresses[1] = ipTokenUsdc;
-        ipTokenAddresses[2] = ipTokenDai;
-        return ipTokenAddresses;
     }
 
     function getIpTokenUsdt(address tokenUsdt) public returns (IpToken) {
@@ -158,9 +132,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
     function getIpTokenDai(address tokenDai) public returns (IpToken) {
         return new IpToken("IP DAI", "ipDAI", tokenDai);
     }
-    /// ---------------- IP TOKENS  ----------------
 
-    /// ---------------- APPROVALS ----------------
     function prepareApproveForUsersUsdt(
         address[] memory users,
         MockTestnetToken tokenUsdt,
@@ -202,9 +174,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
             deal(address(tokenDai), users[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
         }
     }
-    /// ---------------- APPROVALS ----------------
 
-    /// ---------------- USERS ----------------
     function usersToArray(address userOne, address userTwo, address userThree, address userFour, address userFive)
         public
         pure
@@ -236,5 +206,17 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         users[5] = userSix;
         return users;
     }
-    /// ---------------- USERS ----------------
+
+    function addressesToArray(address assetOneAddress, address assetTwoAddress, address assetThreeAddress)
+        public
+        pure
+        returns (address[] memory)
+    {
+        address[] memory assetAddresses = new address[](3);
+        assetAddresses[0] = assetOneAddress;
+        assetAddresses[1] = assetTwoAddress;
+        assetAddresses[2] = assetThreeAddress;
+        return assetAddresses;
+    }
+
 }

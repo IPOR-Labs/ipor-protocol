@@ -71,9 +71,6 @@ library TestConstants {
     uint256 public constant PERCENTAGE_366_18DEC = 366 * 1e16;
     uint256 public constant PERCENTAGE_400_18DEC = 400 * 1e16;
 
-    // #################################################################################
-    //                              18 decimals
-    // #################################################################################
     uint256 public constant TC_TOTAL_AMOUNT_100_18DEC = 100 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
@@ -111,9 +108,6 @@ library TestConstants {
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
 
-    // #################################################################################
-    //                              6 decimals
-    // #################################################################################
     uint256 public constant N1__0_6DEC = 1000000;
     uint256 public constant N0__1_6DEC = 100000;
     uint256 public constant N0__01_6DEC = 10000;
@@ -154,9 +148,6 @@ library TestConstants {
 
     uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000 * 1000000;
 
-    // #################################################################################
-    //                              Time
-    // #################################################################################
     uint256 public constant YEAR_IN_SECONDS = 31536000;
     uint256 public constant MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
     uint256 public constant PERIOD_25_DAYS_IN_SECONDS = 60 * 60 * 24 * 25;

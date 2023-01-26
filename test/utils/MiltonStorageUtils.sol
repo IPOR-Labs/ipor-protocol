@@ -10,13 +10,11 @@ import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract MiltonStorageUtils is Test {
-    /// ------------------- MILTONSTORAGE -------------------
     struct MiltonStorages {
         MiltonStorage miltonStorageUsdt;
         MiltonStorage miltonStorageUsdc;
         MiltonStorage miltonStorageDai;
     }
-    /// ------------------- MILTONSTORAGE -------------------
 
     function getMiltonStorage() public returns (MiltonStorage) {
         MiltonStorage miltonStorageImplementation = new MiltonStorage();
@@ -31,18 +29,6 @@ contract MiltonStorageUtils is Test {
         miltonStorages.miltonStorageUsdc = getMiltonStorage();
         miltonStorages.miltonStorageDai = getMiltonStorage();
         return miltonStorages;
-    }
-
-    function getMiltonStorageAddresses(address miltonStorageUsdt, address miltonStorageUsdc, address miltonStorageDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory miltonStorageAddresses = new address[](3);
-        miltonStorageAddresses[0] = miltonStorageUsdt;
-        miltonStorageAddresses[1] = miltonStorageUsdc;
-        miltonStorageAddresses[2] = miltonStorageDai;
-        return miltonStorageAddresses;
     }
 
     function prepareSwapPayFixedStruct18DecSimpleCase1(address buyer) public view returns (AmmTypes.NewSwap memory) {

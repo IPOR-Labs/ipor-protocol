@@ -17,7 +17,6 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
 
 contract JosephUtils is Test {
-    /// ------------------- JOSEPH -------------------
     struct ItfJosephs {
         ItfJosephUsdt itfJosephUsdt;
         ItfJosephUsdc itfJosephUsdc;
@@ -34,8 +33,6 @@ contract JosephUtils is Test {
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
     }
-    /// ------------------- JOSEPH -------------------
-    /// ---------------------- ITFJOSEPH ----------------------
 
     function getItfJosephUsdt(
         address tokenUsdt,
@@ -76,18 +73,6 @@ contract JosephUtils is Test {
         return ItfJosephDai(address(josephProxy));
     }
 
-    function getItfJosephAddresses(address josephUsdt, address josephUsdc, address josephDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory josephs = new address[](3);
-        josephs[0] = josephUsdt;
-        josephs[1] = josephUsdc;
-        josephs[2] = josephDai;
-        return josephs;
-    }
-
     function getItfJosephs(
         address[] memory tokenAddresses,
         address[] memory ipTokenAddresses,
@@ -107,9 +92,7 @@ contract JosephUtils is Test {
         );
         return itfJosephs;
     }
-    /// ---------------------- ITFJOSEPH ----------------------
 
-    /// ---------------------- Mock Cases Joseph ----------------------
     function getMockCase0JosephUsdt(
         address tokenUsdt,
         address ipTokenUsdt,
@@ -149,18 +132,6 @@ contract JosephUtils is Test {
         return MockCase0JosephDai(address(josephProxy));
     }
 
-    function getMockCase0JosephAddresses(address josephUsdt, address josephUsdc, address josephDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory josephs = new address[](3);
-        josephs[0] = josephUsdt;
-        josephs[1] = josephUsdc;
-        josephs[2] = josephDai;
-        return josephs;
-    }
-
     function getMockCase0Josephs(
         address[] memory tokenAddresses,
         address[] memory ipTokenAddresses,
@@ -180,8 +151,4 @@ contract JosephUtils is Test {
         );
         return mockCase0Josephs;
     }
-
-    /// ------------------------------------------------------------------------------------
-
-    /// ---------------------- Mock Cases Joseph ----------------------
 }

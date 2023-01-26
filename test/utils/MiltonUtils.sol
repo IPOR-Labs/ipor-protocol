@@ -40,7 +40,6 @@ import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 
 contract MiltonUtils is Test {
-    /// ------------------- MILTON -------------------
     struct ItfMiltons {
         ItfMiltonUsdt itfMiltonUsdt;
         ItfMiltonUsdc itfMiltonUsdc;
@@ -53,9 +52,6 @@ contract MiltonUtils is Test {
         MockCase0MiltonDai mockCase0MiltonDai;
     }
 
-    /// ------------------- MILTON -------------------
-
-    /// ------------------- SPREAD MODEL -------------------
     function prepareMockSpreadModel(
         uint256 calculateQuotePayFixedValue,
         uint256 calculateQuoteReceiveFixedValue,
@@ -70,9 +66,7 @@ contract MiltonUtils is Test {
     );
         return miltonSpreadModel;
     }
-    /// ------------------- SPREAD MODEL -------------------
 
-    /// ------------------- MILTON FACADE DATA PROVIDER -------------------
     function getMiltonFacadeDataProvider(
         address iporOracle,
         address[] memory assets,
@@ -86,9 +80,6 @@ contract MiltonUtils is Test {
         return IMiltonFacadeDataProvider(address(miltonFacadeDataProviderProxy));
     }
 
-    /// ------------------- MILTON FACADE DATA PROVIDER -------------------
-
-    /// ------------------- MILTON -------------------
     function prepareMilton(IMiltonInternal milton, address joseph, address stanley) public {
         IMiltonStorage miltonStorage = IMiltonStorage(milton.getMiltonStorage());
         miltonStorage.setJoseph(joseph);
@@ -97,9 +88,7 @@ contract MiltonUtils is Test {
         milton.setupMaxAllowanceForAsset(joseph);
         milton.setupMaxAllowanceForAsset(stanley);
     }
-    /// ------------------- MILTON -------------------
 
-    /// ------------------- ITFMILTON -------------------
     function getItfMiltonUsdt(
         address tokenUsdt,
         address iporOracle,
@@ -157,22 +146,6 @@ contract MiltonUtils is Test {
             getItfMiltonDai(tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2]);
         return mockCase0Miltons;
     }
-
-    function getItfMiltonAddresses(address miltonUsdt, address miltonUsdc, address miltonDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory miltons = new address[](3);
-        miltons[0] = miltonUsdt;
-        miltons[1] = miltonUsdc;
-        miltons[2] = miltonDai;
-        return miltons;
-    }
-
-    /// ------------------- ITFMILTON -------------------
-
-    /// ------------------- Mock Cases Milton -------------------
 
     function getMockCase0MiltonUsdt(
         address tokenUsdt,
@@ -235,20 +208,6 @@ contract MiltonUtils is Test {
         return mockCase0Miltons;
     }
 
-    function getMockCase0MiltonAddresses(address miltonUsdt, address miltonUsdc, address miltonDai)
-        public
-        pure
-        returns (address[] memory)
-    {
-        address[] memory miltons = new address[](3);
-        miltons[0] = miltonUsdt;
-        miltons[1] = miltonUsdc;
-        miltons[2] = miltonDai;
-        return miltons;
-    }
-
-    /// ------------------------------------------------------------------------------------
-
     function getMockCase2MiltonUsdt(
         address tokenUsdt,
         address iporOracle,
@@ -287,8 +246,6 @@ contract MiltonUtils is Test {
         new ERC1967Proxy(address(mockCase2MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase2MiltonDai(address(miltonDaiProxy));
     }
-
-    /// ------------------------------------------------------------------------------------
 
     function getMockCase3MiltonUsdt(
         address tokenUsdt,
@@ -329,8 +286,6 @@ contract MiltonUtils is Test {
         return MockCase3MiltonDai(address(miltonDaiProxy));
     }
 
-    /// ------------------------------------------------------------------------------------
-
     function getMockCase4MiltonDai(
         address tokenDai,
         address iporOracle,
@@ -344,8 +299,6 @@ contract MiltonUtils is Test {
         return MockCase4MiltonDai(address(miltonDaiProxy));
     }
 
-    /// ------------------------------------------------------------------------------------
-
     function getMockCase5MiltonDai(
         address tokenDai,
         address iporOracle,
@@ -358,8 +311,6 @@ contract MiltonUtils is Test {
         new ERC1967Proxy(address(mockCase5MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase5MiltonDai(address(miltonDaiProxy));
     }
-
-    /// ------------------------------------------------------------------------------------
 
     function getMockCase6MiltonUsdt(
         address tokenUsdt,
@@ -400,8 +351,6 @@ contract MiltonUtils is Test {
         return MockCase6MiltonDai(address(miltonDaiProxy));
     }
 
-    /// ------------------------------------------------------------------------------------
-
     function getMockCase7MiltonDai(
         address tokenDai,
         address iporOracle,
@@ -414,8 +363,6 @@ contract MiltonUtils is Test {
         new ERC1967Proxy(address(mockCase7MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase7MiltonDai(address(miltonDaiProxy));
     }
-
-    /// ------------------------------------------------------------------------------------
 
     function getMockCase8MiltonDai(
         address tokenDai,
@@ -430,9 +377,6 @@ contract MiltonUtils is Test {
         return MockCase8MiltonDai(address(miltonDaiProxy));
     }
 
-    /// ------------------- Mock Cases Milton -------------------
-
-    /// ------------------- Mock Cases Milton Spread -------------------
     function prepareMiltonSpreadBaseUsdt() public returns (MockBaseMiltonSpreadModelUsdt) {
         return new MockBaseMiltonSpreadModelUsdt();
     }
@@ -444,9 +388,6 @@ contract MiltonUtils is Test {
     function prepareMiltonSpreadBaseDai() public returns (MockBaseMiltonSpreadModelDai) {
         return new MockBaseMiltonSpreadModelDai();
     }
-    /// ------------------- Mock Cases Milton Spread -------------------
-
-    /// ------------------- Milton Test Cases -------------------
 
     struct TestCaseWhenMiltonLostAndUserEarnedDai {
         uint256 openerUserLost;
