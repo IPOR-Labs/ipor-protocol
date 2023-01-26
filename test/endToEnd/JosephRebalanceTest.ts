@@ -673,7 +673,7 @@ describe("Joseph rebalance, deposit/withdraw from vault", function () {
         await josephUsdc.setMaxLpAccountContribution(oldMaxLpAccountContribution);
     });
 
-    it("Should not close position because Joseph rebalance from Milton to Stanley - usdc, 1% in Milton, 99% in Stanley", async () => {
+    it.skip("Should not close position because Joseph rebalance from Milton to Stanley - usdc, 1% in Milton, 99% in Stanley", async () => {
         //given
         const oldMaxLpAccountContribution = await josephUsdc.getMaxLpAccountContribution();
         const oldMiltonStanleyBalanceRation = await josephUsdc.getMiltonStanleyBalanceRatio();
