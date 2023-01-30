@@ -133,31 +133,18 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         return new IpToken("IP DAI", "ipDAI", tokenDai);
     }
 
-    function prepareApproveForUsersUsdt(
+    function prepareApproveForUsersUsd(
         address[] memory users,
-        MockTestnetToken tokenUsdt,
-        address josephUsdt,
-        address miltonUsdt
+        MockTestnetToken tokenUsd,
+        address josephUsd,
+        address miltonUsd
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
             vm.startPrank(users[i]);
-            tokenUsdt.approve(address(josephUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            tokenUsdt.approve(address(miltonUsdt), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            deal(address(tokenUsdt), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
-        }
-    }
-
-    function prepareApproveForUsersUsdc(
-        address[] memory users,
-        MockTestnetToken tokenUsdc,
-        address josephUsdc,
-        address miltonUsdc
-    ) public {
-        for (uint256 i = 0; i < users.length; ++i) {
-            vm.startPrank(users[i]);
-            tokenUsdc.approve(address(josephUsdc), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            tokenUsdc.approve(address(miltonUsdc), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            deal(address(tokenUsdc), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
+            tokenUsd.approve(address(josephUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
+            tokenUsd.approve(address(miltonUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
+            vm.stopPrank();
+            deal(address(tokenUsd), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
         }
     }
 
@@ -171,6 +158,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
             vm.startPrank(users[i]);
             tokenDai.approve(address(josephDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
             tokenDai.approve(address(miltonDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
+            vm.stopPrank();
             deal(address(tokenDai), users[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
         }
     }
