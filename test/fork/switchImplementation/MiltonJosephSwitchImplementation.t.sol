@@ -5,20 +5,20 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 
-import "../TestCommons.sol";
-import "./MiltonSnapshot.sol";
-import "../../contracts/amm/Milton.sol";
-import "../../contracts/amm/MiltonDai.sol";
-import "../../contracts/amm/pool/Joseph.sol";
-import "./JosephSnapshot.sol";
-import "../../contracts/amm/pool/JosephDai.sol";
-import "./MiltonStorageSnapshot.sol";
-import "./StanleySnapshot.sol";
-import "./ForkUtils.sol";
-import "../../contracts/amm/MiltonUsdc.sol";
-import "../../contracts/amm/pool/JosephUsdc.sol";
-import "../../contracts/amm/MiltonUsdt.sol";
-import "../../contracts/amm/pool/JosephUsdt.sol";
+import "../../TestCommons.sol";
+import "./snapshots/MiltonSnapshot.sol";
+import "../../../contracts/amm/Milton.sol";
+import "../../../contracts/amm/MiltonDai.sol";
+import "../../../contracts/amm/pool/Joseph.sol";
+import "./snapshots/JosephSnapshot.sol";
+import "../../../contracts/amm/pool/JosephDai.sol";
+import "./snapshots/MiltonStorageSnapshot.sol";
+import "./snapshots/StanleySnapshot.sol";
+import "../ForkUtils.sol";
+import "../../../contracts/amm/MiltonUsdc.sol";
+import "../../../contracts/amm/pool/JosephUsdc.sol";
+import "../../../contracts/amm/MiltonUsdt.sol";
+import "../../../contracts/amm/pool/JosephUsdt.sol";
 
 contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
 
