@@ -18,9 +18,7 @@ import "../../contracts/itf/ItfJosephDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     IporProtocol private _iporProtocol;
