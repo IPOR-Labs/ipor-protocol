@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "./DaiAmm.sol";
 
-contract AmmDaiFork is Test, TestCommons {
+contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
     function testShouldProvideLiquidityFor50000DaiWhenNoAutoRebalanceThreshold() public {
         // given
