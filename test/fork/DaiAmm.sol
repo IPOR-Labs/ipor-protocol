@@ -16,6 +16,7 @@ import "../../contracts/amm/Milton.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelDai.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
+import "../../contracts/mocks/stanley/MockStrategy.sol";
 
 contract DaiAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -66,6 +67,28 @@ contract DaiAmm is Test, TestCommons {
         _setupStrategyCompound();
         _setupIporOracle(owner);
         vm.stopPrank();
+    }
+
+    function overrideAaveStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(aDai);
+        strategy.setApr(0);
+        strategy.setAsset(dai);
+        vm.prank(owner);
+        stanley.setStrategyAave(address(strategy));
+    }
+
+    function overrideCompoundStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(cDai);
+        strategy.setApr(0);
+        strategy.setAsset(dai);
+        vm.prank(owner);
+        stanley.setStrategyCompound(address(strategy));
     }
 
     function approveMiltonJoseph(address user) public {

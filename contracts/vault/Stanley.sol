@@ -379,7 +379,7 @@ abstract contract Stanley is
         require(newStrategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
         IERC20Upgradeable newShareToken = IERC20Upgradeable(newStrategy.getShareToken());
-
+        //todo o for oldStrategyAddr???
         asset.safeApprove(newStrategyAddr, 0);
         asset.safeApprove(newStrategyAddr, type(uint256).max);
 
