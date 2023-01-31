@@ -3,101 +3,101 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../TestCommons.sol";
-import "./UsdtAmm.sol";
-import "./IAsset.sol";
+import "../../TestCommons.sol";
+import "../UsdcAmm.sol";
+import "../IAsset.sol";
 
-contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
+contract AmmUsdcForkOpenCloseSwaps is Test, TestCommons {
 
     function testShouldProvideLiquidityFor50000WhenNoAutoRebalanceThreshold() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
-        UsdtAmm usdtAmm = new UsdtAmm(address(this));
-        Joseph joseph = usdtAmm.joseph();
+        UsdcAmm usdcAmm = new UsdcAmm(address(this));
+        Joseph joseph = usdcAmm.joseph();
 
         joseph.setAutoRebalanceThreshold(0);
-        deal(usdtAmm.usdt(), user, 500_000e6);
-        usdtAmm.approveMiltonJoseph(user);
+        deal(usdcAmm.usdc(), user, 500_000e6);
+        usdcAmm.approveMiltonJoseph(user);
 
-        uint256 balanceIpUsdtBefore = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUsdtBefore = IAsset(usdtAmm.usdt()).balanceOf(user);
+        uint256 balanceIpUsdcBefore = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUsdcBefore = IAsset(usdcAmm.usdc()).balanceOf(user);
 
         // when
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
 
         //then
-        uint256 balanceIpUsdtAfter = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUsdtAfter = IAsset(usdtAmm.usdt()).balanceOf(user);
+        uint256 balanceIpUsdcAfter = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUsdcAfter = IAsset(usdcAmm.usdc()).balanceOf(user);
 
 
-        assertEq(balanceUsdtAfter, balanceUsdtBefore - depositAmount);
-        assertEq(balanceIpUsdtAfter, balanceIpUsdtBefore + depositAmount * 1e12);
+        assertEq(balanceUsdcAfter, balanceUsdcBefore - depositAmount);
+        assertEq(balanceIpUsdcAfter, balanceIpUsdcBefore + depositAmount * 1e12);
     }
 
     function testShouldProvideLiquidityFor50000WhenBelowAutoRebalanceThreshold() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
-        UsdtAmm usdtAmm = new UsdtAmm(address(this));
-        Joseph joseph = usdtAmm.joseph();
+        UsdcAmm usdcAmm = new UsdcAmm(address(this));
+        Joseph joseph = usdcAmm.joseph();
 
         joseph.setAutoRebalanceThreshold(70);
-        deal(usdtAmm.usdt(), user, 500_000e6);
-        usdtAmm.approveMiltonJoseph(user);
+        deal(usdcAmm.usdc(), user, 500_000e6);
+        usdcAmm.approveMiltonJoseph(user);
 
-        uint256 balanceIpUsdtBefore = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUsdtBefore = IAsset(usdtAmm.usdt()).balanceOf(user);
-        uint256 balanceStanleyBefore = usdtAmm.stanley().totalBalance(address(usdtAmm.milton()));
+        uint256 balanceIpUsdcBefore = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUsdcBefore = IAsset(usdcAmm.usdc()).balanceOf(user);
+        uint256 balanceStanleyBefore = usdcAmm.stanley().totalBalance(address(usdcAmm.milton()));
 
         // when
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
 
         //then
-        uint256 balanceIpUsdtAfter = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUsdtAfter = IAsset(usdtAmm.usdt()).balanceOf(user);
-        uint256 balanceStanleyAfter = usdtAmm.stanley().totalBalance(address(usdtAmm.milton()));
+        uint256 balanceIpUsdcAfter = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUsdcAfter = IAsset(usdcAmm.usdc()).balanceOf(user);
+        uint256 balanceStanleyAfter = usdcAmm.stanley().totalBalance(address(usdcAmm.milton()));
 
         assertEq(balanceStanleyBefore, 0);
         assertEq(balanceStanleyAfter, 0);
-        assertEq(balanceUsdtAfter, balanceUsdtBefore - depositAmount);
-        assertEq(balanceIpUsdtAfter, balanceIpUsdtBefore + depositAmount * 1e12);
+        assertEq(balanceUsdcAfter, balanceUsdcBefore - depositAmount);
+        assertEq(balanceIpUsdcAfter, balanceIpUsdcBefore + depositAmount * 1e12);
     }
     //
     function testShouldProvideLiquidityFor50000WhenAboveAutoRebalanceThreshold() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
-        UsdtAmm usdtAmm = new UsdtAmm(address(this));
-        Joseph joseph = usdtAmm.joseph();
+        UsdcAmm usdcAmm = new UsdcAmm(address(this));
+        Joseph joseph = usdcAmm.joseph();
 
         joseph.setAutoRebalanceThreshold(40);
-        deal(usdtAmm.usdt(), user, 500_000e6);
-        usdtAmm.approveMiltonJoseph(user);
+        deal(usdcAmm.usdc(), user, 500_000e6);
+        usdcAmm.approveMiltonJoseph(user);
 
-        uint256 balanceUserIpUsdtBefore = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUserUsdtBefore = IAsset(usdtAmm.usdt()).balanceOf(user);
-        uint256 balanceStanleyBefore = usdtAmm.stanley().totalBalance(address(usdtAmm.milton()));
-        uint256 balanceMiltonUsdtBefore = IAsset(usdtAmm.usdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceUserIpUsdcBefore = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUserUsdcBefore = IAsset(usdcAmm.usdc()).balanceOf(user);
+        uint256 balanceStanleyBefore = usdcAmm.stanley().totalBalance(address(usdcAmm.milton()));
+        uint256 balanceMiltonUsdcBefore = IAsset(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
 
         // when
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
 
         //then
-        uint256 balanceUserIpUsdtAfter = IIpToken(usdtAmm.ipUsdt()).balanceOf(user);
-        uint256 balanceUserUsdtAfter = IIpToken(usdtAmm.usdt()).balanceOf(user);
-        uint256 balanceStanleyAfter = usdtAmm.stanley().totalBalance(address(usdtAmm.milton()));
-        uint256 balanceMiltonUsdtAfter = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceUserIpUsdcAfter = IIpToken(usdcAmm.ipUsdc()).balanceOf(user);
+        uint256 balanceUserUsdcAfter = IIpToken(usdcAmm.usdc()).balanceOf(user);
+        uint256 balanceStanleyAfter = usdcAmm.stanley().totalBalance(address(usdcAmm.milton()));
+        uint256 balanceMiltonUsdcAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
 
         assertEq(balanceStanleyBefore, 0);
-        assertEq(balanceStanleyAfter, 7499999999000000002500);
-        assertEq(balanceMiltonUsdtBefore, 0);
-        assertEq(balanceMiltonUsdtAfter, depositAmount - 7500e6);
-        assertEq(balanceUserUsdtAfter, balanceUserUsdtBefore - depositAmount);
-        assertEq(balanceUserIpUsdtAfter, balanceUserIpUsdtBefore + depositAmount * 1e12);
+        assertTrue(balanceStanleyAfter > 0);
+        assertEq(balanceMiltonUsdcBefore, 0);
+        assertEq(balanceMiltonUsdcAfter, depositAmount - 7500e6);
+        assertEq(balanceUserUsdcAfter, balanceUserUsdcBefore - depositAmount);
+        assertEq(balanceUserIpUsdcAfter, balanceUserIpUsdcBefore + depositAmount * 1e12);
     }
 
     function testShouldOpenSwapPayFixed() public {
@@ -105,15 +105,15 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e6;
-        UsdtAmm usdtAmm = new UsdtAmm(address(this));
-        Joseph joseph = usdtAmm.joseph();
-        Milton milton = usdtAmm.milton();
+        UsdcAmm usdcAmm = new UsdcAmm(address(this));
+        Joseph joseph = usdcAmm.joseph();
+        Milton milton = usdcAmm.milton();
 
-        deal(usdtAmm.usdt(), user, 500_000e6);
-        deal(usdtAmm.usdt(), userTwo, 500_000e6);
+        deal(usdcAmm.usdc(), user, 500_000e6);
+        deal(usdcAmm.usdc(), userTwo, 500_000e6);
 
-        usdtAmm.approveMiltonJoseph(user);
-        usdtAmm.approveMiltonJoseph(userTwo);
+        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveMiltonJoseph(userTwo);
 
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
@@ -123,7 +123,7 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
         uint256 swapId = milton.openSwapPayFixed(100e6, 9e16, 10e18);
 
         // then
-        MiltonStorage miltonStorage = usdtAmm.miltonStorage();
+        MiltonStorage miltonStorage = usdcAmm.miltonStorage();
         IporTypes.IporSwapMemory memory swap = miltonStorage.getSwapPayFixed(1);
 
         assertEq(swap.id, 1);
@@ -138,15 +138,15 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e6;
-        UsdtAmm usdtAmm = new UsdtAmm(address(this));
-        Joseph joseph = usdtAmm.joseph();
-        Milton milton = usdtAmm.milton();
+        UsdcAmm usdcAmm = new UsdcAmm(address(this));
+        Joseph joseph = usdcAmm.joseph();
+        Milton milton = usdcAmm.milton();
 
-        deal(usdtAmm.usdt(), user, 500_000e6);
-        deal(usdtAmm.usdt(), userTwo, 500_000e6);
+        deal(usdcAmm.usdc(), user, 500_000e6);
+        deal(usdcAmm.usdc(), userTwo, 500_000e6);
 
-        usdtAmm.approveMiltonJoseph(user);
-        usdtAmm.approveMiltonJoseph(userTwo);
+        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveMiltonJoseph(userTwo);
 
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
@@ -157,7 +157,7 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
         uint256 swapId = milton.openSwapReceiveFixed(100e6, 1e16, 10e18);
 
         // then
-        MiltonStorage miltonStorage = usdtAmm.miltonStorage();
+        MiltonStorage miltonStorage = usdcAmm.miltonStorage();
         IporTypes.IporSwapMemory memory swap = miltonStorage.getSwapReceiveFixed(1);
 
         assertEq(swap.id, 1);
@@ -172,16 +172,16 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
             address user = _getUserAddress(1);
             address userTwo = _getUserAddress(2);
             uint256 depositAmount = 50_000e6;
-            UsdtAmm usdtAmm = new UsdtAmm(address(this));
-            MiltonStorage miltonStorage = usdtAmm.miltonStorage();
-            Joseph joseph = usdtAmm.joseph();
-            Milton milton = usdtAmm.milton();
+            UsdcAmm usdcAmm = new UsdcAmm(address(this));
+            MiltonStorage miltonStorage = usdcAmm.miltonStorage();
+            Joseph joseph = usdcAmm.joseph();
+            Milton milton = usdcAmm.milton();
 
-            deal(usdtAmm.usdt(), user, 500_000e6);
-            deal(usdtAmm.usdt(), userTwo, 500_000e6);
+            deal(usdcAmm.usdc(), user, 500_000e6);
+            deal(usdcAmm.usdc(), userTwo, 500_000e6);
 
-            usdtAmm.approveMiltonJoseph(user);
-            usdtAmm.approveMiltonJoseph(userTwo);
+            usdcAmm.approveMiltonJoseph(user);
+            usdcAmm.approveMiltonJoseph(userTwo);
 
             vm.prank(userTwo);
             joseph.provideLiquidity(depositAmount);
@@ -216,16 +216,16 @@ contract AmmUsdtForkOpenCloseSwaps is Test, TestCommons {
             address user = _getUserAddress(1);
             address userTwo = _getUserAddress(2);
             uint256 depositAmount = 50_000e6;
-            UsdtAmm usdtAmm = new UsdtAmm(address(this));
-            MiltonStorage miltonStorage = usdtAmm.miltonStorage();
-            Joseph joseph = usdtAmm.joseph();
-            Milton milton = usdtAmm.milton();
+            UsdcAmm usdcAmm = new UsdcAmm(address(this));
+            MiltonStorage miltonStorage = usdcAmm.miltonStorage();
+            Joseph joseph = usdcAmm.joseph();
+            Milton milton = usdcAmm.milton();
 
-            deal(usdtAmm.usdt(), user, 500_000e6);
-            deal(usdtAmm.usdt(), userTwo, 500_000e6);
+            deal(usdcAmm.usdc(), user, 500_000e6);
+            deal(usdcAmm.usdc(), userTwo, 500_000e6);
 
-            usdtAmm.approveMiltonJoseph(user);
-            usdtAmm.approveMiltonJoseph(userTwo);
+            usdcAmm.approveMiltonJoseph(user);
+            usdcAmm.approveMiltonJoseph(userTwo);
 
             vm.prank(userTwo);
             joseph.provideLiquidity(depositAmount);
