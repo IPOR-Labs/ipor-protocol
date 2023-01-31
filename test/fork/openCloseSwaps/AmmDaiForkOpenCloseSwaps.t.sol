@@ -98,18 +98,18 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
     function testShouldOpenSwapPayFixed() public {
         // given
         address user = _getUserAddress(1);
-        address usertwo = _getUserAddress(2);
+        address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e18;
         DaiAmm daiAmm = new DaiAmm(address(this));
 
         deal(daiAmm.dai(), user, 500_000e18);
-        deal(daiAmm.dai(), usertwo, 500_000e18);
+        deal(daiAmm.dai(), userTwo, 500_000e18);
 
         daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(usertwo);
+        daiAmm.approveMiltonJoseph(userTwo);
 
         Joseph joseph = daiAmm.joseph();
-        vm.prank(usertwo);
+        vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
         Milton milton = daiAmm.milton();
@@ -132,18 +132,18 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
     function testShouldOpenSwapReceiveFixed() public {
         // given
         address user = _getUserAddress(1);
-        address usertwo = _getUserAddress(2);
+        address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e18;
         DaiAmm daiAmm = new DaiAmm(address(this));
 
         deal(daiAmm.dai(), user, 500_000e18);
-        deal(daiAmm.dai(), usertwo, 500_000e18);
+        deal(daiAmm.dai(), userTwo, 500_000e18);
 
         daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(usertwo);
+        daiAmm.approveMiltonJoseph(userTwo);
 
         Joseph joseph = daiAmm.joseph();
-        vm.prank(usertwo);
+        vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
         Milton milton = daiAmm.milton();
