@@ -5,9 +5,9 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/amm/Milton.sol";
-import "../../contracts/facades/MiltonFacadeDataProvider.sol";
+import "../../../../contracts/interfaces/types/IporTypes.sol";
+import "../../../../contracts/amm/Milton.sol";
+import "../../../../contracts/facades/MiltonFacadeDataProvider.sol";
 import "forge-std/Test.sol";
 
 

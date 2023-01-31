@@ -5,7 +5,7 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/amm/pool/Joseph.sol";
+import "../../../../contracts/amm/pool/Joseph.sol";
 import "forge-std/Test.sol";
 
 contract JosephSnapshot is Script, Test {

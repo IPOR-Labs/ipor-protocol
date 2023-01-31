@@ -432,15 +432,15 @@ abstract contract Stanley is
         uint256 ivTokenTotalSupply,
         IStrategy strategyAave,
         IStrategy strategyCompound
-    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalance) {
+    ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalanceAmount) {
         if (amount > 0) {
             //Withdraw from Strategy to Stanley
             uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
 
             /// @dev when in future more strategies then change this calculation
-            totalBalance = strategyAave.balanceOf() + strategyCompound.balanceOf();
+            totalBalanceAmount = strategyAave.balanceOf() + strategyCompound.balanceOf();
 
-            uint256 totalBalanceWithWithdrawnAmount = totalBalance + withdrawnAmount;
+            uint256 totalBalanceWithWithdrawnAmount = totalBalanceAmount + withdrawnAmount;
 
             uint256 exchangeRate;
 
