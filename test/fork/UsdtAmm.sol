@@ -18,10 +18,7 @@ import "../../contracts/amm/spread/MiltonSpreadModelUsdt.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "./IAsset.sol";
 
-
-
 contract UsdtAmm is Test, TestCommons {
-
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
     address private constant _comptrollerAddress = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
     address private constant _compTokenAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
@@ -29,7 +26,7 @@ contract UsdtAmm is Test, TestCommons {
     address private constant _addressProviderAave = 0xB53C1a33016B2DC2fF3653530bfF1848a515c8c5;
     address private constant _stkAave = 0x4da27a545c0c5B758a6BA100e3a049001de870f5;
     address private constant _aaveIncentiveAddress = 0xd784927Ff2f95ba542BfC824c8a8a98F3495f6b5;
-    address private constant _aaveAddress = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
+    address private constant _aaveTokenAddress = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
 
     address public constant usdt = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
     address public constant cUsdt = 0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9;
@@ -48,7 +45,6 @@ contract UsdtAmm is Test, TestCommons {
     Milton public milton;
     MiltonStorage public miltonStorage;
     MiltonSpreadModel public miltonSpreadModel;
-
 
     constructor(address owner) {
         vm.startPrank(owner);
@@ -81,58 +77,67 @@ contract UsdtAmm is Test, TestCommons {
     }
 
     function _createIpUsdt() internal {
-        ipUsdt = address(new IpToken("IP USDT", "IPUSDT", usdt));
+        ipUsdt = address(new IpToken("IP USDT", "ipUSDT", usdt));
     }
 
     function _createIvUsdt() internal {
-        ivUsdt = address(new IvToken("IV USDT", "IVUSDT", usdt));
+        ivUsdt = address(new IvToken("IV USDT", "ivUSDT", usdt));
     }
-
 
     function _createCompoundStrategy() internal {
         StrategyCompound implementation = new StrategyCompound();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
                 usdt,
                 cUsdt,
                 _comptrollerAddress,
                 _compTokenAddress
-            ));
+            )
+        );
         strategyCompound = StrategyCompound(address(proxy));
     }
 
     function _createAaveStrategy() internal {
         StrategyAave implementation = new StrategyAave();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
                 "initialize(address,address,address,address,address,address)",
                 usdt,
                 aUsdt,
                 _addressProviderAave,
                 _stkAave,
                 _aaveIncentiveAddress,
-                _aaveAddress
-            ));
+                _aaveTokenAddress
+            )
+        );
         strategyAave = StrategyAave(address(proxy));
     }
 
     function _createStanley() internal {
         StanleyUsdt implementation = new StanleyUsdt();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
                 usdt,
                 ivUsdt,
                 address(strategyAave),
                 address(strategyCompound)
-            ));
+            )
+        );
 
         stanley = Stanley(address(proxy));
     }
 
     function _createMiltonStorage() internal {
         MiltonStorageUsdt implementation = new MiltonStorageUsdt();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
-                "initialize()"
-            ));
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature("initialize()")
+        );
         miltonStorage = MiltonStorage(address(proxy));
     }
 
@@ -155,7 +160,6 @@ contract UsdtAmm is Test, TestCommons {
 
         exponentialWeightedMovingVariances[0] = uint64(49811986068491);
 
-
         iporOracle = IporOracle(
             address(
                 new ERC1967Proxy(
@@ -174,7 +178,9 @@ contract UsdtAmm is Test, TestCommons {
 
     function _createMilton() internal {
         MiltonUsdt implementation = new MiltonUsdt();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
                 usdt,
@@ -182,13 +188,16 @@ contract UsdtAmm is Test, TestCommons {
                 address(miltonStorage),
                 address(miltonSpreadModel),
                 address(stanley)
-            ));
+            )
+        );
         milton = Milton(address(proxy));
     }
 
     function _createJoseph() internal {
         JosephUsdt implementation = new JosephUsdt();
-        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature(
+        ERC1967Proxy proxy = new ERC1967Proxy(
+            address(implementation),
+            abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
                 usdt,
@@ -196,16 +205,15 @@ contract UsdtAmm is Test, TestCommons {
                 address(milton),
                 address(miltonStorage),
                 address(stanley)
-            ));
+            )
+        );
         joseph = Joseph(address(proxy));
     }
-
 
     function _setupMilton() internal {
         milton.setJoseph(address(joseph));
         milton.setupMaxAllowanceForAsset(address(joseph));
         milton.setupMaxAllowanceForAsset(address(stanley));
-
     }
 
     function _setupIpToken() internal {

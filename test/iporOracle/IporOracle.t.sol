@@ -860,7 +860,9 @@ contract IporOracleTest is Test, TestCommons {
         vm.warp(_blockTimestamp);
 
         // when
-        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.updateIndex(address(_daiTestnetToken));
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.updateIndex(
+            address(_daiTestnetToken)
+        );
         (uint256 indexValueAfter, , , , ) = _iporOracle.getIndex(address(_daiTestnetToken));
 
         // then

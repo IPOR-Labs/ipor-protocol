@@ -7,7 +7,6 @@ import "../../TestCommons.sol";
 import "../DaiAmm.sol";
 
 contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
-
     function testShouldProvideLiquidityFor50000DaiWhenNoAutoRebalanceThreshold() public {
         // given
         address user = _getUserAddress(1);
@@ -209,6 +208,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         assertEq(swapBefore.state, 1);
         assertEq(swapAfter.state, 0);
     }
+
     function testShouldCloseSwapReceiveFixed() public {
         // given
         address user = _getUserAddress(1);
