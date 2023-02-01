@@ -389,17 +389,13 @@ abstract contract Stanley is
         //when first initialization then old
         if (oldStrategyAddr != address(0)) {
             uint256 assetAmount = IStrategy(oldStrategyAddr).balanceOf();
-
-            require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-
-            IStrategy(oldStrategyAddr).withdraw(assetAmount);
-
-            uint256 stanleyAssetAmount = asset.balanceOf(address(this));
-
-            IStrategy(newStrategyAddr).deposit(
-                IporMath.convertToWad(stanleyAssetAmount, _getDecimals())
-            );
-
+            if (assetAmount != 0) {
+                IStrategy(oldStrategyAddr).withdraw(assetAmount);
+                uint256 stanleyAssetAmount = asset.balanceOf(address(this));
+                IStrategy(newStrategyAddr).deposit(
+                    IporMath.convertToWad(stanleyAssetAmount, _getDecimals())
+                );
+            }
             asset.safeApprove(oldStrategyAddr, 0);
             IERC20Upgradeable(IStrategy(oldStrategyAddr).getShareToken()).safeApprove(
                 oldStrategyAddr,

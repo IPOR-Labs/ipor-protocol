@@ -50,14 +50,15 @@ contract DaiAmm is Test, TestCommons {
         vm.startPrank(owner);
         _createIpDai();
         _createIvDai();
-        _createCompoundStrategy();
-        _createAaveStrategy();
+        strategyCompound = _createCompoundStrategy();
+        strategyAave = _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
         _setupMilton();
@@ -98,6 +99,12 @@ contract DaiAmm is Test, TestCommons {
         vm.stopPrank();
     }
 
+    function createAaveStrategy() external returns (StrategyAave) {
+        StrategyAave strategy = _createAaveStrategy();
+        strategy.setStanley(address(stanley));
+        return strategy;
+    }
+
     function _createIpDai() internal {
         ipDai = address(new IpToken("IP DAI", "ipDAI", dai));
     }
@@ -106,7 +113,7 @@ contract DaiAmm is Test, TestCommons {
         ivDai = address(new IvToken("IV DAI", "ivDAI", dai));
     }
 
-    function _createCompoundStrategy() internal {
+    function _createCompoundStrategy() internal returns (StrategyCompound) {
         StrategyCompound implementation = new StrategyCompound();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -118,10 +125,10 @@ contract DaiAmm is Test, TestCommons {
                 _compTokenAddress
             )
         );
-        strategyCompound = StrategyCompound(address(proxy));
+        return StrategyCompound(address(proxy));
     }
 
-    function _createAaveStrategy() internal {
+    function _createAaveStrategy() internal returns (StrategyAave) {
         StrategyAave implementation = new StrategyAave();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -135,7 +142,7 @@ contract DaiAmm is Test, TestCommons {
                 _aaveTokenAddress
             )
         );
-        strategyAave = StrategyAave(address(proxy));
+        return StrategyAave(address(proxy));
     }
 
     function _createStanley() internal {
@@ -230,6 +237,10 @@ contract DaiAmm is Test, TestCommons {
             )
         );
         joseph = Joseph(address(proxy));
+    }
+
+    function _setupJoseph(address owner) internal {
+        joseph.addAppointedToRebalance(owner);
     }
 
     function _setupMilton() internal {
