@@ -155,9 +155,6 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         MiltonStorage miltonStorage = daiAmm.miltonStorage();
         IporTypes.IporSwapMemory memory swap = miltonStorage.getSwapReceiveFixed(1);
 
-        console2.log("swap.collateral", swap.collateral);
-        console2.log("swap.notional", swap.notional);
-
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
         assertEq(swap.collateral, 64356435643564356436);
