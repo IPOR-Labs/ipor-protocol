@@ -5,10 +5,10 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import "../../contracts/interfaces/IMiltonStorage.sol";
-import "../../contracts/amm/MiltonStorage.sol";
+import "../../../../contracts/interfaces/types/IporTypes.sol";
+import "../../../../contracts/interfaces/types/MiltonStorageTypes.sol";
+import "../../../../contracts/interfaces/IMiltonStorage.sol";
+import "../../../../contracts/amm/MiltonStorage.sol";
 import "forge-std/Test.sol";
 
 contract MiltonStorageSnapshot is Script, Test {
