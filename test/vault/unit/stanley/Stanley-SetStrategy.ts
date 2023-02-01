@@ -130,13 +130,11 @@ describe("Stanley -> StrategyChanged", () => {
             //then
             const newStrategyBalanceAfter = await newStrategyAave.balanceOf();
             const oldStrategyBalanceAfter = await strategyAave.balanceOf();
-            expect(
-                newStrategyBalanceBefore.eq(newStrategyBalanceAfter),
-                "newStrategyBalanceBefore = newStrategyBalanceAfter"
-            ).to.be.true;
+
             expect(oldStrategyBalanceBefore).to.be.equal(ZERO);
             expect(oldStrategyBalanceAfter).to.be.equal(ZERO);
             expect(newStrategyBalanceBefore).to.be.equal(ZERO);
+            expect(newStrategyBalanceAfter).to.be.equal(ZERO);
 
             expect(await stanley.getStrategyAave()).to.be.equal(newStrategyAave.address);
         });

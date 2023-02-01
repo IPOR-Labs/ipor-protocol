@@ -416,10 +416,10 @@ abstract contract Stanley is
         }
     }
 
-    function _revokeStrategyAllowance(address oldStrategyAddress) internal {
-        IERC20Upgradeable(_asset).safeApprove(oldStrategyAddress, 0);
-        IERC20Upgradeable(IStrategy(oldStrategyAddress).getShareToken()).safeApprove(
-            oldStrategyAddress,
+    function _revokeStrategyAllowance(address strategyAddress) internal {
+        IERC20Upgradeable(_asset).safeApprove(strategyAddress, 0);
+        IERC20Upgradeable(IStrategy(strategyAddress).getShareToken()).safeApprove(
+            strategyAddress,
             0
         );
     }
