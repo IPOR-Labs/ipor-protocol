@@ -365,56 +365,63 @@ abstract contract Stanley is
         return IporMath.division(_ivToken.balanceOf(who) * exchangeRate, Constants.D18);
     }
 
-    function _setStrategy(address oldStrategyAddr, address newStrategyAddr)
+    function _setStrategy(address oldStrategyAddress, address newStrategyAddress)
         internal
         nonReentrant
         returns (address)
     {
-        require(newStrategyAddr != address(0), IporErrors.WRONG_ADDRESS);
+        require(newStrategyAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         IERC20Upgradeable asset = IERC20Upgradeable(_asset);
 
-        IStrategy newStrategy = IStrategy(newStrategyAddr);
+        IStrategy newStrategy = IStrategy(newStrategyAddress);
 
         require(newStrategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
 
         IERC20Upgradeable newShareToken = IERC20Upgradeable(newStrategy.getShareToken());
 
-        asset.safeApprove(newStrategyAddr, 0);
-        asset.safeApprove(newStrategyAddr, type(uint256).max);
+        asset.safeApprove(newStrategyAddress, 0);
+        asset.safeApprove(newStrategyAddress, type(uint256).max);
 
-        newShareToken.safeApprove(newStrategyAddr, 0);
-        newShareToken.safeApprove(newStrategyAddr, type(uint256).max);
+        newShareToken.safeApprove(newStrategyAddress, 0);
+        newShareToken.safeApprove(newStrategyAddress, type(uint256).max);
 
-        //when first initialization then old
-        if (oldStrategyAddr != address(0)) {
-            uint256 assetAmount = IStrategy(oldStrategyAddr).balanceOf();
-
-            require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-
-            IStrategy(oldStrategyAddr).withdraw(assetAmount);
-
-            uint256 stanleyAssetAmount = asset.balanceOf(address(this));
-
-            IStrategy(newStrategyAddr).deposit(
-                IporMath.convertToWad(stanleyAssetAmount, _getDecimals())
-            );
-
-            asset.safeApprove(oldStrategyAddr, 0);
-            IERC20Upgradeable(IStrategy(oldStrategyAddr).getShareToken()).safeApprove(
-                oldStrategyAddr,
-                0
-            );
+        //when this is not initialize setup
+        if (oldStrategyAddress != address(0)) {
+            _transferFromOldToNewStrategy(oldStrategyAddress, newStrategyAddress);
+            _revokeStrategyAllowance(oldStrategyAddress);
         }
 
         emit StrategyChanged(
             _msgSender(),
-            oldStrategyAddr,
-            newStrategyAddr,
+            oldStrategyAddress,
+            newStrategyAddress,
             address(newShareToken)
         );
 
-        return newStrategyAddr;
+        return newStrategyAddress;
+    }
+
+    function _transferFromOldToNewStrategy(address oldStrategyAddress, address newStrategyAddress)
+        internal
+    {
+        uint256 assetAmount = IStrategy(oldStrategyAddress).balanceOf();
+
+        if (assetAmount > 0) {
+            IStrategy(oldStrategyAddress).withdraw(assetAmount);
+            uint256 stanleyAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
+            IStrategy(newStrategyAddress).deposit(
+                IporMath.convertToWad(stanleyAssetAmount, _getDecimals())
+            );
+        }
+    }
+
+    function _revokeStrategyAllowance(address strategyAddress) internal {
+        IERC20Upgradeable(_asset).safeApprove(strategyAddress, 0);
+        IERC20Upgradeable(IStrategy(strategyAddress).getShareToken()).safeApprove(
+            strategyAddress,
+            0
+        );
     }
 
     /**

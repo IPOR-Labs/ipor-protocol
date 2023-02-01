@@ -10,6 +10,7 @@ import {
     MockTestnetShareTokenAaveDai,
     MockTestnetShareTokenCompoundDai,
 } from "../../../../types";
+import { ZERO } from "../../../utils/Constants";
 
 chai.use(solidity);
 const { expect } = chai;
@@ -102,6 +103,40 @@ describe("Stanley -> StrategyChanged", () => {
                 newStrategyBalanceBefore.eq(newStrategyBalanceAfter),
                 "newStrategyBalanceBefore = newStrategyBalanceAfter"
             ).to.be.true;
+        });
+
+        it("Should setup AAVE strategy when balance on strategy is zero", async () => {
+            //given
+            const NewStrategyAave = await hre.ethers.getContractFactory("MockStrategy");
+            const newStrategyAave = await NewStrategyAave.deploy();
+            await newStrategyAave.setShareToken(aDAI.address);
+
+            await newStrategyAave.setAsset(DAI.address);
+            const oldStrategyAddress = strategyAave.address;
+
+            const oldStrategyBalanceBefore = await strategyAave.balanceOf();
+            const newStrategyBalanceBefore = await newStrategyAave.balanceOf();
+
+            //when
+            await expect(stanley.setStrategyAave(newStrategyAave.address))
+                //then
+                .to.emit(stanley, "StrategyChanged")
+                .withArgs(
+                    admin.getAddress,
+                    oldStrategyAddress,
+                    newStrategyAave.address,
+                    aDAI.address
+                );
+            //then
+            const newStrategyBalanceAfter = await newStrategyAave.balanceOf();
+            const oldStrategyBalanceAfter = await strategyAave.balanceOf();
+
+            expect(oldStrategyBalanceBefore).to.be.equal(ZERO);
+            expect(oldStrategyBalanceAfter).to.be.equal(ZERO);
+            expect(newStrategyBalanceBefore).to.be.equal(ZERO);
+            expect(newStrategyBalanceAfter).to.be.equal(ZERO);
+
+            expect(await stanley.getStrategyAave()).to.be.equal(newStrategyAave.address);
         });
 
         it("Should not setup new strategy when underlying Token don't match", async () => {
