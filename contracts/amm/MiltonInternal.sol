@@ -81,7 +81,7 @@ abstract contract MiltonInternal is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 4;
+        return 5;
     }
 
     function getAsset() external view override returns (address) {
