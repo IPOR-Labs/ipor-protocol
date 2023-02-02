@@ -56,7 +56,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 25;
 
-    uint256 internal constant _MAX_LEVERAGE = 1000 * 1e18;
+    uint256 internal constant _MAX_LEVERAGE = 100 * 1e18;
 
     uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
@@ -81,7 +81,7 @@ abstract contract MiltonInternal is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 4;
     }
 
     function getAsset() external view override returns (address) {

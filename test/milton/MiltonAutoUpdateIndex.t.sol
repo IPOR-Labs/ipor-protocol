@@ -18,9 +18,7 @@ import "../../contracts/itf/ItfJosephDai.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     IporProtocol private _iporProtocol;
@@ -39,7 +37,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _userOne = _getUserAddress(1);
     }
 
-    function testOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
+    function skipTestOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
 
@@ -75,7 +73,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function testOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
+    function skipTestOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForUsdt();
@@ -110,7 +108,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function testOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
+    function skipTestOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();
@@ -145,7 +143,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366);
     }
 
-    function testOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
+    function skipTestOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();

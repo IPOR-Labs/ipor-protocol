@@ -26,7 +26,7 @@ contract StanleyUtils {
 
         ItfStanleyUsdt itfStanleyImpl = new ItfStanleyUsdt();
 
-        ERC1967Proxy itfStanleyProxy = new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -35,13 +35,13 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        );
+        ));
 
-        ivToken.setStanley(address(itfStanleyProxy));
-        strategyAave.setStanley(address(itfStanleyProxy));
-        strategyCompound.setStanley(address(itfStanleyProxy));
+        ivToken.setStanley(itfStanleyProxyAddress);
+        strategyAave.setStanley(itfStanleyProxyAddress);
+        strategyCompound.setStanley(itfStanleyProxyAddress);
 
-        return ItfStanley(address(itfStanleyProxy));
+        return ItfStanley(itfStanleyProxyAddress);
     }
 
     function getItfStanleyDai(address asset) public returns (ItfStanley itfStanley) {
@@ -52,7 +52,7 @@ contract StanleyUtils {
 
         ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
 
-        ERC1967Proxy itfStanleyProxy = new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -61,13 +61,13 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        );
+        ));
 
-        ivToken.setStanley(address(itfStanleyProxy));
-        strategyAave.setStanley(address(itfStanleyProxy));
-        strategyCompound.setStanley(address(itfStanleyProxy));
+        ivToken.setStanley(itfStanleyProxyAddress);
+        strategyAave.setStanley(itfStanleyProxyAddress);
+        strategyCompound.setStanley(itfStanleyProxyAddress);
 
-        return ItfStanley(address(itfStanleyProxy));
+        return ItfStanley(itfStanleyProxyAddress);
     }
 
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
@@ -82,10 +82,7 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockTestnetStrategyCompoundUsdt(address asset)
-        public
-        returns (MockTestnetStrategy)
-    {
+    function getMockTestnetStrategyCompoundUsdt(address asset) public returns (MockTestnetStrategy) {
         MockTestnetStrategyCompoundUsdt strategyImpl = new MockTestnetStrategyCompoundUsdt();
         MockTestnetShareTokenCompoundUsdt shareToken = new MockTestnetShareTokenCompoundUsdt(0);
 
@@ -122,21 +119,16 @@ contract StanleyUtils {
     }
 
     function getMockCase0Stanley(address asset) public returns (MockCase0Stanley) {
-        MockCase0Stanley mockStanley = new MockCase0Stanley(asset);
-        return mockStanley;
+        return new MockCase0Stanley(asset);
     }
 
-    function _getMockCase0Stanleys(
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai
-    )
+    function getMockCaseBaseStanley(address asset) public returns (MockCaseBaseStanley) {
+        return new MockCaseBaseStanley(asset);
+    }
+
+    function _getMockCase0Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
         internal
-        returns (
-            MockCase0Stanley,
-            MockCase0Stanley,
-            MockCase0Stanley
-        )
+        returns (MockCase0Stanley, MockCase0Stanley, MockCase0Stanley)
     {
         MockCase0Stanley mockStanleyUsdt = new MockCase0Stanley(tokenUsdt);
         MockCase0Stanley mockStanleyUsdc = new MockCase0Stanley(tokenUsdc);
@@ -144,39 +136,13 @@ contract StanleyUtils {
         return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
     }
 
-    function getMockCase0StanleyAddresses(
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai
-    ) public returns (address[] memory) {
-        (
-            MockCase0Stanley stanleyUsdt,
-            MockCase0Stanley stanleyUsdc,
-            MockCase0Stanley stanleyDai
-        ) = _getMockCase0Stanleys(address(tokenUsdt), address(tokenUsdc), address(tokenDai));
-        address[] memory mockStanleyAddresses = new address[](3);
-        mockStanleyAddresses[0] = address(stanleyUsdt);
-        mockStanleyAddresses[1] = address(stanleyUsdc);
-        mockStanleyAddresses[2] = address(stanleyDai);
-        return mockStanleyAddresses;
-    }
-
     function getMockCase1Stanley(address asset) public returns (MockCase1Stanley) {
-        MockCase1Stanley mockStanley = new MockCase1Stanley(asset);
-        return mockStanley;
+        return new MockCase1Stanley(asset);
     }
 
-    function _getMockCase1Stanleys(
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai
-    )
+    function _getMockCase1Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
         internal
-        returns (
-            MockCase1Stanley,
-            MockCase1Stanley,
-            MockCase1Stanley
-        )
+        returns (MockCase1Stanley, MockCase1Stanley, MockCase1Stanley)
     {
         MockCase1Stanley mockStanleyUsdt = new MockCase1Stanley(tokenUsdt);
         MockCase1Stanley mockStanleyUsdc = new MockCase1Stanley(tokenUsdc);
@@ -184,25 +150,7 @@ contract StanleyUtils {
         return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
     }
 
-    function getMockCase1StanleyAddresses(
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai
-    ) public returns (address[] memory) {
-        (
-            MockCase1Stanley stanleyUsdt,
-            MockCase1Stanley stanleyUsdc,
-            MockCase1Stanley stanleyDai
-        ) = _getMockCase1Stanleys(address(tokenUsdt), address(tokenUsdc), address(tokenDai));
-        address[] memory mockStanleyAddresses = new address[](3);
-        mockStanleyAddresses[0] = address(stanleyUsdt);
-        mockStanleyAddresses[1] = address(stanleyUsdc);
-        mockStanleyAddresses[2] = address(stanleyDai);
-        return mockStanleyAddresses;
-    }
-
     function getMockCase2Stanley(address asset) public returns (MockCase2Stanley) {
-        MockCase2Stanley mockStanley = new MockCase2Stanley(asset);
-        return mockStanley;
+        return new MockCase2Stanley(asset);
     }
 }

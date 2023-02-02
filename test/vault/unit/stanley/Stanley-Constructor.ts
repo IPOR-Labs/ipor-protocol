@@ -40,7 +40,7 @@ describe("Stanley -> constructor", () => {
         await strategyCompound.setAsset(DAI.address);
     });
 
-    it("Shouldl throw error when underlyingToken address is 0", async () => {
+    it("Should throw error when underlyingToken address is 0", async () => {
         // given
         // when
         await expect(

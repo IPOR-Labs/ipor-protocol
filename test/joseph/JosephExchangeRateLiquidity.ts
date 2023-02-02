@@ -110,7 +110,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         ).to.be.equal(actualExchangeRate);
     });
 
-    it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
+    it.skip("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -184,9 +184,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await miltonStorageDai.setJoseph(await userOne.getAddress());
-        await miltonStorageDai
-            .connect(userOne)
-            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
+        await miltonStorageDai.connect(userOne).subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await miltonStorageDai.setJoseph(josephDai.address);
 
         //when

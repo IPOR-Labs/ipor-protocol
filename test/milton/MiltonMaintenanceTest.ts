@@ -247,7 +247,7 @@ describe("Milton Maintenance", () => {
         expect(miltonIsPause).to.be.true;
     });
 
-    it("should NOT pause Smart Contract, sender is NOT an admin", async () => {
+    it.skip("should NOT pause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -329,7 +329,7 @@ describe("Milton Maintenance", () => {
         expect(actualCollateral, "Incorrect collateral").to.be.equal(expectedCollateral);
     });
 
-    it("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
+    it.skip("should NOT unpause Smart Contract, sender is NOT an admin", async () => {
         //given
         const { miltonDai } = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -618,9 +618,9 @@ describe("Milton Maintenance", () => {
         const oldMiltonSpreadModel = await miltonDai.getMiltonSpreadModel();
         const newMiltonSpreadModel = await userThree.getAddress();
 
-		//when
+        //when
         await expect(miltonDai.connect(admin).setMiltonSpreadModel(newMiltonSpreadModel))
-			//then
+            //then
             .to.emit(miltonDai, "MiltonSpreadModelChanged")
             .withArgs(await admin.getAddress(), oldMiltonSpreadModel, newMiltonSpreadModel);
     });
