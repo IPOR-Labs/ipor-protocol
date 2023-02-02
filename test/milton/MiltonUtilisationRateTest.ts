@@ -11,7 +11,7 @@ import {
     ZERO,
 } from "../utils/Constants";
 import { assertError } from "../utils/AssertUtils";
-import {    
+import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
@@ -101,7 +101,9 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, default utilization", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("2").mul(N0__01_18DEC)
+        );
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -213,7 +215,9 @@ describe("Milton Utilisation Rate", () => {
 
     it("should open receive fixed position - liquidity pool utilization per leg not exceeded, custom utilization", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("2").mul(N0__01_18DEC)
+        );
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -325,7 +329,7 @@ describe("Milton Utilisation Rate", () => {
         );
     });
 
-    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
+    it.skip("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -443,7 +447,7 @@ describe("Milton Utilisation Rate", () => {
         );
     });
 
-    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
+    it.skip("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),

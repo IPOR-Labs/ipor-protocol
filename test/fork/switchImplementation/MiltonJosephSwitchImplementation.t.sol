@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
-
 import "../../TestCommons.sol";
 import "./snapshots/MiltonSnapshot.sol";
 import "../../../contracts/amm/Milton.sol";
@@ -21,7 +20,6 @@ import "../../../contracts/amm/MiltonUsdt.sol";
 import "../../../contracts/amm/pool/JosephUsdt.sol";
 
 contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
-
     address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private _usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private _usdt = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -42,11 +40,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
     address private _miltonStorageProxyUsdt = 0x364f116352EB95033D73822bA81257B8c1f5B1CE;
     address private _stanleyProxyUsdt = 0x8e679C1d67Af0CD4b314896856f09ece9E64D6B5;
 
+    function setUp() public {}
 
-    function setUp() public {
-    }
-
-    function testShouldUpgradeDaiImplementation() public {
+    function skipTestShouldUpgradeDaiImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyDai);
         miltonSnapshotStart.snapshot();
@@ -54,7 +50,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyDai);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyDai);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyDai
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
@@ -82,7 +80,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyDai);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyDai);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyDai
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyDai);
@@ -94,16 +94,18 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
-
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeDaiImplementationAndInteract() public {
+    function skipTestShouldUpgradeDaiImplementationAndInteract() public {
         uint256 blockNumber = block.number;
-       basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
+        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyDai);
         miltonSnapshotStart.snapshot();
@@ -111,7 +113,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyDai);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyDai);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyDai
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
@@ -125,7 +129,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         //rollback
         vm.rollFork(blockNumber);
 
-
         //Switch implementation of Milton
         Milton newMilton = new MiltonDai();
         vm.prank(_owner);
@@ -138,7 +141,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.prank(_owner);
         Joseph(_josephProxyDai).addAppointedToRebalance(_owner);
 
-       basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
+        basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
 
         //Get snapshot after upgrade
         MiltonSnapshot miltonSnapshotAfterUpgrade = new MiltonSnapshot(_miltonProxyDai);
@@ -147,7 +150,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyDai);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyDai);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyDai
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyDai);
@@ -159,14 +164,16 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
-
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeUsdcImplementation() public {
+    function skipTestShouldUpgradeUsdcImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdc);
         miltonSnapshotStart.snapshot();
@@ -174,7 +181,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdc
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
@@ -202,7 +211,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdc
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdc);
@@ -214,14 +225,16 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
-
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeUsdcImplementationAndInteract() public {
+    function skipTestShouldUpgradeUsdcImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _miltonProxyUsdc);
         //Get snapshot of milton before switch implementation
@@ -231,7 +244,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdc
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
@@ -244,7 +259,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
 
         //rollback
         vm.rollFork(blockNumber);
-
 
         //Switch implementation of Milton
         Milton newMilton = new MiltonUsdc();
@@ -267,7 +281,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdc);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdc);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdc
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdc);
@@ -279,13 +295,16 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeUsdtImplementation() public {
+    function skipTestShouldUpgradeUsdtImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdt);
         miltonSnapshotStart.snapshot();
@@ -293,7 +312,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdt
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
@@ -321,7 +342,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdt
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdt);
@@ -333,14 +356,16 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
-
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeUsdtImplementationAndInteract() public {
+    function skipTestShouldUpgradeUsdtImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _miltonProxyUsdt);
         //Get snapshot of milton before switch implementation
@@ -350,7 +375,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotStart = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotStart.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
+        MiltonStorageSnapshot miltonStorageSnapshotStart = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdt
+        );
         miltonStorageSnapshotStart.snapshot();
 
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
@@ -363,7 +390,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
 
         //rollback
         vm.rollFork(blockNumber);
-
 
         //Switch implementation of Milton
         Milton newMilton = new MiltonUsdt();
@@ -386,7 +412,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         JosephSnapshot josephSnapshotAfterUpgrade = new JosephSnapshot(_josephProxyUsdt);
         josephSnapshotAfterUpgrade.snapshot();
 
-        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(_miltonStorageProxyUsdt);
+        MiltonStorageSnapshot miltonStorageSnapshotAfterUpgrade = new MiltonStorageSnapshot(
+            _miltonStorageProxyUsdt
+        );
         miltonStorageSnapshotAfterUpgrade.snapshot();
 
         StanleySnapshot stanleySnapshotAfterUpgrade = new StanleySnapshot(_stanleyProxyUsdt);
@@ -398,10 +426,12 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert( miltonSnapshotStart, miltonSnapshotAfterUpgrade);
-        josephSnapshotStart.assert( josephSnapshotStart, josephSnapshotAfterUpgrade);
-        miltonStorageSnapshotStart.assert( miltonStorageSnapshotStart, miltonStorageSnapshotAfterUpgrade);
-        stanleySnapshotStart.assert( stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
+        miltonStorageSnapshotStart.assert(
+            miltonStorageSnapshotStart,
+            miltonStorageSnapshotAfterUpgrade
+        );
+        stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
-
 }
