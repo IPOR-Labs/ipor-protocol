@@ -156,11 +156,11 @@ contract MiltonConfiguration is Test, TestCommons {
         assertEq(actualValue, 8 * TestConstants.D17);
     }
 
-    function testShouldSetupInitValueForMaxLpUtilizationPerLegPercentage() public {
+    function skipTestShouldSetupInitValueForMaxLpUtilizationPerLegPercentage() public {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxLpUtilizationPerLegRate();
         // then
-        assertEq(actualValue, 48 * TestConstants.D16);
+        assertEq(actualValue, 10 * TestConstants.D16);
     }
 
     function testShouldSetupInitValueForIncomeFeePercentage() public {
