@@ -24,8 +24,18 @@ contract MiltonConfiguration is Test, TestCommons {
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(6);
         MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
-        ERC1967Proxy miltonUsdtProxy =
-        new ERC1967Proxy(address(miltonUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdt), address(usdt), address(usdt), address(usdt), address(usdt)));
+        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
+            address(miltonUsdtImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(usdt),
+                address(usdt),
+                address(usdt),
+                address(usdt),
+                address(usdt)
+            )
+        );
         IMiltonInternal miltonUsdt = IMiltonInternal(address(miltonUsdtProxy));
         assertEq(miltonUsdt.getAsset(), address(usdt));
     }
@@ -35,8 +45,18 @@ contract MiltonConfiguration is Test, TestCommons {
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(6);
         MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
-        ERC1967Proxy miltonUsdcProxy =
-        new ERC1967Proxy(address(miltonUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdc), address(usdc), address(usdc), address(usdc), address(usdc)));
+        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
+            address(miltonUsdcImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(usdc),
+                address(usdc),
+                address(usdc),
+                address(usdc),
+                address(usdc)
+            )
+        );
         IMiltonInternal miltonUsdc = IMiltonInternal(address(miltonUsdcProxy));
         assertEq(miltonUsdc.getAsset(), address(usdc));
     }
@@ -46,8 +66,18 @@ contract MiltonConfiguration is Test, TestCommons {
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(18);
         MiltonDai miltonDaiImplementation = new MiltonDai();
-        ERC1967Proxy miltonDaiProxy =
-        new ERC1967Proxy(address(miltonDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(dai), address(dai), address(dai), address(dai), address(dai)));
+        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
+            address(miltonDaiImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(dai),
+                address(dai),
+                address(dai),
+                address(dai),
+                address(dai)
+            )
+        );
         IMiltonInternal miltonDai = IMiltonInternal(address(miltonDaiProxy));
         assertEq(miltonDai.getAsset(), address(dai));
     }
@@ -58,8 +88,18 @@ contract MiltonConfiguration is Test, TestCommons {
         usdt.setDecimals(8);
         MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonUsdtProxy =
-        new ERC1967Proxy(address(miltonUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdt), address(usdt), address(usdt), address(usdt), address(usdt)));
+        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
+            address(miltonUsdtImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(usdt),
+                address(usdt),
+                address(usdt),
+                address(usdt),
+                address(usdt)
+            )
+        );
     }
 
     function testShouldRevertInitializeUsdcWhenMismatchAssetAndMiltonDecimals() public {
@@ -68,8 +108,18 @@ contract MiltonConfiguration is Test, TestCommons {
         usdc.setDecimals(8);
         MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonUsdcProxy =
-        new ERC1967Proxy(address(miltonUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(usdc), address(usdc), address(usdc), address(usdc), address(usdc)));
+        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
+            address(miltonUsdcImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(usdc),
+                address(usdc),
+                address(usdc),
+                address(usdc),
+                address(usdc)
+            )
+        );
     }
 
     function testShouldRevertInitializerDaiWhenMismatchAssetAndMiltonDecimals() public {
@@ -78,8 +128,18 @@ contract MiltonConfiguration is Test, TestCommons {
         dai.setDecimals(8);
         MiltonDai miltonDaiImplementation = new MiltonDai();
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonDaiProxy =
-        new ERC1967Proxy(address(miltonDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(dai), address(dai), address(dai), address(dai), address(dai)));
+        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
+            address(miltonDaiImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(dai),
+                address(dai),
+                address(dai),
+                address(dai),
+                address(dai)
+            )
+        );
     }
 
     function testShouldSetupInitValueForMaxSwapTotalAmount() public {
@@ -149,7 +209,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         uint256 actualValue = _miltonConfiguration.getMaxLeverage();
         // then
-        assertEq(actualValue, 1000 * TestConstants.D18);
+        assertEq(actualValue, 100 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {

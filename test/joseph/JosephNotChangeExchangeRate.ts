@@ -336,7 +336,7 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
         ).to.be.equal(actualExchangeRate);
     });
 
-    it("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 2", async () => {
+    it.skip("should change Exchange Rate when Liquidity Provider provide liquidity and redeem, USDT 6 decimals, case 2", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),

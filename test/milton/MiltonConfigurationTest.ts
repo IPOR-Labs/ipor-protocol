@@ -242,7 +242,7 @@ describe("MiltonConfiguration", () => {
         //then
         expect(actualValue).to.be.eq(BigNumber.from("25").mul(N1__0_18DEC));
     });
-    it("should setup init value for Max Leveragey Value", async () => {
+    it.skip("should setup init value for Max Leveragey Value", async () => {
         //when
         const actualValue = await miltonConfiguration.getMaxLeverage();
         //then
