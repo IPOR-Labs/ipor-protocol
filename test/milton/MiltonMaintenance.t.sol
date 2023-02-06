@@ -126,29 +126,26 @@ contract MiltonMaintenanceTest is Test, TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC
         );
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         mockCase0MiltonDai.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_1_18DEC, TestConstants.LEVERAGE_18DEC
         );
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userOne);
         mockCase0MiltonDai.closeSwapPayFixed(1);
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userOne);
         mockCase0MiltonDai.closeSwapReceiveFixed(1);
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userOne);
         mockCase0MiltonDai.closeSwaps(swapIds, emptySwapIds);
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userOne);
         mockCase0MiltonDai.closeSwaps(emptySwapIds, swapIds);
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userTwo);
+        vm.stopPrank();
+        vm.startPrank(_userTwo);
         mockCase0MiltonDai.depositToStanley(1);
         vm.expectRevert("Pausable: paused");
-        vm.prank(_userTwo);
         mockCase0MiltonDai.withdrawFromStanley(1);
         vm.expectRevert("Pausable: paused");
+        vm.stopPrank();
         mockCase0MiltonDai.setupMaxAllowanceForAsset(_userThree);
         vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.setJoseph(_userThree);
@@ -183,66 +180,47 @@ contract MiltonMaintenanceTest is Test, TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp); // 3%
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_50_000_18DEC, block.timestamp);
-        vm.prank(_userTwo);
+        vm.startPrank(_userTwo);
         mockCase0MiltonDai.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
-        vm.prank(_userTwo);
         IporTypes.IporSwapMemory memory swapPayFixed = miltonStorageDai.getSwapPayFixed(1);
-        vm.prank(_userTwo);
         mockCase0MiltonDai.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
-        vm.prank(_userTwo);
         IporTypes.IporSwapMemory memory swapReceiveFixed = miltonStorageDai.getSwapReceiveFixed(1);
+        vm.stopPrank();
         // when
         mockCase0MiltonDai.pause();
         // then
         bool paused = mockCase0MiltonDai.paused();
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         mockCase0MiltonDai.getVersion();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getAccruedBalance();
-        vm.prank(_userOne);
         mockCase0MiltonDai.calculateSpread();
-        vm.prank(_userOne);
         mockCase0MiltonDai.calculateSoap();
-        vm.prank(_userOne);
         mockCase0MiltonDai.calculateSoapAtTimestamp(block.timestamp);
-        vm.prank(_userOne);
         mockCase0MiltonDai.calculatePayoffPayFixed(swapPayFixed);
-        vm.prank(_userOne);
         mockCase0MiltonDai.calculatePayoffReceiveFixed(swapReceiveFixed);
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMiltonSpreadModel();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMaxSwapCollateralAmount();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMaxLpUtilizationRate();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMaxLpUtilizationPerLegRate();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getIncomeFeeRate();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getOpeningFeeRate();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getOpeningFeeTreasuryPortionRate();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getIporPublicationFee();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getLiquidationDepositAmount();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMaxLeverage();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getMinLeverage();
-        vm.prank(_userOne);
         mockCase0MiltonDai.getJoseph();
+        vm.stopPrank();
         assertTrue(paused);
     }
 
@@ -293,19 +271,19 @@ contract MiltonMaintenanceTest is Test, TestCommons, DataUtils, SwapUtils {
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_50_000_18DEC, block.timestamp);
         mockCase0MiltonDai.pause();
         vm.expectRevert("Pausable: paused");
-        vm.prank(address(_userTwo));
+        vm.prank(_userTwo);
         mockCase0MiltonDai.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC
         );
         // when
         mockCase0MiltonDai.unpause();
-        vm.prank(address(_userTwo));
+        vm.startPrank(_userTwo);
         mockCase0MiltonDai.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, TestConstants.PERCENTAGE_6_18DEC, TestConstants.LEVERAGE_18DEC
         );
         // then
-        vm.prank(_userTwo);
         IporTypes.IporSwapMemory memory swapPayFixed = miltonStorageDai.getSwapPayFixed(1);
+        vm.stopPrank();
         assertEq(9967009897030890732780, swapPayFixed.collateral);
     }
 
@@ -358,7 +336,7 @@ contract MiltonMaintenanceTest is Test, TestCommons, DataUtils, SwapUtils {
         vm.prank(_userTwo);
         mockCase0MiltonDai.confirmTransferOwnership();
         // then
-        vm.prank(address(_userOne));
+        vm.prank(_userOne);
         address newOwner = mockCase0MiltonDai.owner();
         assertEq(_userTwo, newOwner);
     }
