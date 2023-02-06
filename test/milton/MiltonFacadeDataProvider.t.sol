@@ -52,7 +52,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = addressesToArray(
             address(miltonStorages.miltonStorageUsdt),
@@ -170,7 +170,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -311,7 +311,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -455,7 +455,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -596,7 +596,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -734,7 +734,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -874,7 +874,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -1005,7 +1005,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -1136,7 +1136,7 @@ contract MiltonFacadeDataProviderTest is Test, TestCommons, DataUtils, SwapUtils
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0);
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
