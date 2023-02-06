@@ -5,10 +5,10 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 
-import "../TestCommons.sol";
-import "../../contracts/security/IporOwnable.sol";
-import "../../contracts/libraries/errors/IporErrors.sol";
-import "./IporOracleSnapshot.sol";
+import "../../TestCommons.sol";
+import "../../../contracts/security/IporOwnable.sol";
+import "../../../contracts/libraries/errors/IporErrors.sol";
+import "./snapshots/IporOracleSnapshot.sol";
 
 contract SwitchIporOracleImplementation is Test, TestCommons {
 
