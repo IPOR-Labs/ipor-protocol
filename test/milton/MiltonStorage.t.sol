@@ -61,7 +61,7 @@ contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
         vm.prank(_userTwo);
         miltonStorageDai.confirmTransferOwnership();
         // then
-        vm.prank(address(_userOne));
+        vm.prank(_userOne);
         address newOwner = miltonStorageDai.owner();
         assertEq(_userTwo, newOwner);
     }
