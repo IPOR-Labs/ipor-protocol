@@ -747,12 +747,17 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         if (absPayoff < minPayoffToCloseBeforeMaturity) {
-            //verify if sender is an owner of swap. If not then check if maturity has been reached - if not then reject, if yes then close even if not an owner
+            /// @dev Validation is passed when at least one of the following conditions is met:
+            /// 1. Sender is an owner of swap
+            /// 2. Sender is not an owner of swap but maturity has been reached
+            /// 3. Sender is not an owner of swap but maturity has not been reached and IPOR Protocol Owner is the sender
+
             if (_msgSender() != derivativeItem.buyer) {
                 require(
                     calculationTimestamp >=
                         derivativeItem.endTimestamp -
-                            cfgSecondsBeforeMaturityWhenPositionCanBeClosed,
+                            cfgSecondsBeforeMaturityWhenPositionCanBeClosed ||
+                        _msgSender() == owner(),
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
                 );
             }
@@ -803,6 +808,20 @@ abstract contract Milton is MiltonInternal, IMilton {
                 transferAmount,
                 decimals
             );
+            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(address(this));
+            if (wadMiltonErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
+                IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
+                int256 rebalanceAmount = IJoseph(_joseph).calculateRebalanceAmountBeforeWithdraw(
+                    wadMiltonErc20BalanceBeforeRedeem,
+                    balance.vault,
+                    transferAmount + liquidationDepositAmount
+                );
+
+                if (rebalanceAmount < 0) {
+                    _withdrawFromStanley((- rebalanceAmount).toUint256());
+                }
+            }
+
             //transfer from Milton to Trader
             IERC20Upgradeable(_asset).safeTransfer(buyer, transferAmountAssetDecimals);
 
