@@ -38,7 +38,8 @@ import {
     TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
     TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     PERIOD_14_DAYS_IN_SECONDS,
-    PERIOD_28_DAYS_IN_SECONDS, PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
+    PERIOD_28_DAYS_IN_SECONDS,
+    PERIOD_6_HOURS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -2291,6 +2292,60 @@ describe("Milton - close position", () => {
             admin,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
+            USD_1_000_000_18DEC,
+            BigNumber.from("1"),
+            async (contract) => {
+                return contract.emergencyCloseSwapsPayFixed([1]);
+            },
+            ZERO,
+            true,
+            admin,
+            userOne,
+            liquidityProvider
+        );
+    });
+
+    it("should close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is paused, before maturity", async () => {
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [ZERO],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            LEVERAGE_1000_18DEC,
+            LEG_PAY_FIXED,
+            userTwo,
+            admin,
+            PERCENTAGE_3_18DEC,
+            PERIOD_6_HOURS_IN_SECONDS,
             USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
