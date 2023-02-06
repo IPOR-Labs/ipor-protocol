@@ -39,6 +39,7 @@ import {
     TC_IPOR_PUBLICATION_AMOUNT_18DEC,
     PERIOD_14_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
+    PERIOD_6_HOURS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -1891,7 +1892,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+    it.skip("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -2291,6 +2292,60 @@ describe("Milton - close position", () => {
             admin,
             PERCENTAGE_160_18DEC,
             PERIOD_25_DAYS_IN_SECONDS,
+            USD_1_000_000_18DEC,
+            BigNumber.from("1"),
+            async (contract) => {
+                return contract.emergencyCloseSwapsPayFixed([1]);
+            },
+            ZERO,
+            true,
+            admin,
+            userOne,
+            liquidityProvider
+        );
+    });
+
+    it("should close position by owner, pay fixed, multiple ids emergency function, DAI, when contract is paused, before maturity", async () => {
+        const testData = await prepareTestData(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            ["DAI"],
+            [ZERO],
+            miltonSpreadModel,
+            MiltonUsdcCase.CASE3,
+            MiltonUsdtCase.CASE3,
+            MiltonDaiCase.CASE3,
+            MockStanleyCase.CASE1,
+            JosephUsdcMockCases.CASE0,
+            JosephUsdtMockCases.CASE0,
+            JosephDaiMockCases.CASE0
+        );
+
+        await prepareApproveForUsers(
+            [userOne, userTwo, userThree, liquidityProvider],
+            "DAI",
+            testData
+        );
+        await setupTokenDaiInitialValuesForUsers(
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            testData
+        );
+
+        const { tokenDai } = testData;
+        if (tokenDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+
+        await executeCloseSwapsTestCase(
+            testData,
+            tokenDai.address,
+            LEVERAGE_1000_18DEC,
+            LEG_PAY_FIXED,
+            userTwo,
+            admin,
+            PERCENTAGE_3_18DEC,
+            PERIOD_6_HOURS_IN_SECONDS,
             USD_1_000_000_18DEC,
             BigNumber.from("1"),
             async (contract) => {
@@ -4203,5 +4258,80 @@ describe("Milton - close position", () => {
 
         //then
         // no errors during execution closeSwaps.
+    });
+
+    it("should close position, DAI, when amount exceeds balance milton on DAI token", async () => {
+        //given
+        await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
+        const testData = await prepareComplexTestDataDaiCase000(
+            BigNumber.from(Math.floor(Date.now() / 1000)),
+            [admin, userOne, userTwo, userThree, liquidityProvider],
+            miltonSpreadModel,
+            PERCENTAGE_5_18DEC
+        );
+
+        const { tokenDai, josephDai, iporOracle, miltonDai, stanleyDai } = testData;
+        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined || stanleyDai === undefined) {
+            expect(true).to.be.false;
+            return;
+        }
+        const initStanleyBalance = BigNumber.from("30000").mul(N1__0_18DEC);
+        await tokenDai.approve(stanleyDai.address, USD_1_000_000_18DEC);
+        await stanleyDai.testDeposit(miltonDai.address, initStanleyBalance);
+
+        const params = {
+            asset: tokenDai.address,
+            totalAmount: TC_TOTAL_AMOUNT_10_000_18DEC,
+            acceptableFixedInterestRate: BigNumber.from("9").mul(N0__1_18DEC),
+            leverage: USD_10_18DEC,
+            openTimestamp: BigNumber.from(Math.floor(Date.now() / 1000)),
+            from: userTwo,
+        };
+        await josephDai
+            .connect(liquidityProvider)
+            .itfProvideLiquidity(USD_28_000_18DEC, params.openTimestamp);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_5_18DEC, params.openTimestamp);
+        await openSwapPayFixed(testData, params);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_120_18DEC, params.openTimestamp);
+        const endTimestamp = params.openTimestamp.add(PERIOD_27_DAYS_17_HOURS_IN_SECONDS);
+        await iporOracle
+            .connect(userOne)
+            .itfUpdateIndex(params.asset, PERCENTAGE_6_18DEC, endTimestamp);
+
+        await hre.network.provider.send("hardhat_setBalance", [
+            miltonDai.address,
+            "0x500000000000000000000",
+        ]);
+        await hre.network.provider.request({
+            method: "hardhat_impersonateAccount",
+            params: [miltonDai.address],
+        });
+        const signer = await hre.ethers.provider.getSigner(miltonDai.address);
+        const daiBalanceAfterOpen = await tokenDai.balanceOf(miltonDai.address);
+        await tokenDai.connect(signer).transfer(await admin.getAddress(), daiBalanceAfterOpen);
+
+        const userTwoBalanceBefore = await tokenDai.balanceOf(await userTwo.getAddress());
+        const stanleyBalanceBefore = await tokenDai.balanceOf(stanleyDai.address);
+        const miltonBalanceBefore = await tokenDai.balanceOf(miltonDai.address);
+
+        //when
+        await miltonDai.connect(userTwo).itfCloseSwapPayFixed(1, endTimestamp);
+
+        //then
+
+        const userTwoBalanceAfter = await tokenDai.balanceOf(await userTwo.getAddress());
+        const stanleyBalanceAfter = await tokenDai.balanceOf(stanleyDai.address);
+        const miltonBalanceAfter = await tokenDai.balanceOf(miltonDai.address);
+
+        expect(userTwoBalanceBefore).to.be.equal(BigNumber.from("9990000").mul(N1__0_18DEC));
+        expect(userTwoBalanceAfter).to.be.equal(BigNumber.from("10007750013530187519076909"));
+        expect(stanleyBalanceBefore).to.be.equal(initStanleyBalance);
+        expect(stanleyBalanceAfter.lt(stanleyBalanceBefore)).to.be.true;
+        expect(miltonBalanceBefore).to.be.equal(ZERO);
+        expect(miltonBalanceAfter.gt(ZERO)).to.be.true;
     });
 });

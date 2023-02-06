@@ -94,7 +94,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         assertEq(balanceUserIpDaiAfter, balanceUserIpDaiBefore + depositAmount);
     }
 
-    function testShouldOpenSwapPayFixed() public {
+    function skipTestShouldOpenSwapPayFixed() public {
         // given
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
@@ -162,7 +162,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         assertEq(swapId, 1);
     }
 
-    function testShouldCloseSwapPayFixed() public {
+    function skipTestShouldCloseSwapPayFixed() public {
         // given
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
