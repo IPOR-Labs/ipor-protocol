@@ -98,10 +98,10 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapReceiveFixedValue(
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userThree); // closerUser
+        vm.startPrank(_userThree); // closerUser
         mockCase2MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+        vm.stopPrank();
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) =
@@ -186,10 +186,10 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userThree); // closerUser
+        vm.startPrank(_userThree); // closerUser
         mockCase2MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+        vm.stopPrank();
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) =
@@ -270,12 +270,12 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
             + 7918994164764269383465; // TC_OPENING_FEE_18DEC_INT + TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT - expectedPayoffAbs
         // when
-        vm.prank(_userTwo); // openerUser
+        vm.startPrank(_userTwo); // openerUser
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userTwo); // closerUser
         mockCase2MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+        vm.stopPrank();
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
@@ -355,12 +355,12 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
             + 9967009897030890732780; // TC_OPENING_FEE_18DEC_INT + TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT - expectedPayoffAbs
         // when
-        vm.prank(_userTwo); // openerUser
+        vm.startPrank(_userTwo); // openerUser
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapReceiveFixedValue(
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userTwo); // closerUser
         mockCase2MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
+        vm.stopPrank();
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
@@ -444,10 +444,10 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
         int256 actualPayoff = mockCase3MiltonDai.itfCalculateSwapReceiveFixedValue(
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userThree); // closerUser
+        vm.startPrank(_userThree); // closerUser
         mockCase3MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+        vm.stopPrank();
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) =
@@ -532,10 +532,10 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
         int256 actualPayoff = mockCase3MiltonDai.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userThree); // closerUser
+        vm.startPrank(_userThree); // closerUser
         mockCase3MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+        vm.stopPrank();
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) =
@@ -616,14 +616,13 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
             + 7918994164764269383465; // TC_OPENING_FEE_18DEC_INT + TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT - expectedPayoffAbs
         // when
-        vm.prank(_userTwo); // openerUser
+        vm.startPrank(_userTwo); // openerUser
         int256 actualPayoff = mockCase3MiltonDai.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userTwo); // closerUser
         mockCase3MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        vm.prank(_userTwo); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+        vm.stopPrank();
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) =
@@ -699,12 +698,12 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
             + 9967009897030890732780; // TC_OPENING_FEE_18DEC_INT + TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT - expectedPayoffAbs
         // when
-        vm.prank(_userTwo); // openerUser
+        vm.startPrank(_userTwo); // openerUser
         int256 actualPayoff = mockCase3MiltonDai.itfCalculateSwapReceiveFixedValue(
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 1
         );
-        vm.prank(_userTwo); // closerUser
         mockCase3MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
+        vm.stopPrank();
         vm.prank(_userThree); // closerUser
         uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         // then
