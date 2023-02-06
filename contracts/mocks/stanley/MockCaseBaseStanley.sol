@@ -36,7 +36,6 @@ contract MockCaseBaseStanley is IStanley {
         returns (uint256 balance)
     {
         balance = _balance[recipient] + assetAmount;
-
         _balance[recipient] = balance;
 
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
@@ -69,7 +68,9 @@ contract MockCaseBaseStanley is IStanley {
             wadAssetAmount * _withdrawRate(),
             Constants.D18
         );
-
+        if (wadFinalAssetAmount > _balance[msg.sender]) {
+            return (0, _balance[msg.sender]);
+        }
         balance = _balance[msg.sender] - wadFinalAssetAmount;
         withdrawnAmount = wadFinalAssetAmount;
 

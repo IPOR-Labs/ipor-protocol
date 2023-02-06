@@ -132,7 +132,9 @@ library TestConstants {
     uint256 public constant PERCENTAGE_7_6DEC = 7 * 10000;
     uint256 public constant PERCENTAGE_50_6DEC = 50 * 10000;
 
+    uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint256 public constant TC_DEFAULT_EMA_18DEC = 3 * 1e16;
+    uint256 public constant TC_NOTIONAL_18DEC = 99670098970308907327800;
     uint256 public constant TOTAL_SUPPLY_6_DECIMALS = 100000000000000 * 1000000;
     uint256 public constant TC_IBT_PRICE_DAI_6DEC = 1000000;
     uint256 public constant TC_TOTAL_AMOUNT_100_6DEC = 100 * 1000000;
