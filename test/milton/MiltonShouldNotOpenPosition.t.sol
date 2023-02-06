@@ -444,14 +444,14 @@ contract MiltonShouldNotOpenPositionTest is Test, TestCommons, DataUtils, SwapUt
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), 16 * TestConstants.D17, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_5_18DEC,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
+        vm.stopPrank();
         miltonStorageDai.setJoseph(_userOne);
         vm.prank(_userOne);
         miltonStorageDai.subtractLiquidity(20000 * TestConstants.D18);
