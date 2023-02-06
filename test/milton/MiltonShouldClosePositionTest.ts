@@ -40,6 +40,7 @@ import {
     PERIOD_14_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_6_HOURS_IN_SECONDS,
+    PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -4271,7 +4272,12 @@ describe("Milton - close position", () => {
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, stanleyDai } = testData;
-        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined || stanleyDai === undefined) {
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            stanleyDai === undefined
+        ) {
             expect(true).to.be.false;
             return;
         }
