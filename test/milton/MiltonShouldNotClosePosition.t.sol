@@ -88,14 +88,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -139,14 +139,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -190,14 +190,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -241,14 +241,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -292,14 +292,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -345,14 +345,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
+        vm.stopPrank();
         // when
         vm.expectRevert("IPOR_321");
         vm.prank(_userThree);
@@ -446,11 +446,11 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             mockCase0MiltonDai
         );
         // when
-        vm.prank(_userThree);
+        vm.startPrank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         vm.expectRevert("IPOR_307");
-        vm.prank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
+        vm.stopPrank();
     }
 
     function testShouldNotClosePositionReceiveFixedWhenIncorrectStatus() public {
@@ -497,11 +497,11 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             mockCase0MiltonDai
         );
         // when
-        vm.prank(_userThree);
+        vm.startPrank(_userThree);
         mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         vm.expectRevert("IPOR_307");
-        vm.prank(_userThree);
         mockCase0MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
+        vm.stopPrank();
     }
 
     function testShouldNotClosepositionWhenSwapDoesNotExist() public {
@@ -1095,14 +1095,14 @@ contract MiltonShouldNotClosePositionTest is Test, TestCommons, DataUtils, SwapU
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        vm.prank(_userOne);
+        vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
             address(_daiMockedToken),
             TestConstants.PERCENTAGE_6_18DEC,
             block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS
         );
+        vm.stopPrank();
         vm.prank(address(mockCase0MiltonDai));
         // when
         vm.expectRevert("ERC20: transfer amount exceeds balance");
