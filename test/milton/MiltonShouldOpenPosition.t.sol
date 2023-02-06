@@ -633,10 +633,10 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
             mockCase0MiltonDai
         );
         // when
-        vm.prank(_userThree);
+        vm.startPrank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        vm.prank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        vm.stopPrank();
         // then
         (, IporTypes.IporSwapMemory[] memory swapsUserOne) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
@@ -700,10 +700,10 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
             mockCase0MiltonDai
         );
         // when
-        vm.prank(_userThree);
+        vm.startPrank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        vm.prank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        vm.stopPrank();
         // then
         (, IporTypes.IporSwapMemory[] memory swapsUserOne) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
@@ -765,10 +765,10 @@ contract MiltonShouldOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils
             mockCase0MiltonDai
         );
         // when
-        vm.prank(_userThree);
+        vm.startPrank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
-        vm.prank(_userThree);
         mockCase0MiltonDai.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        vm.stopPrank();
         // then
         (, IporTypes.IporSwapMemory[] memory swapsUserOne) =
             miltonStorageDai.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
