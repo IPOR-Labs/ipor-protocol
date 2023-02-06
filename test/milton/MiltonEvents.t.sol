@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
@@ -389,7 +388,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
     }
 
-    function testShouldEmitEventWhenClosePayFixedSwap6Decimals() public {
+    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
         // given
         MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 0);
@@ -446,7 +445,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
     }
 
-    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsNotTakerClosedSwap() public {
+    function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
         // given
         MockTestnetToken usdtMockedToken = getTokenUsdt();
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 3e16);
@@ -487,13 +486,13 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_160_18DEC, block.timestamp); // PERCENTAGE_160_18DEC
         vm.prank(_userThree);
-        vm.expectEmit(true, true, true, false);
+        vm.expectEmit(true, true, true, true);
         emit CloseSwap(
             1, // swapId
             address(usdtMockedToken), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
-            18957318804000000000000, // transferredToBuyer
+            18937318804000000000000, // transferredToBuyer
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // transferredToLiquidator
             TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
         );
