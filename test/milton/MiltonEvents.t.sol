@@ -79,7 +79,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -143,7 +143,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -207,7 +207,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
         MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -271,7 +271,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
         MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -392,7 +392,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -449,7 +449,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
         MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
