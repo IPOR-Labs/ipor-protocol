@@ -115,7 +115,7 @@ contract IporSwapLogicCalculateSwapPayFixedValue is TestCommons, DataUtils {
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
             987030000000000000000, // ibtQuantity
-            3650000000000000000 + 1 * TestConstants.D16, // fixedInterestRate
+            3650000000000000000 + TestConstants.PERCENTAGE_1_18DEC, // fixedInterestRate
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
             1 // state
         );
