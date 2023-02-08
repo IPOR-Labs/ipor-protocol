@@ -7,6 +7,7 @@ import "../../contracts/itf/ItfMilton.sol";
 
 contract SwapUtils is Test {
     function iterateOpenSwapsPayFixed(
+        address user,
         ItfMilton milton,
         uint256 numberIterations,
         uint256 totalAmount,
@@ -15,6 +16,7 @@ contract SwapUtils is Test {
         for (uint256 i; i < numberIterations; ++i) {
             if (i % 2 == 0) {
                 uint256 acceptableFixedInterestRate = 9 * TestConstants.D17;
+                vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
@@ -23,6 +25,7 @@ contract SwapUtils is Test {
                 );
             } else {
                 uint256 acceptableFixedInterestRate = 1 * TestConstants.D17;
+                vm.prank(user);
                 milton.itfOpenSwapPayFixed(
                     block.timestamp, // openTimestamp
                     totalAmount, // totalAmount
@@ -34,6 +37,7 @@ contract SwapUtils is Test {
     }
 
     function iterateOpenSwapsReceiveFixed(
+        address user,
         ItfMilton milton,
         uint256 numberIterations,
         uint256 totalAmount,
@@ -41,6 +45,7 @@ contract SwapUtils is Test {
     ) public {
         for (uint256 i; i < numberIterations; ++i) {
             uint256 acceptableFixedInterestRate = 1 * TestConstants.D16;
+            vm.prank(user);
             milton.itfOpenSwapReceiveFixed(
                 block.timestamp, // openTimestamp
                 totalAmount, // totalAmount
