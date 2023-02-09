@@ -24,6 +24,10 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
 
+    event MiltonSpreadModelChanged(
+        address indexed changedBy, address indexed oldMiltonSpreadModel, address indexed newMiltonSpreadModel
+    );
+    
     function setUp() public {
         _miltonSpreadModel = prepareMockSpreadModel(
             TestConstants.PERCENTAGE_4_18DEC,
