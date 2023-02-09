@@ -7,4 +7,8 @@ contract MiltonUsdt is Milton {
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 6;
     }
+
+    function _getMaxLeverage() internal view virtual override returns (uint256) {
+        return _MAX_LEVERAGE;
+    }
 }

@@ -311,9 +311,7 @@ abstract contract MiltonInternal is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal view virtual returns (uint256) {
-        return _MAX_LEVERAGE;
-    }
+    function _getMaxLeverage() internal view virtual returns (uint256);
 
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;

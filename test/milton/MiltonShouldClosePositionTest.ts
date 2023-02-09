@@ -1893,7 +1893,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
