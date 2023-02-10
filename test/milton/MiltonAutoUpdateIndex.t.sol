@@ -37,7 +37,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _userOne = _getUserAddress(1);
     }
 
-    function skipTestOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
 
@@ -48,10 +48,10 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
-        uint256 liquidityAmount = 100000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10**6;
         uint256 totalAmount = 10000 * 10**6;
         uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 500 * 10**18;
+        uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
         asset.approve(address(milton), totalAmount);
@@ -73,7 +73,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function skipTestOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForUsdt();
@@ -83,10 +83,10 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
-        uint256 liquidityAmount = 100000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10**6;
         uint256 totalAmount = 10000 * 10**6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 500 * 10**18;
+        uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
         asset.approve(address(milton), totalAmount);
@@ -108,7 +108,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366);
     }
 
-    function skipTestOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();
@@ -118,10 +118,10 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
-        uint256 liquidityAmount = 100000 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10**18;
         uint256 totalAmount = 10000 * 10**18;
         uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 500 * 10**18;
+        uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
         asset.approve(address(milton), totalAmount);
@@ -143,7 +143,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366);
     }
 
-    function skipTestOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
+    function testOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
         _iporProtocol = setupIporProtocolForDai();
@@ -153,10 +153,10 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
-        uint256 liquidityAmount = 100000 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10**18;
         uint256 totalAmount = 10000 * 10**18;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 500 * 10**18;
+        uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
         asset.approve(address(milton), totalAmount);
