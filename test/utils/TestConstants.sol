@@ -32,6 +32,7 @@ library TestConstants {
     uint256 public constant USD_20_000_18DEC = 20000 * 1e18;
     uint256 public constant USD_28_000_18DEC = 28000 * 1e18;
     uint256 public constant USD_50_000_18DEC = 50000 * 1e18;
+    uint256 public constant USD_60_000_18DEC = 60000 * 1e18;
     uint256 public constant USD_100_000_18DEC = 100000 * 1e18;
     uint256 public constant USD_1_000_000_18DEC = 1000000 * 1e18;
     uint256 public constant USD_10_000_000_18DEC = 10000000 * 1e18;
@@ -134,6 +135,7 @@ library TestConstants {
 
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_50_EMA_18DEC_64UINT = 50 * 1e16;
     uint256 public constant TC_DEFAULT_EMA_18DEC = 3 * 1e16;
     uint256 public constant TC_NOTIONAL_18DEC = 99670098970308907327800;
     uint256 public constant TOTAL_SUPPLY_6_DECIMALS = 100000000000000 * 1000000;
