@@ -329,7 +329,7 @@ describe("Milton Utilisation Rate", () => {
         );
     });
 
-    it.skip("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
+    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -447,7 +447,7 @@ describe("Milton Utilisation Rate", () => {
         );
     });
 
-    it.skip("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
+    it("should NOT open pay fixed position - liquidity pool utilization per leg exceeded, custom utilization", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
