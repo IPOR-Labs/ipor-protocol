@@ -21,6 +21,10 @@ abstract contract ItfMilton is Milton {
     uint256 internal _secondsBeforeMaturityWhenPositionCanBeClosed;
     uint256 internal _liquidationLegLimit;
 
+    function getVersion() external pure virtual override returns (uint256) {
+        return 7;
+    }
+
     function itfOpenSwapPayFixed(
         uint256 openTimestamp,
         uint256 totalAmount,
