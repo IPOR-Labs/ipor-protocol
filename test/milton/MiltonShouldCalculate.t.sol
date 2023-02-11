@@ -1,17 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
-import "../../contracts/interfaces/types/MiltonFacadeTypes.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/facades/MiltonFacadeDataProvider.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
@@ -20,10 +16,8 @@ import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/milton/MockCase2MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/milton/MockCase2MiltonUsdt.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 
-contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
+contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
@@ -34,8 +28,8 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function setUp() public {
         _miltonSpreadModel = prepareMockSpreadModel(
-            TestConstants.PERCENTAGE_4_18DEC, // 4%
-            TestConstants.PERCENTAGE_2_18DEC, // 2%
+            TestConstants.PERCENTAGE_4_18DEC, 
+            TestConstants.PERCENTAGE_2_18DEC,
             TestConstants.ZERO_INT,
             TestConstants.ZERO_INT
         );
@@ -57,7 +51,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(1 * TestConstants.D17);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_120_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
@@ -94,11 +88,11 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
             - 682671910755540429746 + 34133595537777021487;
         // when
-        vm.prank(_userTwo); // openerUser
+        vm.prank(_userTwo); 
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapReceiveFixedValue(
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, 1
         );
-        vm.startPrank(_userThree); // closerUser
+        vm.startPrank(_userThree); 
         mockCase2MiltonDai.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS);
         uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         vm.stopPrank();
@@ -145,7 +139,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
@@ -233,7 +227,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_120_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
@@ -318,7 +312,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(4e16);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase2MiltonDai mockCase2MiltonDai = getMockCase2MiltonDai(
@@ -403,7 +397,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(10e16);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_120_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -491,7 +485,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -579,7 +573,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(121e16);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 120e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_120_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
@@ -661,7 +655,7 @@ contract MiltonShouldCalculateTest is Test, TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(4e16);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 5e16);
+        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase3MiltonDai mockCase3MiltonDai = getMockCase3MiltonDai(
