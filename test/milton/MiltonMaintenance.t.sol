@@ -145,14 +145,14 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         mockCase0MiltonDai.closeSwaps(swapIds, emptySwapIds);
         vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.closeSwaps(emptySwapIds, swapIds);
-        vm.expectRevert("Pausable: paused");
         vm.stopPrank();
         vm.startPrank(_userTwo);
+        vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.depositToStanley(1);
         vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.withdrawFromStanley(1);
-        vm.expectRevert("Pausable: paused");
         vm.stopPrank();
+        vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.setupMaxAllowanceForAsset(_userThree);
         vm.expectRevert("Pausable: paused");
         mockCase0MiltonDai.setJoseph(_userThree);
