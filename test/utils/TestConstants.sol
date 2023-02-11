@@ -104,6 +104,8 @@ library TestConstants {
     int256 public constant D16_INT = 1e16;
     int256 public constant ZERO_INT = 0;
 
+    uint64 public constant ZERO_64UINT = 0;
+
     uint256 public constant ZERO = 0;
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
