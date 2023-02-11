@@ -40,6 +40,7 @@ import {
     PERIOD_14_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_6_HOURS_IN_SECONDS,
+    PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
@@ -1892,7 +1893,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.equal(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
+    it("should close position, DAI, not owner, receive fixed, Milton earned, User lost < Collateral, after maturity", async () => {
         //given
         const quote = BigNumber.from("4").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
@@ -4271,7 +4272,12 @@ describe("Milton - close position", () => {
         );
 
         const { tokenDai, josephDai, iporOracle, miltonDai, stanleyDai } = testData;
-        if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined || stanleyDai === undefined) {
+        if (
+            tokenDai === undefined ||
+            josephDai === undefined ||
+            miltonDai === undefined ||
+            stanleyDai === undefined
+        ) {
             expect(true).to.be.false;
             return;
         }

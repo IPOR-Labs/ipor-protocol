@@ -807,7 +807,7 @@ describe("Joseph Redeem", () => {
         ).to.be.equal(actualDAIBalanceUserThree);
     });
 
-    it.skip("should redeem - Liquidity Pool Utilization not exceedeed, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
+    it("should redeem - Liquidity Pool Utilization not exceeded, Redeem Liquidity Pool Utilization not exceeded, Pay Fixed", async () => {
         //given
         const testData = await prepareTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
