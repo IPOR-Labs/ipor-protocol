@@ -30,12 +30,12 @@ contract ForkUtils is Test, TestCommons {
         uint256 swapPayFixedId = Milton(milton).openSwapPayFixed(
             10_000 * 10**assetDecimals,
             1e18,
-            500e18
+            100e18
         );
         uint256 swapPayReceiveId = Milton(milton).openSwapReceiveFixed(
             10_000 * 10**assetDecimals,
             10**(assetDecimals - 3),
-            500e18
+            100e18
         );
         vm.stopPrank();
 

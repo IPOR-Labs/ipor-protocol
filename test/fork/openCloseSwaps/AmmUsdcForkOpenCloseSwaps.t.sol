@@ -103,7 +103,7 @@ contract AmmUsdcForkOpenCloseSwaps is Test, TestCommons {
         assertEq(balanceUserIpUsdcAfter, balanceUserIpUsdcBefore + depositAmount * 1e12);
     }
 
-    function skipTestShouldOpenSwapPayFixed() public {
+    function testShouldOpenSwapPayFixed() public {
         // given
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
@@ -169,7 +169,7 @@ contract AmmUsdcForkOpenCloseSwaps is Test, TestCommons {
         assertEq(swapId, 1);
     }
 
-    function skipTestShouldCloseSwapPayFixed() public {
+    function testShouldCloseSwapPayFixed() public {
         // given
         address user = _getUserAddress(1);
         address userTwo = _getUserAddress(2);
