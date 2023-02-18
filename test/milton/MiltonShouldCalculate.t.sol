@@ -195,7 +195,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.prank(_userTwo);
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapPayFixedValue(
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, 1
+            endTimestamp, 1
         );
         vm.startPrank(_userThree);
         mockCase2MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
