@@ -75,6 +75,8 @@ abstract contract MiltonInternal is
 
     uint32 internal _autoUpdateIporIndexThreshold;
 
+    mapping(address => bool) internal _swapLiquidators;
+
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
         _;
@@ -203,9 +205,7 @@ abstract contract MiltonInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function _withdrawFromStanley(uint256 assetAmount)
-        internal
-    {
+    function _withdrawFromStanley(uint256 assetAmount) internal {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
@@ -267,6 +267,23 @@ abstract contract MiltonInternal is
 
     function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
         return _getAutoUpdateIporIndexThreshold();
+    }
+
+    function addSwapLiquidator(address newSwapLiquidator)
+        external
+        override
+        onlyOwner
+        whenNotPaused
+    {
+        require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[newSwapLiquidator] = true;
+        emit SwapLiquidatorAdded(newSwapLiquidator);
+    }
+
+    function removeSwapLiquidator(address liquidator) external override onlyOwner whenNotPaused {
+        require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[liquidator] = false;
+        emit SwapLiquidatorRemoved(liquidator);
     }
 
     function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
@@ -407,5 +424,23 @@ abstract contract MiltonInternal is
                 timestamp,
                 _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return 1 days;
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByAnyone()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return 1 hours;
     }
 }

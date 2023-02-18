@@ -615,6 +615,41 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
+    function _validateAllowanceToCloseSwap(
+        IporTypes.IporSwapMemory memory iporSwap,
+        uint256 closeTimestamp
+    ) internal returns (bool) {
+        require(
+            iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
+            MiltonErrors.INCORRECT_SWAP_STATUS
+        );
+
+        if (_msgSender() != owner()) {
+            if (closeTimestamp > iporSwap.endTimestamp) {
+                require(
+                    _swapLiquidators[_msgSender()],
+                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_LIQUIDATOR
+                );
+            } else {
+                require(
+                    iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByAnyone() >=
+                        closeTimestamp,
+                    MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
+                );
+
+                if (
+                    iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() >=
+                    closeTimestamp
+                ) {
+                    require(
+                        _msgSender() == iporSwap.buyer,
+                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER
+                    );
+                }
+            }
+        }
+    }
+
     function _closeSwapReceiveFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         uint256 closeTimestamp
@@ -808,7 +843,9 @@ abstract contract Milton is MiltonInternal, IMilton {
                 transferAmount,
                 decimals
             );
-            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(address(this));
+            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(
+                address(this)
+            );
             if (wadMiltonErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
                 IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
                 int256 rebalanceAmount = IJoseph(_joseph).calculateRebalanceAmountBeforeWithdraw(
@@ -818,7 +855,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 );
 
                 if (rebalanceAmount < 0) {
-                    _withdrawFromStanley((- rebalanceAmount).toUint256());
+                    _withdrawFromStanley((-rebalanceAmount).toUint256());
                 }
             }
 

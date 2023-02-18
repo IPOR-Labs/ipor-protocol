@@ -97,4 +97,13 @@ library MiltonErrors {
 
     /// @notice Treasury balance is too low.
     string public constant TREASURY_BALANCE_IS_TOO_LOW = "IPOR_330";
+
+	/// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp.
+	string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY = "IPOR_331";
+
+	/// @notice Swap cannot be closed because sender is not a liquidator.
+	string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_LIQUIDATOR = "IPOR_332";
+
+	/// @notice Swap cannot be closed because sender is not a buyer.
+	string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER = "IPOR_333";
 }
