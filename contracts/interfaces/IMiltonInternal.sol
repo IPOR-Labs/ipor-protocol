@@ -218,6 +218,11 @@ interface IMiltonInternal {
 	/// @dev Emits {SwapLiquidatorRemoved} event from Milton.
 	function removeSwapLiquidator(address swapLiquidator) external;
 
+	/// @notice Checks if given account is swap liquidator.
+	/// @param account account address
+	/// @return true if account is swap liquidator, false otherwise
+	function isSwapLiquidator(address account) external view returns (bool);
+
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
     /// @param oldJoseph Joseph's old address

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
-import "forge-std/console2.sol";
 
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
@@ -582,6 +581,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
+
         _getMiltonStorage().updateStorageWhenCloseSwapPayFixed(
             iporSwap,
             payoff,
@@ -590,6 +590,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         uint256 transferredToBuyer;
+
         (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(
             iporSwap,
             payoff,
@@ -611,8 +612,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         uint256 closeTimestamp
     ) internal returns (bool) {
-        console2.log("closeTimestamp", closeTimestamp);
-        console2.log("endTimestamp", iporSwap.endTimestamp);
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
             MiltonErrors.INCORRECT_SWAP_STATUS
@@ -621,15 +620,15 @@ abstract contract Milton is MiltonInternal, IMilton {
         if (_msgSender() != owner()) {
             if (closeTimestamp > iporSwap.endTimestamp) {
                 require(
-                    _swapLiquidators[_msgSender()],
-                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_LIQUIDATOR
+                    _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
+                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
                 );
             } else {
                 if (_msgSender() == iporSwap.buyer) {
                     require(
                         iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
                             closeTimestamp,
-                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER
+                        MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER
                     );
                 } else {
                     require(
@@ -647,10 +646,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         uint256 closeTimestamp
     ) internal returns (uint256 payoutForLiquidator) {
-        require(
-            iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
-            MiltonErrors.INCORRECT_SWAP_STATUS
-        );
+        _validateAllowanceToCloseSwap(iporSwap, closeTimestamp);
 
         int256 payoff = _calculatePayoffReceiveFixed(closeTimestamp, iporSwap);
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
@@ -663,11 +659,13 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         uint256 transferredToBuyer;
+
         (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(
             iporSwap,
             payoff,
             incomeFeeValue
         );
+
         emit CloseSwap(
             iporSwap.id,
             _asset,

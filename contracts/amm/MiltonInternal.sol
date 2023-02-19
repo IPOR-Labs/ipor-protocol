@@ -286,6 +286,10 @@ abstract contract MiltonInternal is
         emit SwapLiquidatorRemoved(liquidator);
     }
 
+    function isSwapLiquidator(address account) external view override returns (bool) {
+        return _swapLiquidators[account];
+    }
+
     function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
         return _autoUpdateIporIndexThreshold * Constants.D21;
     }

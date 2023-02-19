@@ -68,8 +68,8 @@ library MiltonErrors {
     /// @notice Swap cannot be closed because liquidity pool is too low for payid out cash. Situation should never happen where Liquidity Pool is insolvent.
     string public constant CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW = "IPOR_320";
 
-    /// @notice Swap cannot be closed because sender is not an owner of derivative and derivative maturity not achieved.
-    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY = "IPOR_321";
+    /// @notice Swap cannot be closed because sender is not a buyer nor liquidator.
+    string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR = "IPOR_321";
 
     /// @notice Interest from Strategy is below zero.
     string public constant INTEREST_FROM_STRATEGY_BELOW_ZERO = "IPOR_322";
@@ -98,12 +98,9 @@ library MiltonErrors {
     /// @notice Treasury balance is too low.
     string public constant TREASURY_BALANCE_IS_TOO_LOW = "IPOR_330";
 
-	/// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp.
-	string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY = "IPOR_331";
+    /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp in general.
+    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY = "IPOR_331";
 
-	/// @notice Swap cannot be closed because sender is not a liquidator.
-	string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_LIQUIDATOR = "IPOR_332";
-
-	/// @notice Swap cannot be closed because sender is not a buyer.
-	string public constant CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER = "IPOR_333";
+    /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp for buyer.
+    string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_332";
 }
