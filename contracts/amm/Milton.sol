@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
+import "forge-std/console2.sol";
 
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
@@ -577,31 +578,22 @@ abstract contract Milton is MiltonInternal, IMilton {
         internal
         returns (uint256 payoutForLiquidator)
     {
-        require(
-            iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
-            MiltonErrors.INCORRECT_SWAP_STATUS
-        );
+        _validateAllowanceToCloseSwap(iporSwap, closeTimestamp);
 
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
         _getMiltonStorage().updateStorageWhenCloseSwapPayFixed(
-            _msgSender(),
             iporSwap,
             payoff,
             incomeFeeValue,
-            closeTimestamp,
-            _getMinLiquidationThresholdToCloseBeforeMaturity(),
-            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
+            closeTimestamp
         );
 
         uint256 transferredToBuyer;
         (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(
             iporSwap,
             payoff,
-            incomeFeeValue,
-            closeTimestamp,
-            _getMinLiquidationThresholdToCloseBeforeMaturity(),
-            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
+            incomeFeeValue
         );
 
         emit CloseSwap(
@@ -619,6 +611,8 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         uint256 closeTimestamp
     ) internal returns (bool) {
+        console2.log("closeTimestamp", closeTimestamp);
+        console2.log("endTimestamp", iporSwap.endTimestamp);
         require(
             iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
             MiltonErrors.INCORRECT_SWAP_STATUS
@@ -631,19 +625,18 @@ abstract contract Milton is MiltonInternal, IMilton {
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_LIQUIDATOR
                 );
             } else {
-                require(
-                    iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByAnyone() >=
-                        closeTimestamp,
-                    MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
-                );
-
-                if (
-                    iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() >=
-                    closeTimestamp
-                ) {
+                if (_msgSender() == iporSwap.buyer) {
                     require(
-                        _msgSender() == iporSwap.buyer,
+                        iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
+                            closeTimestamp,
                         MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER
+                    );
+                } else {
+                    require(
+                        iporSwap.endTimestamp -
+                            _getTimeBeforeMaturityAllowedToCloseSwapByAnyone() <=
+                            closeTimestamp,
+                        MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
                     );
                 }
             }
@@ -663,23 +656,17 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
 
         _getMiltonStorage().updateStorageWhenCloseSwapReceiveFixed(
-            _msgSender(),
             iporSwap,
             payoff,
             incomeFeeValue,
-            closeTimestamp,
-            _getMinLiquidationThresholdToCloseBeforeMaturity(),
-            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
+            closeTimestamp
         );
 
         uint256 transferredToBuyer;
         (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(
             iporSwap,
             payoff,
-            incomeFeeValue,
-            closeTimestamp,
-            _getMinLiquidationThresholdToCloseBeforeMaturity(),
-            _getSecondsBeforeMaturityWhenPositionCanBeClosed()
+            incomeFeeValue
         );
         emit CloseSwap(
             iporSwap.id,
@@ -761,42 +748,14 @@ abstract contract Milton is MiltonInternal, IMilton {
      * @param derivativeItem - Derivative struct
      * @param payoff - Net earnings of the derivative. Can be positive (swap has a possitive earnings) or negative (swap looses)
      * @param incomeFeeValue - amount of fee calculated based on payoff.
-     * @param calculationTimestamp - Time for which the calculations in this funciton are run
-     * @param cfgMinLiquidationThresholdToCloseBeforeMaturity - Minimal profit to loss required to put the swap up for the liquidation by non-byer regardless of maturity
-     * @param cfgSecondsBeforeMaturityWhenPositionCanBeClosed - Time before the appointed maturity allowing the liquidation of the swap
-     * for more information on liquidations refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
      **/
 
     function _transferTokensBasedOnPayoff(
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 payoff,
-        uint256 incomeFeeValue,
-        uint256 calculationTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 incomeFeeValue
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-        uint256 minPayoffToCloseBeforeMaturity = IporMath.percentOf(
-            derivativeItem.collateral,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity
-        );
-
-        if (absPayoff < minPayoffToCloseBeforeMaturity) {
-            /// @dev Validation is passed when at least one of the following conditions is met:
-            /// 1. Sender is an owner of swap
-            /// 2. Sender is not an owner of swap but maturity has been reached
-            /// 3. Sender is not an owner of swap but maturity has not been reached and IPOR Protocol Owner is the sender
-
-            if (_msgSender() != derivativeItem.buyer) {
-                require(
-                    calculationTimestamp >=
-                        derivativeItem.endTimestamp -
-                            cfgSecondsBeforeMaturityWhenPositionCanBeClosed ||
-                        _msgSender() == owner(),
-                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
-                );
-            }
-        }
 
         if (payoff > 0) {
             //Buyer earns, Milton looses

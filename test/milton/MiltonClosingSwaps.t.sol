@@ -116,6 +116,50 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         uint256 swap28daysInSeconds = 28 * 24 * 60 * 60;
+        uint256 swap20hoursInSeconds = 24 * 60 * 60;
+        vm.warp(100 + swap28daysInSeconds - swap20hoursInSeconds);
+
+        //when
+        vm.prank(_buyer);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+    }
+
+    function testShouldClosePayFixedSwapAsBuyerInLast20hours() public {
+        //given
+        vm.warp(100);
+
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        uint256 liquidityAmount = 1000000 * 10**6;
+        uint256 totalAmount = 10000 * 10**6;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 100 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        uint256 swap28daysInSeconds = 28 * 24 * 60 * 60;
         uint256 swap20hoursInSeconds = 20 * 60 * 60;
         vm.warp(100 + swap28daysInSeconds - swap20hoursInSeconds);
 
@@ -272,13 +316,59 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldNotCloseAsBuyerInMoreThanLast24hours() public {}
+    function testShouldNotClosePayFixedSwapAsBuyerInMoreThanLast24hours() public {
+        //given
+        vm.warp(100);
 
-    function testShouldNotCloseAsBuyerAfterMaturity() public {}
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
 
-    function testShouldNotCloseAsAnyoneInMoreThanLastOneHour() public {}
+        uint256 liquidityAmount = 1000000 * 10**6;
+        uint256 totalAmount = 10000 * 10**6;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 100 * 10**18;
 
-    function testShouldNotCloseAsAnyoneAfterMaturity() public {}
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
 
-    function testShouldNotCloseAsLiquiditatorBeforeMaturity() public {}
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        uint256 swap28daysInSeconds = 28 * 24 * 60 * 60;
+        uint256 swap20hoursInSeconds = 25 * 60 * 60;
+        vm.warp(100 + swap28daysInSeconds - swap20hoursInSeconds);
+
+        //when
+        vm.expectRevert(abi.encodePacked("IPOR_331"));
+        vm.prank(_buyer);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+    }
+
+    function testShouldNotClosePayFixedSwapAsBuyerAfterMaturity() public {
+        //? buyer can or cannot close after maturity?
+		// Update https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/liquidations
+    }
+
+    function testShouldNotClosePayFixedSwapAsAnyoneInMoreThanLastOneHour() public {}
+
+    function testShouldNotClosePayFixedSwapAsAnyoneAfterMaturity() public {}
+
+    function testShouldNotClosePayFixedSwapAsLiquiditatorBeforeMaturity() public {}
 }

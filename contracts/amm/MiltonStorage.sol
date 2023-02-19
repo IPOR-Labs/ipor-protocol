@@ -377,46 +377,24 @@ contract MiltonStorage is
     }
 
     function updateStorageWhenCloseSwapPayFixed(
-        address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 incomeFeeValue,
-        uint256 closingTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
-        _updateBalancesWhenCloseSwapPayFixed(
-            liquidator,
-            iporSwap,
-            payoff,
-            incomeFeeValue,
-            closingTimestamp,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity,
-            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-        );
+        _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff, incomeFeeValue);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
-        address liquidator,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 incomeFeeValue,
-        uint256 closingTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
-        _updateBalancesWhenCloseSwapReceiveFixed(
-            liquidator,
-            iporSwap,
-            payoff,
-            incomeFeeValue,
-            closingTimestamp,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity,
-            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-        );
+        _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff, incomeFeeValue);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
     }
 
@@ -663,23 +641,11 @@ contract MiltonStorage is
     }
 
     function _updateBalancesWhenCloseSwapPayFixed(
-        address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
-        uint256 incomeFeeValue,
-        uint256 closingTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 incomeFeeValue
     ) internal {
-        _updateBalancesWhenCloseSwap(
-            liquidator,
-            swap,
-            payoff,
-            incomeFeeValue,
-            closingTimestamp,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity,
-            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-        );
+        _updateBalancesWhenCloseSwap(payoff, incomeFeeValue);
 
         _balances.totalCollateralPayFixed =
             _balances.totalCollateralPayFixed -
@@ -687,58 +653,19 @@ contract MiltonStorage is
     }
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
-        address liquidator,
         IporTypes.IporSwapMemory memory swap,
         int256 payoff,
-        uint256 incomeFeeValue,
-        uint256 closingTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
+        uint256 incomeFeeValue
     ) internal {
-        _updateBalancesWhenCloseSwap(
-            liquidator,
-            swap,
-            payoff,
-            incomeFeeValue,
-            closingTimestamp,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity,
-            cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-        );
+        _updateBalancesWhenCloseSwap(payoff, incomeFeeValue);
 
         _balances.totalCollateralReceiveFixed =
             _balances.totalCollateralReceiveFixed -
             swap.collateral.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwap(
-        address liquidator,
-        IporTypes.IporSwapMemory memory swap,
-        int256 payoff,
-        uint256 incomeFeeValue,
-        uint256 closingTimestamp,
-        uint256 cfgMinLiquidationThresholdToCloseBeforeMaturity,
-        uint256 cfgSecondsBeforeMaturityWhenPositionCanBeClosed
-    ) internal {
+    function _updateBalancesWhenCloseSwap(int256 payoff, uint256 incomeFeeValue) internal {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-        uint256 minPayoffToCloseBeforeMaturity = IporMath.percentOf(
-            swap.collateral,
-            cfgMinLiquidationThresholdToCloseBeforeMaturity
-        );
-        if (absPayoff < minPayoffToCloseBeforeMaturity) {
-            /// @dev Validation is passed when at least one of the following conditions is met:
-            /// 1. Sender is an owner of swap
-            /// 2. Sender is not an owner of swap but maturity has been reached
-            /// 3. Sender is not an owner of swap but maturity has not been reached and IPOR Protocol Owner is the sender
-
-            if (liquidator != swap.buyer) {
-                require(
-                    closingTimestamp >=
-                        swap.endTimestamp - cfgSecondsBeforeMaturityWhenPositionCanBeClosed ||
-                        liquidator == owner(),
-                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_AND_NO_MATURITY
-                );
-            }
-        }
 
         _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
