@@ -16,7 +16,8 @@ import {
     PERCENTAGE_5_18DEC,
     PERCENTAGE_120_18DEC,
     PERIOD_50_DAYS_IN_SECONDS,
-    PERIOD_14_DAYS_IN_SECONDS, N0__1_18DEC,
+    PERIOD_14_DAYS_IN_SECONDS,
+    N0__1_18DEC,
 } from "../utils/Constants";
 import {
     MiltonUsdcCase,
@@ -62,7 +63,7 @@ describe("Milton should calculate income - Core", () => {
     });
 
     it("should calculate income fee 5%, receive fixed, not owner, Milton loses, user earns, |I| < D", async () => {
-        const quote = N0__1_18DEC
+        const quote = N0__1_18DEC;
         const acceptableFixedInterestRate = quote;
         await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
 
@@ -101,6 +102,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedIncomeFeeValueWad = BigNumber.from("34133595537777021487");
         const expectedPayoff = BigNumber.from("682671910755540429746");
         const expectedPayoffWad = BigNumber.from("682671910755540429746");
+
+        testData.miltonDai?.addSwapLiquidator(await userThree.getAddress());
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -169,6 +172,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedPayoff = TC_COLLATERAL_18DEC;
         const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
+        testData.miltonDai?.addSwapLiquidator(await userTwo.getAddress());
+
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
@@ -234,6 +239,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedPayoff = BigNumber.from("-7918994164764269383465");
         const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
 
+        testData.miltonDai?.addSwapLiquidator(await userTwo.getAddress());
+
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
@@ -297,6 +304,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
 
+        testData.miltonDai?.addSwapLiquidator(await userThree.getAddress());
+
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
@@ -359,6 +368,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedIncomeFeeValueWad = BigNumber.from("682671910755540429746");
         const expectedPayoff = expectedIncomeFeeValue;
         const expectedPayoffWad = expectedIncomeFeeValueWad;
+
+        testData.miltonDai?.addSwapLiquidator(await userThree.getAddress());
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -426,6 +437,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedPayoff = TC_COLLATERAL_18DEC;
         const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
+        testData.miltonDai?.addSwapLiquidator(await userTwo.getAddress());
+
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,
@@ -491,6 +504,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedPayoff = BigNumber.from("-7918994164764269383465");
         const expectedPayoffWad = BigNumber.from("-7918994164764269383465");
 
+        testData.miltonDai?.addSwapLiquidator(await userTwo.getAddress());
+
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
             tokenDai.address,
@@ -554,6 +569,8 @@ describe("Milton should calculate income - Core", () => {
         const expectedIncomeFeeValueWad = TC_COLLATERAL_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+
+        testData.miltonDai?.addSwapLiquidator(await userThree.getAddress());
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,

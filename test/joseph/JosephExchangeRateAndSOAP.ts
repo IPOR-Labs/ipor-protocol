@@ -699,8 +699,8 @@ describe("Joseph -  calculate Exchange Rate when SOAP changed", () => {
             actualLiquidityPoolBalanceBeforeClose.sub(actualSOAPAfter56DaysBeforeClose.soap);
 
         //when
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, timestamp56DaysLater);
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, timestamp56DaysLater);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, timestamp56DaysLater);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(2, timestamp56DaysLater);
 
         //then
         const actualMiltonLiquidityPoolBalanceAfterClose = (await miltonStorageDai.getBalance())

@@ -11,7 +11,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
-
+import "hardhat/console.sol";
 /**
  * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
  * @dev Milton is scoped per asset (USDT, USDC, DAI or other type of ERC20 asset included by the DAO)
@@ -577,9 +577,9 @@ abstract contract Milton is MiltonInternal, IMilton {
         internal
         returns (uint256 payoutForLiquidator)
     {
-        _validateAllowanceToCloseSwap(iporSwap, closeTimestamp);
-
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
+        _validateAllowanceToCloseSwap(iporSwap, payoff, closeTimestamp);
+
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
 
         _getMiltonStorage().updateStorageWhenCloseSwapPayFixed(
@@ -610,6 +610,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function _validateAllowanceToCloseSwap(
         IporTypes.IporSwapMemory memory iporSwap,
+        int256 payoff,
         uint256 closeTimestamp
     ) internal returns (bool) {
         require(
@@ -618,18 +619,21 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         if (_msgSender() != owner()) {
-            if (closeTimestamp > iporSwap.endTimestamp) {
+            if (closeTimestamp >= iporSwap.endTimestamp) {
                 require(
                     _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
                     MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
                 );
             } else {
                 if (_msgSender() == iporSwap.buyer) {
-                    require(
-                        iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
-                            closeTimestamp,
-                        MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER
-                    );
+                    uint256 absPayoff = IporMath.absoluteValue(payoff);
+                    if (absPayoff < iporSwap.collateral) {
+                        require(
+                            iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
+                                closeTimestamp,
+                            MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER
+                        );
+                    }
                 } else {
                     require(
                         iporSwap.endTimestamp -
@@ -646,9 +650,12 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         uint256 closeTimestamp
     ) internal returns (uint256 payoutForLiquidator) {
-        _validateAllowanceToCloseSwap(iporSwap, closeTimestamp);
 
         int256 payoff = _calculatePayoffReceiveFixed(closeTimestamp, iporSwap);
+
+        _validateAllowanceToCloseSwap(iporSwap, payoff, closeTimestamp);
+
+
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
 
         _getMiltonStorage().updateStorageWhenCloseSwapReceiveFixed(

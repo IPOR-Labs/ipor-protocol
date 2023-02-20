@@ -454,7 +454,7 @@ describe("Milton SOAP", () => {
         const endTimestamp = derivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        await miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, endTimestamp);
 
         const expectedSoap = ZERO;
 
@@ -523,6 +523,7 @@ describe("Milton SOAP", () => {
         await josephDai
             .connect(liquidityProvider)
             .itfProvideLiquidity(USD_28_000_18DEC, derivativeParams.openTimestamp);
+
         await iporOracle
             .connect(userOne)
             .itfUpdateIndex(
@@ -540,8 +541,10 @@ describe("Milton SOAP", () => {
             .connect(liquidityProvider)
             .itfProvideLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC, derivativeParams.openTimestamp);
 
+        await miltonDai.addSwapLiquidator(closerUser.getAddress());
+
         //when
-        await miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(1, endTimestamp);
 
         const soapParams = {
             asset: tokenDai.address,
@@ -912,7 +915,7 @@ describe("Milton SOAP", () => {
         const endTimestamp = recFixDerivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        await miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(2, endTimestamp);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(2, endTimestamp);
 
         //then
         const expectedSoap = BigNumber.from("-68267191075554066594");
@@ -999,7 +1002,7 @@ describe("Milton SOAP", () => {
         const endTimestamp = recFixDerivativeParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        await miltonDai.connect(closerUser).itfCloseSwapPayFixed(1, endTimestamp);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, endTimestamp);
 
         //then
         const expectedSoap = BigNumber.from("-68267191075554025634");
@@ -1130,7 +1133,7 @@ describe("Milton SOAP", () => {
             recFixDerivativeUSDTParams.openTimestamp.add(PERIOD_25_DAYS_IN_SECONDS);
 
         //when
-        await miltonUsdt.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
+        await miltonUsdt.connect(admin).itfCloseSwapReceiveFixed(1, endTimestamp);
 
         //then
         const expectedSoapDAI = BigNumber.from("-68267191075554066594");
@@ -2035,8 +2038,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2147,8 +2150,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2259,8 +2262,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
-        await miltonDai.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapPayFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2371,8 +2374,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
-        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2485,8 +2488,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
-        await miltonDai.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonDai.connect(admin).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2598,8 +2601,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
-        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapPayFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2710,8 +2713,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(1, calculationTimestamp75days);
-        await miltonUsdt.connect(userOne).itfCloseSwapPayFixed(2, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapPayFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapPayFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");
@@ -2823,8 +2826,8 @@ describe("Milton SOAP", () => {
         const calculationTimestamp75days =
             calculationTimestamp50days.add(PERIOD_25_DAYS_IN_SECONDS);
 
-        await miltonUsdt.connect(userOne).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
-        await miltonUsdt.connect(userOne).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapReceiveFixed(1, calculationTimestamp75days);
+        await miltonUsdt.connect(admin).itfCloseSwapReceiveFixed(2, calculationTimestamp75days);
 
         //then
         const expectedSoap = BigNumber.from("0");

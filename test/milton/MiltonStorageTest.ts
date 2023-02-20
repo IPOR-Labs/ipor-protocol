@@ -574,13 +574,10 @@ describe("MiltonStorage", () => {
         await miltonStorageDai
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
-                await userTwo.getAddress(),
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_18DEC),
                 BigNumber.from("1").mul(N1__0_18DEC),
-                closeSwapTimestamp,
-                PERCENTAGE_95_18DEC,
-                PERIOD_6_HOURS_IN_SECONDS
+                closeSwapTimestamp
             );
 
         await miltonStorageDai.setMilton(miltonDai.address);
@@ -660,13 +657,10 @@ describe("MiltonStorage", () => {
         await miltonStorageUsdt
             .connect(miltonStorageAddress)
             .updateStorageWhenCloseSwapPayFixed(
-                await userTwo.getAddress(),
                 derivativeItem,
                 BigNumber.from("10").mul(N1__0_6DEC),
                 BigNumber.from("1").mul(N1__0_6DEC),
-                closeSwapTimestamp,
-                PERCENTAGE_95_18DEC,
-                PERIOD_6_HOURS_IN_SECONDS
+                closeSwapTimestamp
             );
         //then
         //assert(true); //no exception this line is achieved
@@ -740,13 +734,10 @@ describe("MiltonStorage", () => {
             miltonStorageDai
                 .connect(userThree)
                 .updateStorageWhenCloseSwapPayFixed(
-                    await userTwo.getAddress(),
                     derivativeItem,
                     BigNumber.from("10").mul(N1__0_18DEC),
                     BigNumber.from("1").mul(N1__0_18DEC),
-                    closeSwapTimestamp,
-                    PERCENTAGE_95_18DEC,
-                    PERIOD_6_HOURS_IN_SECONDS
+                    closeSwapTimestamp
                 ),
             //then
             "IPOR_008"
