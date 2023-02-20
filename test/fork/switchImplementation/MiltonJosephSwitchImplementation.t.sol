@@ -42,7 +42,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
 
     function setUp() public {}
 
-    function skipTestShouldUpgradeDaiImplementation() public {
+    function testShouldUpgradeDaiImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyDai);
         miltonSnapshotStart.snapshot();
@@ -103,7 +103,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function skipTestShouldUpgradeDaiImplementationAndInteract() public {
+    function testShouldUpgradeDaiImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _dai, _josephProxyDai, _miltonProxyDai);
         //Get snapshot of milton before switch implementation
@@ -173,7 +173,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function skipTestShouldUpgradeUsdcImplementation() public {
+    function testShouldUpgradeUsdcImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdc);
         miltonSnapshotStart.snapshot();
@@ -234,7 +234,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function skipTestShouldUpgradeUsdcImplementationAndInteract() public {
+    function testShouldUpgradeUsdcImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _usdc, _josephProxyUsdc, _miltonProxyUsdc);
         //Get snapshot of milton before switch implementation
@@ -304,7 +304,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function skipTestShouldUpgradeUsdtImplementation() public {
+    function testShouldUpgradeUsdtImplementation() public {
         //Get snapshot of milton before switch implementation
         MiltonSnapshot miltonSnapshotStart = new MiltonSnapshot(_miltonProxyUsdt);
         miltonSnapshotStart.snapshot();
@@ -365,7 +365,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function skipTestShouldUpgradeUsdtImplementationAndInteract() public {
+    function testShouldUpgradeUsdtImplementationAndInteract() public {
         uint256 blockNumber = block.number;
         basicInteractWithAmm(_owner, _usdt, _josephProxyUsdt, _miltonProxyUsdt);
         //Get snapshot of milton before switch implementation
