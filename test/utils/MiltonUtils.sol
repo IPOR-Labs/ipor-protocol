@@ -52,6 +52,16 @@ contract MiltonUtils is Test {
         MockCase0MiltonDai mockCase0MiltonDai;
     }
 
+    struct ExpectedMiltonBalances {
+        uint256 expectedPayoffAbs;
+        uint256 expectedIncomeFeeValue;
+        uint256 expectedMiltonBalance;
+        int256 expectedOpenerUserBalance;
+        int256 expectedCloserUserBalance;
+        uint256 expectedLiquidityPoolBalance;
+        uint256 expectedSumOfBalancesBeforePayout;
+    }
+
     function prepareMockSpreadModel(
         uint256 calculateQuotePayFixedValue,
         uint256 calculateQuoteReceiveFixedValue,
