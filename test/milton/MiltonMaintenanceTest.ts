@@ -618,9 +618,9 @@ describe("Milton Maintenance", () => {
         const oldMiltonSpreadModel = await miltonDai.getMiltonSpreadModel();
         const newMiltonSpreadModel = await userThree.getAddress();
 
-		//when
+        //when
         await expect(miltonDai.connect(admin).setMiltonSpreadModel(newMiltonSpreadModel))
-			//then
+            //then
             .to.emit(miltonDai, "MiltonSpreadModelChanged")
             .withArgs(await admin.getAddress(), oldMiltonSpreadModel, newMiltonSpreadModel);
     });
