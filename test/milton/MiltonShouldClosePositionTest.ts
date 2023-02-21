@@ -23,6 +23,7 @@ import {
     PERIOD_27_DAYS_23_HOURS_IN_SECONDS, PERIOD_27_DAYS_IN_SECONDS,
     PERIOD_28_DAYS_IN_SECONDS,
     PERIOD_50_DAYS_IN_SECONDS,
+    PERIOD_56_DAYS_IN_SECONDS,
     PERIOD_6_HOURS_IN_SECONDS,
     SPECIFIC_INCOME_TAX_CASE_1,
     SPECIFIC_INTEREST_AMOUNT_CASE_1,
@@ -1341,9 +1342,9 @@ describe("Milton - close position", () => {
             return;
         }
 
-        const expectedIncomeFeeValueWad = BigNumber.from("791899416476426932749");
-        const expectedPayoff = BigNumber.from("-7918994164764269327486");
-        const expectedPayoffWad = BigNumber.from("-7918994164764269327486");
+        const expectedIncomeFeeValueWad = BigNumber.from("886927346453598165077");
+        const expectedPayoff = BigNumber.from("-8869273464535981650771");
+        const expectedPayoffWad = BigNumber.from("-8869273464535981650771");
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1354,7 +1355,7 @@ describe("Milton - close position", () => {
             userTwo,
             PERCENTAGE_120_18DEC,
             acceptableFixedInterestRate,
-            PERIOD_25_DAYS_IN_SECONDS,
+            PERIOD_28_DAYS_IN_SECONDS,
             ZERO,
             ZERO,
             expectedIncomeFeeValueWad,
@@ -2615,11 +2616,9 @@ describe("Milton - close position", () => {
             from: openerUser,
         };
         await openSwapPayFixed(testData, derivativeParams28days);
-        const endTimestamp = openTimestamp.add(PERIOD_50_DAYS_IN_SECONDS);
+        const endTimestamp = openTimestamp.add(PERIOD_56_DAYS_IN_SECONDS);
         const expectedOpenedPositionsVol = 1;
         const expectedDerivativeId = BigNumber.from(1);
-
-        await miltonDai.addSwapLiquidator(closerUser.getAddress());
 
         //when
         await miltonDai.connect(closerUser).itfCloseSwapPayFixed(2, endTimestamp);
@@ -3453,9 +3452,11 @@ describe("Milton - close position", () => {
         const expectedBalanceUserTwo = BigNumber.from("9999704642032047919907479");
         const expectedBalanceUserThree = BigNumber.from("9999784642032047919907479");
 
+        await miltonDai.addSwapLiquidator(await userThree.getAddress());
+
         //when
         await miltonDai
-            .connect(paramsPayFixed.from)
+            .connect(userThree)
             .itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
@@ -3546,9 +3547,10 @@ describe("Milton - close position", () => {
 
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
+        await miltonDai.addSwapLiquidator(await userThree.getAddress());
         //when
         const results = await miltonDai
-            .connect(paramsPayFixed.from)
+            .connect(userThree)
             .callStatic.itfCloseSwaps(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then

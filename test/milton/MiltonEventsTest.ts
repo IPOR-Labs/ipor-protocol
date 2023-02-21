@@ -440,6 +440,8 @@ describe("Milton Events", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_160_18DEC, params.openTimestamp);
 
+        await miltonUsdt.addSwapLiquidator(await userThree.getAddress());
+
         await expect(
             miltonUsdt
                 .connect(userThree)
