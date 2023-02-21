@@ -151,6 +151,7 @@ library TestConstants {
     uint256 public constant TC_OPENING_FEE_6DEC = 2990103;
     int256 public constant TC_OPENING_FEE_6DEC_INT = 2990103;
     uint256 public constant TC_COLLATERAL_6DEC = 9967009897;
+    int256 public constant TC_COLLATERAL_6DEC_INT = 9967009897;
 
     uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000 * 1000000;
 
