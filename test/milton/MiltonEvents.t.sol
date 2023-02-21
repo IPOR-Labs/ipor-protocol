@@ -471,6 +471,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
         prepareJoseph(josephUsdt);
         prepareIpToken(ipTokenUsdt, address(josephUsdt));
+
+        miltonUsdt.addSwapLiquidator(_userThree);
+
         // when
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp); // 5%, PERCENTAGE_5_18DEC
