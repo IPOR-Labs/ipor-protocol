@@ -89,7 +89,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         milton.removeSwapLiquidator(_liquidator);
     }
 
-    function testShouldClosePayFixedSwaoAsIporOwnerBeforeMaturity() public {
+    function testShouldClosePayFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
         vm.warp(100);
 
@@ -98,10 +98,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -140,10 +140,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -184,10 +184,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -219,7 +219,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedAsAnyoneInLastOneHour() public {
+    function testShouldClosePayFixedAsAnyoneElseInLastOneHour() public {
         //given
         vm.warp(100);
 
@@ -228,10 +228,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -266,7 +266,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedAsAnyoneInLast30Minutes() public {
+    function testShouldClosePayFixedAsAnyoneElseInLast30Minutes() public {
         //given
         vm.warp(100);
 
@@ -275,10 +275,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -313,7 +313,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedAsLiquiditatorAfterMaturity() public {
+    function testShouldClosePayFixedAsLiquidatorAfterMaturity() public {
         //given
         vm.warp(100);
 
@@ -322,10 +322,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -371,10 +371,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -416,10 +416,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -451,7 +451,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapAsAnyoneInMoreThanLastOneHour() public {
+    function testShouldNotClosePayFixedSwapAsAnyoneElseInMoreThanLastOneHourBelow100Percentage() public {
         //given
         vm.warp(100);
 
@@ -460,10 +460,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -496,7 +496,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapAsAnyoneAfterMaturity() public {
+    function testShouldNotClosePayFixedSwapAsAnyoneAfterMaturityBelow100Percentage() public {
         //given
         vm.warp(100);
 
@@ -505,10 +505,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -541,7 +541,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapAsLiquiditatorBeforeMaturity() public {
+    function testShouldNotClosePayFixedSwapAsLiquidatorBeforeMaturityMoreThanOneHour() public {
         //given
         vm.warp(100);
 
@@ -550,10 +550,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
-        uint256 acceptableFixedInterestRate = 10 * 10**16;
-        uint256 leverage = 100 * 10**18;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
+        uint256 acceptableFixedInterestRate = 10 * 10 ** 16;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -587,7 +587,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwaoAsIporOwnerBeforeMaturity() public {
+    function testShouldCloseReceiveFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
         vm.warp(100);
 
@@ -596,10 +596,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -638,10 +638,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -682,10 +682,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -726,10 +726,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -773,10 +773,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -820,10 +820,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -869,10 +869,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -914,10 +914,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -958,10 +958,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -1003,10 +1003,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -1039,7 +1039,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapAsLiquiditatorBeforeMaturity() public {
+    function testShouldNotCloseReceiveFixedSwapAsLiquidatorBeforeMaturityMoreThenOneHour() public {
         //given
         vm.warp(100);
 
@@ -1048,10 +1048,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
-        uint256 liquidityAmount = 1000000 * 10**6;
-        uint256 totalAmount = 10000 * 10**6;
+        uint256 liquidityAmount = 1000000 * 10 ** 6;
+        uint256 totalAmount = 10000 * 10 ** 6;
         uint256 acceptableFixedInterestRate = 0;
-        uint256 leverage = 100 * 10**18;
+        uint256 leverage = 100 * 10 ** 18;
 
         asset.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
@@ -1084,4 +1084,125 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(buyerBalanceBefore - buyerBalanceAfter, 10000000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
+
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24HourseFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24HourseFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByAnyoneElseAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByAnyoneElseBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByAnyoneElseBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
+    }
+    ///!!!
+    function testShouldNotClosePayFixedSwapByAnyoneElseAfterMaturity100PercentagePayoff() public {
+    }
+
+    function testShouldNotClosePayFixedSwapByAnyoneElseBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldNotClosePayFixedSwapByAnyoneElseBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldClosePayFixedSwapByAnyoneAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHourFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24HourseFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24HourseFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByAnyoneElseAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByAnyoneElseBeforeMaturityMoreThanOneHourFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByAnyoneElseBeforeMaturityLessThanOneHourFrom99HalfTo100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
+    }
+    ///!!!
+    function testShouldNotCloseReceiveFixedSwapByAnyoneElseAfterMaturity100PercentagePayoff() public {
+    }
+
+    function testShouldNotCloseReceiveFixedSwapByAnyoneElseBeforeMaturityLessThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldNotCloseReceiveFixedSwapByAnyoneElseBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
+    }
+
+    function testShouldCloseReceiveFixedSwapByAnyoneAfterMaturityFrom99HalfTo100PercentagePayoff() public {
+    }
+
 }

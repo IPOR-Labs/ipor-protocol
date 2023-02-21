@@ -60,8 +60,6 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
-    uint256 internal constant _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY = 99 * 1e16;
-
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
@@ -334,13 +332,21 @@ abstract contract MiltonInternal is
         return _MIN_LEVERAGE;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturity()
+    function _getMinLiquidationThresholdToCloseBeforeMaturityForBuyer()
         internal
         view
         virtual
         returns (uint256)
     {
-        return _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY;
+        return 99 * 1e16;
+    }
+    function _getMinLiquidationThresholdToCloseBeforeMaturityForCommunity()
+    internal
+    view
+    virtual
+    returns (uint256)
+    {
+        return 99 * 1e16;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
