@@ -16,7 +16,7 @@ contract MiltonUsdc is Milton {
         return 500 * 1e18;
     }
 
-    function _getMaxLpUtilizationPerLegRate() internal view virtual returns (uint256) {
+    function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
         return 25 * 1e15;
     }
 }
