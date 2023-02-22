@@ -60,6 +60,7 @@ contract MiltonUtils is Test {
         int256 expectedCloserUserBalance;
         uint256 expectedLiquidityPoolBalance;
         uint256 expectedSumOfBalancesBeforePayout;
+        uint256 expectedAdminBalance;
     }
 
     function prepareMockSpreadModel(
