@@ -712,8 +712,8 @@ describe("Milton - close position", () => {
             PERCENTAGE_5_18DEC
         );
 
-        const { tokenDai } = testData;
-        if (tokenDai === undefined) {
+        const { tokenDai, miltonDai } = testData;
+        if (tokenDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
         }
@@ -722,6 +722,8 @@ describe("Milton - close position", () => {
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC;
         const expectedPayoffWad = TC_COLLATERAL_18DEC;
+
+        await miltonDai.addSwapLiquidator(userThree.getAddress());
 
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
@@ -967,6 +969,8 @@ describe("Milton - close position", () => {
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+
+        await testData.miltonDai?.addSwapLiquidator(userThree.getAddress());
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
@@ -1561,7 +1565,7 @@ describe("Milton - close position", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it("should close position, DAI, not owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
+    it("should close position, DAI, not swap owner, receive fixed, Milton lost, User earned > Collateral, before maturity", async () => {
         const quote = BigNumber.from("159").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = quote;
         await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
@@ -1588,7 +1592,7 @@ describe("Milton - close position", () => {
             USD_10_18DEC,
             LEG_RECEIVE_FIXED,
             userTwo,
-            userThree,
+            admin,
             PERCENTAGE_5_18DEC,
             acceptableFixedInterestRate,
             PERIOD_27_DAYS_23_HOURS_IN_SECONDS,
@@ -1677,6 +1681,8 @@ describe("Milton - close position", () => {
         const expectedIncomeFeeValueWad = TC_INCOME_TAX_18DEC;
         const expectedPayoff = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
         const expectedPayoffWad = TC_COLLATERAL_18DEC.mul(BigNumber.from("-1"));
+
+        await testData.miltonDai?.addSwapLiquidator(userThree.getAddress());
 
         await testCaseWhenMiltonEarnAndUserLost(
             testData,
