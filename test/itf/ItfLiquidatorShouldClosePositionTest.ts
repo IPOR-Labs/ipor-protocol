@@ -1254,7 +1254,6 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         const expectedPayoff = TC_COLLATERAL_18DEC;
         const expectedPayoffWad = TC_COLLATERAL_18DEC;
 
-
         await testCaseWhenMiltonLostAndUserEarn(
             testData,
             tokenDai.address,

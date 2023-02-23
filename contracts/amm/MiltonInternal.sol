@@ -342,10 +342,10 @@ abstract contract MiltonInternal is
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
-    internal
-    view
-    virtual
-    returns (uint256)
+        internal
+        view
+        virtual
+        returns (uint256)
     {
         return 995 * 1e15;
     }
