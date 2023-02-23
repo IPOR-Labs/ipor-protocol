@@ -134,6 +134,10 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
 
+        MiltonStorage newMiltonStorage = new MiltonStorage();
+        vm.prank(_owner);
+        MiltonStorage(_miltonStorageProxyDai).upgradeTo(address(newMiltonStorage));
+
         //switch implementation of Joseph
         Joseph newJoseph = new JosephDai();
         vm.prank(_owner);
@@ -198,6 +202,10 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         Milton newMilton = new MiltonUsdc();
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
+
+        MiltonStorage newMiltonStorage = new MiltonStorage();
+        vm.prank(_owner);
+        MiltonStorage(_miltonStorageProxyUsdc).upgradeTo(address(newMiltonStorage));
 
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdc();
@@ -265,10 +273,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
 
+        MiltonStorage newMiltonStorage = new MiltonStorage();
+        vm.prank(_owner);
+        MiltonStorage(_miltonStorageProxyUsdc).upgradeTo(address(newMiltonStorage));
+
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdc();
         vm.prank(_owner);
         Joseph(_josephProxyUsdc).upgradeTo(address(newJoseph));
+
         vm.prank(_owner);
         Joseph(_josephProxyUsdc).addAppointedToRebalance(_owner);
 
@@ -396,10 +409,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
 
+        MiltonStorage newMiltonStorage = new MiltonStorage();
+        vm.prank(_owner);
+        MiltonStorage(_miltonStorageProxyUsdt).upgradeTo(address(newMiltonStorage));
+
         //switch implementation of Joseph
         Joseph newJoseph = new JosephUsdt();
         vm.prank(_owner);
         Joseph(_josephProxyUsdt).upgradeTo(address(newJoseph));
+
         vm.prank(_owner);
         Joseph(_josephProxyUsdt).addAppointedToRebalance(_owner);
 

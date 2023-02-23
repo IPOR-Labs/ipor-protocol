@@ -27,6 +27,7 @@ contract ForkUtils is Test, TestCommons {
         IAsset(asset).approve(joseph, 1_000_000 * 10**assetDecimals);
         IAsset(asset).approve(milton, 1_000_000 * 10**assetDecimals);
         Joseph(joseph).provideLiquidity(10_000 * 10**assetDecimals);
+
         uint256 swapPayFixedId = Milton(milton).openSwapPayFixed(
             10_000 * 10**assetDecimals,
             1e18,
@@ -41,7 +42,7 @@ contract ForkUtils is Test, TestCommons {
 
         vm.warp(block.timestamp + 60 * 60 * 24 * 7);
 
-        vm.startPrank(userOne);
+        vm.startPrank(owner);
         Milton(milton).closeSwapPayFixed(swapPayFixedId);
         Milton(milton).closeSwapReceiveFixed(swapPayReceiveId);
         vm.stopPrank();
