@@ -336,7 +336,9 @@ describe("MiltonStorage", () => {
             expect(true).to.be.false;
             return;
         }
-        const derivativeStruct = prepareSwapPayFixedStruct18DecSimpleCase1(await userTwo.getAddress());
+        const derivativeStruct = prepareSwapPayFixedStruct18DecSimpleCase1(
+            await userTwo.getAddress()
+        );
         await assertError(
             //when
             miltonStorageDai

@@ -105,7 +105,9 @@ describe("Milton Events", () => {
 
     it("should emit event when open Receive Fixed Swap - 18 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("2").mul(N0__01_18DEC)
+        );
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
             [admin, userOne, userTwo, userThree, liquidityProvider],
@@ -229,7 +231,9 @@ describe("Milton Events", () => {
 
     it("should emit event when open Receive Fixed Swap - 6 decimals", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("2").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("2").mul(N0__01_18DEC)
+        );
 
         const testData = await prepareComplexTestDataUsdtCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),
