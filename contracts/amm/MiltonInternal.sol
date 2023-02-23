@@ -332,7 +332,7 @@ abstract contract MiltonInternal is
         return _MIN_LEVERAGE;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturityForBuyer()
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
         internal
         view
         virtual
@@ -340,13 +340,14 @@ abstract contract MiltonInternal is
     {
         return 99 * 1e16;
     }
-    function _getMinLiquidationThresholdToCloseBeforeMaturityForCommunity()
+
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
     internal
     view
     virtual
     returns (uint256)
     {
-        return 99 * 1e16;
+        return 995 * 1e15;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
@@ -445,7 +446,7 @@ abstract contract MiltonInternal is
         return 1 days;
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByAnyone()
+    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
         internal
         pure
         virtual

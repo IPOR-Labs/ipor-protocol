@@ -29,6 +29,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         MiltonStorage miltonStorage;
         ItfMilton milton;
         ItfJoseph joseph;
+        ItfIporOracle iporOracle;
     }
 
     address internal _admin;
@@ -70,7 +71,17 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
         stanley.setMilton(address(milton));
 
-        return IporProtocol(MockTestnetToken(asset), ipToken, stanley, miltonStorage, milton, joseph);
+        IporProtocol memory iporProtocol;
+
+        iporProtocol.asset = MockTestnetToken(asset);
+        iporProtocol.ipToken = ipToken;
+        iporProtocol.stanley = stanley;
+        iporProtocol.miltonStorage = miltonStorage;
+        iporProtocol.milton = milton;
+        iporProtocol.joseph = joseph;
+        iporProtocol.iporOracle = iporOracle;
+
+        return iporProtocol;
     }
 
     function setupIporProtocolForDai() public returns (IporProtocol memory iporProtocol) {
@@ -102,7 +113,17 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
         stanley.setMilton(address(milton));
 
-        return IporProtocol(MockTestnetToken(asset), ipToken, stanley, miltonStorage, milton, joseph);
+        IporProtocol memory iporProtocol;
+
+        iporProtocol.asset = MockTestnetToken(asset);
+        iporProtocol.ipToken = ipToken;
+        iporProtocol.stanley = stanley;
+        iporProtocol.miltonStorage = miltonStorage;
+        iporProtocol.milton = milton;
+        iporProtocol.joseph = joseph;
+        iporProtocol.iporOracle = iporOracle;
+
+        return iporProtocol;
     }
 
     function getTokenUsdt() public returns (MockTestnetToken) {

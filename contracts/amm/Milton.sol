@@ -619,33 +619,50 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         if (_msgSender() != owner()) {
-            if (closeTimestamp >= iporSwap.endTimestamp) {
-                require(
-                    _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
-                    MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
-                );
-            } else {
-                if (_msgSender() == iporSwap.buyer) {
-                    uint256 absPayoff = IporMath.absoluteValue(payoff);
-                    uint256 minPayoffToCloseBeforeMaturityForBuyer = IporMath.percentOf(
-                        iporSwap.collateral,
-                        _getMinLiquidationThresholdToCloseBeforeMaturityForBuyer()
-                    );
+            uint256 absPayoff = IporMath.absoluteValue(payoff);
+            uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
+                iporSwap.collateral,
+                _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
+            );
 
-                    if (absPayoff < minPayoffToCloseBeforeMaturityForBuyer) {
+            if (closeTimestamp >= iporSwap.endTimestamp) {
+                if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
+                    require(
+                        _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
+                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
+                    );
+                }
+
+            } else {
+                /// @dev before maturity
+                uint256 minPayoffToCloseBeforeMaturityByBuyer = IporMath.percentOf(
+                    iporSwap.collateral,
+                    _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
+                );
+
+                if (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer && absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
+                    require(
+                        _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
+                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
+                    );
+                }
+
+                if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
+                    /// @dev when amount threshold not achieved then time threshold
+
+                    if (_msgSender() == iporSwap.buyer) {
                         require(
                             iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
                             closeTimestamp,
                             MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER
                         );
+                    } else {
+                        require(
+                            iporSwap.endTimestamp - _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() <=
+                            closeTimestamp,
+                            MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
+                        );
                     }
-                } else {
-                    require(
-                        iporSwap.endTimestamp -
-                        _getTimeBeforeMaturityAllowedToCloseSwapByAnyone() <=
-                        closeTimestamp,
-                        MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
-                    );
                 }
             }
         }
