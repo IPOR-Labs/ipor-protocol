@@ -104,6 +104,8 @@ library TestConstants {
     int256 public constant D16_INT = 1e16;
     int256 public constant ZERO_INT = 0;
 
+    uint64 public constant ZERO_64UINT = 0;
+
     uint256 public constant ZERO = 0;
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
@@ -132,7 +134,16 @@ library TestConstants {
     uint256 public constant PERCENTAGE_7_6DEC = 7 * 10000;
     uint256 public constant PERCENTAGE_50_6DEC = 50 * 10000;
 
+    uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
+    uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
+    uint64 public constant TC_150_EMA_18DEC_64UINT = 150 * 1e16;
+    uint64 public constant TC_151_EMA_18DEC_64UINT = 151 * 1e16;
+    uint64 public constant TC_160_EMA_18DEC_64UINT = 160 * 1e16;
+    uint64 public constant TC_161_EMA_18DEC_64UINT = 161 * 1e16;
+    uint64 public constant TC_400_EMA_18DEC_64UINT = 400 * 1e16;
     uint256 public constant TC_DEFAULT_EMA_18DEC = 3 * 1e16;
+    uint256 public constant TC_NOTIONAL_18DEC = 99670098970308907327800;
     uint256 public constant TOTAL_SUPPLY_6_DECIMALS = 100000000000000 * 1000000;
     uint256 public constant TC_IBT_PRICE_DAI_6DEC = 1000000;
     uint256 public constant TC_TOTAL_AMOUNT_100_6DEC = 100 * 1000000;
@@ -145,6 +156,7 @@ library TestConstants {
     uint256 public constant TC_OPENING_FEE_6DEC = 2990103;
     int256 public constant TC_OPENING_FEE_6DEC_INT = 2990103;
     uint256 public constant TC_COLLATERAL_6DEC = 9967009897;
+    int256 public constant TC_COLLATERAL_6DEC_INT = 9967009897;
 
     uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000 * 1000000;
 

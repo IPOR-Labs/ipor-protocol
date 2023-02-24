@@ -110,7 +110,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         ).to.be.equal(actualExchangeRate);
     });
 
-    it.skip("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
+    it("should calculate Exchange Rate when Liquidity Pool Balance is NOT zero and ipToken Total Supply is NOT zero, USDT 6 decimals", async () => {
         //given
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
