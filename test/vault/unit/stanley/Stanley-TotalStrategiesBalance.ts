@@ -81,8 +81,8 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
         const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
         await DAI.approve(stanley.address, expectedBalance);
 
-        await strategyAave.setApy(BigNumber.from("555"));
-        await strategyCompound.setApy(BigNumber.from("444"));
+        await strategyAave.setApr(BigNumber.from("555"));
+        await strategyCompound.setApr(BigNumber.from("444"));
 
         await stanley.deposit(expectedBalance);
 
@@ -101,8 +101,8 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
         const expectedBalance = TC_AMOUNT_10000_USD_18DEC;
         await DAI.approve(stanley.address, expectedBalance);
 
-        await strategyAave.setApy(BigNumber.from("33333333"));
-        await strategyCompound.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApr(BigNumber.from("33333333"));
+        await strategyCompound.setApr(BigNumber.from("55555555"));
 
         await stanley.deposit(expectedBalance);
 
@@ -121,12 +121,12 @@ describe("Stanley -> totalStrategiesBalance 18 decimals", () => {
         const expectedTotalBalance = TC_AMOUNT_20000_USD_18DEC;
         await DAI.approve(stanley.address, expectedTotalBalance);
 
-        await strategyAave.setApy(BigNumber.from("33333333"));
-        await strategyCompound.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApr(BigNumber.from("33333333"));
+        await strategyCompound.setApr(BigNumber.from("55555555"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
-        await strategyAave.setApy(BigNumber.from("55555555"));
-        await strategyCompound.setApy(BigNumber.from("33333333"));
+        await strategyAave.setApr(BigNumber.from("55555555"));
+        await strategyCompound.setApr(BigNumber.from("33333333"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         //when
@@ -208,8 +208,8 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         await usdc.approve(stanley.address, expectedBalance6D);
 
-        await strategyAave.setApy(BigNumber.from("555"));
-        await strategyCompound.setApy(BigNumber.from("444"));
+        await strategyAave.setApr(BigNumber.from("555"));
+        await strategyCompound.setApr(BigNumber.from("444"));
 
         await stanley.deposit(expectedBalance18D);
 
@@ -230,8 +230,8 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         await usdc.approve(stanley.address, expectedBalance6D);
 
-        await strategyAave.setApy(BigNumber.from("33333333"));
-        await strategyCompound.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApr(BigNumber.from("33333333"));
+        await strategyCompound.setApr(BigNumber.from("55555555"));
 
         await stanley.deposit(expectedBalance18D);
 
@@ -252,12 +252,12 @@ describe("Stanley -> totalStrategiesBalance 6 decimals", () => {
 
         await usdc.approve(stanley.address, expectedTotalBalance6D);
 
-        await strategyAave.setApy(BigNumber.from("33333333"));
-        await strategyCompound.setApy(BigNumber.from("55555555"));
+        await strategyAave.setApr(BigNumber.from("33333333"));
+        await strategyCompound.setApr(BigNumber.from("55555555"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
-        await strategyAave.setApy(BigNumber.from("55555555"));
-        await strategyCompound.setApy(BigNumber.from("33333333"));
+        await strategyAave.setApr(BigNumber.from("55555555"));
+        await strategyCompound.setApr(BigNumber.from("33333333"));
         await stanley.deposit(TC_AMOUNT_10000_USD_18DEC);
 
         //when

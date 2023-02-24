@@ -1304,7 +1304,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         expect(expectedPayoffWad.abs()).to.be.lt(TC_COLLATERAL_18DEC);
     });
 
-    it.skip("should close DAI position pay fixed, Liquidator earned, User lost > Collateral, before maturity", async () => {
+    it("should close DAI position pay fixed, Liquidator earned, User lost > Collateral, before maturity", async () => {
         const quote = BigNumber.from("161").mul(N0__01_18DEC);
         const acceptableFixedInterestRate = BigNumber.from("161").mul(N0__01_18DEC);
         await miltonSpreadModel.setCalculateQuotePayFixed(quote);
