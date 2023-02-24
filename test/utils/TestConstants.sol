@@ -134,6 +134,7 @@ library TestConstants {
     uint256 public constant PERCENTAGE_7_6DEC = 7 * 10000;
     uint256 public constant PERCENTAGE_50_6DEC = 50 * 10000;
 
+    uint64 public constant TC_1_EMA_18DEC_64UINT = 1 * 1e16;
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
     uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
