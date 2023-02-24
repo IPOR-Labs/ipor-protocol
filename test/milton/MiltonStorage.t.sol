@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -21,7 +19,7 @@ import "../../contracts/interfaces/types/AmmTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
-contract MiltonStorageTest is Test, TestCommons, DataUtils, SwapUtils {
+contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
