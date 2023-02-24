@@ -661,7 +661,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
-    ) internal view returns (uint256 status) {
+    ) internal view returns (uint256) {
         if (iporSwap.state != uint256(AmmTypes.SwapState.ACTIVE)) {
             return 1;
         }
