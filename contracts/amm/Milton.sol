@@ -99,6 +99,39 @@ abstract contract Milton is MiltonInternal, IMilton {
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
+    function getClosableStatusForPayFixedSwap(uint256 swapId)
+        external
+        view
+        override
+        returns (uint256 closableStatus)
+    {
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
+        closableStatus = _getClosableStatusForSwap(
+            _msgSender(),
+            owner(),
+            iporSwap,
+            _calculatePayoffPayFixed(block.timestamp, iporSwap),
+            block.timestamp
+        );
+    }
+
+    function getClosableStatusForReceiveFixedSwap(uint256 swapId)
+        external
+        view
+        override
+        returns (uint256 closableStatus)
+    {
+        IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
+
+        closableStatus = _getClosableStatusForSwap(
+            _msgSender(),
+            owner(),
+            iporSwap,
+            _calculatePayoffReceiveFixed(block.timestamp, iporSwap),
+            block.timestamp
+        );
+    }
+
     function openSwapPayFixed(
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
@@ -609,17 +642,29 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _validateAllowanceToCloseSwap(
+    /// @notice Check closable status for Swap given as a parameter.
+    /// @param msgSender The address of the caller
+    /// @param owner The address of the owner
+    /// @param iporSwap The swap to be checked
+    /// @param payoff The payoff of the swap
+    /// @param closeTimestamp The timestamp of closing
+    /// @return closableStatus Closable status for Swap.
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    function _getClosableStatusForSwap(
         address msgSender,
         address owner,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
-    ) internal view {
-        require(
-            iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE),
-            MiltonErrors.INCORRECT_SWAP_STATUS
-        );
+    ) internal view returns (uint256 status) {
+        if (iporSwap.state != uint256(AmmTypes.SwapState.ACTIVE)) {
+            return 1;
+        }
 
         if (msgSender != owner) {
             uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -634,13 +679,11 @@ abstract contract Milton is MiltonInternal, IMilton {
                     absPayoff < minPayoffToCloseBeforeMaturityByCommunity ||
                     absPayoff == iporSwap.collateral
                 ) {
-                    require(
-                        _swapLiquidators[msgSender] || msgSender == iporSwap.buyer,
-                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
-                    );
+                    if (_swapLiquidators[msgSender] != true && msgSender != iporSwap.buyer) {
+                        return 2;
+                    }
                 }
             } else {
-                /// @dev before maturity
                 uint256 minPayoffToCloseBeforeMaturityByBuyer = IporMath.percentOf(
                     iporSwap.collateral,
                     _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
@@ -651,33 +694,56 @@ abstract contract Milton is MiltonInternal, IMilton {
                         absPayoff < minPayoffToCloseBeforeMaturityByCommunity) ||
                     absPayoff == iporSwap.collateral
                 ) {
-                    require(
-                        _swapLiquidators[msgSender] || msgSender == iporSwap.buyer,
-                        MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
-                    );
+                    if (_swapLiquidators[msgSender] != true && msgSender != iporSwap.buyer) {
+                        return 2;
+                    }
                 }
 
                 if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
-                    /// @dev when amount threshold not achieved then time threshold
-
                     if (msgSender == iporSwap.buyer) {
-                        require(
+                        if (
                             iporSwap.endTimestamp -
-                                _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
-                                closeTimestamp,
-                            MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER
-                        );
+                                _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() >
+                            closeTimestamp
+                        ) {
+                            return 3;
+                        }
                     } else {
-                        require(
+                        if (
                             iporSwap.endTimestamp -
-                                _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() <=
-                                closeTimestamp,
-                            MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY
-                        );
+                                _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() >
+                            closeTimestamp
+                        ) {
+                            return 4;
+                        }
                     }
                 }
             }
         }
+
+        return 0;
+    }
+
+    function _validateAllowanceToCloseSwap(
+        address msgSender,
+        address owner,
+        IporTypes.IporSwapMemory memory iporSwap,
+        int256 payoff,
+        uint256 closeTimestamp
+    ) internal view {
+        uint256 closableStatus = _getClosableStatusForSwap(
+            msgSender,
+            owner,
+            iporSwap,
+            payoff,
+            closeTimestamp
+        );
+        if (closableStatus == 1) revert(MiltonErrors.INCORRECT_SWAP_STATUS);
+        if (closableStatus == 2)
+            revert(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR);
+        if (closableStatus == 3)
+            revert(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER);
+        if (closableStatus == 4) revert(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY);
     }
 
     function _closeSwapReceiveFixed(
