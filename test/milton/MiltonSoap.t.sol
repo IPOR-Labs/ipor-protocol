@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -19,7 +17,7 @@ import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 
-contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
+contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
@@ -48,7 +46,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateSoapWhenNoDerivativesSoapEqualZero() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
 
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -66,7 +65,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculate() public {
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -108,7 +108,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculateAfter25Days() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -125,6 +126,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoapBalance = -68267191075554066594;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -145,14 +147,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap, -68267191075554066594);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapDAIReceiveFixedWhenAddPositionThenCalculate() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -169,6 +172,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -188,14 +192,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // when
         (,, int256 soap) = calculateSoap(_userTwo, block.timestamp, mockCase0MiltonDai);
         // then
-        assertEq(soap, TestConstants.ZERO_INT);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapDAIReceiveFixedWhenAddPositionThenCalculateAfter25Days() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -212,6 +217,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = -68267191075554025634;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -232,14 +238,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap, -68267191075554025634);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddAndRemovePosition() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -256,6 +263,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -278,14 +286,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap, TestConstants.ZERO_INT);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapDAIReceiveFixedWhenAddAndRemovePosition() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -302,6 +311,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -327,14 +337,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap, TestConstants.ZERO_INT);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixed18Decimals() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -351,6 +362,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = -136534382151108092229;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -379,14 +391,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap, -136534382151108092229);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenUSDTPayFixedAndUSDTReceiveFixed6Decimals() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
         MockCase1Stanley mockCase1StanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -404,6 +417,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase1StanleyUsdt)
         );
+        int256 expectedSoapBalance = -136534382151108092229;
         prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
@@ -431,7 +445,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
         // then
-        assertEq(soap, -136534382151108092229);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndUSDTPayFixed() public {
@@ -442,7 +456,9 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(
+            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
+        );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -480,6 +496,9 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Josephs.mockCase0JosephDai)
         );
+        int256 expectedSoapUsdt = -68267191075554066594;
+        int256 expectedSoapDai = -68267191075554066594;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersUsd(
             _users,
             _usdtMockedToken,
@@ -532,22 +551,19 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             10 * Constants.D18,
             mockCase0Miltons.mockCase0MiltonDai
         );
-        (,, int256 soapUsdt) = calculateSoap(
-            _userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0Miltons.mockCase0MiltonUsdt
-        );
-        (,, int256 soapDai) = calculateSoap(
-            _userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0Miltons.mockCase0MiltonDai
-        );
+        (,, int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, mockCase0Miltons.mockCase0MiltonUsdt);
+        (,, int256 soapDai) = calculateSoap(_userTwo, endTimestamp, mockCase0Miltons.mockCase0MiltonDai);
         // then
-        assertEq(soapUsdt, -68267191075554066594);
-        assertEq(soapDai, -68267191075554066594);
+        assertEq(soapUsdt, expectedSoapUsdt);
+        assertEq(soapDai, expectedSoapDai);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixedAndClosePayFixed() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -564,6 +580,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = -68267191075554025634;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -590,18 +608,18 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         );
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (,, int256 soap) =
-            calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
+        mockCase0MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
+        (,, int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase0MiltonDai);
         // then
-        assertEq(soap, -68267191075554025634);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixedAndCloseReceiveFixed() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -618,6 +636,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
+        int256 expectedSoapBalance = -68267191075554066594;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -644,11 +664,10 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         );
         // when
         vm.prank(_userTwo);
-        mockCase0MiltonDai.itfCloseSwapReceiveFixed(2, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
-        (,, int256 soap) =
-            calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
+        mockCase0MiltonDai.itfCloseSwapReceiveFixed(2, endTimestamp);
+        (,, int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase0MiltonDai);
         // then
-        assertEq(soap, -68267191075554066594);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndUSDTReceiveFixedAndRemoveReceiveFixedPositionAfter25Days()
@@ -661,7 +680,9 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(_userOne, tokenAddresses, uint32(block.timestamp), 5e16, 0);
+        ItfIporOracle iporOracle = getIporOracleAssets(
+            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
+        );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -699,6 +720,9 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Josephs.mockCase0JosephDai)
         );
+        int256 expectedSoapUsdt = TestConstants.ZERO_INT;
+        int256 expectedSoapDai = -68267191075554066594;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersUsd(
             _users,
             _usdtMockedToken,
@@ -757,18 +781,12 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         );
         // when
         vm.prank(_userTwo);
-        mockCase0Miltons.mockCase0MiltonUsdt.itfCloseSwapReceiveFixed(
-            1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-        );
-        (,, int256 soapUsdt) = calculateSoap(
-            _userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0Miltons.mockCase0MiltonUsdt
-        );
-        (,, int256 soapDai) = calculateSoap(
-            _userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0Miltons.mockCase0MiltonDai
-        );
+        mockCase0Miltons.mockCase0MiltonUsdt.itfCloseSwapReceiveFixed(1, endTimestamp);
+        (,, int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, mockCase0Miltons.mockCase0MiltonUsdt);
+        (,, int256 soapDai) = calculateSoap(_userTwo, endTimestamp, mockCase0Miltons.mockCase0MiltonDai);
         // then
-        assertEq(soapUsdt, 0);
-        assertEq(soapDai, -68267191075554066594);
+        assertEq(soapUsdt, expectedSoapUsdt);
+        assertEq(soapDai, expectedSoapDai);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndChangeIbtPriceAndWait25DaysAndThenCalculateSoap18Decimals()
@@ -777,7 +795,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -794,6 +813,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoapBalance = 7918994164764269327487;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -812,17 +833,12 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         );
         vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(
-            address(_daiMockedToken),
-            TestConstants.PERCENTAGE_6_18DEC,
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-        );
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_6_18DEC, endTimestamp);
         vm.stopPrank();
         // when
-        (,, int256 soap) =
-            calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonDai);
+        (,, int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase0MiltonDai);
         // then
-        assertEq(soap, 7918994164764269327487);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenUSDTPayFixedAndChangeIbtPriceAndWait25DaysAndThenCalculateSoap6Decimals()
@@ -831,7 +847,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IpToken ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
         MockCase1Stanley mockCase1StanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -849,6 +866,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase1StanleyUsdt)
         );
+        int256 expectedSoapBalance = 7918994164764269327487;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase1StanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
@@ -867,17 +886,12 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         );
         vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(
-            address(_usdtMockedToken),
-            TestConstants.PERCENTAGE_6_18DEC,
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-        );
+        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_6_18DEC, endTimestamp);
         vm.stopPrank();
         // when
-        (,, int256 soap) =
-            calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
+        (,, int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase0MiltonUsdt);
         // then
-        assertEq(soap, 7918994164764269327487);
+        assertEq(soap, expectedSoapBalance);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndChangeIbtPriceAndCalculateSoapAfter28DaysAndCalculateSoapAfter50DaysAndCompare(
@@ -885,7 +899,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -902,6 +917,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoapBalanceAfter28Days = 7935378290622402313573;
+        int256 expectedSoapBalanceAfter50Days = 8055528546915377478426;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -930,10 +947,10 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap28Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap28Days, 7935378290622402313573);
+        assertEq(soap28Days, expectedSoapBalanceAfter28Days);
         (,, int256 soap50Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap50Days, 8055528546915377478426);
+        assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndWait25DaysAndDAIPayFixedAndWait25DaysAndThenCalculateSoap()
@@ -942,7 +959,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -959,6 +977,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoapBalanceAfter50Days = -205221535441070939561;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -987,7 +1006,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap50Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap50Days, -205221535441070939561);
+        assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
     function testShouldCalculateSoapWhenDAYPayFixedAndWait25DaysAndUpdateIPORAndDAIPayFixedAndWait25DaysAndUpdateIPORAndThenCalculateSoap(
@@ -995,7 +1014,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1012,6 +1032,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoapBalanceAfter50Days = -205221535441070939561;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1052,7 +1073,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap50Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap50Days, -205221535441070939561);
+        assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
 
     function testShouldCalculateExactlyTheSameSoapWithAndWithoutUpdateIPORWithTheSameIndexValueWhenDAIPayFixed25And50DaysPeriod(
@@ -1060,7 +1081,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1113,16 +1135,20 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soapAfterUpdateIndex50Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soapBeforeUpdateIndex, -136534382151108133189);
-        assertEq(soapAfterUpdateIndex25Days, -136534382151108133189);
-        assertEq(soapAfterUpdateIndex50Days, -136534382151108133189);
+        int256 expectedSoapBeforeUpdateIndex = -136534382151108133189;
+        int256 expectedSoapAfterUpdateIndex25Days = -136534382151108133189;
+        int256 expectedSoapBalanceAfter50Days = -136534382151108133189;
+        assertEq(soapBeforeUpdateIndex, expectedSoapBeforeUpdateIndex);
+        assertEq(soapAfterUpdateIndex25Days, expectedSoapAfterUpdateIndex25Days);
+        assertEq(soapAfterUpdateIndex50Days, expectedSoapBalanceAfter50Days);
     }
 
     function testShouldCalculateNegativeSoapWhenDAIPayFixedAndWat25DaysAndUpdateIbtPriceAfterSwapOpened() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1155,6 +1181,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
+        int256 expectedSoap = TestConstants.ZERO_INT;
         // when
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
@@ -1165,14 +1192,15 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soapRightAfterOpenedPayFixedSwap) =
             calculateSoap(_userTwo, block.timestamp + 86500, mockCase0MiltonDai);
         // then
-        assertLt(soapRightAfterOpenedPayFixedSwap, 0);
+        assertLt(soapRightAfterOpenedPayFixedSwap, expectedSoap);
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAnd2xAndWait50Days() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1189,6 +1217,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap50Days = -205221535441070939561;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1229,7 +1258,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         (,, int256 soap50Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, mockCase0MiltonDai);
         // then
-        assertEq(soap50Days, -205221535441070939561);
+        assertEq(soap50Days, expectedSoap50Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIPayFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndDAIPayFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75DaysComplexTotalAmounts(
@@ -1237,7 +1266,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1254,6 +1284,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1298,7 +1329,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIPayFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndDAIPayFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75DaysSimpleTotalAmounts(
@@ -1306,7 +1337,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1323,6 +1355,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1367,7 +1400,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIPayFixedAtIPOR6PercentAndIPOR3PercentAfter25DaysAndDAIPayFixedAndIPOR3PercentAfter50DaysAndCloseAllSwapsAfter75Days(
@@ -1375,7 +1408,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_7_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1392,6 +1426,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1436,7 +1471,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIReceiveFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndDAIReceiveFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75Days(
@@ -1444,7 +1479,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(2);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1461,6 +1497,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1505,7 +1542,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIReceiveFixedAtIPOR6PercentAndIPOR3PercentAfter25DaysAndDAIReceiveFixedAndIPOR3PercentAfter50DaysAndCloseAllSwapsAfter75Days(
@@ -1513,7 +1550,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(5);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1530,6 +1568,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1574,7 +1613,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenDAIReceiveFixedAtIPOR6PercentAndIPOR6PercentAfter25DaysAndDAIReceiveFixedAndIPOR3PercentAfter50DaysAndCloseAllSwapsAfter75Days(
@@ -1582,7 +1621,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_5_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1599,6 +1639,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
         prepareJoseph(mockCase0JosephDai);
@@ -1643,7 +1684,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonDai);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenUSDTPayFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndUSDTPayFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75DaysSimpleTotalAmounts(
@@ -1651,7 +1692,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1668,6 +1710,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase0StanleyUsdt)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
@@ -1712,7 +1755,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenUSDTPayFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndUSDTPayFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75DaysComplexTotalAmounts(
@@ -1720,7 +1763,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1737,6 +1781,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase0StanleyUsdt)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
@@ -1781,7 +1826,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 
     function testShouldCalculateSoapEqualZeroWhenUSDTReceiveFixedAtIPOR3PercentAndIPOR5PercentAfter25DaysAndDAIReceiveFixedAndIPOR6PercentAfter50DaysAndCloseAllSwapsAfter75Days(
@@ -1789,7 +1834,8 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), 3e16);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley mockCase0StanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -1806,6 +1852,7 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase0StanleyUsdt)
         );
+        int256 expectedSoap75Days = TestConstants.ZERO_INT;
         prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(mockCase0StanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
@@ -1850,6 +1897,6 @@ contract MiltonSoapTest is Test, TestCommons, DataUtils, SwapUtils {
         // then
         (,, int256 soap75Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, mockCase0MiltonUsdt);
-        assertEq(soap75Days, 0);
+        assertEq(soap75Days, expectedSoap75Days);
     }
 }
