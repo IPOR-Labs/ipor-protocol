@@ -53,7 +53,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooLow() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -92,7 +93,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsGreaterThanAssetBalance() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -131,7 +133,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -170,7 +173,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed18Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -209,7 +213,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInReceiveFixed18Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -248,7 +253,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed6Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -287,7 +293,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInReceiveFixed6Decimals() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -326,7 +333,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseOne() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -365,7 +373,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseTwo() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -405,7 +414,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     function testShouldNotOpenPositionWhenLiquidityPoolBalanceIsTooLow() public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_1_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_1_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -441,11 +451,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.startPrank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), 16 * TestConstants.D17, block.timestamp);
-        iporOracle.itfUpdateIndex(
-            address(_daiMockedToken),
-            TestConstants.PERCENTAGE_5_18DEC,
-            endTimestamp    
-        );
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, endTimestamp);
         vm.stopPrank();
         miltonStorageDai.setJoseph(_userOne);
         vm.prank(_userOne);
@@ -460,7 +466,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPayFixedPositionWhenLeverageIsTooLow() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -495,7 +502,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPayFixedPositionWhenLeverageIsTooHigh() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -526,7 +534,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenUtilizationIsExceeded() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase7MiltonDai mockCase7MiltonDai = getMockCase7MiltonDai(
@@ -560,7 +569,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsLowerThanFee() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase8MiltonDai mockCase8MiltonDai = getMockCase8MiltonDai(
@@ -594,7 +604,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotGetMiltonAccruedBalanceWhenLiquidtyPoolAmountIsTooLow() public {
         // given
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase8MiltonDai mockCase8MiltonDai = getMockCase8MiltonDai(
