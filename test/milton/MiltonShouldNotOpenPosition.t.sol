@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -13,19 +11,15 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase7MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 import "../../contracts/mocks/milton/MockMiltonStorage.sol";
-import "../../contracts/interfaces/types/MiltonTypes.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
-contract MiltonShouldNotOpenPositionTest is Test, TestCommons, DataUtils, SwapUtils {
+contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
