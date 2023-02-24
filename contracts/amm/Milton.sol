@@ -578,7 +578,8 @@ abstract contract Milton is MiltonInternal, IMilton {
         returns (uint256 payoutForLiquidator)
     {
         int256 payoff = _calculatePayoffPayFixed(closeTimestamp, iporSwap);
-        _validateAllowanceToCloseSwap(iporSwap, payoff, closeTimestamp);
+
+        _validateAllowanceToCloseSwap(_msgSender(), owner(), iporSwap, payoff, closeTimestamp);
 
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
 
@@ -609,6 +610,8 @@ abstract contract Milton is MiltonInternal, IMilton {
     }
 
     function _validateAllowanceToCloseSwap(
+        address msgSender,
+        address owner,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
@@ -618,8 +621,9 @@ abstract contract Milton is MiltonInternal, IMilton {
             MiltonErrors.INCORRECT_SWAP_STATUS
         );
 
-        if (_msgSender() != owner()) {
+        if (msgSender != owner) {
             uint256 absPayoff = IporMath.absoluteValue(payoff);
+
             uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
                 iporSwap.collateral,
                 _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
@@ -631,7 +635,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                     absPayoff == iporSwap.collateral
                 ) {
                     require(
-                        _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
+                        _swapLiquidators[msgSender] || msgSender == iporSwap.buyer,
                         MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
                     );
                 }
@@ -648,7 +652,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                     absPayoff == iporSwap.collateral
                 ) {
                     require(
-                        _swapLiquidators[_msgSender()] || _msgSender() == iporSwap.buyer,
+                        _swapLiquidators[msgSender] || msgSender == iporSwap.buyer,
                         MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR
                     );
                 }
@@ -656,7 +660,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
                     /// @dev when amount threshold not achieved then time threshold
 
-                    if (_msgSender() == iporSwap.buyer) {
+                    if (msgSender == iporSwap.buyer) {
                         require(
                             iporSwap.endTimestamp -
                                 _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() <=
@@ -682,7 +686,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     ) internal returns (uint256 payoutForLiquidator) {
         int256 payoff = _calculatePayoffReceiveFixed(closeTimestamp, iporSwap);
 
-        _validateAllowanceToCloseSwap(iporSwap, payoff, closeTimestamp);
+        _validateAllowanceToCloseSwap(_msgSender(), owner(), iporSwap, payoff, closeTimestamp);
 
         uint256 incomeFeeValue = _calculateIncomeFeeValue(payoff);
 

@@ -267,18 +267,13 @@ abstract contract MiltonInternal is
         return _getAutoUpdateIporIndexThreshold();
     }
 
-    function addSwapLiquidator(address newSwapLiquidator)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function addSwapLiquidator(address newSwapLiquidator) external override onlyOwner {
         require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
         _swapLiquidators[newSwapLiquidator] = true;
         emit SwapLiquidatorAdded(newSwapLiquidator);
     }
 
-    function removeSwapLiquidator(address liquidator) external override onlyOwner whenNotPaused {
+    function removeSwapLiquidator(address liquidator) external override onlyOwner {
         require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
         _swapLiquidators[liquidator] = false;
         emit SwapLiquidatorRemoved(liquidator);
