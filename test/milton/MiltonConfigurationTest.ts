@@ -201,7 +201,7 @@ describe("MiltonConfiguration", () => {
         //when
         const actualValue = await miltonConfiguration.getMaxLpUtilizationPerLegRate();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("48").mul(N0__01_18DEC));
+        expect(actualValue).to.be.eq(BigNumber.from("5").mul(N0__01_18DEC));
     });
 
     it("should setup init value for Income Fee Percentage", async () => {
@@ -242,14 +242,14 @@ describe("MiltonConfiguration", () => {
         //then
         expect(actualValue).to.be.eq(BigNumber.from("25").mul(N1__0_18DEC));
     });
-    it("should setup init value for Max Leveragey Value", async () => {
+    it("should setup init value for Max Leverage Value", async () => {
         //when
         const actualValue = await miltonConfiguration.getMaxLeverage();
         //then
-        expect(actualValue).to.be.eq(BigNumber.from("1000").mul(N1__0_18DEC));
+        expect(actualValue).to.be.eq(BigNumber.from("500").mul(N1__0_18DEC));
     });
 
-    it("should setup init value for Min Leveragey Value", async () => {
+    it("should setup init value for Min Leverage Value", async () => {
         //when
         const actualValue = await miltonConfiguration.getMinLeverage();
         //then
