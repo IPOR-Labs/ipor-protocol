@@ -22,6 +22,18 @@ interface IJoseph {
     /// @param ipTokenAmount redeem amount, represented in 18 decimals.
     function redeem(uint256 ipTokenAmount) external;
 
+    /// @notice Method calculate how one should modifiy balances of stanley and milton before withdraw.
+    /// @param wadMiltonErc20BalanceBeforeWithdraw balance of milton before withdraw, represented in 18 decimals.
+    /// @param vaultBalance balance of stanley before withdraw, represented in 18 decimals.
+    /// @param wadOperationAmount amount which one want to withdraw, represented in 18 decimals.
+    /// @return amount for rebalance, if is negative one should withdraw from stanley,
+    /// if it is positive one should deposit to stanley, represented in 18 decimals.
+    function calculateRebalanceAmountBeforeWithdraw(
+        uint256 wadMiltonErc20BalanceBeforeWithdraw,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) external view returns (int256);
+
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
     event ProvideLiquidity(
         /// @notice moment when liquidity is provided by `from` account

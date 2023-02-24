@@ -88,7 +88,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
         // then
         assertEq(josephVersionBefore, 0);
-        assertEq(josephVersionAfter, 2);
+        assertEq(josephVersionAfter, 3);
     }
 
     function testShouldSwitchImplementationOfJosephAndDontChangeValuesInStorage() public {
@@ -141,7 +141,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         assertTrue(amm.joseph.isAppointedToRebalance(userTwo));
 
         assertEq(josephVersionBefore, 0);
-        assertEq(amm.joseph.getVersion(), 2);
+        assertEq(amm.joseph.getVersion(), 3);
     }
 
     function _createAmmForDai() internal returns (Amm memory) {

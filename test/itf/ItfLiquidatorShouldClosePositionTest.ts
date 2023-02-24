@@ -30,18 +30,18 @@ import {
     PERIOD_27_DAYS_19_HOURS_IN_SECONDS,
     USD_10_000_18DEC,
     LEVERAGE_18DEC,
-    PERIOD_14_DAYS_IN_SECONDS, N0__1_18DEC,
+    PERIOD_14_DAYS_IN_SECONDS,
+    N0__1_18DEC,
 } from "../utils/Constants";
 import {
     prepareMockSpreadModel,
     MiltonUsdcCase,
     MiltonUsdtCase,
-    MiltonDaiCase,testCaseWhenMiltonLostAndUserEarn, testCaseWhenMiltonEarnAndUserLost
+    MiltonDaiCase,
+    testCaseWhenMiltonLostAndUserEarn,
+    testCaseWhenMiltonEarnAndUserLost,
 } from "../utils/MiltonUtils";
-import {
-    openSwapPayFixed,
-    openSwapReceiveFixed,
-} from "../utils/SwapUtils";
+import { openSwapPayFixed, openSwapReceiveFixed } from "../utils/SwapUtils";
 import { MockStanleyCase } from "../utils/StanleyUtils";
 import { JosephUsdcMockCases, JosephUsdtMockCases, JosephDaiMockCases } from "../utils/JosephUtils";
 
@@ -54,7 +54,7 @@ import {
     setupTokenDaiInitialValuesForUsers,
 } from "../utils/DataUtils";
 import { assertError } from "../utils/AssertUtils";
-import { beforeEach } from 'mocha'
+import { beforeEach } from "mocha";
 
 const { expect } = chai;
 
@@ -68,7 +68,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     before(async () => {
         [admin, userOne, userTwo, userThree, liquidityProvider] = await hre.ethers.getSigners();
-    })
+    });
 
     beforeEach(async () => {
         miltonSpreadModel = await prepareMockSpreadModel(
@@ -80,12 +80,14 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     });
 
     it("Should deploy contract", async () => {
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(userOne.getAddress(), userTwo.getAddress())
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            userOne.getAddress(),
+            userTwo.getAddress()
+        );
         // assert deployed
         expect(await itfLiquidator.deployed()).to.be.not.null;
     });
-        
 
     it("should emit CloseSwap event - pay fixed", async () => {
         //given
@@ -97,14 +99,16 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         );
         const { tokenDai, josephDai, miltonDai, iporOracle, miltonStorageDai } = testData;
 
-
         if (tokenDai === undefined || josephDai === undefined || miltonDai === undefined) {
             expect(true).to.be.false;
             return;
         }
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
         const params = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
         await iporOracle
@@ -137,17 +141,16 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_160_18DEC, params.openTimestamp);
 
-        const closeTimestamp = params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS)
+        const closeTimestamp = params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
         // when
-        await expect(
-            itfLiquidator.itfLiquidate([1, 2], [], closeTimestamp)
-        )
-        //then
-        .to.emit(miltonDai, "CloseSwap").withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
-        .to.emit(miltonDai, "CloseSwap").withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+        await expect(itfLiquidator.itfLiquidate([1, 2], [], closeTimestamp))
+            //then
+            .to.emit(miltonDai, "CloseSwap")
+            .withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+            .to.emit(miltonDai, "CloseSwap")
+            .withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue);
     });
-
 
     it("should emit CloseSwap event - receive fixed", async () => {
         //given
@@ -167,8 +170,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
         const params = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -199,15 +205,20 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         await iporOracle
             .connect(userOne)
             .itfUpdateIndex(params.asset, PERCENTAGE_160_18DEC, params.openTimestamp);
-        
+
         // when
         await expect(
-            itfLiquidator
-                .itfLiquidate([], [1, 2], params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS))
+            itfLiquidator.itfLiquidate(
+                [],
+                [1, 2],
+                params.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS)
+            )
         )
-        //then
-        .to.emit(miltonDai, "CloseSwap").withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
-        .to.emit(miltonDai, "CloseSwap").withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+            //then
+            .to.emit(miltonDai, "CloseSwap")
+            .withArgs(1, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue)
+            .to.emit(miltonDai, "CloseSwap")
+            .withArgs(2, anyValue, anyValue, anyValue, anyValue, anyValue, anyValue);
     });
 
     it("should close 10 pay fixed, 10 receive fixed positions in one transaction - case 1, all are opened", async () => {
@@ -254,8 +265,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -290,8 +304,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         for (let i = 0; i < volumePayFixed; i++) {
@@ -308,7 +321,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             );
         }
     });
-    
+
     it("should close 5 pay fixed swaps and leave another 5 open, and close 5 receive fixed and leave another 5 open in one transaction - case 2, some of them are already closed and some expired", async () => {
         //given
         await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
@@ -354,12 +367,20 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
         const paramsPayFixedOpenedLater = getPayFixedDerivativeParamsDAICase1(userTwo, tokenDai);
-        paramsPayFixedOpenedLater.openTimestamp = paramsPayFixedOpenedLater.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS)
-        const paramsReceiveFixedOpenedLater = getReceiveFixedDerivativeParamsDAICase1(userTwo, tokenDai);
-        paramsReceiveFixedOpenedLater.openTimestamp = paramsReceiveFixedOpenedLater.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS)
+        paramsPayFixedOpenedLater.openTimestamp =
+            paramsPayFixedOpenedLater.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS);
+        const paramsReceiveFixedOpenedLater = getReceiveFixedDerivativeParamsDAICase1(
+            userTwo,
+            tokenDai
+        );
+        paramsReceiveFixedOpenedLater.openTimestamp =
+            paramsReceiveFixedOpenedLater.openTimestamp.add(PERIOD_14_DAYS_IN_SECONDS);
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -391,12 +412,24 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             swapIdsReceiveFixed.push(i + 1);
         }
 
-        for (let i = volumePayFixed + volumeReceiveFixed; i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater; i++) {
+        for (
+            let i = volumePayFixed + volumeReceiveFixed;
+            i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater;
+            i++
+        ) {
             await openSwapPayFixed(testData, paramsPayFixedOpenedLater);
             swapIdsPayFixed.push(i + 1);
         }
 
-        for (let i = volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater; i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater + volumeReceiveFixedOpenedLater; i++) {
+        for (
+            let i = volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater;
+            i <
+            volumePayFixed +
+                volumeReceiveFixed +
+                volumePayFixedOpenedLater +
+                volumeReceiveFixedOpenedLater;
+            i++
+        ) {
             await openSwapReceiveFixed(testData, paramsReceiveFixedOpenedLater);
             swapIdsReceiveFixed.push(i + 1);
         }
@@ -407,8 +440,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         for (let i = 0; i < volumePayFixed; i++) {
@@ -425,20 +457,33 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             );
         }
 
-        for (let i = volumePayFixed + volumeReceiveFixed; i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater; i++) {
+        for (
+            let i = volumePayFixed + volumeReceiveFixed;
+            i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater;
+            i++
+        ) {
             const swapPayFixed = await miltonStorageDai.getSwapPayFixed(i + 1);
-            expect(expectedSwapStatusForOpenedLater, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
-                swapPayFixed.state
-            );
+            expect(
+                expectedSwapStatusForOpenedLater,
+                `Incorrect swap status for swapId=${i + 1}`
+            ).to.be.eq(swapPayFixed.state);
         }
 
-        for (let i = volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater; i < volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater + volumeReceiveFixedOpenedLater; i++) {
+        for (
+            let i = volumePayFixed + volumeReceiveFixed + volumePayFixedOpenedLater;
+            i <
+            volumePayFixed +
+                volumeReceiveFixed +
+                volumePayFixedOpenedLater +
+                volumeReceiveFixedOpenedLater;
+            i++
+        ) {
             const swapReceiveFixed = await miltonStorageDai.getSwapReceiveFixed(i + 1);
-            expect(expectedSwapStatusForOpenedLater, `Incorrect swap status for swapId=${i + 1}`).to.be.eq(
-                swapReceiveFixed.state
-            );
+            expect(
+                expectedSwapStatusForOpenedLater,
+                `Incorrect swap status for swapId=${i + 1}`
+            ).to.be.eq(swapReceiveFixed.state);
         }
-
     });
 
     it("should close 5 pay fixed, 5 receive fixed positions in one transaction - case 2, some of them are already closed", async () => {
@@ -485,8 +530,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -524,8 +572,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         await miltonDai.connect(paramsPayFixed.from).itfCloseSwapReceiveFixed(8, closeTimestamp);
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         for (let i = 0; i < volumePayFixed; i++) {
@@ -593,8 +640,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -626,12 +676,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
-        const expectedBalanceTrader = BigNumber.from("9997046420320479199074790")
-        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC
+        const expectedBalanceTrader = BigNumber.from("9997046420320479199074790");
+        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC;
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         const actualBalanceLiquidator = await tokenDai.balanceOf(await userThree.getAddress());
@@ -689,8 +738,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -722,8 +774,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
-        const expectedBalanceTrader = BigNumber.from("9997246420320479199074790")
-        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC
+        const expectedBalanceTrader = BigNumber.from("9997246420320479199074790");
+        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC;
 
         for (let i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
             await miltonDai
@@ -732,8 +784,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         }
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         const actualBalanceLiquidator = await tokenDai.balanceOf(await userThree.getAddress());
@@ -791,8 +842,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -824,8 +878,8 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
         const closeTimestamp = paramsPayFixed.openTimestamp.add(PERIOD_28_DAYS_IN_SECONDS);
 
-        const expectedBalanceTrader = BigNumber.from("9997246420320479199074790")
-        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC
+        const expectedBalanceTrader = BigNumber.from("9997246420320479199074790");
+        const expectedBalanceLiquidator = USER_SUPPLY_10MLN_18DEC;
 
         for (let i = 0; i < volumePayFixed; i++) {
             await miltonDai
@@ -834,8 +888,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         }
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         const actualBalanceLiquidator = await tokenDai.balanceOf(await userThree.getAddress());
@@ -849,10 +902,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         expect(expectedBalanceTrader, `Incorrect trader balance`).to.be.eq(actualBalanceTrader);
     });
 
-
     it("Should commit transaction try to close 2 pay fixed, 2 receive fixed positions in one transaction - all positions already closed", async () => {
         //given
-        await miltonSpreadModel.setCalculateQuoteReceiveFixed(BigNumber.from("4").mul(N0__01_18DEC));
+        await miltonSpreadModel.setCalculateQuoteReceiveFixed(
+            BigNumber.from("4").mul(N0__01_18DEC)
+        );
         await miltonSpreadModel.setCalculateQuotePayFixed(BigNumber.from("6").mul(N0__01_18DEC));
         const testData = await prepareTestData(
             BigNumber.from(Math.floor(Date.now() / 1000)),
@@ -895,8 +949,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         paramsReceiveFixed.from = paramsPayFixed.from;
         paramsReceiveFixed.openTimestamp = paramsPayFixed.openTimestamp;
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         await iporOracle
             .connect(userOne)
@@ -947,8 +1004,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
         );
 
         //when
-        await itfLiquidator
-            .itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
+        await itfLiquidator.itfLiquidate(swapIdsPayFixed, swapIdsReceiveFixed, closeTimestamp);
 
         //then
         const actualBalanceLiquidatorAfter = await tokenDai.balanceOf(await userThree.getAddress());
@@ -979,7 +1035,6 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             JosephDaiMockCases.CASE0
         );
 
-
         await prepareApproveForUsers(
             [userOne, userTwo, userThree, liquidityProvider],
             "DAI",
@@ -992,8 +1047,11 @@ describe("ItfLiquidator - close position (liquidate)", () => {
             return;
         }
 
-        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator")
-        const itfLiquidator = await ItfLiquidator.deploy(miltonDai?.address, miltonStorageDai?.address)
+        const ItfLiquidator = await hre.ethers.getContractFactory("ItfLiquidator");
+        const itfLiquidator = await ItfLiquidator.deploy(
+            miltonDai?.address,
+            miltonStorageDai?.address
+        );
 
         const closeTimestamp = BigNumber.from(Math.floor(Date.now() / 1000));
 
@@ -1341,7 +1399,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
     });
 
     it("should close DAI position pay fixed, Liquidator earned, User lost < Collateral, after maturity", async () => {
-        const quote = N0__1_18DEC
+        const quote = N0__1_18DEC;
         const acceptableFixedInterestRate = N0__1_18DEC;
         await miltonSpreadModel.setCalculateQuotePayFixed(quote);
 
@@ -1483,7 +1541,7 @@ describe("ItfLiquidator - close position (liquidate)", () => {
 
     it("should close DAI position receive fixed, Liquidator lost, 100% Collateral > User earned > 99% Collateral, before maturity", async () => {
         const quote = BigNumber.from("150").mul(N0__01_18DEC);
-        const acceptableFixedInterestRate = BigNumber.from("150").mul(N0__01_18DEC);;
+        const acceptableFixedInterestRate = BigNumber.from("150").mul(N0__01_18DEC);
         await miltonSpreadModel.setCalculateQuoteReceiveFixed(quote);
         const testData = await prepareComplexTestDataDaiCase000(
             BigNumber.from(Math.floor(Date.now() / 1000)),

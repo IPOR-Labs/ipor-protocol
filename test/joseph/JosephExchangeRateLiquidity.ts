@@ -184,9 +184,7 @@ describe("Joseph - calculate Exchange Rate when Liquidity Pool", () => {
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
 
         await miltonStorageDai.setJoseph(await userOne.getAddress());
-        await miltonStorageDai
-            .connect(userOne)
-            .subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
+        await miltonStorageDai.connect(userOne).subtractLiquidity(TC_TOTAL_AMOUNT_10_000_18DEC);
         await miltonStorageDai.setJoseph(josephDai.address);
 
         //when
