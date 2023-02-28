@@ -16,12 +16,17 @@ jobs:
         uses: ./.github/workflows/build-smart-contracts.yml
         secrets:
             HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+        with:
+            compile-command: 'compile:hardhat'
 
     foundry-tests:
         needs: notify
         uses: ./.github/workflows/foundry-tests.yml
         secrets:
-            HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+            FORK_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+        with:
+            test-options: '--no-match-path "test/fork/*"'
+            test-fork-options: '--match-path "test/fork/*"'
 
     build-java:
         needs: notify
