@@ -26,7 +26,7 @@ jobs:
             FORK_URL: ${{ secrets.HARDHAT_FORKING_URL }}
         with:
             test-options: '--no-match-path "test/fork/*"'
-            test-fork-options: '--match-path "test/fork/*"'
+            fork-test-options: '--match-path "test/fork/*"'
 
     build-java:
         needs: notify
