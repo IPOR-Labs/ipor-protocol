@@ -4080,7 +4080,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         uint256[] memory payFixedSwapIds = new uint256[](volumePayFixed);
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeReceiveFixed);
-        for (uint256 i = 0; i < volumePayFixed; i++) {
+        for (uint256 i = 0; i < volumePayFixed; ++i) {
             openSwapPayFixed(
                 _userTwo,
                 block.timestamp,
@@ -4091,7 +4091,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
             );
             payFixedSwapIds[i]= i + 1;
         }
-        for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+        for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; ++i) {
             openSwapReceiveFixed(
                 _userTwo,
                 block.timestamp,
@@ -4107,11 +4107,11 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
             payFixedSwapIds, receiveFixedSwapIds, block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS
         );
         // then
-        for (uint256 i = 0; i < volumePayFixed; i++) {
+        for (uint256 i = 0; i < volumePayFixed; ++i) {
             IporTypes.IporSwapMemory memory payFixedSwap = miltonStorageDai.getSwapPayFixed(i + 1);
             assertEq(payFixedSwap.state, TestConstants.ZERO);
         }
-        for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; i++) {
+        for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; ++i) {
             IporTypes.IporSwapMemory memory receiveFixedSwap = miltonStorageDai.getSwapReceiveFixed(i + 1);
             assertEq(receiveFixedSwap.state, TestConstants.ZERO);
         }
@@ -4848,5 +4848,72 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
         // then
         // no errors during execution closeSwaps
+    }
+
+    function testShouldClosePositionDAIWhenAmountExceedsBalanceMiltonOnDAIToken() public {
+        // given
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
+            address(_daiMockedToken),
+            address(iporOracle),
+            address(miltonStorageDai),
+            address(_miltonSpreadModel),
+            address(stanleyDai)
+        );
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
+            address(_daiMockedToken),
+            address(_ipTokenDai),
+            address(mockCase0MiltonDai),
+            address(miltonStorageDai),
+            address(stanleyDai)
+        );
+        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        uint256 initStanleyBalance = 30000 * TestConstants.D18;
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_27_DAYS_17_HOURS_IN_SECONDS;
+        _daiMockedToken.approve(address(stanleyDai), TestConstants.USD_1_000_000_000_18DEC);
+        stanleyDai.testDeposit(address(mockCase0MiltonDai), initStanleyBalance);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        openSwapPayFixed(
+            _userTwo,
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC,
+            mockCase0MiltonDai
+        );
+        vm.startPrank(_userOne);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_6_18DEC, endTimestamp);
+        vm.stopPrank();
+        deal(address(_daiMockedToken), address(mockCase0MiltonDai), 6044629100000000000000000);
+        uint256 daiBalanceAfterOpen = _daiMockedToken.balanceOf(address(mockCase0MiltonDai));
+        vm.prank(address(mockCase0MiltonDai));
+        _daiMockedToken.transfer(_admin, daiBalanceAfterOpen);
+        uint256 userTwoBalanceBeforeClose = _daiMockedToken.balanceOf(address(_userTwo));
+        uint256 stanleyBalanceBeforeClose = _daiMockedToken.balanceOf(address(stanleyDai));
+        uint256 miltonBalanceBeforeClose = _daiMockedToken.balanceOf(address(mockCase0MiltonDai));
+        // when
+        vm.prank(_userTwo);
+        mockCase0MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
+        // then
+        uint256 userTwoBalanceAfterClose = _daiMockedToken.balanceOf(address(_userTwo));
+        uint256 stanleyBalanceAfterClose = _daiMockedToken.balanceOf(address(stanleyDai));
+        uint256 miltonBalanceAfterClose = _daiMockedToken.balanceOf(address(mockCase0MiltonDai));
+        assertEq(userTwoBalanceBeforeClose, 9990000 * TestConstants.D18);
+        assertEq(userTwoBalanceAfterClose, 10007750013530187519076909);
+        assertEq(stanleyBalanceBeforeClose, initStanleyBalance);    
+        assertLt(stanleyBalanceAfterClose, stanleyBalanceBeforeClose);
+        assertEq(miltonBalanceBeforeClose, TestConstants.ZERO);
+        assertGt(miltonBalanceAfterClose, TestConstants.ZERO);
     }
 }
