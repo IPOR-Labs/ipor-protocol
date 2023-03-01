@@ -16,7 +16,7 @@ jobs:
         needs: notify
         uses: ./.github/workflows/build-smart-contracts.yml
         secrets:
-            HARDHAT_FORKING_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+            PROVIDER_URL: ${{ secrets.PROVIDER_URL }}
         with:
             compile-command: 'compile:hardhat'
 
@@ -24,7 +24,7 @@ jobs:
         needs: notify
         uses: ./.github/workflows/foundry-tests.yml
         secrets:
-            FORK_URL: ${{ secrets.HARDHAT_FORKING_URL }}
+            FORK_URL: ${{ secrets.PROVIDER_URL }}
         with:
             test-options: '--no-match-path "test/fork/*"'
             fork-test-options: '--match-path "test/fork/*"'
