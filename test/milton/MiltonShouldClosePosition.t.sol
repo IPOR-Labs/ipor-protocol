@@ -4422,9 +4422,11 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(14 * TestConstants.USD_28_000_18DEC, block.timestamp);
-        uint256[] memory payFixedSwapIds = new uint256[](12);
-        uint256[] memory receiveFixedSwapIds = new uint256[](2);
-        for (uint256 i = 0; i < 12; ++i) {
+        uint256 volumePayFixed = 12;
+        uint256 volumeReceiveFixed = 2;
+        uint256[] memory payFixedSwapIds = new uint256[](volumePayFixed);
+        uint256[] memory receiveFixedSwapIds = new uint256[](volumeReceiveFixed);
+        for (uint256 i = 0; i < volumePayFixed; ++i) {
             openSwapPayFixed(
                 _userTwo,
                 block.timestamp,
@@ -4435,7 +4437,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
             );
             payFixedSwapIds[i] = i + 1;
         }
-        for (uint256 i = 0; i < 2; ++i) {
+        for (uint256 i = volumePayFixed; i < volumePayFixed + volumeReceiveFixed; ++i) {
             openSwapReceiveFixed(
                 _userTwo,
                 block.timestamp,
@@ -4444,7 +4446,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
                 TestConstants.LEVERAGE_18DEC,
                 mockCase3MiltonDai
             );
-            receiveFixedSwapIds[i] = i + 1;
+            receiveFixedSwapIds[i - volumePayFixed] = i + 1;
         }
         // when
         vm.expectRevert("IPOR_315");
@@ -4747,6 +4749,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
