@@ -11,6 +11,7 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
+import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase7MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
@@ -54,7 +55,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     function testShouldNotOpenPositionWhenTotalAmountIsTooLow() public {
         // given
         ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -75,17 +76,13 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_310");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
             TestConstants.ZERO,
-            TestConstants.PERCENTAGE_3_18DEC,
+            3,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
@@ -115,57 +112,13 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_003");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
             TestConstants.USER_SUPPLY_10MLN_18DEC + 3,
-            TestConstants.PERCENTAGE_3_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            mockCase0MiltonDai
-        );
-    }
-
-    function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed() public {
-        // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        // when
-        vm.expectRevert("IPOR_313");
-        openSwapPayFixed(
-            _userTwo,
-            block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            39999999999999999,
+            3,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
@@ -195,16 +148,16 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_313");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            30000000000000000001,
             39999999999999999,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
@@ -235,16 +188,16 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_313");
         openSwapReceiveFixed(
             _userTwo,
             block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            30000000000000000001,
             TestConstants.D16 + 48374213950104766,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
@@ -255,7 +208,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
+        MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -275,16 +228,16 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
         prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_313");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            30000001,
             39999999999999999,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonUsdt
@@ -295,7 +248,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
+        MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
             address(_usdtMockedToken),
@@ -315,16 +268,16 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
         prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_313");
         openSwapReceiveFixed(
             _userTwo,
             block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            30000001,
             48374213950069062,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonUsdt
@@ -334,7 +287,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseOne() public {
         // given
         ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -355,17 +308,13 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_312");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
             1000000000000000000000001,
-            TestConstants.PERCENTAGE_3_18DEC,
+            3,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
@@ -395,17 +344,13 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
-        vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_312");
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
             100688870576704582165765,
-            TestConstants.PERCENTAGE_3_18DEC,
+            3,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
@@ -444,7 +389,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
+            TestConstants.USD_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
@@ -466,6 +411,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPayFixedPositionWhenLeverageIsTooLow() public {
         // given
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
@@ -488,8 +434,6 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         // when
@@ -524,6 +468,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_309");
         vm.prank(_userTwo);
@@ -558,7 +504,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         // when
         vm.expectRevert("IPOR_302");
-        vm.prank(_userTwo);
+        vm.prank(_userThree);
         mockCase7MiltonDai.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
