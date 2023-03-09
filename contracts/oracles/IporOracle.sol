@@ -158,6 +158,7 @@ contract IporOracle is
     function updateIndex(address asset)
         external
         override
+        onlyUpdater
         whenNotPaused
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
