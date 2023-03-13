@@ -277,6 +277,19 @@ abstract contract Joseph is JosephInternal, IJoseph {
         }
     }
 
+
+    function calculateRebalanceAmountBeforeWithdraw(
+        uint256 wadMiltonErc20BalanceBeforeWithdraw,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) external view returns (int256) {
+        return _calculateRebalanceAmountBeforeRedeem(
+            wadMiltonErc20BalanceBeforeWithdraw,
+            vaultBalance,
+            wadOperationAmount
+        );
+    }
+
     function _calculateRebalanceAmountBeforeRedeem(
         uint256 wadMiltonErc20BalanceBeforeRedeem,
         uint256 vaultBalance,

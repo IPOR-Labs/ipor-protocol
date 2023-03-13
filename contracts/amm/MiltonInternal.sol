@@ -42,7 +42,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MAX_LP_UTILIZATION_RATE = 8 * 1e17;
 
-    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 48 * 1e16;
+    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 5 * 1e16;
 
     uint256 internal constant _INCOME_TAX_RATE = 1e17;
 
@@ -78,10 +78,6 @@ abstract contract MiltonInternal is
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
         _;
-    }
-
-    function getVersion() external pure virtual override returns (uint256) {
-        return 4;
     }
 
     function getAsset() external view override returns (address) {
@@ -203,6 +199,13 @@ abstract contract MiltonInternal is
         onlyJoseph
         whenNotPaused
     {
+        _withdrawFromStanley(assetAmount);
+    }
+
+    //@param assetAmount underlying token amount represented in 18 decimals
+    function _withdrawFromStanley(uint256 assetAmount)
+        internal
+    {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
@@ -304,9 +307,7 @@ abstract contract MiltonInternal is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal view virtual returns (uint256) {
-        return _MAX_LEVERAGE;
-    }
+    function _getMaxLeverage() internal view virtual returns (uint256);
 
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;

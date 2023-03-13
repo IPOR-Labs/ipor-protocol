@@ -5,7 +5,7 @@ pragma solidity 0.8.16;
 interface ITestnetFaucet {
 
     /// @notice Return implementation version.
-    function getVersion() external pure virtual returns (uint256);
+    function getVersion() external pure returns (uint256);
 
     /// @notice Claim stable for amm system (Dai, Usdc, Usdt) it can be done ones every 24h.
     /// First time transfer 100 000 otherwise 10 000

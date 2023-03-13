@@ -20,7 +20,6 @@ import {
     PERCENTAGE_6_18DEC,
     PERIOD_27_DAYS_17_HOURS_IN_SECONDS,
     USD_1_000_000_18DEC,
-    USD_10_000_000_18DEC,
     LEG_PAY_FIXED,
     LEG_RECEIVE_FIXED,
 } from "../utils/Constants";
@@ -210,7 +209,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it.skip("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
         await miltonSpreadModel.setCalculateQuoteReceiveFixed(
             BigNumber.from("119").mul(N0__01_18DEC)
