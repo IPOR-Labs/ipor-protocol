@@ -137,6 +137,7 @@ library TestConstants {
     uint64 public constant TC_1_EMA_18DEC_64UINT = 1 * 1e16;
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_6_EMA_18DEC_64UINT = 6 * 1e16;
     uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
     uint64 public constant TC_150_EMA_18DEC_64UINT = 150 * 1e16;
     uint64 public constant TC_151_EMA_18DEC_64UINT = 151 * 1e16;
