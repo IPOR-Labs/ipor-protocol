@@ -216,14 +216,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
     ) internal {
         uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold();
 
-        if (wadOperationAmount > wadMiltonErc20Balance) {
-            _withdrawFromStanleyBeforeRedeem(
-                milton,
-                wadMiltonErc20Balance,
-                vaultBalance,
-                wadOperationAmount
-            );
-        } else if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
+        if (
+            wadOperationAmount > wadMiltonErc20Balance ||
+            (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold)
+        ) {
             _withdrawFromStanleyBeforeRedeem(
                 milton,
                 wadMiltonErc20Balance,
