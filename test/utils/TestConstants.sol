@@ -117,6 +117,16 @@ library TestConstants {
     uint256 public constant N0__000_1_6DEC = 100;
     uint256 public constant N0__000_01_6DEC = 10;
 
+    uint256 public constant P_0_1_DEC18 = 100000000000000000;
+    uint256 public constant P_0_01_DEC18 = 10000000000000000;
+    uint256 public constant P_0_3_DEC18 = 30000000000000000;
+    uint256 public constant P_0_004_DEC18 = 4000000000000000;
+    uint256 public constant P_0_5_DEC18 = 500000000000000000;
+    uint256 public constant P_0_05_DEC18 = 50000000000000000;
+    uint256 public constant P_0_005_DEC18 = 5000000000000000;
+    uint256 public constant P_0_06_DEC18 = 60000000000000000;
+    uint256 public constant P_0_006_DEC18 = 6000000000000000;
+
     uint256 public constant USD_10_000_000 = 10000000;
     uint256 public constant USD_1_000_000 = 1000000;
     uint256 public constant USD_100_6DEC = 100000000;
