@@ -209,7 +209,7 @@ describe("Milton - not close position", () => {
         );
     });
 
-    it.skip("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
+    it("should NOT close position, DAI, not owner, receive fixed, Milton lost, User earned < Collateral, before maturity", async () => {
         //given
         await miltonSpreadModel.setCalculateQuoteReceiveFixed(
             BigNumber.from("119").mul(N0__01_18DEC)

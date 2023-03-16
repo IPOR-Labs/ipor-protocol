@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const forkEnabled = process.env.FORK_ENABLED;
-const forkingUrl = process.env.HARDHAT_FORKING_URL as string;
+const forkingUrl = process.env.PROVIDER_URL as string;
 
 const networks: HardhatUserConfig["networks"] = {
     coverage: {
