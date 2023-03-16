@@ -73,7 +73,7 @@ contract IporOracle is
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2;
+        return 3;
     }
 
     function getIndex(address asset)
@@ -158,6 +158,7 @@ contract IporOracle is
     function updateIndex(address asset)
         external
         override
+        onlyUpdater
         whenNotPaused
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
