@@ -85,10 +85,13 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         miltonStorageDai.subtractLiquidity(45000 * TestConstants.D18);
         miltonStorageDai.setJoseph(address(mockCase0JosephDai));
         //END HACK - subtract liquidity without  burn ipToken
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        uint256 actualLiquidityPoolBalance = balance.liquidityPool;
         // when
         vm.prank(_liquidityProvider);
         vm.expectRevert("IPOR_402");
         mockCase0JosephDai.itfRedeem(60000 * TestConstants.D18, block.timestamp);
+        assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed() public {
@@ -128,10 +131,14 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         miltonStorageDai.subtractLiquidity(45000 * TestConstants.D18);
         miltonStorageDai.setJoseph(address(mockCase0JosephDai));
         //END HACK - subtract liquidity without  burn ipToken
+        IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonDai.getAccruedBalance();
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        uint256 actualLiquidityPoolBalance = balance.liquidityPool;
         // when
         vm.prank(_liquidityProvider);
         vm.expectRevert("IPOR_402");
         mockCase0JosephDai.itfRedeem(60000 * TestConstants.D18, block.timestamp);
+        assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
@@ -169,11 +176,6 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonDai.getAccruedBalance();
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
-        //BEGIN HACK - subtract liquidity without  burn ipToken
-        miltonStorageDai.setJoseph(_admin);
-        miltonStorageDai.subtractLiquidity(45000 * TestConstants.D18);
-        miltonStorageDai.setJoseph(address(mockCase0JosephDai));
-        //END HACK - subtract liquidity without  burn ipToken
         // when
         vm.prank(_liquidityProvider);
         vm.expectRevert("IPOR_402");
@@ -216,11 +218,6 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonDai.getAccruedBalance();
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
-        //BEGIN HACK - subtract liquidity without  burn ipToken
-        miltonStorageDai.setJoseph(_admin);
-        miltonStorageDai.subtractLiquidity(45000 * TestConstants.D18);
-        miltonStorageDai.setJoseph(address(mockCase0JosephDai));
-        //END HACK - subtract liquidity without  burn ipToken
         // when
         vm.prank(_liquidityProvider);
         vm.expectRevert("IPOR_402");
