@@ -85,6 +85,8 @@ library TestConstants {
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
     uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
     int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
+    uint256 public constant TC_DECIMALS_18 = 18;
+    uint256 public constant TC_100_000_000_18DEC = 100_000_000 * 1e18;
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
