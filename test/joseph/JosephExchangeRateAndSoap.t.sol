@@ -192,7 +192,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_7_18DEC);
         ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_8_EMA_18DEC_64UINT);
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -236,7 +236,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         assertEq(actualExchangeRate, 987823434476506362);
     }
 
-    function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
+    function testShouldNotCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -292,7 +292,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.liquidityPool, 5008088573427971608517);
     }
 
-    function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
+    function testShouldNotCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
     ) public {
         // given
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(49 * TestConstants.D16);
