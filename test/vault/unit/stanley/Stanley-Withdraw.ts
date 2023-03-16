@@ -665,19 +665,19 @@ describe("Stanley -> Withdraw", () => {
         await usdc.approve(await admin.getAddress(), one.mul(10000));
         await usdc.approve(stanley.address, one.mul(10000));
 
-        await strategyAave.setApy(one.mul(3));
+        await strategyAave.setApr(one.mul(3));
         await stanley.deposit(one.mul(40));
 
         const aaveBalanceBefore = await strategyAave.balanceOf();
         expect(aaveBalanceBefore).to.be.equal(one.mul(40));
 
-        await strategyCompound.setApy(one.mul(4));
+        await strategyCompound.setApr(one.mul(4));
         await stanley.deposit(one.mul(40));
         const compoundBalanceBefore = await strategyCompound.balanceOf();
         const userIvTokenBefore = await ivTokenUsdc.balanceOf(await admin.getAddress());
         expect(compoundBalanceBefore).to.be.equal(one.mul(40));
         expect(userIvTokenBefore).to.be.equal(one.mul(80));
-        await strategyAave.setApy(one.mul(5));
+        await strategyAave.setApr(one.mul(5));
         //when
 
         await stanley.withdraw(one.mul(50));
