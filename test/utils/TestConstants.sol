@@ -36,6 +36,7 @@ library TestConstants {
     uint256 public constant USD_100_000_18DEC = 100000 * 1e18;
     uint256 public constant USD_1_000_000_18DEC = 1000000 * 1e18;
     uint256 public constant USD_10_000_000_18DEC = 10000000 * 1e18;
+    uint256 public constant USD_20_000_000_18DEC = 20000000 * 1e18;
     uint256 public constant USD_1_000_000_000_18DEC = 1000000000 * 1e18;
     int256 public constant USD_10_000_000_18DEC_INT = 10000000 * 1e18;
 
