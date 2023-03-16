@@ -1150,24 +1150,24 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        MockCase0Stanley mockCase0StanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+        MockCase1Stanley mockCase1StanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(mockCase0StanleyDai)
+            address(mockCase1StanleyDai)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
             address(miltonStorageDai),
-            address(mockCase0StanleyDai)
+            address(mockCase1StanleyDai)
         );
         prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase0StanleyDai));
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(mockCase1StanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_liquidityProvider);
@@ -1191,7 +1191,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS
         );
         (,, int256 soapRightAfterOpenedPayFixedSwap) =
-            calculateSoap(_userTwo, block.timestamp + 100, mockCase0MiltonDai);
+            calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS + 100, mockCase0MiltonDai);
         // then
         assertLt(soapRightAfterOpenedPayFixedSwap, expectedSoap);
     }
