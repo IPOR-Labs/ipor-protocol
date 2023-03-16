@@ -45,8 +45,8 @@ describe("Stanley -> maxApyStrategy", () => {
 
     it("Should select AAVE strategy", async () => {
         //  given
-        await strategyAave.setApy(BigNumber.from("100000"));
-        await strategyCompound.setApy(BigNumber.from("99999"));
+        await strategyAave.setApr(BigNumber.from("100000"));
+        await strategyCompound.setApr(BigNumber.from("99999"));
 
         //  when
         const result = await stanley.getMaxApyStrategy();
@@ -57,8 +57,8 @@ describe("Stanley -> maxApyStrategy", () => {
 
     it("Should select aave strategy when aaveApy == compoundApy", async () => {
         //  given
-        await strategyAave.setApy(BigNumber.from("10"));
-        await strategyCompound.setApy(BigNumber.from("10"));
+        await strategyAave.setApr(BigNumber.from("10"));
+        await strategyCompound.setApr(BigNumber.from("10"));
 
         //  when
         const result = await stanley.getMaxApyStrategy();
@@ -69,8 +69,8 @@ describe("Stanley -> maxApyStrategy", () => {
 
     it("Should select compound strategy", async () => {
         //  given
-        await strategyAave.setApy(BigNumber.from("1000"));
-        await strategyCompound.setApy(BigNumber.from("99999"));
+        await strategyAave.setApr(BigNumber.from("1000"));
+        await strategyCompound.setApr(BigNumber.from("99999"));
 
         //  when
         const result = await stanley.getMaxApyStrategy();
