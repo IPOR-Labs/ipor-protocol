@@ -458,7 +458,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         address[] memory ipTokenAddresses =
             addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
         ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_3_EMA_18DEC_64UINT, 0
+            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
