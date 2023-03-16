@@ -44,7 +44,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotExchangeRateWhenLiquidityProviderProvidesLiquidity18Decimals() public {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidity18Decimals() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
@@ -87,7 +87,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		assertEq(13125 * TestConstants.D14, actualExchangeRate);
     }
 
-    function testShouldNotExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals() public {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
@@ -133,7 +133,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     }
 
 
-    function testShouldNotExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase1() public {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase1() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
@@ -178,7 +178,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		assertEq(1312500000000000000, actualExchangeRate);
     }
 
-    function testShouldNotExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2() public {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
@@ -226,7 +226,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		assertEq(1312499999183722969, actualExchangeRate);
     }
 
-    function testShouldNotExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3() public {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
