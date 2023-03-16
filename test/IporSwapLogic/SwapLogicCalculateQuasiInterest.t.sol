@@ -93,8 +93,8 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
             TestConstants.ZERO, // id
             _admin, // buyer
-            block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, // openTimestamp
-            block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, // closeTimestamp
+            block.timestamp, // openTimestamp
+            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
             TestConstants.ZERO, // idsIndex
             TestConstants.USD_50_000_18DEC, // collateral
             9870300000000000000000 * 10, // notional
