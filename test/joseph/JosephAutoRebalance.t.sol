@@ -1433,9 +1433,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
     }
 
-    function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceTooLow()
-        public
-    {
+    function testRedeemAndRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceTooLow() public {
         //given
         IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
 
@@ -1445,8 +1443,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 stanleyInitBalance = 800000 * 1e18;
         uint256 userPosition = 210000 * 1e6;
 
-        uint256 expectedMiltonBalance = 200000 * 1e6;
-        uint256 expectedStanleyBalance = stanleyInitBalance;
+        uint256 expectedMiltonBalance = 158210 * 1e6;
+        uint256 expectedStanleyBalance = 632840 * 1e18;
 
         uint256 wadUserPosition = userPosition * 1e12;
 
@@ -1474,10 +1472,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         );
 
         vm.prank(address(_userOne));
-        //then
 
         //when
-        vm.expectRevert(abi.encodePacked("ERC20: transfer amount exceeds balance"));
         iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
