@@ -95,9 +95,11 @@ contract IpTokenTest is Test, TestCommons {
     function testShouldHaveRightsToTransferOwnershipSenderStillHaveRights() public {
         // given
         IpToken ipToken = prepareIpToken();
+        vm.prank(_admin);
+        ipToken.transferOwnership(_user1);
 
         // when
-        vm.startPrank(_admin);
+        vm.prank(_admin);
         ipToken.transferOwnership(_user1);
 
         // then
