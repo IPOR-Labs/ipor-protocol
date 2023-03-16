@@ -85,6 +85,8 @@ library TestConstants {
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
     uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
     int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
+    uint256 public constant TC_DECIMALS_18 = 18;
+    uint256 public constant TC_100_000_000_18DEC = 100_000_000 * 1e18;
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
@@ -137,6 +139,7 @@ library TestConstants {
     uint64 public constant TC_1_EMA_18DEC_64UINT = 1 * 1e16;
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_6_EMA_18DEC_64UINT = 6 * 1e16;
     uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
     uint64 public constant TC_150_EMA_18DEC_64UINT = 150 * 1e16;
     uint64 public constant TC_151_EMA_18DEC_64UINT = 151 * 1e16;
