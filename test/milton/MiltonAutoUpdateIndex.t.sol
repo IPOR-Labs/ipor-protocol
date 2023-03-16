@@ -45,6 +45,9 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
+        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+
+        iporOracle.addUpdater(address(milton));
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
@@ -80,6 +83,9 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
+        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+
+        iporOracle.addUpdater(address(milton));
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
@@ -115,6 +121,9 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
+        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+
+        iporOracle.addUpdater(address(milton));
 
         milton.setAutoUpdateIporIndexThreshold(1);
 
@@ -150,6 +159,9 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
+        ItfIporOracle iporOracle = _iporProtocol.iporOracle;
+
+        iporOracle.addUpdater(address(milton));
 
         milton.setAutoUpdateIporIndexThreshold(1);
 

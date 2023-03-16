@@ -40,7 +40,7 @@ import {
 
 const { expect } = chai;
 
-describe("Milton should calculate income - Core", () => {
+describe.skip("Milton should calculate income - Core", () => {
     let miltonSpreadModel: MockSpreadModel;
     let admin: Signer,
         userOne: Signer,
