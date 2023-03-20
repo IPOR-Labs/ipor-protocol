@@ -91,24 +91,26 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
     function testShouldRevertWhenClosingTimestampIsLowerThanOpenTimestamp() public {
         // given
         IporTypes.IporSwapMemory memory swap = IporTypes.IporSwapMemory(
-            TestConstants.ZERO, // id
-            _admin, // buyer
-            block.timestamp, // openTimestamp
-            block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp
-            TestConstants.ZERO, // idsIndex
-            TestConstants.USD_50_000_18DEC, // collateral
-            9870300000000000000000 * 10, // notional
-            987030000000000000000, // ibtQuantity
-            TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
-            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
-            1 // state
-        );
-        // when
-        vm.expectRevert("IPOR_319");
-        _iporSwapLogic.calculateQuasiInterest(
-            swap, swap.openTimestamp - TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, 1 * TestConstants.D18
-        );
-    }
+			TestConstants.ZERO, // id
+			_admin, // buyer
+			block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS, // openTimestamp
+			block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS, // closeTimestamp
+			TestConstants.ZERO, // idsIndex
+			TestConstants.USD_50_000_18DEC, // collateral
+			9870300000000000000000 * 10, // notional
+			987030000000000000000, // ibtQuantity
+			TestConstants.PERCENTAGE_4_18DEC, // fixedInterestRate
+			TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // liquidationDepositAmount
+			1 // state
+		);
+		// when
+		vm.expectRevert("IPOR_319");
+		_iporSwapLogic.calculateQuasiInterest(
+			swap, 
+			swap.openTimestamp - TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS,
+			1 * TestConstants.D18
+		);
+	}
 
     function testShouldCalculateQuasiInterestCase2WhenSameTimestampAndIBTPriceIncreasesAnd18DecimalsCase1() public {
         // given
