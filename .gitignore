@@ -69,3 +69,5 @@ iporErrorList.json
 /containers/eth-bc/eth-bc-dump
 
 /contracts/**/artifacts/
+
+*_flattened.sol
