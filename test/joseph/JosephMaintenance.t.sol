@@ -109,11 +109,12 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        mockCase0JosephDai.addAppointedToRebalance(_admin);
         // when
         vm.startPrank(_admin);
         mockCase0JosephDai.pause();
         // then
-        vm.expectRevert("IPOR_411");
+        vm.expectRevert("Pausable: paused");
         mockCase0JosephDai.rebalance();
         vm.expectRevert("Pausable: paused");
         mockCase0JosephDai.depositToStanley(123);
