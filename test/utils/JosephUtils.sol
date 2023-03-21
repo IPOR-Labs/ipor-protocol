@@ -29,6 +29,16 @@ contract JosephUtils is Test {
         MockCase0JosephDai mockCase0JosephDai;
     }
 
+    struct ExchangeRateAndPayoff {
+        uint256 initialExchangeRate;
+        uint256 exchangeRateAfter28Days;
+        uint256 exchangeRateAfter56DaysBeforeClose;
+        int256 payoff1After28Days;
+        int256 payoff2After28Days;
+        int256 payoff1After56Days;
+        int256 payoff2After56Days;
+    }
+
     function prepareJoseph(IJosephInternal joseph) public {
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
