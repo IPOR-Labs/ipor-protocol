@@ -186,6 +186,38 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         mockCase0JosephDai.transferToTreasury(100);
     }
 
+    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect() public {
+        // given
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
+        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
+            address(_daiMockedToken),
+            address(iporOracle),
+            address(miltonStorageDai),
+            address(_miltonSpreadModel),
+            address(stanleyDai)
+        );
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
+            address(_daiMockedToken),
+            address(_ipTokenDai),
+            address(mockCase0MiltonDai),
+            address(miltonStorageDai),
+            address(stanleyDai)
+        );
+        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        vm.prank(_admin);
+        mockCase0JosephDai.setTreasuryManager(_userThree);
+        // when
+        vm.expectRevert("IPOR_405");
+        vm.prank(_userThree);
+        mockCase0JosephDai.transferToTreasury(100);
+    }
+
     function testShouldTransferTreasuryToTreasuryTreasurerWhenSimpleCase1() public {
         // given
         ItfIporOracle iporOracle =
