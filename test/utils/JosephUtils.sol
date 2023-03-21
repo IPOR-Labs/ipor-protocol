@@ -39,6 +39,13 @@ contract JosephUtils is Test {
         int256 payoff2After56Days;
     }
 
+    struct ExpectedJosephBalances {
+        uint256 expectedMiltonBalance;
+        uint256 expectedIpTokenBalance;
+        uint256 expectedTokenBalance;
+        uint256 expectedLiquidityPoolBalance;
+    }
+
     function prepareJoseph(IJosephInternal joseph) public {
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
