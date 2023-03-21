@@ -85,6 +85,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         miltonStorageDai.subtractLiquidity(45000 * TestConstants.D18);
         miltonStorageDai.setJoseph(address(mockCase0JosephDai));
         //END HACK - subtract liquidity without  burn ipToken
+        IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonDai.getAccruedBalance();
         uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
         // when
