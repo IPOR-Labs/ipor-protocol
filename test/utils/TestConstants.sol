@@ -35,6 +35,7 @@ library TestConstants {
     uint256 public constant USD_100_000_18DEC = 100000 * 1e18;
     uint256 public constant USD_1_000_000_18DEC = 1000000 * 1e18;
     uint256 public constant USD_10_000_000_18DEC = 10000000 * 1e18;
+    uint256 public constant USD_20_000_000_18DEC = 20000000 * 1e18;
     uint256 public constant USD_1_000_000_000_18DEC = 1000000000 * 1e18;
     int256 public constant USD_10_000_000_18DEC_INT = 10000000 * 1e18;
 
@@ -112,6 +113,7 @@ library TestConstants {
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
 
+    uint256 public constant N1__0_18DEC = 1000000000000000000;
     uint256 public constant N1__0_6DEC = 1000000;
     uint256 public constant N0__1_6DEC = 100000;
     uint256 public constant N0__01_6DEC = 10000;
