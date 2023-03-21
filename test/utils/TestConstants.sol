@@ -32,9 +32,11 @@ library TestConstants {
     uint256 public constant USD_20_000_18DEC = 20000 * 1e18;
     uint256 public constant USD_28_000_18DEC = 28000 * 1e18;
     uint256 public constant USD_50_000_18DEC = 50000 * 1e18;
+    uint256 public constant USD_60_000_18DEC = 60000 * 1e18;
     uint256 public constant USD_100_000_18DEC = 100000 * 1e18;
     uint256 public constant USD_1_000_000_18DEC = 1000000 * 1e18;
     uint256 public constant USD_10_000_000_18DEC = 10000000 * 1e18;
+    uint256 public constant USD_20_000_000_18DEC = 20000000 * 1e18;
     uint256 public constant USD_1_000_000_000_18DEC = 1000000000 * 1e18;
     int256 public constant USD_10_000_000_18DEC_INT = 10000000 * 1e18;
 
@@ -85,6 +87,8 @@ library TestConstants {
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
     uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
     int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
+    uint256 public constant TC_DECIMALS_18 = 18;
+    uint256 public constant TC_100_000_000_18DEC = 100_000_000 * 1e18;
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
@@ -110,6 +114,7 @@ library TestConstants {
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
 
+    uint256 public constant N1__0_18DEC = 1000000000000000000;
     uint256 public constant N1__0_6DEC = 1000000;
     uint256 public constant N0__1_6DEC = 100000;
     uint256 public constant N0__01_6DEC = 10000;
@@ -137,6 +142,9 @@ library TestConstants {
     uint64 public constant TC_1_EMA_18DEC_64UINT = 1 * 1e16;
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_8_EMA_18DEC_64UINT = 8 * 1e16;
+    uint64 public constant TC_50_EMA_18DEC_64UINT = 50 * 1e16;
+    uint64 public constant TC_6_EMA_18DEC_64UINT = 6 * 1e16;
     uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
     uint64 public constant TC_150_EMA_18DEC_64UINT = 150 * 1e16;
     uint64 public constant TC_151_EMA_18DEC_64UINT = 151 * 1e16;
