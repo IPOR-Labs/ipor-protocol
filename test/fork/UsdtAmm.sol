@@ -16,6 +16,7 @@ import "../../contracts/amm/Milton.sol";
 import "../../contracts/amm/MiltonUsdt.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelUsdt.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
+import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "./IAsset.sol";
 
 contract UsdtAmm is Test, TestCommons {
@@ -50,7 +51,7 @@ contract UsdtAmm is Test, TestCommons {
         vm.startPrank(owner);
         _createIpUsdt();
         _createIvUsdt();
-        _createCompoundStrategy();
+        strategyCompound = _createCompoundStrategy();
         _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
@@ -60,6 +61,7 @@ contract UsdtAmm is Test, TestCommons {
         _createJoseph();
         _setupIpToken();
         _setupIvToken();
+        _setupJoseph(owner);
         _setupMilton();
         _setupMiltonStorage();
         _setupStanley();
@@ -76,6 +78,24 @@ contract UsdtAmm is Test, TestCommons {
         vm.stopPrank();
     }
 
+    function overrideAaveStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(aUsdt);
+        strategy.setApr(0);
+        strategy.setAsset(usdt);
+        vm.prank(owner);
+        stanley.setStrategyAave(address(strategy));
+    }
+
+
+    function createCompoundStrategy() external returns (StrategyCompound) {
+        StrategyCompound strategy = _createCompoundStrategy();
+        strategy.setStanley(address(stanley));
+        return strategy;
+    }
+
     function _createIpUsdt() internal {
         ipUsdt = address(new IpToken("IP USDT", "ipUSDT", usdt));
     }
@@ -84,7 +104,7 @@ contract UsdtAmm is Test, TestCommons {
         ivUsdt = address(new IvToken("IV USDT", "ivUSDT", usdt));
     }
 
-    function _createCompoundStrategy() internal {
+    function _createCompoundStrategy() internal returns (StrategyCompound) {
         StrategyCompound implementation = new StrategyCompound();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -96,7 +116,7 @@ contract UsdtAmm is Test, TestCommons {
                 _compTokenAddress
             )
         );
-        strategyCompound = StrategyCompound(address(proxy));
+        return  StrategyCompound(address(proxy));
     }
 
     function _createAaveStrategy() internal {
@@ -208,6 +228,11 @@ contract UsdtAmm is Test, TestCommons {
             )
         );
         joseph = Joseph(address(proxy));
+    }
+
+
+    function _setupJoseph(address owner) internal {
+        joseph.addAppointedToRebalance(owner);
     }
 
     function _setupMilton() internal {

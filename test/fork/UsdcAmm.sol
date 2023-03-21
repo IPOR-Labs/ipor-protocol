@@ -16,6 +16,7 @@ import "../../contracts/amm/Milton.sol";
 import "../../contracts/amm/MiltonUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
+import "../../contracts/mocks/stanley/MockStrategy.sol";
 
 contract UsdcAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -50,7 +51,7 @@ contract UsdcAmm is Test, TestCommons {
         _createIpUsdc();
         _createIvUsdc();
         _createCompoundStrategy();
-        _createAaveStrategy();
+        strategyAave = _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
         _createMiltonSpreadModel();
@@ -59,6 +60,7 @@ contract UsdcAmm is Test, TestCommons {
         _createJoseph();
         _setupIpToken();
         _setupIvToken();
+        _setupJoseph(owner);
         _setupMilton();
         _setupMiltonStorage();
         _setupStanley();
@@ -73,6 +75,23 @@ contract UsdcAmm is Test, TestCommons {
         ERC20(usdc).approve(address(joseph), type(uint256).max);
         ERC20(usdc).approve(address(milton), type(uint256).max);
         vm.stopPrank();
+    }
+
+    function overrideCompoundStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(cUsdc);
+        strategy.setApr(0);
+        strategy.setAsset(usdc);
+        vm.prank(owner);
+        stanley.setStrategyCompound(address(strategy));
+    }
+
+    function createAaveStrategy() external returns (StrategyAave) {
+        StrategyAave strategy = _createAaveStrategy();
+        strategy.setStanley(address(stanley));
+        return strategy;
     }
 
     function _createIpUsdc() internal {
@@ -98,7 +117,7 @@ contract UsdcAmm is Test, TestCommons {
         strategyCompound = StrategyCompound(address(proxy));
     }
 
-    function _createAaveStrategy() internal {
+    function _createAaveStrategy() internal returns (StrategyAave) {
         StrategyAave implementation = new StrategyAave();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -112,7 +131,7 @@ contract UsdcAmm is Test, TestCommons {
                 _aaveTokenAddress
             )
         );
-        strategyAave = StrategyAave(address(proxy));
+        return StrategyAave(address(proxy));
     }
 
     function _createStanley() internal {
@@ -213,6 +232,10 @@ contract UsdcAmm is Test, TestCommons {
         milton.setJoseph(address(joseph));
         milton.setupMaxAllowanceForAsset(address(joseph));
         milton.setupMaxAllowanceForAsset(address(stanley));
+    }
+
+    function _setupJoseph(address owner) internal {
+        joseph.addAppointedToRebalance(owner);
     }
 
     function _setupIpToken() internal {
