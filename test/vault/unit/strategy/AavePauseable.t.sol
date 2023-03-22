@@ -19,7 +19,7 @@ import "../../../../contracts/mocks/stanley/aave/MockProviderAave.sol";
 import "../../../../contracts/mocks/stanley/aave/MockStakedAave.sol";
 import "../../../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
 
-contract AavePausableTest is TestCommons, StanleyUtils, DataUtils {
+contract AavePausableTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;
     MockTestnetToken internal _daiMockedToken;
@@ -33,8 +33,8 @@ contract AavePausableTest is TestCommons, StanleyUtils, DataUtils {
 	MockLendingPoolAave internal _lendingPoolAave;
 	MockProviderAave internal _mockProviderAave;
 	MockStakedAave internal _mockStakedAave;
-	MockAaveIncentivesController internal _mockAaveIncentivesController;
-	StrategyAave internal _strategyAave;
+	// MockAaveIncentivesController internal _mockAaveIncentivesController;
+	// StrategyAave internal _strategyAave;
 
     function setUp() public {
         _usdtMockedToken = getTokenUsdt();
@@ -60,15 +60,15 @@ contract AavePausableTest is TestCommons, StanleyUtils, DataUtils {
 		);
 		_mockProviderAave = getMockProviderAave(address(_lendingPoolAave));
 		_mockStakedAave = getMockStakedAave(address(_aaveMockedToken));
-		_mockAaveIncentivesController = getMockAaveIncentivesController(address(_mockStakedAave));
-		_strategyAave = getStrategyAave(
-			address(_usdtMockedToken),
-			address(_aUsdtMockedToken),
-			address(_mockProviderAave),
-			address(_mockStakedAave),
-			address(_mockAaveIncentivesController),
-			address(_aaveMockedToken)
-		);
+		// _mockAaveIncentivesController = getMockAaveIncentivesController(address(_mockStakedAave));
+		// _strategyAave = getStrategyAave(
+		// 	address(_usdtMockedToken),
+		// 	address(_aUsdtMockedToken),
+		// 	address(_mockProviderAave),
+		// 	address(_mockStakedAave),
+		// 	address(_mockAaveIncentivesController),
+		// 	address(_aaveMockedToken)
+		// );
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -76,5 +76,14 @@ contract AavePausableTest is TestCommons, StanleyUtils, DataUtils {
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
     }
+
+	function testShouldBeAbleToPauseContractWhenSenderIsOwner() public {
+		// given
+		// when
+		// _strategyAave.pause();
+		// // then
+		// assertTrue(_strategyAave.paused());
+	}
+
 
 }
