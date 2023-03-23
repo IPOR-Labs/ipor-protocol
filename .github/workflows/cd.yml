@@ -40,29 +40,28 @@ jobs:
             publish-jar-enabled: false
             push-docker-enabled: false
 
-    build-geth-itf:
+    trigger-containers:
         needs: notify
-        uses: ./.github/workflows/build-geth-image.yml
-        secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # from tag: v1.6.5
+        uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
         with:
-            image-type: itf
-            build-enabled: true
-            push-docker-enabled: true
-            retag-docker-enabled: false
-
-    build-geth-s0-s12:
-        needs: notify
-        uses: ./.github/workflows/build-geth-image.yml
-        secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        with:
-            image-type: s0/s12
-            build-enabled: true
-            push-docker-enabled: true
-            retag-docker-enabled: false
+            owner: IPOR-Labs
+            repo: ${{ secrets.BUILD_CONTAINERS_REPO }}
+            github_token: ${{ secrets.TOKEN_RUN_BUILD_CONTAINERS }}
+            workflow_file_name: cd.yml
+            ref: main
+            client_payload: >-
+                {
+                "src-sha": "${{ github.sha }}",
+                "src-actor": "${{ github.triggering_actor }}",
+                "src-repository": "${{ github.repository }}",
+                "src-workflow": "${{ github.workflow }}",
+                "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                }
+            wait_interval: 0
+            propagate_failure: false
+            trigger_workflow: true
+            wait_workflow: false
 
     publish-jar:
         if: ${{ needs.notify.outputs.branch-name == 'main' }}
@@ -71,8 +70,7 @@ jobs:
             - build-sc
             - foundry-tests
             - build-java
-            - build-geth-itf
-            - build-geth-s0-s12
+            - trigger-containers
         uses: ./.github/workflows/build-java.yml
         with:
             smart-contracts-compile-enabled: true
@@ -81,24 +79,6 @@ jobs:
             publish-jar-enabled: true
             push-docker-enabled: false
 
-    publish-docker:
-        needs:
-            - notify
-            - build-sc
-            - foundry-tests
-            - build-java
-            - build-geth-itf
-            - build-geth-s0-s12
-        uses: ./.github/workflows/build-geth-image.yml
-        secrets:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        with:
-            image-type: itf/s0/s12
-            build-enabled: false
-            push-docker-enabled: false
-            retag-docker-enabled: true
-
     report:
         if: ${{ always() }}
         needs:
@@ -106,13 +86,11 @@ jobs:
             - build-sc
             - foundry-tests
             - build-java
-            - build-geth-itf
-            - build-geth-s0-s12
+            - trigger-containers
             - publish-jar
-            - publish-docker
         uses: ./.github/workflows/report-slack.yml
         secrets:
             SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
-            success: ${{ (needs.publish-jar.result == 'success' || needs.publish-jar.result == 'skipped') && needs.publish-docker.result == 'success' }}
+            success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.build-java.result == 'success' && needs.trigger-containers.result == 'success' && (needs.publish-jar.result == 'success' || needs.publish-jar.result == 'skipped') }}
             slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
