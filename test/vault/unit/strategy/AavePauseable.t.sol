@@ -127,9 +127,9 @@ contract AavePausableTest is TestCommons, DataUtils {
 		// then
 		assertTrue(_strategyAave.paused());
 		vm.expectRevert("Pausable: paused");
-		_strategyAave.deposit(TestConstants.TC_1000_USD_18DEC);
+		_strategyAave.deposit(TestConstants.TC_1000_18DEC);
 		vm.expectRevert("Pausable: paused");
-		_strategyAave.withdraw(TestConstants.TC_1000_USD_18DEC);
+		_strategyAave.withdraw(TestConstants.TC_1000_18DEC);
 		vm.expectRevert("Pausable: paused");
 		_strategyAave.beforeClaim();
 		vm.expectRevert("Pausable: paused");
