@@ -102,8 +102,8 @@ jobs:
               shell: bash
 
             - name: Set up java
-              # from tag: v2.5.0
-              uses: actions/setup-java@f0bb91606209742fe3ea40199be2f3ef195ecabf
+              # from tag: v3.10.0
+              uses: actions/setup-java@3f07048e3d294f56e9b90ac5ea2c6f74e9ad0f98
               with:
                   java-version: ${{ inputs.java-version }}
                   distribution: temurin
@@ -111,14 +111,14 @@ jobs:
                   settings-path: ${{ github.workspace }}
 
             - name: Set up maven
-              # from tag: v4.2
-              uses: stCarolas/setup-maven@7060d72b50fbf2389a16d6f66a9c7d4d9ece5d36
+              # from tag: v4.5
+              uses: stCarolas/setup-maven@07fbbe97d97ef44336b7382563d66743297e442f
               with:
                   maven-version: ${{ inputs.mvn-version }}
 
             - name: Checkout
-              # from tag: v3.0.0
-              uses: actions/checkout@a12a3943b4bdde767164f792f33f40b04645d846
+              # from tag: v3.4.0
+              uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
 
             - name: Set up maven repository cache
               # from tag: v3.3.1
