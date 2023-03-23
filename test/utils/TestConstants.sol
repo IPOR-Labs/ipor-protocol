@@ -74,6 +74,7 @@ library TestConstants {
     uint256 public constant PERCENTAGE_400_18DEC = 400 * 1e16;
 
     uint256 public constant TC_TOTAL_AMOUNT_100_18DEC = 100 * 1e18;
+    uint256 public constant TC_1000_18DEC = 1000 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
     uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
