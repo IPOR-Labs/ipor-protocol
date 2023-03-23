@@ -27,7 +27,6 @@ import "../../contracts/mocks/stanley/aave/MockStakedAave.sol";
 import "../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
 
 contract StanleyUtils {
-
     function getTokenAUsdt() public returns (MockAUsdt) {
         return new MockAUsdt();
     }
@@ -52,7 +51,8 @@ contract StanleyUtils {
 
         ItfStanleyUsdt itfStanleyImpl = new ItfStanleyUsdt();
 
-        address itfStanleyProxyAddress = address(new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -61,7 +61,8 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        ));
+            )
+        );
 
         ivToken.setStanley(itfStanleyProxyAddress);
         strategyAave.setStanley(itfStanleyProxyAddress);
@@ -78,7 +79,8 @@ contract StanleyUtils {
 
         ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
 
-        address itfStanleyProxyAddress = address(new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -87,7 +89,8 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        ));
+            )
+        );
 
         ivToken.setStanley(itfStanleyProxyAddress);
         strategyAave.setStanley(itfStanleyProxyAddress);
@@ -181,10 +184,10 @@ contract StanleyUtils {
     }
 
     function getMockLendingPoolAave(
-        address dai, 
-        address aDai, 
+        address dai,
+        address aDai,
         uint256 liquidityRatesDai,
-        address usdc, 
+        address usdc,
         address aUsdc,
         uint256 liquidityRatesUsdc,
         address usdt,
@@ -230,6 +233,5 @@ contract StanleyUtils {
             abi.encodeWithSignature("initialize(address,address,address,address,address,address)", tokenAddress, aTokenAddress, addressProviderAddress, stakedAaveAddress, aaveIncentivesControllerAddress, aaveTokenAddress)
         );
         return StrategyAave(address(strategyProxy));
-    } 
-
+    }
 }
