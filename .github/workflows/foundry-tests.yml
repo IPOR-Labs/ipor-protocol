@@ -55,8 +55,8 @@ jobs:
           node-version: ${{ inputs.node-version }}
 
       - name: Set up node_modules cache
-        # from tag: v2.1.7
-        uses: actions/cache@937d24475381cd9c75ae6db12cb4e79714b926ed
+        # from tag: v3.3.1
+        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
