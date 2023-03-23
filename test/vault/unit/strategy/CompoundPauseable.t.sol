@@ -23,7 +23,7 @@ contract CompoundPausableTest is TestCommons, DataUtils {
     IpToken internal _ipTokenUsdt;
     IpToken internal _ipTokenUsdc;
     IpToken internal _ipTokenDai;
-	MockWhitePaper internal _mockWhitepaper;
+    MockWhitePaper internal _mockWhitepaper;
     MockCToken internal _mockCUSDT;
     MockCToken internal _mockCUSDC;
     MockCToken internal _mockCDAI;
@@ -38,12 +38,15 @@ contract CompoundPausableTest is TestCommons, DataUtils {
         _ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
         _ipTokenUsdc = getIpTokenUsdc(address(_usdcMockedToken));
         _ipTokenDai = getIpTokenDai(address(_daiMockedToken));
-		_mockWhitepaper = getMockWhitePaper();
+        _mockWhitepaper = getMockWhitePaper();
         _mockCUSDT = getCToken(address(_usdtMockedToken), address(_mockWhitepaper), 6, "cUSDT", "cUSDT");
         _mockCUSDC = getCToken(address(_usdcMockedToken), address(_mockWhitepaper), 6, "cUSDC", "cUSDC");
         _mockCDAI = getCToken(address(_daiMockedToken), address(_mockWhitepaper), 18, "cDAI", "cDAI");
-        _mockComptroller = getMockComptroller(address(_compMockedToken), address(_mockCUSDT), address(_mockCUSDC), address(_mockCDAI));
-        _strategyCompound = getStrategyCompound(address(_usdcMockedToken), address(_mockCUSDC), address(_mockComptroller), address(_compMockedToken));
+        _mockComptroller =
+            getMockComptroller(address(_compMockedToken), address(_mockCUSDT), address(_mockCUSDC), address(_mockCDAI));
+        _strategyCompound = getStrategyCompound(
+            address(_usdcMockedToken), address(_mockCUSDC), address(_mockComptroller), address(_compMockedToken)
+        );
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
@@ -55,12 +58,12 @@ contract CompoundPausableTest is TestCommons, DataUtils {
     }
 
     function testShouldBeAbleToPauseContractWhenSenderIsOwner() public {
-        // given 
+        // given
         // when
         _strategyCompound.pause();
         // then
         assertTrue(_strategyCompound.paused());
-    } 
+    }
 
     function testShouldBeAbleToUnpauseContractWhenSenderIsOwner() public {
         // given
@@ -117,5 +120,4 @@ contract CompoundPausableTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         _strategyCompound.setTreasury(_userTwo);
     }
-
 }

@@ -23,8 +23,10 @@ import "../../contracts/mocks/tokens/MockedCOMPToken.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 
 contract StanleyUtils {
-
-    function getCToken(address asset, address interestRateModel, uint8 decimal, string memory name, string memory code) public returns (MockCToken) {
+    function getCToken(address asset, address interestRateModel, uint8 decimal, string memory name, string memory code)
+        public
+        returns (MockCToken)
+    {
         return new MockCToken(asset, interestRateModel, decimal, name, code);
     }
 
@@ -40,7 +42,8 @@ contract StanleyUtils {
 
         ItfStanleyUsdt itfStanleyImpl = new ItfStanleyUsdt();
 
-        address itfStanleyProxyAddress = address(new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -49,7 +52,8 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        ));
+            )
+        );
 
         ivToken.setStanley(itfStanleyProxyAddress);
         strategyAave.setStanley(itfStanleyProxyAddress);
@@ -66,7 +70,8 @@ contract StanleyUtils {
 
         ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
 
-        address itfStanleyProxyAddress = address(new ERC1967Proxy(
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
             address(itfStanleyImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
@@ -75,7 +80,8 @@ contract StanleyUtils {
                 address(strategyAave),
                 address(strategyCompound)
             )
-        ));
+            )
+        );
 
         ivToken.setStanley(itfStanleyProxyAddress);
         strategyAave.setStanley(itfStanleyProxyAddress);
@@ -172,11 +178,17 @@ contract StanleyUtils {
         return new MockWhitePaper();
     }
 
-    function getMockComptroller(address tokenCOMP, address cUSDT, address cUSDC, address cDAI) public returns (MockComptroller) {
+    function getMockComptroller(address tokenCOMP, address cUSDT, address cUSDC, address cDAI)
+        public
+        returns (MockComptroller)
+    {
         return new MockComptroller(tokenCOMP, cUSDT, cUSDC, cDAI);
     }
 
-    function getStrategyCompound(address asset, address shareToken, address comptroller, address tokenComp) public returns (StrategyCompound) {
+    function getStrategyCompound(address asset, address shareToken, address comptroller, address tokenComp)
+        public
+        returns (StrategyCompound)
+    {
         StrategyCompound strategyCompoundImpl = new StrategyCompound();
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyCompoundImpl),
@@ -184,5 +196,4 @@ contract StanleyUtils {
         );
         return StrategyCompound(address(strategyProxy));
     }
-
 }
