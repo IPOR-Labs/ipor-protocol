@@ -63,9 +63,9 @@ jobs:
       shell: bash
       run: |
         if [ ${{ github.event_name }} = "pull_request" ]; then
-          echo "::set-output name=branch-name::${GITHUB_HEAD_REF}"
+          echo "branch-name=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=branch-name::${GITHUB_REF#refs/heads/}"
+          echo "branch-name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         fi
 
     - name: Slack status start
