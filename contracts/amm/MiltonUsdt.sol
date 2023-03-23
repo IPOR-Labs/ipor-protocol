@@ -15,4 +15,8 @@ contract MiltonUsdt is Milton {
     function _getMaxLeverage() internal view virtual override returns (uint256) {
         return 100 * 1e18;
     }
+
+    function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
+        return 0;
+    }
 }

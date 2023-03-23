@@ -29,6 +29,23 @@ contract JosephUtils is Test {
         MockCase0JosephDai mockCase0JosephDai;
     }
 
+    struct ExchangeRateAndPayoff {
+        uint256 initialExchangeRate;
+        uint256 exchangeRateAfter28Days;
+        uint256 exchangeRateAfter56DaysBeforeClose;
+        int256 payoff1After28Days;
+        int256 payoff2After28Days;
+        int256 payoff1After56Days;
+        int256 payoff2After56Days;
+    }
+
+    struct ExpectedJosephBalances {
+        uint256 expectedMiltonBalance;
+        uint256 expectedIpTokenBalance;
+        uint256 expectedTokenBalance;
+        uint256 expectedLiquidityPoolBalance;
+    }
+
     function prepareJoseph(IJosephInternal joseph) public {
         joseph.setMaxLiquidityPoolBalance(1000000000);
         joseph.setMaxLpAccountContribution(1000000000);
@@ -151,4 +168,44 @@ contract JosephUtils is Test {
         );
         return mockCase0Josephs;
     }
+
+    function getMockCase1JosephUsdt(
+        address tokenUsdt,
+        address ipTokenUsdt,
+        address miltonUsdt,
+        address miltonStorageUsdt,
+        address stanleyUsdt
+    ) public returns (MockCase1JosephUsdt) {
+        MockCase1JosephUsdt josephUsdtImplementation = new MockCase1JosephUsdt();
+        ERC1967Proxy josephProxy =
+        new ERC1967Proxy(address(josephUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdt, ipTokenUsdt, miltonUsdt, miltonStorageUsdt, stanleyUsdt));
+        return MockCase1JosephUsdt(address(josephProxy));
+    }
+
+    function getMockCase1JosephUsdc(
+        address tokenUsdc,
+        address ipTokenUsdc,
+        address miltonUsdc,
+        address miltonStorageUsdc,
+        address stanleyUsdc
+    ) public returns (MockCase1JosephUsdc) {
+        MockCase1JosephUsdc josephUsdcImplementation = new MockCase1JosephUsdc();
+        ERC1967Proxy josephProxy =
+        new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
+        return MockCase1JosephUsdc(address(josephProxy));
+    }
+
+    function getMockCase1JosephDai(
+        address tokenDai,
+        address ipTokenDai,
+        address miltonDai,
+        address miltonStorageDai,
+        address stanleyDai
+    ) public returns (MockCase1JosephDai) {
+        MockCase1JosephDai josephDaiImplementation = new MockCase1JosephDai();
+        ERC1967Proxy josephProxy =
+        new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
+        return MockCase1JosephDai(address(josephProxy));
+    }
+
 }

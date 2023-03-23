@@ -32,9 +32,11 @@ library TestConstants {
     uint256 public constant USD_20_000_18DEC = 20000 * 1e18;
     uint256 public constant USD_28_000_18DEC = 28000 * 1e18;
     uint256 public constant USD_50_000_18DEC = 50000 * 1e18;
+    uint256 public constant USD_60_000_18DEC = 60000 * 1e18;
     uint256 public constant USD_100_000_18DEC = 100000 * 1e18;
     uint256 public constant USD_1_000_000_18DEC = 1000000 * 1e18;
     uint256 public constant USD_10_000_000_18DEC = 10000000 * 1e18;
+    uint256 public constant USD_20_000_000_18DEC = 20000000 * 1e18;
     uint256 public constant USD_1_000_000_000_18DEC = 1000000000 * 1e18;
     int256 public constant USD_10_000_000_18DEC_INT = 10000000 * 1e18;
 
@@ -72,6 +74,7 @@ library TestConstants {
     uint256 public constant PERCENTAGE_400_18DEC = 400 * 1e16;
 
     uint256 public constant TC_TOTAL_AMOUNT_100_18DEC = 100 * 1e18;
+    uint256 public constant TC_1000_18DEC = 1000 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
     uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
@@ -85,6 +88,8 @@ library TestConstants {
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
     uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
     int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
+    uint256 public constant TC_DECIMALS_18 = 18;
+    uint256 public constant TC_100_000_000_18DEC = 100_000_000 * 1e18;
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
@@ -110,12 +115,23 @@ library TestConstants {
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
 
+    uint256 public constant N1__0_18DEC = 1000000000000000000;
     uint256 public constant N1__0_6DEC = 1000000;
     uint256 public constant N0__1_6DEC = 100000;
     uint256 public constant N0__01_6DEC = 10000;
     uint256 public constant N0__001_6DEC = 1000;
     uint256 public constant N0__000_1_6DEC = 100;
     uint256 public constant N0__000_01_6DEC = 10;
+
+    uint256 public constant P_0_1_DEC18 = 100000000000000000;
+    uint256 public constant P_0_01_DEC18 = 10000000000000000;
+    uint256 public constant P_0_3_DEC18 = 30000000000000000;
+    uint256 public constant P_0_004_DEC18 = 4000000000000000;
+    uint256 public constant P_0_5_DEC18 = 500000000000000000;
+    uint256 public constant P_0_05_DEC18 = 50000000000000000;
+    uint256 public constant P_0_005_DEC18 = 5000000000000000;
+    uint256 public constant P_0_06_DEC18 = 60000000000000000;
+    uint256 public constant P_0_006_DEC18 = 6000000000000000;
 
     uint256 public constant USD_10_000_000 = 10000000;
     uint256 public constant USD_1_000_000 = 1000000;
@@ -134,8 +150,12 @@ library TestConstants {
     uint256 public constant PERCENTAGE_7_6DEC = 7 * 10000;
     uint256 public constant PERCENTAGE_50_6DEC = 50 * 10000;
 
+    uint64 public constant TC_1_EMA_18DEC_64UINT = 1 * 1e16;
     uint64 public constant TC_DEFAULT_EMA_18DEC_64UINT = 3 * 1e16;
     uint64 public constant TC_5_EMA_18DEC_64UINT = 5 * 1e16;
+    uint64 public constant TC_8_EMA_18DEC_64UINT = 8 * 1e16;
+    uint64 public constant TC_50_EMA_18DEC_64UINT = 50 * 1e16;
+    uint64 public constant TC_6_EMA_18DEC_64UINT = 6 * 1e16;
     uint64 public constant TC_120_EMA_18DEC_64UINT = 120 * 1e16;
     uint64 public constant TC_150_EMA_18DEC_64UINT = 150 * 1e16;
     uint64 public constant TC_151_EMA_18DEC_64UINT = 151 * 1e16;
