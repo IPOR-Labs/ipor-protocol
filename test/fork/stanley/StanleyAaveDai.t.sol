@@ -255,10 +255,13 @@ contract StanleyAaveDaiTest is Test {
         // given
         uint256 depositAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin); // force Compound to have 0% APR to deposit to AAVE
-        IStrategy(amm.stanley().getStrategyCompound()).deposit(depositAmount); // deposit to Compound
-        // after withdrawing Stanley should have enough DAI to deposit to AAVE - Compound mock under the hood is dumb
-        deal(amm.dai(), address(amm.stanley()), depositAmount);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
+        deal(amm.dai(), address(amm.milton()), depositAmount);
+        vm.startPrank(address(amm.milton()));
+        amm.stanley().deposit(depositAmount);
+        vm.stopPrank();
+        amm.restoreStrategies(_admin);
+        amm.overrideCompoundStrategyWithZeroApr(_admin);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
         uint256 strategyAaveBalanceBefore = amm.strategyAave().balanceOf();

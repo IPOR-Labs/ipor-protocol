@@ -83,6 +83,13 @@ contract DaiAmm is Test, TestCommons {
         stanley.setStrategyAave(address(strategy));
     }
 
+    function restoreStrategies(address owner) public {
+        vm.startPrank(owner);
+        stanley.setStrategyAave(address(strategyAave));
+        stanley.setStrategyCompound(address(strategyCompound));
+        vm.stopPrank();
+    }
+
     function overrideCompoundStrategyWithZeroApr(address owner) public {
         MockStrategy strategy = new MockStrategy();
         strategy.setStanley(address(stanley));
