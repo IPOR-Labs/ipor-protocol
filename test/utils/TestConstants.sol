@@ -75,6 +75,7 @@ library TestConstants {
 
     uint256 public constant TC_TOTAL_AMOUNT_100_18DEC = 100 * 1e18;
     uint256 public constant TC_1000_18DEC = 1000 * 1e18;
+    uint256 public constant TC_9_000_USD_18DEC = 9000 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
     uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
@@ -136,6 +137,8 @@ library TestConstants {
     uint256 public constant USD_10_000_000 = 10000000;
     uint256 public constant USD_1_000_000 = 1000000;
     uint256 public constant USD_100_6DEC = 100000000;
+    uint256 public constant USD_1_000_6DEC = 1000 * 1000000;
+    uint256 public constant USD_9_000_6DEC = 9000 * 1000000;
     uint256 public constant USD_10_000_6DEC = 10000 * 1000000;
     uint256 public constant USD_14_000_6DEC = 14000 * 1000000;
     uint256 public constant USD_28_000_6DEC = 28000 * 1000000;
