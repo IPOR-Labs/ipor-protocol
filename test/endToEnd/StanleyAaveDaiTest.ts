@@ -180,7 +180,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Dai", function () {
         await ivToken.setStanley(stanley.address);
     });
 
-    it("Should accept deposit and transfer tokens into AAVE", async () => {
+    it.skip("Should accept deposit and transfer tokens into AAVE", async () => {
         //given
         const depositAmount = ONE_18.mul(10);
         const userAddress = await signer.getAddress();

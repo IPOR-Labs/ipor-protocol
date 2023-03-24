@@ -50,7 +50,6 @@
         "migrate:truffle-reset": "truffle migrate --network $ETH_BC_NETWORK_NAME --reset --compile-none",
         "test:unit": "export FORK_ENABLED=false; hardhat test",
         "test:mainnet": "export FORK_ENABLED=true; hardhat test test/endToEnd/*.ts",
-        "test:miningrewards": "export FORK_ENABLED=false; hardhat test test/mining/iporToken/IporTokenTest.ts",
         "test": "npm-run-all test:*",
         "solhint": "./node_modules/.bin/solhint -f table contracts/**/*.sol",
         "export-abi": "hardhat export-abi",

@@ -219,6 +219,45 @@ contract MiltonUtils is Test {
         return mockCase0Miltons;
     }
 
+    function getMockCase1MiltonUsdt(
+        address tokenUsdt,
+        address iporOracle,
+        address miltonStorageUsdt,
+        address miltonSpreadModel,
+        address stanleyUsdt
+    ) public returns (MockCase1MiltonUsdt) {
+        MockCase1MiltonUsdt mockCase1MiltonUsdtImplementation = new MockCase1MiltonUsdt();
+        ERC1967Proxy miltonUsdtProxy =
+        new ERC1967Proxy(address(mockCase1MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
+        return MockCase1MiltonUsdt(address(miltonUsdtProxy));
+    }
+
+    function getMockCase1MiltonUsdc(
+        address tokenUsdc,
+        address iporOracle,
+        address miltonStorageUsdc,
+        address miltonSpreadModel,
+        address stanleyUsdc
+    ) public returns (MockCase1MiltonUsdc) {
+        MockCase1MiltonUsdc mockCase1MiltonUsdcImplementation = new MockCase1MiltonUsdc();
+        ERC1967Proxy miltonUsdcProxy =
+        new ERC1967Proxy(address(mockCase1MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
+        return MockCase1MiltonUsdc(address(miltonUsdcProxy));
+    }
+
+    function getMockCase1MiltonDai(
+        address tokenDai,
+        address iporOracle,
+        address miltonStorageDai,
+        address miltonSpreadModel,
+        address stanleyDai
+    ) public returns (MockCase1MiltonDai) {
+        MockCase1MiltonDai mockCase1MiltonDaiImplementation = new MockCase1MiltonDai();
+        ERC1967Proxy miltonDaiProxy =
+        new ERC1967Proxy(address(mockCase1MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
+        return MockCase1MiltonDai(address(miltonDaiProxy));
+    }
+
     function getMockCase2MiltonUsdt(
         address tokenUsdt,
         address iporOracle,
