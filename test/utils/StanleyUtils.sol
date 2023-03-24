@@ -25,6 +25,11 @@ import "../../contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
 import "../../contracts/mocks/stanley/aave/MockProviderAave.sol";
 import "../../contracts/mocks/stanley/aave/MockStakedAave.sol";
 import "../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import "../../contracts/mocks/stanley/compound/MockWhitePaper.sol";
+import "../../contracts/mocks/stanley/compound/MockCToken.sol";
+import "../../contracts/mocks/stanley/compound/MockComptroller.sol";
+import "../../contracts/mocks/tokens/MockedCOMPToken.sol";
+import "../../contracts/vault/strategies/StrategyCompound.sol";
 
 contract StanleyUtils {
     function getTokenAUsdt() public returns (MockAUsdt) {
@@ -41,6 +46,17 @@ contract StanleyUtils {
 
     function getTokenAave() public returns (AAVEMockedToken) {
         return new AAVEMockedToken(1000000000000000000000000000000, 18);
+    }
+
+    function getCToken(address asset, address interestRateModel, uint8 decimal, string memory name, string memory code)
+        public
+        returns (MockCToken)
+    {
+        return new MockCToken(asset, interestRateModel, decimal, name, code);
+    }
+
+    function getTokenComp() public returns (MockedCOMPToken) {
+        return new MockedCOMPToken(1000000000000000000000000000000, 18);
     }
 
     function getItfStanleyUsdt(address asset) public returns (ItfStanley itfStanley) {
@@ -233,5 +249,28 @@ contract StanleyUtils {
             abi.encodeWithSignature("initialize(address,address,address,address,address,address)", tokenAddress, aTokenAddress, addressProviderAddress, stakedAaveAddress, aaveIncentivesControllerAddress, aaveTokenAddress)
         );
         return StrategyAave(address(strategyProxy));
+    }
+
+    function getMockWhitePaper() public returns (MockWhitePaper) {
+        return new MockWhitePaper();
+    }
+
+    function getMockComptroller(address tokenCOMP, address cUSDT, address cUSDC, address cDAI)
+        public
+        returns (MockComptroller)
+    {
+        return new MockComptroller(tokenCOMP, cUSDT, cUSDC, cDAI);
+    }
+
+    function getStrategyCompound(address asset, address shareToken, address comptroller, address tokenComp)
+        public
+        returns (StrategyCompound)
+    {
+        StrategyCompound strategyCompoundImpl = new StrategyCompound();
+        ERC1967Proxy strategyProxy = new ERC1967Proxy(
+            address(strategyCompoundImpl),
+            abi.encodeWithSignature("initialize(address,address,address,address)", asset, shareToken, comptroller, tokenComp)
+        );
+        return StrategyCompound(address(strategyProxy));
     }
 }
