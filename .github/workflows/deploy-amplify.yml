@@ -13,20 +13,24 @@ on:
         description: 'AWS region in which the application is already configured'
         type: string
         default: eu-central-1
+        required: false
 
       app-name:
         description: 'The name of the web application in AWS Amplify'
         type: string
+        required: false
 
       branch:
         description: 'Git repository branch name from which application will be built'
         type: string
         default: main
+        required: false
 
       extra-args:
         description: 'Extra arguments to AWS Amplify CLI commands'
         type: string
         default: ""
+        required: false
 
 jobs:
   amplify:
@@ -37,12 +41,12 @@ jobs:
 
       - name: Checkout
         if: "${{ github.event.head_commit.message == '' || github.event.head_commit.timestamp == '' }}"
-        # from tag: v3.4.0
-        uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f
+        # from tag: v3.5.0
+        uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
 
       - name: Set up AWS credentials
-        # from tag: v1.6.1
-        uses: aws-actions/configure-aws-credentials@05b148adc31e091bafbaf404f745055d4d3bc9d2
+        # from tag: v2.0.0
+        uses: aws-actions/configure-aws-credentials@e1e17a757e536f70e52b5a12b2e8d1d1c60e04ef
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
