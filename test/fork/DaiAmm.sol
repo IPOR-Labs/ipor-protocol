@@ -40,6 +40,7 @@ contract DaiAmm is Test, TestCommons {
     Stanley public stanley;
     StrategyCompound public strategyCompound;
     StrategyAave public strategyAave;
+    StrategyAave public strategyAaveV2;
 
     Joseph public joseph;
     Milton public milton;
@@ -52,6 +53,7 @@ contract DaiAmm is Test, TestCommons {
         _createIvDai();
         strategyCompound = _createCompoundStrategy();
         strategyAave = _createAaveStrategy();
+        strategyAaveV2 = _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
         _createMiltonSpreadModel();
@@ -79,6 +81,13 @@ contract DaiAmm is Test, TestCommons {
         strategy.setAsset(dai);
         vm.prank(owner);
         stanley.setStrategyAave(address(strategy));
+    }
+
+    function restoreStrategies(address owner) public {
+        vm.startPrank(owner);
+        stanley.setStrategyAave(address(strategyAave));
+        stanley.setStrategyCompound(address(strategyCompound));
+        vm.stopPrank();
     }
 
     function overrideCompoundStrategyWithZeroApr(address owner) public {
@@ -268,6 +277,7 @@ contract DaiAmm is Test, TestCommons {
 
     function _setupStrategyAave() internal {
         strategyAave.setStanley(address(stanley));
+        strategyAaveV2.setStanley(address(stanley));
     }
 
     function _setupStrategyCompound() internal {
