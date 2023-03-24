@@ -15,6 +15,30 @@ on:
         default: github-ci
         required: false
 
+      src-actor:
+        description: 'Optional actor from the source workflow that triggered this build'
+        type: string
+        default: ""
+        required: false
+
+      src-repository:
+        description: 'Optional repository from the source workflow that triggered this build'
+        type: string
+        default: ""
+        required: false
+
+      src-workflow:
+        description: 'Optional workflow name from the source workflow that triggered this build'
+        type: string
+        default: ""
+        required: false
+
+      src-run-url:
+        description: 'Optional workflow run URL from the source workflow that triggered this build'
+        type: string
+        default: ""
+        required: false
+
     outputs:
 
       slack-status-msg-id:
@@ -39,18 +63,22 @@ jobs:
       shell: bash
       run: |
         if [ ${{ github.event_name }} = "pull_request" ]; then
-          echo "::set-output name=branch-name::${GITHUB_HEAD_REF}"
+          echo "branch-name=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=branch-name::${GITHUB_REF#refs/heads/}"
+          echo "branch-name=${GITHUB_REF#refs/heads/}" >> $GITHUB_OUTPUT
         fi
 
     - name: Slack status start
       id: slack-status
-      # from tag: v1.5.0-ipor-v2
-      uses: IPOR-Labs/github-action-slack-notify-build@3c8c336d9f03897665305e2283e5aa9a547c94bc
+      # from tag: v1.6.0-ipor-v2
+      uses: IPOR-Labs/github-action-slack-notify-build@56a99a384d13bd55342db60fdf956d12d17fcbb7
       with:
         channel: ${{ inputs.status-slack-channel-name }}
         status: STARTING
         color: warning
+        src_actor: ${{ inputs.src-actor }}
+        src_repository: ${{ inputs.src-repository }}
+        src_workflow: ${{ inputs.src-workflow }}
+        src_run_url: ${{ inputs.src-run-url }}
       env:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
