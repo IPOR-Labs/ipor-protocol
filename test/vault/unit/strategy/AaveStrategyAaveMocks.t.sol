@@ -98,61 +98,60 @@ contract AaveStrategyAaveMocksTest is TestCommons, DataUtils {
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
     }
 
-	function testShouldBeAbleToSetupStanleyAndInteractWithDAI() public {
-		// given 
-		address newStanleyAddress = _userTwo; // random address
-		address oldStanleyAddress = _strategyAaveDai.getStanley();
+    function testShouldBeAbleToSetupStanleyAndInteractWithDAI() public {
+        // given
+        address newStanleyAddress = _userTwo; // random address
+        address oldStanleyAddress = _strategyAaveDai.getStanley();
         vm.expectEmit(true, true, true, true);
-		emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
-		_strategyAaveDai.setStanley(newStanleyAddress);
+        emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
+        _strategyAaveDai.setStanley(newStanleyAddress);
         deal(address(_daiMockedToken), address(newStanleyAddress), TestConstants.USD_10_000_18DEC);
-		vm.startPrank(_userTwo);
-		_daiMockedToken.increaseAllowance(address(_strategyAaveDai), TestConstants.USD_10_000_18DEC);
-		_strategyAaveDai.deposit(TestConstants.USD_1_000_18DEC);
-		assertEq(_daiMockedToken.balanceOf(newStanleyAddress), TestConstants.TC_9_000_USD_18DEC);
-		assertEq(_aDaiMockedToken.balanceOf(address(_strategyAaveDai)), TestConstants.USD_1_000_18DEC);
-		_strategyAaveDai.withdraw(TestConstants.USD_1_000_18DEC);
-		vm.stopPrank();
-		assertEq(_daiMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_18DEC);
-		assertEq(_aDaiMockedToken.balanceOf(address(_strategyAaveDai)), TestConstants.ZERO);
-	}
+        vm.startPrank(_userTwo);
+        _daiMockedToken.increaseAllowance(address(_strategyAaveDai), TestConstants.USD_10_000_18DEC);
+        _strategyAaveDai.deposit(TestConstants.USD_1_000_18DEC);
+        assertEq(_daiMockedToken.balanceOf(newStanleyAddress), TestConstants.TC_9_000_USD_18DEC);
+        assertEq(_aDaiMockedToken.balanceOf(address(_strategyAaveDai)), TestConstants.USD_1_000_18DEC);
+        _strategyAaveDai.withdraw(TestConstants.USD_1_000_18DEC);
+        vm.stopPrank();
+        assertEq(_daiMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_18DEC);
+        assertEq(_aDaiMockedToken.balanceOf(address(_strategyAaveDai)), TestConstants.ZERO);
+    }
 
-	function testShouldBeAbleToSetupStanleyAndInteractWithUSDC() public {
-		// given 
-		address newStanleyAddress = _userTwo; // random address
-		address oldStanleyAddress = _strategyAaveUsdc.getStanley();
+    function testShouldBeAbleToSetupStanleyAndInteractWithUSDC() public {
+        // given
+        address newStanleyAddress = _userTwo; // random address
+        address oldStanleyAddress = _strategyAaveUsdc.getStanley();
         vm.expectEmit(true, true, true, true);
-		emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
-		_strategyAaveUsdc.setStanley(newStanleyAddress);
+        emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
+        _strategyAaveUsdc.setStanley(newStanleyAddress);
         deal(address(_usdcMockedToken), address(newStanleyAddress), TestConstants.USD_10_000_6DEC);
-		vm.startPrank(_userTwo);
-		_usdcMockedToken.increaseAllowance(address(_strategyAaveUsdc), TestConstants.USD_10_000_6DEC);
-		_strategyAaveUsdc.deposit(TestConstants.USD_1_000_18DEC);
-		assertEq(_usdcMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_9_000_6DEC);
-		assertEq(_aUsdcMockedToken.balanceOf(address(_strategyAaveUsdc)), TestConstants.USD_1_000_6DEC);
-		_strategyAaveUsdc.withdraw(TestConstants.USD_1_000_18DEC);
-		vm.stopPrank();
-		assertEq(_usdcMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_6DEC);
-		assertEq(_aUsdcMockedToken.balanceOf(address(_strategyAaveUsdc)), TestConstants.ZERO);
-	}
+        vm.startPrank(_userTwo);
+        _usdcMockedToken.increaseAllowance(address(_strategyAaveUsdc), TestConstants.USD_10_000_6DEC);
+        _strategyAaveUsdc.deposit(TestConstants.USD_1_000_18DEC);
+        assertEq(_usdcMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_9_000_6DEC);
+        assertEq(_aUsdcMockedToken.balanceOf(address(_strategyAaveUsdc)), TestConstants.USD_1_000_6DEC);
+        _strategyAaveUsdc.withdraw(TestConstants.USD_1_000_18DEC);
+        vm.stopPrank();
+        assertEq(_usdcMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_6DEC);
+        assertEq(_aUsdcMockedToken.balanceOf(address(_strategyAaveUsdc)), TestConstants.ZERO);
+    }
 
-	function testShouldBeAbleToSetupStanleyAndInteractWithUSDT() public {
-		// given 
-		address newStanleyAddress = _userTwo; // random address
-		address oldStanleyAddress = _strategyAaveUsdt.getStanley();
+    function testShouldBeAbleToSetupStanleyAndInteractWithUSDT() public {
+        // given
+        address newStanleyAddress = _userTwo; // random address
+        address oldStanleyAddress = _strategyAaveUsdt.getStanley();
         vm.expectEmit(true, true, true, true);
-		emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
-		_strategyAaveUsdt.setStanley(newStanleyAddress);
+        emit StanleyChanged(_admin, oldStanleyAddress, newStanleyAddress);
+        _strategyAaveUsdt.setStanley(newStanleyAddress);
         deal(address(_usdtMockedToken), address(newStanleyAddress), TestConstants.USD_10_000_6DEC);
-		vm.startPrank(_userTwo);
-		_usdtMockedToken.increaseAllowance(address(_strategyAaveUsdt), TestConstants.USD_10_000_6DEC);
-		_strategyAaveUsdt.deposit(TestConstants.USD_1_000_18DEC);
-		assertEq(_usdtMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_9_000_6DEC);
-		assertEq(_aUsdtMockedToken.balanceOf(address(_strategyAaveUsdt)), TestConstants.USD_1_000_6DEC);
-		_strategyAaveUsdt.withdraw(TestConstants.USD_1_000_18DEC);
-		vm.stopPrank();
-		assertEq(_usdtMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_6DEC);
-		assertEq(_aUsdtMockedToken.balanceOf(address(_strategyAaveUsdt)), TestConstants.ZERO);
-	}
-
+        vm.startPrank(_userTwo);
+        _usdtMockedToken.increaseAllowance(address(_strategyAaveUsdt), TestConstants.USD_10_000_6DEC);
+        _strategyAaveUsdt.deposit(TestConstants.USD_1_000_18DEC);
+        assertEq(_usdtMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_9_000_6DEC);
+        assertEq(_aUsdtMockedToken.balanceOf(address(_strategyAaveUsdt)), TestConstants.USD_1_000_6DEC);
+        _strategyAaveUsdt.withdraw(TestConstants.USD_1_000_18DEC);
+        vm.stopPrank();
+        assertEq(_usdtMockedToken.balanceOf(newStanleyAddress), TestConstants.USD_10_000_6DEC);
+        assertEq(_aUsdtMockedToken.balanceOf(address(_strategyAaveUsdt)), TestConstants.ZERO);
+    }
 }
