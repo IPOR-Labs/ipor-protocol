@@ -191,6 +191,7 @@ library TestConstants {
     uint256 public constant PERIOD_56_DAYS_IN_SECONDS = 60 * 60 * 24 * 56;
     uint256 public constant PERIOD_28_DAYS_IN_SECONDS = 60 * 60 * 24 * 28;
     uint256 public constant PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
+    uint256 public constant PERIOD_27_DAYS_23_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 23;
     uint256 public constant PERIOD_27_DAYS_19_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 19;
     uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
     uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
