@@ -17,6 +17,7 @@ import "../../contracts/amm/MiltonUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
+import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract UsdcAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -48,6 +49,8 @@ contract UsdcAmm is Test, TestCommons {
     MiltonStorage public miltonStorage;
     MiltonSpreadModel public miltonSpreadModel;
 
+    IAaveIncentivesController public aaveIncentivesController;
+
     constructor(address owner) {
         vm.startPrank(owner);
         _createIpUsdc();
@@ -62,6 +65,7 @@ contract UsdcAmm is Test, TestCommons {
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _createAaveIncentivesController();
         _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
@@ -71,13 +75,6 @@ contract UsdcAmm is Test, TestCommons {
         _setupStrategyAave();
         _setupStrategyCompound();
         _setupIporOracle(owner);
-        vm.stopPrank();
-    }
-
-    function approveMiltonJoseph(address user) public {
-        vm.startPrank(user);
-        ERC20(usdc).approve(address(joseph), type(uint256).max);
-        ERC20(usdc).approve(address(milton), type(uint256).max);
         vm.stopPrank();
     }
 
@@ -108,6 +105,13 @@ contract UsdcAmm is Test, TestCommons {
         strategy.setAsset(usdc);
         vm.prank(owner);
         stanley.setStrategyCompound(address(strategy));
+    }
+
+    function approveMiltonJoseph(address user) public {
+        vm.startPrank(user);
+        ERC20(usdc).approve(address(joseph), type(uint256).max);
+        ERC20(usdc).approve(address(milton), type(uint256).max);
+        vm.stopPrank();
     }
 
     function createAaveStrategy() external returns (StrategyAave) {
@@ -248,6 +252,10 @@ contract UsdcAmm is Test, TestCommons {
             )
         );
         joseph = Joseph(address(proxy));
+    }
+
+    function _createAaveIncentivesController() internal {
+       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {
