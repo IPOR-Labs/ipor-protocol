@@ -23,7 +23,7 @@ import {
 
 // // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
-describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
+describe.only("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
     let accounts: Signer[];
     let accountToImpersonate: string;
     let usdcAddress: string;
@@ -379,6 +379,7 @@ describe("Deposit -> deployed Contract on Mainnet fork AAVE Usdc", function () {
         const aaveBalanceBefore = await aaveContract.balanceOf(userOneAddres);
 
         expect(claimable.gt(ZERO), "Aave Claimable Amount > 0").to.be.true;
+        console.log("Aave Claimable Amount: ", claimable.toString());
         expect(aaveBalanceBefore, "Claimed Aave Balance Before").to.be.equal(ZERO);
 
         // when

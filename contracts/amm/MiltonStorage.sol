@@ -90,6 +90,23 @@ contract MiltonStorage is
             );
     }
 
+    function getSwapsBalance()
+        external
+        view
+        virtual
+        override
+        returns (IporTypes.MiltonSwapsBalanceMemory memory)
+    {
+        return
+            IporTypes.MiltonSwapsBalanceMemory(
+                _balances.totalCollateralPayFixed,
+                _balances.totalCollateralReceiveFixed,
+                _balances.liquidityPool,
+                _soapIndicatorsPayFixed.totalNotional,
+                _soapIndicatorsReceiveFixed.totalNotional
+            );
+    }
+
     function getExtendedBalance()
         external
         view

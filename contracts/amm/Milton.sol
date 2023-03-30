@@ -381,7 +381,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             leverage
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        IporTypes.MiltonSwapsBalanceMemory memory balance = _getMiltonStorage().getSwapsBalance();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
@@ -393,7 +393,9 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
             bosStruct.accruedIpor,
-            balance
+            balance,
+            bosStruct.collateral,
+            bosStruct.notional
         );
 
         require(
@@ -808,7 +810,9 @@ abstract contract Milton is MiltonInternal, IMilton {
                 transferAmount,
                 decimals
             );
-            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(address(this));
+            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(
+                address(this)
+            );
             if (wadMiltonErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
                 IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
                 int256 rebalanceAmount = IJoseph(_joseph).calculateRebalanceAmountBeforeWithdraw(
@@ -818,7 +822,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 );
 
                 if (rebalanceAmount < 0) {
-                    _withdrawFromStanley((- rebalanceAmount).toUint256());
+                    _withdrawFromStanley((-rebalanceAmount).toUint256());
                 }
             }
 
