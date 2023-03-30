@@ -99,6 +99,5 @@ interface ICockpitDataProvider {
     /// @return spreadReceiveFixed Spread value for Receive Fixed leg for a given asset
     function calculateSpread(address asset)
         external
-        view
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 }

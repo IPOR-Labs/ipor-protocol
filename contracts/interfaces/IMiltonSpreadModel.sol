@@ -16,7 +16,7 @@ interface IMiltonSpreadModel {
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
         uint256 swapCollateral,
         uint256 swapNotional
-    ) external view returns (uint256 quoteValue);
+    ) external returns (uint256 quoteValue);
 
     /// @notice Calculates the quote for Receive-Fixed leg.
     /// @param accruedIpor - accrued IPOR at moment of calculation
@@ -34,7 +34,7 @@ interface IMiltonSpreadModel {
     function calculateSpreadPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
-    ) external view returns (int256 spreadValue);
+    ) external returns (int256 spreadValue);
 
     /// @notice Calculates the spread for Receive-Fixed leg.
     /// @param accruedIpor - interest accrued by IPOR at the moment of calculation

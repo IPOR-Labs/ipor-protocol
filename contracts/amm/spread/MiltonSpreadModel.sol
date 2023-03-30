@@ -5,6 +5,7 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadInternal.sol";
+import "forge-std/Test.sol";
 
 abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
@@ -20,6 +21,11 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
     uint256 _collateralOpenInBlockReceiveFixed;
     uint256 _notionalOpenInBlockPayFixed;
     uint256 _notionalOpenInBlockReceiveFixed;
+
+    uint256 constant _weightedTimeToMaturity = 28;
+    uint256 constant _minAnticipatedSustainedRate = 0;
+    uint256 constant _maxAnticipatedSustainedRate = 1e16;
+    uint256 constant _maturity = 28;
 
     struct SpreadCalculation {
         uint256 lpBalance;
@@ -38,7 +44,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
         uint256 swapCollateral,
         uint256 swapNotional
-    ) external view override returns (uint256 quoteValue) {
+    ) external override returns (uint256 quoteValue) {
         int256 volatilitySpread = _calculateSpreadPremiumsPayFixed(accruedIpor, accruedBalance);
 
         SpreadCalculation memory spreadData = SpreadCalculation(
@@ -80,7 +86,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
     function calculateSpreadPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
-    ) external view override returns (int256 spreadValue) {
+    ) external override returns (int256 spreadValue) {
         int256 volatilitySpread = _calculateSpreadPremiumsPayFixed(accruedIpor, accruedBalance);
 
         SpreadCalculation memory spreadData = SpreadCalculation(
@@ -144,7 +150,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         SpreadCalculation memory spreadData,
         uint256 swapCollateral,
         uint256 swapNotional
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         uint256 baseSpread;
         if (_lastUpdateTimePayFixed == block.timestamp) {
             spreadData.weightedNotionalPayFixed -= _notionalOpenInBlockPayFixed;
@@ -228,58 +234,57 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         public
         returns (uint256 basePayFixedSpread)
     {
-        // TODO: extract to constant or put into  SpreadCalculation
-        uint256 weightedTimeToMaturity = 28;
-        uint256 minAnticipatedSustainedRate = 0;
-        uint256 maxAnticipatedSustainedRate = 1e16;
-        uint256 maturity = 28;
-
+        console2.log("spreadData.collateralPayFixed", spreadData.collateralPayFixed);
         uint256 lpDepth = calculateLpDepth(
             spreadData.lpBalance,
             spreadData.collateralPayFixed,
             spreadData.collateralReceiveFixed
         );
+        console2.log("lpDepth", lpDepth);
 
         uint256 maxDdReceiveFixed = calculateMaxDdReceiveFixed(
             spreadData.collateralReceiveFixed,
             spreadData.notionalReceiveFixed,
             spreadData.iporRate,
-            minAnticipatedSustainedRate,
-            maturity
+            _minAnticipatedSustainedRate,
+            _maturity
         );
+        console2.log("maxDdReceiveFixed", maxDdReceiveFixed);
 
         uint256 maxDdPayFixed = calculateMaxDdPayFixed(
             spreadData.collateralPayFixed,
             spreadData.notionalPayFixed,
             spreadData.iporRate,
-            maxAnticipatedSustainedRate,
-            maturity
+            _maxAnticipatedSustainedRate,
+            _maturity
         );
+        console2.log("maxDdPayFixed", maxDdPayFixed);
 
         uint256 maxDdAdjustedReceiveFixed = calculateMaxDdAdjusted(
             maxDdReceiveFixed,
             maxDdPayFixed,
-            weightedTimeToMaturity,
-            maturity,
+            _weightedTimeToMaturity,
             spreadData.weightedNotionalReceiveFixed,
             spreadData.weightedNotionalPayFixed,
             spreadData.notionalReceiveFixed
         );
+        console2.log("maxDdAdjustedReceiveFixed", maxDdAdjustedReceiveFixed);
 
         uint256 maxDdAdjustedPayFixed = calculateMaxDdAdjusted(
             maxDdPayFixed,
             maxDdReceiveFixed,
-            weightedTimeToMaturity,
-            maturity,
+            _weightedTimeToMaturity,
             spreadData.weightedNotionalPayFixed,
             spreadData.weightedNotionalReceiveFixed,
             spreadData.notionalPayFixed
         );
+        console2.log("maxDdAdjustedPayFixed", maxDdAdjustedPayFixed);
 
         uint256 slope = _calculateSlope(
             spreadData.weightedNotionalPayFixed,
             spreadData.notionalPayFixed
         );
+        console2.log("slope", slope);
 
         basePayFixedSpread = calculateNewSpread(
             maxDdAdjustedPayFixed,
@@ -287,18 +292,13 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             slope,
             spreadData.volatilitySpread
         );
+        console2.log("basePayFixedSpread", basePayFixedSpread);
     }
 
     function calculateBaseReceiveFixedSpread(SpreadCalculation memory spreadData)
         public
         returns (uint256 baseReceiveFixedSpread)
     {
-        // TODO: extract to constant or put into  SpreadCalculation
-        uint256 weightedTimeToMaturity = 28;
-        uint256 minAnticipatedSustainedRate = 0;
-        uint256 maxAnticipatedSustainedRate = 1e16;
-        uint256 maturity = 28;
-
         uint256 lpDepth = calculateLpDepth(
             spreadData.lpBalance,
             spreadData.collateralPayFixed,
@@ -309,23 +309,22 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             spreadData.collateralReceiveFixed,
             spreadData.notionalReceiveFixed,
             spreadData.iporRate,
-            minAnticipatedSustainedRate,
-            maturity
+            _minAnticipatedSustainedRate,
+            _maturity
         );
 
         uint256 maxDdPayFixed = calculateMaxDdPayFixed(
             spreadData.collateralPayFixed,
             spreadData.notionalPayFixed,
             spreadData.iporRate,
-            maxAnticipatedSustainedRate,
-            maturity
+            _maxAnticipatedSustainedRate,
+            _maturity
         );
 
         uint256 maxDdAdjustedReceiveFixed = calculateMaxDdAdjusted(
             maxDdReceiveFixed,
             maxDdPayFixed,
-            weightedTimeToMaturity,
-            maturity,
+            _weightedTimeToMaturity,
             spreadData.weightedNotionalReceiveFixed,
             spreadData.weightedNotionalPayFixed,
             spreadData.notionalReceiveFixed
@@ -334,8 +333,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         uint256 maxDdAdjustedPayFixed = calculateMaxDdAdjusted(
             maxDdPayFixed,
             maxDdReceiveFixed,
-            weightedTimeToMaturity,
-            maturity,
+            _weightedTimeToMaturity,
             spreadData.weightedNotionalPayFixed,
             spreadData.weightedNotionalReceiveFixed,
             spreadData.notionalPayFixed
@@ -414,7 +412,6 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         uint256 maxDdT1,
         uint256 maxDdT2,
         uint256 weightedTimeToMaturity,
-        uint256 maturity,
         uint256 weightedNotionalT1,
         uint256 weightedNotionalT2,
         uint256 totalNotionalPerLeg
@@ -429,7 +426,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
                 )
                 : 0;
         } else {
-            maxDdAdjusted = (maxDdT1 - maxDdT2) * (weightedTimeToMaturity / maturity);
+            maxDdAdjusted = (maxDdT1 - maxDdT2) * (weightedTimeToMaturity / 28);
         }
     }
 
@@ -453,7 +450,11 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         view
         returns (uint256 slope)
     {
-        slope = IporMath.divisionWithoutRound(weightedNotional * 1e18, totalNotionalPerLeg);
+        if (totalNotionalPerLeg == 0) {
+            slope = 1;
+        } else {
+            slope = IporMath.divisionWithoutRound(weightedNotional * 1e18, totalNotionalPerLeg);
+        }
     }
 
     /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.

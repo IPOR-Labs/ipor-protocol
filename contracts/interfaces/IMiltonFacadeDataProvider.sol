@@ -12,10 +12,7 @@ interface IMiltonFacadeDataProvider {
 
     /// @notice Gets required configuration for frontend (webapp etc.), to open, close position, provide and redeem liquidity.
     /// @return configuration structure
-    function getConfiguration()
-        external
-        view
-        returns (MiltonFacadeTypes.AssetConfiguration[] memory);
+    function getConfiguration() external returns (MiltonFacadeTypes.AssetConfiguration[] memory);
 
     /// @notice Gets Milton balances for given asset.
     /// @param asset asset address

@@ -10,10 +10,11 @@ contract MockBaseMiltonSpreadModelDai is MiltonSpreadModelDai {
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
     ) public view returns (int256 spreadPremiums) {
-        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+        IporTypes.MiltonSwapsBalanceMemory memory balance = IporTypes.MiltonSwapsBalanceMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
             liquidityPoolBalance,
+            0,
             0
         );
         return _calculateSpreadPremiumsPayFixed(accruedIpor, balance);

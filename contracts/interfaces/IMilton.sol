@@ -11,10 +11,7 @@ interface IMilton {
     /// @dev All values represented in 18 decimals.
     /// @return spreadPayFixed spread for Pay-Fixed leg.
     /// @return spreadReceiveFixed spread for Receive-Fixed leg.
-    function calculateSpread()
-        external
-        view
-        returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
+    function calculateSpread() external returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
 
     /// @notice Calculates the SOAP for the current block
     /// @dev All values represented in 18 decimals.

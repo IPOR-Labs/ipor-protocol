@@ -76,7 +76,6 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function calculateSpread()
         external
-        view
         override
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
@@ -267,7 +266,6 @@ abstract contract Milton is MiltonInternal, IMilton {
 
     function _calculateSpread(uint256 calculateTimestamp)
         internal
-        view
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
         IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
@@ -275,11 +273,17 @@ abstract contract Milton is MiltonInternal, IMilton {
             _asset
         );
 
+        //        TODO remove this
         IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
+        IporTypes.MiltonSwapsBalanceMemory memory balanceMiltonStorage = _getMiltonStorage()
+            .getSwapsBalance();
 
         IMiltonSpreadModel miltonSpreadModel = _miltonSpreadModel;
 
-        spreadPayFixed = miltonSpreadModel.calculateSpreadPayFixed(accruedIpor, balance);
+        spreadPayFixed = miltonSpreadModel.calculateSpreadPayFixed(
+            accruedIpor,
+            balanceMiltonStorage
+        );
         spreadReceiveFixed = miltonSpreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
     }
 

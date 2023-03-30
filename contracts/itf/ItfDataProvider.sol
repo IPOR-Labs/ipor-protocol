@@ -44,7 +44,6 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
 
     function getAmmData(uint256 timestamp, address asset)
         public
-        view
         returns (ItfDataProviderTypes.ItfAmmData memory ammData)
     {
         ammData = ItfDataProviderTypes.ItfAmmData(
@@ -60,7 +59,6 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
 
     function getMiltonData(uint256 timestamp, address asset)
         public
-        view
         returns (ItfDataProviderTypes.ItfMiltonData memory miltonData)
     {
         ItfMilton milton = _miltons[asset];

@@ -108,7 +108,6 @@ abstract contract ItfMilton is Milton {
 
     function itfCalculateSpread(uint256 calculateTimestamp)
         external
-        view
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
         (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(calculateTimestamp);

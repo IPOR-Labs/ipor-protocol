@@ -70,7 +70,6 @@ contract MiltonFacadeDataProvider is
 
     function getConfiguration()
         external
-        view
         override
         returns (MiltonFacadeTypes.AssetConfiguration[] memory)
     {
@@ -188,13 +187,13 @@ contract MiltonFacadeDataProvider is
 
     function _createIporAssetConfig(address asset, uint256 timestamp)
         internal
-        view
         returns (MiltonFacadeTypes.AssetConfiguration memory assetConfiguration)
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         address miltonAddr = config.milton;
         address josephAddr = config.joseph;
+        address miltonStorageAddr = config.miltonStorage;
 
         IMiltonInternal milton = IMiltonInternal(miltonAddr);
         IJosephInternal joseph = IJosephInternal(josephAddr);
@@ -208,7 +207,10 @@ contract MiltonFacadeDataProvider is
         IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
             .getAccruedBalance();
 
-        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(accruedIpor, balance);
+        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
+            accruedIpor,
+            IMiltonStorage(miltonStorageAddr).getSwapsBalance()
+        );
 
         int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
 
