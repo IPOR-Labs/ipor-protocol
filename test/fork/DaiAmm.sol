@@ -39,6 +39,7 @@ contract DaiAmm is Test, TestCommons {
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
+    StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
     StrategyAave public strategyAaveV2;
 
@@ -52,6 +53,7 @@ contract DaiAmm is Test, TestCommons {
         _createIpDai();
         _createIvDai();
         strategyCompound = _createCompoundStrategy();
+        strategyCompoundV2 = _createCompoundStrategy();
         strategyAave = _createAaveStrategy();
         strategyAaveV2 = _createAaveStrategy();
         _createStanley();
@@ -282,6 +284,7 @@ contract DaiAmm is Test, TestCommons {
 
     function _setupStrategyCompound() internal {
         strategyCompound.setStanley(address(stanley));
+        strategyCompoundV2.setStanley(address(stanley));
     }
 
     function _setupIporOracle(address owner) internal {
