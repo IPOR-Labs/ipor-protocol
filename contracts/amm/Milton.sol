@@ -808,6 +808,20 @@ abstract contract Milton is MiltonInternal, IMilton {
                 transferAmount,
                 decimals
             );
+            uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(_asset).balanceOf(address(this));
+            if (wadMiltonErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
+                IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
+                int256 rebalanceAmount = IJoseph(_joseph).calculateRebalanceAmountBeforeWithdraw(
+                    wadMiltonErc20BalanceBeforeRedeem,
+                    balance.vault,
+                    transferAmount + liquidationDepositAmount
+                );
+
+                if (rebalanceAmount < 0) {
+                    _withdrawFromStanley((- rebalanceAmount).toUint256());
+                }
+            }
+
             //transfer from Milton to Trader
             IERC20Upgradeable(_asset).safeTransfer(buyer, transferAmountAssetDecimals);
 

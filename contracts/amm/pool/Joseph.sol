@@ -216,24 +216,16 @@ abstract contract Joseph is JosephInternal, IJoseph {
     ) internal {
         uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold();
 
-        if (autoRebalanceThreshold > 0) {
-            if (wadOperationAmount >= autoRebalanceThreshold) {
-                _withdrawFromStanleyBeforeRedeem(
-                    milton,
-                    wadMiltonErc20Balance,
-                    vaultBalance,
-                    wadOperationAmount
-                );
-            } else {
-                if (wadOperationAmount > wadMiltonErc20Balance) {
-                    _withdrawFromStanleyBeforeRedeem(
-                        milton,
-                        wadMiltonErc20Balance,
-                        vaultBalance,
-                        wadOperationAmount
-                    );
-                }
-            }
+        if (
+            wadOperationAmount > wadMiltonErc20Balance ||
+            (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold)
+        ) {
+            _withdrawFromStanleyBeforeRedeem(
+                milton,
+                wadMiltonErc20Balance,
+                vaultBalance,
+                wadOperationAmount
+            );
         }
     }
 
@@ -275,6 +267,19 @@ abstract contract Joseph is JosephInternal, IJoseph {
         if (rebalanceAmount < 0) {
             milton.withdrawFromStanley((-rebalanceAmount).toUint256());
         }
+    }
+
+    function calculateRebalanceAmountBeforeWithdraw(
+        uint256 wadMiltonErc20BalanceBeforeWithdraw,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) external view returns (int256) {
+        return
+            _calculateRebalanceAmountBeforeRedeem(
+                wadMiltonErc20BalanceBeforeWithdraw,
+                vaultBalance,
+                wadOperationAmount
+            );
     }
 
     function _calculateRebalanceAmountBeforeRedeem(
