@@ -11,16 +11,14 @@ IPOR smart contracts
 
 ### Pre-run steps
 
+-   Install `Foundry` from https://getfoundry.sh/
 -   Install `python3-pip`.
 -   Install `solc-select` using pip: `pip3 install solc-select`
--   Install docker and docker-compose
--   Install `node` and `npm`.
+-   Install `node` (v16.15.0) and `npm` (v8.5.5).
 -   Install `truffle` : `npm install -g truffle`
--   Install `j2cli` : `pip3 install j2cli`
--   Install `curl`, `jq`
+-   Install `jq`
 -   Check truffle binary execution permission. Run `chmod +x truffle` in binary dir if execution flag is missing.
 -   Run `sudo apt-get install build-essential`
--   Install AWS CLI if You want to download images from AWS ECR: https://aws.amazon.com/cli/
 
 ### How to run as developer?
 
@@ -30,23 +28,11 @@ IPOR smart contracts
     cd ipor-protocol
     cp .env-local.j2 .env
     ```
-    WARNING! You need to setup `GLOBAL_AWS_PROFILE` env variable with the name of Your local AWS profile.
-3. In directory `ipor-protocol/containers/cockpit` configure `.env` file based on `.env-local.j2`
-    ```
-    cd ipor-protocol/containers/cockpit
-    cp .env-local.j2 .env
-    ```
-4. Execute script `./run.sh` with specific commands in order like below:
-    - `m` - migrate Smart Contracts to blockchain
-5. Application will be available at `http://localhost:4000`
-6. Local blockchain will be available at `http://localhost:8545` `chainId = 31337`
-7. Local blockchain explorer will be available at `http://localhost:9055`
-8. Before you can open the address `http://localhost:4000` connect to local blockchain using Metamask
-    - In Metamask choose `Custom RPC`
-    - Enter network name `localhost`
-    - Enter New RPC URL: `http://localhost:8545`
-    - Enter Chain ID: `31337`
-    - Click `Save`
+    WARNING! Optional: You can setup `GLOBAL_AWS_PROFILE` env variable with the name of Your local AWS profile. Its only needed when publishing migration results to S3.
+3. Run local `Ethereum` node. The assumption is that `Ethereum` node is a local instance of `anvil` from `Foundry` and will be available at `http://localhost:8545` with `chainId = 31337`
+4. Execute script `./run.sh` with specific command, like below:
+    - `mc` - migrate Smart Contracts to blockchain from the first migration
+    - `m` - migrate Smart Contracts to blockchain from the last migration
 
 ### How to execute migrations locally?
 
@@ -58,7 +44,7 @@ IPOR smart contracts
 ### How to execute smart contracts migrations remotely?
 
 -   On remote server all parameters in `.env` are already prepared, you should not modify them without consultation with IT Team.
--   For `dev` in command line execute: `ssh ipor-dev-warren`,
+-   Connect to server by ssh
 -   `cd repos/ipor-protocol`
 -   `git pull`
 -   `./run.sh m mlogs`
