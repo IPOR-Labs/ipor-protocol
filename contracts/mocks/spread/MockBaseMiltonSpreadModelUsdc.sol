@@ -26,11 +26,12 @@ contract MockBaseMiltonSpreadModelUsdc is MiltonSpreadModelUsdc {
         uint256 totalCollateralPayFixedBalance,
         uint256 totalCollateralReceiveFixedBalance
     ) public view returns (int256 spreadPremiums) {
-        IporTypes.MiltonBalancesMemory memory balance = IporTypes.MiltonBalancesMemory(
+        IporTypes.MiltonSwapsBalanceMemory memory balance = IporTypes.MiltonSwapsBalanceMemory(
             totalCollateralPayFixedBalance,
             totalCollateralReceiveFixedBalance,
             liquidityPoolBalance,
-            0
+            totalCollateralPayFixedBalance * 10,
+            totalCollateralReceiveFixedBalance * 10
         );
         return _calculateSpreadPremiumsReceiveFixed(accruedIpor, balance);
     }

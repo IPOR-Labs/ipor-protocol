@@ -21,10 +21,14 @@ interface IMiltonSpreadModel {
     /// @notice Calculates the quote for Receive-Fixed leg.
     /// @param accruedIpor - accrued IPOR at moment of calculation
     /// @param accruedBalance - Milton's balance including Stanley's interest and collateral if present
+    /// @param swapCollateral - collateral amount of the swap
+    /// @param swapNotional - notional amount of the swap
     /// @return quoteValue calculated quote for Receive-Fixed leg
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
+        uint256 swapCollateral,
+        uint256 swapNotional
     ) external view returns (uint256 quoteValue);
 
     /// @notice Calculates the spread for Pay-Fixed leg.
@@ -42,6 +46,6 @@ interface IMiltonSpreadModel {
     /// @return spreadValue calculated spread for Receive-Fixed leg
     function calculateSpreadReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue);
 }

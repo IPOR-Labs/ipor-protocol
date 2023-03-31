@@ -273,8 +273,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             _asset
         );
 
-        //        TODO remove this
-        IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
         IporTypes.MiltonSwapsBalanceMemory memory balanceMiltonStorage = _getMiltonStorage()
             .getSwapsBalance();
 
@@ -284,7 +282,10 @@ abstract contract Milton is MiltonInternal, IMilton {
             accruedIpor,
             balanceMiltonStorage
         );
-        spreadReceiveFixed = miltonSpreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
+        spreadReceiveFixed = miltonSpreadModel.calculateSpreadReceiveFixed(
+            accruedIpor,
+            balanceMiltonStorage
+        );
     }
 
     function _beforeOpenSwap(
@@ -457,7 +458,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             leverage
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        IporTypes.MiltonSwapsBalanceMemory memory balance = _getMiltonStorage().getSwapsBalance();
 
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed =
@@ -472,7 +473,9 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
             bosStruct.accruedIpor,
-            balance
+            balance,
+            bosStruct.collateral,
+            bosStruct.notional
         );
         require(
             acceptableFixedInterestRate <= quoteValue,

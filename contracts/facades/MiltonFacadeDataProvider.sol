@@ -204,8 +204,8 @@ contract MiltonFacadeDataProvider is
             asset
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
-            .getAccruedBalance();
+        IporTypes.MiltonSwapsBalanceMemory memory balance = IMiltonStorage(miltonStorageAddr)
+            .getSwapsBalance();
 
         int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(
             accruedIpor,

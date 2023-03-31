@@ -40,7 +40,9 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
+        uint256 swapCollateral,
+        uint256 swapNotional
     ) external view override returns (uint256 quoteValue) {
         quoteValue = _calculateQuoteReceiveFixed;
     }
@@ -62,7 +64,7 @@ contract MockSpreadModel is IMiltonSpreadModel {
 
     function calculateSpreadReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
         spreadValue = _calculateSpreadReceiveFixed;
     }

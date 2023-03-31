@@ -71,11 +71,25 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
 
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
+        uint256 swapCollateral,
+        uint256 swapNotional
     ) external view override returns (uint256 quoteValue) {
-        int256 spreadPremiums = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
+        int256 volatilitySpread = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
+        SpreadCalculation memory spreadData = SpreadCalculation(
+            accruedBalance.liquidityPool,
+            accruedBalance.totalCollateralPayFixed,
+            accruedBalance.totalCollateralReceiveFixed,
+            accruedBalance.totalNotionalReceiveFixed,
+            accruedBalance.totalNotionalPayFixed,
+            accruedIpor.indexValue,
+            volatilitySpread,
+            _weightedNotionalReceiveFixed,
+            _weightedNotionalPayFixed
+        );
+        uint256 spread = calculateSwapSpreadReceiveFixed(spreadData, swapCollateral, swapNotional);
 
-        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() + spreadPremiums;
+        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() - spread.toInt256();
 
         quoteValue = _calculateReferenceLegReceiveFixed(
             intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
@@ -105,9 +119,21 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
 
     function calculateSpreadReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
     ) external view override returns (int256 spreadValue) {
-        spreadValue = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
+        int256 volatilitySpread = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
+        SpreadCalculation memory spreadData = SpreadCalculation(
+            accruedBalance.liquidityPool,
+            accruedBalance.totalCollateralPayFixed,
+            accruedBalance.totalCollateralReceiveFixed,
+            accruedBalance.totalNotionalReceiveFixed,
+            accruedBalance.totalNotionalPayFixed,
+            accruedIpor.indexValue,
+            volatilitySpread,
+            _weightedNotionalReceiveFixed,
+            _weightedNotionalPayFixed
+        );
+        spreadValue = calculateBaseReceiveFixedSpread(spreadData).toInt256();
     }
 
     function _calculateSpreadPremiumsPayFixed(
@@ -130,7 +156,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
 
     function _calculateSpreadPremiumsReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
     ) internal view returns (int256 spreadPremiums) {
         require(
             accruedBalance.liquidityPool > 0,
@@ -165,6 +191,31 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         }
         uint256 premium = IporMath.division(
             (spreadData.collateralPayFixed + IporMath.division(swapCollateral, 2)) * 1e18,
+            spreadData.lpBalance
+        );
+
+        return baseSpread + premium;
+    }
+
+    function calculateSwapSpreadReceiveFixed(
+        SpreadCalculation memory spreadData,
+        uint256 swapCollateral,
+        uint256 swapNotional
+    ) public view returns (uint256) {
+        uint256 baseSpread;
+        if (_lastUpdateTimePayFixed == block.timestamp) {
+            spreadData.weightedNotionalPayFixed -= _notionalOpenInBlockPayFixed;
+            spreadData.weightedNotionalReceiveFixed -= _notionalOpenInBlockReceiveFixed;
+            spreadData.collateralPayFixed -= _collateralOpenInBlockPayFixed;
+            spreadData.collateralReceiveFixed -= _collateralOpenInBlockReceiveFixed;
+            spreadData.notionalReceiveFixed -= _notionalOpenInBlockReceiveFixed;
+            spreadData.notionalPayFixed -= _notionalOpenInBlockPayFixed;
+            baseSpread = calculateBaseReceiveFixedSpread(spreadData);
+        } else {
+            baseSpread = calculateBaseReceiveFixedSpread(spreadData);
+        }
+        uint256 premium = IporMath.division(
+            (spreadData.collateralReceiveFixed + IporMath.division(swapCollateral, 2)) * 1e18,
             spreadData.lpBalance
         );
 
@@ -297,6 +348,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
 
     function calculateBaseReceiveFixedSpread(SpreadCalculation memory spreadData)
         public
+        view
         returns (uint256 baseReceiveFixedSpread)
     {
         uint256 lpDepth = calculateLpDepth(
