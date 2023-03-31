@@ -22,10 +22,6 @@ ENV_CONFIG_BUCKET="${ENV_CONFIG_BUCKET:-ipor-env}"
 
 # global vars that can be reset
 function refresh_global_variables() {
-
-  ENV_CONFIG_FILE_DEST="smart-contract-addresses.yaml"
-  ENV_CONFIG_FILE_RMT="${ENV_PROFILE}/${ENV_CONFIG_FILE_DEST}"
-
   ENV_CONTRACTS_FILE_NAME="contracts.zip"
   local ENV_CONTRACTS_ROOT_DIR="app/src"
   ENV_CONTRACTS_DIR="${ENV_CONTRACTS_ROOT_DIR}/contracts"
@@ -404,7 +400,6 @@ if [ $IS_PUBLISH_ARTIFACTS = "YES" ]; then
   create_contracts_zip
 
   put_file_to_bucket "${ENV_CONTRACTS_ZIP_DEST}" "${ENV_CONTRACTS_ZIP_RMT}"
-  put_file_to_bucket "${ENV_CONFIG_FILE_DEST}" "${ENV_CONFIG_FILE_RMT}"
   put_file_to_bucket "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${ENV_PROFILE}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_RMT}" "${ENV_PROFILE}")"
 fi
 
