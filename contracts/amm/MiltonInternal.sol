@@ -173,7 +173,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffPayFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
@@ -182,7 +186,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffReceiveFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     /// @notice Joseph deposits to Stanley asset amount from Milton.
@@ -406,30 +414,6 @@ abstract contract MiltonInternal is
         (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _getMiltonStorage()
             .calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function _calculatePayoffPayFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
-        internal
-        view
-        returns (int256)
-    {
-        return
-            swap.calculatePayoffPayFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
-    }
-
-    function _calculatePayoffReceiveFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
-        internal
-        view
-        returns (int256)
-    {
-        return
-            swap.calculatePayoffReceiveFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
     }
 
     function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()

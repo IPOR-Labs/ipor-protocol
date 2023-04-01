@@ -6,6 +6,7 @@ import "./types/ItfMiltonTypes.sol";
 
 abstract contract ItfMilton is Milton {
     using SafeCast for uint256;
+    using IporSwapLogic for IporTypes.IporSwapMemory;
 
     uint256 internal _maxSwapCollateralAmount;
     uint256 internal _maxLpUtilizationRate;
@@ -167,7 +168,8 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
-        return _calculatePayoffPayFixed(calculateTimestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        return swap.calculatePayoffPayFixed(calculateTimestamp, accruedIbtPrice);
     }
 
     function _itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
@@ -176,7 +178,8 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
-        return _calculatePayoffReceiveFixed(calculateTimestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        return swap.calculatePayoffReceiveFixed(calculateTimestamp, accruedIbtPrice);
     }
 
     function setMiltonConstants(

@@ -339,7 +339,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldNotClosePayFixedSwapAsBuyerInMoreThanLast24hours() public {
+    function testShouldCloseAndUnwindPayFixedSwapAsBuyerInMoreThanLast24hours() public {
         //given
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
@@ -368,8 +368,50 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER));
         vm.prank(_buyer);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+    }
+
+    function testShouldNotClosePayFixedSwapAsLiquidatorInMoreThanLast4hours() public {
+        //given
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        uint256 liquidityAmount = 1_000_000 * 1e6;
+        uint256 totalAmount = 10_000 * 1e6;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 100 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        vm.warp(100 + 28 days - 4 hours - 1 seconds);
+
+        milton.addSwapLiquidator(_liquidator);
+
+        //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.prank(_liquidator);
         milton.closeSwapPayFixed(1);
 
         //then
@@ -796,7 +838,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldNotCloseReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
+    function testShouldCloseAndUnwindReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
         //given
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
@@ -825,8 +867,50 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER));
         vm.prank(_buyer);
+        milton.closeSwapReceiveFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(adminBalanceAfter - adminBalanceBefore, 0);
+    }
+
+    function testShouldNotCloseReceiveFixedSwapAsLiquidatorInMoreThanLast4hours() public {
+        //given
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        uint256 liquidityAmount = 1_000_000 * 1e6;
+        uint256 totalAmount = 10_000 * 1e6;
+        uint256 acceptableFixedInterestRate = 0;
+        uint256 leverage = 100 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        vm.warp(100 + 28 days - 4 hours - 1 seconds);
+
+        milton.addSwapLiquidator(_liquidator);
+
+        //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.prank(_liquidator);
         milton.closeSwapReceiveFixed(1);
 
         //then

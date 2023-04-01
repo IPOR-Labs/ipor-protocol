@@ -78,6 +78,25 @@ library IporSwapLogic {
         );
     }
 
+    function calculateVirtualHedgingPosition(
+        IporTypes.IporSwapMemory memory swap,
+        uint256 closingTimestamp,
+        int256 currentPayoff,
+        int256 oppositeLegFixedRate,
+        uint256 hedgingFee
+    ) internal pure returns (int256 hedgingPosition) {
+//        hedgingPosition =
+//        currentPayoff +
+//        IporMath.divisionInt(
+//            swap.notional.toInt256() *
+//            (oppositeLegFixedRate - swap.fixedInterestRate.toInt256()) *
+//            (swap.endTimestamp - closingTimestamp).toInt256(),
+//            Constants.WAD_P3_YEAR_IN_SECONDS_INT
+//        ) -
+//        hedgingFee.toInt256();
+    hedgingPosition = 0;
+    }
+
     /// @notice Calculates interests fixed and floating without division by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterest(
         IporTypes.IporSwapMemory memory swap,

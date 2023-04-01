@@ -144,4 +144,14 @@ interface IMilton {
         /// @notice incomeFeeValue value transferred to treasury
         uint256 incomeFeeValue
     );
+
+    /// @notice Emmited when trader closes Swap.
+    event VirtualHedgingPosition (
+        /// @notice swap ID.
+        uint256 indexed swapId,
+        // @notice virtual hedging position, represented in 18 decimals
+        int256 hedgingPosition,
+        // @notice virtual hedging position income fee value, represented in 18 decimals
+        uint256 hedgingPositionIncomeFeeValue
+    );
 }
