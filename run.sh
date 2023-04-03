@@ -28,18 +28,10 @@ function refresh_global_variables() {
   ENV_CONTRACTS_ZIP_DEST="${ENV_CONTRACTS_ROOT_DIR}/${ENV_CONTRACTS_FILE_NAME}"
   ENV_CONTRACTS_ZIP_RMT="${ENV_PROFILE}/${ENV_CONTRACTS_FILE_NAME}"
 
-  local ETH_BC_DOCKERFILE_PATH="${CONTAINERS_DIR}/eth-bc"
-
   AWS_REGION="eu-central-1"
 
   IPOR_MIGRATION_STATE_DIR=".ipor"
   SC_MIGRATION_STATE_REPO_DIR="${DIR}/../${SC_MIGRATION_STATE_REPO}"
-
-  local ENVS_DIR="${ETH_BC_DOCKERFILE_PATH}/envs"
-  local ETH_BC_DUMP_CONFIG_DIR="${ENVS_DIR}/{ENV}"
-
-  ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH="${ETH_BC_DUMP_CONFIG_DIR}/${ENV_CONTRACTS_FILE_NAME}"
-  ETH_BC_GEN_ENV_DUMP_CONFIG_DIR="${ETH_BC_DUMP_CONFIG_DIR}/"
 
   GEN_IPOR_ADDRESSES_FILE="{ENV}-${ETH_BC_NETWORK_NAME}-ipor-addresses.json"
   GEN_IPOR_ADDRESSES_FILE_PATH="${IPOR_MIGRATION_STATE_DIR}/${GEN_IPOR_ADDRESSES_FILE}"
@@ -155,13 +147,6 @@ function get_commit_hash() {
   echo "${COMMIT_HASH}"
 }
 
-function get_branch_name() {
-  cd "${DIR}"
-  local BRANCH_NAME
-  BRANCH_NAME=$(git branch --show-current)
-  echo "${BRANCH_NAME}"
-}
-
 function create_commit_file() {
   local commit_hash="${1}"
   local ENV_NAME="${2}"
@@ -177,12 +162,6 @@ function create_commit_file() {
 }
 
 function get_date_and_time() {
-  local DATE_NOW
-  DATE_NOW=$(date "+%F_%H-%M-%S")
-  echo "${DATE_NOW}"
-}
-
-function read_last_migration() {
   local DATE_NOW
   DATE_NOW=$(date "+%F_%H-%M-%S")
   echo "${DATE_NOW}"
@@ -228,10 +207,6 @@ function prepare_migration_state_files_structure() {
   update_global_state_vars
   create_migration_logs_dir_files "${LAST_MIGRATION_DATE}" "${ENV_PROFILE}"
   create_commit_file "${LAST_COMMIT_HASH}" "${ENV_PROFILE}"
-}
-
-function rm_smart_contracts_migrations_state_file() {
-  rm -f -v ".openzeppelin/unknown-${ETH_BC_NETWORK_ID}.json"
 }
 
 function run_smart_contract_migrations() {
@@ -283,41 +258,6 @@ function get_path_with_env() {
   local ENV_NAME="${2}"
   local TARGET_PATH=${SOURCE_PATH/\{ENV\}/$ENV_NAME}
   echo "${TARGET_PATH}"
-}
-
-function copy_smart_contract_json_files() {
-  local ENV_NAME="${1}"
-
-  cd "${DIR}"
-  create_contracts_zip
-  echo "Copy: ${ENV_CONTRACTS_ZIP_DEST} into: $(get_path_with_env "${ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH}" "${ENV_NAME}")"
-  cp "${ENV_CONTRACTS_ZIP_DEST}" "$(get_path_with_env "${ETH_BC_GEN_ENV_CONTRACTS_FILE_PATH}" "${ENV_NAME}")"
-}
-
-function copy_ipor_migrations_dir() {
-  local ENV_NAME="${1}"
-
-  cd "${DIR}"
-  echo "Copy: ${IPOR_MIGRATION_STATE_DIR} into: $(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}" "${ENV_NAME}")"
-  cp -r "${IPOR_MIGRATION_STATE_DIR}" "$(get_path_with_env "${ETH_BC_GEN_ENV_DUMP_CONFIG_DIR}" "${ENV_NAME}")"
-}
-
-function copy_env_files() {
-  local ENV_NAME="${1}"
-
-  copy_smart_contract_json_files "${ENV_NAME}"
-  copy_ipor_migrations_dir "${ENV_NAME}"
-}
-
-function create_migrated_env_files() {
-  local SRC_ENV_NAME="${1}"
-  local TRG_ENV_NAME="${2}"
-
-  cd "${DIR}"
-
-  cp "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_IPOR_ADDRESSES_FILE_PATH}" "${TRG_ENV_NAME}")"
-  cp "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_MIGRATION_COMMIT_FILE_PATH}" "${TRG_ENV_NAME}")"
-  cp "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${SRC_ENV_NAME}")" "$(get_path_with_env "${GEN_LAST_COMPLETED_MIGRATION_FILE_PATH}" "${TRG_ENV_NAME}")"
 }
 
 ################################### COMMANDS ###################################
