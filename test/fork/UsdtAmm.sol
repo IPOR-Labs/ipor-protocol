@@ -18,6 +18,7 @@ import "../../contracts/amm/spread/MiltonSpreadModelUsdt.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "./IAsset.sol";
+import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract UsdtAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -49,6 +50,8 @@ contract UsdtAmm is Test, TestCommons {
     MiltonStorage public miltonStorage;
     MiltonSpreadModel public miltonSpreadModel;
 
+    IAaveIncentivesController public aaveIncentivesController;
+
     constructor(address owner) {
         vm.startPrank(owner);
         _createIpUsdt();
@@ -63,6 +66,7 @@ contract UsdtAmm is Test, TestCommons {
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _createAaveIncentivesController();
         _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
@@ -72,13 +76,6 @@ contract UsdtAmm is Test, TestCommons {
         _setupStrategyAave();
         _setupStrategyCompound();
         _setupIporOracle(owner);
-        vm.stopPrank();
-    }
-
-    function approveMiltonJoseph(address user) public {
-        vm.startPrank(user);
-        IAsset(usdt).approve(address(joseph), type(uint256).max);
-        IAsset(usdt).approve(address(milton), type(uint256).max);
         vm.stopPrank();
     }
 
@@ -111,14 +108,21 @@ contract UsdtAmm is Test, TestCommons {
         stanley.setStrategyCompound(address(strategy));
     }
 
-    function createCompoundStrategy() external returns (StrategyCompound) {
-        StrategyCompound strategy = _createCompoundStrategy();
-        strategy.setStanley(address(stanley));
-        return strategy;
+    function approveMiltonJoseph(address user) public {
+        vm.startPrank(user);
+        IAsset(usdt).approve(address(joseph), type(uint256).max);
+        IAsset(usdt).approve(address(milton), type(uint256).max);
+        vm.stopPrank();
     }
 
     function createAaveStrategy() external returns (StrategyAave) {
         StrategyAave strategy = _createAaveStrategy();
+        strategy.setStanley(address(stanley));
+        return strategy;
+    }
+
+    function createCompoundStrategy() external returns (StrategyCompound) {
+        StrategyCompound strategy = _createCompoundStrategy();
         strategy.setStanley(address(stanley));
         return strategy;
     }
@@ -255,6 +259,10 @@ contract UsdtAmm is Test, TestCommons {
             )
         );
         joseph = Joseph(address(proxy));
+    }
+
+    function _createAaveIncentivesController() internal {
+       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {
