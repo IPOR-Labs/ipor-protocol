@@ -69,5 +69,22 @@ library ItfDataProviderTypes {
         ItfIporOracleData itfIporOracleData;
         ItfMiltonStorageData itfMiltonStorageData;
         ItfMiltonSpreadModelData itfMiltonSpreadModelData;
+        SpreadWeightedDataType spreadWeightedData;
+    }
+
+    struct SpreadWeightedDataType {
+        int256 volatilitySpreadReceiveFixed;
+        int256 volatilitySpreadPayFixed;
+        uint256 weightedNotionalPayFixed;
+        uint256 weightedNotionalReceiveFixed;
+        uint256 lastUpdateTimePayFixed;
+        uint256 lastUpdateTimeReceiveFixed;
+        uint256 minAnticipatedSustainedRate;
+        uint256 maxAnticipatedSustainedRate;
+        uint256 lpDepth;
+        uint256 maxDdPayFixed;
+        uint256 maxDdReceiveFixed;
+        uint256 maxDdAdjustedReceiveFixed;
+        uint256 maxDdAdjustedPayFixed;
     }
 }

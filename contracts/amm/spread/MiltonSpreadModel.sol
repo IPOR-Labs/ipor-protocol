@@ -22,6 +22,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
     uint256 _notionalOpenInBlockPayFixed;
     uint256 _notionalOpenInBlockReceiveFixed;
 
+    //    TODO: change to immutable
     uint256 constant _weightedTimeToMaturity = 28;
     uint256 constant _minAnticipatedSustainedRate = 0;
     uint256 constant _maxAnticipatedSustainedRate = 1e16;
@@ -37,6 +38,30 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         int256 volatilitySpread;
         uint256 weightedNotionalReceiveFixed;
         uint256 weightedNotionalPayFixed;
+    }
+
+    function getMinAnticipatedSustainedRate() external pure override returns (uint256) {
+        return _minAnticipatedSustainedRate;
+    }
+
+    function getMaxAnticipatedSustainedRate() external pure override returns (uint256) {
+        return _maxAnticipatedSustainedRate;
+    }
+
+    function getWeightedNotionalPayFixed() external view override returns (uint256) {
+        return _weightedNotionalPayFixed;
+    }
+
+    function getWeightedNotionalReceiveFixed() external view override returns (uint256) {
+        return _weightedNotionalReceiveFixed;
+    }
+
+    function getLastUpdateTimePayFixed() external view override returns (uint256) {
+        return _lastUpdateTimePayFixed;
+    }
+
+    function getLastUpdateTimeReceiveFixed() external view override returns (uint256) {
+        return _lastUpdateTimeReceiveFixed;
     }
 
     function calculateQuotePayFixed(
@@ -114,7 +139,14 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             _weightedNotionalReceiveFixed,
             _weightedNotionalPayFixed
         );
-        spreadValue = calculateBasePayFixedSpread(spreadData).toInt256();
+        spreadValue = _calculateBasePayFixedSpread(spreadData).toInt256();
+    }
+
+    function calculateVolatilitySpreadPayFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view override returns (int256 volatilitySpread) {
+        volatilitySpread = _calculateSpreadPremiumsPayFixed(accruedIpor, accruedBalance);
     }
 
     function calculateSpreadReceiveFixed(
@@ -133,7 +165,14 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             _weightedNotionalReceiveFixed,
             _weightedNotionalPayFixed
         );
-        spreadValue = calculateBaseReceiveFixedSpread(spreadData).toInt256();
+        spreadValue = _calculateBaseReceiveFixedSpread(spreadData).toInt256();
+    }
+
+    function calculateVolatilitySpreadReceiveFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view override returns (int256 volatilitySpread) {
+        volatilitySpread = _calculateSpreadPremiumsReceiveFixed(accruedIpor, accruedBalance);
     }
 
     function _calculateSpreadPremiumsPayFixed(
@@ -185,9 +224,9 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             spreadData.collateralReceiveFixed -= _collateralOpenInBlockReceiveFixed;
             spreadData.notionalReceiveFixed -= _notionalOpenInBlockReceiveFixed;
             spreadData.notionalPayFixed -= _notionalOpenInBlockPayFixed;
-            baseSpread = calculateBasePayFixedSpread(spreadData);
+            baseSpread = _calculateBasePayFixedSpread(spreadData);
         } else {
-            baseSpread = calculateBasePayFixedSpread(spreadData);
+            baseSpread = _calculateBasePayFixedSpread(spreadData);
         }
         uint256 premium = IporMath.division(
             (spreadData.collateralPayFixed + IporMath.division(swapCollateral, 2)) * 1e18,
@@ -210,9 +249,9 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
             spreadData.collateralReceiveFixed -= _collateralOpenInBlockReceiveFixed;
             spreadData.notionalReceiveFixed -= _notionalOpenInBlockReceiveFixed;
             spreadData.notionalPayFixed -= _notionalOpenInBlockPayFixed;
-            baseSpread = calculateBaseReceiveFixedSpread(spreadData);
+            baseSpread = _calculateBaseReceiveFixedSpread(spreadData);
         } else {
-            baseSpread = calculateBaseReceiveFixedSpread(spreadData);
+            baseSpread = _calculateBaseReceiveFixedSpread(spreadData);
         }
         uint256 premium = IporMath.division(
             (spreadData.collateralReceiveFixed + IporMath.division(swapCollateral, 2)) * 1e18,
@@ -228,9 +267,9 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         uint256 weightedNotionalPayFixed
     ) internal {
         if (weightedNotionalPayFixed == 0) {
-            _weightedNotionalPayFixed = calculateWeightedNotional(newSwapNotional, 0);
+            _weightedNotionalPayFixed = _calculateWeightedNotional(newSwapNotional, 0);
         } else {
-            uint256 oldWeightedNotionalPayFixed = calculateWeightedNotional(
+            uint256 oldWeightedNotionalPayFixed = _calculateWeightedNotional(
                 weightedNotionalPayFixed,
                 block.timestamp - _lastUpdateTimePayFixed
             );
@@ -246,15 +285,15 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         }
     }
 
-    function updateWeightedNotionalReceiveFixed(
+    function _updateWeightedNotionalReceiveFixed(
         uint256 newSwapCollateral,
         uint256 newSwapNotional,
         uint256 weightedNotionalReceiveFixed
-    ) external {
+    ) internal {
         if (weightedNotionalReceiveFixed == 0) {
-            _weightedNotionalReceiveFixed = calculateWeightedNotional(newSwapNotional, 0);
+            _weightedNotionalReceiveFixed = _calculateWeightedNotional(newSwapNotional, 0);
         } else {
-            uint256 oldWeightedNotionalReceiveFixed = calculateWeightedNotional(
+            uint256 oldWeightedNotionalReceiveFixed = _calculateWeightedNotional(
                 weightedNotionalReceiveFixed,
                 block.timestamp - _lastUpdateTimeReceiveFixed
             );
@@ -270,8 +309,8 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         }
     }
 
-    function calculateWeightedNotional(uint256 weightedNotional, uint256 timeFromLastUpdate)
-        public
+    function _calculateWeightedNotional(uint256 weightedNotional, uint256 timeFromLastUpdate)
+        internal
         pure
         returns (uint256)
     {
@@ -281,8 +320,8 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         return weightedNotional * (1 - (timeFromLastUpdate / 28) * 24 * 60 * 60);
     }
 
-    function calculateBasePayFixedSpread(SpreadCalculation memory spreadData)
-        public
+    function _calculateBasePayFixedSpread(SpreadCalculation memory spreadData)
+        internal
         returns (uint256 basePayFixedSpread)
     {
         console2.log("spreadData.collateralPayFixed", spreadData.collateralPayFixed);
@@ -346,8 +385,8 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         console2.log("basePayFixedSpread", basePayFixedSpread);
     }
 
-    function calculateBaseReceiveFixedSpread(SpreadCalculation memory spreadData)
-        public
+    function _calculateBaseReceiveFixedSpread(SpreadCalculation memory spreadData)
+        internal
         view
         returns (uint256 baseReceiveFixedSpread)
     {

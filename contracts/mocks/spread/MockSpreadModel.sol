@@ -72,4 +72,42 @@ contract MockSpreadModel is IMiltonSpreadModel {
     function setCalculateSpreadReceiveFixed(int256 value) external {
         _calculateSpreadReceiveFixed = value;
     }
+
+    function getWeightedNotionalPayFixed() external view returns (uint256) {
+        return 0;
+    }
+
+    function getWeightedNotionalReceiveFixed() external view returns (uint256) {
+        return 0;
+    }
+
+    function getLastUpdateTimePayFixed() external view returns (uint256) {
+        return 0;
+    }
+
+    function getLastUpdateTimeReceiveFixed() external view returns (uint256) {
+        return 0;
+    }
+
+    function getMinAnticipatedSustainedRate() external pure returns (uint256) {
+        return 0;
+    }
+
+    function getMaxAnticipatedSustainedRate() external pure returns (uint256) {
+        return 0;
+    }
+
+    function calculateVolatilitySpreadReceiveFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view returns (int256 volatilitySpread) {
+        return 0;
+    }
+
+    function calculateVolatilitySpreadPayFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view returns (int256 volatilitySpread) {
+        return 0;
+    }
 }

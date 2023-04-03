@@ -53,7 +53,8 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             getMiltonData(timestamp, asset),
             getIporOracleData(timestamp, asset),
             getMiltonStorageData(asset),
-            getMiltonSpreadModelData(asset)
+            getMiltonSpreadModelData(asset),
+            getSpreadWeightedData(timestamp, asset)
         );
     }
 
@@ -143,6 +144,7 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
         returns (ItfDataProviderTypes.ItfMiltonSpreadModelData memory miltonSpreadModelData)
     {
         IMiltonSpreadInternal miltonSpreadModel = _miltonSpreadModels[asset];
+
         miltonSpreadModelData = ItfDataProviderTypes.ItfMiltonSpreadModelData(
             miltonSpreadModel.getPayFixedRegionOneBase(),
             miltonSpreadModel.getPayFixedRegionOneSlopeForVolatility(),
@@ -156,6 +158,72 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             miltonSpreadModel.getReceiveFixedRegionTwoBase(),
             miltonSpreadModel.getReceiveFixedRegionTwoSlopeForVolatility(),
             miltonSpreadModel.getReceiveFixedRegionTwoSlopeForMeanReversion()
+        );
+    }
+
+    function getSpreadWeightedData(uint256 timestamp, address asset)
+        public
+        view
+        returns (ItfDataProviderTypes.SpreadWeightedDataType memory spreadWeightedData)
+    {
+        IMiltonSpreadInternal miltonSpreadModel = _miltonSpreadModels[asset];
+
+        IMiltonStorage miltonStorages = IMiltonStorage(address(_miltonStorages[asset]));
+        IporTypes.MiltonSwapsBalanceMemory memory balance = miltonStorages.getSwapsBalance();
+        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(timestamp, asset);
+
+        ItfDataProviderTypes.SpreadWeightedDataType memory spreadWeightedData;
+
+        spreadWeightedData.volatilitySpreadReceiveFixed = miltonSpreadModel
+            .calculateVolatilitySpreadReceiveFixed(accruedIpor, balance);
+        spreadWeightedData.volatilitySpreadPayFixed = miltonSpreadModel
+            .calculateVolatilitySpreadPayFixed(accruedIpor, balance);
+
+        spreadWeightedData.weightedNotionalPayFixed = miltonSpreadModel
+            .getWeightedNotionalPayFixed();
+        spreadWeightedData.weightedNotionalReceiveFixed = miltonSpreadModel
+            .getWeightedNotionalReceiveFixed();
+        spreadWeightedData.lastUpdateTimePayFixed = miltonSpreadModel.getLastUpdateTimePayFixed();
+        spreadWeightedData.lastUpdateTimeReceiveFixed = miltonSpreadModel
+            .getLastUpdateTimeReceiveFixed();
+        uint256 minAnticipatedSustainedRate = miltonSpreadModel.getMinAnticipatedSustainedRate();
+        uint256 maxAnticipatedSustainedRate = miltonSpreadModel.getMaxAnticipatedSustainedRate();
+        spreadWeightedData.lpDepth = miltonSpreadModel.calculateLpDepth(
+            balance.liquidityPool,
+            balance.totalCollateralPayFixed,
+            balance.totalCollateralReceiveFixed
+        );
+        spreadWeightedData.maxDdReceiveFixed = miltonSpreadModel.calculateMaxDdReceiveFixed(
+            balance.totalCollateralReceiveFixed,
+            balance.totalNotionalReceiveFixed,
+            accruedIpor.indexValue,
+            minAnticipatedSustainedRate,
+            28
+        );
+        spreadWeightedData.maxDdPayFixed = miltonSpreadModel.calculateMaxDdPayFixed(
+            balance.totalCollateralPayFixed,
+            balance.totalNotionalPayFixed,
+            accruedIpor.indexValue,
+            maxAnticipatedSustainedRate,
+            28
+        );
+
+        spreadWeightedData.maxDdAdjustedReceiveFixed = miltonSpreadModel.calculateMaxDdAdjusted(
+            spreadWeightedData.maxDdReceiveFixed,
+            spreadWeightedData.maxDdPayFixed,
+            28,
+            spreadWeightedData.weightedNotionalReceiveFixed,
+            spreadWeightedData.weightedNotionalPayFixed,
+            balance.totalNotionalReceiveFixed
+        );
+
+        spreadWeightedData.maxDdAdjustedPayFixed = miltonSpreadModel.calculateMaxDdAdjusted(
+            spreadWeightedData.maxDdPayFixed,
+            spreadWeightedData.maxDdReceiveFixed,
+            28,
+            spreadWeightedData.weightedNotionalPayFixed,
+            spreadWeightedData.weightedNotionalReceiveFixed,
+            balance.totalNotionalPayFixed
         );
     }
 

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
+import "./types/IporTypes.sol";
+
 /// @title Interface for interacting with Milton Spread - for internal use.
 interface IMiltonSpreadInternal {
     /// @notice Gets Base in Region 1 for Pay Fixed - Receive Floating leg
@@ -50,4 +52,57 @@ interface IMiltonSpreadInternal {
     /// @notice Gets slope factor 2 for mean reversion in Region 2 for Receive Fixed - Pay Floating leg
     /// @return slope factor 2 for mean reversion in region 2 for receive fixed - pay floating leg represented in 18 decimals
     function getReceiveFixedRegionTwoSlopeForMeanReversion() external view returns (int256);
+
+    function getWeightedNotionalPayFixed() external view returns (uint256);
+
+    function getWeightedNotionalReceiveFixed() external view returns (uint256);
+
+    function getLastUpdateTimePayFixed() external view returns (uint256);
+
+    function getLastUpdateTimeReceiveFixed() external view returns (uint256);
+
+    function getMinAnticipatedSustainedRate() external pure returns (uint256);
+
+    function getMaxAnticipatedSustainedRate() external pure returns (uint256);
+
+    function calculateVolatilitySpreadReceiveFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view returns (int256 volatilitySpread);
+
+    function calculateVolatilitySpreadPayFixed(
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonSwapsBalanceMemory memory accruedBalance
+    ) external view returns (int256 volatilitySpread);
+
+    function calculateLpDepth(
+        uint256 lpBalance,
+        uint256 totalCollateralPayFixed,
+        uint256 totalCollateralReceiveFixed
+    ) external view returns (uint256 lpDepth);
+
+    function calculateMaxDdReceiveFixed(
+        uint256 collateralReceiveFixed,
+        uint256 notionalReceiveFixed,
+        uint256 iporRate,
+        uint256 minAnticipatedSustainedRate,
+        uint256 maturity
+    ) external view returns (uint256 maxDdReceiveFixed);
+
+    function calculateMaxDdPayFixed(
+        uint256 collateralPayFixed,
+        uint256 notionalPayFixed,
+        uint256 iporRate,
+        uint256 maxAnticipatedSustainedRate,
+        uint256 maturity
+    ) external view returns (uint256 maxDdPayFixed);
+
+    function calculateMaxDdAdjusted(
+        uint256 maxDdT1,
+        uint256 maxDdT2,
+        uint256 weightedTimeToMaturity,
+        uint256 weightedNotionalT1,
+        uint256 weightedNotionalT2,
+        uint256 totalNotionalPerLeg
+    ) external view returns (uint256 maxDdAdjusted);
 }

@@ -387,6 +387,14 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
 
         IporTypes.MiltonSwapsBalanceMemory memory balance = _getMiltonStorage().getSwapsBalance();
+
+        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
+            bosStruct.accruedIpor,
+            balance,
+            bosStruct.collateral,
+            bosStruct.notional
+        );
+
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
@@ -394,13 +402,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
-        );
-
-        uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
-            bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral,
-            bosStruct.notional
         );
 
         require(
@@ -460,6 +461,13 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         IporTypes.MiltonSwapsBalanceMemory memory balance = _getMiltonStorage().getSwapsBalance();
 
+        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
+            bosStruct.accruedIpor,
+            balance,
+            bosStruct.collateral,
+            bosStruct.notional
+        );
+
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed =
             balance.totalCollateralReceiveFixed +
@@ -471,12 +479,6 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
         );
 
-        uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
-            bosStruct.accruedIpor,
-            balance,
-            bosStruct.collateral,
-            bosStruct.notional
-        );
         require(
             acceptableFixedInterestRate <= quoteValue,
             MiltonErrors.ACCEPTABLE_FIXED_INTEREST_RATE_EXCEEDED
