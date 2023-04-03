@@ -17,6 +17,7 @@ import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelDai.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
+import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract DaiAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -48,6 +49,8 @@ contract DaiAmm is Test, TestCommons {
     MiltonStorage public miltonStorage;
     MiltonSpreadModel public miltonSpreadModel;
 
+    IAaveIncentivesController public aaveIncentivesController;
+
     constructor(address owner) {
         vm.startPrank(owner);
         _createIpDai();
@@ -62,6 +65,7 @@ contract DaiAmm is Test, TestCommons {
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _createAaveIncentivesController();
         _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
@@ -248,6 +252,10 @@ contract DaiAmm is Test, TestCommons {
             )
         );
         joseph = Joseph(address(proxy));
+    }
+
+    function _createAaveIncentivesController() internal {
+       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {

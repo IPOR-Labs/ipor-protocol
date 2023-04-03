@@ -231,6 +231,25 @@ contract StanleyAaveDaiTest is Test {
         );
     }
 
+    function testShouldUnclaimedRewardsFromAAVEEqualsZero() public {
+        //given
+        uint256 ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
+        uint256 amount = 100_000 * 1e18;
+        DaiAmm amm = new DaiAmm(_admin);
+        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        deal(amm.dai(), address(amm.milton()), 2 * amount);
+        vm.startPrank(address(amm.milton()));
+
+        // when
+        amm.stanley().deposit(amount);
+        vm.warp(block.timestamp + ONE_WEEK_IN_SECONDS);
+        amm.stanley().deposit(amount);
+
+        // then
+        uint256 claimable = amm.aaveIncentivesController().getUserUnclaimedRewards(address(amm.strategyAave()));
+        assertEq(claimable, 0);
+    }
+
     function testShouldSetNewAAVEStrategyForDAI() public {
         // given
         uint256 depositAmount = 10 * 1e18;
