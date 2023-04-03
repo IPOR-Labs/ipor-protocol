@@ -40,7 +40,9 @@ contract UsdtAmm is Test, TestCommons {
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
+    StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
+    StrategyAave public strategyAaveV2;
 
     Joseph public joseph;
     Milton public milton;
@@ -52,16 +54,18 @@ contract UsdtAmm is Test, TestCommons {
         _createIpUsdt();
         _createIvUsdt();
         strategyCompound = _createCompoundStrategy();
-        _createAaveStrategy();
+        strategyCompoundV2 = _createCompoundStrategy();
+        strategyAave = _createAaveStrategy();
+        strategyAaveV2 = _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
-        _setupJoseph(owner);
         _setupMilton();
         _setupMiltonStorage();
         _setupStanley();
@@ -89,9 +93,32 @@ contract UsdtAmm is Test, TestCommons {
         stanley.setStrategyAave(address(strategy));
     }
 
+    function restoreStrategies(address owner) public {
+        vm.startPrank(owner);
+        stanley.setStrategyAave(address(strategyAave));
+        stanley.setStrategyCompound(address(strategyCompound));
+        vm.stopPrank();
+    }
+
+    function overrideCompoundStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(cUsdt);
+        strategy.setApr(0);
+        strategy.setAsset(usdt);
+        vm.prank(owner);
+        stanley.setStrategyCompound(address(strategy));
+    }
 
     function createCompoundStrategy() external returns (StrategyCompound) {
         StrategyCompound strategy = _createCompoundStrategy();
+        strategy.setStanley(address(stanley));
+        return strategy;
+    }
+
+    function createAaveStrategy() external returns (StrategyAave) {
+        StrategyAave strategy = _createAaveStrategy();
         strategy.setStanley(address(stanley));
         return strategy;
     }
@@ -116,10 +143,10 @@ contract UsdtAmm is Test, TestCommons {
                 _compTokenAddress
             )
         );
-        return  StrategyCompound(address(proxy));
+        return StrategyCompound(address(proxy));
     }
 
-    function _createAaveStrategy() internal {
+    function _createAaveStrategy() internal returns (StrategyAave) {
         StrategyAave implementation = new StrategyAave();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -133,7 +160,7 @@ contract UsdtAmm is Test, TestCommons {
                 _aaveTokenAddress
             )
         );
-        strategyAave = StrategyAave(address(proxy));
+        return StrategyAave(address(proxy));
     }
 
     function _createStanley() internal {
@@ -230,7 +257,6 @@ contract UsdtAmm is Test, TestCommons {
         joseph = Joseph(address(proxy));
     }
 
-
     function _setupJoseph(address owner) internal {
         joseph.addAppointedToRebalance(owner);
     }
@@ -260,10 +286,12 @@ contract UsdtAmm is Test, TestCommons {
 
     function _setupStrategyAave() internal {
         strategyAave.setStanley(address(stanley));
+        strategyAaveV2.setStanley(address(stanley));
     }
 
     function _setupStrategyCompound() internal {
         strategyCompound.setStanley(address(stanley));
+        strategyCompoundV2.setStanley(address(stanley));
     }
 
     function _setupIporOracle(address owner) internal {

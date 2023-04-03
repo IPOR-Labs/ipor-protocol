@@ -6,48 +6,48 @@ import "../../../contracts/vault/StanleyDai.sol";
 import "../../../contracts/tokens/IvToken.sol";
 import "../DaiAmm.sol";
 
-contract StanleyAaveDaiTest is Test {
+contract StanleyCompoundDaiTest is Test {
     address internal _admin;
 
     function setUp() public {
         _admin = vm.rememberKey(1);
     }
 
-    function testShouldAaveAprBeZeroAfterOverride() public {
+    function testShouldCompoundAprBeZeroAfterOverride() public {
         // given
         DaiAmm amm = new DaiAmm(_admin);
 
         // when
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApr(_admin);
 
         // then
-        assertEq(IStrategy(amm.stanley().getStrategyAave()).getApr(), 0, "strategyCompoundApr == 0");
+        assertEq(IStrategy(amm.stanley().getStrategyCompound()).getApr(), 0, "strategyCompoundApr == 0");
     }
 
-    function testShouldAaveAprGreaterThanCompoundApr() public {
+    function testShouldCompoundAprGreaterThanAaveApr() public {
         // given
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         // when
         uint256 compoundApr = IStrategy(amm.stanley().getStrategyCompound()).getApr();
         uint256 aaveApr = IStrategy(amm.stanley().getStrategyAave()).getApr();
 
         // then
-        assertGt(aaveApr, compoundApr, "aaveApr > compoundApr");
+        assertGt(compoundApr, aaveApr, "compoundApr > aaveApr");
     }
 
-    function testShouldAcceptDepositAndTransferTokensIntoAAVE() public {
+    function testShouldAcceptDepositAndTransferTokensIntoCompound() public {
         // given
         uint256 depositAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         deal(amm.dai(), address(amm.milton()), depositAmount);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractBefore = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractBefore = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         // when
         vm.startPrank(address(amm.milton()));
@@ -55,37 +55,37 @@ contract StanleyAaveDaiTest is Test {
 
         // then
         uint256 miltonIvTokenAfter = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceAfter = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractAfter = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractAfter = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         assertEq(miltonIvTokenBefore, 0, "miltonIvTokenBefore == 0");
-        assertEq(strategyAaveBalanceBefore, 0, "strategyAaveBalanceBefore == 0");
-        assertGe(miltonIvTokenAfter, 9999999999999999999, "miltonIvTokenAfter >= 9999999999999999999");
-        assertGe(strategyAaveBalanceAfter, 9999999999999999999, "strategyAaveBalanceAfter >= 9999999999999999999");
-        assertEq(
-            miltonDaiBalanceAfter,
-            miltonDaiBalanceBefore - depositAmount,
-            "miltonDaiBalanceAfter == miltonDaiBalanceBefore - depositAmount"
+        assertEq(strategyCompoundBalanceBefore, 0, "strategyCompoundBalanceBefore == 0");
+        assertEq(miltonIvTokenAfter, depositAmount, "miltonIvTokenAfter == depositAmount");
+        assertGt(
+            strategyCompoundBalanceAfter,
+            strategyCTokenContractBefore,
+            "strategyCompoundBalanceAfter > strategyCTokenContractBefore"
         );
-        assertGe(
-            strategyATokenContractAfter - strategyATokenContractBefore,
-            depositAmount,
-            "strategyATokenContractAfter - strategyATokenContractBefore >= depositAmount"
+        assertLt(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter < miltonDaiBalanceBefore");
+        assertGt(
+            strategyCTokenContractAfter,
+            strategyCTokenContractBefore,
+            "strategyCTokenContractAfter > strategyCTokenContractBefore"
         );
     }
 
-    function testShouldAcceptDepositTwiceAndTransferTokensIntoAAVE() public {
+    function testShouldAcceptDepositTwiceAndTransferTokensIntoCompound() public {
         // given
         uint256 depositAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
         deal(amm.dai(), address(amm.milton()), 2 * depositAmount);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractBefore = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractBefore = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         // when
         vm.startPrank(address(amm.milton()));
@@ -94,179 +94,176 @@ contract StanleyAaveDaiTest is Test {
 
         // then
         uint256 miltonIvTokenAfter = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractAfter = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractAfter = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
         uint256 miltonDaiBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceAfter = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
 
-        assertGe(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter >= miltonIvTokenBefore");
+        assertGt(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter > miltonIvTokenBefore");
         assertGt(
-            strategyAaveBalanceAfter,
-            strategyAaveBalanceBefore,
-            "strategyAaveBalanceAfter > strategyAaveBalanceBefore"
+            strategyCompoundBalanceAfter,
+            strategyCompoundBalanceBefore,
+            "strategyCompoundBalanceAfter > strategyCompoundBalanceBefore"
         );
         assertLt(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter < miltonDaiBalanceBefore");
-        assertGt(
-            strategyATokenContractAfter,
-            strategyATokenContractBefore,
-            "strategyATokenContractAfter > strategyATokenContractBefore"
+        assertGe(
+            strategyCTokenContractAfter,
+            strategyCTokenContractBefore,
+            "strategyCTokenContractAfter >= strategyCTokenContractBefore"
         );
     }
 
-    function testShouldWithdraw10FromAAVE() public {
+    function testShouldWithdraw10FromCompound() public {
         //given
         uint256 withdrawAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         vm.startPrank(address(amm.milton()));
         deal(amm.dai(), address(amm.milton()), withdrawAmount);
         amm.stanley().deposit(withdrawAmount);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractBefore = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractBefore = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         // when
         amm.stanley().withdraw(withdrawAmount);
 
         // then
-        uint256 strategyAaveBalanceAfter = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonIvTokenAfter = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
         uint256 miltonDaiBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractAfter = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractAfter = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         assertLt(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter < miltonIvTokenBefore");
         assertLt(
-            strategyAaveBalanceAfter,
-            strategyAaveBalanceBefore,
-            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+            strategyCompoundBalanceAfter,
+            strategyCompoundBalanceBefore,
+            "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore"
         );
-        assertGe(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter >= miltonDaiBalanceBefore");
+        assertGt(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter > miltonDaiBalanceBefore");
         assertLt(
-            strategyATokenContractAfter,
-            strategyATokenContractBefore,
-            "strategyATokenContractAfter < strategyATokenContractBefore"
+            strategyCTokenContractAfter,
+            strategyCTokenContractBefore,
+            "strategyCTokenContractAfter < strategyCTokenContractBefore"
         );
     }
 
-    function testShouldWithdrawAllStanleyBalanceFromAAVEWithdrawMethod() public {
+    function testShouldWithdrawAllStanleyBalanceFromCompoundWithdrawMethod() public {
         // given
         uint256 withdrawAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin); // force Compound to have 0% APR to deposit to AAVE
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         vm.startPrank(address(amm.milton()));
         deal(amm.dai(), address(amm.milton()), withdrawAmount);
         amm.stanley().deposit(withdrawAmount);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractBefore = IERC20(amm.aDai()).balanceOf(amm.stanley().getStrategyAave());
 
         // when
-        amm.stanley().withdraw(strategyAaveBalanceBefore);
+        amm.stanley().withdraw(strategyCompoundBalanceBefore);
 
         // then
         uint256 miltonIvTokenAfter = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceAfter = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractAfter = IERC20(amm.aDai()).balanceOf(amm.stanley().getStrategyAave());
+        uint256 strategyCTokenContractAfter = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         assertLt(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter < miltonIvTokenBefore");
         assertLt(
-            strategyAaveBalanceAfter,
-            strategyAaveBalanceBefore,
-            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+            strategyCompoundBalanceAfter,
+            strategyCompoundBalanceBefore,
+            "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore"
         );
 
         // Important check!
-        assertLt(strategyAaveBalanceAfter, 1e12, "strategyAaveBalanceAfter < 1e12");
+        assertLt(strategyCompoundBalanceAfter, 5e17, "strategyCompoundBalanceAfter < 5e17");
         assertGt(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter > miltonDaiBalanceBefore");
-        assertLt(
-            strategyATokenContractAfter,
-            strategyATokenContractBefore,
-            "strategyATokenContractAfter < strategyATokenContractBefore"
-        );
+        assertEq(strategyCTokenContractAfter, 0, "strategyCTokenContractAfter == 0");
     }
 
-    function testShouldWithdrawAllStanleyBalanceFromAAVEWithdrawAllMethod() public {
+    function testShouldWithdrawAllStanleyBalanceFromCompoundWithdrawAllMethod() public {
         // given
         uint256 withdrawAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         vm.startPrank(address(amm.milton()));
         deal(amm.dai(), address(amm.milton()), withdrawAmount);
         amm.stanley().deposit(withdrawAmount);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceBefore = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractBefore = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
 
         // when
         amm.stanley().withdrawAll();
 
         // then
         uint256 miltonIvTokenAfter = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
-        uint256 strategyAaveBalanceAfter = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
+        uint256 strategyCompoundBalanceAfter = IStrategy(amm.stanley().getStrategyCompound()).balanceOf();
         uint256 miltonDaiBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
-        uint256 strategyATokenContractAfter = IERC20(amm.aDai()).balanceOf(address(amm.strategyAave()));
+        uint256 strategyCTokenContractAfter = IERC20(amm.cDai()).balanceOf(amm.stanley().getStrategyCompound());
 
         assertLt(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter < miltonIvTokenBefore");
         assertLt(
-            strategyAaveBalanceAfter,
-            strategyAaveBalanceBefore,
-            "strategyAaveBalanceAfter < strategyAaveBalanceBefore"
+            strategyCompoundBalanceAfter,
+            strategyCompoundBalanceBefore,
+            "strategyCompoundBalanceAfter < strategyCompoundBalanceBefore"
         );
         // Important check!
-        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter = 0");
+        assertLt(strategyCompoundBalanceAfter, 5e17, "strategyCompoundBalanceAfter < 5e17");
         assertGt(miltonDaiBalanceAfter, miltonDaiBalanceBefore, "miltonDaiBalanceAfter > miltonDaiBalanceBefore");
-        assertLt(
-            strategyATokenContractAfter,
-            strategyATokenContractBefore,
-            "strategyATokenContractAfter < strategyATokenContractBefore"
-        );
+        assertEq(strategyCTokenContractAfter, 0, "strategyCTokenContractAfter == 0");
     }
 
-    function testShouldSetNewAAVEStrategyForDAI() public {
+    function testShouldSetNewCompoundStrategyForDAI() public {
         // given
-        uint256 depositAmount = 10 * 1e18;
+        uint256 deposit_loss = 0.000000001 * 1e18;
+        uint256 depositAmount = 100_000 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         vm.startPrank(address(amm.milton()));
         deal(amm.dai(), address(amm.milton()), depositAmount);
         amm.stanley().deposit(depositAmount);
         vm.stopPrank();
 
-        uint256 strategyAaveBalanceBefore = amm.strategyAave().balanceOf();
-        uint256 strategyAaveV2BalanceBefore = amm.strategyAaveV2().balanceOf();
+        uint256 strategyCompoundBalanceBefore = amm.strategyCompound().balanceOf();
+        uint256 strategyCompoundV2BalanceBefore = amm.strategyCompoundV2().balanceOf();
         uint256 miltonAssetBalanceBefore = IERC20(amm.dai()).balanceOf(address(amm.milton()));
 
         // when
         vm.startPrank(_admin);
-        amm.stanley().setStrategyAave(address(amm.strategyAaveV2()));
+        amm.stanley().setStrategyCompound(address(amm.strategyCompoundV2()));
 
         // then
-        uint256 strategyAaveBalanceAfter = amm.strategyAave().balanceOf();
-        uint256 strategyAaveV2BalanceAfter = amm.strategyAaveV2().balanceOf();
+        uint256 strategyCompoundBalanceAfter = amm.strategyCompound().balanceOf();
+        uint256 strategyCompoundV2BalanceAfter = amm.strategyCompoundV2().balanceOf();
         uint256 miltonAssetBalanceAfter = IERC20(amm.dai()).balanceOf(address(amm.milton()));
 
-        assertEq(strategyAaveV2BalanceBefore, 0, "strategyAaveV2BalanceBefore == 0");
-        assertEq(strategyAaveBalanceAfter, 0, "strategyAaveBalanceAfter == 0");
+        assertGe(
+            strategyCompoundBalanceBefore,
+            depositAmount - deposit_loss,
+            "strategyCompoundBalanceBefore >= depositAmount - deposit_loss"
+        );
+        assertLe(
+            strategyCompoundBalanceBefore,
+            depositAmount + 1e18,
+            "strategyCompoundBalanceBefore <= depositAmount + 1e18"
+        );
+
+        assertEq(strategyCompoundV2BalanceBefore, 0, "strategyCompoundV2BalanceBefore == 0");
+        assertEq(strategyCompoundBalanceAfter, 0, "strategyCompoundBalanceAfter == 0");
         // Great Than Equal because with accrued interest
         assertGe(
-            strategyAaveV2BalanceAfter,
-            strategyAaveBalanceBefore,
-            "strategyAaveV2BalanceAfter >= strategyAaveBalanceBefore"
-        );
-        assertLt(
-            strategyAaveV2BalanceAfter,
-            strategyAaveBalanceBefore + 1e18,
-            "strategyAaveV2BalanceAfter < strategyAaveBalanceBefore + 1e18"
+            strategyCompoundV2BalanceAfter,
+            depositAmount - deposit_loss,
+            "strategyCompoundV2BalanceAfter >= depositAmount - deposit_loss"
         );
         assertEq(
             miltonAssetBalanceBefore,
@@ -277,15 +274,16 @@ contract StanleyAaveDaiTest is Test {
 
     function testShouldMigrateAssetToStrategyWithMaxAPR() public {
         // given
+        uint256 deposit_loss = 0.000000001 * 1e18;
         uint256 depositAmount = 10 * 1e18;
         DaiAmm amm = new DaiAmm(_admin);
-        amm.overrideAaveStrategyWithZeroApr(_admin);
+        amm.overrideCompoundStrategyWithZeroApr(_admin);
         deal(amm.dai(), address(amm.milton()), depositAmount);
         vm.startPrank(address(amm.milton()));
         amm.stanley().deposit(depositAmount);
         vm.stopPrank();
         amm.restoreStrategies(_admin);
-        amm.overrideCompoundStrategyWithZeroApr(_admin);
+        amm.overrideAaveStrategyWithZeroApr(_admin);
 
         uint256 miltonIvTokenBefore = IvToken(amm.stanley().getIvToken()).balanceOf(address(amm.milton()));
         uint256 strategyAaveBalanceBefore = IStrategy(amm.stanley().getStrategyAave()).balanceOf();
@@ -305,18 +303,17 @@ contract StanleyAaveDaiTest is Test {
         uint256 miltonTotalBalanceAfter = amm.stanley().totalBalance(address(amm.milton()));
 
         assertEq(miltonIvTokenAfter, miltonIvTokenBefore, "miltonIvTokenAfter == miltonIvTokenBefore");
-        assertLt(
+        assertGt(
             strategyAaveBalanceBefore,
             strategyAaveBalanceAfter,
-            "strategyAaveBalanceBefore < strategyAaveBalanceAfter"
+            "strategyAaveBalanceBefore > strategyAaveBalanceAfter"
         );
-        assertGt(
+        assertLt(
             strategyCompoundBalanceBefore,
             strategyCompoundBalanceAfter,
-            "strategyCompoundBalanceBefore > strategyCompoundBalanceAfter"
+            "strategyCompoundBalanceBefore < strategyCompoundBalanceAfter"
         );
-        assertGe(strategyCompoundBalanceAfter, 0, "strategyCompoundBalanceAfter >= 0");
-        assertLe(strategyCompoundBalanceAfter, 5e17, "strategyCompoundBalanceAfter <= 0.5");
+        assertEq(strategyAaveBalanceAfter, 0, "strategyCompoundBalanceAfter >= 0");
         assertEq(
             miltonAssetBalanceAfter,
             miltonAssetBalanceBefore,
@@ -324,13 +321,13 @@ contract StanleyAaveDaiTest is Test {
         );
         assertLe(
             miltonTotalBalanceBefore,
-            miltonTotalBalanceAfter,
-            "miltonTotalBalanceAfter <= miltonTotalBalanceBefore"
+            miltonTotalBalanceAfter + deposit_loss,
+            "miltonTotalBalanceBefore <= miltonTotalBalanceAfter + deposit_loss"
         );
         assertLe(
             miltonTotalBalanceAfter,
-            miltonTotalBalanceBefore + 1e18,
-            "miltonTotalBalanceAfter <= miltonTotalBalanceBefore + 1e18"
+            miltonTotalBalanceBefore + deposit_loss,
+            "miltonTotalBalanceAfter <= miltonTotalBalanceBefore + deposit_loss"
         );
     }
 }
