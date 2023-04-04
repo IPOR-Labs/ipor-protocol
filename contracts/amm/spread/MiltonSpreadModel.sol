@@ -64,6 +64,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         return _lastUpdateTimeReceiveFixed;
     }
 
+    //    TODO:add only milton
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
@@ -94,6 +95,7 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         return accruedIpor.indexValue + spread;
     }
 
+    //    TODO:add only milton
     function calculateQuoteReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonSwapsBalanceMemory memory accruedBalance,
