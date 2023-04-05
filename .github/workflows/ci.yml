@@ -62,7 +62,7 @@ jobs:
                   owner: IPOR-Labs
                   repo: ${{ secrets.BUILD_JAR_REPO }}
                   github_token: ${{ secrets.TOKEN_RUN_BUILD_JAR }}
-                  workflow_file_name: cd.yml
+                  workflow_file_name: ci.yml
                   ref: main
                   client_payload: >-
                       {
