@@ -1,13 +1,8 @@
 ### Environment ###
 /.env
 
-### Java build artifacts ###
-/src/generated/
-/target/
-
 ### Node build artifacts ###
 /node_modules
-
 
 ### Smart Contracts build artifacts ###
 /app/src/contracts/
