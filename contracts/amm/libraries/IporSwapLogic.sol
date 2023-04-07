@@ -85,6 +85,9 @@ library IporSwapLogic {
         int256 oppositeLegFixedRate,
         uint256 hedgingFee
     ) internal pure returns (int256 hedgingPosition) {
+
+        require(closingTimestamp<= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+
         hedgingPosition =
             basePayoff +
             IporMath.divisionInt(

@@ -1140,6 +1140,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1149,7 +1150,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200OppositeLegEqual() public {
@@ -1169,6 +1170,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1178,7 +1180,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 
     function testShouldCalculateVirtHedgPosAterMaturityPnL200OppositeLegLower() public {
@@ -1198,6 +1200,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1207,7 +1210,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegHigher() public {
@@ -1227,6 +1230,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1236,7 +1240,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegEqual() public {
@@ -1256,6 +1260,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1265,7 +1270,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 
     function testShouldCalculateVirtHedgPosAfterMaturityPnL200MinusOppositeLegLower() public {
@@ -1285,6 +1290,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingPosition = _iporSwapLogic.calculateVirtualHedgingPosition(
             swap,
             closingTimestamp,
@@ -1294,6 +1300,6 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingPosition, -5000000000000000000);
+        assertEq(virtualHedgingPosition, 0);
     }
 }

@@ -103,4 +103,6 @@ library MiltonErrors {
 
     /// @notice Swap cannot be closed because closing timestamp is lower than swap's open timestamp for buyer.
     string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_332";
+
+    string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_333";
 }
