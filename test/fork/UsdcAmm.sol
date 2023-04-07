@@ -17,6 +17,7 @@ import "../../contracts/amm/MiltonUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
+import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 
 contract UsdcAmm is Test, TestCommons {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
@@ -39,28 +40,35 @@ contract UsdcAmm is Test, TestCommons {
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
+    StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
+    StrategyAave public strategyAaveV2;
 
     Joseph public joseph;
     Milton public milton;
     MiltonStorage public miltonStorage;
     MiltonSpreadModel public miltonSpreadModel;
 
+    IAaveIncentivesController public aaveIncentivesController;
+
     constructor(address owner) {
         vm.startPrank(owner);
         _createIpUsdc();
         _createIvUsdc();
-        _createCompoundStrategy();
+        strategyCompound = _createCompoundStrategy();
+        strategyCompoundV2 = _createCompoundStrategy();
         strategyAave = _createAaveStrategy();
+        strategyAaveV2 = _createAaveStrategy();
         _createStanley();
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
         _createMilton();
         _createJoseph();
+        _createAaveIncentivesController();
+        _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
-        _setupJoseph(owner);
         _setupMilton();
         _setupMiltonStorage();
         _setupStanley();
@@ -70,10 +78,21 @@ contract UsdcAmm is Test, TestCommons {
         vm.stopPrank();
     }
 
-    function approveMiltonJoseph(address user) public {
-        vm.startPrank(user);
-        ERC20(usdc).approve(address(joseph), type(uint256).max);
-        ERC20(usdc).approve(address(milton), type(uint256).max);
+    function overrideAaveStrategyWithZeroApr(address owner) public {
+        MockStrategy strategy = new MockStrategy();
+        strategy.setStanley(address(stanley));
+        strategy.setBalance(0);
+        strategy.setShareToken(aUsdc);
+        strategy.setApr(0);
+        strategy.setAsset(usdc);
+        vm.prank(owner);
+        stanley.setStrategyAave(address(strategy));
+    }
+
+    function restoreStrategies(address owner) public {
+        vm.startPrank(owner);
+        stanley.setStrategyAave(address(strategyAave));
+        stanley.setStrategyCompound(address(strategyCompound));
         vm.stopPrank();
     }
 
@@ -86,6 +105,13 @@ contract UsdcAmm is Test, TestCommons {
         strategy.setAsset(usdc);
         vm.prank(owner);
         stanley.setStrategyCompound(address(strategy));
+    }
+
+    function approveMiltonJoseph(address user) public {
+        vm.startPrank(user);
+        ERC20(usdc).approve(address(joseph), type(uint256).max);
+        ERC20(usdc).approve(address(milton), type(uint256).max);
+        vm.stopPrank();
     }
 
     function createAaveStrategy() external returns (StrategyAave) {
@@ -102,7 +128,7 @@ contract UsdcAmm is Test, TestCommons {
         ivUsdc = address(new IvToken("IV USDC", "ivUSDC", usdc));
     }
 
-    function _createCompoundStrategy() internal {
+    function _createCompoundStrategy() internal returns (StrategyCompound) {
         StrategyCompound implementation = new StrategyCompound();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
@@ -114,7 +140,7 @@ contract UsdcAmm is Test, TestCommons {
                 _compTokenAddress
             )
         );
-        strategyCompound = StrategyCompound(address(proxy));
+        return StrategyCompound(address(proxy));
     }
 
     function _createAaveStrategy() internal returns (StrategyAave) {
@@ -228,14 +254,18 @@ contract UsdcAmm is Test, TestCommons {
         joseph = Joseph(address(proxy));
     }
 
-    function _setupMilton() internal {
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+    function _createAaveIncentivesController() internal {
+       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {
         joseph.addAppointedToRebalance(owner);
+    }
+
+    function _setupMilton() internal {
+        milton.setJoseph(address(joseph));
+        milton.setupMaxAllowanceForAsset(address(joseph));
+        milton.setupMaxAllowanceForAsset(address(stanley));
     }
 
     function _setupIpToken() internal {
@@ -257,10 +287,12 @@ contract UsdcAmm is Test, TestCommons {
 
     function _setupStrategyAave() internal {
         strategyAave.setStanley(address(stanley));
+        strategyAaveV2.setStanley(address(stanley));
     }
 
     function _setupStrategyCompound() internal {
         strategyCompound.setStanley(address(stanley));
+        strategyCompoundV2.setStanley(address(stanley));
     }
 
     function _setupIporOracle(address owner) internal {

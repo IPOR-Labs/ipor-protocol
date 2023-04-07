@@ -8,7 +8,7 @@
 
 IPOR App available in port `3000`
 
-Local blockchain available in port `9545`
+Local blockchain available in port `8545`
 
 #### Compile contracts
 
