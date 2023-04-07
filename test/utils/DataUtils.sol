@@ -38,6 +38,7 @@ contract DataUtils is
         ItfMilton milton;
         ItfJoseph joseph;
         ItfIporOracle iporOracle;
+        MockSpreadModel miltonSpreadModel;
     }
 
     address internal _admin;
@@ -147,6 +148,7 @@ contract DataUtils is
         iporProtocol.milton = milton;
         iporProtocol.joseph = joseph;
         iporProtocol.iporOracle = iporOracle;
+        iporProtocol.miltonSpreadModel = miltonSpreadModel;
 
         return iporProtocol;
     }

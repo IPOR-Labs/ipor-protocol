@@ -82,7 +82,7 @@ library IporSwapLogic {
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         int256 basePayoff,
-        int256 oppositeLegFixedRate,
+        uint256 oppositeLegFixedRate,
         uint256 hedgingFee
     ) internal pure returns (int256 hedgingPosition) {
 
@@ -92,7 +92,7 @@ library IporSwapLogic {
             basePayoff +
             IporMath.divisionInt(
                 swap.notional.toInt256() *
-                    (oppositeLegFixedRate - swap.fixedInterestRate.toInt256()) *
+                    (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
                     ((swap.endTimestamp - swap.openTimestamp) -
                         (closingTimestamp - swap.openTimestamp)).toInt256(),
                 Constants.WAD_YEAR_IN_SECONDS_INT

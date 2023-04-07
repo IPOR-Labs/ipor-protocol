@@ -19,7 +19,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -50,7 +50,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -81,7 +81,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -110,7 +110,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -141,7 +141,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -172,7 +172,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -203,7 +203,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -234,7 +234,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -265,7 +265,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -296,7 +296,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -327,7 +327,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -358,7 +358,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -389,7 +389,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -420,7 +420,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -451,7 +451,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -482,7 +482,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -513,7 +513,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -544,7 +544,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -573,7 +573,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
@@ -602,7 +602,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 0;
+        uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -631,7 +631,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
@@ -662,7 +662,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 0;
+        uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -691,7 +691,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -720,7 +720,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -749,7 +749,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -778,7 +778,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -807,7 +807,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -836,7 +836,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -865,7 +865,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
@@ -896,7 +896,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 0;
+        uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -925,7 +925,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 0;
-        int256 oppositeLegFixedRate = 0;
+        uint256 oppositeLegFixedRate = 0;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 0;
@@ -954,7 +954,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -983,7 +983,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1012,7 +1012,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1041,7 +1041,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -1070,7 +1070,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1099,7 +1099,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1128,7 +1128,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -1158,7 +1158,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1188,7 +1188,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = 200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1218,7 +1218,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 3 * 1e16;
@@ -1248,7 +1248,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 5 * 1e16;
+        uint256 oppositeLegFixedRate = 5 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
@@ -1278,7 +1278,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         IporTypes.IporSwapMemory memory swap;
 
         int256 basePayoff = -200 * 1e18;
-        int256 oppositeLegFixedRate = 3 * 1e16;
+        uint256 oppositeLegFixedRate = 3 * 1e16;
 
         swap.notional = 500_000 * 1e18;
         swap.fixedInterestRate = 5 * 1e16;
