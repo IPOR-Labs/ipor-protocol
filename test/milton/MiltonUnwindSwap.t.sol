@@ -57,7 +57,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.state = 1;
 
         int256 expectedHedgingPosition = 883561643835616438347;
-        int256 expectedPayoff = 900 * 1e18 + expectedHedgingPosition;
+        int256 expectedPayoff = int256(swap.collateral) + expectedHedgingPosition;
         uint256 expectedIncomeFeeValue = 90 * 1e18;
 
         /// @dev required for spread but in this test we are using mocked spread model
@@ -84,54 +84,54 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
         assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
     }
-//
-//    function testShouldCalculatePnLForUnwindPayFixedExcel() public {
-//        //given
-//        _iporProtocol = setupIporProtocolForDai();
-//        asset = _iporProtocol.asset;
-//        milton = _iporProtocol.milton;
-//        miltonSpreadModel = _iporProtocol.miltonSpreadModel;
-//
-//        int256 basePayoff = -181 * 1e18;
-//        uint256 closingTimestamp = block.timestamp + 11 days;
-//
-//        IporTypes.IporSwapMemory memory swap;
-//
-//        swap.id = 1;
-//        swap.buyer = _buyer;
-//        swap.openTimestamp = block.timestamp;
-//        swap.endTimestamp = block.timestamp + 28 days;
-//        swap.collateral = 1000 * 1e18;
-//        swap.notional = 1000 * 1e18 * 1000;
-//        swap.fixedInterestRate = 42 * 1e15;
-//        swap.state = 1;
-//
-//        int256 expectedHedgingPosition = 875342465753424657525;
-//        int256 expectedPayoff = 256 * 1e18; // + expectedHedgingPosition;
-//        uint256 expectedIncomeFeeValue = 90 * 1e18;
-//
-//        /// @dev required for spread but in this test we are using mocked spread model
-//        IporTypes.AccruedIpor memory fakedAccruedIpor;
-//        IporTypes.MiltonBalancesMemory memory fakedBalance;
-//
-//        miltonSpreadModel.setCalculateQuoteReceiveFixed(1 * 1e14);
-//
-//        //when
-//        vm.expectEmit(true, true, true, true);
-//        emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
-//
-//        vm.prank(_buyer);
-//        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePnL(
-//            swap,
-//            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
-//            closingTimestamp,
-//            basePayoff,
-//            fakedAccruedIpor,
-//            fakedBalance
-//        );
-//
-//        //then
-//        assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-//        //        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
-//    }
+
+    function testShouldCalculatePnLForUnwindPayFixedExcel() public {
+        //given
+        _iporProtocol = setupIporProtocolForDai();
+        asset = _iporProtocol.asset;
+        milton = _iporProtocol.milton;
+        miltonSpreadModel = _iporProtocol.miltonSpreadModel;
+
+        int256 basePayoff = -180821917808219000000;
+        uint256 closingTimestamp = block.timestamp + 11 days;
+
+        IporTypes.IporSwapMemory memory swap;
+
+        swap.id = 1;
+        swap.buyer = _buyer;
+        swap.openTimestamp = block.timestamp;
+        swap.endTimestamp = block.timestamp + 28 days;
+        swap.collateral = 1000 * 1e18;
+        swap.notional = 1000 * 1e18 * 1000;
+        swap.fixedInterestRate = 42 * 1e15;
+        swap.state = 1;
+
+        int256 expectedHedgingPosition = -744383561643835438365;
+        int256 expectedPayoff = int256(swap.collateral) + expectedHedgingPosition;
+        uint256 expectedIncomeFeeValue = 90 * 1e18;
+
+        /// @dev required for spread but in this test we are using mocked spread model
+        IporTypes.AccruedIpor memory fakedAccruedIpor;
+        IporTypes.MiltonBalancesMemory memory fakedBalance;
+
+        miltonSpreadModel.setCalculateQuoteReceiveFixed(299 * 1e14);
+
+        //when
+        vm.expectEmit(true, true, true, true);
+        emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
+
+        vm.prank(_buyer);
+        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePnL(
+            swap,
+            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            closingTimestamp,
+            basePayoff,
+            fakedAccruedIpor,
+            fakedBalance
+        );
+
+        //then
+        assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
+        //        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
+    }
 }

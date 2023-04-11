@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-// import "forge-std/console2.sol";
+import "forge-std/console2.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
@@ -657,14 +657,14 @@ abstract contract Milton is MiltonInternal, IMilton {
                 _LIQUIDATION_LEG_LIMIT
             );
 
-            // console2.log("Hedging position:");
-            // console2.logInt(hedgingPosition);
+            console2.log("Hedging position:");
+            console2.logInt(hedgingPosition);
 
             emit VirtualHedgingPosition(iporSwap.id, hedgingPosition);
         }
 
         incomeFeeValue = _calculateIncomeFeeValue(basePayoff);
-        payoff = basePayoff + hedgingPosition;
+        payoff = iporSwap.collateral.toInt256() + hedgingPosition;
     }
 
     function _closeSwapPayFixed(
