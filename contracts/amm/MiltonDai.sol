@@ -13,10 +13,10 @@ contract MiltonDai is Milton {
     }
 
     function _getMaxLeverage() internal view virtual override returns (uint256) {
-        return 500 * 1e18;
+        return 500000000000000000000;
     }
 
     function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
-        return 25 * 1e15;
+        return 25000000000000000;
     }
 }
