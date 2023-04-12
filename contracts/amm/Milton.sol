@@ -8,6 +8,7 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IMarketSafetyOracle.sol";
 import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
@@ -50,7 +51,8 @@ abstract contract Milton is MiltonInternal, IMilton {
         address iporOracle,
         address miltonStorage,
         address miltonSpreadModel,
-        address stanley
+        address stanley,
+        address marketSafetyOracle
     ) public initializer {
         __Pausable_init();
         __Ownable_init();
@@ -72,6 +74,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         _iporOracle = IIporOracle(iporOracle);
         _asset = asset;
         _stanley = IStanley(stanley);
+        _marketSafetyOracle = IMarketSafetyOracle(marketSafetyOracle);
     }
 
     function calculateSpread()
