@@ -661,10 +661,15 @@ abstract contract Milton is MiltonInternal, IMilton {
             console2.logInt(hedgingPosition);
 
             emit VirtualHedgingPosition(iporSwap.id, hedgingPosition);
+
+            payoff = iporSwap.collateral.toInt256() + hedgingPosition;
+        } else {
+            payoff = basePayoff;
         }
 
         incomeFeeValue = _calculateIncomeFeeValue(basePayoff);
-        payoff = iporSwap.collateral.toInt256() + hedgingPosition;
+
+
     }
 
     function _closeSwapPayFixed(
