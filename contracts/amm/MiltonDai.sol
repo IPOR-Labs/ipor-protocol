@@ -5,7 +5,7 @@ import "./Milton.sol";
 
 contract MiltonDai is Milton {
     function getVersion() external pure virtual override returns (uint256) {
-        return 8;
+        return 9;
     }
 
     function _getDecimals() internal pure virtual override returns (uint256) {
@@ -17,6 +17,6 @@ contract MiltonDai is Milton {
     }
 
     function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
-        return 25000000000000000;
+        return 15000000000000000;
     }
 }
