@@ -16,12 +16,14 @@ import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/IMarketSafetyOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmMiltonTypes.sol";
 
 abstract contract MiltonInternal is
     Initializable,
@@ -72,6 +74,7 @@ abstract contract MiltonInternal is
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
+    IMarketSafetyOracle internal _marketSafetyOracle;
 
     uint32 internal _autoUpdateIporIndexThreshold;
 
@@ -101,11 +104,11 @@ abstract contract MiltonInternal is
     }
 
     function getMaxLpUtilizationRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationRate();
+        return 0; //TODO
     }
 
     function getMaxLpUtilizationPerLegRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationPerLegRate();
+        return 0; //TODO
     }
 
     function getIncomeFeeRate() external view override returns (uint256) {
@@ -135,7 +138,7 @@ abstract contract MiltonInternal is
     }
 
     function getMaxLeverage() external view override returns (uint256) {
-        return _getMaxLeverage();
+        return 0; //TODO
     }
 
     function getMinLeverage() external view override returns (uint256) {
@@ -279,14 +282,6 @@ abstract contract MiltonInternal is
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxLpUtilizationRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_RATE;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
-    }
-
     function _getIncomeFeeRate() internal view virtual returns (uint256) {
         return _INCOME_TAX_RATE;
     }
@@ -307,10 +302,46 @@ abstract contract MiltonInternal is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal view virtual returns (uint256);
-
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;
+    }
+
+    function _getSafetyIndicators(uint256 liquidityPool)
+        internal
+        view
+        virtual
+        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
+    {
+        (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRate,
+        ) = _marketSafetyOracle.getIndicators(_asset);
+        uint256 maxCollateralPayFixed = IporMath.division(
+            liquidityPool * maxUtilizationRatePayFixed,
+            Constants.D18
+        );
+        uint256 maxLeveragePayFixed = IporMath.division(
+            maxNotionalPayFixed * Constants.D18,
+            maxCollateralPayFixed
+        );
+        uint256 maxCollateralReceiveFixed = IporMath.division(
+            liquidityPool * maxUtilizationRateReceiveFixed,
+            Constants.D18
+        );
+        uint256 maxLeverageReceiveFixed = IporMath.division(
+            maxNotionalReceiveFixed * Constants.D18,
+            maxCollateralReceiveFixed
+        );
+        return AmmMiltonTypes.OpenSwapSafetyIndicators(
+            maxUtilizationRate,
+            maxUtilizationRatePayFixed,
+            maxUtilizationRateReceiveFixed,
+            maxLeveragePayFixed,
+            maxLeverageReceiveFixed
+        );
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturity()

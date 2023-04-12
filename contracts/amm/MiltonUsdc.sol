@@ -11,12 +11,4 @@ contract MiltonUsdc is Milton {
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 6;
     }
-
-    function _getMaxLeverage() internal view virtual override returns (uint256) {
-        return 500 * 1e18;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
-        return 25 * 1e15;
-    }
 }

@@ -8,14 +8,6 @@ abstract contract MockCase5Milton is ItfMilton {
         return 1e23;
     }
 
-    function _getMaxLpUtilizationRate() internal pure virtual override returns (uint256) {
-        return 8 * 1e17;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal pure virtual override returns (uint256) {
-        return 48 * 1e18;
-    }
-
     function _getIncomeFeeRate() internal pure virtual override returns (uint256) {
         return 1e17;
     }
@@ -36,11 +28,22 @@ abstract contract MockCase5Milton is ItfMilton {
         return 20;
     }
 
-    function _getMaxLeverage() internal pure virtual override returns (uint256) {
-        return 1000 * 1e18;
-    }
-
     function _getMinLeverage() internal pure virtual override returns (uint256) {
         return 10 * 1e18;
+    }
+
+    function _getSafetyIndicators(uint256 liquidityPool)
+        internal
+        view
+        override
+        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
+    {
+        return AmmMiltonTypes.OpenSwapSafetyIndicators(
+            8 * 1e17,
+            48 * 1e16,
+            48 * 1e16,
+            1000 * 1e18,
+            1000 * 1e18
+        );
     }
 }
