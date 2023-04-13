@@ -28,6 +28,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     ItfMilton milton;
     MockSpreadModel miltonSpreadModel;
 
+    int256 unwindFlatFee = 5*1e18;
+
     event VirtualHedgingPosition(uint256 indexed swapId, int256 hedgingPosition);
 
     function setUp() public {
@@ -56,8 +58,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 3 * 1e16;
         swap.state = 1;
 
-        int256 expectedHedgingPosition = 883561643835616438347;
-        int256 expectedPayoff = int256(swap.collateral) + expectedHedgingPosition;
+        int256 expectedHedgingPosition = 878561643835616438357;
+        int256 expectedBasePayoff = 900 * 1e18;
+        int256 expectedPayoff = expectedBasePayoff + expectedHedgingPosition ;
         uint256 expectedIncomeFeeValue = 90 * 1e18;
 
         /// @dev required for spread but in this test we are using mocked spread model
@@ -71,7 +74,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePnL(
+        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -106,9 +109,10 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 42 * 1e15;
         swap.state = 1;
 
-        int256 expectedHedgingPosition = -744383561643835438365;
-        int256 expectedPayoff = int256(swap.collateral) + expectedHedgingPosition;
-        uint256 expectedIncomeFeeValue = 90 * 1e18;
+        int256 expectedHedgingPosition = -749383561643835438355;
+        int256 expectedBasePayoff = -180821917808219000000;
+        int256 expectedPayoff = expectedBasePayoff + expectedHedgingPosition;
+        uint256 expectedIncomeFeeValue = 18082191780821900000;
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
@@ -121,7 +125,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePnL(
+        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -132,6 +136,85 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //then
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-        //        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
+        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
+    }
+
+    function testShouldCloseAndUnwindPayFixedSwapAsBuyerInMoreThanLast24hours() public {
+        //given
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        uint256 liquidityAmount = 1_000_000 * 1e6;
+        uint256 totalAmount = 10_000 * 1e6;
+        uint256 acceptableFixedInterestRate = 10 * 10**16;
+        uint256 leverage = 100 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        vm.warp(100 + 28 days - 24 hours - 1 seconds);
+
+        //when
+        vm.prank(_buyer);
+        milton.closeSwapPayFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366, "Incorrect buyer balance");
+
+    }
+
+    function testShouldCloseAndUnwindReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
+        //given
+        _iporProtocol = setupIporProtocolForUsdt();
+        MockTestnetToken asset = _iporProtocol.asset;
+        ItfMilton milton = _iporProtocol.milton;
+        ItfJoseph joseph = _iporProtocol.joseph;
+
+        uint256 liquidityAmount = 1_000_000 * 1e6;
+        uint256 totalAmount = 10_000 * 1e6;
+        uint256 acceptableFixedInterestRate = 0;
+        uint256 leverage = 100 * 10**18;
+
+        asset.approve(address(joseph), liquidityAmount);
+        joseph.provideLiquidity(liquidityAmount);
+
+        asset.transfer(_buyer, totalAmount);
+
+        vm.prank(_buyer);
+        asset.approve(address(milton), totalAmount);
+
+        uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
+
+        vm.prank(_buyer);
+        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+
+        vm.warp(100 + 28 days - 24 hours - 1 seconds);
+
+        //when
+        vm.prank(_buyer);
+        milton.closeSwapReceiveFixed(1);
+
+        //then
+        uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
+        uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
+
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 }

@@ -135,7 +135,7 @@ abstract contract ItfMilton is Milton {
         return _calculateIncomeFeeValue(payoff);
     }
 
-    function itfCalculatePnlForSwaps(
+    function itfCalculatePayoffForSwaps(
         uint256 calculateTimestamp,
         uint256[] memory swapIdsPayFixed,
         uint256[] memory swapIdsReceiveFixed
@@ -155,14 +155,14 @@ abstract contract ItfMilton is Milton {
         }
     }
 
-    function itfCalculatePnL(
+    function itfCalculatePayoff(
         IporTypes.IporSwapMemory memory iporSwap,
         MiltonTypes.SwapDirection direction,
         uint256 closeTimestamp,
         int256 basePayoff,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory balance) external returns (int256 payoff, uint256 incomeFeeValue) {
-        (payoff, incomeFeeValue) = _calculatePnL(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
+        (payoff, incomeFeeValue) = _calculatePayoff(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
     }
 
     function _itfSubstractIncomeFeeValue(int256 payoff) internal view returns (int256) {

@@ -617,7 +617,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _calculatePnL(
+    function _calculatePayoff(
         IporTypes.IporSwapMemory memory iporSwap,
         MiltonTypes.SwapDirection direction,
         uint256 closeTimestamp,
@@ -654,7 +654,7 @@ abstract contract Milton is MiltonInternal, IMilton {
                 closeTimestamp,
                 basePayoff,
                 oppositeLegFixedRate,
-                _LIQUIDATION_LEG_LIMIT
+                _UNWIND_SWAP_FLAT_FEE
             );
 
             console2.log("Hedging position:");
@@ -662,12 +662,14 @@ abstract contract Milton is MiltonInternal, IMilton {
 
             emit VirtualHedgingPosition(iporSwap.id, hedgingPosition);
 
-            payoff = iporSwap.collateral.toInt256() + hedgingPosition;
-        } else {
-            payoff = basePayoff;
         }
 
+        payoff = basePayoff + hedgingPosition;
         incomeFeeValue = _calculateIncomeFeeValue(basePayoff);
+        console2.log("Base payoff:");
+        console2.logInt(basePayoff);
+        console2.log("Payoff:");
+        console2.logInt(payoff);
 
 
     }
@@ -683,7 +685,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             asset
         );
 
-        (int256 payoff, uint256 incomeFeeValue) = _calculatePnL(
+        (int256 payoff, uint256 incomeFeeValue) = _calculatePayoff(
             iporSwap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closeTimestamp,
@@ -842,7 +844,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             asset
         );
 
-        (int256 payoff, uint256 incomeFeeValue) = _calculatePnL(
+        (int256 payoff, uint256 incomeFeeValue) = _calculatePayoff(
             iporSwap,
             MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED,
             closeTimestamp,
