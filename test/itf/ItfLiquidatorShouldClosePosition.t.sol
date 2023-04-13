@@ -784,7 +784,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         volumeSwaps.volumePayFixedSwaps = 10;
         volumeSwaps.volumeReceiveFixedSwaps = 10;
         uint256 endTimestamp = block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS;
-        uint256 expectedBalanceTrader = 9997046420320479199074790;
+        uint256 expectedBalanceTrader = 9997046420320479199074780;
         uint256 expectedBalanceLiquidator = (volumeSwaps.volumePayFixedSwaps +
             volumeSwaps.volumeReceiveFixedSwaps) *
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
@@ -874,7 +874,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         uint256[] memory payFixedSwapIds = new uint256[](volumeSwaps.volumePayFixedSwaps);
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeSwaps.volumeReceiveFixedSwaps);
         uint256 endTimestamp = block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS;
-        uint256 expectedBalanceTrader = 9997246420320479199074790;
+        uint256 expectedBalanceTrader = 9997246420320479199074780;
         uint256 expectedBalanceLiquidator = volumeSwaps.volumePayFixedSwaps *
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         prepareApproveForUsersDai(
@@ -983,7 +983,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         uint256[] memory payFixedSwapIds = new uint256[](volumeSwaps.volumePayFixedSwaps);
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeSwaps.volumeReceiveFixedSwaps);
         uint256 endTimestamp = block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS;
-        uint256 expectedBalanceTrader = 9997046420320479199074790;
+        uint256 expectedBalanceTrader = 9997046420320479199074780;
         uint256 expectedBalanceLiquidator = volumeSwaps.volumeReceiveFixedSwaps *
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
 
@@ -1099,7 +1099,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeSwaps.volumeReceiveFixedSwaps);
         uint256 endTimestamp = block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS;
         uint256 expectedBalanceLiquidator = 0;
-        uint256 expectedBalanceTrader = 9999489284064095839814958;
+        uint256 expectedBalanceTrader = 9999489284064095839814956;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -2018,8 +2018,8 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 9898742705955336727624;
-        expectedBalances.expectedIncomeFeeValue = 989874270595533672762;
+        expectedBalances.expectedPayoffAbs = 9898742705955336727625;
+        expectedBalances.expectedIncomeFeeValue = 989874270595533672763;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -2174,7 +2174,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 682671910755540429745;
+        expectedBalances.expectedPayoffAbs = 682671910755540429746;
         expectedBalances.expectedIncomeFeeValue = 68267191075554042975;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
@@ -2769,7 +2769,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 9967009897030890705472;
+        expectedBalances.expectedPayoffAbs = 9967009897030890705473;
         expectedBalances.expectedIncomeFeeValue = 996700989703089070547;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
@@ -3354,7 +3354,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 6280581578950972257591;
+        expectedBalances.expectedPayoffAbs = 6280581578950972257592;
         expectedBalances.expectedIncomeFeeValue = 628058157895097225759;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +

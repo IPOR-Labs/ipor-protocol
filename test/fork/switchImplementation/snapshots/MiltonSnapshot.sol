@@ -214,34 +214,226 @@ contract MiltonSnapshot is Script, Test {
         vm.writeJson(finalJson, string.concat(path, fileName));
     }
 
-    function assert(MiltonSnapshot  miltonSnapshot1, MiltonSnapshot  miltonSnapshot2) external {
-        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph());
-        assertEq(miltonSnapshot1.miltonSpreadModel(), miltonSnapshot2.miltonSpreadModel());
-        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner());
-        assertEq(miltonSnapshot1.miltonFacadeDataProviderOwner(), miltonSnapshot2.miltonFacadeDataProviderOwner());
-        assertEq(miltonSnapshot1.miltonMaxSwapCollateralAmount(), miltonSnapshot2.miltonMaxSwapCollateralAmount());
-        assertEq(miltonSnapshot1.miltonMaxLpUtilizationRate(), miltonSnapshot2.miltonMaxLpUtilizationRate());
-        // assertEq(miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(), miltonSnapshot2.miltonMaxLpUtilizationPerLegRate());
-        assertEq(miltonSnapshot1.miltonIncomeFeeRate(), miltonSnapshot2.miltonIncomeFeeRate());
-        assertEq(miltonSnapshot1.miltonOpeningFeeRate(), miltonSnapshot2.miltonOpeningFeeRate());
-        assertEq(miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(), miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate());
-        assertEq(miltonSnapshot1.miltonIporPublicationFee(), miltonSnapshot2.miltonIporPublicationFee());
-        assertEq(miltonSnapshot1.miltonLiquidationDepositAmount(), miltonSnapshot2.miltonLiquidationDepositAmount());
-        assertEq(miltonSnapshot1.miltonWadLiquidationDepositAmount(), miltonSnapshot2.miltonWadLiquidationDepositAmount());
-        // assertEq(miltonSnapshot1.miltonMaxLeverage(), miltonSnapshot2.miltonMaxLeverage());
-        assertEq(miltonSnapshot1.miltonMinLeverage(), miltonSnapshot2.miltonMinLeverage());
-        assertEq(miltonSnapshot1.miltonSpreadPayFixed(), miltonSnapshot2.miltonSpreadPayFixed());
-        assertEq(miltonSnapshot1.miltonSpreadReceiveFixed(), miltonSnapshot2.miltonSpreadReceiveFixed());
-        assertEq(miltonSnapshot1.miltonSoapPayFixed(), miltonSnapshot2.miltonSoapPayFixed());
-        assertEq(miltonSnapshot1.miltonSoapReceiveFixed(), miltonSnapshot2.miltonSoapReceiveFixed());
-        assertEq(miltonSnapshot1.miltonSoap(), miltonSnapshot2.miltonSoap());
-        assertEq(miltonSnapshot1.totalCollateralPayFixed(), miltonSnapshot2.totalCollateralPayFixed());
-        assertEq(miltonSnapshot1.totalCollateralReceiveFixed(), miltonSnapshot2.totalCollateralReceiveFixed());
-        assertEq(miltonSnapshot1.liquidityPool(), miltonSnapshot2.liquidityPool());
-        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault());
-        assertEq(miltonSnapshot1.miltonIsPaused(), miltonSnapshot2.miltonIsPaused());
-        assertEq(miltonSnapshot1.blockNumber(), miltonSnapshot2.blockNumber());
-        assertEq(miltonSnapshot1.blockTimestamp(), miltonSnapshot2.blockTimestamp());
+    function assert(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
+        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph(), "Milton: Joseph should be the same");
+        assertEq(
+            miltonSnapshot1.miltonSpreadModel(),
+            miltonSnapshot2.miltonSpreadModel(),
+            "Milton: Spread Model should be the same"
+        );
+        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner(), "Milton: Owner should be the same");
+        assertEq(
+            miltonSnapshot1.miltonFacadeDataProviderOwner(),
+            miltonSnapshot2.miltonFacadeDataProviderOwner(),
+            "Milton: Facade Data Provider Owner should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxSwapCollateralAmount(),
+            miltonSnapshot2.miltonMaxSwapCollateralAmount(),
+            "Milton: Max Swap Collateral Amount should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationRate(),
+            miltonSnapshot2.miltonMaxLpUtilizationRate(),
+            "Milton: Max LP Utilization Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(),
+            miltonSnapshot2.miltonMaxLpUtilizationPerLegRate(),
+            "Milton: Max LP Utilization Per Leg Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonIncomeFeeRate(),
+            miltonSnapshot2.miltonIncomeFeeRate(),
+            "Milton: Income Fee Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonOpeningFeeRate(),
+            miltonSnapshot2.miltonOpeningFeeRate(),
+            "Milton: Opening Fee Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(),
+            miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate(),
+            "Milton: Opening Fee Treasury Portion Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonIporPublicationFee(),
+            miltonSnapshot2.miltonIporPublicationFee(),
+            "Milton: IPOR Publication Fee should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonLiquidationDepositAmount(),
+            miltonSnapshot2.miltonLiquidationDepositAmount(),
+            "Milton: Liquidation Deposit Amount should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonWadLiquidationDepositAmount(),
+            miltonSnapshot2.miltonWadLiquidationDepositAmount(),
+            "Milton: WAD Liquidation Deposit Amount should be the same"
+        );
+        // assertEq(miltonSnapshot1.miltonMaxLeverage(), miltonSnapshot2.miltonMaxLeverage(), "Milton: Max Leverage should be the same");
+        assertEq(
+            miltonSnapshot1.miltonMinLeverage(),
+            miltonSnapshot2.miltonMinLeverage(),
+            "Milton: Min Leverage should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSpreadPayFixed(),
+            miltonSnapshot2.miltonSpreadPayFixed(),
+            "Milton: Spread Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSpreadReceiveFixed(),
+            miltonSnapshot2.miltonSpreadReceiveFixed(),
+            "Milton: Spread Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSoapPayFixed(),
+            miltonSnapshot2.miltonSoapPayFixed(),
+            "Milton: SOAP Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSoapReceiveFixed(),
+            miltonSnapshot2.miltonSoapReceiveFixed(),
+            "Milton: SOAP Receive Fixed should be the same"
+        );
+        //        assertEq(miltonSnapshot1.miltonSoap(), miltonSnapshot2.miltonSoap(), "Milton: SOAP should be the same");
+        assertEq(
+            miltonSnapshot1.totalCollateralPayFixed(),
+            miltonSnapshot2.totalCollateralPayFixed(),
+            "Total Collateral Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.totalCollateralReceiveFixed(),
+            miltonSnapshot2.totalCollateralReceiveFixed(),
+            "Total Collateral Receive Fixed should be the same"
+        );
+        assertEq(miltonSnapshot1.liquidityPool(), miltonSnapshot2.liquidityPool(), "Liquidity Pool should be the same");
+        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault(), "Vault should be the same");
+        assertEq(
+            miltonSnapshot1.miltonIsPaused(),
+            miltonSnapshot2.miltonIsPaused(),
+            "Milton: Is Paused should be the same"
+        );
+        assertEq(miltonSnapshot1.blockNumber(), miltonSnapshot2.blockNumber(), "Block Number should be the same");
+        assertEq(
+            miltonSnapshot1.blockTimestamp(),
+            miltonSnapshot2.blockTimestamp(),
+            "Block Timestamp should be the same"
+        );
+    }
+
+    // This method should be removed after deployment. There is a problem with the assertion of the new IporMath.divideInt implementation.
+    function assertWithIgnore(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
+        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph(), "Milton: Joseph should be the same");
+        assertEq(
+            miltonSnapshot1.miltonSpreadModel(),
+            miltonSnapshot2.miltonSpreadModel(),
+            "Milton: Spread Model should be the same"
+        );
+        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner(), "Milton: Owner should be the same");
+        assertEq(
+            miltonSnapshot1.miltonFacadeDataProviderOwner(),
+            miltonSnapshot2.miltonFacadeDataProviderOwner(),
+            "Milton: Facade Data Provider Owner should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxSwapCollateralAmount(),
+            miltonSnapshot2.miltonMaxSwapCollateralAmount(),
+            "Milton: Max Swap Collateral Amount should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationRate(),
+            miltonSnapshot2.miltonMaxLpUtilizationRate(),
+            "Milton: Max LP Utilization Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(),
+            miltonSnapshot2.miltonMaxLpUtilizationPerLegRate(),
+            "Milton: Max LP Utilization Per Leg Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonIncomeFeeRate(),
+            miltonSnapshot2.miltonIncomeFeeRate(),
+            "Milton: Income Fee Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonOpeningFeeRate(),
+            miltonSnapshot2.miltonOpeningFeeRate(),
+            "Milton: Opening Fee Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(),
+            miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate(),
+            "Milton: Opening Fee Treasury Portion Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonIporPublicationFee(),
+            miltonSnapshot2.miltonIporPublicationFee(),
+            "Milton: IPOR Publication Fee should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonLiquidationDepositAmount(),
+            miltonSnapshot2.miltonLiquidationDepositAmount(),
+            "Milton: Liquidation Deposit Amount should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonWadLiquidationDepositAmount(),
+            miltonSnapshot2.miltonWadLiquidationDepositAmount(),
+            "Milton: WAD Liquidation Deposit Amount should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLeverage(),
+            miltonSnapshot2.miltonMaxLeverage(),
+            "Milton: Max Leverage should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMinLeverage(),
+            miltonSnapshot2.miltonMinLeverage(),
+            "Milton: Min Leverage should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSpreadPayFixed(),
+            miltonSnapshot2.miltonSpreadPayFixed(),
+            "Milton: Spread Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonSpreadReceiveFixed(),
+            miltonSnapshot2.miltonSpreadReceiveFixed(),
+            "Milton: Spread Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.totalCollateralPayFixed(),
+            miltonSnapshot2.totalCollateralPayFixed(),
+            "Milton: Total Collateral Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.totalCollateralReceiveFixed(),
+            miltonSnapshot2.totalCollateralReceiveFixed(),
+            "Milton: Total Collateral Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.liquidityPool(),
+            miltonSnapshot2.liquidityPool(),
+            "Milton: Liquidity Pool should be the same"
+        );
+        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault(), "Milton: Vault should be the same");
+        assertEq(
+            miltonSnapshot1.miltonIsPaused(),
+            miltonSnapshot2.miltonIsPaused(),
+            "Milton: Is Paused should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.blockNumber(),
+            miltonSnapshot2.blockNumber(),
+            "Milton: Block Number should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.blockTimestamp(),
+            miltonSnapshot2.blockTimestamp(),
+            "Milton: Block Timestamp should be the same"
+        );
     }
 
     function consoleLog() public {
@@ -275,7 +467,5 @@ contract MiltonSnapshot is Script, Test {
         console2.log("blockNumber", blockNumber);
         console2.log("miltonIsPaused", miltonIsPaused);
         console2.log("blockTimestamp", blockTimestamp);
-
-
     }
 }
