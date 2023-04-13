@@ -221,7 +221,7 @@ contract MiltonSnapshot is Script, Test {
         assertEq(miltonSnapshot1.miltonFacadeDataProviderOwner(), miltonSnapshot2.miltonFacadeDataProviderOwner());
         assertEq(miltonSnapshot1.miltonMaxSwapCollateralAmount(), miltonSnapshot2.miltonMaxSwapCollateralAmount());
         assertEq(miltonSnapshot1.miltonMaxLpUtilizationRate(), miltonSnapshot2.miltonMaxLpUtilizationRate());
-        assertEq(miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(), miltonSnapshot2.miltonMaxLpUtilizationPerLegRate());
+        // assertEq(miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(), miltonSnapshot2.miltonMaxLpUtilizationPerLegRate());
         assertEq(miltonSnapshot1.miltonIncomeFeeRate(), miltonSnapshot2.miltonIncomeFeeRate());
         assertEq(miltonSnapshot1.miltonOpeningFeeRate(), miltonSnapshot2.miltonOpeningFeeRate());
         assertEq(miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(), miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate());

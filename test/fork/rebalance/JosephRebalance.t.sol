@@ -10,6 +10,8 @@ import "../UsdtAmm.sol";
 
 
 contract JosephRebalance is Test, TestCommons {
+    event Burn(address indexed account, uint256 amount);
+
     function testRebalanceAndDepositDaiIntoVaultAAVE() public {
         // given
         address user = _getUserAddress(1);
@@ -438,6 +440,56 @@ contract JosephRebalance is Test, TestCommons {
         assertEq(balanceNewCompoundStrategyBefore, 0);
         assertTrue(balanceOldCompoundStrategyAfterSwitch < balanceOldCompoundStrategyBefore);
         assertEq(balanceMiltonIvBefore, balanceMiltonIvAfter);
+    }
+
+    function testShouldClosePositionWhenMiltonDoesntHaveCashButStanleyHas() public {
+        //given
+        address user = _getUserAddress(1);
+        uint256 depositAmount = 50_000e18;
+        uint256 totalAmount = 750e18;
+
+        DaiAmm daiAmm = new DaiAmm(address(this));
+        Joseph joseph = daiAmm.joseph();
+        Milton milton = daiAmm.milton();
+
+        joseph.setAutoRebalanceThreshold(0);
+        joseph.setMiltonStanleyBalanceRatio(1e16);
+        deal(daiAmm.dai(), user, 500_000e18);
+        daiAmm.approveMiltonJoseph(user);
+
+        vm.prank(user);
+        joseph.provideLiquidity(depositAmount);
+
+        vm.prank(user);
+        milton.openSwapPayFixed(totalAmount, 9e16, 100e18);
+
+        joseph.rebalance();
+
+        uint256 balanceMiltonAfterRebalance = IIpToken(daiAmm.dai()).balanceOf(
+            address(milton)
+        );
+
+        vm.roll(block.number + 10);
+
+        uint256 userBalanceBeforeClose = IIpToken(daiAmm.dai()).balanceOf(user);
+
+
+        //then
+        vm.expectEmit(true, true, false, false);
+        emit Burn(address(milton), 1234);
+
+        //when
+        milton.closeSwapPayFixed(1);
+
+        uint256 userBalanceAfterClose = IIpToken(daiAmm.dai()).balanceOf(user);
+
+        //then
+        assertTrue(balanceMiltonAfterRebalance < totalAmount, "balanceMiltonAfterRebalance < totalAmount not achieved");
+        assertTrue(userBalanceAfterClose > userBalanceBeforeClose, "userBalanceAfterClose > userBalanceBeforeClose not achieved");
+
+        uint256 balanceMiltonAfterClose = IIpToken(daiAmm.dai()).balanceOf(
+            address(milton)
+        );
     }
 }
 
