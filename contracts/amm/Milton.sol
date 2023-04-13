@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "forge-std/console2.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIporOracle.sol";
@@ -88,7 +87,11 @@ abstract contract Milton is MiltonInternal, IMilton {
         external
         view
         override
-        returns (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap)
+        returns (
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
+            int256 soap
+        )
     {
         (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(
             block.timestamp
@@ -96,9 +99,12 @@ abstract contract Milton is MiltonInternal, IMilton {
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function getClosableStatusForPayFixedSwap(
-        uint256 swapId
-    ) external view override returns (uint256 closableStatus) {
+    function getClosableStatusForPayFixedSwap(uint256 swapId)
+        external
+        view
+        override
+        returns (uint256 closableStatus)
+    {
         IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapPayFixed(swapId);
         uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
             _asset,
@@ -114,9 +120,12 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function getClosableStatusForReceiveFixedSwap(
-        uint256 swapId
-    ) external view override returns (uint256 closableStatus) {
+    function getClosableStatusForReceiveFixedSwap(uint256 swapId)
+        external
+        view
+        override
+        returns (uint256 closableStatus)
+    {
         IporTypes.IporSwapMemory memory iporSwap = _getMiltonStorage().getSwapReceiveFixed(swapId);
         uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
             _asset,
@@ -163,10 +172,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
-    function closeSwaps(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
+    function closeSwaps(uint256[] memory payFixedSwapIds, uint256[] memory receiveFixedSwapIds)
         external
         override
         nonReentrant
@@ -191,9 +197,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, block.timestamp);
     }
 
-    function emergencyCloseSwapsPayFixed(
-        uint256[] memory swapIds
-    )
+    function emergencyCloseSwapsPayFixed(uint256[] memory swapIds)
         external
         override
         onlyOwner
@@ -203,9 +207,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, block.timestamp);
     }
 
-    function emergencyCloseSwapsReceiveFixed(
-        uint256[] memory swapIds
-    )
+    function emergencyCloseSwapsReceiveFixed(uint256[] memory swapIds)
         external
         override
         onlyOwner
@@ -312,9 +314,11 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
     }
 
-    function _calculateSpread(
-        uint256 calculateTimestamp
-    ) internal view returns (int256 spreadPayFixed, int256 spreadReceiveFixed) {
+    function _calculateSpread(uint256 calculateTimestamp)
+        internal
+        view
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
+    {
         IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(
             calculateTimestamp,
             _asset
@@ -401,10 +405,11 @@ abstract contract Milton is MiltonInternal, IMilton {
             );
     }
 
-    function _splitOpeningFeeAmount(
-        uint256 openingFeeAmount,
-        uint256 openingFeeForTreasureRate
-    ) internal pure returns (uint256 liquidityPoolAmount, uint256 treasuryAmount) {
+    function _splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasureRate)
+        internal
+        pure
+        returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
+    {
         treasuryAmount = IporMath.division(
             openingFeeAmount * openingFeeForTreasureRate,
             Constants.D18
@@ -657,27 +662,17 @@ abstract contract Milton is MiltonInternal, IMilton {
                 _UNWIND_SWAP_FLAT_FEE
             );
 
-            console2.log("Hedging position:");
-            console2.logInt(hedgingPosition);
-
             emit VirtualHedgingPosition(iporSwap.id, hedgingPosition);
-
         }
 
         payoff = basePayoff + hedgingPosition;
         incomeFeeValue = _calculateIncomeFeeValue(basePayoff);
-        console2.log("Base payoff:");
-        console2.logInt(basePayoff);
-        console2.log("Payoff:");
-        console2.logInt(payoff);
-
-
     }
 
-    function _closeSwapPayFixed(
-        IporTypes.IporSwapMemory memory iporSwap,
-        uint256 closeTimestamp
-    ) internal returns (uint256 payoutForLiquidator) {
+    function _closeSwapPayFixed(IporTypes.IporSwapMemory memory iporSwap, uint256 closeTimestamp)
+        internal
+        returns (uint256 payoutForLiquidator)
+    {
         address asset = _asset;
         IMiltonStorage miltonStorage = _getMiltonStorage();
         IporTypes.AccruedIpor memory accruedIpor = _getIporOracle().getAccruedIndex(
@@ -879,10 +874,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         );
     }
 
-    function _closeSwapsPayFixed(
-        uint256[] memory swapIds,
-        uint256 closeTimestamp
-    )
+    function _closeSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
         internal
         returns (
             uint256 payoutForLiquidator,
@@ -911,10 +903,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
     }
 
-    function _closeSwapsReceiveFixed(
-        uint256[] memory swapIds,
-        uint256 closeTimestamp
-    )
+    function _closeSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
         internal
         returns (
             uint256 payoutForLiquidator,
@@ -1034,10 +1023,9 @@ abstract contract Milton is MiltonInternal, IMilton {
     //Transfer sum of all liquidation deposits to liquidator
     /// @param liquidator address of liquidator
     /// @param liquidationDepositAmount liquidation deposit amount, value represented in 18 decimals
-    function _transferLiquidationDepositAmount(
-        address liquidator,
-        uint256 liquidationDepositAmount
-    ) internal {
+    function _transferLiquidationDepositAmount(address liquidator, uint256 liquidationDepositAmount)
+        internal
+    {
         if (liquidationDepositAmount > 0) {
             IERC20Upgradeable(_asset).safeTransfer(
                 liquidator,

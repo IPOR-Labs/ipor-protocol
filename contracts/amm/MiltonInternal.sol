@@ -64,7 +64,7 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
 
-    uint256 internal constant _UNWIND_SWAP_FLAT_FEE = 5*1e18;
+    uint256 internal constant _UNWIND_SWAP_FLAT_FEE = 5 * 1e18;
 
     address internal _asset;
     address internal _joseph;
