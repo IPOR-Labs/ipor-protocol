@@ -28,18 +28,7 @@ jobs:
             test-options: '--no-match-path "test/fork/*"'
             fork-test-options: '--match-path "test/fork/*"'
 
-    build-java:
-        needs: notify
-        uses: ./.github/workflows/build-java.yml
-        with:
-            solc-version: 0.8.16
-            smart-contracts-compile-enabled: true
-            build-enabled: true
-            tests-enabled: true
-            publish-jar-enabled: false
-            push-docker-enabled: false
-
-    trigger-containers:
+    trigger-external-jobs:
         needs: notify
         runs-on: ubuntu-latest
         steps:
@@ -66,17 +55,38 @@ jobs:
                   trigger_workflow: true
                   wait_workflow: false
 
+            - name: Trigger build jar
+                # from tag: v1.6.5
+              uses: convictional/trigger-workflow-and-wait@f69fa9eedd3c62a599220f4d5745230e237904be
+              with:
+                  owner: IPOR-Labs
+                  repo: ${{ secrets.BUILD_JAR_REPO }}
+                  github_token: ${{ secrets.TOKEN_RUN_BUILD_JAR }}
+                  workflow_file_name: ci.yml
+                  ref: main
+                  client_payload: >-
+                      {
+                      "src-sha": "${{ github.sha }}",
+                      "src-actor": "${{ github.triggering_actor }}",
+                      "src-repository": "${{ github.repository }}",
+                      "src-workflow": "${{ github.workflow }}",
+                      "src-run-url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}"
+                      }
+                  wait_interval: 0
+                  propagate_failure: false
+                  trigger_workflow: true
+                  wait_workflow: false
+
     report:
         if: ${{ always() }}
         needs:
             - notify
             - build-sc
             - foundry-tests
-            - build-java
-            - trigger-containers
+            - trigger-external-jobs
         uses: ./.github/workflows/report-slack.yml
         secrets:
             SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         with:
-            success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.build-java.result == 'success' && needs.trigger-containers.result == 'success' }}
+            success: ${{ needs.build-sc.result == 'success' && needs.foundry-tests.result == 'success' && needs.trigger-external-jobs.result == 'success' }}
             slack-status-msg-id: ${{ needs.notify.outputs.slack-status-msg-id }}
