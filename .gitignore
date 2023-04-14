@@ -1,14 +1,8 @@
 ### Environment ###
 /.env
-/containers/cockpit/.env
-
-### Java build artifacts ###
-/src/generated/
-/target/
 
 ### Node build artifacts ###
 /node_modules
-
 
 ### Smart Contracts build artifacts ###
 /app/src/contracts/
@@ -19,7 +13,6 @@
 /contracts/interfaces/artifacts/
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
-/smart-contract-addresses.yaml
 /docs
 
 ### IntelliJ IDEA ###
@@ -34,9 +27,6 @@
 ### Ansible build artifacts ###
 /contracts.zip
 /coverage/
-/containers/ganache/
-/containers/logs/nginx-eth-bc/access.log
-/containers/logs/nginx-eth-bc/error.log
 /bin/
 /test/output
 /.nyc_output/
@@ -66,8 +56,6 @@ out/
 iporErrorList.json
 
 ### ETH dumps ###
-/containers/eth-bc/eth-bc-dump
-
 /contracts/**/artifacts/
 
 *_flattened.sol
