@@ -37,22 +37,38 @@ contract MarketSafetyOracle is
         _disableInitializers();
     }
 
-    function initialize(address[] memory assets) public initializer {
+    function initialize(
+        address[] memory assets,
+        uint256[] memory maxNotionalPayFixed,
+        uint256[] memory maxNotionalReceiveFixed,
+        uint256[] memory maxUtilizationRatePayFixed,
+        uint256[] memory maxUtilizationRateReceiveFixed,
+        uint256[] memory maxUtilizationRate
+    ) public initializer {
         __Pausable_init_unchained();
         __Ownable_init_unchained();
         __UUPSUpgradeable_init_unchained();
 
         uint256 assetsLength = assets.length;
 
+        require(
+            assetsLength == maxNotionalPayFixed.length &&
+            assetsLength == maxNotionalReceiveFixed.length &&
+            assetsLength == maxUtilizationRatePayFixed.length &&
+            assetsLength == maxUtilizationRateReceiveFixed.length &&
+            assetsLength == maxUtilizationRate.length,
+            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
+        );
+
         for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indicators[assets[i]] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
-                0,
-                0,
-                0,
-                0,
-                0,
+                maxNotionalPayFixed[i].toUint64(),
+                maxNotionalReceiveFixed[i].toUint64(),
+                maxUtilizationRatePayFixed[i].toUint16(),
+                maxUtilizationRateReceiveFixed[i].toUint16(),
+                maxUtilizationRate[i].toUint16(),
                 block.timestamp.toUint32()
             );
         }

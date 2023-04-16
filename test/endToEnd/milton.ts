@@ -133,7 +133,8 @@ export const miltonUsdtFactory = async (
     iporOracleAddress: string,
     miltonStorageUsdtAddress: string,
     miltonSpreadModelAddress: string,
-    stanleyUsdtAddress: string
+    stanleyUsdtAddress: string,
+    marketSafetyOracleAddress: string
 ): Promise<MiltonUsdt> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdt", admin);
@@ -146,6 +147,7 @@ export const miltonUsdtFactory = async (
             miltonStorageUsdtAddress,
             miltonSpreadModelAddress,
             stanleyUsdtAddress,
+            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",
@@ -157,7 +159,8 @@ export const miltonUsdcFactory = async (
     iporOracleAddress: string,
     miltonStorageUsdcAddress: string,
     miltonSpreadModelAddress: string,
-    stanleyUsdcAddress: string
+    stanleyUsdcAddress: string,
+    marketSafetyOracleAddress: string
 ): Promise<MiltonUsdc> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdc", admin);
@@ -170,6 +173,7 @@ export const miltonUsdcFactory = async (
             miltonStorageUsdcAddress,
             miltonSpreadModelAddress,
             stanleyUsdcAddress,
+            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",
@@ -181,7 +185,8 @@ export const miltonDaiFactory = async (
     iporOracleAddress: string,
     miltonStorageDaiAddress: string,
     miltonSpreadModelAddress: string,
-    stanleyDaiAddress: string
+    stanleyDaiAddress: string,
+    marketSafetyOracleAddress: string
 ): Promise<MiltonDai> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonDai", admin);
@@ -194,6 +199,7 @@ export const miltonDaiFactory = async (
             miltonStorageDaiAddress,
             miltonSpreadModelAddress,
             stanleyDaiAddress,
+            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",

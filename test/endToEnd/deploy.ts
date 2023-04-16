@@ -18,6 +18,7 @@ import {
     MiltonSpreadModelUsdc,
     MiltonSpreadModelDai,
     IporOracle,
+    MarketSafetyOracle,
     MiltonUsdc,
     MiltonUsdt,
     MiltonDai,
@@ -78,6 +79,7 @@ import {
     compoundUsdtStrategyFactory,
     strategyCompoundSetup,
 } from "./compound";
+import {marketSafetyOracleFactory, marketSafetyOracleSetup} from "./marketSafetyOracle";
 export type DeployType = {
     dai: ERC20;
     usdc: ERC20;
@@ -115,6 +117,7 @@ export type DeployType = {
     miltonSpreadModelDai: MiltonSpreadModelDai;
     miltonFacadeDataProvider: MiltonFacadeDataProvider;
     iporOracle: IporOracle;
+    marketSafetyOracle: MarketSafetyOracle;
     miltonDai: MiltonDai;
     miltonUsdc: MiltonUsdc;
     miltonUsdt: MiltonUsdt;
@@ -211,23 +214,63 @@ export const deploy = async (admin: Signer): Promise<DeployType> => {
 
     const iporOracle = await iporOracleFactory(initialParams);
 
+    const maxNotionalPayFixed = [
+        BigNumber.from("100000"),
+        BigNumber.from("100000"),
+        BigNumber.from("100000"),
+    ];
+    const maxNotionalReceiveFixed = [
+        BigNumber.from("100000"),
+        BigNumber.from("100000"),
+        BigNumber.from("100000"),
+    ];
+    const maxUtilizationRatePayFixed = [
+        BigNumber.from("4800"),
+        BigNumber.from("4800"),
+        BigNumber.from("4800"),
+    ]
+    const maxUtilizationRateReceiveFixed = [
+        BigNumber.from("4800"),
+        BigNumber.from("4800"),
+        BigNumber.from("4800"),
+    ]
+    const maxUtilizationRate = [
+        BigNumber.from("9000"),
+        BigNumber.from("9000"),
+        BigNumber.from("9000"),
+    ]
+
+    const marketSafetyOracleInitialParams = {
+        assets,
+        maxNotionalPayFixed,
+        maxNotionalReceiveFixed,
+        maxUtilizationRatePayFixed,
+        maxUtilizationRateReceiveFixed,
+        maxUtilizationRate,
+    }
+
+    const marketSafetyOracle = await marketSafetyOracleFactory(marketSafetyOracleInitialParams);
+
     const miltonUsdt = await miltonUsdtFactory(
         iporOracle.address,
         miltonStorageUsdt.address,
         miltonSpreadModelUsdt.address,
-        stanleyUsdt.address
+        stanleyUsdt.address,
+        marketSafetyOracle.address
     );
     const miltonUsdc = await miltonUsdcFactory(
         iporOracle.address,
         miltonStorageUsdc.address,
         miltonSpreadModelUsdc.address,
-        stanleyUsdc.address
+        stanleyUsdc.address,
+        marketSafetyOracle.address
     );
     const miltonDai = await miltonDaiFactory(
         iporOracle.address,
         miltonStorageDai.address,
         miltonSpreadModelDai.address,
-        stanleyDai.address
+        stanleyDai.address,
+        marketSafetyOracle.address
     );
 
     const josephDai = await josephDaiFactory(
@@ -303,6 +346,7 @@ export const deploy = async (admin: Signer): Promise<DeployType> => {
         miltonSpreadModelDai,
         miltonFacadeDataProvider,
         iporOracle,
+        marketSafetyOracle,
         miltonDai,
         miltonUsdc,
         miltonUsdt,
@@ -338,6 +382,7 @@ export const setup = async (deployed: DeployType) => {
         miltonStorageUsdc,
         miltonStorageUsdt,
         iporOracle,
+        marketSafetyOracle,
         miltonDai,
         miltonUsdc,
         miltonUsdt,
@@ -377,6 +422,7 @@ export const setup = async (deployed: DeployType) => {
 
     await iporOracleSetup(iporOracle);
     await initIporValues(iporOracle);
+    await marketSafetyOracleSetup(marketSafetyOracle);
 
     await testnetFaucetSetup(testnetFaucet, dai, usdc, usdt);
 };

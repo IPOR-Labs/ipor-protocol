@@ -26,6 +26,7 @@ import {
 } from "./JosephUtils";
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
 import { prepareIporOracle } from "./IporOracleUtils";
+import { prepareMarketSafetyOracle } from "./MarketSafetyOracle";
 import {
     MockBaseMiltonSpreadModelDai,
     DaiMockedToken,
@@ -58,6 +59,9 @@ import {
     YEAR_IN_SECONDS,
     LEG_PAY_FIXED,
     LEG_RECEIVE_FIXED,
+    MSO_NOTIONAL_1B,
+    MSO_UTILIZATION_RATE_48_PER,
+    MSO_UTILIZATION_RATE_90_PER,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -145,6 +149,11 @@ export const prepareTestData = async (
     const lastUpdateTimestamps: BigNumber[] = [];
     const exponentialMovingAverages: BigNumber[] = [];
     const exponentialWeightedMovingVariances: BigNumber[] = [];
+    const maxNotionalPayFixed: BigNumber[] = [];
+    const maxNotionalReceiveFixed: BigNumber[] = [];
+    const maxUtilizationRatePayFixed: BigNumber[] = [];
+    const maxUtilizationRateReceiveFixed: BigNumber[] = [];
+    const maxUtilizationRate: BigNumber[] = [];
     for (let k = 0; k < assets.length; k++) {
         if (assets[k] === "USDT") {
             tokenUsdt = (await UsdtMockedToken.deploy(
@@ -178,6 +187,12 @@ export const prepareTestData = async (
             exponentialWeightedMovingVariances.push(BigNumber.from("0"));
         }
 
+        maxNotionalPayFixed.push(MSO_NOTIONAL_1B);
+        maxNotionalReceiveFixed.push(MSO_NOTIONAL_1B);
+        maxUtilizationRatePayFixed.push(MSO_UTILIZATION_RATE_48_PER);
+        maxUtilizationRateReceiveFixed.push(MSO_UTILIZATION_RATE_48_PER);
+        maxUtilizationRate.push(MSO_UTILIZATION_RATE_90_PER);
+
         if (emas[k]) {
             exponentialMovingAverages.push(emas[k]);
         } else {
@@ -193,6 +208,15 @@ export const prepareTestData = async (
             exponentialMovingAverages,
             exponentialWeightedMovingVariances
         ));
+    const marketSafetyOracle = (await prepareMarketSafetyOracle(
+        accounts,
+        assetsAddr,
+        maxNotionalPayFixed,
+        maxNotionalReceiveFixed,
+        maxUtilizationRatePayFixed,
+        maxUtilizationRateReceiveFixed,
+        maxUtilizationRate,
+    ));
 
     if (tokenUsdt) {
         stanleyUsdt = await getMockStanleyCase(stanleyCaseNumber, tokenUsdt.address);
@@ -212,6 +236,7 @@ export const prepareTestData = async (
                 miltonStorageUsdt.address,
                 miltonSpreadModel.address,
                 stanleyUsdt.address,
+                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
@@ -227,7 +252,7 @@ export const prepareTestData = async (
                 ipTokenUsdt.address,
                 miltonUsdt.address,
                 miltonStorageUsdt.address,
-                stanleyUsdt.address,
+                stanleyUsdt.address
             ],
             {
                 kind: "uups",
@@ -267,6 +292,7 @@ export const prepareTestData = async (
                 miltonStorageUsdc.address,
                 miltonSpreadModel.address,
                 stanleyUsdc.address,
+                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
@@ -282,7 +308,7 @@ export const prepareTestData = async (
                 ipTokenUsdc.address,
                 miltonUsdc.address,
                 miltonStorageUsdc.address,
-                stanleyUsdc.address,
+                stanleyUsdc.address
             ],
             {
                 kind: "uups",
@@ -321,6 +347,7 @@ export const prepareTestData = async (
                 miltonStorageDai.address,
                 miltonSpreadModel.address,
                 stanleyDai.address,
+                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
@@ -336,7 +363,7 @@ export const prepareTestData = async (
                 ipTokenDai.address,
                 miltonDai.address,
                 miltonStorageDai.address,
-                stanleyDai.address,
+                stanleyDai.address
             ],
             {
                 kind: "uups",
