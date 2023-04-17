@@ -8,6 +8,7 @@ import {MiltonUtils} from "../utils/MiltonUtils.sol";
 import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import {MarketSafetyOracleUtils} from "../utils/MarketSafetyOracleUtils.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
@@ -18,11 +19,12 @@ import "../../contracts/itf/ItfMilton.sol";
 import "../../contracts/itf/ItfStanley.sol";
 import "../../contracts/itf/ItfJoseph.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/oracles/MarketSafetyOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
 
 
-contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, JosephUtils, StanleyUtils {
+contract DataUtils is Test, IporOracleUtils, MarketSafetyOracleUtils, MiltonUtils, MiltonStorageUtils, JosephUtils, StanleyUtils {
     struct IporProtocol {
         MockTestnetToken asset;
         IpToken ipToken;
@@ -31,6 +33,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         ItfMilton milton;
         ItfJoseph joseph;
         ItfIporOracle iporOracle;
+        MarketSafetyOracle marketSafetyOracle;
     }
 
     address internal _admin;
@@ -55,10 +58,18 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
 
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
+        MarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+            _userOne,
+            tokenAddresses,
+            TestConstants.MSO_NOTIONAL_1B,
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER
+        );
+
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
 
         ItfMilton milton = getItfMiltonUsdt(
-            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
+            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley), address(marketSafetyOracle)
         );
 
         ItfJoseph joseph = getItfJosephUsdt(
@@ -80,6 +91,7 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         iporProtocol.milton = milton;
         iporProtocol.joseph = joseph;
         iporProtocol.iporOracle = iporOracle;
+        iporProtocol.marketSafetyOracle = marketSafetyOracle;
 
         return iporProtocol;
     }
@@ -100,8 +112,16 @@ contract DataUtils is Test, IporOracleUtils, MiltonUtils, MiltonStorageUtils, Jo
         MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
+        MarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+            _userOne,
+            tokenAddresses,
+            TestConstants.MSO_NOTIONAL_1B,
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER
+        );
+
         ItfMilton milton = getItfMiltonDai(
-            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley)
+            asset, address(iporOracle), address(miltonStorage), address(miltonSpreadModel), address(stanley), address(marketSafetyOracle)
         );
 
         ItfJoseph joseph =

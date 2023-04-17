@@ -26,7 +26,7 @@ import {
 } from "./JosephUtils";
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
 import { prepareIporOracle } from "./IporOracleUtils";
-import { prepareMarketSafetyOracle } from "./MarketSafetyOracle";
+import { prepareMarketSafetyOracle } from "./MarketSafetyOracleUtils";
 import {
     MockBaseMiltonSpreadModelDai,
     DaiMockedToken,

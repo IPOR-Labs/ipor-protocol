@@ -48,19 +48,4 @@ contract MockCase8MiltonDai is ItfMilton {
         }
         return _miltonStorage;
     }
-
-    function _getSafetyIndicators(uint256 liquidityPool)
-        internal
-        view
-        override
-        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
-    {
-        return AmmMiltonTypes.OpenSwapSafetyIndicators(
-            8 * 1e17,
-            48 * 1e16,
-            48 * 1e16,
-            1000 * 1e18,
-            1000 * 1e18
-        );
-    }
 }

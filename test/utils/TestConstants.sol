@@ -195,4 +195,8 @@ library TestConstants {
     uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
     uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
     uint256 public constant MAX_CHUNK_SIZE = 50;
+
+    uint64 public constant MSO_NOTIONAL_1B = 100000;
+    uint16 public constant MSO_UTILIZATION_RATE_48_PER = 4800;
+    uint16 public constant MSO_UTILIZATION_RATE_90_PER = 9000;
 }

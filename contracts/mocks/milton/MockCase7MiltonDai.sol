@@ -35,19 +35,4 @@ contract MockCase7MiltonDai is ItfMilton {
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 18;
     }
-
-    function _getSafetyIndicators(uint256 liquidityPool)
-        internal
-        view
-        override
-        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
-    {
-        return AmmMiltonTypes.OpenSwapSafetyIndicators(
-            0,
-            0,
-            0,
-            1000 * 1e18,
-            1000 * 1e18
-        );
-    }
 }

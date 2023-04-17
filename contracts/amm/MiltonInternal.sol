@@ -74,9 +74,10 @@ abstract contract MiltonInternal is
     IIporOracle internal _iporOracle;
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
-    IMarketSafetyOracle internal _marketSafetyOracle;
 
     uint32 internal _autoUpdateIporIndexThreshold;
+
+    IMarketSafetyOracle internal _marketSafetyOracle;
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);

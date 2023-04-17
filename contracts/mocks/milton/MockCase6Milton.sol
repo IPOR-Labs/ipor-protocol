@@ -31,19 +31,4 @@ abstract contract MockCase6Milton is ItfMilton {
     function _getMinLeverage() internal pure virtual override returns (uint256) {
         return 10 * 1e18;
     }
-
-    function _getSafetyIndicators(uint256 liquidityPool)
-        internal
-        view
-        override
-        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
-    {
-        return AmmMiltonTypes.OpenSwapSafetyIndicators(
-            8 * 1e17,
-            300000000000000000,
-            300000000000000000,
-            1000 * 1e18,
-            1000 * 1e18
-        );
-    }
 }
