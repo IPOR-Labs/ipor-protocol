@@ -25,6 +25,21 @@ contract MockSpreadModel is IMiltonSpreadModel {
         _calculateSpreadReceiveFixed = calculateSpreadReceiveFixedVaule;
     }
 
+    SpreadModelParams public spreadModelParamsPayFixed;
+    SpreadModelParams public spreadModelParamsReceiveFixed;
+
+    function getSpreadModelParams() external view override returns (SpreadModelParams memory, SpreadModelParams memory) {
+        return (spreadModelParamsPayFixed, spreadModelParamsReceiveFixed);
+    }
+
+    function setSpreadModelParams(
+        SpreadModelParams memory newSpreadModelParamsPayFixed,
+        SpreadModelParams memory newSpreadModelParamsReceiveFixed
+    ) external override {
+        spreadModelParamsPayFixed = newSpreadModelParamsPayFixed;
+        spreadModelParamsReceiveFixed = newSpreadModelParamsReceiveFixed;
+    }
+
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance

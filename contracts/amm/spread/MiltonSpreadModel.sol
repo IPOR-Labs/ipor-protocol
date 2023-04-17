@@ -9,6 +9,21 @@ import "./MiltonSpreadInternal.sol";
 abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel {
     using SafeCast for uint256;
     using SafeCast for int256;
+    SpreadModelParams public spreadModelParamsPayFixed;
+    SpreadModelParams public spreadModelParamsReceiveFixed;
+
+    function getSpreadModelParams() external view override returns (SpreadModelParams memory, SpreadModelParams memory) {
+        return (spreadModelParamsPayFixed, spreadModelParamsReceiveFixed);
+    }
+
+    function setSpreadModelParams(
+        SpreadModelParams memory newSpreadModelParamsPayFixed,
+        SpreadModelParams memory newSpreadModelParamsReceiveFixed
+    ) external override {
+        spreadModelParamsPayFixed = newSpreadModelParamsPayFixed;
+        spreadModelParamsReceiveFixed = newSpreadModelParamsReceiveFixed;
+    }
+
 
     function calculateQuotePayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
@@ -31,10 +46,9 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
 
         int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() + spreadPremiums;
 
-        quoteValue = _calculateReferenceLegReceiveFixed(
-            intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
-            accruedIpor.exponentialMovingAverage
-        );
+        if (intQuoteValueWithIpor > 0) {
+            return intQuoteValueWithIpor.toUint256();
+        }
     }
 
     function calculateSpreadPayFixed(
@@ -63,10 +77,17 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
             accruedIpor.exponentialMovingAverage.toInt256();
 
-        spreadPremiums = _calculateVolatilityAndMeanReversionPayFixed(
-            accruedIpor.exponentialWeightedMovingVariance,
-            diffIporIndexEma
+        SpreadModelParams memory spreadModelParams = spreadModelParamsPayFixed;
+        int256 quote = spreadModelParams.bias + IporMath.divisionInt(
+            accruedIpor.indexValue.toInt256() * spreadModelParams.rt + diffIporIndexEma * spreadModelParams.theta,
+            Constants.D18_INT
         );
+
+        if(quote > accruedIpor.indexValue.toInt256()) {
+            spreadPremiums = quote;
+        } else {
+            spreadPremiums = accruedIpor.indexValue.toInt256();
+        }
     }
 
     function _calculateSpreadPremiumsReceiveFixed(
@@ -79,12 +100,19 @@ abstract contract MiltonSpreadModel is MiltonSpreadInternal, IMiltonSpreadModel 
         );
 
         int256 diffIporIndexEma = accruedIpor.indexValue.toInt256() -
-            accruedIpor.exponentialMovingAverage.toInt256();
+        accruedIpor.exponentialMovingAverage.toInt256();
 
-        spreadPremiums = _calculateVolatilityAndMeanReversionReceiveFixed(
-            accruedIpor.exponentialWeightedMovingVariance,
-            diffIporIndexEma
+        SpreadModelParams memory spreadModelParams = spreadModelParamsPayFixed;
+        int256 quote = spreadModelParams.bias + IporMath.divisionInt(
+            accruedIpor.indexValue.toInt256() * spreadModelParams.rt + diffIporIndexEma * spreadModelParams.theta,
+            Constants.D18_INT
         );
+
+        if(quote < accruedIpor.indexValue.toInt256()) {
+            spreadPremiums = quote;
+        } else {
+            spreadPremiums = accruedIpor.indexValue.toInt256();
+        }
     }
 
     /// @dev Volatility and mean revesion component for Pay Fixed Receive Floating leg. Maximum value between regions.

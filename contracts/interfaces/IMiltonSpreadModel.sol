@@ -5,6 +5,13 @@ import "./types/IporTypes.sol";
 
 /// @title Interface for interaction with Milton Spread Model smart contract.
 interface IMiltonSpreadModel {
+    struct SpreadModelParams {
+        int256 theta;
+        int256 rt;
+        int256 bias;
+    }
+
+
     /// @notice Calculates the quote for Pay-Fixed leg.
     /// @param accruedIpor - interest accrued by IPOR at the moment of calculation
     /// @param accruedBalance - Milton balance including Stanley's interest and collateral if present
@@ -40,4 +47,11 @@ interface IMiltonSpreadModel {
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view returns (int256 spreadValue);
+
+    function getSpreadModelParams() external view returns (SpreadModelParams memory, SpreadModelParams memory);
+
+    function setSpreadModelParams(
+        SpreadModelParams memory newSpreadModelParamsPayFixed,
+        SpreadModelParams memory newSpreadModelParamsReceiveFixed
+    ) external;
 }

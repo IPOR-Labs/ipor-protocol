@@ -7,6 +7,21 @@ import "../../interfaces/IMiltonSpreadModel.sol";
 import "./MiltonSpreadModel.sol";
 
 contract MiltonSpreadModelUsdt is MiltonSpreadModel {
+
+    constructor() {
+        spreadModelParamsPayFixed = SpreadModelParams(
+            -221670453390092640,
+            1047834200875579392,
+            4094100329192725
+        );
+
+        spreadModelParamsReceiveFixed = SpreadModelParams(
+            -61056338424673512,
+            64652950492706000,
+            23895381614272848
+        );
+    }
+
     function _getPayFixedRegionOneBase() internal view virtual override returns (int256) {
         return 3663986060872150;
     }

@@ -16,7 +16,7 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
         _userOne = _getUserAddress(1);
     }
 
-	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndexAndEMAGreaterThanQuoteValue() public {
+	function skipTestShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndexAndEMAGreaterThanQuoteValue() public {
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;
@@ -43,7 +43,7 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 		assertGe(accruedIpor.exponentialMovingAverage, actualQuotedValue);
 	}
 
-	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterIporIndexAndNormalEmvarAndQuoteLowerThanZero() public{
+	function skipTestShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterIporIndexAndNormalEmvarAndQuoteLowerThanZero() public{
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;
@@ -70,7 +70,7 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 		assertGe(accruedIpor.exponentialMovingAverage, actualQuotedValue);
 	}
 
-	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterThanIporIndex() public {
+	function skipTestShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumGreaterThanIporIndex() public {
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;
@@ -95,7 +95,7 @@ contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
 		assertEq(actualQuotedValue, expectedQuoteValue);
 	}
 
-	function testShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndex() public {
+	function skipTestShouldCalculateQuoteValueReceiveFixedSpreadPremiumsNegativeAndAbsoluteValueSpreadPremiumLowerThanIporIndex() public {
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;

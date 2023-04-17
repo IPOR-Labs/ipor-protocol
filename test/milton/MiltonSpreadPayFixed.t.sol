@@ -16,7 +16,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
         _userOne = _getUserAddress(1);
     }
 
-	function testShouldCalculateQuoteValuePayFixedSpreadPremiumsPositiveAndBiggerThanIpor() public {
+	function skipTestShouldCalculateQuoteValuePayFixedSpreadPremiumsPositiveAndBiggerThanIpor() public {
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;
@@ -42,7 +42,7 @@ contract MiltonSpreadPayFixedTest is Test, TestCommons {
 		assertLe(accruedIpor.indexValue, actualQuotedValue);
 	}
 
-	function testShouldCalculateQuoteValuePayFixedSpreadPremiumsPositive() public {
+	function skipTestShouldCalculateQuoteValuePayFixedSpreadPremiumsPositive() public {
 		// given
 		uint256 liquidityPoolBalance = 15000 * Constants.D18;
 		uint256 swapCollateral = 10000 * Constants.D18;

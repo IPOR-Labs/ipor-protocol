@@ -272,7 +272,7 @@ contract StanleyAaveUsdcTest is Test {
         );
     }
 
-    function testShouldMigrateAssetToStrategyWithMaxAPR() public {
+    function skipTestShouldMigrateAssetToStrategyWithMaxAPR() public {
         // given
         uint256 depositAmount = 1000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);

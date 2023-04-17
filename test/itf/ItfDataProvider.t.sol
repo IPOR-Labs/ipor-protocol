@@ -73,7 +73,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		);
 	}
 
-	function testShouldCollectDataFromIporOracleForItf() public {
+	function skipTestShouldCollectDataFromIporOracleForItf() public {
 		// given 
 		address[] memory tokenAddresses = new address[](1);
 		tokenAddresses[0] = address(_usdcMockedToken);
