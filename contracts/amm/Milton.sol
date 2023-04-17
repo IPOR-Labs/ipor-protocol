@@ -359,6 +359,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic
             .calculateSwapAmount(
+                28,
                 wadTotalAmount,
                 leverage,
                 wadLiquidationDepositAmount,
