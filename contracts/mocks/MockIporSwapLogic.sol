@@ -52,14 +52,14 @@ contract MockIporSwapLogic {
         swapValue = IporSwapLogic.calculatePayoffReceiveFixed(swap, closingTimestamp, mdIbtPrice);
     }
 
-    function calculateVirtualHedgingPosition(
+    function calculateVirtualHedgingSwap(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         int256 basePayoff,
         uint256 oppositeLegFixedRate,
         uint256 hedgingFee
-    ) public pure returns (int256 virtualHedgingPosition) {
-        virtualHedgingPosition = IporSwapLogic.calculateVirtualHedgingPosition(
+    ) public pure returns (int256 virtualHedgingSwap) {
+        virtualHedgingSwap = IporSwapLogic.calculateVirtualHedgingSwap(
             swap,
             closingTimestamp,
             basePayoff,

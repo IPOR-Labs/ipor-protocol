@@ -78,7 +78,7 @@ library IporSwapLogic {
         );
     }
 
-    function calculateVirtualHedgingPosition(
+    function calculateVirtualHedgingSwap(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
         int256 basePayoff,

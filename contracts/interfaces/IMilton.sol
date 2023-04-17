@@ -146,7 +146,7 @@ interface IMilton {
     );
 
     /// @notice Emmited when trader closes Swap.
-    event VirtualHedgingPosition (
+    event VirtualHedgingSwap (
         /// @notice swap ID.
         uint256 indexed swapId,
         // @notice virtual hedging position, represented in 18 decimals

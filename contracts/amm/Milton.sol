@@ -630,7 +630,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory balance
     ) internal returns (int256 payoff, uint256 incomeFeeValue) {
-        bool virtualHedgingPositionRequired = _validateAllowanceToCloseSwap(
+        bool virtualHedgingSwapRequired = _validateAllowanceToCloseSwap(
             _msgSender(),
             owner(),
             iporSwap,
@@ -640,7 +640,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         int256 hedgingPosition;
 
-        if (virtualHedgingPositionRequired == true) {
+        if (virtualHedgingSwapRequired == true) {
             uint256 oppositeLegFixedRate;
 
             if (direction == MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -655,14 +655,14 @@ abstract contract Milton is MiltonInternal, IMilton {
                 );
             }
 
-            hedgingPosition = iporSwap.calculateVirtualHedgingPosition(
+            hedgingPosition = iporSwap.calculateVirtualHedgingSwap(
                 closeTimestamp,
                 basePayoff,
                 oppositeLegFixedRate,
-                _UNWIND_SWAP_FLAT_FEE
+                _getVirtualHedgingSwapOpeningFeeRate()
             );
 
-            emit VirtualHedgingPosition(iporSwap.id, hedgingPosition);
+            emit VirtualHedgingSwap(iporSwap.id, hedgingPosition);
         }
 
         payoff = basePayoff + hedgingPosition;
@@ -803,7 +803,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
-    ) internal view returns (bool virtualHedgingPositionRequired) {
+    ) internal view returns (bool virtualHedgingSwapRequired) {
         uint256 closableStatus = _getClosableStatusForSwap(
             msgSender,
             owner,
@@ -818,7 +818,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         if (closableStatus == 3 || closableStatus == 4) {
             if (msgSender == iporSwap.buyer) {
-                virtualHedgingPositionRequired = true;
+                virtualHedgingSwapRequired = true;
             } else {
                 if (closableStatus == 3)
                     revert(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER);

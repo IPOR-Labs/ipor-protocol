@@ -30,7 +30,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     int256 unwindFlatFee = 5*1e18;
 
-    event VirtualHedgingPosition(uint256 indexed swapId, int256 hedgingPosition);
+    event VirtualHedgingSwap(uint256 indexed swapId, int256 hedgingPosition);
 
     function setUp() public {
         _admin = address(this);
@@ -71,7 +71,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
+        emit VirtualHedgingSwap(swap.id, expectedHedgingPosition);
 
         vm.prank(_buyer);
         (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
@@ -122,7 +122,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit VirtualHedgingPosition(swap.id, expectedHedgingPosition);
+        emit VirtualHedgingSwap(swap.id, expectedHedgingPosition);
 
         vm.prank(_buyer);
         (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
