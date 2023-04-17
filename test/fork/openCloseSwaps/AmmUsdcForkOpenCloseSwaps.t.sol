@@ -196,7 +196,6 @@ contract AmmUsdcForkOpenCloseSwaps is Test, TestCommons {
         IporTypes.IporSwapMemory memory swapBefore = miltonStorage.getSwapPayFixed(1);
 
         // when
-        vm.prank(userTwo);
         milton.closeSwapPayFixed(swapId);
 
         // then
@@ -241,7 +240,6 @@ contract AmmUsdcForkOpenCloseSwaps is Test, TestCommons {
         IporTypes.IporSwapMemory memory swapBefore = miltonStorage.getSwapReceiveFixed(1);
 
         // when
-        vm.prank(userTwo);
         milton.closeSwapReceiveFixed(swapId);
 
         // then

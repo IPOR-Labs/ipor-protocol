@@ -60,8 +60,6 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
-    uint256 internal constant _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY = 99 * 1e16;
-
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
@@ -74,6 +72,8 @@ abstract contract MiltonInternal is
     IMiltonSpreadModel internal _miltonSpreadModel;
 
     uint32 internal _autoUpdateIporIndexThreshold;
+
+    mapping(address => bool) internal _swapLiquidators;
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -203,9 +203,7 @@ abstract contract MiltonInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function _withdrawFromStanley(uint256 assetAmount)
-        internal
-    {
+    function _withdrawFromStanley(uint256 assetAmount) internal {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
@@ -269,6 +267,22 @@ abstract contract MiltonInternal is
         return _getAutoUpdateIporIndexThreshold();
     }
 
+    function addSwapLiquidator(address newSwapLiquidator) external override onlyOwner {
+        require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[newSwapLiquidator] = true;
+        emit SwapLiquidatorAdded(newSwapLiquidator);
+    }
+
+    function removeSwapLiquidator(address liquidator) external override onlyOwner {
+        require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[liquidator] = false;
+        emit SwapLiquidatorRemoved(liquidator);
+    }
+
+    function isSwapLiquidator(address account) external view override returns (bool) {
+        return _swapLiquidators[account];
+    }
+
     function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
         return _autoUpdateIporIndexThreshold * Constants.D21;
     }
@@ -313,13 +327,22 @@ abstract contract MiltonInternal is
         return _MIN_LEVERAGE;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturity()
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
         internal
         view
         virtual
         returns (uint256)
     {
-        return _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY;
+        return 99 * 1e16;
+    }
+
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
+        return 995 * 1e15;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
@@ -407,5 +430,23 @@ abstract contract MiltonInternal is
                 timestamp,
                 _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
             );
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return 1 days;
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return 1 hours;
     }
 }

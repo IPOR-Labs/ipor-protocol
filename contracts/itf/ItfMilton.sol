@@ -275,7 +275,7 @@ abstract contract ItfMilton is Milton {
         return _MIN_LEVERAGE;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturity()
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
         internal
         view
         virtual
@@ -285,7 +285,7 @@ abstract contract ItfMilton is Milton {
         if (_minLiquidationThresholdToCloseBeforeMaturity != 0) {
             return _minLiquidationThresholdToCloseBeforeMaturity;
         }
-        return _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY;
+        return 99 * 1e16;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
