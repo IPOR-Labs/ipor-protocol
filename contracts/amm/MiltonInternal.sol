@@ -418,15 +418,6 @@ abstract contract MiltonInternal is
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
-        return 1 days;
-    }
-
     function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
         internal
         pure
@@ -438,5 +429,14 @@ abstract contract MiltonInternal is
 
     function _getVirtualHedgingSwapOpeningFeeRate() internal view virtual returns (uint256) {
         return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
+        internal
+        pure
+        virtual
+        returns (uint256)
+    {
+        return 1 days;
     }
 }

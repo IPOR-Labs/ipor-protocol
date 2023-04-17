@@ -15,9 +15,14 @@ contract IporOwnableUpgradeable is OwnableUpgradeable {
         emit AppointedToTransferOwnership(appointedOwner);
     }
 
-    function confirmTransferOwnership() public onlyAppointedOwner {
+    function confirmTransferOwnership() external onlyAppointedOwner {
         _appointedOwner = address(0);
         _transferOwnership(_msgSender());
+    }
+
+    function renounceOwnership() public virtual override onlyOwner {
+        _transferOwnership(address(0));
+        _appointedOwner = address(0);
     }
 
     modifier onlyAppointedOwner() {

@@ -42,12 +42,12 @@ abstract contract ItfMilton is Milton {
         uint256 leverage
     ) external returns (uint256) {
         return
-        _openSwapReceiveFixed(
-            openTimestamp,
-            totalAmount,
-            acceptableFixedInterestRate,
-            leverage
-        );
+            _openSwapReceiveFixed(
+                openTimestamp,
+                totalAmount,
+                acceptableFixedInterestRate,
+                leverage
+            );
     }
 
     function itfCloseSwaps(
@@ -55,13 +55,13 @@ abstract contract ItfMilton is Milton {
         uint256[] memory receiveFixedSwapIds,
         uint256 closeTimestamp
     )
-    external
-    nonReentrant
-    whenNotPaused
-    returns (
-        MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
-        MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-    )
+        external
+        nonReentrant
+        whenNotPaused
+        returns (
+            MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        )
     {
         (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
             payFixedSwapIds,
@@ -79,15 +79,15 @@ abstract contract ItfMilton is Milton {
     }
 
     function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-    external
-    returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
+        external
+        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
     {
         closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, closeTimestamp);
     }
 
     function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-    external
-    returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
+        external
+        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
     {
         closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
             swapIds,
@@ -96,37 +96,37 @@ abstract contract ItfMilton is Milton {
     }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
-    external
-    view
-    returns (
-        int256 soapPayFixed,
-        int256 soapReceiveFixed,
-        int256 soap
-    )
+        external
+        view
+        returns (
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
+            int256 soap
+        )
     {
         (soapPayFixed, soapReceiveFixed, soap) = _calculateSoap(calculateTimestamp);
     }
 
     function itfCalculateSpread(uint256 calculateTimestamp)
-    external
-    view
-    returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
+        external
+        view
+        returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
         (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(calculateTimestamp);
     }
 
     function itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId)
-    external
-    view
-    returns (int256)
+        external
+        view
+        returns (int256)
     {
         return _itfCalculateSwapPayFixedValue(calculateTimestamp, swapId);
     }
 
     function itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
-    external
-    view
-    returns (int256)
+        external
+        view
+        returns (int256)
     {
         return _itfCalculateSwapReceiveFixedValue(calculateTimestamp, swapId);
     }
@@ -173,9 +173,9 @@ abstract contract ItfMilton is Milton {
     }
 
     function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId)
-    internal
-    view
-    returns (int256)
+        internal
+        view
+        returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
         uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
@@ -183,9 +183,9 @@ abstract contract ItfMilton is Milton {
     }
 
     function _itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
-    internal
-    view
-    returns (int256)
+        internal
+        view
+        returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
         uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
@@ -289,11 +289,11 @@ abstract contract ItfMilton is Milton {
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
-    internal
-    view
-    virtual
-    override
-    returns (uint256)
+        internal
+        view
+        virtual
+        override
+        returns (uint256)
     {
         if (_minLiquidationThresholdToCloseBeforeMaturity != 0) {
             return _minLiquidationThresholdToCloseBeforeMaturity;
@@ -302,11 +302,11 @@ abstract contract ItfMilton is Milton {
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
-    internal
-    view
-    virtual
-    override
-    returns (uint256)
+        internal
+        view
+        virtual
+        override
+        returns (uint256)
     {
         if (_secondsBeforeMaturityWhenPositionCanBeClosed != 0) {
             return _secondsBeforeMaturityWhenPositionCanBeClosed;
