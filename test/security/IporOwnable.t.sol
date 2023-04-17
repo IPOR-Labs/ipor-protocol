@@ -42,18 +42,14 @@ contract IporOwnableTest is Test, TestCommons {
         assertEq(ownerAfter, _admin);
     }
 
-    function testShouldNotBePossibleToConfirmTheTransferOwnershipFromDifferentAddress()
-        public
-    {
+    function testShouldNotBePossibleToConfirmTheTransferOwnershipFromDifferentAddress() public {
         // given
         address ownerBefore = _iporOwnable.owner();
         _iporOwnable.transferOwnership(_userOne);
 
         // when
         vm.prank(_userTwo);
-        vm.expectRevert(
-            abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER)
-        );
+        vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
         _iporOwnable.confirmTransferOwnership();
 
         // then
@@ -106,19 +102,15 @@ contract IporOwnableTest is Test, TestCommons {
         assertEq(ownerAfter, _admin);
     }
 
-    function testShouldNotBeAbleToConfirmTransferOwnershipWhenRenounceOwnership()
-        public
-    {
+    function testShouldNotBeAbleToConfirmTransferOwnershipWhenRenounceOwnership() public {
         //given
         address ownerBefore = _iporOwnable.owner();
-        _iporOwnable.transferOwnership(_userOne);
+
+        _iporOwnable.transferOwnership(ownerBefore);
         _iporOwnable.renounceOwnership();
 
         //when
-        vm.prank(_userOne);
-        vm.expectRevert(
-            abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER)
-        );
+        vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
         _iporOwnable.confirmTransferOwnership();
 
         //then
