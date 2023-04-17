@@ -81,6 +81,14 @@ contract MockTestnetStrategy is StrategyCore {
         return wadAmount;
     }
 
+    function updateDepositsBalance(uint256 newDepositsBalance) external onlyOwner {
+        _depositsBalance = newDepositsBalance;
+    }
+
+    function getDepositsBalance() external view returns (uint256) {
+        return _depositsBalance;
+    }
+
     function doClaim() external override onlyOwner {}
 
     function beforeClaim() external onlyOwner {}

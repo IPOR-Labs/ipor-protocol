@@ -339,7 +339,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldNotClosePayFixedSwapAsBuyerInMoreThanLast24hours() public {
+
+    function testShouldNotClosePayFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
@@ -365,11 +366,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         vm.prank(_buyer);
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
-        vm.warp(100 + 28 days - 24 hours - 1 seconds);
+        vm.warp(100 + 28 days - 4 hours - 1 seconds);
+
+        milton.addSwapLiquidator(_liquidator);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER));
-        vm.prank(_buyer);
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.prank(_liquidator);
         milton.closeSwapPayFixed(1);
 
         //then
@@ -796,7 +799,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldNotCloseReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
+      function testShouldNotCloseReceiveFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
         _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
@@ -822,11 +825,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         vm.prank(_buyer);
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
-        vm.warp(100 + 28 days - 24 hours - 1 seconds);
+        vm.warp(100 + 28 days - 4 hours - 1 seconds);
+
+        milton.addSwapLiquidator(_liquidator);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER));
-        vm.prank(_buyer);
+        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.prank(_liquidator);
         milton.closeSwapReceiveFixed(1);
 
         //then

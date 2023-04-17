@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
+import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -17,6 +18,8 @@ import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
+import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "../../contracts/libraries/Constants.sol";
 
 contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
     MockSpreadModel internal _miltonSpreadModel;
@@ -41,21 +44,37 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         _miltonSpreadModel = prepareMockSpreadModel(
-            TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT
+            TestConstants.ZERO,
+            TestConstants.ZERO,
+            TestConstants.ZERO_INT,
+            TestConstants.ZERO_INT
         );
     }
 
     function testShouldSetupInitValueForRedeemLPMaxUtilizationPercentage() public {
         // given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
+        address[] memory tokenAddresses = addressesToArray(
+            address(_usdtMockedToken),
+            address(_usdcMockedToken),
+            address(_daiMockedToken)
         );
-        address[] memory mockCase1StanleyAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
+        address[] memory ipTokenAddresses = addressesToArray(
+            address(_ipTokenUsdt),
+            address(_ipTokenUsdc),
+            address(_ipTokenDai)
+        );
+        ItfIporOracle iporOracle = getIporOracleAssets(
+            _userOne,
+            tokenAddresses,
+            uint32(block.timestamp),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
+            0
+        );
+        address[] memory mockCase1StanleyAddresses = addressesToArray(
+            address(_usdtMockedToken),
+            address(_usdcMockedToken),
+            address(_daiMockedToken)
+        );
         MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = addressesToArray(
             address(miltonStorages.miltonStorageUsdt),
@@ -84,19 +103,30 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             mockCase1StanleyAddresses
         );
         // when
-        uint256 actualValueUsdt = mockCase0Josephs.mockCase0JosephUsdt.getRedeemLpMaxUtilizationRate();
-        uint256 actualValueUsdc = mockCase0Josephs.mockCase0JosephUsdc.getRedeemLpMaxUtilizationRate();
-        uint256 actualValueDai = mockCase0Josephs.mockCase0JosephDai.getRedeemLpMaxUtilizationRate();
+        uint256 actualValueUsdt = mockCase0Josephs
+            .mockCase0JosephUsdt
+            .getRedeemLpMaxUtilizationRate();
+        uint256 actualValueUsdc = mockCase0Josephs
+            .mockCase0JosephUsdc
+            .getRedeemLpMaxUtilizationRate();
+        uint256 actualValueDai = mockCase0Josephs
+            .mockCase0JosephDai
+            .getRedeemLpMaxUtilizationRate();
         // then
         assertEq(actualValueUsdt, TestConstants.D18);
         assertEq(actualValueUsdc, TestConstants.D18);
+
         assertEq(actualValueDai, TestConstants.D18);
     }
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And18Decimals() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -113,7 +143,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -123,15 +158,21 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonDai.getAccruedBalance();
         // then
         assertEq(TestConstants.USD_14_000_18DEC, _ipTokenDai.balanceOf(_liquidityProvider));
-        assertEq(TestConstants.USD_14_000_18DEC, _daiMockedToken.balanceOf(address(mockCase0MiltonDai)));
+        assertEq(
+            TestConstants.USD_14_000_18DEC,
+            _daiMockedToken.balanceOf(address(mockCase0MiltonDai))
+        );
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
         assertEq(9986000 * TestConstants.D18, _daiMockedToken.balanceOf(_liquidityProvider));
     }
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And6Decimals() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -148,7 +189,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(stanleyUsdt)
         );
-        prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+        prepareApproveForUsersUsd(
+            _users,
+            _usdtMockedToken,
+            address(mockCase0JosephUsdt),
+            address(mockCase0MiltonUsdt)
+        );
         prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
         prepareJoseph(mockCase0JosephUsdt);
         prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
@@ -158,15 +204,21 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = mockCase0MiltonUsdt.getAccruedBalance();
         // then
         assertEq(TestConstants.USD_14_000_18DEC, _ipTokenUsdt.balanceOf(_liquidityProvider));
-        assertEq(TestConstants.USD_14_000_6DEC, _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)));
+        assertEq(
+            TestConstants.USD_14_000_6DEC,
+            _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt))
+        );
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
         assertEq(9986000000000, _usdtMockedToken.balanceOf(_liquidityProvider));
     }
 
     function testShouldNotProvideLiquidityWhenLiquidyPoolIsEmpty() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -183,7 +235,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -201,8 +258,11 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotProvideLiquidityWhenMaxLiquidityPoolBalanceExceeded() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -219,7 +279,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -233,10 +298,15 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_15_000_18DEC, block.timestamp);
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase1() public {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase1()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -253,7 +323,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -267,10 +342,15 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase2() public {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase2()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -287,7 +367,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -301,10 +386,15 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase3() public {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase3()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -321,7 +411,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -336,10 +431,15 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase4() public {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase4()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -356,7 +456,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));

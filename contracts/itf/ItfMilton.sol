@@ -6,6 +6,7 @@ import "./types/ItfMiltonTypes.sol";
 
 abstract contract ItfMilton is Milton {
     using SafeCast for uint256;
+    using IporSwapLogic for IporTypes.IporSwapMemory;
 
     uint256 internal _maxSwapCollateralAmount;
     uint256 internal _maxLpUtilizationRate;
@@ -134,7 +135,7 @@ abstract contract ItfMilton is Milton {
         return _calculateIncomeFeeValue(payoff);
     }
 
-    function itfCalculatePnlForSwaps(
+    function itfCalculatePayoffForSwaps(
         uint256 calculateTimestamp,
         uint256[] memory swapIdsPayFixed,
         uint256[] memory swapIdsReceiveFixed
@@ -154,6 +155,16 @@ abstract contract ItfMilton is Milton {
         }
     }
 
+    function itfCalculatePayoff(
+        IporTypes.IporSwapMemory memory iporSwap,
+        MiltonTypes.SwapDirection direction,
+        uint256 closeTimestamp,
+        int256 basePayoff,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory balance) external returns (int256 payoff, uint256 incomeFeeValue) {
+        (payoff, incomeFeeValue) = _calculatePayoff(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
+    }
+
     function _itfSubstractIncomeFeeValue(int256 payoff) internal view returns (int256) {
         if (payoff <= 0) {
             return payoff;
@@ -167,7 +178,8 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
-        return _calculatePayoffPayFixed(calculateTimestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        return swap.calculatePayoffPayFixed(calculateTimestamp, accruedIbtPrice);
     }
 
     function _itfCalculateSwapReceiveFixedValue(uint256 calculateTimestamp, uint256 swapId)
@@ -176,7 +188,8 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
-        return _calculatePayoffReceiveFixed(calculateTimestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        return swap.calculatePayoffReceiveFixed(calculateTimestamp, accruedIbtPrice);
     }
 
     function setMiltonConstants(

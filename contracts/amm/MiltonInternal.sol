@@ -64,6 +64,8 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
 
+    uint256 internal constant _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE = 5 * 1e18;
+
     address internal _asset;
     address internal _joseph;
     IStanley internal _stanley;
@@ -173,7 +175,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffPayFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
@@ -182,7 +188,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffReceiveFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     /// @notice Joseph deposits to Stanley asset amount from Milton.
@@ -408,28 +418,17 @@ abstract contract MiltonInternal is
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function _calculatePayoffPayFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
+    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
         internal
-        view
-        returns (int256)
+        pure
+        virtual
+        returns (uint256)
     {
-        return
-            swap.calculatePayoffPayFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
+        return 1 hours;
     }
 
-    function _calculatePayoffReceiveFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
-        internal
-        view
-        returns (int256)
-    {
-        return
-            swap.calculatePayoffReceiveFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
+    function _getOpeningFeeRateForSwapUnwind() internal view virtual returns (uint256) {
+        return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
     }
 
     function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
@@ -439,14 +438,5 @@ abstract contract MiltonInternal is
         returns (uint256)
     {
         return 1 days;
-    }
-
-    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
-        return 1 hours;
     }
 }

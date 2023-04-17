@@ -144,4 +144,14 @@ interface IMilton {
         /// @notice incomeFeeValue value transferred to treasury
         uint256 incomeFeeValue
     );
+
+    /// @notice Emmited when trader closes Swap.
+    event SwapUnwind(
+        /// @notice swap ID.
+        uint256 indexed swapId,
+        /// @notice payoff to date without unwind value, represented in 18 decimals
+        int256 swapPayoffToDate,
+        // @notice swap unwind value, represented in 18 decimals
+        int256 swapUnwindValue
+    );
 }
