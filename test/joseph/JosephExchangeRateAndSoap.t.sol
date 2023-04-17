@@ -481,11 +481,14 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+
         // required to have IBT price higher than 0
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_1_000_000_18DEC, block.timestamp);
+
         vm.startPrank(_userTwo);
         mockCase0MiltonDai.itfOpenSwapPayFixed(
             block.timestamp, TestConstants.USD_100_000_18DEC, 9 * TestConstants.D17, TestConstants.LEVERAGE_1000_18DEC
@@ -494,14 +497,17 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             block.timestamp, TestConstants.USD_100_000_18DEC, 9 * TestConstants.D17, TestConstants.LEVERAGE_1000_18DEC
         );
         vm.stopPrank();
+
         // fixed interest rate on swaps is equal to 4%, so lets use 4,5% for IPOR here:
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_4_5_18DEC, block.timestamp);
+
         (,, int256 initialSoap) = calculateSoap(_userTwo, block.timestamp, mockCase0MiltonDai);
         (,, int256 soapAfter28Days) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS, mockCase0MiltonDai);
         (,, int256 soapAfter56DaysBeforeClose) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS, mockCase0MiltonDai);
+
         ExchangeRateAndPayoff memory exchangeRateAndPayoff;
         exchangeRateAndPayoff.initialExchangeRate = mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp);
         exchangeRateAndPayoff.exchangeRateAfter28Days =
@@ -523,11 +529,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceBeforeClose = miltonStorageDai.getBalance();
         int256 actualSOAPPlusLiquidityPoolBalanceBeforeClose =
             int256(liquidityPoolBalanceBeforeClose.liquidityPool) - soapAfter56DaysBeforeClose;
+
         // when
-        vm.startPrank(_userOne);
+//        vm.startPrank(_userOne);
         mockCase0MiltonDai.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
         mockCase0MiltonDai.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
-        vm.stopPrank();
+//        vm.stopPrank();
+
         // then
         (,, int256 soapAfter56DaysAfterClose) =
             calculateSoap(_userTwo, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS, mockCase0MiltonDai);

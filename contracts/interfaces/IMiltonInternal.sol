@@ -208,6 +208,21 @@ interface IMiltonInternal {
     /// @return treshold for auto update of IPOR Index. Represented in 18 decimals.
     function getAutoUpdateIporIndexThreshold() external view returns (uint256);
 
+    /// @notice Adds new swap liquidator to the list of swap liquidators. Function available only to the Owner.
+    /// @param newSwapLiquidator new swap liquidator address
+    /// @dev Emits {SwapLiquidatorAdded} event from Milton.
+    function addSwapLiquidator(address newSwapLiquidator) external;
+
+    /// @notice Removes swap liquidator from the list of swap liquidators. Function available only to the Owner.
+    /// @param swapLiquidator swap liquidator address
+    /// @dev Emits {SwapLiquidatorRemoved} event from Milton.
+    function removeSwapLiquidator(address swapLiquidator) external;
+
+    /// @notice Checks if given account is swap liquidator.
+    /// @param account account address
+    /// @return true if account is swap liquidator, false otherwise
+    function isSwapLiquidator(address account) external view returns (bool);
+
     /// @notice Emmited when Joseph's address is changed by its owner.
     /// @param changedBy account address that has changed Joseph's address
     /// @param oldJoseph Joseph's old address
@@ -237,4 +252,12 @@ interface IMiltonInternal {
         uint256 indexed oldAutoUpdateIporIndexThreshold,
         uint256 indexed newAutoUpdateIporIndexThreshold
     );
+
+    /// @notice Emmited when new liquidator is added to the list of SwapLiquidators.
+    /// @param liquidator address of the new liquidator
+    event SwapLiquidatorAdded(address indexed liquidator);
+
+    /// @notice Emmited when liquidator is removed from the list of SwapLiquidators.
+    /// @param liquidator address of the liquidator
+    event SwapLiquidatorRemoved(address indexed liquidator);
 }
