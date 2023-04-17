@@ -215,7 +215,8 @@ contract MiltonFacadeDataProvider is
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
             milton.getMinLeverage(),
-            milton.getMaxLeverage(),
+            milton.getMaxLeveragePayFixed(),
+            milton.getMaxLeverageReceiveFixed(),
             milton.getOpeningFeeRate(),
             milton.getIporPublicationFee(),
             milton.getWadLiquidationDepositAmount(),
@@ -223,7 +224,8 @@ contract MiltonFacadeDataProvider is
             spreadPayFixed,
             spreadReceiveFixed,
             milton.getMaxLpUtilizationRate(),
-            milton.getMaxLpUtilizationPerLegRate(),
+            milton.getMaxLpUtilizationRatePayFixed(),
+            milton.getMaxLpUtilizationRateReceiveFixed(),
             joseph.getMaxLiquidityPoolBalance() * Constants.D18,
             joseph.getMaxLpAccountContribution() * Constants.D18
         );

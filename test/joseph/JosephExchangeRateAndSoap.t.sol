@@ -13,6 +13,7 @@ import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/interfaces/IMarketSafetyOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
@@ -48,6 +49,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -55,7 +63,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -95,6 +104,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -102,7 +118,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -144,6 +161,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -151,7 +175,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -193,6 +218,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_7_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_8_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -200,7 +232,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -242,6 +275,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -249,7 +289,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -298,6 +339,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(49 * TestConstants.D16);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_50_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -305,7 +353,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -354,6 +403,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuotePayFixed(51 * TestConstants.D16);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_50_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -361,7 +417,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -408,6 +465,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -415,7 +479,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -461,6 +526,13 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -468,7 +540,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(marketSafetyOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),

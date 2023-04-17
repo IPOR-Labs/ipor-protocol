@@ -11,6 +11,8 @@ library Constants {
     uint256 public constant D36 = 1e36;
     uint256 public constant D54 = 1e54;
 
+    uint256 public constant LEVERAGE_1000 = 1000 * 1e18;
+
     uint256 public constant YEAR_IN_SECONDS = 365 days;
     uint256 public constant WAD_YEAR_IN_SECONDS = D18 * YEAR_IN_SECONDS;
     int256 public constant WAD_YEAR_IN_SECONDS_INT = int256(WAD_YEAR_IN_SECONDS);

@@ -468,7 +468,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
             _userOne,
-            address(_daiMockedToken),
+            address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
             TestConstants.MSO_UTILIZATION_RATE_90_PER,
             TestConstants.MSO_NOTIONAL_1B

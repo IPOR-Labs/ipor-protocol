@@ -243,7 +243,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
             _userOne,
-            address(_daiMockedToken),
+            address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
             TestConstants.MSO_UTILIZATION_RATE_90_PER,
             TestConstants.MSO_NOTIONAL_1B
@@ -291,7 +291,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
         IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
             _userOne,
-            address(_daiMockedToken),
+            address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
             TestConstants.MSO_UTILIZATION_RATE_90_PER,
             TestConstants.MSO_NOTIONAL_1B
@@ -516,6 +516,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_308");
         vm.prank(_userTwo);
@@ -558,6 +560,8 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         // when
         vm.expectRevert("IPOR_309");
         vm.prank(_userTwo);
@@ -652,7 +656,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotGetMiltonAccruedBalanceWhenLiquidtyPoolAmountIsTooLow() public {
+    function testShouldNotGetMiltonAccruedBalanceWhenLiquidityPoolAmountIsTooLow() public {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
@@ -690,4 +694,6 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         vm.expectRevert("IPOR_301");
         mockCase8MiltonDai.getAccruedBalance();
     }
+
+    //TODO calculate max leverages
 }

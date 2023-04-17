@@ -160,9 +160,16 @@ contract MiltonConfiguration is Test, TestCommons {
         assertEq(actualValue, 8 * TestConstants.D17);
     }
 
-    function testShouldSetupInitValueForMaxLpUtilizationPerLegPercentage() public {
+    function testShouldSetupInitValueForMaxLpUtilizationPercentagePayFixed() public {
         // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationPerLegRate();
+        uint256 actualValue = _miltonDai.getMaxLpUtilizationRatePayFixed();
+        // then
+        assertEq(actualValue, 5 * TestConstants.D16);
+    }
+
+    function testShouldSetupInitValueForMaxLpUtilizationPercentageReceiveFixed() public {
+        // when
+        uint256 actualValue = _miltonDai.getMaxLpUtilizationRateReceiveFixed();
         // then
         assertEq(actualValue, 5 * TestConstants.D16);
     }
@@ -209,23 +216,44 @@ contract MiltonConfiguration is Test, TestCommons {
         assertEq(actualValue, 25 * TestConstants.D18);
     }
 
-    function testShouldSetupInitValueForMaxLeverageValueDai() public {
+    function testShouldSetupInitValueForMaxLeveragePayFixedValueDai() public {
         // when
-        uint256 actualValue = _miltonDai.getMaxLeverage();
+        uint256 actualValue = _miltonDai.getMaxLeveragePayFixed();
         // then
         assertEq(actualValue, 500 * TestConstants.D18);
     }
 
-    function testShouldSetupInitValueForMaxLeverageValueUsdc() public {
+    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueDai() public {
         // when
-        uint256 actualValue = _miltonUsdc.getMaxLeverage();
+        uint256 actualValue = _miltonDai.getMaxLeverageReceiveFixed();
         // then
         assertEq(actualValue, 500 * TestConstants.D18);
     }
 
-    function testShouldSetupInitValueForMaxLeverageValueUsdt() public {
+    function testShouldSetupInitValueForMaxLeveragePayFixedValueUsdc() public {
         // when
-        uint256 actualValue = _miltonUsdt.getMaxLeverage();
+        uint256 actualValue = _miltonUsdc.getMaxLeveragePayFixed();
+        // then
+        assertEq(actualValue, 500 * TestConstants.D18);
+    }
+
+    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueUsdc() public {
+        // when
+        uint256 actualValue = _miltonUsdc.getMaxLeverageReceiveFixed();
+        // then
+        assertEq(actualValue, 500 * TestConstants.D18);
+    }
+
+    function testShouldSetupInitValueForMaxLeveragePayFixedValueUsdt() public {
+        // when
+        uint256 actualValue = _miltonUsdt.getMaxLeveragePayFixed();
+        // then
+        assertEq(actualValue, 100 * TestConstants.D18);
+    }
+
+    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueUsdt() public {
+        // when
+        uint256 actualValue = _miltonUsdt.getMaxLeverageReceiveFixed();
         // then
         assertEq(actualValue, 100 * TestConstants.D18);
     }

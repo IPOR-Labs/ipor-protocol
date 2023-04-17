@@ -23,14 +23,16 @@ contract MiltonSnapshot is Script, Test {
     uint256 public miltonFacadeDataProviderVersion;
     uint256 public miltonMaxSwapCollateralAmount;
     uint256 public miltonMaxLpUtilizationRate;
-    uint256 public miltonMaxLpUtilizationPerLegRate;
+    uint256 public miltonMaxLpUtilizationRatePayFixed;
+    uint256 public miltonMaxLpUtilizationRateReceiveFixed;
     uint256 public miltonIncomeFeeRate;
     uint256 public miltonOpeningFeeRate;
     uint256 public miltonOpeningFeeTreasuryPortionRate;
     uint256 public miltonIporPublicationFee;
     uint256 public miltonLiquidationDepositAmount;
     uint256 public miltonWadLiquidationDepositAmount;
-    uint256 public miltonMaxLeverage;
+    uint256 public miltonMaxLeveragePayFixed;
+    uint256 public miltonMaxLeverageReceiveFixed;
     uint256 public miltonMinLeverage;
     int256 public miltonSpreadPayFixed;
     int256 public miltonSpreadReceiveFixed;
@@ -66,8 +68,10 @@ contract MiltonSnapshot is Script, Test {
         miltonMaxSwapCollateralAmount = milton
         .getMaxSwapCollateralAmount();
         miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
-        miltonMaxLpUtilizationPerLegRate = milton
-        .getMaxLpUtilizationPerLegRate();
+        miltonMaxLpUtilizationRatePayFixed = milton
+        .getMaxLpUtilizationRatePayFixed();
+        miltonMaxLpUtilizationRateReceiveFixed = milton
+        .getMaxLpUtilizationRateReceiveFixed();
         miltonIncomeFeeRate = milton.getIncomeFeeRate();
         miltonOpeningFeeRate = milton.getOpeningFeeRate();
         miltonOpeningFeeTreasuryPortionRate = milton
@@ -77,7 +81,8 @@ contract MiltonSnapshot is Script, Test {
         .getLiquidationDepositAmount();
         miltonWadLiquidationDepositAmount = milton
         .getWadLiquidationDepositAmount();
-        miltonMaxLeverage = milton.getMaxLeverage();
+        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed();
+        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed();
         miltonMinLeverage = milton.getMinLeverage();
 
         (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton
@@ -128,8 +133,13 @@ contract MiltonSnapshot is Script, Test {
         );
         vm.serializeUint(
             miltonJson,
-            "miltonMaxLpUtilizationPerLegRate",
-            miltonMaxLpUtilizationPerLegRate
+            "miltonMaxLpUtilizationRatePayFixed",
+            miltonMaxLpUtilizationRatePayFixed
+        );
+        vm.serializeUint(
+            miltonJson,
+            "miltonMaxLpUtilizationRateReceiveFixed",
+            miltonMaxLpUtilizationRateReceiveFixed
         );
         vm.serializeUint(
             miltonJson,
@@ -161,7 +171,8 @@ contract MiltonSnapshot is Script, Test {
             "miltonWadLiquidationDepositAmount",
             miltonWadLiquidationDepositAmount
         );
-        vm.serializeUint(miltonJson, "miltonMaxLeverage", miltonMaxLeverage);
+        vm.serializeUint(miltonJson, "miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
+        vm.serializeUint(miltonJson, "miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
         vm.serializeUint(miltonJson, "miltonMinLeverage", miltonMinLeverage);
 
         vm.serializeInt(
@@ -221,7 +232,8 @@ contract MiltonSnapshot is Script, Test {
         assertEq(miltonSnapshot1.miltonFacadeDataProviderOwner(), miltonSnapshot2.miltonFacadeDataProviderOwner());
         assertEq(miltonSnapshot1.miltonMaxSwapCollateralAmount(), miltonSnapshot2.miltonMaxSwapCollateralAmount());
         assertEq(miltonSnapshot1.miltonMaxLpUtilizationRate(), miltonSnapshot2.miltonMaxLpUtilizationRate());
-        assertEq(miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(), miltonSnapshot2.miltonMaxLpUtilizationPerLegRate());
+        assertEq(miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(), miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed());
+        assertEq(miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(), miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed());
         assertEq(miltonSnapshot1.miltonIncomeFeeRate(), miltonSnapshot2.miltonIncomeFeeRate());
         assertEq(miltonSnapshot1.miltonOpeningFeeRate(), miltonSnapshot2.miltonOpeningFeeRate());
         assertEq(miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(), miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate());
@@ -254,14 +266,16 @@ contract MiltonSnapshot is Script, Test {
         console2.log("miltonFacadeDataProviderVersion", miltonFacadeDataProviderVersion);
         console2.log("miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
         console2.log("miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
-        console2.log("miltonMaxLpUtilizationPerLegRate", miltonMaxLpUtilizationPerLegRate);
+        console2.log("miltonMaxLpUtilizationRatePayFixed", miltonMaxLpUtilizationRatePayFixed);
+        console2.log("miltonMaxLpUtilizationRateReceiveFixed", miltonMaxLpUtilizationRateReceiveFixed);
         console2.log("miltonIncomeFeeRate", miltonIncomeFeeRate);
         console2.log("miltonOpeningFeeRate", miltonOpeningFeeRate);
         console2.log("miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
         console2.log("miltonIporPublicationFee", miltonIporPublicationFee);
         console2.log("miltonLiquidationDepositAmount", miltonLiquidationDepositAmount);
         console2.log("miltonWadLiquidationDepositAmount", miltonWadLiquidationDepositAmount);
-        console2.log("miltonMaxLeverage", miltonMaxLeverage);
+        console2.log("miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
+        console2.log("miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
         console2.log("miltonMinLeverage", miltonMinLeverage);
         console2.logInt(miltonSpreadPayFixed);
         console2.logInt(miltonSpreadReceiveFixed);

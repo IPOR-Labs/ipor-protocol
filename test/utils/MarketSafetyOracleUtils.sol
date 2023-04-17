@@ -51,7 +51,7 @@ contract MarketSafetyOracleUtils is Test {
         uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](assets.length);
         uint16[] memory maxUtilizationRates = new uint16[](assets.length);
 
-        for (uint256 i = 1; i < assets.length; i++) {
+        for (uint256 i = 0; i < assets.length; i++) {
             maxNotionalPayFixed[i] = maxNotional;
             maxNotionalReceiveFixed[i] = maxNotional;
             maxUtilizationRatePayFixed[i] = maxUtilizationRatePerLeg;

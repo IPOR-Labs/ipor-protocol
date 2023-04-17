@@ -53,10 +53,10 @@ contract MarketSafetyOracle is
 
         require(
             assetsLength == maxNotionalPayFixed.length &&
-            assetsLength == maxNotionalReceiveFixed.length &&
-            assetsLength == maxUtilizationRatePayFixed.length &&
-            assetsLength == maxUtilizationRateReceiveFixed.length &&
-            assetsLength == maxUtilizationRate.length,
+                assetsLength == maxNotionalReceiveFixed.length &&
+                assetsLength == maxUtilizationRatePayFixed.length &&
+                assetsLength == maxUtilizationRateReceiveFixed.length &&
+                assetsLength == maxUtilizationRate.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
@@ -94,12 +94,12 @@ contract MarketSafetyOracle is
         MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage memory indicators = _indicators[asset];
         require(indicators.maxNotionalPayFixed > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
         return (
-            indicators.maxNotionalPayFixed * 1e22, // 1 = 10k notional
-            indicators.maxNotionalReceiveFixed * 1e22,
-            indicators.maxUtilizationRatePayFixed * 1e14, // 1 = 0.01%
-            indicators.maxUtilizationRateReceiveFixed * 1e14,
-            indicators.maxUtilizationRate * 1e14,
-            indicators.lastUpdateTimestamp
+            uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
+            uint256(indicators.maxNotionalReceiveFixed) * 1e22,
+            uint256(indicators.maxUtilizationRatePayFixed) * 1e14, // 1 = 0.01%
+            uint256(indicators.maxUtilizationRateReceiveFixed) * 1e14,
+            uint256(indicators.maxUtilizationRate) * 1e14,
+            uint256(indicators.lastUpdateTimestamp)
         );
     }
 

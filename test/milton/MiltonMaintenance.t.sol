@@ -246,13 +246,15 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         mockCase0MiltonDai.getMiltonSpreadModel();
         mockCase0MiltonDai.getMaxSwapCollateralAmount();
         mockCase0MiltonDai.getMaxLpUtilizationRate();
-        mockCase0MiltonDai.getMaxLpUtilizationPerLegRate();
+        mockCase0MiltonDai.getMaxLpUtilizationRatePayFixed();
+        mockCase0MiltonDai.getMaxLpUtilizationRateReceiveFixed();
         mockCase0MiltonDai.getIncomeFeeRate();
         mockCase0MiltonDai.getOpeningFeeRate();
         mockCase0MiltonDai.getOpeningFeeTreasuryPortionRate();
         mockCase0MiltonDai.getIporPublicationFee();
         mockCase0MiltonDai.getLiquidationDepositAmount();
-        mockCase0MiltonDai.getMaxLeverage();
+        mockCase0MiltonDai.getMaxLeveragePayFixed();
+        mockCase0MiltonDai.getMaxLeverageReceiveFixed();
         mockCase0MiltonDai.getMinLeverage();
         mockCase0MiltonDai.getJoseph();
         vm.stopPrank();
@@ -589,6 +591,13 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
             TestConstants.ZERO_64UINT
         );
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+            _userOne,
+            tokenAddresses,
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
             address(getMockCase1Stanley(address(_usdcMockedToken))),
@@ -607,7 +616,8 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
             address(_usdcMockedToken),
             address(_daiMockedToken),
             miltonStorageAddresses,
-            mockCase1StanleyAddresses
+            mockCase1StanleyAddresses,
+            address(marketSafetyOracle)
         );
         // when
         vm.expectRevert(

@@ -8,6 +8,7 @@ import "../utils/TestConstants.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/MiltonStorage.sol";
+import "../../contracts/interfaces/IMarketSafetyOracle.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/itf/ItfDataProvider.sol";
 import "../../contracts/itf/types/ItfDataProviderTypes.sol";
@@ -31,6 +32,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 	MockCase0MiltonUsdc internal _milton;
 	MockCase0JosephUsdc internal _joseph;
 	MockCase1Stanley internal _stanley;
+	IMarketSafetyOracle internal _marketSafetyOracle;
 
     function getItfDataProvider(
 		address[] memory tokenAddresses,
@@ -39,7 +41,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		address iporOracleAddress,
 		address[] memory miltonSpreadAddresses
 	) public returns (ItfDataProvider) {
-        ItfDataProvider itfDataProviderImplementation = new ItfDataProvider(); 
+        ItfDataProvider itfDataProviderImplementation = new ItfDataProvider();
         ERC1967Proxy itfDataProviderImplementationProxy = new ERC1967Proxy(address(itfDataProviderImplementation), abi.encodeWithSignature("initialize(address[],address[],address[],address,address[])", tokenAddresses, miltonAddresses, miltonStorageAddresses, iporOracleAddress, miltonSpreadAddresses));
 		return ItfDataProvider(address(itfDataProviderImplementationProxy));
     }
@@ -54,6 +56,13 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		_iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+		_marketSafetyOracle = getMarketSafetyOracleAsset(
+			_userOne,
+			address(_usdcMockedToken),
+			TestConstants.MSO_UTILIZATION_RATE_48_PER,
+			TestConstants.MSO_UTILIZATION_RATE_90_PER,
+			TestConstants.MSO_NOTIONAL_1B
+		);
 		_miltonStorage = getMiltonStorage();
 		_miltonSpreadModel = new MockBaseMiltonSpreadModelUsdc();
 		_stanley = getMockCase1Stanley(address(_usdcMockedToken));
@@ -62,7 +71,8 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
             address(_iporOracle),
             address(_miltonStorage),
             address(_miltonSpreadModel),
-            address(_stanley)
+            address(_stanley),
+            address(_marketSafetyOracle)
         );
 		_joseph = getMockCase0JosephUsdc(
 			address(_usdcMockedToken),
@@ -74,7 +84,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 	}
 
 	function testShouldCollectDataFromIporOracleForItf() public {
-		// given 
+		// given
 		address[] memory tokenAddresses = new address[](1);
 		tokenAddresses[0] = address(_usdcMockedToken);
 		address iporOracleAddress = address(_iporOracle);
@@ -104,7 +114,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		ItfDataProviderTypes.ItfMiltonStorageData memory miltonStorageData = _itfDataProvider.getMiltonStorageData(address(_usdcMockedToken));
 		ItfDataProviderTypes.ItfMiltonSpreadModelData memory miltonSpreadModelData = _itfDataProvider.getMiltonSpreadModelData(address(_usdcMockedToken));
 		ItfDataProviderTypes.ItfAmmData memory ammData = _itfDataProvider.getAmmData(block.timestamp, address(_usdcMockedToken));
-		// then 
+		// then
 		assertEq(iporOracleData.decayFactorValue, 999997217008929160);
 		assertEq(iporOracleData.indexValue, TestConstants.ZERO);
 		assertEq(iporOracleData.ibtPrice, TestConstants.D18);
@@ -117,14 +127,16 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		assertEq(iporOracleData.accruedExponentialWeightedMovingVariance, TestConstants.ZERO);
 		assertEq(miltonData.maxSwapCollateralAmount, 100000 * TestConstants.D18);
 		assertEq(miltonData.maxLpUtilizationRate, 8 * TestConstants.D17);
-		assertEq(miltonData.maxLpUtilizationPerLegRate, 48 * TestConstants.D16);
+		assertEq(miltonData.maxLpUtilizationRatePayFixed, 48 * TestConstants.D16);
+		assertEq(miltonData.maxLpUtilizationRateReceiveFixed, 48 * TestConstants.D16);
 		assertEq(miltonData.incomeFeeRate, TestConstants.D17);
 		assertEq(miltonData.openingFeeRate, 300000000000000);
 		assertEq(miltonData.openingFeeTreasuryPortionRate, TestConstants.ZERO);
 		assertEq(miltonData.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
 		assertEq(miltonData.liquidationDepositAmount, 20);
 		assertEq(miltonData.wadLiquidationDepositAmount, TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC);
-		assertEq(miltonData.maxLeverage, TestConstants.LEVERAGE_1000_18DEC);
+		assertEq(miltonData.maxLeveragePayFixed, TestConstants.LEVERAGE_1000_18DEC);
+		assertEq(miltonData.maxLeverageReceiveFixed, TestConstants.LEVERAGE_1000_18DEC);
 		assertEq(miltonData.minLeverage, TestConstants.LEVERAGE_18DEC);
 		assertEq(miltonData.spreadPayFixed, 50194572076283301);
 		assertEq(miltonData.spreadReceiveFixed, -50249999865446650);

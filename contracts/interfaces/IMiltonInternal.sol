@@ -41,10 +41,15 @@ interface IMiltonInternal {
     /// @return max liquidity pool utilization rate represented in 18 decimals
     function getMaxLpUtilizationRate() external view returns (uint256);
 
-    /// @notice Gets max liquidity pool utilization per leg.
+    /// @notice Gets max liquidity pool utilization per pay fixed leg.
     /// @dev Param used in swap validation.
-    /// @return max Liquidity Pool Utilization Per Leg rate represented in 18 decimals
-    function getMaxLpUtilizationPerLegRate() external view returns (uint256);
+    /// @return max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
+    function getMaxLpUtilizationRatePayFixed() external view returns (uint256);
+
+    /// @notice Gets max liquidity pool utilization per receive fixed leg.
+    /// @dev Param used in swap validation.
+    /// @return max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
+    function getMaxLpUtilizationRateReceiveFixed() external view returns (uint256);
 
     /// @notice Gets income fee rate.
     /// @dev Param used when closing the swap. When trader earns then fee is deducted from accrued profit.
@@ -80,10 +85,15 @@ interface IMiltonInternal {
     /// @return liquidation deposit is represented in 18 decimals
     function getWadLiquidationDepositAmount() external view returns (uint256);
 
-    /// @notice Gets max leverage value.
+    /// @notice Gets max leverage value per pay fixed leg.
     /// @dev Param used in swap validation.
     /// @return max leverage value represented in 18 decimals
-    function getMaxLeverage() external view returns (uint256);
+    function getMaxLeveragePayFixed() external view returns (uint256);
+
+    /// @notice Gets max leverage value per receive fixed leg.
+    /// @dev Param used in swap validation.
+    /// @return max leverage value represented in 18 decimals
+    function getMaxLeverageReceiveFixed() external view returns (uint256);
 
     /// @notice Gets min leverage value.
     /// @dev Param used in swap validation.

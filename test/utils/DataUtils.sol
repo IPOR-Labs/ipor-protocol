@@ -14,12 +14,12 @@ import "../../contracts/libraries/Constants.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "../../contracts/interfaces/IMarketSafetyOracle.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/itf/ItfMilton.sol";
 import "../../contracts/itf/ItfStanley.sol";
 import "../../contracts/itf/ItfJoseph.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/oracles/MarketSafetyOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/MockIporWeighted.sol";
 
@@ -33,7 +33,7 @@ contract DataUtils is Test, IporOracleUtils, MarketSafetyOracleUtils, MiltonUtil
         ItfMilton milton;
         ItfJoseph joseph;
         ItfIporOracle iporOracle;
-        MarketSafetyOracle marketSafetyOracle;
+        IMarketSafetyOracle marketSafetyOracle;
     }
 
     address internal _admin;
@@ -58,12 +58,12 @@ contract DataUtils is Test, IporOracleUtils, MarketSafetyOracleUtils, MiltonUtil
 
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
-        MarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
         );
 
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
@@ -112,12 +112,12 @@ contract DataUtils is Test, IporOracleUtils, MarketSafetyOracleUtils, MiltonUtil
         MockIporWeighted iporWeighted = _prepareIporWeighted(address(iporOracle));
         iporOracle.setIporAlgorithmFacade(address(iporWeighted));
 
-        MarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
         );
 
         ItfMilton milton = getItfMiltonDai(

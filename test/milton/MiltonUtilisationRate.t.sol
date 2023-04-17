@@ -288,8 +288,8 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_UTILIZATION_RATE_30_PER,
+            TestConstants.MSO_UTILIZATION_RATE_80_PER,
             TestConstants.MSO_NOTIONAL_1B
         );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
@@ -381,8 +381,8 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_UTILIZATION_RATE_30_PER,
+            TestConstants.MSO_UTILIZATION_RATE_80_PER,
             TestConstants.MSO_NOTIONAL_1B
         );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
