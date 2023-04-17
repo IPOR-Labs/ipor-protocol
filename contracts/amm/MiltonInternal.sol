@@ -427,7 +427,7 @@ abstract contract MiltonInternal is
         return 1 hours;
     }
 
-    function _getVirtualHedgingSwapOpeningFeeRate() internal view virtual returns (uint256) {
+    function _getOpeningFeeRateForSwapUnwind() internal view virtual returns (uint256) {
         return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
     }
 

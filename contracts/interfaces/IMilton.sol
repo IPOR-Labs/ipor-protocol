@@ -146,10 +146,12 @@ interface IMilton {
     );
 
     /// @notice Emmited when trader closes Swap.
-    event VirtualHedgingSwap (
+    event SwapUnwind(
         /// @notice swap ID.
         uint256 indexed swapId,
-        // @notice virtual hedging position, represented in 18 decimals
-        int256 hedgingPosition
+        /// @notice payoff to date without unwind value, represented in 18 decimals
+        int256 swapPayoffToDate,
+        // @notice swap unwind value, represented in 18 decimals
+        int256 swapUnwindValue
     );
 }

@@ -78,18 +78,17 @@ library IporSwapLogic {
         );
     }
 
-    function calculateVirtualHedgingSwap(
+    function calculateSwapUnwindValue(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,
-        int256 basePayoff,
+        int256 swapPayoffToDate,
         uint256 oppositeLegFixedRate,
-        uint256 hedgingFee
-    ) internal pure returns (int256 hedgingPosition) {
+        uint256 openingFeeRateForSwapUnwind
+    ) internal pure returns (int256 swapUnwindValue) {
+        require(closingTimestamp <= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
-        require(closingTimestamp<= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
-
-        hedgingPosition =
-            basePayoff +
+        swapUnwindValue =
+            swapPayoffToDate +
             IporMath.divisionInt(
                 swap.notional.toInt256() *
                     (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
@@ -97,7 +96,7 @@ library IporSwapLogic {
                         (closingTimestamp - swap.openTimestamp)).toInt256(),
                 Constants.WAD_YEAR_IN_SECONDS_INT
             ) -
-            hedgingFee.toInt256();
+            openingFeeRateForSwapUnwind.toInt256();
     }
 
     /// @notice Calculates interests fixed and floating without division by Constants.D18 * Constants.YEAR_IN_SECONDS

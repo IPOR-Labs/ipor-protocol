@@ -626,21 +626,21 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         MiltonTypes.SwapDirection direction,
         uint256 closeTimestamp,
-        int256 basePayoff,
+        int256 swapPayoffToDate,
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory balance
     ) internal returns (int256 payoff, uint256 incomeFeeValue) {
-        bool virtualHedgingSwapRequired = _validateAllowanceToCloseSwap(
+        bool swapUnwindRequired = _validateAllowanceToCloseSwap(
             _msgSender(),
             owner(),
             iporSwap,
-            basePayoff,
+            swapPayoffToDate,
             closeTimestamp
         );
 
-        int256 hedgingPosition;
+        int256 swapUnwindValue;
 
-        if (virtualHedgingSwapRequired == true) {
+        if (swapUnwindRequired == true) {
             uint256 oppositeLegFixedRate;
 
             if (direction == MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING) {
@@ -655,18 +655,18 @@ abstract contract Milton is MiltonInternal, IMilton {
                 );
             }
 
-            hedgingPosition = iporSwap.calculateVirtualHedgingSwap(
+            swapUnwindValue = iporSwap.calculateSwapUnwindValue(
                 closeTimestamp,
-                basePayoff,
+                swapPayoffToDate,
                 oppositeLegFixedRate,
-                _getVirtualHedgingSwapOpeningFeeRate()
+                _getOpeningFeeRateForSwapUnwind()
             );
 
-            emit VirtualHedgingSwap(iporSwap.id, hedgingPosition);
+            emit SwapUnwind(iporSwap.id, swapPayoffToDate, swapUnwindValue);
         }
 
-        payoff = basePayoff + hedgingPosition;
-        incomeFeeValue = _calculateIncomeFeeValue(basePayoff);
+        payoff = swapPayoffToDate + swapUnwindValue;
+        incomeFeeValue = _calculateIncomeFeeValue(swapPayoffToDate);
     }
 
     function _closeSwapPayFixed(IporTypes.IporSwapMemory memory iporSwap, uint256 closeTimestamp)
@@ -803,7 +803,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
-    ) internal view returns (bool virtualHedgingSwapRequired) {
+    ) internal view returns (bool swapUnwindRequired) {
         uint256 closableStatus = _getClosableStatusForSwap(
             msgSender,
             owner,
@@ -818,7 +818,7 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         if (closableStatus == 3 || closableStatus == 4) {
             if (msgSender == iporSwap.buyer) {
-                virtualHedgingSwapRequired = true;
+                swapUnwindRequired = true;
             } else {
                 if (closableStatus == 3)
                     revert(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER);

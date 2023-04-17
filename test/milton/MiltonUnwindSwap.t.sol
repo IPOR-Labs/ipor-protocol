@@ -28,9 +28,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     ItfMilton milton;
     MockSpreadModel miltonSpreadModel;
 
-    int256 unwindFlatFee = 5*1e18;
+    int256 unwindFlatFee = 5 * 1e18;
 
-    event VirtualHedgingSwap(uint256 indexed swapId, int256 hedgingPosition);
+    event SwapUnwind(uint256 indexed swapId, int256 swapPayoffToDate, int256 swapUnwindValue);
 
     function setUp() public {
         _admin = address(this);
@@ -44,7 +44,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         milton = _iporProtocol.milton;
         miltonSpreadModel = _iporProtocol.miltonSpreadModel;
 
-        int256 basePayoff = 900 * 1e18;
+        int256 swapPayoffToDate = 900 * 1e18;
         uint256 closingTimestamp = block.timestamp + 25 days;
 
         IporTypes.IporSwapMemory memory swap;
@@ -58,9 +58,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 3 * 1e16;
         swap.state = 1;
 
-        int256 expectedHedgingPosition = 878561643835616438357;
-        int256 expectedBasePayoff = 900 * 1e18;
-        int256 expectedPayoff = expectedBasePayoff + expectedHedgingPosition ;
+        int256 expectedSwapUnwindValue = 878561643835616438357;
+        int256 expectedSwapPayoffToDate = 900 * 1e18;
+        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
         uint256 expectedIncomeFeeValue = 90 * 1e18;
 
         /// @dev required for spread but in this test we are using mocked spread model
@@ -71,14 +71,14 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit VirtualHedgingSwap(swap.id, expectedHedgingPosition);
+        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
 
         vm.prank(_buyer);
         (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            basePayoff,
+            swapPayoffToDate,
             fakedAccruedIpor,
             fakedBalance
         );
@@ -95,7 +95,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         milton = _iporProtocol.milton;
         miltonSpreadModel = _iporProtocol.miltonSpreadModel;
 
-        int256 basePayoff = -180821917808219000000;
+        int256 swapPayoffToDate = -180821917808219000000;
         uint256 closingTimestamp = block.timestamp + 11 days;
 
         IporTypes.IporSwapMemory memory swap;
@@ -109,9 +109,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 42 * 1e15;
         swap.state = 1;
 
-        int256 expectedHedgingPosition = -749383561643835438355;
-        int256 expectedBasePayoff = -180821917808219000000;
-        int256 expectedPayoff = expectedBasePayoff + expectedHedgingPosition;
+        int256 expectedSwapUnwindValue = -749383561643835438355;
+        int256 expectedSwapPayoffToDate = -180821917808219000000;
+        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
         uint256 expectedIncomeFeeValue = 18082191780821900000;
 
         /// @dev required for spread but in this test we are using mocked spread model
@@ -122,14 +122,14 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit VirtualHedgingSwap(swap.id, expectedHedgingPosition);
+        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
 
         vm.prank(_buyer);
         (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
-            basePayoff,
+            swapPayoffToDate,
             fakedAccruedIpor,
             fakedBalance
         );
@@ -175,7 +175,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
 
         assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366, "Incorrect buyer balance");
-
     }
 
     function testShouldCloseAndUnwindReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
