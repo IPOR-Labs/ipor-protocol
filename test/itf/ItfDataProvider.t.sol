@@ -118,7 +118,6 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		assertEq(miltonData.maxSwapCollateralAmount, 100000 * TestConstants.D18);
 		assertEq(miltonData.maxLpUtilizationRate, 8 * TestConstants.D17);
 		assertEq(miltonData.maxLpUtilizationPerLegRate, 48 * TestConstants.D16);
-		assertEq(miltonData.incomeFeeRate, TestConstants.D17);
 		assertEq(miltonData.openingFeeRate, 300000000000000);
 		assertEq(miltonData.openingFeeTreasuryPortionRate, TestConstants.ZERO);
 		assertEq(miltonData.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);

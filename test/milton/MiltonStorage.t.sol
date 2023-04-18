@@ -260,7 +260,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         miltonStorageDai.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
         miltonStorageDai.setMilton(address(mockCase0MiltonDai));
@@ -309,7 +308,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         miltonStorageUsdt.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
         miltonStorageUsdt.setMilton(address(mockCase0MiltonUsdt));
@@ -358,7 +356,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         miltonStorageDai.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }

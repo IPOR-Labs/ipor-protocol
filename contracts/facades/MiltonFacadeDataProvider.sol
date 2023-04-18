@@ -219,7 +219,6 @@ contract MiltonFacadeDataProvider is
             milton.getOpeningFeeRate(),
             milton.getIporPublicationFee(),
             milton.getWadLiquidationDepositAmount(),
-            milton.getIncomeFeeRate(),
             spreadPayFixed,
             spreadReceiveFixed,
             milton.getMaxLpUtilizationRate(),

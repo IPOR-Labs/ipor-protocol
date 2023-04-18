@@ -54,9 +54,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
         /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
-        uint256 transferredToLiquidator,
-        /// @notice incomeFeeValue value transferred to treasury
-        uint256 incomeFeeValue
+        uint256 transferredToLiquidator
     );
 
     event MiltonSpreadModelChanged(
@@ -434,8 +432,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             18957318804358692392282, // transferredToBuyer
-            TestConstants.ZERO, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            TestConstants.ZERO // transferredToLiquidator
         );
         miltonDai.itfCloseSwapPayFixed(
             1, // swapId
@@ -508,8 +505,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             18957318804000000000000, // transferredToBuyer
-            TestConstants.ZERO, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            TestConstants.ZERO // transferredToLiquidator
         );
         miltonUsdt.itfCloseSwapPayFixed(
             1, // swapId
@@ -585,8 +581,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
             18937318804000000000000, // transferredToBuyer
-            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
         );
         miltonUsdt.itfCloseSwapPayFixed(
             1, // swapId

@@ -61,7 +61,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         int256 expectedSwapUnwindValue = 878561643835616438357;
         int256 expectedSwapPayoffToDate = 900 * 1e18;
         int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
-        uint256 expectedIncomeFeeValue = 90 * 1e18;
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
@@ -74,7 +73,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
+        int256 actualPayoff = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -85,7 +84,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //then
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
     }
 
     function testShouldCalculatePnLForUnwindPayFixedExcel() public {
@@ -112,7 +110,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         int256 expectedSwapUnwindValue = -749383561643835438355;
         int256 expectedSwapPayoffToDate = -180821917808219000000;
         int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
-        uint256 expectedIncomeFeeValue = 18082191780821900000;
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
@@ -125,7 +122,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
+        int256 actualPayoff = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -136,7 +133,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //then
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
     }
 
     function testShouldCloseAndUnwindPayFixedSwapAsBuyerInMoreThanLast24hours() public {

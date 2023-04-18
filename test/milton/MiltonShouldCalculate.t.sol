@@ -103,18 +103,15 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = 682671910755540429746;
-        expectedBalances.expectedIncomeFeeValue = 34133595537777021487;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
-            int256(expectedBalances.expectedPayoffAbs) +
-            int256(expectedBalances.expectedIncomeFeeValue);
+            int256(expectedBalances.expectedPayoffAbs);
         expectedBalances.expectedMiltonBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
-            expectedBalances.expectedPayoffAbs +
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.USER_SUPPLY_10MLN_18DEC_INT +
             TestConstants.ZERO_INT -
@@ -145,9 +142,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase2MiltonDai.itfCloseSwapReceiveFixed(1, endTimestamp);
 
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
-
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -160,7 +154,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase2MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -176,7 +169,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
         assertEq(_daiMockedToken.balanceOf(_admin), expectedBalances.expectedAdminBalance);
@@ -238,18 +230,15 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = TestConstants.TC_COLLATERAL_18DEC;
-        expectedBalances.expectedIncomeFeeValue = 498350494851544536639;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
-            int256(expectedBalances.expectedPayoffAbs) +
-            int256(expectedBalances.expectedIncomeFeeValue);
+            int256(expectedBalances.expectedPayoffAbs);
         expectedBalances.expectedMiltonBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
-            expectedBalances.expectedPayoffAbs +
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.USER_SUPPLY_10MLN_18DEC_INT +
             TestConstants.ZERO_INT -
@@ -279,9 +268,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase2MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
 
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
-
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -293,7 +279,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase2MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase2MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -309,7 +294,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
         assertEq(_daiMockedToken.balanceOf(_admin), expectedBalances.expectedAdminBalance);
@@ -371,7 +355,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = 7918994164764269383465;
-        expectedBalances.expectedIncomeFeeValue = 395949708238213469173;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -387,8 +370,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
-            expectedBalances.expectedPayoffAbs -
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedSumOfBalancesBeforePayout =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.USER_SUPPLY_10MLN_18DEC +
@@ -410,7 +392,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase2MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
 
-        uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
         vm.prank(_userThree);
         // closerUser
         // then
@@ -424,7 +405,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase2MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase2MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -436,7 +416,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
         assertEq(_daiMockedToken.balanceOf(_admin), expectedBalances.expectedAdminBalance);
@@ -498,7 +477,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = TestConstants.TC_COLLATERAL_18DEC;
-        expectedBalances.expectedIncomeFeeValue = 498350494851544536639;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -515,8 +493,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
-            expectedBalances.expectedPayoffAbs -
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedSumOfBalancesBeforePayout =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.USER_SUPPLY_10MLN_18DEC +
@@ -530,8 +507,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         int256 actualPayoff = mockCase2MiltonDai.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         mockCase2MiltonDai.itfCloseSwapReceiveFixed(1, endTimestamp);
         vm.stopPrank();
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase2MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -543,7 +519,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase2MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase2MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -555,7 +530,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
     }
@@ -616,18 +590,15 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = 682671910755540429746;
-        expectedBalances.expectedIncomeFeeValue = 682671910755540429746;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
-            int256(expectedBalances.expectedPayoffAbs) +
-            int256(expectedBalances.expectedIncomeFeeValue);
+            int256(expectedBalances.expectedPayoffAbs);
         expectedBalances.expectedMiltonBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
-            expectedBalances.expectedPayoffAbs +
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.USER_SUPPLY_10MLN_18DEC_INT +
             TestConstants.ZERO_INT -
@@ -658,9 +629,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase3MiltonDai.itfCloseSwapReceiveFixed(1, endTimestamp);
 
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
-
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -672,7 +640,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase3MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase3MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -688,7 +655,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
         assertEq(_daiMockedToken.balanceOf(_admin), expectedBalances.expectedAdminBalance);
@@ -750,18 +716,15 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = TestConstants.TC_COLLATERAL_18DEC;
-        expectedBalances.expectedIncomeFeeValue = TestConstants.TC_COLLATERAL_18DEC;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
-            int256(expectedBalances.expectedPayoffAbs) +
-            int256(expectedBalances.expectedIncomeFeeValue);
+            int256(expectedBalances.expectedPayoffAbs);
         expectedBalances.expectedMiltonBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC -
-            expectedBalances.expectedPayoffAbs +
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedOpenerUserBalance =
             TestConstants.USER_SUPPLY_10MLN_18DEC_INT +
             TestConstants.ZERO_INT -
@@ -792,9 +755,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase3MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
 
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
-
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -807,7 +767,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase3MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -823,7 +782,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
         assertEq(_daiMockedToken.balanceOf(_admin), expectedBalances.expectedAdminBalance);
@@ -886,8 +844,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = 7918994164764269383465;
         //
-        expectedBalances.expectedIncomeFeeValue = 7918994164764269383465;
-        //
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -904,8 +860,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
-            expectedBalances.expectedPayoffAbs -
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedSumOfBalancesBeforePayout =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.USER_SUPPLY_10MLN_18DEC;
@@ -920,9 +875,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         mockCase3MiltonDai.itfCloseSwapPayFixed(1, endTimestamp);
 
-        vm.prank(_userTwo);
-        uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
-
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -934,7 +886,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase3MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase3MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -946,7 +897,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
     }
@@ -1007,7 +957,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         );
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = TestConstants.TC_COLLATERAL_18DEC;
-        expectedBalances.expectedIncomeFeeValue = TestConstants.TC_COLLATERAL_18DEC;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -1024,8 +973,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
-            expectedBalances.expectedPayoffAbs -
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedSumOfBalancesBeforePayout =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.USER_SUPPLY_10MLN_18DEC +
@@ -1034,13 +982,13 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             _daiMockedToken.balanceOf(_userTwo) +
             _daiMockedToken.balanceOf(_userThree);
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS;
+
         // when
         vm.startPrank(_userTwo);
         int256 actualPayoff = mockCase3MiltonDai.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         mockCase3MiltonDai.itfCloseSwapReceiveFixed(1, endTimestamp);
         vm.stopPrank();
-        vm.prank(_userThree);
-        uint256 actualIncomeFeeValue = mockCase3MiltonDai.itfCalculateIncomeFeeValue(actualPayoff);
+
         // then
         MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
             .getExtendedBalance();
@@ -1052,7 +1000,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase3MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
-        assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
         assertEq(
             _daiMockedToken.balanceOf(address(mockCase3MiltonDai)),
             expectedBalances.expectedMiltonBalance
@@ -1064,7 +1011,6 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue);
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
         assertEq(soap, TestConstants.ZERO_INT);
     }

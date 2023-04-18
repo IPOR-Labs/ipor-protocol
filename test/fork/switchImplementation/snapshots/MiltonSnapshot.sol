@@ -68,7 +68,6 @@ contract MiltonSnapshot is Script, Test {
         miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
         miltonMaxLpUtilizationPerLegRate = milton
         .getMaxLpUtilizationPerLegRate();
-        miltonIncomeFeeRate = milton.getIncomeFeeRate();
         miltonOpeningFeeRate = milton.getOpeningFeeRate();
         miltonOpeningFeeTreasuryPortionRate = milton
         .getOpeningFeeTreasuryPortionRate();
@@ -130,11 +129,6 @@ contract MiltonSnapshot is Script, Test {
             miltonJson,
             "miltonMaxLpUtilizationPerLegRate",
             miltonMaxLpUtilizationPerLegRate
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonIncomeFeeRate",
-            miltonIncomeFeeRate
         );
         vm.serializeUint(
             miltonJson,
@@ -255,7 +249,6 @@ contract MiltonSnapshot is Script, Test {
         console2.log("miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
         console2.log("miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
         console2.log("miltonMaxLpUtilizationPerLegRate", miltonMaxLpUtilizationPerLegRate);
-        console2.log("miltonIncomeFeeRate", miltonIncomeFeeRate);
         console2.log("miltonOpeningFeeRate", miltonOpeningFeeRate);
         console2.log("miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
         console2.log("miltonIporPublicationFee", miltonIporPublicationFee);

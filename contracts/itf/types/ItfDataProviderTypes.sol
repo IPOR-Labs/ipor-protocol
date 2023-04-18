@@ -7,7 +7,6 @@ library ItfDataProviderTypes {
         uint256 maxSwapCollateralAmount;
         uint256 maxLpUtilizationRate;
         uint256 maxLpUtilizationPerLegRate;
-        uint256 incomeFeeRate;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
         uint256 iporPublicationFee;

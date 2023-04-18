@@ -18,10 +18,6 @@ contract MockCase8MiltonDai is ItfMilton {
         return 48 * 1e16;
     }
 
-    function _getIncomeFeeRate() internal pure virtual override returns (uint256) {
-        return 1e17;
-    }
-
     function _getOpeningFeeRate() internal pure virtual override returns (uint256) {
         return 3e14;
     }

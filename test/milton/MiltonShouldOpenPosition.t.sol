@@ -31,7 +31,6 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     IpToken internal _ipTokenDai;
 
     struct ActualBalances {
-        uint256 actualIncomeFeeValue;
         uint256 actualSumOfBalances;
         uint256 actualMiltonBalance;
         int256 actualPayoff;
@@ -485,7 +484,7 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = TestConstants.ZERO;
-        expectedBalances.expectedIncomeFeeValue = TestConstants.ZERO;
+
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -501,8 +500,7 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
-            expectedBalances.expectedPayoffAbs -
-            expectedBalances.expectedIncomeFeeValue;
+            expectedBalances.expectedPayoffAbs;
         expectedBalances.expectedSumOfBalancesBeforePayout =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.USD_10_000_000_18DEC -
@@ -519,9 +517,7 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             endTimestamp,
             1
         );
-        actualBalances.actualIncomeFeeValue = mockCase0MiltonDai.itfCalculateIncomeFeeValue(
-            actualBalances.actualPayoff
-        );
+
         actualBalances.actualSumOfBalances =
             _daiMockedToken.balanceOf(address(mockCase0MiltonDai)) +
             _daiMockedToken.balanceOf(_userTwo);
@@ -537,7 +533,7 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase0MiltonDai);
         assertEq(TestConstants.ZERO, swaps.length, "Incorrect swaps length");
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs), "Incorrect payoff");
-        assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue,  "Incorrect income fee value");
+
         assertEq(
             actualBalances.actualSumOfBalances,
             expectedBalances.expectedSumOfBalancesBeforePayout,"Incorrect sum of balances"
@@ -550,7 +546,7 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO, "Incorrect total collateral");
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC,  "Incorrect ipor publication fee");
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance, "Incorrect lp");
-        assertEq(balance.treasury, expectedBalances.expectedIncomeFeeValue, "Incorrect treasury");
+
         assertEq(soap, TestConstants.ZERO_INT, "Incorrect soap");
     }
 

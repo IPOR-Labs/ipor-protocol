@@ -38,8 +38,10 @@ library IporSwapLogic {
         );
         notional = IporMath.division(leverage * collateral, Constants.D18);
         openingFee = IporMath.division(
-            notional * openingFeeRate * IporMath.division(timeToMaturityInDays, 365),
-            Constants.D18
+            notional *
+                openingFeeRate *
+                IporMath.division(timeToMaturityInDays * Constants.D18, 365),
+            Constants.D36
         );
     }
 

@@ -46,11 +46,6 @@ interface IMiltonInternal {
     /// @return max Liquidity Pool Utilization Per Leg rate represented in 18 decimals
     function getMaxLpUtilizationPerLegRate() external view returns (uint256);
 
-    /// @notice Gets income fee rate.
-    /// @dev Param used when closing the swap. When trader earns then fee is deducted from accrued profit.
-    /// @return income fee rate param value represented in 18 decimals
-    function getIncomeFeeRate() external view returns (uint256);
-
     /// @notice Gets opening fee rate. When the trader opens swap position then fee is charged from the amount used to open the swap.
     /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
     /// @dev Param is used during swap opening.

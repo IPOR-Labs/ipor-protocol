@@ -11,7 +11,6 @@ abstract contract ItfMilton is Milton {
     uint256 internal _maxSwapCollateralAmount;
     uint256 internal _maxLpUtilizationRate;
     uint256 internal _maxLpUtilizationPerLegRate;
-    uint256 internal _incomeTaxRate;
     uint256 internal _openingFeeRate;
     uint256 internal _openingFeeForTreasuryPortionRate;
     uint256 internal _iporPublicationFee;
@@ -131,10 +130,6 @@ abstract contract ItfMilton is Milton {
         return _itfCalculateSwapReceiveFixedValue(calculateTimestamp, swapId);
     }
 
-    function itfCalculateIncomeFeeValue(int256 payoff) external view returns (uint256) {
-        return _calculateIncomeFeeValue(payoff);
-    }
-
     function itfCalculatePayoffForSwaps(
         uint256 calculateTimestamp,
         uint256[] memory swapIdsPayFixed,
@@ -143,7 +138,6 @@ abstract contract ItfMilton is Milton {
         for (uint256 i = 0; i != swapIdsPayFixed.length; i++) {
             int256 payoff = _itfCalculateSwapPayFixedValue(calculateTimestamp, swapIdsPayFixed[i]);
             payoffGross += payoff;
-            plnValue += _itfSubstractIncomeFeeValue(payoff);
         }
         for (uint256 j = 0; j != swapIdsReceiveFixed.length; j++) {
             int256 payoff = _itfCalculateSwapReceiveFixedValue(
@@ -151,7 +145,6 @@ abstract contract ItfMilton is Milton {
                 swapIdsReceiveFixed[j]
             );
             payoffGross += payoff;
-            plnValue += _itfSubstractIncomeFeeValue(payoff);
         }
     }
 
@@ -161,15 +154,8 @@ abstract contract ItfMilton is Milton {
         uint256 closeTimestamp,
         int256 basePayoff,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory balance) external returns (int256 payoff, uint256 incomeFeeValue) {
-        (payoff, incomeFeeValue) = _calculatePayoff(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
-    }
-
-    function _itfSubstractIncomeFeeValue(int256 payoff) internal view returns (int256) {
-        if (payoff <= 0) {
-            return payoff;
-        }
-        return payoff - _calculateIncomeFeeValue(payoff).toInt256();
+        IporTypes.MiltonBalancesMemory memory balance) external returns (int256 payoff) {
+        payoff = _calculatePayoff(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
     }
 
     function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId)
@@ -194,7 +180,6 @@ abstract contract ItfMilton is Milton {
 
     function setMiltonConstants(
         uint256 maxSwapCollateralAmount,
-        uint256 incomeTaxRate,
         uint256 liquidationDepositAmount,
         uint256 minLiquidationThresholdToCloseBeforeMaturity,
         uint256 secondsBeforeMaturityWhenPositionCanBeClosed,
@@ -206,7 +191,6 @@ abstract contract ItfMilton is Milton {
         _maxSwapCollateralAmount = maxSwapCollateralAmount;
         _maxLpUtilizationRate = utilization.maxLpUtilizationRate;
         _maxLpUtilizationPerLegRate = utilization.maxLpUtilizationPerLegRate;
-        _incomeTaxRate = incomeTaxRate;
         _openingFeeRate = fees.openingFeeRate;
         _openingFeeForTreasuryPortionRate = fees.openingFeeForTreasuryPortionRate;
         _iporPublicationFee = fees.iporPublicationFee;
@@ -237,13 +221,6 @@ abstract contract ItfMilton is Milton {
             return _maxLpUtilizationPerLegRate;
         }
         return _MAX_LP_UTILIZATION_PER_LEG_RATE;
-    }
-
-    function _getIncomeFeeRate() internal view virtual override returns (uint256) {
-        if (_incomeTaxRate != 0) {
-            return _incomeTaxRate;
-        }
-        return _INCOME_TAX_RATE;
     }
 
     function _getOpeningFeeRate() internal view virtual override returns (uint256) {

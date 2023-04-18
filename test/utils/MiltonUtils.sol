@@ -54,7 +54,6 @@ contract MiltonUtils is Test {
 
     struct ExpectedMiltonBalances {
         uint256 expectedPayoffAbs;
-        uint256 expectedIncomeFeeValue;
         uint256 expectedMiltonBalance;
         int256 expectedOpenerUserBalance;
         int256 expectedCloserUserBalance;

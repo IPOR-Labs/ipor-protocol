@@ -2,7 +2,8 @@
 pragma solidity 0.8.16;
 
 library TestConstants {
-    uint256 public constant MAX_VALUE = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    uint256 public constant MAX_VALUE =
+        115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
     uint256 public constant D54 = 1e54;
     uint256 public constant D36 = 1e36;
@@ -86,8 +87,6 @@ library TestConstants {
     int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT = 20 * 1e18;
     uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC = 10 * 1e18;
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT = 10 * 1e18;
-    uint256 public constant TC_INCOME_TAX_18DEC = 996700989703089073278;
-    int256 public constant TC_INCOME_TAX_18DEC_INT = 996700989703089073278;
     uint256 public constant TC_DECIMALS_18 = 18;
     uint256 public constant TC_100_000_000_18DEC = 100_000_000 * 1e18;
 
@@ -99,8 +98,6 @@ library TestConstants {
     int256 public constant LEVERAGE_18DEC_INT = 10 * 1e18;
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
 
-    uint256 public constant SPECIFIC_INCOME_TAX_CASE_1 = 600751281464875607313;
-    int256 public constant SPECIFIC_INCOME_TAX_CASE_1_INT = 600751281464875607313;
     uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007512814648756073133;
     int256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1_INT = 6007512814648756073133;
 
