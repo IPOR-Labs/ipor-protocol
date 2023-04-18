@@ -167,19 +167,18 @@ contract MiltonConfiguration is Test, TestCommons {
         assertEq(actualValue, 15 * TestConstants.D15);
     }
 
-
     function testShouldSetupInitValueForOpeningFeePercentage() public {
         // when
         uint256 actualValue = _miltonDai.getOpeningFeeRate();
         // then
-        assertEq(actualValue, 1 * TestConstants.D16);
+        assertEq(actualValue, 5 * TestConstants.D14);
     }
 
     function testShouldSetupInitValueForOpeningFeeTreasuryPercentage() public {
         // when
         uint256 actualValue = _miltonDai.getOpeningFeeTreasuryPortionRate();
         // then
-        assertEq(actualValue, TestConstants.ZERO);
+        assertEq(actualValue, 5 * TestConstants.D17);
     }
 
     function testShouldSetupInitValueForIporPublicationFeeAmount() public {

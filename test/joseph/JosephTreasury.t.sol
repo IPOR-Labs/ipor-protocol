@@ -37,10 +37,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
     }
 
-    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer() public {
+    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -57,7 +62,12 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -67,10 +77,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         mockCase0JosephDai.transferToCharlieTreasury(100);
     }
 
-    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect() public {
+    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -87,7 +102,12 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -101,8 +121,11 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferPublicationFeeToCharlieTreasurySimpleCase1() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -120,16 +143,28 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(stanleyDai)
         );
         uint256 transferredAmount = 100;
-        uint256 expectedERC20BalanceCharlieTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
-        uint256 expectedERC20BalanceMilton =
-            TestConstants.USD_28_000_18DEC + TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC - transferredAmount;
-        uint256 expectedPublicationFeeBalanceMilton = TestConstants.USD_10_18DEC - transferredAmount;
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        uint256 expectedERC20BalanceCharlieTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC +
+            transferredAmount;
+        uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
+            transferredAmount;
+        uint256 expectedPublicationFeeBalanceMilton = TestConstants.USD_10_18DEC -
+            transferredAmount;
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        iporOracle.itfUpdateIndex(
+            address(_daiMockedToken),
+            TestConstants.PERCENTAGE_3_18DEC,
+            block.timestamp
+        );
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userTwo);
@@ -147,7 +182,8 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         vm.prank(_userThree);
         mockCase0JosephDai.transferToCharlieTreasury(transferredAmount);
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
+            .getExtendedBalance();
         uint256 actualERC20BalanceCharlieTreasury = _daiMockedToken.balanceOf(_userOne);
         uint256 actualERC20BalanceMilton = _daiMockedToken.balanceOf(address(mockCase0MiltonDai));
         uint256 actualPublicationFeeBalanceMilton = balance.iporPublicationFee;
@@ -158,8 +194,11 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferToTreasuryWhenCallerIsNotTreasuryTransferer() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -176,7 +215,12 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -186,10 +230,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         mockCase0JosephDai.transferToTreasury(100);
     }
 
-    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect() public {
+    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect()
+        public
+    {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -206,7 +255,12 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase0MiltonDai)
+        );
         prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
@@ -220,10 +274,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferTreasuryToTreasuryTreasurerWhenSimpleCase1() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        ItfIporOracle iporOracle = getIporOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
+
         MockCase4MiltonDai mockCase4MiltonDai = getMockCase4MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
@@ -238,40 +297,62 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             address(miltonStorageDai),
             address(stanleyDai)
         );
+
         uint256 transferredAmount = 100;
-        uint256 expectedERC20BalanceTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
-        uint256 expectedERC20BalanceMilton =
-            TestConstants.USD_28_000_18DEC + TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC - transferredAmount;
-        uint256 expectedPublicationFeeBalanceMilton = 149505148455463261;
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase4MiltonDai));
+
+        uint256 expectedERC20BalanceTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC +
+            transferredAmount;
+        uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
+            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
+            transferredAmount;
+
+        uint256 expectedTreasuryBalance = 149505148455463261;
+
+        prepareApproveForUsersDai(
+            _users,
+            _daiMockedToken,
+            address(mockCase0JosephDai),
+            address(mockCase4MiltonDai)
+        );
         prepareMilton(mockCase4MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
         prepareJoseph(mockCase0JosephDai);
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        iporOracle.itfUpdateIndex(
+            address(_daiMockedToken),
+            TestConstants.PERCENTAGE_3_18DEC,
+            block.timestamp
+        );
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.prank(_userTwo);
+
         mockCase4MiltonDai.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
+
         vm.startPrank(_admin);
         mockCase0JosephDai.setTreasuryManager(_userThree);
         mockCase0JosephDai.setTreasury(_userOne);
         vm.stopPrank();
+
         // when
         vm.prank(_userThree);
         mockCase0JosephDai.transferToTreasury(transferredAmount);
+
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai.getExtendedBalance();
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageDai
+            .getExtendedBalance();
+
         uint256 actualERC20BalanceTreasury = _daiMockedToken.balanceOf(_userOne);
         uint256 actualERC20BalanceMilton = _daiMockedToken.balanceOf(address(mockCase4MiltonDai));
-        uint256 actualPublicationFeeBalanceMilton = balance.treasury;
+
         assertEq(actualERC20BalanceTreasury, expectedERC20BalanceTreasury);
         assertEq(actualERC20BalanceMilton, expectedERC20BalanceMilton);
-        assertEq(actualPublicationFeeBalanceMilton, expectedPublicationFeeBalanceMilton);
+        assertEq(balance.treasury, expectedTreasuryBalance);
     }
 }
