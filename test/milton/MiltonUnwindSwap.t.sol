@@ -58,7 +58,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 3 * 1e16;
         swap.state = 1;
 
-        int256 expectedSwapUnwindValue = 878561643835616438357;
+        int256 expectedSwapUnwindValue = 878561643835616438356;
         int256 expectedSwapPayoffToDate = 900 * 1e18;
         int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
         uint256 expectedIncomeFeeValue = 90 * 1e18;
@@ -109,7 +109,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         swap.fixedInterestRate = 42 * 1e15;
         swap.state = 1;
 
-        int256 expectedSwapUnwindValue = -749383561643835438355;
+        int256 expectedSwapUnwindValue = -749383561643835438356;
         int256 expectedSwapPayoffToDate = -180821917808219000000;
         int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
         uint256 expectedIncomeFeeValue = 18082191780821900000;

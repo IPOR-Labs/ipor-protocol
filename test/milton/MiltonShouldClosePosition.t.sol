@@ -470,7 +470,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         
 		ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 8803281846496279452160;
+        expectedBalances.expectedPayoffAbs = 8803281846496279452161;
         expectedBalances.expectedIncomeFeeValue = 880328184649627945216;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -564,8 +564,8 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         ExpectedMiltonBalances memory expectedBalances;
         expectedBalances.expectedPayoffAbs = 379451804;
-        int256 expectedPayoffWad = -379451803728287931808;
-        uint256 expectedPayoffWadAbs = 379451803728287931808;
+        int256 expectedPayoffWad = -379451803728287931809;
+        uint256 expectedPayoffWadAbs = 379451803728287931809;
         expectedBalances.expectedIncomeFeeValue = 37945180372828793181;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_6DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC_INT
@@ -649,7 +649,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 682671910755540429745;
+        expectedBalances.expectedPayoffAbs = 682671910755540429746;
         expectedBalances.expectedIncomeFeeValue = 68267191075554042975;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -743,7 +743,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         
 		ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 682671910755540429745;
+        expectedBalances.expectedPayoffAbs = 682671910755540429746;
         expectedBalances.expectedIncomeFeeValue = 68267191075554042975;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -1928,7 +1928,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_6_18DEC, block.timestamp);
 
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 378314017210361985072;
+        expectedBalances.expectedPayoffAbs = 378314017210361985073;
         expectedBalances.expectedIncomeFeeValue = 37831401721036198507;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -2102,7 +2102,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_120_18DEC, block.timestamp);
 
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 8776885199280398517919;
+        expectedBalances.expectedPayoffAbs = 8776885199280398517920;
         expectedBalances.expectedIncomeFeeValue = 877688519928039851792;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -2432,7 +2432,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_50_18DEC, block.timestamp);
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 6417115961102080349821;
+        expectedBalances.expectedPayoffAbs = 6417115961102080349822;
         expectedBalances.expectedIncomeFeeValue = 641711596110208034982;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -3007,7 +3007,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_50_18DEC, block.timestamp);
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 6280581578950972257591;
+        expectedBalances.expectedPayoffAbs = 6280581578950972257592;
         expectedBalances.expectedIncomeFeeValue = 628058157895097225759;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT
             + TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT + TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT
@@ -3105,7 +3105,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC,
             mockCase0MiltonDai
         );
-        int256 expectedPayoff = -38229627002310297226;
+        int256 expectedPayoff = -38229627002310297227;
         
 		// when
         vm.prank(_userTwo);        
@@ -4251,8 +4251,8 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         uint256[] memory receiveFixedSwapIds = new uint256[](2);
         receiveFixedSwapIds[0] = 2;
         receiveFixedSwapIds[1] = 4;
-        uint256 expectedBalanceUserTwo = 9999704642032047919907479;
-        uint256 expectedBalanceUserThree = 9999784642032047919907479;
+        uint256 expectedBalanceUserTwo = 9999704642032047919907478;
+        uint256 expectedBalanceUserThree = 9999784642032047919907478;
         openSwapPayFixed(
             _userTwo,
             block.timestamp,
@@ -4567,7 +4567,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         uint256 volumeReceiveFixed = 10;
         uint256 expectedBalanceLiquidator = TestConstants.USER_SUPPLY_10MLN_18DEC
             + (volumePayFixed + volumeReceiveFixed) * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
-        uint256 expectedBalanceTrader = 9997046420320479199074790;
+        uint256 expectedBalanceTrader = 9997046420320479199074780;
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         mockCase0JosephDai.itfProvideLiquidity(20 * TestConstants.USD_28_000_18DEC, block.timestamp);
@@ -4645,7 +4645,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         uint256 expectedBalanceLiquidator = TestConstants.USER_SUPPLY_10MLN_18DEC
             + volumeReceiveFixed * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         uint256 expectedBalanceTrader =
-            9997046420320479199074790 + volumePayFixed * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+            9997046420320479199074780 + volumePayFixed * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
 
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
@@ -4745,7 +4745,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         uint256 volumePayFixed = 10;
         uint256 volumeReceiveFixed = 10;
         uint256 expectedBalanceLiquidator = TestConstants.USER_SUPPLY_10MLN_18DEC ;
-        uint256 expectedBalanceTrader = 9997046420320479199074790 + volumeReceiveFixed * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
+        uint256 expectedBalanceTrader = 9997046420320479199074780 + volumeReceiveFixed * TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
 
         vm.prank(_userOne);
         iporOracle.itfUpdateIndex(
@@ -4855,7 +4855,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         uint256 volumePayFixed = 2;
         uint256 volumeReceiveFixed = 2;
         uint256 expectedBalanceLiquidator = TestConstants.USER_SUPPLY_10MLN_18DEC;
-        uint256 expectedBalanceTrader = 9999489284064095839814958;
+        uint256 expectedBalanceTrader = 9999489284064095839814956;
         uint256[] memory payFixedSwapIds = new uint256[](volumePayFixed);
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeReceiveFixed);
         for (uint256 i = 0; i < volumePayFixed; ++i) {

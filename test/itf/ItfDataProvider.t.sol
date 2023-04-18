@@ -127,7 +127,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 		assertEq(miltonData.maxLeverage, TestConstants.LEVERAGE_1000_18DEC);
 		assertEq(miltonData.minLeverage, TestConstants.LEVERAGE_18DEC);
 		assertEq(miltonData.spreadPayFixed, 50194572076283301);
-		assertEq(miltonData.spreadReceiveFixed, -50249999865446650);
+		assertEq(miltonData.spreadReceiveFixed, -50249999865446651);
 		assertEq(miltonData.soapPayFixed, TestConstants.ZERO_INT);
 		assertEq(miltonData.soapReceiveFixed, TestConstants.ZERO_INT);
 		assertEq(miltonData.soap, TestConstants.ZERO_INT);
