@@ -60,7 +60,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 			_userOne,
 			address(_usdcMockedToken),
 			TestConstants.MSO_UTILIZATION_RATE_48_PER,
-			TestConstants.MSO_UTILIZATION_RATE_90_PER,
+			TestConstants.MSO_UTILIZATION_RATE_80_PER,
 			TestConstants.MSO_NOTIONAL_1B
 		);
 		_miltonStorage = getMiltonStorage();

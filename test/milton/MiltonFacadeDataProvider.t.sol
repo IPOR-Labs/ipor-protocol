@@ -58,7 +58,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_UTILIZATION_RATE_80_PER,
             TestConstants.MSO_NOTIONAL_1B
         );
         MiltonStorages memory miltonStorages = getMiltonStorages();

@@ -342,18 +342,28 @@ abstract contract MiltonInternal is
             liquidityPool * maxUtilizationRatePayFixed,
             Constants.D18
         );
-        uint256 maxLeveragePayFixed = IporMath.division(
-            maxNotionalPayFixed * Constants.D18,
-            maxCollateralPayFixed
-        );
         uint256 maxCollateralReceiveFixed = IporMath.division(
             liquidityPool * maxUtilizationRateReceiveFixed,
             Constants.D18
         );
-        uint256 maxLeverageReceiveFixed = IporMath.division(
-            maxNotionalReceiveFixed * Constants.D18,
-            maxCollateralReceiveFixed
-        );
+        uint256 maxLeveragePayFixed;
+        if (maxCollateralPayFixed > 0) {
+            maxLeveragePayFixed = IporMath.division(
+                maxNotionalPayFixed * Constants.D18,
+                maxCollateralPayFixed
+            );
+        } else {
+            maxLeveragePayFixed = _MIN_LEVERAGE;
+        }
+        uint256 maxLeverageReceiveFixed;
+        if (maxCollateralReceiveFixed > 0) {
+            maxLeverageReceiveFixed = IporMath.division(
+                maxNotionalReceiveFixed * Constants.D18,
+                maxCollateralReceiveFixed
+            );
+        } else {
+            maxLeverageReceiveFixed = _MIN_LEVERAGE;
+        }
         return AmmMiltonTypes.OpenSwapSafetyIndicators(
             maxUtilizationRate,
             maxUtilizationRatePayFixed,

@@ -31,8 +31,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(usdt),
                 address(usdt),
                 address(usdt),
                 address(usdt),
@@ -52,8 +53,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(usdc),
                 address(usdc),
                 address(usdc),
                 address(usdc),
@@ -73,8 +75,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(dai),
                 address(dai),
                 address(dai),
                 address(dai),
@@ -95,8 +98,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(usdt),
                 address(usdt),
                 address(usdt),
                 address(usdt),
@@ -115,8 +119,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(usdc),
                 address(usdc),
                 address(usdc),
                 address(usdc),
@@ -135,8 +140,9 @@ contract MiltonConfiguration is Test, TestCommons {
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address,address)",
                 false,
+                address(dai),
                 address(dai),
                 address(dai),
                 address(dai),
@@ -151,27 +157,6 @@ contract MiltonConfiguration is Test, TestCommons {
         uint256 actualValue = _miltonDai.getMaxSwapCollateralAmount();
         // then
         assertEq(actualValue, TestConstants.USD_100_000_18DEC);
-    }
-
-    function testShouldSetupInitValueForMaxLpUtilizationPercentage() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationRate();
-        // then
-        assertEq(actualValue, 8 * TestConstants.D17);
-    }
-
-    function testShouldSetupInitValueForMaxLpUtilizationPercentagePayFixed() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationRatePayFixed();
-        // then
-        assertEq(actualValue, 5 * TestConstants.D16);
-    }
-
-    function testShouldSetupInitValueForMaxLpUtilizationPercentageReceiveFixed() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationRateReceiveFixed();
-        // then
-        assertEq(actualValue, 5 * TestConstants.D16);
     }
 
     function testShouldSetupInitValueForIncomeFeePercentage() public {
@@ -214,48 +199,6 @@ contract MiltonConfiguration is Test, TestCommons {
         uint256 actualValue = _miltonDai.getWadLiquidationDepositAmount();
         // then
         assertEq(actualValue, 25 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeveragePayFixedValueDai() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLeveragePayFixed();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueDai() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLeverageReceiveFixed();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeveragePayFixedValueUsdc() public {
-        // when
-        uint256 actualValue = _miltonUsdc.getMaxLeveragePayFixed();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueUsdc() public {
-        // when
-        uint256 actualValue = _miltonUsdc.getMaxLeverageReceiveFixed();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeveragePayFixedValueUsdt() public {
-        // when
-        uint256 actualValue = _miltonUsdt.getMaxLeveragePayFixed();
-        // then
-        assertEq(actualValue, 100 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageReceiveFixedValueUsdt() public {
-        // when
-        uint256 actualValue = _miltonUsdt.getMaxLeverageReceiveFixed();
-        // then
-        assertEq(actualValue, 100 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {
