@@ -4,6 +4,11 @@ pragma solidity 0.8.16;
 import "../../itf/ItfMilton.sol";
 
 abstract contract MockCase2Milton is ItfMilton {
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address marketSafetyOracle) ItfMilton(marketSafetyOracle) {
+    }
+
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
     }

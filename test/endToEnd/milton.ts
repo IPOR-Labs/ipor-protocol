@@ -147,10 +147,12 @@ export const miltonUsdtFactory = async (
             miltonStorageUsdtAddress,
             miltonSpreadModelAddress,
             stanleyUsdtAddress,
-            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",
+            constructorArgs: [
+                marketSafetyOracleAddress,
+            ]
         }
     ) as Promise<MiltonUsdt>;
 };
@@ -173,10 +175,12 @@ export const miltonUsdcFactory = async (
             miltonStorageUsdcAddress,
             miltonSpreadModelAddress,
             stanleyUsdcAddress,
-            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",
+            constructorArgs: [
+                marketSafetyOracleAddress,
+            ]
         }
     ) as Promise<MiltonUsdc>;
 };
@@ -199,10 +203,12 @@ export const miltonDaiFactory = async (
             miltonStorageDaiAddress,
             miltonSpreadModelAddress,
             stanleyDaiAddress,
-            marketSafetyOracleAddress,
         ],
         {
             kind: "uups",
+            constructorArgs: [
+                marketSafetyOracleAddress,
+            ]
         }
     ) as Promise<MiltonDai>;
 };

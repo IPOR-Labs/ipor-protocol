@@ -77,7 +77,14 @@ abstract contract MiltonInternal is
 
     uint32 internal _autoUpdateIporIndexThreshold;
 
-    IMarketSafetyOracle internal _marketSafetyOracle;
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    IMarketSafetyOracle private immutable _marketSafetyOracle;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address marketSafetyOracle) {
+        /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
+        _marketSafetyOracle = IMarketSafetyOracle(marketSafetyOracle);
+    }
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -98,6 +105,10 @@ abstract contract MiltonInternal is
 
     function getStanley() external view returns (address) {
         return address(_stanley);
+    }
+
+    function getMarketSafetyOracle() external view returns (address) {
+        return address(_marketSafetyOracle);
     }
 
     function getMaxSwapCollateralAmount() external view override returns (uint256) {

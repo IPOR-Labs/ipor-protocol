@@ -18,22 +18,21 @@ contract MiltonConfiguration is Test, TestCommons {
     MiltonDai internal _miltonDai;
 
     function setUp() public {
-        _miltonUsdt = new MiltonUsdt();
-        _miltonUsdc = new MiltonUsdc();
-        _miltonDai = new MiltonDai();
+        _miltonUsdt = new MiltonUsdt(address(0));
+        _miltonUsdc = new MiltonUsdc(address(0));
+        _miltonDai = new MiltonDai(address(0));
     }
 
     function testShouldCreateMiltonUsdt() public {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(6);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(usdt),
                 address(usdt),
                 address(usdt),
                 address(usdt),
@@ -49,13 +48,12 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(6);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(usdc),
                 address(usdc),
                 address(usdc),
                 address(usdc),
@@ -71,13 +69,12 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(18);
-        MiltonDai miltonDaiImplementation = new MiltonDai();
+        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(dai),
                 address(dai),
                 address(dai),
                 address(dai),
@@ -93,14 +90,13 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(8);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(usdt),
                 address(usdt),
                 address(usdt),
                 address(usdt),
@@ -114,14 +110,13 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(8);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(usdc),
                 address(usdc),
                 address(usdc),
                 address(usdc),
@@ -135,14 +130,13 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(8);
-        MiltonDai miltonDaiImplementation = new MiltonDai();
+        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
-                "initialize(bool,address,address,address,address,address,address)",
+                "initialize(bool,address,address,address,address,address)",
                 false,
-                address(dai),
                 address(dai),
                 address(dai),
                 address(dai),

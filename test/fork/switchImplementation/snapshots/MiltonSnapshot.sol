@@ -68,10 +68,10 @@ contract MiltonSnapshot is Script, Test {
         miltonMaxSwapCollateralAmount = milton
         .getMaxSwapCollateralAmount();
         miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
-        miltonMaxLpUtilizationRatePayFixed = milton
-        .getMaxLpUtilizationRatePayFixed();
-        miltonMaxLpUtilizationRateReceiveFixed = milton
-        .getMaxLpUtilizationRateReceiveFixed();
+//        miltonMaxLpUtilizationRatePayFixed = milton
+//        .getMaxLpUtilizationRatePayFixed(); TODO revert
+//        miltonMaxLpUtilizationRateReceiveFixed = milton
+//        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
         miltonIncomeFeeRate = milton.getIncomeFeeRate();
         miltonOpeningFeeRate = milton.getOpeningFeeRate();
         miltonOpeningFeeTreasuryPortionRate = milton
@@ -81,8 +81,8 @@ contract MiltonSnapshot is Script, Test {
         .getLiquidationDepositAmount();
         miltonWadLiquidationDepositAmount = milton
         .getWadLiquidationDepositAmount();
-        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed();
-        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed();
+//        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed(); TODO revert
+//        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed(); TODO revert
         miltonMinLeverage = milton.getMinLeverage();
 
         (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton

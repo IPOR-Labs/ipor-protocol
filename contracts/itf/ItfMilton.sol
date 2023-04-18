@@ -21,6 +21,11 @@ abstract contract ItfMilton is Milton {
     uint256 internal _secondsBeforeMaturityWhenPositionCanBeClosed;
     uint256 internal _liquidationLegLimit;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address marketSafetyOracle) Milton(marketSafetyOracle) {
+    }
+
+
     function getVersion() external pure virtual override returns (uint256) {
         return 7;
     }

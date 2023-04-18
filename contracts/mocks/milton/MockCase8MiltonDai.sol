@@ -6,6 +6,11 @@ import "../../itf/ItfMilton.sol";
 contract MockCase8MiltonDai is ItfMilton {
     IMiltonStorage _mockMiltonStorage;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address marketSafetyOracle) ItfMilton(marketSafetyOracle) {
+    }
+
+
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
     }

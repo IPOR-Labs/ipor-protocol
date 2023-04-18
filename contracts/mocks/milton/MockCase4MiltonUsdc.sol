@@ -4,6 +4,11 @@ pragma solidity 0.8.16;
 import "./MockCase4Milton.sol";
 
 contract MockCase4MiltonUsdc is MockCase4Milton {
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address marketSafetyOracle) MockCase4Milton(marketSafetyOracle) {
+    }
+
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 6;
     }

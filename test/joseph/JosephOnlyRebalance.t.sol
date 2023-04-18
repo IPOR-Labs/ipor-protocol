@@ -271,21 +271,20 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     }
 
     function _createMilton(Amm memory amm) internal returns (Milton) {
-        MiltonDai miltonImplementation = new MiltonDai();
+        MiltonDai miltonImplementation = new MiltonDai(address(amm.marketSafetyOracle));
         return
             Milton(
                 address(
                     new ERC1967Proxy(
                         address(miltonImplementation),
                         abi.encodeWithSignature(
-                            "initialize(bool,address,address,address,address,address,address)",
+                            "initialize(bool,address,address,address,address,address)",
                             false,
                             address(amm.ammTokens.dai),
                             address(amm.iporOracle),
                             address(amm.miltonStorage),
                             address(amm.miltonSpreadModel),
-                            address(amm.stanley),
-                            address(amm.marketSafetyOracle)
+                            address(amm.stanley)
                         )
                     )
                 )
@@ -409,7 +408,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](1);
         maxUtilizationRateReceiveFixed[0] = TestConstants.MSO_UTILIZATION_RATE_48_PER;
         uint16[] memory maxUtilizationRate = new uint16[](1);
-        maxUtilizationRate[0] = TestConstants.MSO_UTILIZATION_RATE_90_PER;
+        maxUtilizationRate[0] = TestConstants.MSO_UTILIZATION_RATE_80_PER;
 
         MarketSafetyOracle marketSafetyOracleImplementation = new MarketSafetyOracle();
         ERC1967Proxy marketSafetyOracleProxy = new ERC1967Proxy(

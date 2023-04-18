@@ -18,8 +18,10 @@ import "../../contracts/amm/spread/MiltonSpreadModelDai.sol";
 import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
+import "../utils/MarketSafetyOracleUtils.sol";
+import "../utils/TestConstants.sol";
 
-contract DaiAmm is Test, TestCommons {
+contract DaiAmm is Test, TestCommons, MarketSafetyOracleUtils {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
     address private constant _comptrollerAddress = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
     address private constant _compTokenAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
@@ -37,6 +39,7 @@ contract DaiAmm is Test, TestCommons {
     address public ipDai;
 
     IporOracle public iporOracle;
+    IMarketSafetyOracle public marketSafetyOracle;
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
@@ -63,6 +66,7 @@ contract DaiAmm is Test, TestCommons {
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
+        _createMarketSafetyOracle();
         _createMilton();
         _createJoseph();
         _createAaveIncentivesController();
@@ -220,8 +224,18 @@ contract DaiAmm is Test, TestCommons {
         );
     }
 
+    function _createMarketSafetyOracle() internal {
+        marketSafetyOracle = getMarketSafetyOracleAsset(
+            address(this),
+            address(dai),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
+    }
+
     function _createMilton() internal {
-        MiltonDai implementation = new MiltonDai();
+        MiltonDai implementation = new MiltonDai(address(marketSafetyOracle));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(

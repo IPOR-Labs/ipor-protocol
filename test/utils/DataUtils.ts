@@ -236,10 +236,12 @@ export const prepareTestData = async (
                 miltonStorageUsdt.address,
                 miltonSpreadModel.address,
                 stanleyUsdt.address,
-                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
+                constructorArgs: [
+                    marketSafetyOracle.address,
+                ],
             }
         )) as MiltonUsdtMockCase;
 
@@ -292,10 +294,12 @@ export const prepareTestData = async (
                 miltonStorageUsdc.address,
                 miltonSpreadModel.address,
                 stanleyUsdc.address,
-                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
+                constructorArgs: [
+                    marketSafetyOracle.address,
+                ],
             }
         )) as MiltonUsdcMockCase;
 
@@ -347,10 +351,12 @@ export const prepareTestData = async (
                 miltonStorageDai.address,
                 miltonSpreadModel.address,
                 stanleyDai.address,
-                marketSafetyOracle.address,
             ],
             {
                 kind: "uups",
+                constructorArgs: [
+                    marketSafetyOracle.address,
+                ]
             }
         )) as MiltonDaiMockCase;
 
