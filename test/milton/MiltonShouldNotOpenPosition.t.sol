@@ -613,6 +613,51 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         );
     }
 
+    function testShouldNotOpenPositionWhenUtilizationIsExceededAndMarketSafetyOracleProvidesLowUtilizationRate() public {
+        // given
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_0_1_PER,
+            TestConstants.MSO_UTILIZATION_RATE_0_1_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
+        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
+        MiltonStorage miltonStorageDai = getMiltonStorage();
+        MockCase7MiltonDai mockCase7MiltonDai = getMockCase7MiltonDai(
+            address(_daiMockedToken),
+            address(iporOracle),
+            address(miltonStorageDai),
+            address(_miltonSpreadModel),
+            address(stanleyDai),
+            address(marketSafetyOracle)
+        );
+        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
+            address(_daiMockedToken),
+            address(_ipTokenDai),
+            address(mockCase7MiltonDai),
+            address(miltonStorageDai),
+            address(stanleyDai)
+        );
+        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase7MiltonDai));
+        prepareMilton(mockCase7MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
+        prepareJoseph(mockCase0JosephDai);
+        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        vm.prank(_liquidityProvider);
+        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        // when
+        vm.expectRevert("IPOR_302");
+        vm.prank(_userThree);
+        mockCase7MiltonDai.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_100_18DEC,
+            9 * TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
+        );
+    }
+
     function testShouldNotOpenPositionWhenTotalAmountIsLowerThanFee() public {
         // given
         ItfIporOracle iporOracle =

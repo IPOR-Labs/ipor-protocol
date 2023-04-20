@@ -246,15 +246,13 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         mockCase0MiltonDai.getMiltonSpreadModel();
         mockCase0MiltonDai.getMaxSwapCollateralAmount();
         mockCase0MiltonDai.getMaxLpUtilizationRate();
-        mockCase0MiltonDai.getMaxLpUtilizationRatePayFixed();
-        mockCase0MiltonDai.getMaxLpUtilizationRateReceiveFixed();
+        mockCase0MiltonDai.getMaxLpUtilizationPerLegRate();
         mockCase0MiltonDai.getIncomeFeeRate();
         mockCase0MiltonDai.getOpeningFeeRate();
         mockCase0MiltonDai.getOpeningFeeTreasuryPortionRate();
         mockCase0MiltonDai.getIporPublicationFee();
         mockCase0MiltonDai.getLiquidationDepositAmount();
-        mockCase0MiltonDai.getMaxLeveragePayFixed();
-        mockCase0MiltonDai.getMaxLeverageReceiveFixed();
+        mockCase0MiltonDai.getMaxLeverage();
         mockCase0MiltonDai.getMinLeverage();
         mockCase0MiltonDai.getJoseph();
         vm.stopPrank();

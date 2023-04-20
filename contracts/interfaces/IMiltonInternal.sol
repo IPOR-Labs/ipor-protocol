@@ -46,15 +46,14 @@ interface IMiltonInternal {
     /// @return max liquidity pool utilization rate represented in 18 decimals
     function getMaxLpUtilizationRate() external view returns (uint256);
 
-    /// @notice Gets max liquidity pool utilization per pay fixed leg.
+    /// @notice Gets max liquidity pool utilization per leg.
     /// @dev Param used in swap validation.
-    /// @return max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
-    function getMaxLpUtilizationRatePayFixed() external view returns (uint256);
-
-    /// @notice Gets max liquidity pool utilization per receive fixed leg.
-    /// @dev Param used in swap validation.
-    /// @return max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
-    function getMaxLpUtilizationRateReceiveFixed() external view returns (uint256);
+    /// @return maxUtilizationRatePayFixed max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
+    /// @return maxUtilizationRateReceiveFixed max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
+    function getMaxLpUtilizationPerLegRate() external view returns (
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed
+    );
 
     /// @notice Gets income fee rate.
     /// @dev Param used when closing the swap. When trader earns then fee is deducted from accrued profit.
@@ -90,15 +89,14 @@ interface IMiltonInternal {
     /// @return liquidation deposit is represented in 18 decimals
     function getWadLiquidationDepositAmount() external view returns (uint256);
 
-    /// @notice Gets max leverage value per pay fixed leg.
+    /// @notice Gets max leverage value per leg.
     /// @dev Param used in swap validation.
-    /// @return max leverage value represented in 18 decimals
-    function getMaxLeveragePayFixed() external view returns (uint256);
-
-    /// @notice Gets max leverage value per receive fixed leg.
-    /// @dev Param used in swap validation.
-    /// @return max leverage value represented in 18 decimals
-    function getMaxLeverageReceiveFixed() external view returns (uint256);
+    /// @return maxLeveragePayFixed max leverage per Pay Fixed leg rate represented in 18 decimals
+    /// @return maxLeverageReceiveFixed max leverage per Receive Fixed leg rate represented in 18 decimals
+    function getMaxLeverage() external view returns (
+        uint256 maxLeveragePayFixed,
+        uint256 maxLeverageReceiveFixed
+    );
 
     /// @notice Gets min leverage value.
     /// @dev Param used in swap validation.

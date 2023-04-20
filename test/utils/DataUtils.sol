@@ -141,6 +141,7 @@ contract DataUtils is Test, IporOracleUtils, MarketSafetyOracleUtils, MiltonUtil
         iporProtocol.milton = milton;
         iporProtocol.joseph = joseph;
         iporProtocol.iporOracle = iporOracle;
+        iporProtocol.marketSafetyOracle = marketSafetyOracle;
 
         return iporProtocol;
     }

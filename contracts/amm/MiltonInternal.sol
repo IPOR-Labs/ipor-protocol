@@ -121,16 +121,13 @@ abstract contract MiltonInternal is
         return safetyIndicators.maxUtilizationRate;
     }
 
-    function getMaxLpUtilizationRatePayFixed() external view override returns (uint256) {
+    function getMaxLpUtilizationPerLegRate() external view override returns (
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed
+    ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
         AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return safetyIndicators.maxUtilizationRatePayFixed;
-    }
-
-    function getMaxLpUtilizationRateReceiveFixed() external view override returns (uint256) {
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return safetyIndicators.maxUtilizationRateReceiveFixed;
+        return (safetyIndicators.maxUtilizationRatePayFixed, safetyIndicators.maxUtilizationRateReceiveFixed);
     }
 
     function getIncomeFeeRate() external view override returns (uint256) {
@@ -159,16 +156,13 @@ abstract contract MiltonInternal is
         return _getLiquidationDepositAmount() * Constants.D18;
     }
 
-    function getMaxLeveragePayFixed() external view override returns (uint256) {
+    function getMaxLeverage() external view override returns (
+        uint256 maxLeveragePayFixed,
+        uint256 maxLeverageReceiveFixed
+    ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
         AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return safetyIndicators.maxLeveragePayFixed;
-    }
-
-    function getMaxLeverageReceiveFixed() external view override returns (uint256) {
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return safetyIndicators.maxLeverageReceiveFixed;
+        return (safetyIndicators.maxLeveragePayFixed, safetyIndicators.maxLeverageReceiveFixed);
     }
 
     function getMinLeverage() external view override returns (uint256) {
@@ -379,9 +373,19 @@ abstract contract MiltonInternal is
             maxUtilizationRate,
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
-            maxLeveragePayFixed > Constants.LEVERAGE_1000 ? Constants.LEVERAGE_1000 : maxLeveragePayFixed,
-            maxLeverageReceiveFixed > Constants.LEVERAGE_1000 ? Constants.LEVERAGE_1000 : maxLeverageReceiveFixed
+            leverageInRange(maxLeveragePayFixed),
+            leverageInRange(maxLeverageReceiveFixed)
         );
+    }
+
+    function leverageInRange(uint256 leverage) internal view returns (uint256) {
+        if (leverage > Constants.LEVERAGE_1000) {
+            return Constants.LEVERAGE_1000;
+        } else if (leverage < _MIN_LEVERAGE) {
+            return _MIN_LEVERAGE;
+        } else {
+            return leverage;
+        }
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturity()

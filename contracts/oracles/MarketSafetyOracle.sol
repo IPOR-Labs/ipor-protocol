@@ -193,7 +193,7 @@ contract MarketSafetyOracle is
     ) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            _indicators[asset].maxNotionalPayFixed == 0,
+            _indicators[asset].lastUpdateTimestamp == 0,
             MarketSafetyOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
 
