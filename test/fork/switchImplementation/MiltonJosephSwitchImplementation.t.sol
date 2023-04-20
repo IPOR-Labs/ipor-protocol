@@ -125,8 +125,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_dai);
-
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
@@ -136,6 +134,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
+        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_dai);
         Milton newMilton = new MiltonDai(address(marketSafetyOracle));
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
@@ -261,8 +260,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdc);
-
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
@@ -272,6 +269,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
+        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdc);
         Milton newMilton = new MiltonUsdc(address(marketSafetyOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
@@ -397,8 +395,6 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdt);
-
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
@@ -408,6 +404,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
+        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdt);
         Milton newMilton = new MiltonUsdt(address(marketSafetyOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));

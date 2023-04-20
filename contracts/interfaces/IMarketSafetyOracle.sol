@@ -39,7 +39,14 @@ interface IMarketSafetyOracle {
 
     /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner. Initialized with notional equals 0 and max utilization equals 0.
     /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
-    function addAsset(address asset) external;
+    function addAsset(
+        address asset,
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed,
+        uint256 maxUtilizationRate
+    ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
     /// @param asset  underlying / stablecoin address which current is supported by IPOR Protocol.

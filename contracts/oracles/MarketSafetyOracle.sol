@@ -92,7 +92,7 @@ contract MarketSafetyOracle is
         )
     {
         MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage memory indicators = _indicators[asset];
-        require(indicators.maxNotionalPayFixed > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        require(indicators.lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
         return (
             uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
             uint256(indicators.maxNotionalReceiveFixed) * 1e22,
@@ -162,7 +162,7 @@ contract MarketSafetyOracle is
     ) internal {
         MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage memory indicators = _indicators[asset];
 
-        require(indicators.maxNotionalPayFixed > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        require(indicators.lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
 
         _indicators[asset] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
             maxNotionalPayFixed.toUint64(),
@@ -183,7 +183,14 @@ contract MarketSafetyOracle is
         );
     }
 
-    function addAsset(address asset) external override onlyOwner {
+    function addAsset(
+        address asset,
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed,
+        uint256 maxUtilizationRate
+    ) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indicators[asset].maxNotionalPayFixed == 0,
@@ -191,27 +198,27 @@ contract MarketSafetyOracle is
         );
 
         _indicators[asset] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
-            0,
-            0,
-            0,
-            0,
-            0,
+            maxNotionalPayFixed.toUint64(),
+            maxNotionalReceiveFixed.toUint64(),
+            maxUtilizationRatePayFixed.toUint16(),
+            maxUtilizationRateReceiveFixed.toUint16(),
+            maxUtilizationRate.toUint16(),
             block.timestamp.toUint32()
         );
 
         emit MarketSafetyAddAsset(asset);
     }
 
-    function removeAsset(address asset) external override onlyOwner {
+    function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(_indicators[asset].maxNotionalPayFixed > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        require(_indicators[asset].lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
 
         delete _indicators[asset];
         emit MarketSafetyRemoveAsset(asset);
     }
 
     function isAssetSupported(address asset) external view override returns (bool) {
-        return _indicators[asset].maxNotionalPayFixed > 0;
+        return _indicators[asset].lastUpdateTimestamp > 0;
     }
 
     function pause() external override onlyOwner {
@@ -222,14 +229,14 @@ contract MarketSafetyOracle is
         _unpause();
     }
 
-    function addUpdater(address updater) external override onlyOwner {
+    function addUpdater(address updater) external override onlyOwner whenNotPaused {
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 1;
         emit MarketSafetyAddUpdater(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner {
+    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 0;

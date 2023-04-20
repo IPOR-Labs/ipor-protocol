@@ -197,8 +197,14 @@ library TestConstants {
     uint256 public constant MAX_CHUNK_SIZE = 50;
 
     uint64 public constant MSO_NOTIONAL_1B = 100000;
+    uint64 public constant MSO_NOTIONAL_2B = 200000;
+    uint64 public constant MSO_NOTIONAL_3B = 300000;
+    uint64 public constant MSO_NOTIONAL_10B = 1000000;
+    uint16 public constant MSO_UTILIZATION_RATE_20_PER = 2000;
     uint16 public constant MSO_UTILIZATION_RATE_30_PER = 3000;
+    uint16 public constant MSO_UTILIZATION_RATE_35_PER = 3500;
     uint16 public constant MSO_UTILIZATION_RATE_48_PER = 4800;
+    uint16 public constant MSO_UTILIZATION_RATE_60_PER = 6000;
     uint16 public constant MSO_UTILIZATION_RATE_80_PER = 8000;
     uint16 public constant MSO_UTILIZATION_RATE_90_PER = 9000;
 }
