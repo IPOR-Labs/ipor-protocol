@@ -14,6 +14,10 @@ library TestConstants {
     uint256 public constant D13 = 1e13;
     uint256 public constant D12 = 1e12;
 
+    uint128 public constant D18_128UINT = 1e18;
+
+    uint64 public constant D16_64UINT = 1e16;
+
     uint256 public constant USD_3_18DEC = 3 * 1e18;
     uint256 public constant USD_10_18DEC = 10 * 1e18;
     uint256 public constant USD_20_18DEC = 20 * 1e18;
@@ -111,6 +115,8 @@ library TestConstants {
     int256 public constant ZERO_INT = 0;
 
     uint64 public constant ZERO_64UINT = 0;
+
+    uint128 public constant ZERO_128UINT = 0;
 
     uint256 public constant ZERO = 0;
     uint256 public constant LEG_PAY_FIXED = 0;
