@@ -2,9 +2,12 @@
 pragma solidity 0.8.16;
 
 import "./Spread28DaysConfigLibs.sol";
+import "../../interfaces/types/IporTypes.sol";
+import "./ISpreadLens.sol";
+import "./BaseSpread28DaysLibs.sol";
 
 
-contract SpreadLens {
+contract SpreadLens is ISpreadLens{
 
     address internal immutable _DAI;
     address internal immutable _USDC;
@@ -28,7 +31,6 @@ contract SpreadLens {
         return assets;
     }
 
-
     function getBaseSpreadConfig(address asset) external view returns (Spread28DaysConfigLibs.BaseSpreadConfig memory) {
         if (asset == _DAI) {
             return Spread28DaysConfigLibs._getBaseSpreadDaiConfig();
@@ -40,6 +42,62 @@ contract SpreadLens {
             return Spread28DaysConfigLibs._getBaseSpreadUsdtConfig();
         }
         revert("SpreadLens: asset not supported"); //TODO: Do we want costume error code ?
+    }
+
+    function calculateBaseSpreadPayFixed28Days(
+        address asset,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external view override returns (int256 spreadValue) {
+        spreadValue = _calculateSpreadPremiumsPayFixed(
+        asset,
+        accruedIpor,
+        accruedBalance
+        );
+    }
+
+    function calculateSpreadPayFixed28Days(
+        address asset,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) external view override returns (int256 spreadValue) {
+        // TODO: implement with imbalance part
+        spreadValue = _calculateSpreadPremiumsPayFixed(
+            asset,
+            accruedIpor,
+            accruedBalance
+        );
+    }
+
+    function _calculateSpreadPremiumsPayFixed(
+        address asset,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal view virtual returns (int256 baseSpread) {
+        return
+        BaseSpread28DaysLibs._calculateSpreadPremiumsPayFixed(
+            accruedIpor,
+            accruedBalance,
+            _getBaseSpreadConfig(asset)
+        );
+    }
+
+    function _getBaseSpreadConfig(address asset)
+    internal
+    view
+    returns (Spread28DaysConfigLibs.BaseSpreadConfig memory)
+    {
+        if (asset == _DAI) {
+            return Spread28DaysConfigLibs._getBaseSpreadDaiConfig();
+        }
+        if (asset == _USDC) {
+            return Spread28DaysConfigLibs._getBaseSpreadUsdcConfig();
+        }
+        if (asset == _USDT) {
+            return Spread28DaysConfigLibs._getBaseSpreadUsdtConfig();
+        }
+        revert("Spread: asset not supported");
+        //TODO: Do we want costume error code ?
     }
 
 }

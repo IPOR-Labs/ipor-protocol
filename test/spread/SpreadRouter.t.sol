@@ -28,9 +28,7 @@ contract SpreadRouterTest is TestCommons {
             address(_usdt),
             address(0x0),
             address(0x0),
-            address(mockSpread28Days),
-            address(0x0),
-            address(0x0)
+            address(mockSpread28Days)
         );
 
         IporTypes.AccruedIpor memory accruedIpor;
@@ -56,9 +54,7 @@ contract SpreadRouterTest is TestCommons {
             address(_usdt),
             address(0x0),
             address(0x0),
-            address(0x0),
-            address(mockSpread28Days),
-            address(0x0)
+            address(mockSpread28Days)
         );
 
         IporTypes.AccruedIpor memory accruedIpor;
@@ -82,8 +78,6 @@ contract SpreadRouterTest is TestCommons {
             address(_dai),
             address(_usdc),
             address(_usdt),
-            address(0x0),
-            address(0x0),
             address(0x0),
             address(0x0),
             address(mockSpread28Days)

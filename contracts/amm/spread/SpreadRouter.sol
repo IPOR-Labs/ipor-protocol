@@ -14,9 +14,7 @@ contract SpreadRouter is OpenzeppelinStorage {
     bytes32 public immutable USDT;
     address public immutable GOVERNANCE;
     address public immutable LENS;
-    address public immutable SPREAD_28_DAYS_DAI;
-    address public immutable SPREAD_28_DAYS_USDC;
-    address public immutable SPREAD_28_DAYS_USDT;
+    address public immutable SPREAD_28_DAYS;
 
 
     struct DeployedContracts {
@@ -25,17 +23,13 @@ contract SpreadRouter is OpenzeppelinStorage {
         address usdt;
         address governance;
         address lens;
-        address spread28DaysDai;
-        address spread28DaysUsdc;
-        address spread28DaysUsdt;
+        address spread28Days;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
         GOVERNANCE = deployedContracts.governance;
         LENS = deployedContracts.lens;
-        SPREAD_28_DAYS_DAI = deployedContracts.spread28DaysDai;
-        SPREAD_28_DAYS_USDC = deployedContracts.spread28DaysUsdc;
-        SPREAD_28_DAYS_USDT = deployedContracts.spread28DaysUsdt;
+        SPREAD_28_DAYS = deployedContracts.spread28Days;
         DAI = bytes32(uint256(uint160(deployedContracts.dai)));
         USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
         USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
@@ -61,17 +55,13 @@ contract SpreadRouter is OpenzeppelinStorage {
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
         ) {
-            if (asset == DAI) {
-                return SPREAD_28_DAYS_DAI;
-            } else if (asset == USDC) {
-                return SPREAD_28_DAYS_USDC;
-            } else if (asset == USDT) {
-                return SPREAD_28_DAYS_USDT;
-            }
+            return SPREAD_28_DAYS;
         }
         if (
             sig == ISpreadLens.getSupportedAssets.selector ||
-            sig == ISpreadLens.getBaseSpreadConfig.selector
+            sig == ISpreadLens.getBaseSpreadConfig.selector ||
+            sig == ISpreadLens.calculateSpreadPayFixed28Days.selector ||
+            sig == ISpreadLens.calculateBaseSpreadPayFixed28Days.selector
         ) {
             return LENS;
         }

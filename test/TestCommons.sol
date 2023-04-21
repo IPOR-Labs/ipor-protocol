@@ -36,9 +36,7 @@ contract TestCommons is Test {
                 usdt: usdt,
                 governance: address(0x0), // TODO: add governance
                 lens: address(spreadLens),
-                spread28DaysDai: address(0x0), // TODO: add spread28DaysDai
-                spread28DaysUsdc: address(0x0), // TODO: add spread28DaysUsdc
-                spread28DaysUsdt: address(0x0) // TODO: add spread28DaysUsdt
+                spread28Days: address(0x0) // TODO: add spread28Days
             })
         );
 
