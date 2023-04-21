@@ -1,0 +1,120 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity 0.8.16;
+
+import "forge-std/console2.sol";
+import "./ISpread28Days.sol";
+import "./ISpreadLens.sol";
+import "./OpenzeppelinStorage.sol";
+
+
+contract SpreadRouter is OpenzeppelinStorage {
+
+    bytes32 public immutable DAI;
+    bytes32 public immutable USDC;
+    bytes32 public immutable USDT;
+    address public immutable GOVERNANCE;
+    address public immutable LENS;
+    address public immutable SPREAD_28_DAYS_DAI;
+    address public immutable SPREAD_28_DAYS_USDC;
+    address public immutable SPREAD_28_DAYS_USDT;
+
+
+    struct DeployedContracts {
+        address dai;
+        address usdc;
+        address usdt;
+        address governance;
+        address lens;
+        address spread28DaysDai;
+        address spread28DaysUsdc;
+        address spread28DaysUsdt;
+    }
+
+    constructor(DeployedContracts memory deployedContracts) {
+        GOVERNANCE = deployedContracts.governance;
+        LENS = deployedContracts.lens;
+        SPREAD_28_DAYS_DAI = deployedContracts.spread28DaysDai;
+        SPREAD_28_DAYS_USDC = deployedContracts.spread28DaysUsdc;
+        SPREAD_28_DAYS_USDT = deployedContracts.spread28DaysUsdt;
+        DAI = bytes32(uint256(uint160(deployedContracts.dai)));
+        USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
+        USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
+
+        _disableInitializers();
+    }
+
+
+    function initialize(
+        bool paused
+    ) public initializer {
+        __Pausable_init();
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+
+        if (paused) {
+            _pause();
+        }
+    }
+
+    function getRouterImplementation(bytes4 sig, bytes32 asset) public view returns (address) {
+        if (
+            sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
+            sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
+        ) {
+            if (asset == DAI) {
+                return SPREAD_28_DAYS_DAI;
+            } else if (asset == USDC) {
+                return SPREAD_28_DAYS_USDC;
+            } else if (asset == USDT) {
+                return SPREAD_28_DAYS_USDT;
+            }
+        }
+        if (
+            sig == ISpreadLens.getSupportedAssets.selector ||
+            sig == ISpreadLens.getBaseSpreadConfig.selector
+        ) {
+            return LENS;
+        }
+        return address(0);
+    }
+
+    /// @dev Delegates the current call to `implementation`.
+    /// This function does not return to its internal call site, it will return directly to the external caller.
+    function _delegate(address implementation) private {
+        // solhint-disable-next-line no-inline-assembly
+        assembly {
+        // Copy msg.data. We take full control of memory in this inline assembly
+        // block because it will not return to Solidity code. We overwrite the
+        // Solidity scratch pad at memory position 0.
+            calldatacopy(0, 0, calldatasize())
+
+        // Call the implementation.
+        // out and outsize are 0 because we don't know the size yet.
+            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
+
+        // Copy the returned data.
+            returndatacopy(0, 0, returndatasize())
+
+            switch result
+            // delegatecall returns 0 on error.
+            case 0 {
+                revert(0, returndatasize())
+            }
+            default {
+                return (0, returndatasize())
+            }
+        }
+    }
+
+    fallback() external payable {
+        bytes32 assetBytes = msg.data.length >= 36 ? bytes32(msg.data[4 : 36]) : bytes32(0);
+        _delegate(getRouterImplementation(msg.sig, assetBytes));
+    }
+
+
+    /**
+ * @notice Function run at the time of the contract upgrade via proxy. Available only to the contract's owner.
+     **/
+    //solhint-disable no-empty-blocks
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+}
