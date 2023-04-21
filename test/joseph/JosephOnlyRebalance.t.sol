@@ -21,7 +21,7 @@ import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/facades/IporOracleFacadeDataProvider.sol";
-import "../../contracts/oracles/MarketSafetyOracle.sol";
+import "../../contracts/oracles/RiskManagementOracle.sol";
 import "./MockJosephDai.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
@@ -202,7 +202,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         amm.compoundStrategy = _createCompoundStrategy(amm);
         amm.miltonSpreadModel = new MiltonSpreadModelDai();
         amm.iporOracle = _createIporOracleDai(address(amm.ammTokens.dai));
-        amm.marketSafetyOracle = _createMarketSafetyOracleDai(address(amm.ammTokens.dai));
+        amm.iporRiskManagementOracle = _createRiskManagementOracleDai(address(amm.ammTokens.dai));
         amm.miltonStorage = _createStorage();
         amm.stanley = _createStanley(amm);
         amm.milton = _createMilton(amm);
@@ -271,7 +271,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     }
 
     function _createMilton(Amm memory amm) internal returns (Milton) {
-        MiltonDai miltonImplementation = new MiltonDai(address(amm.marketSafetyOracle));
+        MiltonDai miltonImplementation = new MiltonDai(address(amm.iporRiskManagementOracle));
         return
             Milton(
                 address(
@@ -395,7 +395,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
             );
     }
 
-    function _createMarketSafetyOracleDai(address dai) internal returns (IMarketSafetyOracle) {
+    function _createRiskManagementOracleDai(address dai) internal returns (IIporRiskManagementOracle) {
         ItfIporOracle iporOracleImplementation = new ItfIporOracle();
         address[] memory assets = new address[](1);
         assets[0] = address(dai);
@@ -410,9 +410,9 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         uint16[] memory maxUtilizationRate = new uint16[](1);
         maxUtilizationRate[0] = TestConstants.MSO_UTILIZATION_RATE_80_PER;
 
-        MarketSafetyOracle marketSafetyOracleImplementation = new MarketSafetyOracle();
-        ERC1967Proxy marketSafetyOracleProxy = new ERC1967Proxy(
-            address(marketSafetyOracleImplementation),
+        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
+        ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
+            address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
                 "initialize(address[],uint256[],uint256[],uint256[],uint256[],uint256[])",
                 assets,
@@ -423,9 +423,9 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
                 maxUtilizationRate
             )
         );
-        MarketSafetyOracle marketSafetyOracle = MarketSafetyOracle(address(marketSafetyOracleProxy));
-        marketSafetyOracle.addUpdater(address(this));
-        return marketSafetyOracle;
+        IporRiskManagementOracle iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
+        iporRiskManagementOracle.addUpdater(address(this));
+        return iporRiskManagementOracle;
     }
 
     struct AmmTokens {
@@ -445,6 +445,6 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         MiltonSpreadModel miltonSpreadModel;
         Milton milton;
         Joseph joseph;
-        IMarketSafetyOracle marketSafetyOracle;
+        IIporRiskManagementOracle iporRiskManagementOracle;
     }
 }

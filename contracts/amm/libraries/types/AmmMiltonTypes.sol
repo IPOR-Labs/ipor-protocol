@@ -30,7 +30,7 @@ library AmmMiltonTypes {
         IporTypes.AccruedIpor accruedIpor;
     }
 
-    struct OpenSwapSafetyIndicators {
+    struct OpenSwapRiskIndicators {
         uint256 maxUtilizationRate;
         uint256 maxUtilizationRatePayFixed;
         uint256 maxUtilizationRateReceiveFixed;

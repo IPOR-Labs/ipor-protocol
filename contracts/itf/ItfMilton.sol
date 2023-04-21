@@ -22,7 +22,7 @@ abstract contract ItfMilton is Milton {
     uint256 internal _liquidationLegLimit;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) Milton(marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) Milton(iporRiskManagementOracle) {
     }
 
 

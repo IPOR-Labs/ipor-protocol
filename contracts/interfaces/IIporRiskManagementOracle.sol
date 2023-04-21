@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
-interface IMarketSafetyOracle {
-    /// @notice Returns current version of IMarketSafetyOracle's
+interface IIporRiskManagementOracle {
+    /// @notice Returns current version of IIporRiskManagementOracle's
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
-    /// @return current IMarketSafetyOracle version
+    /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
-    function getIndicators(address asset)
+    function getRiskIndicators(address asset)
         external
         view
         returns (
@@ -19,7 +19,7 @@ interface IMarketSafetyOracle {
             uint256 lastUpdateTimestamp
         );
 
-    function updateIndicators(
+    function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
@@ -28,7 +28,7 @@ interface IMarketSafetyOracle {
         uint256 maxUtilizationRate
     ) external;
 
-    function updateIndicators(
+    function updateRiskIndicators(
         address[] memory asset,
         uint256[] memory maxNotionalPayFixed,
         uint256[] memory maxNotionalReceiveFixed,
@@ -77,7 +77,7 @@ interface IMarketSafetyOracle {
     /// @dev Emits {Unpaused} event from IporOracle.
     function unpause() external;
 
-    event MarketSafetyIndicatorsUpdate(
+    event RiskIndicatorsUpdate(
         address indexed asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
@@ -86,11 +86,11 @@ interface IMarketSafetyOracle {
         uint256 maxUtilizationRate
     );
 
-    event MarketSafetyAddAsset(address indexed asset);
+    event IporRiskManagementOracleAddAsset(address indexed asset);
 
-    event MarketSafetyRemoveAsset(address indexed asset);
+    event IporRiskManagementOracleRemoveAsset(address indexed asset);
 
-    event MarketSafetyAddUpdater(address indexed updater);
+    event IporRiskManagementOracleAddUpdater(address indexed updater);
 
-    event MarketSafetyRemoveUpdater(address indexed updater);
+    event IporRiskManagementOracleRemoveUpdater(address indexed updater);
 }

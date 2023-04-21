@@ -1,11 +1,11 @@
 import hre, { upgrades } from "hardhat";
 import { BigNumber } from "ethers";
 
-import { MarketSafetyOracle } from "../../types";
+import { IporRiskManagementOracle } from "../../types";
 
-export const marketSafetyOracleFactory = async (initialParams: any): Promise<MarketSafetyOracle> => {
+export const iporRiskManagementOracleFactory = async (initialParams: any): Promise<IporRiskManagementOracle> => {
     const [admin] = await hre.ethers.getSigners();
-    const factory = await hre.ethers.getContractFactory("MarketSafetyOracle", admin);
+    const factory = await hre.ethers.getContractFactory("IporRiskManagementOracle", admin);
 
     return upgrades.deployProxy(
         factory,
@@ -20,11 +20,11 @@ export const marketSafetyOracleFactory = async (initialParams: any): Promise<Mar
         {
             kind: "uups",
         }
-    ) as Promise<MarketSafetyOracle>;
+    ) as Promise<IporRiskManagementOracle>;
 };
 
-export const marketSafetyOracleSetup = async (marketSafetyOracle: MarketSafetyOracle) => {
+export const iporRiskManagementOracleSetup = async (iporRiskManagementOracle: IporRiskManagementOracle) => {
     const [admin] = await hre.ethers.getSigners();
     const adminAddress = await admin.getAddress();
-    await marketSafetyOracle.addUpdater(adminAddress);
+    await iporRiskManagementOracle.addUpdater(adminAddress);
 };

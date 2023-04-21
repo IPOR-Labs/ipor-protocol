@@ -1,15 +1,15 @@
 import hre, { upgrades } from "hardhat";
 import {BigNumber, Signer} from "ethers";
 
-import { MarketSafetyOracle } from "../../types";
+import { IporRiskManagementOracle } from "../../types";
 
 const { ethers } = hre;
 
 // ########################################################################################################
-//                                           MarketSafetyOracle
+//                                           IporRiskManagementOracle
 // ########################################################################################################
 
-export const prepareMarketSafetyOracle = async (
+export const prepareRiskManagementOracle = async (
     accounts: Signer[],
     assets: string[],
     maxNotionalPayFixed: BigNumber[],
@@ -17,11 +17,11 @@ export const prepareMarketSafetyOracle = async (
     maxUtilizationRatePayFixed: BigNumber[],
     maxUtilizationRateReceiveFixed: BigNumber[],
     maxUtilizationRate: BigNumber[],
-): Promise<MarketSafetyOracle> => {
-    const marketSafetyOracle = await ethers.getContractFactory("MarketSafetyOracle");
+): Promise<IporRiskManagementOracle> => {
+    const iporRiskManagementOracle = await ethers.getContractFactory("IporRiskManagementOracle");
 
-    const marketSafetyOracleProxy = (await upgrades.deployProxy(
-        marketSafetyOracle,
+    const iporRiskManagementOracleProxy = (await upgrades.deployProxy(
+        iporRiskManagementOracle,
         [
             assets,
             maxNotionalPayFixed,
@@ -33,10 +33,10 @@ export const prepareMarketSafetyOracle = async (
         {
             kind: "uups",
         }
-    )) as MarketSafetyOracle;
+    )) as IporRiskManagementOracle;
 
     for (let i = 0; i < accounts.length; i++) {
-        await marketSafetyOracleProxy.addUpdater(await accounts[i].getAddress());
+        await iporRiskManagementOracleProxy.addUpdater(await accounts[i].getAddress());
     }
-    return marketSafetyOracleProxy;
+    return iporRiskManagementOracleProxy;
 };

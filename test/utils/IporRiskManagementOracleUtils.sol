@@ -3,17 +3,17 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
-import "../../contracts/oracles/MarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
+import "../../contracts/oracles/RiskManagementOracle.sol";
 
-contract MarketSafetyOracleUtils is Test {
-    function getMarketSafetyOracleAsset(
+contract IporRiskManagementOracleUtils is Test {
+    function getRiskManagementOracleAsset(
         address updater,
         address asset,
         uint16 maxUtilizationRatePerLeg,
         uint16 maxUtilizationRate,
         uint64 maxNotional
-    ) public returns (IMarketSafetyOracle) {
+    ) public returns (IIporRiskManagementOracle) {
         address[] memory assets = new address[](1);
         assets[0] = asset;
         uint64[] memory maxNotionalPayFixed = new uint64[](1);
@@ -27,7 +27,7 @@ contract MarketSafetyOracleUtils is Test {
         uint16[] memory maxUtilizationRates = new uint16[](1);
         maxUtilizationRates[0] = maxUtilizationRate;
         return
-            _prepareMarketSafetyOracle(
+            _prepareRiskManagementOracle(
                 updater,
                 assets,
                 maxNotionalPayFixed,
@@ -38,13 +38,13 @@ contract MarketSafetyOracleUtils is Test {
             );
     }
 
-    function getMarketSafetyOracleAssets(
+    function getRiskManagementOracleAssets(
         address updater,
         address[] memory assets,
         uint16 maxUtilizationRatePerLeg,
         uint16 maxUtilizationRate,
         uint64 maxNotional
-    ) public returns (IMarketSafetyOracle) {
+    ) public returns (IIporRiskManagementOracle) {
         uint64[] memory maxNotionalPayFixed = new uint64[](assets.length);
         uint64[] memory maxNotionalReceiveFixed = new uint64[](assets.length);
         uint16[] memory maxUtilizationRatePayFixed = new uint16[](assets.length);
@@ -59,7 +59,7 @@ contract MarketSafetyOracleUtils is Test {
             maxUtilizationRates[i] = maxUtilizationRate;
         }
         return
-            _prepareMarketSafetyOracle(
+            _prepareRiskManagementOracle(
                 updater,
                 assets,
                 maxNotionalPayFixed,
@@ -70,7 +70,7 @@ contract MarketSafetyOracleUtils is Test {
             );
     }
 
-    function _prepareMarketSafetyOracle(
+    function _prepareRiskManagementOracle(
         address updater,
         address[] memory assets,
         uint64[] memory maxNotionalPayFixed,
@@ -78,10 +78,10 @@ contract MarketSafetyOracleUtils is Test {
         uint16[] memory maxUtilizationRatePayFixed,
         uint16[] memory maxUtilizationRateReceiveFixed,
         uint16[] memory maxUtilizationRate
-    ) internal returns (MarketSafetyOracle) {
-        MarketSafetyOracle marketSafetyOracleImplementation = new MarketSafetyOracle();
-        ERC1967Proxy marketSafetyOracleProxy = new ERC1967Proxy(
-            address(marketSafetyOracleImplementation),
+    ) internal returns (IporRiskManagementOracle) {
+        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
+        ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
+            address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
                 "initialize(address[],uint256[],uint256[],uint256[],uint256[],uint256[])",
                 assets,
@@ -92,8 +92,8 @@ contract MarketSafetyOracleUtils is Test {
                 maxUtilizationRate
             )
         );
-        MarketSafetyOracle marketSafetyOracle = MarketSafetyOracle(address(marketSafetyOracleProxy));
-        marketSafetyOracle.addUpdater(updater);
-        return marketSafetyOracle;
+        IporRiskManagementOracle iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
+        iporRiskManagementOracle.addUpdater(updater);
+        return iporRiskManagementOracle;
     }
 }

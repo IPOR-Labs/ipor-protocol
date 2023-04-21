@@ -8,7 +8,7 @@ import "../utils/TestConstants.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/itf/ItfDataProvider.sol";
 import "../../contracts/itf/types/ItfDataProviderTypes.sol";
@@ -32,7 +32,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 	MockCase0MiltonUsdc internal _milton;
 	MockCase0JosephUsdc internal _joseph;
 	MockCase1Stanley internal _stanley;
-	IMarketSafetyOracle internal _marketSafetyOracle;
+	IIporRiskManagementOracle internal _RiskManagementOracle;
 
     function getItfDataProvider(
 		address[] memory tokenAddresses,
@@ -56,7 +56,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
 		_iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-		_marketSafetyOracle = getMarketSafetyOracleAsset(
+		_RiskManagementOracle = getRiskManagementOracleAsset(
 			_userOne,
 			address(_usdcMockedToken),
 			TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -72,7 +72,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
             address(_miltonStorage),
             address(_miltonSpreadModel),
             address(_stanley),
-            address(_marketSafetyOracle)
+            address(_RiskManagementOracle)
         );
 		_joseph = getMockCase0JosephUsdc(
 			address(_usdcMockedToken),

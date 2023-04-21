@@ -7,7 +7,7 @@ import "../../amm/libraries/types/AmmMiltonTypes.sol";
 abstract contract MockCase1Milton is ItfMilton {
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) ItfMilton(marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {
     }
 
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {

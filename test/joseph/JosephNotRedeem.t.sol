@@ -16,7 +16,7 @@ import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
@@ -53,7 +53,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -68,7 +68,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -108,7 +108,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -123,7 +123,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -163,7 +163,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -178,7 +178,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -213,7 +213,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -228,7 +228,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -263,7 +263,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -278,7 +278,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -308,7 +308,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -323,7 +323,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephDai mockCase1JosephDai = getMockCase1JosephDai(
             address(_daiMockedToken),
@@ -348,7 +348,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -363,7 +363,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephDai mockCase1JosephDai = getMockCase1JosephDai(
             address(_daiMockedToken),

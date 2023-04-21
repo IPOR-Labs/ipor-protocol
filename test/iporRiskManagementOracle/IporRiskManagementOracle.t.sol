@@ -5,23 +5,23 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/oracles/MarketSafetyOracle.sol";
+import "../../contracts/oracles/RiskManagementOracle.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 
-contract MarketSafetyOracleTest is Test, TestCommons {
+contract IporRiskManagementOracleTest is Test, TestCommons {
     uint32 private _blockTimestamp = 1641701;
     uint32 private _blockTimestamp2 = 1641713;
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
-    MarketSafetyOracle private _marketSafetyOracle;
+    IporRiskManagementOracle private _iporRiskManagementOracle;
 
     function setUp() public {
         vm.warp(_blockTimestamp);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
-        MarketSafetyOracle marketSafetyOracleImplementation = new MarketSafetyOracle();
+        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
         address[] memory assets = new address[](3);
         assets[0] = address(_daiTestnetToken);
         assets[1] = address(_usdcTestnetToken);
@@ -52,8 +52,8 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         maxUtilizationRate[1] = TestConstants.MSO_UTILIZATION_RATE_90_PER;
         maxUtilizationRate[2] = TestConstants.MSO_UTILIZATION_RATE_90_PER;
 
-        ERC1967Proxy marketSafetyOracleProxy = new ERC1967Proxy(
-            address(marketSafetyOracleImplementation),
+        ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
+            address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
                 "initialize(address[],uint256[],uint256[],uint256[],uint256[],uint256[])",
                 assets,
@@ -64,25 +64,25 @@ contract MarketSafetyOracleTest is Test, TestCommons {
                 maxUtilizationRate
             )
         );
-        _marketSafetyOracle = MarketSafetyOracle(address(marketSafetyOracleProxy));
+        _iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
 
-        _marketSafetyOracle.addUpdater(address(this));
+        _iporRiskManagementOracle.addUpdater(address(this));
     }
 
     function testShouldReturnContractVersion() public {
         // given
-        uint256 version = _marketSafetyOracle.getVersion();
+        uint256 version = _iporRiskManagementOracle.getVersion();
         // then
         assertEq(version, 1);
     }
 
     function testShouldPauseSCWhenSenderIsAdmin() public {
         // given
-        bool pausedBefore = _marketSafetyOracle.paused();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
         // when
-        _marketSafetyOracle.pause();
+        _iporRiskManagementOracle.pause();
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
 
         assertEq(pausedBefore, false);
         assertEq(pausedAfter, true);
@@ -90,8 +90,8 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldPauseSCSpecificMethods() public {
         // given
-        _marketSafetyOracle.pause();
-        bool pausedBefore = _marketSafetyOracle.paused();
+        _iporRiskManagementOracle.pause();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
 
         MockTestnetToken randomStable = new MockTestnetToken(
             "Random Stable",
@@ -102,7 +102,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.updateIndicators(
+        _iporRiskManagementOracle.updateRiskIndicators(
             address(_daiTestnetToken),
             TestConstants.MSO_NOTIONAL_2B,
             TestConstants.MSO_NOTIONAL_2B,
@@ -136,7 +136,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         maxUtilizationRate[1] = TestConstants.MSO_UTILIZATION_RATE_80_PER;
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.updateIndicators(
+        _iporRiskManagementOracle.updateRiskIndicators(
             assets,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
@@ -146,7 +146,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         );
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.addAsset(
+        _iporRiskManagementOracle.addAsset(
             address(randomStable),
             TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_NOTIONAL_1B,
@@ -156,31 +156,31 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         );
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.removeAsset(address(_daiTestnetToken));
+        _iporRiskManagementOracle.removeAsset(address(_daiTestnetToken));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.addUpdater(address(this));
+        _iporRiskManagementOracle.addUpdater(address(this));
 
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _marketSafetyOracle.removeUpdater(address(this));
+        _iporRiskManagementOracle.removeUpdater(address(this));
 
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, true);
     }
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
-        _marketSafetyOracle.pause();
-        bool pausedBefore = _marketSafetyOracle.paused();
+        _iporRiskManagementOracle.pause();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
 
         //when
-        _marketSafetyOracle.getIndicators(address(_daiTestnetToken));
-        _marketSafetyOracle.isAssetSupported(address(_daiTestnetToken));
-        _marketSafetyOracle.isUpdater(address(this));
+        _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
+        _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
+        _iporRiskManagementOracle.isUpdater(address(this));
 
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, true);
@@ -188,13 +188,13 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        bool pausedBefore = _marketSafetyOracle.paused();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.pause();
+        _iporRiskManagementOracle.pause();
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
 
         assertEq(pausedBefore, false);
         assertEq(pausedAfter, false);
@@ -202,12 +202,12 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldUnpauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _marketSafetyOracle.pause();
-        bool pausedBefore = _marketSafetyOracle.paused();
+        _iporRiskManagementOracle.pause();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
         // when
-        _marketSafetyOracle.unpause();
+        _iporRiskManagementOracle.unpause();
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, false);
@@ -215,14 +215,14 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-        _marketSafetyOracle.pause();
-        bool pausedBefore = _marketSafetyOracle.paused();
+        _iporRiskManagementOracle.pause();
+        bool pausedBefore = _iporRiskManagementOracle.paused();
         // when
         vm.prank(_getUserAddress(1));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.unpause();
+        _iporRiskManagementOracle.unpause();
         // then
-        bool pausedAfter = _marketSafetyOracle.paused();
+        bool pausedAfter = _iporRiskManagementOracle.paused();
 
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, true);
@@ -230,11 +230,11 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldRemovedAsset() public {
         // given
-        bool assetSupportedBefore = _marketSafetyOracle.isAssetSupported(address(_daiTestnetToken));
+        bool assetSupportedBefore = _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
         // when
-        _marketSafetyOracle.removeAsset(address(_daiTestnetToken));
+        _iporRiskManagementOracle.removeAsset(address(_daiTestnetToken));
         // then
-        bool assetSupportedAfter = _marketSafetyOracle.isAssetSupported(address(_daiTestnetToken));
+        bool assetSupportedAfter = _iporRiskManagementOracle.isAssetSupported(address(_daiTestnetToken));
 
         assertEq(assetSupportedBefore, true);
         assertEq(assetSupportedAfter, false);
@@ -245,14 +245,14 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
 
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
         // when
-        _marketSafetyOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(newOwner);
         vm.prank(newOwner);
-        _marketSafetyOracle.confirmTransferOwnership();
+        _iporRiskManagementOracle.confirmTransferOwnership();
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, newOwner);
@@ -263,14 +263,14 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
 
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
         // when
         vm.prank(_getUserAddress(2));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(newOwner);
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, oldOwner);
@@ -281,15 +281,15 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
 
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
         // when
-        _marketSafetyOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(newOwner);
         vm.prank(_getUserAddress(2));
         vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
-        _marketSafetyOracle.confirmTransferOwnership();
+        _iporRiskManagementOracle.confirmTransferOwnership();
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, oldOwner);
@@ -299,18 +299,18 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         // given
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
 
         // when
-        _marketSafetyOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(newOwner);
         vm.prank(newOwner);
-        _marketSafetyOracle.confirmTransferOwnership();
+        _iporRiskManagementOracle.confirmTransferOwnership();
         vm.expectRevert(abi.encodePacked(IporErrors.SENDER_NOT_APPOINTED_OWNER));
         vm.prank(newOwner);
-        _marketSafetyOracle.confirmTransferOwnership();
+        _iporRiskManagementOracle.confirmTransferOwnership();
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, newOwner);
@@ -321,16 +321,16 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
 
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
         // when
-        _marketSafetyOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(newOwner);
         vm.prank(newOwner);
-        _marketSafetyOracle.confirmTransferOwnership();
+        _iporRiskManagementOracle.confirmTransferOwnership();
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.transferOwnership(_getUserAddress(2));
+        _iporRiskManagementOracle.transferOwnership(_getUserAddress(2));
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, newOwner);
@@ -341,13 +341,13 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         address newOwner = _getUserAddress(1);
         address oldOwner = address(this);
 
-        address ownerBefore = _marketSafetyOracle.owner();
+        address ownerBefore = _iporRiskManagementOracle.owner();
         // when
-        _marketSafetyOracle.transferOwnership(newOwner);
-        _marketSafetyOracle.transferOwnership(_getUserAddress(2));
+        _iporRiskManagementOracle.transferOwnership(newOwner);
+        _iporRiskManagementOracle.transferOwnership(_getUserAddress(2));
 
         // then
-        address ownerAfter = _marketSafetyOracle.owner();
+        address ownerAfter = _iporRiskManagementOracle.owner();
 
         assertEq(ownerBefore, oldOwner);
         assertEq(ownerAfter, oldOwner);
@@ -361,9 +361,9 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             100_000_000 * 1e18,
             uint8(18)
         );
-        bool assetSupportedBefore = _marketSafetyOracle.isAssetSupported(address(randomStable));
+        bool assetSupportedBefore = _iporRiskManagementOracle.isAssetSupported(address(randomStable));
         // when
-        _marketSafetyOracle.addAsset(
+        _iporRiskManagementOracle.addAsset(
             address(randomStable),
             TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_NOTIONAL_1B,
@@ -372,7 +372,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             TestConstants.MSO_UTILIZATION_RATE_90_PER
         );
         // then
-        bool assetSupportedAfter = _marketSafetyOracle.isAssetSupported(address(randomStable));
+        bool assetSupportedAfter = _iporRiskManagementOracle.isAssetSupported(address(randomStable));
 
         assertEq(assetSupportedBefore, false);
         assertEq(assetSupportedAfter, true);
@@ -383,8 +383,8 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         vm.prank(_getUserAddress(1));
 
         // when
-        vm.expectRevert(abi.encodePacked(MarketSafetyOracleErrors.CALLER_NOT_UPDATER));
-        _marketSafetyOracle.updateIndicators(
+        vm.expectRevert(abi.encodePacked(IporRiskManagementOracleErrors.CALLER_NOT_UPDATER));
+        _iporRiskManagementOracle.updateRiskIndicators(
             address(_daiTestnetToken),
             TestConstants.MSO_NOTIONAL_2B,
             TestConstants.MSO_NOTIONAL_2B,
@@ -401,7 +401,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             uint256 maxUtilizationRateReceiveFixed,
             uint256 maxUtilizationRate,
             uint256 lastUpdateTimestamp
-        ) = _marketSafetyOracle.getIndicators(address(_daiTestnetToken));
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.MSO_NOTIONAL_1B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.MSO_NOTIONAL_1B) * 1e22);
         assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.MSO_UTILIZATION_RATE_48_PER) * 1e14);
@@ -412,13 +412,13 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
     function testShouldNotUpdateIndicatorsWhenUpdaterWasRemoved() public {
         // given
-        uint256 isUpdaterBeforeRemove = _marketSafetyOracle.isUpdater(address(this));
-        _marketSafetyOracle.removeUpdater(address(this));
-        uint256 isUpdaterAfterRemove = _marketSafetyOracle.isUpdater(address(this));
+        uint256 isUpdaterBeforeRemove = _iporRiskManagementOracle.isUpdater(address(this));
+        _iporRiskManagementOracle.removeUpdater(address(this));
+        uint256 isUpdaterAfterRemove = _iporRiskManagementOracle.isUpdater(address(this));
 
         // when
-        vm.expectRevert(abi.encodePacked(MarketSafetyOracleErrors.CALLER_NOT_UPDATER));
-        _marketSafetyOracle.updateIndicators(
+        vm.expectRevert(abi.encodePacked(IporRiskManagementOracleErrors.CALLER_NOT_UPDATER));
+        _iporRiskManagementOracle.updateRiskIndicators(
             address(_daiTestnetToken),
             TestConstants.MSO_NOTIONAL_2B,
             TestConstants.MSO_NOTIONAL_2B,
@@ -435,7 +435,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             uint256 maxUtilizationRateReceiveFixed,
             uint256 maxUtilizationRate,
             uint256 lastUpdateTimestamp
-        ) = _marketSafetyOracle.getIndicators(address(_daiTestnetToken));
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(isUpdaterBeforeRemove, 1);
         assertEq(isUpdaterAfterRemove, 0);
         assertEq(maxNotionalPayFixed, uint256(TestConstants.MSO_NOTIONAL_1B) * 1e22);
@@ -451,7 +451,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         vm.warp(_blockTimestamp2);
 
         // when
-        _marketSafetyOracle.updateIndicators(
+        _iporRiskManagementOracle.updateRiskIndicators(
             address(_daiTestnetToken),
             TestConstants.MSO_NOTIONAL_2B,
             TestConstants.MSO_NOTIONAL_2B,
@@ -468,7 +468,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             uint256 maxUtilizationRateReceiveFixed,
             uint256 maxUtilizationRate,
             uint256 lastUpdateTimestamp
-        ) = _marketSafetyOracle.getIndicators(address(_daiTestnetToken));
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(maxNotionalPayFixed, uint256(TestConstants.MSO_NOTIONAL_2B) * 1e22);
         assertEq(maxNotionalReceiveFixed, uint256(TestConstants.MSO_NOTIONAL_2B) * 1e22);
         assertEq(maxUtilizationRatePayFixed, uint256(TestConstants.MSO_UTILIZATION_RATE_30_PER) * 1e14);
@@ -507,7 +507,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
 
 
         // when
-        _marketSafetyOracle.updateIndicators(
+        _iporRiskManagementOracle.updateRiskIndicators(
             assets,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
@@ -524,7 +524,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             uint256 daiMaxUtilizationRateReceiveFixed,
             uint256 daiMaxUtilizationRate,
             uint256 daiLastUpdateTimestamp
-        ) = _marketSafetyOracle.getIndicators(address(_daiTestnetToken));
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_daiTestnetToken));
         assertEq(daiMaxNotionalPayFixed, uint256(TestConstants.MSO_NOTIONAL_2B) * 1e22);
         assertEq(daiMaxNotionalReceiveFixed, uint256(TestConstants.MSO_NOTIONAL_2B) * 1e22);
         assertEq(daiMaxUtilizationRatePayFixed, uint256(TestConstants.MSO_UTILIZATION_RATE_30_PER) * 1e14);
@@ -538,7 +538,7 @@ contract MarketSafetyOracleTest is Test, TestCommons {
             uint256 usdcMaxUtilizationRateReceiveFixed,
             uint256 usdcMaxUtilizationRate,
             uint256 usdcLastUpdateTimestamp
-        ) = _marketSafetyOracle.getIndicators(address(_usdcTestnetToken));
+        ) = _iporRiskManagementOracle.getRiskIndicators(address(_usdcTestnetToken));
         assertEq(usdcMaxNotionalPayFixed, uint256(TestConstants.MSO_NOTIONAL_3B) * 1e22);
         assertEq(usdcMaxNotionalReceiveFixed, uint256(TestConstants.MSO_NOTIONAL_10B) * 1e22);
         assertEq(usdcMaxUtilizationRatePayFixed, uint256(TestConstants.MSO_UTILIZATION_RATE_20_PER) * 1e14);
@@ -553,21 +553,21 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         // when
         vm.prank(_getUserAddress(2));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.addUpdater(updater);
+        _iporRiskManagementOracle.addUpdater(updater);
         // then
-        uint256 isUpdater = _marketSafetyOracle.isUpdater(updater);
+        uint256 isUpdater = _iporRiskManagementOracle.isUpdater(updater);
         assertEq(isUpdater, 0);
     }
 
     function testShouldRemoveUpdater() public {
         // given
-        uint256 isUpdaterBefore = _marketSafetyOracle.isUpdater(address(this));
+        uint256 isUpdaterBefore = _iporRiskManagementOracle.isUpdater(address(this));
 
         // when
-        _marketSafetyOracle.removeUpdater(address(this));
+        _iporRiskManagementOracle.removeUpdater(address(this));
 
         // then
-        uint256 isUpdaterAfter = _marketSafetyOracle.isUpdater(address(this));
+        uint256 isUpdaterAfter = _iporRiskManagementOracle.isUpdater(address(this));
 
         assertEq(isUpdaterBefore, 1);
         assertEq(isUpdaterAfter, 0);
@@ -579,9 +579,9 @@ contract MarketSafetyOracleTest is Test, TestCommons {
         // when
         vm.prank(_getUserAddress(2));
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        _marketSafetyOracle.removeUpdater(updater);
+        _iporRiskManagementOracle.removeUpdater(updater);
         // then
-        uint256 isUpdater = _marketSafetyOracle.isUpdater(updater);
+        uint256 isUpdater = _iporRiskManagementOracle.isUpdater(updater);
         assertEq(isUpdater, 1);
     }
 }

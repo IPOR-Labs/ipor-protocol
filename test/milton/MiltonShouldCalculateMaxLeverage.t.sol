@@ -116,9 +116,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
         uint256 expectedMaxLeverageReceiveFixed
     ) internal {
         //given
-        IMarketSafetyOracle marketSafetyOracle = iporProtocol.marketSafetyOracle;
-        marketSafetyOracle.addUpdater(address(this));
-        marketSafetyOracle.updateIndicators(
+        IIporRiskManagementOracle iporRiskManagementOracle = iporProtocol.iporRiskManagementOracle;
+        iporRiskManagementOracle.addUpdater(address(this));
+        iporRiskManagementOracle.updateRiskIndicators(
             address(iporProtocol.asset),
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,

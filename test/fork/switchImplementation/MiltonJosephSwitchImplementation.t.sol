@@ -18,10 +18,10 @@ import "../../../contracts/amm/MiltonUsdc.sol";
 import "../../../contracts/amm/pool/JosephUsdc.sol";
 import "../../../contracts/amm/MiltonUsdt.sol";
 import "../../../contracts/amm/pool/JosephUsdt.sol";
-import "../../utils/MarketSafetyOracleUtils.sol";
+import "../../utils/IporRiskManagementOracleUtils.sol";
 import "../../utils/TestConstants.sol";
 
-contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, MarketSafetyOracleUtils {
+contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, IporRiskManagementOracleUtils {
     address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private _usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private _usdt = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -60,7 +60,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_dai);
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
 
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
@@ -68,7 +68,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonDai(address(marketSafetyOracle));
+        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
 
@@ -134,8 +134,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_dai);
-        Milton newMilton = new MiltonDai(address(marketSafetyOracle));
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
+        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
 
@@ -194,7 +194,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdc);
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
 
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
@@ -202,7 +202,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdc(address(marketSafetyOracle));
+        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
 
@@ -269,8 +269,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdc);
-        Milton newMilton = new MiltonUsdc(address(marketSafetyOracle));
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
+        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
 
@@ -329,7 +329,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
         stanleySnapshotStart.snapshot();
 
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdt);
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
 
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
@@ -337,7 +337,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdt(address(marketSafetyOracle));
+        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
 
@@ -404,8 +404,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        IMarketSafetyOracle marketSafetyOracle = createMarketSafetyOracle(_usdt);
-        Milton newMilton = new MiltonUsdt(address(marketSafetyOracle));
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
+        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
 
@@ -448,8 +448,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ma
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
     }
 
-    function createMarketSafetyOracle(address assetAddress) internal returns (IMarketSafetyOracle) {
-        return getMarketSafetyOracleAsset(
+    function createRiskManagementOracle(address assetAddress) internal returns (IIporRiskManagementOracle) {
+        return getRiskManagementOracleAsset(
             _owner,
             assetAddress,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,

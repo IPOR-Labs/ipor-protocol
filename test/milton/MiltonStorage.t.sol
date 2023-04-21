@@ -6,7 +6,7 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
@@ -123,7 +123,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testShouldUpdateMiltonStorageWhenOpenPositionAndCallerHasRightsToUpdate() public {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -138,7 +138,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(mockCase1StanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         miltonStorageDai.setMilton(_miltonStorageAddress);
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
@@ -153,7 +153,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testShouldNotUpdateMiltonStorageWhenOpenPositionAndCallerDoesNotHaveRightsToUpdate() public {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -168,7 +168,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         miltonStorageDai.setMilton(_miltonStorageAddress);
         AmmTypes.NewSwap memory newSwap = prepareSwapPayFixedStruct18DecSimpleCase1(_userTwo);
@@ -237,7 +237,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateDAI18Decimals() public {
         //given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -252,7 +252,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -297,7 +297,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testShouldUpdateMiltonStorageWhenClosePositionAndCallerHasRightsToUpdateUSDT6Decimals() public {
         //given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -312,7 +312,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -357,7 +357,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testShouldNotUpdateMiltonStorageWhenClosePositionAndCallerDoesNotHaveRightsToUpdate() public {
         //given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -372,7 +372,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(_miltonSpreadModel),
             address(stanleyDai),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -415,7 +415,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -430,7 +430,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -458,7 +458,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -473,7 +473,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -502,7 +502,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -517,7 +517,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -544,7 +544,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen11NumberOfSwapsAndOffsetZeroAndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -559,7 +559,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -589,7 +589,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -604,7 +604,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -634,7 +634,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -649,7 +649,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -681,7 +681,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -696,7 +696,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -726,7 +726,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -741,7 +741,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -774,7 +774,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -789,7 +789,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -821,7 +821,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -836,7 +836,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -865,7 +865,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -880,7 +880,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -912,7 +912,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -927,7 +927,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -957,7 +957,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapsReceiveFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -972,7 +972,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1003,7 +1003,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapsReceiveFixedShouldReceiveEmptyListOfSwapsWhenOffsetIsEqualToNumberOfSwaps() public {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1018,7 +1018,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1048,7 +1048,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsPayFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1063,7 +1063,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1092,7 +1092,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1107,7 +1107,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1136,7 +1136,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1151,7 +1151,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1179,7 +1179,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1194,7 +1194,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1224,7 +1224,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsPayFixedShouldReceiveLimitedSwapArrayWhen22NumberOfSwapsAndOffset10AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1239,7 +1239,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1268,7 +1268,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsPayFixedShouldReceiveRestOfSwapsOnlyWhen22NumberOfSwapsAndOffset20AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1283,7 +1283,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1314,7 +1314,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1329,7 +1329,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1358,7 +1358,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsReceiveFixedShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1373,7 +1373,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1403,7 +1403,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1418,7 +1418,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1447,7 +1447,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1462,7 +1462,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1490,7 +1490,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1505,7 +1505,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1536,7 +1536,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1551,7 +1551,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1582,7 +1582,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1597,7 +1597,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1626,7 +1626,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldFailWhenPageSizeIsEqualToZero() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1641,7 +1641,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1669,7 +1669,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenZeroNumberOfSwapsAndOffsetZer0AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1684,7 +1684,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1711,7 +1711,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldReturnEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwaps() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1726,7 +1726,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1755,7 +1755,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1770,7 +1770,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1802,7 +1802,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1817,7 +1817,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1849,7 +1849,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1864,7 +1864,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1898,7 +1898,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
     function testGetSwapIdsShouldReturnLimited10SwapsWhenUserHas9PayFixedSwapsAnd12ReceiveFixedSwapsAndOffsetZeroAndPageSize10(
     ) public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1913,7 +1913,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -1946,7 +1946,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
     function testGetSwapIdsShouldReturnEmptyArrayWhenUserHasMoreSwapsThanPageSizeAndOffset80AndPageSize10() public {
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAsset(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -1961,7 +1961,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
             address(stanleyUsdt),
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),

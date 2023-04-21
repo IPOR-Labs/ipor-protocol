@@ -31,10 +31,10 @@ interface IMiltonInternal {
     /// @return Stanley address used by Milton
     function getStanley() external view returns (address);
 
-    /// @notice Gets address of MarketSafetyOracle used by Milton
-    /// @dev MarketSafetyOracle is Milton's
+    /// @notice Gets address of IporRiskManagementOracle used by Milton
+    /// @dev IporRiskManagementOracle is Milton's
     /// @return Stanley address used by Milton
-    function getMarketSafetyOracle() external view returns (address);
+    function getRiskManagementOracle() external view returns (address);
 
     /// @notice Gets max swap's collateral amount value.
     /// @dev Param used in swap validation.

@@ -6,7 +6,7 @@ import "../../contracts/interfaces/types/MiltonFacadeTypes.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/interfaces/IMarketSafetyOracle.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/interfaces/IMiltonFacadeDataProvider.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
@@ -54,7 +54,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -80,7 +80,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -184,7 +184,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -210,7 +210,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -335,7 +335,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -361,7 +361,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -424,7 +424,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -450,7 +450,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -513,7 +513,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -539,7 +539,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -601,7 +601,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -627,7 +627,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -691,7 +691,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -717,7 +717,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -783,7 +783,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -809,7 +809,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -875,7 +875,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -901,7 +901,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),
@@ -967,7 +967,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         ItfIporOracle iporOracle = getIporOracleAssets(
             _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
         );
-        IMarketSafetyOracle marketSafetyOracle = getMarketSafetyOracleAssets(
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -993,7 +993,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             miltonStorageAddresses,
             mockCase1StanleyAddresses,
-            address(marketSafetyOracle)
+            address(iporRiskManagementOracle)
         );
         address[] memory mockCase0MiltonAddresses = addressesToArray(
             address(mockCase0Miltons.mockCase0MiltonUsdt),

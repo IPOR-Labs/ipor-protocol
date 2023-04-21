@@ -19,9 +19,9 @@ import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/TestConstants.sol";
-import "../utils/MarketSafetyOracleUtils.sol";
+import "../utils/IporRiskManagementOracleUtils.sol";
 
-contract UsdcAmm is Test, TestCommons, MarketSafetyOracleUtils {
+contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
     address private constant _comptrollerAddress = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
     address private constant _compTokenAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
@@ -39,7 +39,7 @@ contract UsdcAmm is Test, TestCommons, MarketSafetyOracleUtils {
     address public ipUsdc;
 
     IporOracle public iporOracle;
-    IMarketSafetyOracle public marketSafetyOracle;
+    IIporRiskManagementOracle public iporRiskManagementOracle;
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
@@ -66,7 +66,7 @@ contract UsdcAmm is Test, TestCommons, MarketSafetyOracleUtils {
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
-        _createMarketSafetyOracle();
+        _createRiskManagementOracle();
         _createMilton();
         _createJoseph();
         _createAaveIncentivesController();
@@ -224,8 +224,8 @@ contract UsdcAmm is Test, TestCommons, MarketSafetyOracleUtils {
         );
     }
 
-    function _createMarketSafetyOracle() internal {
-        marketSafetyOracle = getMarketSafetyOracleAsset(
+    function _createRiskManagementOracle() internal {
+        iporRiskManagementOracle = getRiskManagementOracleAsset(
             address(this),
             address(usdc),
             TestConstants.MSO_UTILIZATION_RATE_48_PER,
@@ -235,7 +235,7 @@ contract UsdcAmm is Test, TestCommons, MarketSafetyOracleUtils {
     }
 
     function _createMilton() internal {
-        MiltonUsdc implementation = new MiltonUsdc(address(marketSafetyOracle));
+        MiltonUsdc implementation = new MiltonUsdc(address(iporRiskManagementOracle));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(

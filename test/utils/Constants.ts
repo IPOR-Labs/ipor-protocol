@@ -139,7 +139,7 @@ export const PERIOD_27_DAYS_17_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 
 export const PERIOD_14_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 14);
 
 // #################################################################################
-//                              MarketSafetyOracle
+//                              IporRiskManagementOracle
 // #################################################################################
 export const MSO_NOTIONAL_1B = BigNumber.from("100000");
 export const MSO_UTILIZATION_RATE_48_PER = BigNumber.from("4800");

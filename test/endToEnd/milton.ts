@@ -134,7 +134,7 @@ export const miltonUsdtFactory = async (
     miltonStorageUsdtAddress: string,
     miltonSpreadModelAddress: string,
     stanleyUsdtAddress: string,
-    marketSafetyOracleAddress: string
+    iporRiskManagementOracleAddress: string
 ): Promise<MiltonUsdt> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdt", admin);
@@ -151,7 +151,7 @@ export const miltonUsdtFactory = async (
         {
             kind: "uups",
             constructorArgs: [
-                marketSafetyOracleAddress,
+                iporRiskManagementOracleAddress,
             ]
         }
     ) as Promise<MiltonUsdt>;
@@ -162,7 +162,7 @@ export const miltonUsdcFactory = async (
     miltonStorageUsdcAddress: string,
     miltonSpreadModelAddress: string,
     stanleyUsdcAddress: string,
-    marketSafetyOracleAddress: string
+    iporRiskManagementOracleAddress: string
 ): Promise<MiltonUsdc> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonUsdc", admin);
@@ -179,7 +179,7 @@ export const miltonUsdcFactory = async (
         {
             kind: "uups",
             constructorArgs: [
-                marketSafetyOracleAddress,
+                iporRiskManagementOracleAddress,
             ]
         }
     ) as Promise<MiltonUsdc>;
@@ -190,7 +190,7 @@ export const miltonDaiFactory = async (
     miltonStorageDaiAddress: string,
     miltonSpreadModelAddress: string,
     stanleyDaiAddress: string,
-    marketSafetyOracleAddress: string
+    iporRiskManagementOracleAddress: string
 ): Promise<MiltonDai> => {
     const [admin] = await hre.ethers.getSigners();
     const miltonFactory = await hre.ethers.getContractFactory("MiltonDai", admin);
@@ -207,7 +207,7 @@ export const miltonDaiFactory = async (
         {
             kind: "uups",
             constructorArgs: [
-                marketSafetyOracleAddress,
+                iporRiskManagementOracleAddress,
             ]
         }
     ) as Promise<MiltonDai>;

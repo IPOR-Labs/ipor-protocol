@@ -8,7 +8,7 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IMarketSafetyOracle.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
@@ -31,7 +31,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) MiltonInternal(marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) MiltonInternal(iporRiskManagementOracle) {
         _disableInitializers();
     }
 
@@ -383,7 +383,7 @@ abstract contract Milton is MiltonInternal, IMilton {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,
@@ -462,7 +462,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralReceiveFixed +
             bosStruct.collateral;
 
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,

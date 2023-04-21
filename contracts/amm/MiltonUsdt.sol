@@ -6,11 +6,11 @@ import "./Milton.sol";
 contract MiltonUsdt is Milton {
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) Milton(marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) Milton(iporRiskManagementOracle) {
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 7;
+        return 10;
     }
 
     function _getDecimals() internal pure virtual override returns (uint256) {

@@ -26,7 +26,7 @@ import {
 } from "./JosephUtils";
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
 import { prepareIporOracle } from "./IporOracleUtils";
-import { prepareMarketSafetyOracle } from "./MarketSafetyOracleUtils";
+import { prepareRiskManagementOracle } from "./IporRiskManagementOracleUtils";
 import {
     MockBaseMiltonSpreadModelDai,
     DaiMockedToken,
@@ -208,7 +208,7 @@ export const prepareTestData = async (
             exponentialMovingAverages,
             exponentialWeightedMovingVariances
         ));
-    const marketSafetyOracle = (await prepareMarketSafetyOracle(
+    const iporRiskManagementOracle = (await prepareRiskManagementOracle(
         accounts,
         assetsAddr,
         maxNotionalPayFixed,
@@ -240,7 +240,7 @@ export const prepareTestData = async (
             {
                 kind: "uups",
                 constructorArgs: [
-                    marketSafetyOracle.address,
+                    iporRiskManagementOracle.address,
                 ],
             }
         )) as MiltonUsdtMockCase;
@@ -298,7 +298,7 @@ export const prepareTestData = async (
             {
                 kind: "uups",
                 constructorArgs: [
-                    marketSafetyOracle.address,
+                    iporRiskManagementOracle.address,
                 ],
             }
         )) as MiltonUsdcMockCase;
@@ -355,7 +355,7 @@ export const prepareTestData = async (
             {
                 kind: "uups",
                 constructorArgs: [
-                    marketSafetyOracle.address,
+                    iporRiskManagementOracle.address,
                 ]
             }
         )) as MiltonDaiMockCase;

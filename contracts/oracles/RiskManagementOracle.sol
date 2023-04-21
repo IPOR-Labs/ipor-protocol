@@ -5,30 +5,30 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../interfaces/IMarketSafetyOracle.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/MarketSafetyOracleStorageTypes.sol";
-import "../libraries/errors/MarketSafetyOracleErrors.sol";
+import "./libraries/RiskManagementOracleStorageTypes.sol";
+import "../libraries/errors/IporRiskManagementOracleErrors.sol";
 
 /**
  * @title Market Safety Oracle contract
  *
  * @author IPOR Labs
  */
-contract MarketSafetyOracle is
+contract IporRiskManagementOracle is
     Initializable,
     PausableUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IMarketSafetyOracle
+    IIporRiskManagementOracle
 {
     using SafeCast for uint256;
 
     mapping(address => uint256) internal _updaters;
-    mapping(address => MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage) internal _indicators;
+    mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
 
     modifier onlyUpdater() {
-        require(_updaters[_msgSender()] == 1, MarketSafetyOracleErrors.CALLER_NOT_UPDATER);
+        require(_updaters[_msgSender()] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
         _;
     }
 
@@ -63,7 +63,7 @@ contract MarketSafetyOracle is
         for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _indicators[assets[i]] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
+            _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
                 maxNotionalPayFixed[i].toUint64(),
                 maxNotionalReceiveFixed[i].toUint64(),
                 maxUtilizationRatePayFixed[i].toUint16(),
@@ -78,7 +78,7 @@ contract MarketSafetyOracle is
         return 1;
     }
 
-    function getIndicators(address asset)
+    function getRiskIndicators(address asset)
         external
         view
         override
@@ -91,8 +91,8 @@ contract MarketSafetyOracle is
             uint256 lastUpdateTimestamp
         )
     {
-        MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage memory indicators = _indicators[asset];
-        require(indicators.lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
+        require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
         return (
             uint256(indicators.maxNotionalPayFixed) * 1e22, // 1 = 10k notional
             uint256(indicators.maxNotionalReceiveFixed) * 1e22,
@@ -103,7 +103,7 @@ contract MarketSafetyOracle is
         );
     }
 
-    function updateIndicators(
+    function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
@@ -111,7 +111,7 @@ contract MarketSafetyOracle is
         uint256 maxUtilizationRateReceiveFixed,
         uint256 maxUtilizationRate
     ) external override onlyUpdater whenNotPaused {
-        _updateIndicators(
+        _updateRiskIndicators(
             asset,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
@@ -121,7 +121,7 @@ contract MarketSafetyOracle is
         );
     }
 
-    function updateIndicators(
+    function updateRiskIndicators(
         address[] memory asset,
         uint256[] memory maxNotionalPayFixed,
         uint256[] memory maxNotionalReceiveFixed,
@@ -141,7 +141,7 @@ contract MarketSafetyOracle is
         );
 
         for (uint256 i; i != assetsLength; ++i) {
-            _updateIndicators(
+            _updateRiskIndicators(
                 asset[i],
                 maxNotionalPayFixed[i],
                 maxNotionalReceiveFixed[i],
@@ -152,7 +152,7 @@ contract MarketSafetyOracle is
         }
     }
 
-    function _updateIndicators(
+    function _updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
@@ -160,11 +160,11 @@ contract MarketSafetyOracle is
         uint256 maxUtilizationRateReceiveFixed,
         uint256 maxUtilizationRate
     ) internal {
-        MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage memory indicators = _indicators[asset];
+        IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage memory indicators = _indicators[asset];
 
-        require(indicators.lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        require(indicators.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
 
-        _indicators[asset] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
+        _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
             maxNotionalPayFixed.toUint64(),
             maxNotionalReceiveFixed.toUint64(),
             maxUtilizationRatePayFixed.toUint16(),
@@ -173,7 +173,7 @@ contract MarketSafetyOracle is
             block.timestamp.toUint32()
         );
 
-        emit MarketSafetyIndicatorsUpdate(
+        emit RiskIndicatorsUpdate(
             asset,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
@@ -194,10 +194,10 @@ contract MarketSafetyOracle is
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indicators[asset].lastUpdateTimestamp == 0,
-            MarketSafetyOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
+            IporRiskManagementOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS
         );
 
-        _indicators[asset] = MarketSafetyOracleStorageTypes.MarketSafetyIndicatorsStorage(
+        _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
             maxNotionalPayFixed.toUint64(),
             maxNotionalReceiveFixed.toUint64(),
             maxUtilizationRatePayFixed.toUint16(),
@@ -206,15 +206,15 @@ contract MarketSafetyOracle is
             block.timestamp.toUint32()
         );
 
-        emit MarketSafetyAddAsset(asset);
+        emit IporRiskManagementOracleAddAsset(asset);
     }
 
     function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(_indicators[asset].lastUpdateTimestamp > 0, MarketSafetyOracleErrors.ASSET_NOT_SUPPORTED);
+        require(_indicators[asset].lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
 
         delete _indicators[asset];
-        emit MarketSafetyRemoveAsset(asset);
+        emit IporRiskManagementOracleRemoveAsset(asset);
     }
 
     function isAssetSupported(address asset) external view override returns (bool) {
@@ -233,14 +233,14 @@ contract MarketSafetyOracle is
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 1;
-        emit MarketSafetyAddUpdater(updater);
+        emit IporRiskManagementOracleAddUpdater(updater);
     }
 
     function removeUpdater(address updater) external override onlyOwner whenNotPaused {
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 0;
-        emit MarketSafetyRemoveUpdater(updater);
+        emit IporRiskManagementOracleRemoveUpdater(updater);
     }
 
     function isUpdater(address updater) external view override returns (uint256) {

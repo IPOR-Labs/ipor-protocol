@@ -105,9 +105,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (ItfMiltonUsdt) {
-        ItfMiltonUsdt itfMiltonUsdtImplementation = new ItfMiltonUsdt(marketSafetyOracle);
+        ItfMiltonUsdt itfMiltonUsdtImplementation = new ItfMiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(itfMiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return ItfMiltonUsdt(address(miltonUsdtProxy));
@@ -119,9 +119,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (ItfMiltonUsdc) {
-        ItfMiltonUsdc itfMiltonUsdcImplementation = new ItfMiltonUsdc(marketSafetyOracle);
+        ItfMiltonUsdc itfMiltonUsdcImplementation = new ItfMiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(itfMiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return ItfMiltonUsdc(address(miltonUsdcProxy));
@@ -133,9 +133,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (ItfMiltonDai) {
-        ItfMiltonDai itfMiltonDaiImplementation = new ItfMiltonDai(marketSafetyOracle);
+        ItfMiltonDai itfMiltonDaiImplementation = new ItfMiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(itfMiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return ItfMiltonDai(address(miltonDaiProxy));
@@ -149,15 +149,15 @@ contract MiltonUtils is Test {
         address tokenDai,
         address[] memory miltonStorageAddresses,
         address[] memory stanleyAddresses,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (ItfMiltons memory) {
         ItfMiltons memory mockCase0Miltons;
         mockCase0Miltons.itfMiltonUsdt =
-            getItfMiltonUsdt(tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0], marketSafetyOracle);
+            getItfMiltonUsdt(tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0], iporRiskManagementOracle);
         mockCase0Miltons.itfMiltonUsdc =
-            getItfMiltonUsdc(tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1], marketSafetyOracle);
+            getItfMiltonUsdc(tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1], iporRiskManagementOracle);
         mockCase0Miltons.itfMiltonDai =
-            getItfMiltonDai(tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2], marketSafetyOracle);
+            getItfMiltonDai(tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2], iporRiskManagementOracle);
         return mockCase0Miltons;
     }
 
@@ -167,9 +167,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase0MiltonUsdt) {
-        MockCase0MiltonUsdt mockCase0MiltonUsdtImplementation = new MockCase0MiltonUsdt(marketSafetyOracle);
+        MockCase0MiltonUsdt mockCase0MiltonUsdtImplementation = new MockCase0MiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase0MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return MockCase0MiltonUsdt(address(miltonUsdtProxy));
@@ -181,9 +181,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase0MiltonUsdc) {
-        MockCase0MiltonUsdc mockCase0MiltonUsdcImplementation = new MockCase0MiltonUsdc(marketSafetyOracle);
+        MockCase0MiltonUsdc mockCase0MiltonUsdcImplementation = new MockCase0MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase0MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase0MiltonUsdc(address(miltonUsdcProxy));
@@ -195,9 +195,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase0MiltonDai) {
-        MockCase0MiltonDai mockCase0MiltonDaiImplementation = new MockCase0MiltonDai(marketSafetyOracle);
+        MockCase0MiltonDai mockCase0MiltonDaiImplementation = new MockCase0MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase0MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase0MiltonDai(address(miltonDaiProxy));
@@ -211,17 +211,17 @@ contract MiltonUtils is Test {
         address tokenDai,
         address[] memory miltonStorageAddresses,
         address[] memory stanleyAddresses,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase0Miltons memory) {
         MockCase0Miltons memory mockCase0Miltons;
         mockCase0Miltons.mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
-            tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0], marketSafetyOracle
+            tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0], iporRiskManagementOracle
         );
         mockCase0Miltons.mockCase0MiltonUsdc = getMockCase0MiltonUsdc(
-            tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1], marketSafetyOracle
+            tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1], iporRiskManagementOracle
         );
         mockCase0Miltons.mockCase0MiltonDai = getMockCase0MiltonDai(
-            tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2], marketSafetyOracle
+            tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2], iporRiskManagementOracle
         );
         return mockCase0Miltons;
     }
@@ -232,9 +232,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase1MiltonUsdt) {
-        MockCase1MiltonUsdt mockCase1MiltonUsdtImplementation = new MockCase1MiltonUsdt(marketSafetyOracle);
+        MockCase1MiltonUsdt mockCase1MiltonUsdtImplementation = new MockCase1MiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase1MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return MockCase1MiltonUsdt(address(miltonUsdtProxy));
@@ -246,9 +246,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase1MiltonUsdc) {
-        MockCase1MiltonUsdc mockCase1MiltonUsdcImplementation = new MockCase1MiltonUsdc(marketSafetyOracle);
+        MockCase1MiltonUsdc mockCase1MiltonUsdcImplementation = new MockCase1MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase1MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase1MiltonUsdc(address(miltonUsdcProxy));
@@ -260,9 +260,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase1MiltonDai) {
-        MockCase1MiltonDai mockCase1MiltonDaiImplementation = new MockCase1MiltonDai(marketSafetyOracle);
+        MockCase1MiltonDai mockCase1MiltonDaiImplementation = new MockCase1MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase1MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase1MiltonDai(address(miltonDaiProxy));
@@ -274,9 +274,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase2MiltonUsdt) {
-        MockCase2MiltonUsdt mockCase2MiltonUsdtImplementation = new MockCase2MiltonUsdt(marketSafetyOracle);
+        MockCase2MiltonUsdt mockCase2MiltonUsdtImplementation = new MockCase2MiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase2MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return MockCase2MiltonUsdt(address(miltonUsdtProxy));
@@ -288,9 +288,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase2MiltonUsdc) {
-        MockCase2MiltonUsdc mockCase2MiltonUsdcImplementation = new MockCase2MiltonUsdc(marketSafetyOracle);
+        MockCase2MiltonUsdc mockCase2MiltonUsdcImplementation = new MockCase2MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase2MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase2MiltonUsdc(address(miltonUsdcProxy));
@@ -302,9 +302,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase2MiltonDai) {
-        MockCase2MiltonDai mockCase2MiltonDaiImplementation = new MockCase2MiltonDai(marketSafetyOracle);
+        MockCase2MiltonDai mockCase2MiltonDaiImplementation = new MockCase2MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase2MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase2MiltonDai(address(miltonDaiProxy));
@@ -316,9 +316,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase3MiltonUsdt) {
-        MockCase3MiltonUsdt mockCase3MiltonUsdtImplementation = new MockCase3MiltonUsdt(marketSafetyOracle);
+        MockCase3MiltonUsdt mockCase3MiltonUsdtImplementation = new MockCase3MiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase3MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return MockCase3MiltonUsdt(address(miltonUsdtProxy));
@@ -330,9 +330,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase3MiltonUsdc) {
-        MockCase3MiltonUsdc mockCase3MiltonUsdcImplementation = new MockCase3MiltonUsdc(marketSafetyOracle);
+        MockCase3MiltonUsdc mockCase3MiltonUsdcImplementation = new MockCase3MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase3MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase3MiltonUsdc(address(miltonUsdcProxy));
@@ -344,9 +344,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase3MiltonDai) {
-        MockCase3MiltonDai mockCase3MiltonDaiImplementation = new MockCase3MiltonDai(marketSafetyOracle);
+        MockCase3MiltonDai mockCase3MiltonDaiImplementation = new MockCase3MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase3MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase3MiltonDai(address(miltonDaiProxy));
@@ -358,9 +358,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase4MiltonDai) {
-        MockCase4MiltonDai mockCase4MiltonDaiImplementation = new MockCase4MiltonDai(marketSafetyOracle);
+        MockCase4MiltonDai mockCase4MiltonDaiImplementation = new MockCase4MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase4MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase4MiltonDai(address(miltonDaiProxy));
@@ -372,9 +372,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase5MiltonDai) {
-        MockCase5MiltonDai mockCase5MiltonDaiImplementation = new MockCase5MiltonDai(marketSafetyOracle);
+        MockCase5MiltonDai mockCase5MiltonDaiImplementation = new MockCase5MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase5MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase5MiltonDai(address(miltonDaiProxy));
@@ -386,9 +386,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdt,
         address miltonSpreadModel,
         address stanleyUsdt,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase6MiltonUsdt) {
-        MockCase6MiltonUsdt mockCase6MiltonUsdtImplementation = new MockCase6MiltonUsdt(marketSafetyOracle);
+        MockCase6MiltonUsdt mockCase6MiltonUsdtImplementation = new MockCase6MiltonUsdt(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdtProxy =
         new ERC1967Proxy(address(mockCase6MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
         return MockCase6MiltonUsdt(address(miltonUsdtProxy));
@@ -400,9 +400,9 @@ contract MiltonUtils is Test {
         address miltonStorageUsdc,
         address miltonSpreadModel,
         address stanleyUsdc,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase6MiltonUsdc) {
-        MockCase6MiltonUsdc mockCase6MiltonUsdcImplementation = new MockCase6MiltonUsdc(marketSafetyOracle);
+        MockCase6MiltonUsdc mockCase6MiltonUsdcImplementation = new MockCase6MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase6MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase6MiltonUsdc(address(miltonUsdcProxy));
@@ -414,9 +414,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase6MiltonDai) {
-        MockCase6MiltonDai mockCase6MiltonDaiImplementation = new MockCase6MiltonDai(marketSafetyOracle);
+        MockCase6MiltonDai mockCase6MiltonDaiImplementation = new MockCase6MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase6MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase6MiltonDai(address(miltonDaiProxy));
@@ -428,9 +428,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase7MiltonDai) {
-        MockCase7MiltonDai mockCase7MiltonDaiImplementation = new MockCase7MiltonDai(marketSafetyOracle);
+        MockCase7MiltonDai mockCase7MiltonDaiImplementation = new MockCase7MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase7MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase7MiltonDai(address(miltonDaiProxy));
@@ -442,9 +442,9 @@ contract MiltonUtils is Test {
         address miltonStorageDai,
         address miltonSpreadModel,
         address stanleyDai,
-        address marketSafetyOracle
+        address iporRiskManagementOracle
     ) public returns (MockCase8MiltonDai) {
-        MockCase8MiltonDai mockCase8MiltonDaiImplementation = new MockCase8MiltonDai(marketSafetyOracle);
+        MockCase8MiltonDai mockCase8MiltonDaiImplementation = new MockCase8MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase8MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase8MiltonDai(address(miltonDaiProxy));

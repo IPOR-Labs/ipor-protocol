@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-/// @notice types used in MarketSafetyOracle's storage
-library MarketSafetyOracleStorageTypes {
-    struct MarketSafetyIndicatorsStorage {
+/// @notice types used in IporRiskManagementOracle's storage
+library IporRiskManagementOracleStorageTypes {
+    struct RiskIndicatorsStorage {
         /// @notice max notional for pay fixed leg, 1 = 10k
         uint64 maxNotionalPayFixed;
         /// @notice max notional for receive fixed leg, 1 = 10k

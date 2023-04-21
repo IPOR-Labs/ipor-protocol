@@ -6,7 +6,7 @@ import "./MockCase1Milton.sol";
 contract MockCase1MiltonUsdt is MockCase1Milton {
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) MockCase1Milton(marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) MockCase1Milton(iporRiskManagementOracle) {
     }
 
     function _getDecimals() internal pure virtual override returns (uint256) {

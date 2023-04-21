@@ -16,7 +16,7 @@ import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
-import "../interfaces/IMarketSafetyOracle.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
@@ -78,12 +78,12 @@ abstract contract MiltonInternal is
     uint32 internal _autoUpdateIporIndexThreshold;
 
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IMarketSafetyOracle private immutable _marketSafetyOracle;
+    IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address marketSafetyOracle) {
+    constructor(address iporRiskManagementOracle) {
         /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
-        _marketSafetyOracle = IMarketSafetyOracle(marketSafetyOracle);
+        _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
     }
 
     modifier onlyJoseph() {
@@ -107,8 +107,8 @@ abstract contract MiltonInternal is
         return address(_stanley);
     }
 
-    function getMarketSafetyOracle() external view returns (address) {
-        return address(_marketSafetyOracle);
+    function getRiskManagementOracle() external view returns (address) {
+        return address(_iporRiskManagementOracle);
     }
 
     function getMaxSwapCollateralAmount() external view override returns (uint256) {
@@ -117,7 +117,7 @@ abstract contract MiltonInternal is
 
     function getMaxLpUtilizationRate() external view override returns (uint256) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
         return safetyIndicators.maxUtilizationRate;
     }
 
@@ -126,7 +126,7 @@ abstract contract MiltonInternal is
         uint256 maxUtilizationRateReceiveFixed
     ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
         return (safetyIndicators.maxUtilizationRatePayFixed, safetyIndicators.maxUtilizationRateReceiveFixed);
     }
 
@@ -161,7 +161,7 @@ abstract contract MiltonInternal is
         uint256 maxLeverageReceiveFixed
     ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
         return (safetyIndicators.maxLeveragePayFixed, safetyIndicators.maxLeverageReceiveFixed);
     }
 
@@ -334,7 +334,7 @@ abstract contract MiltonInternal is
         internal
         view
         virtual
-        returns (AmmMiltonTypes.OpenSwapSafetyIndicators memory safetyIndicators)
+        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
     {
         (
             uint256 maxNotionalPayFixed,
@@ -342,7 +342,7 @@ abstract contract MiltonInternal is
             uint256 maxUtilizationRatePayFixed,
             uint256 maxUtilizationRateReceiveFixed,
             uint256 maxUtilizationRate,
-        ) = _marketSafetyOracle.getIndicators(_asset);
+        ) = _iporRiskManagementOracle.getRiskIndicators(_asset);
         uint256 maxCollateralPayFixed = IporMath.division(
             liquidityPool * maxUtilizationRatePayFixed,
             Constants.D18
@@ -369,7 +369,7 @@ abstract contract MiltonInternal is
         } else {
             maxLeverageReceiveFixed = _MIN_LEVERAGE;
         }
-        return AmmMiltonTypes.OpenSwapSafetyIndicators(
+        return AmmMiltonTypes.OpenSwapRiskIndicators(
             maxUtilizationRate,
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
