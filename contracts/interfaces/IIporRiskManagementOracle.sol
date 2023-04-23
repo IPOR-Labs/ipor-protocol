@@ -7,6 +7,14 @@ interface IIporRiskManagementOracle {
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
+    /// @notice Gets risk indicators for a given asset
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @return maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
+    /// @return maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
+    /// @return maxUtilizationRate maximum utilization rate for both legs
+    /// @return lastUpdateTimestamp Last risk indicators update done by off-chain service
     function getRiskIndicators(address asset)
         external
         view
@@ -19,6 +27,14 @@ interface IIporRiskManagementOracle {
             uint256 lastUpdateTimestamp
         );
 
+    /// @notice Updates risk indicators for a given asset
+    /// @dev Emmits {RiskIndicatorsUpdate} event.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
+    /// @param maxUtilizationRate maximum utilization rate for both legs
     function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
@@ -28,6 +44,14 @@ interface IIporRiskManagementOracle {
         uint256 maxUtilizationRate
     ) external;
 
+    /// @notice Updates risk indicators for a multiple assets
+    /// @dev Emmits {RiskIndicatorsUpdate} event.
+    /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
+    /// @param maxUtilizationRate maximum utilization rate for both legs
     function updateRiskIndicators(
         address[] memory asset,
         uint256[] memory maxNotionalPayFixed,
@@ -77,6 +101,13 @@ interface IIporRiskManagementOracle {
     /// @dev Emits {Unpaused} event from IporOracle.
     function unpause() external;
 
+    /// @notice event emitted when risk indicators are updated
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
+    /// @param maxUtilizationRate maximum utilization rate for both legs
     event RiskIndicatorsUpdate(
         address indexed asset,
         uint256 maxNotionalPayFixed,
@@ -86,11 +117,19 @@ interface IIporRiskManagementOracle {
         uint256 maxUtilizationRate
     );
 
+    /// @notice event emitted when new asset is added
+    /// @param asset underlying / stablecoin address
     event IporRiskManagementOracleAddAsset(address indexed asset);
 
+    /// @notice event emitted when asset is removed
+    /// @param asset underlying / stablecoin address
     event IporRiskManagementOracleRemoveAsset(address indexed asset);
 
+    /// @notice event emitted when new updater is added
+    /// @param updater address
     event IporRiskManagementOracleAddUpdater(address indexed updater);
 
+    /// @notice event emitted when updater is removed
+    /// @param updater address
     event IporRiskManagementOracleRemoveUpdater(address indexed updater);
 }
