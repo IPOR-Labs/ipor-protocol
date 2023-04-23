@@ -26,6 +26,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_10B,
             TestConstants.MSO_NOTIONAL_2B,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -33,6 +36,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_NOTIONAL_100M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -40,6 +46,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_50M,
             TestConstants.MSO_NOTIONAL_10M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -47,6 +56,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_50M,
             TestConstants.MSO_NOTIONAL_10M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -54,6 +66,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_2M_220K,
             TestConstants.MSO_NOTIONAL_1M_500K,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             111 * 1e18,
             75 * 1e18
         );
@@ -61,6 +76,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolDai,
             TestConstants.MSO_NOTIONAL_1M,
             TestConstants.MSO_NOTIONAL_100K,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             50 * 1e18,
             10 * 1e18
         );
@@ -68,6 +86,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_10B,
             TestConstants.MSO_NOTIONAL_2B,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -75,6 +96,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_1B,
             TestConstants.MSO_NOTIONAL_100M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             1000 * 1e18
         );
@@ -82,6 +106,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_50M,
             TestConstants.MSO_NOTIONAL_10M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -89,6 +116,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_50M,
             TestConstants.MSO_NOTIONAL_10M,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             1000 * 1e18,
             500 * 1e18
         );
@@ -96,6 +126,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_2M_220K,
             TestConstants.MSO_NOTIONAL_1M_500K,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             111 * 1e18,
             75 * 1e18
         );
@@ -103,8 +136,41 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             _iporProtocolUsdt,
             TestConstants.MSO_NOTIONAL_1M,
             TestConstants.MSO_NOTIONAL_100K,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
             50 * 1e18,
             10 * 1e18
+        );
+        updateIndicatorsAndAssertMaxLeverage(
+            _iporProtocolUsdt,
+            type(uint64).min,
+            type(uint64).max,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_20_PER,
+            TestConstants.MSO_UTILIZATION_RATE_35_PER,
+            10 * 1e18,
+            1000 * 1e18
+        );
+        updateIndicatorsAndAssertMaxLeverage(
+            _iporProtocolUsdt,
+            type(uint64).min,
+            type(uint64).max,
+            0,
+            TestConstants.MSO_UTILIZATION_RATE_100_PER,
+            TestConstants.MSO_UTILIZATION_RATE_100_PER,
+            10 * 1e18,
+            1000 * 1e18
+        );
+        updateIndicatorsAndAssertMaxLeverage(
+            _iporProtocolUsdt,
+            type(uint64).min,
+            type(uint64).max,
+            0,
+            TestConstants.MSO_UTILIZATION_RATE_100_PER,
+            TestConstants.MSO_UTILIZATION_RATE_100_PER,
+            10 * 1e18,
+            1000 * 1e18
         );
     }
 
@@ -112,6 +178,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
         IporProtocol memory iporProtocol,
         uint64 maxNotionalPayFixed,
         uint64 maxNotionalReceiveFixed,
+        uint16 maxUtilizationRatePayFixed,
+        uint16 maxUtilizationRateReceiveFixed,
+        uint16 maxUtilizationRate,
         uint256 expectedMaxLeveragePayFixed,
         uint256 expectedMaxLeverageReceiveFixed
     ) internal {
@@ -122,9 +191,9 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
             address(iporProtocol.asset),
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
-            TestConstants.MSO_UTILIZATION_RATE_20_PER,
-            TestConstants.MSO_UTILIZATION_RATE_20_PER,
-            TestConstants.MSO_UTILIZATION_RATE_35_PER
+            maxUtilizationRatePayFixed,
+            maxUtilizationRateReceiveFixed,
+            maxUtilizationRate
         );
 
         //when

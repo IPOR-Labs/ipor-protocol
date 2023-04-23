@@ -213,6 +213,83 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
     }
 
+    function testShouldOpenPositionPayFixedUSDTWhenRiskManagementOracleProvidesLargeValues() public {
+        // given
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            type(uint16).max,
+            type(uint16).max,
+            type(uint64).max
+        );
+        MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
+        MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
+            address(_usdtMockedToken),
+            address(iporOracle),
+            address(miltonStorageUsdt),
+            address(_miltonSpreadModel),
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
+        );
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
+            address(_usdtMockedToken),
+            address(_ipTokenUsdt),
+            address(mockCase0MiltonUsdt),
+            address(miltonStorageUsdt),
+            address(stanleyUsdt)
+        );
+        prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+        prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
+        prepareJoseph(mockCase0JosephUsdt);
+        prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        ExpectedMiltonBalances memory expectedBalances;
+        expectedBalances.expectedMiltonBalance =
+            TestConstants.USD_28_000_6DEC + TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC;
+        expectedBalances.expectedOpenerUserBalance = 9990000000000;
+        expectedBalances.expectedLiquidityPoolBalance =
+            TestConstants.USD_28_000_18DEC + TestConstants.TC_OPENING_FEE_18DEC;
+        expectedBalances.expectedSumOfBalancesBeforePayout =
+            TestConstants.USD_28_000_6DEC + TestConstants.USD_10_000_000_6DEC;
+        uint256 expectedDerivativesTotalBalanceWad = TestConstants.TC_COLLATERAL_18DEC;
+        uint256 expectedIporPublicationFee = TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC;
+        // when
+        vm.prank(_userTwo);
+        mockCase0MiltonUsdt.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_1000_18DEC
+        );
+        (, IporTypes.IporSwapMemory[] memory swaps) =
+            miltonStorageUsdt.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
+        uint256 actualOpenSwapsVolume;
+        for (uint256 i = 0; i < swaps.length; i++) {
+            if (swaps[i].state == 1) {
+                actualOpenSwapsVolume++;
+            }
+        }
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageUsdt.getExtendedBalance();
+        uint256 actualSumOfBalances =
+            _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)) + _usdtMockedToken.balanceOf(_userTwo);
+        uint256 actualDerivativesTotalBalanceWad = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        // then
+        assertEq(actualOpenSwapsVolume, 1);
+        assertEq(_usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)), expectedBalances.expectedMiltonBalance);
+        assertEq(int256(_usdtMockedToken.balanceOf(_userTwo)), expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualDerivativesTotalBalanceWad, expectedDerivativesTotalBalanceWad);
+        assertEq(balance.iporPublicationFee, expectedIporPublicationFee);
+        assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
+        assertEq(balance.treasury, TestConstants.ZERO);
+        assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances);
+    }
+
     function testShouldOpenPositionPayFixedDAIWhenCustomOpeningFeeForTreasuryIs50Percent() public {
         // given
         ItfIporOracle iporOracle =

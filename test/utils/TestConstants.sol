@@ -96,8 +96,10 @@ library TestConstants {
     int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000 * 1e18;
 
     uint256 public constant LEVERAGE_18DEC = 10 * 1e18;
+    uint256 public constant LEVERAGE_11_18DEC = 11 * 1e18;
     int256 public constant LEVERAGE_18DEC_INT = 10 * 1e18;
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
+    uint256 public constant LEVERAGE_1001_18DEC = 1001 * 1e18;
 
     uint256 public constant SPECIFIC_INCOME_TAX_CASE_1 = 600751281464875607313;
     int256 public constant SPECIFIC_INCOME_TAX_CASE_1_INT = 600751281464875607313;
@@ -216,4 +218,7 @@ library TestConstants {
     uint16 public constant MSO_UTILIZATION_RATE_60_PER = 6000;
     uint16 public constant MSO_UTILIZATION_RATE_80_PER = 8000;
     uint16 public constant MSO_UTILIZATION_RATE_90_PER = 9000;
+    uint16 public constant MSO_UTILIZATION_RATE_100_PER = 10000;
+    uint16 public constant MSO_UTILIZATION_RATE_150_PER = 15000;
+    uint16 public constant MSO_UTILIZATION_RATE_MAX = type(uint16).max;
 }
