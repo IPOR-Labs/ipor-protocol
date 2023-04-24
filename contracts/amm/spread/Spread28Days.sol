@@ -46,7 +46,25 @@ contract Spread28Days is ISpread28Days {
         IporTypes.AccruedIpor memory accruedIpor,
         IporTypes.MiltonBalancesMemory memory accruedBalance
     ) external view override returns (uint256 quoteValue) {
-        return 1;
+        int256 spreadPremiums = _calculateSpreadPremiumsReceiveFixed(asset, accruedIpor, accruedBalance);
+
+        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() + spreadPremiums;
+
+        quoteValue = _calculateReferenceLegReceiveFixed(
+            intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
+            accruedIpor.exponentialMovingAverage
+        );
+    }
+
+    function _calculateReferenceLegReceiveFixed(
+        uint256 iporIndexValue,
+        uint256 exponentialMovingAverage
+    ) internal pure returns (uint256) {
+        if (iporIndexValue < exponentialMovingAverage) {
+            return iporIndexValue;
+        } else {
+            return exponentialMovingAverage;
+        }
     }
 
     function _calculateSpreadPremiumsPayFixed(
@@ -56,6 +74,19 @@ contract Spread28Days is ISpread28Days {
     ) internal view virtual returns (int256 baseSpread) {
         return
             BaseSpread28DaysLibs._calculateSpreadPremiumsPayFixed(
+                accruedIpor,
+                accruedBalance,
+                _getBaseSpreadConfig(asset)
+            );
+    }
+
+    function _calculateSpreadPremiumsReceiveFixed(
+        address asset,
+        IporTypes.AccruedIpor memory accruedIpor,
+        IporTypes.MiltonBalancesMemory memory accruedBalance
+    ) internal view virtual returns (int256 baseSpread) {
+        return
+            BaseSpread28DaysLibs._calculateSpreadPremiumsReceiveFixed(
                 accruedIpor,
                 accruedBalance,
                 _getBaseSpreadConfig(asset)

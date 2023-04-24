@@ -96,7 +96,7 @@ contract SpreadRouter is OpenzeppelinStorage {
         }
     }
 
-    fallback() external payable {
+    fallback() external {
         bytes32 assetBytes = msg.data.length >= 36 ? bytes32(msg.data[4 : 36]) : bytes32(0);
         _delegate(getRouterImplementation(msg.sig, assetBytes));
     }
