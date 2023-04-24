@@ -902,6 +902,74 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
         assertEq(soap, TestConstants.ZERO_INT);
     }
 
+    function testShouldClosePositionUSDTAndWithdrawFromStanley(
+    ) public {
+        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
+        ItfIporOracle iporOracle =
+        getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
+        MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
+            address(_usdtMockedToken),
+            address(iporOracle),
+            address(miltonStorageUsdt),
+            address(_miltonSpreadModel),
+            address(stanleyUsdt)
+        );
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
+            address(_usdtMockedToken),
+            address(_ipTokenUsdt),
+            address(mockCase0MiltonUsdt),
+            address(miltonStorageUsdt),
+            address(stanleyUsdt)
+        );
+        prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+        prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
+        prepareJoseph(mockCase0JosephUsdt);
+        prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
+        vm.prank(_liquidityProvider);
+        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        openSwapPayFixed(
+            _userTwo,
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            TestConstants.PERCENTAGE_10_18DEC,
+            TestConstants.LEVERAGE_18DEC,
+            mockCase0MiltonUsdt
+        );
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_160_18DEC, block.timestamp);
+        ExpectedMiltonBalances memory expectedBalances;
+        expectedBalances.expectedPayoffAbs = TestConstants.TC_COLLATERAL_6DEC;
+
+        uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
+        vm.prank(_admin);
+        mockCase0JosephUsdt.addAppointedToRebalance(_admin);
+        vm.prank(_admin);
+        mockCase0JosephUsdt.depositToStanley(20_000e18);
+
+        uint256 miltonERC20BalanceBefore = _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt));
+        uint256 userERC20BalanceBefore = _usdtMockedToken.balanceOf(_userTwo);
+        uint256 stanleyBalanceBefore = stanleyUsdt.totalBalance(address(mockCase0MiltonUsdt));
+
+        // when
+        vm.prank(_userTwo);
+        mockCase0MiltonUsdt.itfCloseSwapPayFixed(1, endTimestamp);
+
+        // then
+        uint256 miltonERC20BalanceAfter = _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt));
+        uint256 userERC20BalanceAfter = _usdtMockedToken.balanceOf(_userTwo);
+        uint256 stanleyBalanceAfter = stanleyUsdt.totalBalance(address(mockCase0MiltonUsdt));
+
+        assertEq(miltonERC20BalanceBefore, 18_000e6);
+        assertEq(userERC20BalanceBefore, 9_990_000e6);
+        assertEq(stanleyBalanceBefore, 20_000e18);
+        assertEq(miltonERC20BalanceAfter, 16189279017);
+        assertEq(userERC20BalanceAfter, 10008957318804);
+        assertEq(stanleyBalanceAfter, 2853402179346196141158);
+
+    }
+
     function testShouldClosePositionDAIWhenPayFixedMiltonLostAndUserEarnedLessThanCollateralBeforeMaturity18DecimalsAndOwner(
     ) public {
         _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
