@@ -8,6 +8,7 @@ import "../../contracts/itf/ItfStanleyUsdt.sol";
 import "../../contracts/itf/ItfStanleyDai.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
+import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "../../contracts/mocks/MockStanleyStrategies.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
@@ -151,6 +152,17 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
+    function getMockTestnetShareTokenAaveDai(uint256 totalSupply) public returns (MockTestnetShareTokenAaveDai) {
+        return new MockTestnetShareTokenAaveDai(totalSupply);
+    }
+
+    function getMockTestnetShareTokenCompoundDai(uint256 totalSupply)
+        public
+        returns (MockTestnetShareTokenCompoundDai)
+    {
+        return new MockTestnetShareTokenCompoundDai(totalSupply);
+    }
+
     function getMockTestnetStrategyCompoundDai(address asset) public returns (MockTestnetStrategy) {
         MockTestnetStrategyCompoundDai strategyImpl = new MockTestnetStrategyCompoundDai();
         MockTestnetShareTokenCompoundDai shareToken = new MockTestnetShareTokenCompoundDai(0);
@@ -272,5 +284,17 @@ contract StanleyUtils {
             abi.encodeWithSignature("initialize(address,address,address,address)", asset, shareToken, comptroller, tokenComp)
         );
         return StrategyCompound(address(strategyProxy));
+    }
+
+    function getStanleyDai(address asset, address ivToken, address strategyAave, address strategyCompound)
+        public
+        returns (StanleyDai)
+    {
+        StanleyDai stanleyDaiImpl = new StanleyDai();
+        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
+        );
+        return StanleyDai(address(stanleyDaiProxy));
     }
 }
