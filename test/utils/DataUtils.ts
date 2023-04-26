@@ -9,9 +9,6 @@ import {
     MiltonUsdcCase,
     MiltonUsdtCase,
     MiltonDaiCase,
-    getMockMiltonUsdcCase,
-    getMockMiltonUsdtCase,
-    getMockMiltonDaiCase,
 } from "./MiltonUtils";
 import {
     JosephUsdcMocks,
@@ -20,9 +17,6 @@ import {
     JosephUsdcMockCases,
     JosephUsdtMockCases,
     JosephDaiMockCases,
-    getMockJosephUsdcCase,
-    getMockJosephUsdtCase,
-    getMockJosephDaiCase,
 } from "./JosephUtils";
 import { MockStanley, MockStanleyCase, getMockStanleyCase } from "./StanleyUtils";
 import { prepareIporOracle } from "./IporOracleUtils";
