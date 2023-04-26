@@ -8,7 +8,37 @@ library IporMath {
     }
 
     function divisionInt(int256 x, int256 y) internal pure returns (int256 z) {
-        z = (x + (y / 2)) / y;
+        uint256 absX = uint256(x < 0 ? -x : x);
+        uint256 absY = uint256(y < 0 ? -y : y);
+
+        // Use bitwise XOR to get the sign on MBS bit then shift to LSB
+        // sign == 0x0000...0000 ==  0 if the number is non-negative
+        // sign == 0xFFFF...FFFF == -1 if the number is negative
+        int256 sign = (x ^ y) >> 255;
+
+        uint256 divAbs;
+        uint256 remainder;
+
+        unchecked {
+            divAbs = absX / absY;
+            remainder = absX % absY;
+        }
+        // Check if we need to round
+        if (sign < 0) {
+            // remainder << 1 left shift is equivalent to multiplying by 2
+            if (remainder << 1 > absY) {
+                divAbs++;
+            }
+        } else {
+            if (remainder << 1 >= absY) {
+                divAbs++;
+            }
+        }
+
+        // (sign | 1) is cheaper than (sign < 0) ? -1 : 1;
+        unchecked {
+            z = int256(divAbs) * (sign | 1);
+        }
     }
 
     function divisionWithoutRound(uint256 x, uint256 y) internal pure returns (uint256 z) {

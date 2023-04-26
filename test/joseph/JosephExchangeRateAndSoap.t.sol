@@ -398,7 +398,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // then
         assertEq(actualExchangeRate, 231204643857984158);
-        assertEq(soap, -8864190058051077882737);
+        assertEq(soap, -8864190058051077882738);
         assertEq(balance.liquidityPool, 5008088573427971608517);
     }
 
@@ -452,7 +452,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // then
         assertEq(actualExchangeRate, 231204643857984155);
-        assertEq(soap, -8864190058051077712840);
+        assertEq(soap, -8864190058051077712841);
         assertEq(balance.liquidityPool, 5008088573427971608517);
     }
 

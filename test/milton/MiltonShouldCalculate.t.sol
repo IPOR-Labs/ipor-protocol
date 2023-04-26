@@ -354,7 +354,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 7918994164764269383465;
+        expectedBalances.expectedPayoffAbs = 7918994164764269383466;
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -842,7 +842,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 7918994164764269383465;
+        expectedBalances.expectedPayoffAbs = 7918994164764269383466;
         //
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +

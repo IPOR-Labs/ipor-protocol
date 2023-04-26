@@ -102,7 +102,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -298150684931506849314);
+        assertEq(virtualHedgingSwap, -298150684931506849315);
     }
 
     function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigher() public {
@@ -193,7 +193,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -698150684931506849314);
+        assertEq(virtualHedgingSwap, -698150684931506849315);
     }
 
     function testShouldCalculateVirtHedgPosElapsed10NegativePnLOppositeLegRateHigherFlatFeeZero()
@@ -286,7 +286,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -693150684931506849314);
+        assertEq(virtualHedgingSwap, -693150684931506849315);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PositivePnLOppositeLegRateHigherFlatFeeZero()
@@ -379,7 +379,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -293150684931506849314);
+        assertEq(virtualHedgingSwap, -293150684931506849315);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLZeroOppositeLegRateHigher()
@@ -472,7 +472,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -498150684931506849314);
+        assertEq(virtualHedgingSwap, -498150684931506849315);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLZeroOppositeLegRateHigherFlatFeeZero()
@@ -565,7 +565,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -493150684931506849314);
+        assertEq(virtualHedgingSwap, -493150684931506849315);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnL200PayFixedZero() public {
@@ -623,7 +623,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1037876712328767123287);
+        assertEq(virtualHedgingSwap, -1037876712328767123288);
     }
 
     function testShouldCalculateVirtualHedgingSwapElapsed10PnLNegative200PayFixedZero() public {
@@ -683,7 +683,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1437876712328767123287);
+        assertEq(virtualHedgingSwap, -1437876712328767123288);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedOppositeLegHigher() public {
@@ -770,7 +770,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -772123287671232876711);
+        assertEq(virtualHedgingSwap, -772123287671232876712);
     }
 
     function testShouldCalculateVirtHedgPosPnL200ClosingInDayWhenOpenedOppositeLegHigher() public {
@@ -857,7 +857,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -572123287671232876711);
+        assertEq(virtualHedgingSwap, -572123287671232876712);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedLegEqualZero() public {
@@ -917,7 +917,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         );
 
         //then
-        assertEq(virtualHedgingSwap, -1922808219178082191780);
+        assertEq(virtualHedgingSwap, -1922808219178082191781);
     }
 
     function testShouldCalculateVirtHedgPosPnLZeroClosingInDayWhenOpenedBothLegZero() public {

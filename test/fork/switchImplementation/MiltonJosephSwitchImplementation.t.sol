@@ -235,7 +235,7 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.makePersistent(address(stanleySnapshotAfterUpgrade));
 
         //Assert files
-        miltonSnapshotStart.assert(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
+        miltonSnapshotStart.assertWithIgnore(miltonSnapshotStart, miltonSnapshotAfterUpgrade);
         josephSnapshotStart.assert(josephSnapshotStart, josephSnapshotAfterUpgrade);
         miltonStorageSnapshotStart.assert(
             miltonStorageSnapshotStart,
