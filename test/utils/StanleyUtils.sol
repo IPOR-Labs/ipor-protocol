@@ -9,12 +9,15 @@ import "../../contracts/itf/ItfStanleyDai.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/StanleyDai.sol";
+import "../../contracts/vault/StanleyUsdc.sol";
 import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "../../contracts/mocks/MockStanleyStrategies.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdt.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
+import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdc.sol";
+import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdc.sol";
 import "../../contracts/mocks/tokens/AAVEMockedToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
@@ -151,6 +154,17 @@ contract StanleyUtils {
         );
 
         return MockTestnetStrategy(address(strategyProxy));
+    }
+
+    function getMockTestnetShareTokenAaveUsdc(uint256 totalSupply) public returns (MockTestnetShareTokenAaveUsdc) {
+        return new MockTestnetShareTokenAaveUsdc(totalSupply);
+    }
+
+    function getMockTestnetShareTokenCompoundUsdc(uint256 totalSupply)
+        public
+        returns (MockTestnetShareTokenCompoundUsdc)
+    {
+        return new MockTestnetShareTokenCompoundUsdc(totalSupply);
     }
 
     function getMockTestnetShareTokenAaveDai(uint256 totalSupply) public returns (MockTestnetShareTokenAaveDai) {
@@ -297,6 +311,18 @@ contract StanleyUtils {
             abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
         );
         return StanleyDai(address(stanleyDaiProxy));
+    }
+
+    function getStanleyUsdc(address asset, address ivToken, address strategyAave, address strategyCompound)
+        public
+        returns (StanleyUsdc)
+    {
+        StanleyUsdc stanleyUsdcImpl = new StanleyUsdc();
+        ERC1967Proxy stanleyUsdcProxy = new ERC1967Proxy(
+            address(stanleyUsdcImpl),
+            abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
+        );
+        return StanleyUsdc(address(stanleyUsdcProxy));
     }
 
     function getMockTestnetStrategy(address asset, address shareToken) public returns (MockTestnetStrategy) {

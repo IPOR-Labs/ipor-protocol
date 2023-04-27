@@ -147,6 +147,7 @@ library TestConstants {
     uint256 public constant USD_9_000_6DEC = 9000 * 1000000;
     uint256 public constant USD_10_000_6DEC = 10000 * 1000000;
     uint256 public constant USD_14_000_6DEC = 14000 * 1000000;
+    uint256 public constant USD_20_000_6DEC = 20000 * 1000000;
     uint256 public constant USD_28_000_6DEC = 28000 * 1000000;
     uint256 public constant USD_50_000_6DEC = 50000 * 1000000;
     uint256 public constant USD_100_000_6DEC = 100000 * 1000000;
