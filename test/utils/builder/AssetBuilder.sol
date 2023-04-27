@@ -14,7 +14,11 @@ contract AssetBuilder {
     BuilderData private builderData;
 
     constructor() {
-        builderData = withDAI();
+        default();
+    }
+
+    function default() public returns(AssetBuilder) {
+        return withDAI();
     }
 
     function withUSDT() public returns (AssetBuilder) {

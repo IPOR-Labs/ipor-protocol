@@ -21,7 +21,17 @@ contract MiltonBuilder {
     BuilderData private builderData;
 
     constructor() {
+        default();
+    }
+
+    function default() public returns(MiltonBuilder) {
+        return withDAI();
+    }
+
+    function withDAI() public returns (MiltonBuilder) {
         AssetBuilder assetBuilder = new AssetBuilder();
+        assetBuilder.withDAI();
+
         MockTestnetToken assetDAI = assetBuilder.build();
 
         builderData = BuilderData(
@@ -32,6 +42,7 @@ contract MiltonBuilder {
             address(0),
             address(0)
         );
+        return this;
     }
 
     function build() public returns (ItfMilton) {
