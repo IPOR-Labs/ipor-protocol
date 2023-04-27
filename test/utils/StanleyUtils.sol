@@ -120,6 +120,26 @@ contract StanleyUtils {
         return ItfStanley(itfStanleyProxyAddress);
     }
 
+    function getItfStanleyDai(address asset, address ivToken, address strategyAave, address strategyCompound)
+        public
+        returns (ItfStanleyDai)
+    {
+        ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
+            address(itfStanleyImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                asset,
+                ivToken,
+                strategyAave,
+                strategyCompound
+            )
+            )
+        );
+        return ItfStanleyDai(itfStanleyProxyAddress);
+    }
+
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
         MockTestnetStrategyAaveUsdt strategyImpl = new MockTestnetStrategyAaveUsdt();
         MockTestnetShareTokenAaveUsdt shareToken = new MockTestnetShareTokenAaveUsdt(0);
