@@ -147,12 +147,7 @@ contract IporOracle is
         onlyUpdater
         whenNotPaused
     {
-        uint256[] memory indexes = new uint256[](1);
-        indexes[0] = indexValue;
-        address[] memory assets = new address[](1);
-        assets[0] = asset;
-
-        _updateIndexes(assets, indexes, block.timestamp);
+        _updateIndex(asset, indexValue, block.timestamp);
     }
 
     function updateIndex(address asset)
