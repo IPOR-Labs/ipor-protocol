@@ -32,6 +32,7 @@ import "../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
 import "../../contracts/mocks/stanley/compound/MockWhitePaper.sol";
 import "../../contracts/mocks/stanley/compound/MockCToken.sol";
 import "../../contracts/mocks/stanley/compound/MockComptroller.sol";
+import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "../../contracts/mocks/tokens/MockedCOMPToken.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 
@@ -322,5 +323,14 @@ contract StanleyUtils {
             abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
         );
         return StanleyUsdc(address(stanleyUsdcProxy));
+    }
+
+    function getMockTestnetStrategy(address asset, address shareToken) public returns (MockTestnetStrategy) {
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        ERC1967Proxy strategyProxy = new ERC1967Proxy(
+            address(strategyImpl),
+            abi.encodeWithSignature("initialize(address,address)", asset, shareToken)
+        );
+        return MockTestnetStrategy(address(strategyProxy));
     }
 }
