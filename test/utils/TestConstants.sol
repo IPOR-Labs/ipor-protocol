@@ -27,6 +27,7 @@ library TestConstants {
     uint256 public constant USD_1_500_18DEC = 1500 * 1e18;
     uint256 public constant USD_2_000_18DEC = 2000 * 1e18;
     uint256 public constant USD_5_000_18DEC = 5000 * 1e18;
+    uint256 public constant USD_9_500_18DEC = 9500 * 1e18;
     uint256 public constant USD_10_000_18DEC = 10000 * 1e18;
     uint256 public constant USD_10_400_18DEC = 10400 * 1e18;
     uint256 public constant USD_13_000_18DEC = 13000 * 1e18;
@@ -147,6 +148,7 @@ library TestConstants {
     uint256 public constant USD_9_000_6DEC = 9000 * 1000000;
     uint256 public constant USD_10_000_6DEC = 10000 * 1000000;
     uint256 public constant USD_14_000_6DEC = 14000 * 1000000;
+    uint256 public constant USD_20_000_6DEC = 20000 * 1000000;
     uint256 public constant USD_28_000_6DEC = 28000 * 1000000;
     uint256 public constant USD_50_000_6DEC = 50000 * 1000000;
     uint256 public constant USD_100_000_6DEC = 100000 * 1000000;
