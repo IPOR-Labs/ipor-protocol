@@ -11,6 +11,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/StanleyErrors.sol";
 import "../libraries/Constants.sol";
+import "../security/PauseManager.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIvToken.sol";
 import "../interfaces/IStanleyInternal.sol";
@@ -39,6 +40,11 @@ abstract contract Stanley is
 
     modifier onlyMilton() {
         require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
+        _;
+    }
+
+    modifier onlyGuardian() {
+        require(PauseManager.isGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
@@ -327,7 +333,7 @@ abstract contract Stanley is
         emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyGuardian {
         _pause();
     }
 
@@ -540,4 +546,12 @@ abstract contract Stanley is
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function addGuardian(address _guardian) external onlyOwner {
+        PauseManager.addGuardian(_guardian);
+    }
+
+    function removeGuardian(address _guardian) external onlyOwner {
+        PauseManager.removeGuardian(_guardian);
+    }
 }

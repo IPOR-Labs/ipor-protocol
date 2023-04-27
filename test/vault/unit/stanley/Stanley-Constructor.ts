@@ -169,6 +169,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        await stanley.addGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then
@@ -183,6 +184,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        await stanley.addGuardian(await admin.getAddress());
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
         //when
@@ -199,6 +201,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        await stanley.addGuardian(await admin.getAddress());
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
         //when
@@ -222,7 +225,7 @@ describe("Stanley -> constructor", () => {
         await assertError(
             stanley.connect(userOne).pause(),
             //then
-            "Ownable: caller is not the owner"
+            "IPOR_011"
         );
     });
 
@@ -234,6 +237,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        await stanley.addGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then
@@ -248,6 +252,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
+        await stanley.addGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then

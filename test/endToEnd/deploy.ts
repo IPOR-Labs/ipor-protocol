@@ -175,6 +175,10 @@ export const deploy = async (admin: Signer): Promise<DeployType> => {
         strategyCompoundUsdt.address
     );
 
+    await stanleyDai.addGuardian(await admin.getAddress());
+    await stanleyUsdc.addGuardian(await admin.getAddress());
+    await stanleyUsdt.addGuardian(await admin.getAddress());
+
     const miltonStorageDai = await miltonStorageDaiFactory();
     const miltonStorageUsdc = await miltonStorageUsdcFactory();
     const miltonStorageUsdt = await miltonStorageUsdtFactory();
