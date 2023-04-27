@@ -10,9 +10,9 @@ contract MockTestnetToken is ERC20, IporOwnable {
         string memory name,
         string memory symbol,
         uint256 initialSupply,
-        uint8 _decimals
+        uint8 decimals
     ) ERC20(name, symbol) {
-        _customDecimals = _decimals;
+        _customDecimals = decimals;
         _mint(msg.sender, initialSupply);
     }
 
