@@ -21,9 +21,9 @@ library SpreadStorageLibs {
         WeightedNotional90DaysUsdt
     }
 
-    function saveWeightedNotional28Days(
+    function saveWeightedNotional(
         StorageId storageId,
-        SpreadTypes.WeightedNotional28DaysMemory memory weightedNotional28Days
+        SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days
     ) internal {
         unchecked {
             weightedNotional28Days.weightedNotionalPayFixed =
@@ -34,8 +34,6 @@ library SpreadStorageLibs {
                 weightedNotional28Days.weightedNotionalReceiveFixed /
                 1e18;
         }
-        console2.log("weightedNotional28Days.weightedNotionalPayFixed", weightedNotional28Days.weightedNotionalPayFixed);
-        console2.log("weightedNotional28Days.weightedNotionalReceiveFixed", weightedNotional28Days.weightedNotionalReceiveFixed);
         uint96 weightedNotionalPayFixed = weightedNotional28Days
             .weightedNotionalPayFixed
             .toUint96();
@@ -62,9 +60,9 @@ library SpreadStorageLibs {
         }
     }
 
-    function getWeightedNotional28Days(StorageId storageId)
+    function getWeightedNotional(StorageId storageId)
         internal
-        returns (SpreadTypes.WeightedNotional28DaysMemory memory weightedNotional28Days)
+        returns (SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days)
     {
         uint256 weightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
@@ -86,13 +84,15 @@ library SpreadStorageLibs {
         }
 
         return
-            SpreadTypes.WeightedNotional28DaysMemory(
+            SpreadTypes.WeightedNotionalMemory(
                 weightedNotionalPayFixed,
                 lastUpdateTimePayFixed,
                 weightedNotionalReceiveFixed,
-                lastUpdateTimeReceiveFixed
+                lastUpdateTimeReceiveFixed,
+                storageId
             );
     }
+
     function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
     }
