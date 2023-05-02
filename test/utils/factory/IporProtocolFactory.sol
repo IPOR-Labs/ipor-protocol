@@ -21,17 +21,6 @@ import "../builder/IporProtocolBuilder.sol";
 import "forge-std/Test.sol";
 
 contract IporProtocolFactory is Test {
-    //    struct IporProtocol {
-    //        MockTestnetToken asset;
-    //        IpToken ipToken;
-    //        ItfIporOracle iporOracle;
-    //        MiltonStorage miltonStorage;
-    //        MockSpreadModel spreadModel;
-    //        ItfStanley stanley;
-    //        ItfMilton milton;
-    //        ItfJoseph joseph;
-    //    }
-
     struct TestCaseConfig {
         address iporOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
@@ -141,21 +130,21 @@ contract IporProtocolFactory is Test {
         iporProtocol = iporProtocolBuilder
             .usdtBuilder()
             .ipToken()
-                .withName("IP USDT")
-                .withSymbol("ipUSDT")
+            .withName("IP USDT")
+            .withSymbol("ipUSDT")
             .and()
             .ivToken()
-                .withName("IV USDT")
-                .withSymbol("ivUSDT")
+            .withName("IV USDT")
+            .withSymbol("ivUSDT")
             .and()
             .iporOracle()
-                .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
             .and()
             .spread()
-                .withDefaultValues()
+            .withDefaultValues()
             .and()
             .milton()
-                .withMiltonImplementation(cfg.miltonImplementation)
+            .withMiltonImplementation(cfg.miltonImplementation)
             .and()
             .build();
 
