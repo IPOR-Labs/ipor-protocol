@@ -169,6 +169,24 @@ contract IporProtocolFactory is Test {
 
         vm.stopPrank();
 
+        for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
+            vm.startPrank(cfg.approvalsForUsers[i]);
+            iporProtocol.asset.approve(
+                address(iporProtocol.joseph),
+                TestConstants.TOTAL_SUPPLY_6_DECIMALS
+            );
+            iporProtocol.asset.approve(
+                address(iporProtocol.milton),
+                TestConstants.TOTAL_SUPPLY_6_DECIMALS
+            );
+            vm.stopPrank();
+            deal(
+                address(iporProtocol.asset),
+                cfg.approvalsForUsers[i],
+                TestConstants.USER_SUPPLY_6_DECIMALS
+            );
+        }
+
         return iporProtocol;
     }
 
@@ -218,22 +236,27 @@ contract IporProtocolFactory is Test {
 
         vm.stopPrank();
 
+        for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
+            vm.startPrank(cfg.approvalsForUsers[i]);
+            iporProtocol.asset.approve(
+                address(iporProtocol.joseph),
+                TestConstants.TOTAL_SUPPLY_6_DECIMALS
+            );
+            iporProtocol.asset.approve(
+                address(iporProtocol.milton),
+                TestConstants.TOTAL_SUPPLY_6_DECIMALS
+            );
+            vm.stopPrank();
+            deal(
+                address(iporProtocol.asset),
+                cfg.approvalsForUsers[i],
+                TestConstants.USER_SUPPLY_6_DECIMALS
+            );
+        }
+
         return iporProtocol;
     }
 
-    function _prepareIporOracleBuilder(address asset, TestCaseConfig memory cfg) internal {
-        iporOracleBuilder.withAsset(asset);
-        if (
-            cfg.iporOracleInitialParamsTestCase ==
-            BuilderUtils.IporOracleInitialParamsTestCase.CASE1
-        ) {
-            iporOracleBuilder.withLastUpdateTimestamp(1);
-            iporOracleBuilder.withExponentialMovingAverage(1);
-            iporOracleBuilder.withExponentialWeightedMovingVariance(1);
-        } else {
-            iporOracleBuilder.withDefaultIndicators();
-        }
-    }
 
     //    function getUsdtInstance() public returns (IporProtocol memory iporProtocol) {
     //        return IporProtocol();

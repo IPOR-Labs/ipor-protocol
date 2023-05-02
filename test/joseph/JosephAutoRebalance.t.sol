@@ -24,14 +24,18 @@ import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
+    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
     }
 
     function testProvideLiquidityAndRebalanceUsdtCase01() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -43,7 +47,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 968000 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -56,7 +59,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase02() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -68,7 +71,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 920000 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -81,7 +83,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase03() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -93,7 +95,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 840000 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -106,7 +107,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase04() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -118,7 +119,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1480000 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -131,7 +131,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase05() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -143,7 +143,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 977500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -156,7 +155,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase06() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -168,7 +167,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1028500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -181,7 +179,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase07() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -193,7 +191,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1572500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -206,7 +203,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase08() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -218,7 +215,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 862500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -231,7 +227,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase09() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -243,7 +239,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 907500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -256,7 +251,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase10() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -268,7 +263,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1387500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -281,7 +275,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase11() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -293,7 +287,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1092500 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -306,7 +299,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase12() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -318,7 +311,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 800000 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -331,7 +323,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceUsdtCase13() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
@@ -343,7 +335,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 101970 * 1e18;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -356,7 +347,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndNOTRebalanceUsdtCaseBelowThreshold() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -368,7 +359,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -381,7 +371,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZERO() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -393,7 +383,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeProvideLiquidityUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -406,7 +395,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase01() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -418,7 +407,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 968000 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -431,7 +419,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase02() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -443,7 +431,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 920000 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -456,7 +443,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase03() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -468,7 +455,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 840000 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -481,7 +467,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase04() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -493,7 +479,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1480000 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -506,7 +491,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase05() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -518,7 +503,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 977500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -531,7 +515,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase06() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -543,7 +527,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1028500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -556,7 +539,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase07() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -568,7 +551,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1572500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -581,7 +563,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase08() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -593,7 +575,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 862500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -606,7 +587,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase09() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -618,7 +599,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 907500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -631,7 +611,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase10() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -643,7 +623,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1387500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -656,7 +635,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase11() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -668,7 +647,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1092500 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -681,7 +659,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase12() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -693,7 +671,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 800000 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -706,7 +683,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testProvideLiquidityAndRebalanceDaiCase13() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 10000000000000000;
@@ -718,7 +695,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 101970 * 1e18;
 
         _executeProvideLiquidityDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -731,7 +707,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase01() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -743,7 +719,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 632840 * 1e18;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -756,7 +731,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase02() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -768,7 +743,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 680600 * 1e18;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -781,7 +755,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase03() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -793,7 +767,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 760200 * 1e18;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -806,7 +779,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase04() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -818,7 +791,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 123400 * 1e18;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -831,7 +803,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase05() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -843,7 +815,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 7231375 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -856,7 +827,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase06() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -868,7 +839,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 6723925 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -881,7 +851,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase07() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -893,7 +863,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1311125 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -906,7 +875,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase08() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -918,7 +887,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 6380625 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -931,7 +899,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase09() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -943,7 +911,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 5932875 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -956,7 +923,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase10() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -968,7 +935,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1156875 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -981,7 +947,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceUsdtCase11() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -995,7 +961,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1008,7 +973,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCase12() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -1020,7 +985,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 425375 * 1e17;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1033,7 +997,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase01() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1045,7 +1009,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 632840 * 1e18;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1058,7 +1021,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase02() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1070,7 +1033,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 680600 * 1e18;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1083,7 +1045,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase03() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 40;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1095,7 +1057,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 760200 * 1e18;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1108,7 +1069,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase04() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1120,7 +1081,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 123400 * 1e18;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1133,7 +1093,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase05() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1145,7 +1105,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 7231375 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1158,7 +1117,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase06() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1170,7 +1129,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 6723925 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1183,7 +1141,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase07() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1195,7 +1153,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1311125 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1208,7 +1165,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase08() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1220,7 +1177,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 6380625 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1233,7 +1189,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase09() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1245,7 +1201,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 5932875 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1258,7 +1213,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase10() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 250000000000000000;
@@ -1270,7 +1225,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 1156875 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1283,7 +1237,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceDaiCase11() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 50000000000000000;
@@ -1297,7 +1251,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1310,7 +1263,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCase12() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 100;
         uint256 miltonStanleyRatio = 950000000000000000;
@@ -1322,7 +1275,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 425375 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1335,7 +1287,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceDaiCaseBigValues() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10000;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -1347,7 +1299,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 7231375000 * 1e17;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1360,7 +1311,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNoRebalanceDaiCaseBelowThresholdBecauseOfFee() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 50;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1372,7 +1323,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 800000 * 1e18;
 
         _executeRedeemDai(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1385,7 +1335,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndNOTRebalanceUsdtCaseBelowThresholdMiltonBalanceIsOK() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1397,7 +1347,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1410,7 +1359,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCaseBelowThresholdButMiltonBalanceTooLow() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 300;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1422,7 +1371,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = 632840 * 1e18;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1435,7 +1383,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
     function testRedeemAndRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceTooLow() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1448,23 +1396,23 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 wadUserPosition = userPosition * 1e12;
 
-        deal(address(iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        iporProtocol.asset.approve(address(iporProtocol.joseph), miltonInitPool);
-        iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
+        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
 
         vm.stopPrank();
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        vm.prank(address(iporProtocol.joseph));
-        iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        vm.prank(address(_iporProtocol.joseph));
+        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
 
-        uint256 exchangeRate = iporProtocol.joseph.calculateExchangeRate();
+        uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
         uint256 userPositionCalculated = IporMath.division(
             wadUserPosition * Constants.D18,
@@ -1474,19 +1422,22 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         vm.prank(address(_userOne));
 
         //when
-        iporProtocol.joseph.redeem(userPositionCalculated);
+        _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
+            expectedMiltonBalance
+        );
     }
 
     function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceIsOK() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 0;
         uint256 miltonStanleyRatio = 200000000000000000;
@@ -1498,7 +1449,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance = stanleyInitBalance;
 
         _executeRedeemUsdt(
-            iporProtocol,
             autoRebalanceThreshold,
             miltonStanleyRatio,
             miltonInitPool,
@@ -1510,7 +1460,6 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     }
 
     function _executeProvideLiquidityUsdt(
-        IporProtocol memory iporProtocol,
         uint256 autoRebalanceThreshold,
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
@@ -1519,36 +1468,38 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance,
         uint256 expectedMiltonBalance
     ) internal {
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(iporProtocol.milton), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_iporProtocol.milton), miltonInitPool);
 
         if (stanleyInitBalance > 0) {
-            vm.prank(address(iporProtocol.joseph));
-            iporProtocol.milton.depositToStanley(stanleyInitBalance);
+            vm.prank(address(_iporProtocol.joseph));
+            _iporProtocol.milton.depositToStanley(stanleyInitBalance);
         }
 
-        deal(address(iporProtocol.asset), address(_userOne), userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), userPosition);
 
         //when
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
         //then
 
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
+            expectedMiltonBalance
+        );
     }
 
     function _executeProvideLiquidityDai(
-        IporProtocol memory iporProtocol,
         uint256 autoRebalanceThreshold,
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
@@ -1557,36 +1508,38 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         uint256 expectedStanleyBalance,
         uint256 expectedMiltonBalance
     ) internal {
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(iporProtocol.milton), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_iporProtocol.milton), miltonInitPool);
 
         if (stanleyInitBalance > 0) {
-            vm.prank(address(iporProtocol.joseph));
-            iporProtocol.milton.depositToStanley(stanleyInitBalance);
+            vm.prank(address(_iporProtocol.joseph));
+            _iporProtocol.milton.depositToStanley(stanleyInitBalance);
         }
 
-        deal(address(iporProtocol.asset), address(_userOne), userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), userPosition);
 
         //when
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
         //then
 
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
+            expectedMiltonBalance
+        );
     }
 
     function _executeRedeemUsdt(
-        IporProtocol memory iporProtocol,
         uint256 autoRebalanceThreshold,
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
@@ -1597,23 +1550,23 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     ) internal {
         uint256 wadUserPosition = userPosition * 1e12;
 
-        deal(address(iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        iporProtocol.asset.approve(address(iporProtocol.joseph), miltonInitPool);
-        iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
+        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
 
         vm.stopPrank();
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        vm.prank(address(iporProtocol.joseph));
-        iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        vm.prank(address(_iporProtocol.joseph));
+        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
 
-        uint256 exchangeRate = iporProtocol.joseph.calculateExchangeRate();
+        uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
         uint256 userPositionCalculated = IporMath.division(
             wadUserPosition * Constants.D18,
@@ -1622,18 +1575,20 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //when
         vm.prank(address(_userOne));
-        iporProtocol.joseph.redeem(userPositionCalculated);
+        _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
+            expectedMiltonBalance
+        );
     }
 
     function _executeRedeemDai(
-        IporProtocol memory iporProtocol,
         uint256 autoRebalanceThreshold,
         uint256 miltonStanleyRatio,
         uint256 miltonInitPool,
@@ -1644,24 +1599,24 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     ) internal {
         uint256 wadUserPosition = userPosition;
 
-        deal(address(iporProtocol.asset), address(_userOne), miltonInitPool);
+        deal(address(_iporProtocol.asset), address(_userOne), miltonInitPool);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
+        _iporProtocol.joseph.setAutoRebalanceThreshold(uint32(miltonInitPool + 1000));
 
         vm.startPrank(address(_userOne));
 
-        iporProtocol.asset.approve(address(iporProtocol.joseph), miltonInitPool);
-        iporProtocol.joseph.provideLiquidity(miltonInitPool);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), miltonInitPool);
+        _iporProtocol.joseph.provideLiquidity(miltonInitPool);
 
         vm.stopPrank();
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        vm.prank(address(iporProtocol.joseph));
-        iporProtocol.milton.depositToStanley(stanleyInitBalance);
+        vm.prank(address(_iporProtocol.joseph));
+        _iporProtocol.milton.depositToStanley(stanleyInitBalance);
 
-        uint256 exchangeRate = iporProtocol.joseph.calculateExchangeRate();
+        uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
         uint256 userPositionCalculated = IporMath.division(
             wadUserPosition * Constants.D18,
             exchangeRate
@@ -1669,13 +1624,16 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //when
         vm.prank(address(_userOne));
-        iporProtocol.joseph.redeem(userPositionCalculated);
+        _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
+            expectedMiltonBalance
+        );
     }
 }

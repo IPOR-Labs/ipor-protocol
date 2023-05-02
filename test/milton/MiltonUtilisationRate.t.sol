@@ -11,6 +11,9 @@ import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase6MiltonDai.sol";
 
 contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
+    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -18,36 +21,34 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+
+        _cfg.approvalsForUsers = _users;
+        _cfg.iporOracleUpdater = _userOne;
     }
 
     function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase0MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
-
-        iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
@@ -59,30 +60,25 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase0MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
-
-        iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -94,29 +90,24 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase6MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
-
-        iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
 
         // when
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
@@ -128,30 +119,25 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase6MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
-
-        iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
 
         // when
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -163,29 +149,24 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase0MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
-
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_6_18DEC,
@@ -197,29 +178,24 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase6MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
-
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
@@ -231,29 +207,24 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase0MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
-
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -265,29 +236,24 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolBuilder.IporProtocol memory iporProtocol;
-        IporProtocolFactory.TestCaseConfig memory cfg;
+        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
 
-        cfg.miltonImplementation = address(new MockCase6MiltonDai());
-        cfg.approvalsForUsers = _users;
-        cfg.iporOracleUpdater = _userOne;
-
-        iporProtocol = _iporProtocolFactory.getDaiInstance(cfg);
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
-        iporProtocol.iporOracle.itfUpdateIndex(
-            address(iporProtocol.asset),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
         );
 
         vm.prank(_liquidityProvider);
-        iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,

@@ -18,6 +18,9 @@ import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
+    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+
     MockSpreadModel internal _miltonSpreadModel;
     MockTestnetToken internal _usdtMockedToken;
     MockTestnetToken internal _usdcMockedToken;

@@ -22,11 +22,12 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;
 
-    IporProtocol private _iporProtocol;
+    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     MockTestnetToken asset;
     ItfMilton milton;
-    MockSpreadModel miltonSpreadModel;
+    MockSpreadModel spreadModel;
 
     int256 unwindFlatFee = 5 * 1e18;
 
@@ -35,14 +36,16 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     function setUp() public {
         _admin = address(this);
         _buyer = _getUserAddress(1);
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
     }
 
     function testShouldCalculatePnLForUnwindPayFixedSimple() public {
         //given
-        _iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         asset = _iporProtocol.asset;
         milton = _iporProtocol.milton;
-        miltonSpreadModel = _iporProtocol.miltonSpreadModel;
+        spreadModel = _iporProtocol.spreadModel;
 
         int256 swapPayoffToDate = 900 * 1e18;
         uint256 closingTimestamp = block.timestamp + 25 days;
@@ -67,7 +70,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         IporTypes.AccruedIpor memory fakedAccruedIpor;
         IporTypes.MiltonBalancesMemory memory fakedBalance;
 
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(1 * 1e16);
+        spreadModel.setCalculateQuoteReceiveFixed(1 * 1e16);
 
         //when
         vm.expectEmit(true, true, true, true);
@@ -90,10 +93,11 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculatePnLForUnwindPayFixedExcel() public {
         //given
-        _iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         asset = _iporProtocol.asset;
         milton = _iporProtocol.milton;
-        miltonSpreadModel = _iporProtocol.miltonSpreadModel;
+        spreadModel = _iporProtocol.spreadModel;
 
         int256 swapPayoffToDate = -180821917808219000000;
         uint256 closingTimestamp = block.timestamp + 11 days;
@@ -118,7 +122,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         IporTypes.AccruedIpor memory fakedAccruedIpor;
         IporTypes.MiltonBalancesMemory memory fakedBalance;
 
-        miltonSpreadModel.setCalculateQuoteReceiveFixed(299 * 1e14);
+        spreadModel.setCalculateQuoteReceiveFixed(299 * 1e14);
 
         //when
         vm.expectEmit(true, true, true, true);
@@ -141,7 +145,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCloseAndUnwindPayFixedSwapAsBuyerInMoreThanLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -179,7 +184,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCloseAndUnwindReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;

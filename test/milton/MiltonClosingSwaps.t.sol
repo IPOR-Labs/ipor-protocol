@@ -37,7 +37,6 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {
