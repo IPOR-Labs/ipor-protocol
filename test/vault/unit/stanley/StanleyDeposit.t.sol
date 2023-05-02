@@ -60,7 +60,7 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 		_mockAaveLendingPoolCore.setReserve(address(_mockAaveInterestRateStrategyV2));
 		_mockAaveLendingPoolCore.setReserveCurrentLiquidityRate(TestConstants.RAY_UINT256 / 100 * 2);
 		_mockAaveInterestRateStrategyV2.setSupplyRate(TestConstants.RAY_UINT256 / 100 * 2);
-		_mockAaveInterestRateStrategyV2.setBorrowRate(TestConstants.RAY_UINT256 * 3);
+		_mockAaveInterestRateStrategyV2.setBorrowRate(TestConstants.RAY_UINT256 / 100 * 3);
 		_lendingPoolAave.setStableDebtTokenAddress(address(_mockAaveStableDebtToken));
 		_lendingPoolAave.setVariableDebtTokenAddress(address(_mockAaveVariableDebtToken));
 		_lendingPoolAave.setInterestRateStrategyAddress(address(_mockAaveInterestRateStrategyV2));
