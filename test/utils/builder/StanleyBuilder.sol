@@ -13,6 +13,7 @@ import "./StrategyCompoundBuilder.sol";
 import "../../../contracts/itf/ItfStanley.sol";
 import "../../../contracts/itf/ItfStanleyDai.sol";
 import "forge-std/Test.sol";
+import "./IporProtocolBuilder.sol";
 
 contract StanleyBuilder is Test {
     struct BuilderData {
@@ -21,13 +22,21 @@ contract StanleyBuilder is Test {
         address ivToken;
         address strategyAave;
         address strategyCompound;
+        address stanleyImplementation;
     }
 
     BuilderData private builderData;
-    address private _owner;
 
-    constructor(address owner) {
+    address private _owner;
+    IporProtocolBuilder private _iporProtocolBuilder;
+
+    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
+        _iporProtocolBuilder = iporProtocolBuilder;
+    }
+
+    function and() public view returns (IporProtocolBuilder) {
+        return _iporProtocolBuilder;
     }
 
     function withAssetType(BuilderUtils.AssetType assetType) public returns (StanleyBuilder) {
@@ -55,85 +64,96 @@ contract StanleyBuilder is Test {
         return this;
     }
 
-    function withStrategiesDai() public returns (StanleyBuilder) {
+    function withStanleyImplementation(address stanleyImplementation)
+        public
+        returns (StanleyBuilder)
+    {
+        builderData.stanleyImplementation = stanleyImplementation;
+        return this;
+    }
+
+    function _buildStrategiesDai() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenDai();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenDai();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
 
-        builderData.assetType = BuilderUtils.AssetType.DAI;
         builderData.strategyAave = address(strategyAave);
         builderData.strategyCompound = address(strategyCompound);
-
-        return this;
     }
 
-    function withStrategiesUsdt() public returns (StanleyBuilder) {
+    function _buildStrategiesUsdt() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
 
-        builderData.assetType = BuilderUtils.AssetType.USDT;
         builderData.strategyAave = address(strategyAave);
         builderData.strategyCompound = address(strategyCompound);
-
-        return this;
     }
 
-    function withStrategiesUsdc() public returns (StanleyBuilder) {
+    function _buildStrategiesUsdc() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
+            _owner,
+            _iporProtocolBuilder
+        );
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenUsdc();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
 
-        builderData.assetType = BuilderUtils.AssetType.USDC;
         builderData.strategyAave = address(strategyAave);
         builderData.strategyCompound = address(strategyCompound);
-
-        return this;
     }
 
     function build() public returns (ItfStanley) {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        ItfStanley stanley;
+        _buildStrategies();
 
         vm.startPrank(_owner);
-        if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            stanley = _buildDAI();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            stanley = _buildUSDC();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            stanley = _buildUSDT();
-        } else {
-            revert("Unsupported asset type");
-        }
+
+        ERC1967Proxy proxy = _constructProxy(address(_buildStanleyImplementation()));
+        ItfStanley stanley = ItfStanley(address(proxy));
 
         MockTestnetStrategy strategyAave = MockTestnetStrategy(builderData.strategyAave);
         MockTestnetStrategy strategyCompound = MockTestnetStrategy(builderData.strategyCompound);
@@ -144,22 +164,32 @@ contract StanleyBuilder is Test {
         return stanley;
     }
 
-    function _buildDAI() internal returns (ItfStanley) {
-        ERC1967Proxy proxy = _constructProxy(address(new ItfStanleyDai()));
-        ItfStanley stanley = ItfStanley(address(proxy));
-        return stanley;
+    function _buildStanleyImplementation() internal returns (address stanleyImpl) {
+        if (builderData.stanleyImplementation != address(0)) {
+            stanleyImpl = builderData.stanleyImplementation;
+        } else {
+            if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+                stanleyImpl = address(new ItfStanleyDai());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
+                stanleyImpl = address(new ItfStanleyUsdt());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
+                stanleyImpl = address(new ItfStanleyUsdc());
+            } else {
+                revert("Asset type not supported");
+            }
+        }
     }
 
-    function _buildUSDC() internal returns (ItfStanley) {
-        ERC1967Proxy proxy = _constructProxy(address(new ItfStanleyUsdc()));
-        ItfStanley stanley = ItfStanley(address(proxy));
-        return stanley;
-    }
-
-    function _buildUSDT() internal returns (ItfStanley) {
-        ERC1967Proxy proxy = _constructProxy(address(new ItfStanleyUsdt()));
-        ItfStanley stanley = ItfStanley(address(proxy));
-        return stanley;
+    function _buildStrategies() internal {
+        if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+            _buildStrategiesDai();
+        } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
+            _buildStrategiesUsdt();
+        } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
+            _buildStrategiesUsdc();
+        } else {
+            revert("Asset type not supported");
+        }
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {

@@ -4,17 +4,26 @@ import "../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
 import "../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdt.sol";
 import "../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdc.sol";
 import "forge-std/Test.sol";
-contract StrategyCompoundBuilder is Test{
+import "./IporProtocolBuilder.sol";
+
+contract StrategyCompoundBuilder is Test {
     struct BuilderData {
         address asset;
         address shareToken;
     }
 
     BuilderData private builderData;
-    address private _owner;
 
-    constructor(address owner) {
+    address private _owner;
+    IporProtocolBuilder private _iporProtocolBuilder;
+
+    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
+        _iporProtocolBuilder = iporProtocolBuilder;
+    }
+
+    function and() public view returns (IporProtocolBuilder) {
+        return _iporProtocolBuilder;
     }
 
     function withAsset(address asset) public returns (StrategyCompoundBuilder) {

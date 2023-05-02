@@ -18,13 +18,14 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 
 contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;
     address internal _community;
     address internal _liquidator;
 
-    IporProtocolFactory.IporProtocol internal _iporProtocol;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
     IporProtocolFactory.TestCaseConfig private _cfg;
 
     function setUp() public {
@@ -36,7 +37,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         _cfg.iporOracleUpdater = _userOne;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {

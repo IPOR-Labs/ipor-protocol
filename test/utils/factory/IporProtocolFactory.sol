@@ -17,27 +17,28 @@ import "../builder/MiltonBuilder.sol";
 import "../builder/JosephBuilder.sol";
 import "../builder/IporOracleBuilder.sol";
 import "../builder/IporWeightedBuilder.sol";
+import "../builder/IporProtocolBuilder.sol";
 import "forge-std/Test.sol";
 
 contract IporProtocolFactory is Test {
-    struct IporProtocol {
-        MockTestnetToken asset;
-        IpToken ipToken;
-        ItfIporOracle iporOracle;
-        MiltonStorage miltonStorage;
-        MockSpreadModel spreadModel;
-        ItfStanley stanley;
-        ItfMilton milton;
-        ItfJoseph joseph;
-    }
+    //    struct IporProtocol {
+    //        MockTestnetToken asset;
+    //        IpToken ipToken;
+    //        ItfIporOracle iporOracle;
+    //        MiltonStorage miltonStorage;
+    //        MockSpreadModel spreadModel;
+    //        ItfStanley stanley;
+    //        ItfMilton milton;
+    //        ItfJoseph joseph;
+    //    }
 
     struct TestCaseConfig {
         address iporOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
-        BuilderUtils.MiltonTestCase miltonTestCase;
         address[] approvalsForUsers;
+        address miltonImplementation;
     }
-
+    IporProtocolBuilder internal iporProtocolBuilder;
     AssetBuilder internal assetBuilder;
     IpTokenBuilder internal ipTokenBuilder;
     IporOracleBuilder internal iporOracleBuilder;
@@ -52,149 +53,53 @@ contract IporProtocolFactory is Test {
     address internal _owner;
 
     constructor(address owner) {
-        assetBuilder = new AssetBuilder(owner);
-        ipTokenBuilder = new IpTokenBuilder(owner);
-        iporOracleBuilder = new IporOracleBuilder(owner);
-        iporWeightedBuilder = new IporWeightedBuilder(owner);
-        miltonStorageBuilder = new MiltonStorageBuilder(owner);
-        ivTokenBuilder = new IvTokenBuilder(owner);
-        stanleyBuilder = new StanleyBuilder(owner);
-        miltonBuilder = new MiltonBuilder(owner);
-        josephBuilder = new JosephBuilder(owner);
-        mockSpreadBuilder = new MockSpreadBuilder(owner);
+        iporProtocolBuilder = new IporProtocolBuilder(owner);
+        assetBuilder = new AssetBuilder(owner, iporProtocolBuilder);
+        ipTokenBuilder = new IpTokenBuilder(owner, iporProtocolBuilder);
+        iporOracleBuilder = new IporOracleBuilder(owner, iporProtocolBuilder);
+        iporWeightedBuilder = new IporWeightedBuilder(owner, iporProtocolBuilder);
+        miltonStorageBuilder = new MiltonStorageBuilder(owner, iporProtocolBuilder);
+        ivTokenBuilder = new IvTokenBuilder(owner, iporProtocolBuilder);
+        stanleyBuilder = new StanleyBuilder(owner, iporProtocolBuilder);
+        miltonBuilder = new MiltonBuilder(owner, iporProtocolBuilder);
+        josephBuilder = new JosephBuilder(owner, iporProtocolBuilder);
+        mockSpreadBuilder = new MockSpreadBuilder(owner, iporProtocolBuilder);
         _owner = owner;
-    }
-
-    function getDaiInstance() public returns (IporProtocol memory iporProtocol) {
-        assetBuilder.withDAI();
-        iporProtocol.asset = assetBuilder.build();
-
-        ipTokenBuilder.withAsset(address(iporProtocol.asset));
-        ipTokenBuilder.withName("IP DAI");
-        ipTokenBuilder.withSymbol("ipDAI");
-        iporProtocol.ipToken = ipTokenBuilder.build();
-
-        iporOracleBuilder.withAsset(address(iporProtocol.asset));
-        iporOracleBuilder.withDefaultIndicators();
-        iporProtocol.iporOracle = iporOracleBuilder.build();
-
-        iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        MockIporWeighted iporWeighted = iporWeightedBuilder.build();
-
-        iporProtocol.miltonStorage = miltonStorageBuilder.build();
-
-        mockSpreadBuilder.withDefaultValues();
-        iporProtocol.spreadModel = mockSpreadBuilder.build();
-
-        ivTokenBuilder.withAsset(address(iporProtocol.asset));
-        ivTokenBuilder.withName("IV DAI");
-        ivTokenBuilder.withSymbol("ivDAI");
-        IvToken ivToken = ivTokenBuilder.build();
-
-        stanleyBuilder.withAsset(address(iporProtocol.asset));
-        stanleyBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        stanleyBuilder.withIvToken(address(ivToken));
-        stanleyBuilder.withStrategiesDai();
-        iporProtocol.stanley = stanleyBuilder.build();
-
-        miltonBuilder.withAsset(address(iporProtocol.asset));
-        miltonBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        miltonBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        miltonBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        miltonBuilder.withSpreadModel(address(iporProtocol.spreadModel));
-        miltonBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.milton = miltonBuilder.build();
-
-        josephBuilder.withAsset(address(iporProtocol.asset));
-        josephBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        josephBuilder.withIpToken(address(iporProtocol.ipToken));
-        josephBuilder.withMilton(address(iporProtocol.milton));
-        josephBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        josephBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.joseph = josephBuilder.build();
-
-        //setup
-        vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporWeighted));
-
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        ivToken.setStanley(address(iporProtocol.stanley));
-
-        iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
-        iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
-        iporProtocol.miltonStorage.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.miltonStorage.setMilton(address(iporProtocol.milton));
-        iporProtocol.milton.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.stanley));
-
-        iporProtocol.stanley.setMilton(address(iporProtocol.milton));
-
-        vm.stopPrank();
-
-        return iporProtocol;
     }
 
     function getDaiInstance(TestCaseConfig memory cfg)
         public
-        returns (IporProtocol memory iporProtocol)
+        returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        assetBuilder.withDAI();
-        iporProtocol.asset = assetBuilder.build();
-
-        ipTokenBuilder.withAsset(address(iporProtocol.asset));
-        ipTokenBuilder.withName("IP DAI");
-        ipTokenBuilder.withSymbol("ipDAI");
-        iporProtocol.ipToken = ipTokenBuilder.build();
-
-        _prepareIporOracleBuilder(address(iporProtocol.asset), cfg);
-
-        iporProtocol.iporOracle = iporOracleBuilder.build();
-
-        iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        MockIporWeighted iporWeighted = iporWeightedBuilder.build();
-
-        iporProtocol.miltonStorage = miltonStorageBuilder.build();
-
-        mockSpreadBuilder.withDefaultValues();
-        iporProtocol.spreadModel = mockSpreadBuilder.build();
-
-        ivTokenBuilder.withAsset(address(iporProtocol.asset));
-        ivTokenBuilder.withName("IV DAI");
-        ivTokenBuilder.withSymbol("ivDAI");
-        IvToken ivToken = ivTokenBuilder.build();
-
-        stanleyBuilder.withAsset(address(iporProtocol.asset));
-        stanleyBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        stanleyBuilder.withIvToken(address(ivToken));
-        stanleyBuilder.withStrategiesDai();
-        iporProtocol.stanley = stanleyBuilder.build();
-
-        miltonBuilder.withAsset(address(iporProtocol.asset));
-        miltonBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        miltonBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        miltonBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        miltonBuilder.withSpreadModel(address(iporProtocol.spreadModel));
-        miltonBuilder.withStanley(address(iporProtocol.stanley));
-        miltonBuilder.withMiltonTestCase(cfg.miltonTestCase);
-        iporProtocol.milton = miltonBuilder.build();
-
-        josephBuilder.withAsset(address(iporProtocol.asset));
-        josephBuilder.withAssetType(BuilderUtils.AssetType.DAI);
-        josephBuilder.withIpToken(address(iporProtocol.ipToken));
-        josephBuilder.withMilton(address(iporProtocol.milton));
-        josephBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        josephBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.joseph = josephBuilder.build();
+        iporProtocol = iporProtocolBuilder
+            .daiBuilder()
+            .ipToken()
+            .withName("IP DAI")
+            .withSymbol("ipDAI")
+            .and()
+            .ivToken()
+            .withName("IV DAI")
+            .withSymbol("ivDAI")
+            .and()
+            .iporOracle()
+            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .and()
+            .spread()
+            .withDefaultValues()
+            .and()
+            .milton()
+            .withMiltonImplementation(cfg.miltonImplementation)
+            .and()
+            .build();
 
         //setup
         vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
 
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
         iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        ivToken.setStanley(address(iporProtocol.stanley));
+        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
 
         iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
         iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
@@ -231,63 +136,37 @@ contract IporProtocolFactory is Test {
 
     function getUsdtInstance(TestCaseConfig memory cfg)
         public
-        returns (IporProtocol memory iporProtocol)
+        returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        assetBuilder.withUSDT();
-        iporProtocol.asset = assetBuilder.build();
-
-        ipTokenBuilder.withAsset(address(iporProtocol.asset));
-        ipTokenBuilder.withName("IP USDT");
-        ipTokenBuilder.withSymbol("ipUSDT");
-        iporProtocol.ipToken = ipTokenBuilder.build();
-
-        _prepareIporOracleBuilder(address(iporProtocol.asset), cfg);
-
-        iporProtocol.iporOracle = iporOracleBuilder.build();
-
-        iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        MockIporWeighted iporWeighted = iporWeightedBuilder.build();
-
-        iporProtocol.miltonStorage = miltonStorageBuilder.build();
-
-        mockSpreadBuilder.withDefaultValues();
-        iporProtocol.spreadModel = mockSpreadBuilder.build();
-
-        ivTokenBuilder.withAsset(address(iporProtocol.asset));
-        ivTokenBuilder.withName("IV USDT");
-        ivTokenBuilder.withSymbol("ivUSDT");
-        IvToken ivToken = ivTokenBuilder.build();
-
-        stanleyBuilder.withAsset(address(iporProtocol.asset));
-        stanleyBuilder.withAssetType(BuilderUtils.AssetType.USDT);
-        stanleyBuilder.withIvToken(address(ivToken));
-        stanleyBuilder.withStrategiesUsdt();
-        iporProtocol.stanley = stanleyBuilder.build();
-
-        miltonBuilder.withAsset(address(iporProtocol.asset));
-        miltonBuilder.withAssetType(BuilderUtils.AssetType.USDT);
-        miltonBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        miltonBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        miltonBuilder.withSpreadModel(address(iporProtocol.spreadModel));
-        miltonBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.milton = miltonBuilder.build();
-
-        josephBuilder.withAsset(address(iporProtocol.asset));
-        josephBuilder.withAssetType(BuilderUtils.AssetType.USDT);
-        josephBuilder.withIpToken(address(iporProtocol.ipToken));
-        josephBuilder.withMilton(address(iporProtocol.milton));
-        josephBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        josephBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.joseph = josephBuilder.build();
+        iporProtocol = iporProtocolBuilder
+            .usdtBuilder()
+            .ipToken()
+                .withName("IP USDT")
+                .withSymbol("ipUSDT")
+            .and()
+            .ivToken()
+                .withName("IV USDT")
+                .withSymbol("ivUSDT")
+            .and()
+            .iporOracle()
+                .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .and()
+            .spread()
+                .withDefaultValues()
+            .and()
+            .milton()
+                .withMiltonImplementation(cfg.miltonImplementation)
+            .and()
+            .build();
 
         //setup
         vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
 
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
         iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        ivToken.setStanley(address(iporProtocol.stanley));
+        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
 
         iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
         iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
@@ -306,63 +185,37 @@ contract IporProtocolFactory is Test {
 
     function getUsdcInstance(TestCaseConfig memory cfg)
         public
-        returns (IporProtocol memory iporProtocol)
+        returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        assetBuilder.withUSDC();
-        iporProtocol.asset = assetBuilder.build();
-
-        ipTokenBuilder.withAsset(address(iporProtocol.asset));
-        ipTokenBuilder.withName("IP USDC");
-        ipTokenBuilder.withSymbol("ipUSDC");
-        iporProtocol.ipToken = ipTokenBuilder.build();
-
-        _prepareIporOracleBuilder(address(iporProtocol.asset), cfg);
-
-        iporProtocol.iporOracle = iporOracleBuilder.build();
-
-        iporWeightedBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        MockIporWeighted iporWeighted = iporWeightedBuilder.build();
-
-        iporProtocol.miltonStorage = miltonStorageBuilder.build();
-
-        mockSpreadBuilder.withDefaultValues();
-        iporProtocol.spreadModel = mockSpreadBuilder.build();
-
-        ivTokenBuilder.withAsset(address(iporProtocol.asset));
-        ivTokenBuilder.withName("IV USDC");
-        ivTokenBuilder.withSymbol("ivUSDC");
-        IvToken ivToken = ivTokenBuilder.build();
-
-        stanleyBuilder.withAsset(address(iporProtocol.asset));
-        stanleyBuilder.withAssetType(BuilderUtils.AssetType.USDC);
-        stanleyBuilder.withIvToken(address(ivToken));
-        stanleyBuilder.withStrategiesUsdc();
-        iporProtocol.stanley = stanleyBuilder.build();
-
-        miltonBuilder.withAsset(address(iporProtocol.asset));
-        miltonBuilder.withAssetType(BuilderUtils.AssetType.USDC);
-        miltonBuilder.withIporOracle(address(iporProtocol.iporOracle));
-        miltonBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        miltonBuilder.withSpreadModel(address(iporProtocol.spreadModel));
-        miltonBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.milton = miltonBuilder.build();
-
-        josephBuilder.withAsset(address(iporProtocol.asset));
-        josephBuilder.withAssetType(BuilderUtils.AssetType.USDC);
-        josephBuilder.withIpToken(address(iporProtocol.ipToken));
-        josephBuilder.withMilton(address(iporProtocol.milton));
-        josephBuilder.withMiltonStorage(address(iporProtocol.miltonStorage));
-        josephBuilder.withStanley(address(iporProtocol.stanley));
-        iporProtocol.joseph = josephBuilder.build();
+        iporProtocol = iporProtocolBuilder
+            .usdcBuilder()
+            .ipToken()
+            .withName("IP USDC")
+            .withSymbol("ipUSDC")
+            .and()
+            .ivToken()
+            .withName("IV USDC")
+            .withSymbol("ivUSDC")
+            .and()
+            .iporOracle()
+            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .and()
+            .spread()
+            .withDefaultValues()
+            .and()
+            .milton()
+            .withMiltonImplementation(cfg.miltonImplementation)
+            .and()
+            .build();
 
         //setup
         vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
 
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
         iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        ivToken.setStanley(address(iporProtocol.stanley));
+        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
 
         iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
         iporProtocol.joseph.setMaxLpAccountContribution(1000000000);

@@ -6,6 +6,8 @@ import "../../../contracts/itf/ItfJosephUsdt.sol";
 
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
+import "./IporProtocolBuilder.sol";
+
 contract JosephBuilder is Test{
     struct BuilderData {
         BuilderUtils.AssetType assetType;
@@ -18,10 +20,17 @@ contract JosephBuilder is Test{
     }
 
     BuilderData private builderData;
-    address private _owner;
 
-    constructor(address owner) {
+    address private _owner;
+    IporProtocolBuilder private _iporProtocolBuilder;
+
+    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
+        _iporProtocolBuilder = iporProtocolBuilder;
+    }
+
+    function and() public view returns (IporProtocolBuilder) {
+        return _iporProtocolBuilder;
     }
 
     function withAssetType(BuilderUtils.AssetType assetType) public returns (JosephBuilder) {

@@ -23,23 +23,32 @@ import "../../../contracts/itf/ItfIporOracle.sol";
 import "../../../contracts/itf/ItfMiltonDai.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
+import "./IporProtocolBuilder.sol";
 
 contract MiltonBuilder is Test {
     struct BuilderData {
         BuilderUtils.AssetType assetType;
-        BuilderUtils.MiltonTestCase miltonTestCase;
         address asset;
         address iporOracle;
         address miltonStorage;
         address spreadModel;
         address stanley;
+        address miltonImplementation;
     }
 
     BuilderData private builderData;
-    address private _owner;
 
-    constructor(address owner) {
+    address private _owner;
+    IporProtocolBuilder private _iporProtocolBuilder;
+
+    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
+        _iporProtocolBuilder = iporProtocolBuilder;
+    }
+
+
+    function and() public view returns (IporProtocolBuilder) {
+        return _iporProtocolBuilder;
     }
 
     function withAssetType(BuilderUtils.AssetType assetType) public returns (MiltonBuilder) {
@@ -47,11 +56,8 @@ contract MiltonBuilder is Test {
         return this;
     }
 
-    function withMiltonTestCase(BuilderUtils.MiltonTestCase miltonTestCase)
-        public
-        returns (MiltonBuilder)
-    {
-        builderData.miltonTestCase = miltonTestCase;
+    function withMiltonImplementation(address miltonImplementation) public returns (MiltonBuilder) {
+        builderData.miltonImplementation = miltonImplementation;
         return this;
     }
 
@@ -81,84 +87,27 @@ contract MiltonBuilder is Test {
     }
 
     function build() public returns (ItfMilton) {
-        if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            return _buildMiltonDAI();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            return _buildMiltonUSDT();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            return _buildMiltonUSDC();
-        } else {
-            revert("Asset type not supported");
-        }
-    }
-
-    function _buildMiltonDAI() internal returns (ItfMiltonDai) {
         vm.startPrank(_owner);
-        ERC1967Proxy miltonProxy = _constructProxy(address(_buildMiltonDaiImplementation()));
-        ItfMiltonDai milton = ItfMiltonDai(address(miltonProxy));
+        ERC1967Proxy miltonProxy = _constructProxy(_buildMiltonImplementation());
+        ItfMilton milton = ItfMilton(address(miltonProxy));
         vm.stopPrank();
         return milton;
     }
 
-    function _buildMiltonUSDT() internal returns (ItfMiltonUsdt) {
-        vm.startPrank(_owner);
-        ERC1967Proxy miltonProxy = _constructProxy(address(_buildMiltonUsdtImplementation()));
-        ItfMiltonUsdt milton = ItfMiltonUsdt(address(miltonProxy));
-        vm.stopPrank();
-        return milton;
-    }
-
-    function _buildMiltonUSDC() internal returns (ItfMiltonUsdc) {
-        vm.startPrank(_owner);
-        ERC1967Proxy miltonProxy = _constructProxy(address(_buildMiltonUsdcImplementation()));
-        ItfMiltonUsdc milton = ItfMiltonUsdc(address(miltonProxy));
-        vm.stopPrank();
-        return milton;
-    }
-
-    function _buildMiltonUsdtImplementation() internal returns (ItfMilton) {
-        ItfMilton milton;
-
-        if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            milton = new ItfMiltonUsdt();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE0) {
-            milton = new MockCase0MiltonUsdt();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE6) {
-            milton = new MockCase6MiltonUsdt();
+    function _buildMiltonImplementation() internal returns (address miltonImpl) {
+        if (builderData.miltonImplementation != address(0)) {
+            miltonImpl = builderData.miltonImplementation;
         } else {
-            milton = new ItfMiltonUsdt();
+            if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+                miltonImpl = address(new ItfMiltonDai());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
+                miltonImpl = address(new ItfMiltonUsdt());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
+                miltonImpl = address(new ItfMiltonUsdc());
+            } else {
+                revert("Asset type not supported");
+            }
         }
-        return milton;
-    }
-
-    function _buildMiltonUsdcImplementation() internal returns (ItfMilton) {
-        ItfMilton milton;
-
-        if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            milton = new ItfMiltonUsdc();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE0) {
-            milton = new MockCase0MiltonUsdc();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE6) {
-            milton = new MockCase6MiltonUsdc();
-        } else {
-            milton = new ItfMiltonUsdc();
-        }
-        return milton;
-    }
-
-    function _buildMiltonDaiImplementation() internal returns (ItfMilton) {
-        ItfMilton milton;
-
-        if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            milton = new ItfMiltonDai();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE0) {
-            milton = new MockCase0MiltonDai();
-        } else if (builderData.miltonTestCase == BuilderUtils.MiltonTestCase.CASE6) {
-            milton = new MockCase6MiltonDai();
-        } else {
-            milton = new ItfMiltonDai();
-        }
-        return milton;
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {

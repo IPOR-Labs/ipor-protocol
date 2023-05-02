@@ -7,6 +7,8 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 
 import "../../contracts/amm/MiltonStorage.sol";
+import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
+import "../../contracts/mocks/milton/MockCase6MiltonDai.sol";
 
 contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
     function setUp() public {
@@ -22,10 +24,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        cfg.miltonImplementation = address(new MockCase0MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -57,10 +59,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        cfg.miltonImplementation = address(new MockCase0MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -92,10 +94,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        cfg.miltonImplementation = address(new MockCase6MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -126,10 +128,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        cfg.miltonImplementation = address(new MockCase6MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -161,10 +163,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        cfg.miltonImplementation = address(new MockCase0MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -195,10 +197,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        cfg.miltonImplementation = address(new MockCase6MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -229,10 +231,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        cfg.miltonImplementation = address(new MockCase0MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
@@ -263,10 +265,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        IporProtocolFactory.IporProtocol memory iporProtocol;
+        IporProtocolBuilder.IporProtocol memory iporProtocol;
         IporProtocolFactory.TestCaseConfig memory cfg;
 
-        cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        cfg.miltonImplementation = address(new MockCase6MiltonDai());
         cfg.approvalsForUsers = _users;
         cfg.iporOracleUpdater = _userOne;
 
