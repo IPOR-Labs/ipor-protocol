@@ -24,7 +24,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _community;
     address internal _liquidator;
 
-    IporProtocol private _iporProtocol;
+    IporProtocolFactory.IporProtocol internal _iporProtocol;
+    IporProtocolFactory.TestCaseConfig private _cfg;
 
     function setUp() public {
         _admin = address(this);
@@ -32,11 +33,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         _community = _getUserAddress(2);
         _liquidator = _getUserAddress(3);
         vm.warp(100);
+
+        _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         //when
@@ -50,7 +55,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldRemoveSwapLiquidatorAsIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         milton.addSwapLiquidator(_liquidator);
@@ -66,7 +71,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotAddLiquidatorAsNotIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         //when
@@ -77,7 +82,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotRemoveLiquidatorAsNotIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         milton.addSwapLiquidator(_liquidator);
@@ -90,7 +95,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -130,7 +135,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsBuyerInLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -170,7 +175,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsBuyerInLast20hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -210,7 +215,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedAsCommunityInLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -253,7 +258,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedAsCommunityInLast30Minutes() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -296,7 +301,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedAsLiquidatorAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -342,7 +347,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -385,7 +390,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsBuyerAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -427,7 +432,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -468,7 +473,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapAsAnyoneAfterMaturityBelow100Percentage() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -509,7 +514,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapAsLiquidatorBeforeMaturityMoreThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -550,7 +555,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -590,7 +595,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsBuyerInLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -630,7 +635,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsBuyerInLast20hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -670,7 +675,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedByCommunityInLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -713,7 +718,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedByCommunityInLast30Minutes() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -756,7 +761,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedAsLiquidatorAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -801,7 +806,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
       function testShouldNotCloseReceiveFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -844,7 +849,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsBuyerAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -884,7 +889,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotCloseReceiveFixedSwapAsAnyoneInMoreThanLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -925,7 +930,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotCloseReceiveFixedSwapAsAnyoneAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -966,7 +971,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotCloseReceiveFixedSwapAsLiquidatorBeforeMaturityMoreThenOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -1007,7 +1012,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -1052,7 +1057,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1127,7 +1132,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1202,7 +1207,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1275,7 +1280,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1348,7 +1353,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1421,7 +1426,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1494,7 +1499,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1570,7 +1575,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1646,7 +1651,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1724,7 +1729,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1802,7 +1807,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1878,7 +1883,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1952,7 +1957,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2028,7 +2033,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2102,7 +2107,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapByCommunityAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2179,7 +2184,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2256,7 +2261,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2333,7 +2338,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2409,7 +2414,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2481,7 +2486,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2553,7 +2558,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2624,7 +2629,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2695,7 +2700,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2768,7 +2773,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2839,7 +2844,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2913,7 +2918,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2989,7 +2994,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         vm.warp(100);
 
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3063,7 +3068,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3139,7 +3144,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3215,7 +3220,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3289,7 +3294,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3361,7 +3366,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3435,7 +3440,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3509,7 +3514,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3588,7 +3593,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3667,7 +3672,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3744,7 +3749,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol =_iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;

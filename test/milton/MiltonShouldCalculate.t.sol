@@ -291,6 +291,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             50
         );
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, mockCase2MiltonDai);
+
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);

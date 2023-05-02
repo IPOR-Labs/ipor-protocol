@@ -1,35 +1,70 @@
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import "../../../contracts/itf/ItfIporOracle.sol";
+import "../TestConstants.sol";
+import "forge-std/Test.sol";
 
-contract IporOracleBuilder {
+contract IporOracleBuilder is Test {
     struct BuilderData {
-        address[] memory assets;
-        uint32[] memory lastUpdateTimestamps;
-        uint64[] memory exponentialMovingAverages;
-        uint64[] memory exponentialWeightedMovingVariances;
+        address[] assets;
+        uint32[] lastUpdateTimestamps;
+        uint64[] exponentialMovingAverages;
+        uint64[] exponentialWeightedMovingVariances;
     }
 
     BuilderData private builderData;
+    address private _owner;
 
-    constructor(address asset) {
-        default(asset);
-    }
-
-    function default(address asset) public returns (IporOracleBuilder) {
-        return withAsset(asset);
+    constructor(address owner) {
+        _owner = owner;
     }
 
     function withAsset(address asset) public returns (IporOracleBuilder) {
-
+        builderData.assets = new address[](1);
+        builderData.assets[0] = asset;
         return this;
     }
 
-    function withAllAssets() public returns (IporOracleBuilder) {
+    function withLastUpdateTimestamp(uint32 lastUpdateTimestamp) public returns (IporOracleBuilder) {
+        builderData.lastUpdateTimestamps = new uint32[](1);
+        builderData.lastUpdateTimestamps[0] = lastUpdateTimestamp;
+        return this;
+    }
+
+    function withExponentialMovingAverage(uint64 exponentialMovingAverage) public returns (IporOracleBuilder) {
+        builderData.exponentialMovingAverages = new uint64[](1);
+        builderData.exponentialMovingAverages[0] = exponentialMovingAverage;
+        return this;
+    }
+
+    function withExponentialWeightedMovingVariance(uint64 exponentialWeightedMovingVariance) public returns (IporOracleBuilder) {
+        builderData.exponentialWeightedMovingVariances = new uint64[](1);
+        builderData.exponentialWeightedMovingVariances[0] = exponentialWeightedMovingVariance;
+        return this;
+    }
+
+    function withAssets(address[] memory assets) public returns (IporOracleBuilder) {
+        builderData.assets = assets;
+        return this;
+    }
+
+    function withDefaultIndicators() public returns (IporOracleBuilder) {
+        builderData.lastUpdateTimestamps = new uint32[](builderData.assets.length);
+        builderData.exponentialMovingAverages = new uint64[](builderData.assets.length);
+        builderData.exponentialWeightedMovingVariances = new uint64[](builderData.assets.length);
+        for (uint256 i = 0; i < builderData.assets.length; i++) {
+            builderData.lastUpdateTimestamps[i] = uint32(block.timestamp);
+            builderData.exponentialMovingAverages[i] = TestConstants.TC_DEFAULT_EMA_18DEC_64UINT;
+            builderData.exponentialWeightedMovingVariances[i] = 0;
+        }
         return this;
     }
 
     function build() public returns (ItfIporOracle) {
-        ERC1967Proxy iporOracleProxy = _constructProxy(address(new ItfIporOracle()));
-        return ItfIporOracle(iporOracleProxy);
+        vm.startPrank(_owner);
+        ERC1967Proxy proxy = _constructProxy(address(new ItfIporOracle()));
+        ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
+        vm.stopPrank();
+        return iporOracle;
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
@@ -37,7 +72,7 @@ contract IporOracleBuilder {
             address(impl),
             abi.encodeWithSignature(
                 "initialize(address[],uint32[],uint64[],uint64[])",
-                builderData.tokenAddresses,
+                builderData.assets,
                 builderData.lastUpdateTimestamps,
                 builderData.exponentialMovingAverages,
                 builderData.exponentialWeightedMovingVariances

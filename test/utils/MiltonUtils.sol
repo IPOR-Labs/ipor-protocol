@@ -67,13 +67,13 @@ contract MiltonUtils is Test {
         uint256 calculateQuotePayFixedValue,
         uint256 calculateQuoteReceiveFixedValue,
         int256 calculateSpreadPayFixedValue,
-        int256 calculateSpreadReceiveFixedVaule
+        int256 calculatespreadReceiveFixedValue
     ) public returns (MockSpreadModel) {
         MockSpreadModel miltonSpreadModel = new MockSpreadModel(
     calculateQuotePayFixedValue,
     calculateQuoteReceiveFixedValue,
     calculateSpreadPayFixedValue,
-    calculateSpreadReceiveFixedVaule
+    calculatespreadReceiveFixedValue
     );
         return miltonSpreadModel;
     }

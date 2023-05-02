@@ -1,28 +1,52 @@
 import "./BuilderUtils.sol";
 import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../utils/TestConstants.sol";
+import "forge-std/Test.sol";
 
-contract AssetBuilder {
+contract AssetBuilder is Test {
     struct BuilderData {
         BuilderUtils.AssetType assetType;
-        string memory name;
-        string memory symbol;
+        string name;
+        string symbol;
         uint256 initialSupply;
         uint8 decimals;
     }
 
     BuilderData private builderData;
 
-    constructor() {
-        default();
+    address private _owner;
+
+    constructor(address owner) {
+        _owner = owner;
     }
 
-    function default() public returns(AssetBuilder) {
-        return withDAI();
+    function withAssetType(BuilderUtils.AssetType assetType) public returns (AssetBuilder) {
+        builderData.assetType = assetType;
+        return this;
+    }
+
+    function withName(string memory name) public returns (AssetBuilder) {
+        builderData.name = name;
+        return this;
+    }
+
+    function withSymbol(string memory symbol) public returns (AssetBuilder) {
+        builderData.symbol = symbol;
+        return this;
+    }
+
+    function withInitialSupply(uint256 initialSupply) public returns (AssetBuilder) {
+        builderData.initialSupply = initialSupply;
+        return this;
+    }
+
+    function withDecimals(uint8 decimals) public returns (AssetBuilder) {
+        builderData.decimals = decimals;
+        return this;
     }
 
     function withUSDT() public returns (AssetBuilder) {
-        builderData.assetType = AssetType.USDT;
+        builderData.assetType = BuilderUtils.AssetType.USDT;
         builderData.name = "Mocked USDT";
         builderData.symbol = "USDT";
         builderData.decimals = 6;
@@ -31,7 +55,7 @@ contract AssetBuilder {
     }
 
     function withUSDC() public returns (AssetBuilder) {
-        builderData.assetType = AssetType.USDC;
+        builderData.assetType = BuilderUtils.AssetType.USDC;
         builderData.name = "Mocked USDC";
         builderData.symbol = "USDC";
         builderData.decimals = 6;
@@ -40,7 +64,7 @@ contract AssetBuilder {
     }
 
     function withDAI() public returns (AssetBuilder) {
-        builderData.assetType = AssetType.DAI;
+        builderData.assetType = BuilderUtils.AssetType.DAI;
         builderData.name = "Mocked DAI";
         builderData.symbol = "DAI";
         builderData.decimals = 18;
@@ -49,12 +73,14 @@ contract AssetBuilder {
     }
 
     function build() public returns (MockTestnetToken) {
-        return
-            new MockTestnetToken(
-                builderData.name,
-                builderData.symbol,
-                builderData.initialSupply,
-                builderData.decimals
-            );
+        vm.startPrank(_owner);
+        MockTestnetToken token = new MockTestnetToken(
+            builderData.name,
+            builderData.symbol,
+            builderData.initialSupply,
+            builderData.decimals
+        );
+        vm.stopPrank();
+        return token;
     }
 }
