@@ -25,6 +25,7 @@ import "../../contracts/mocks/stanley/MockCase2Stanley.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockADai.sol";
+import "../../contracts/mocks/stanley/aave/MockADAI.sol";
 import "../../contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
 import "../../contracts/mocks/stanley/aave/MockProviderAave.sol";
 import "../../contracts/mocks/stanley/aave/MockStakedAave.sol";
@@ -47,6 +48,11 @@ contract StanleyUtils {
 
     function getTokenADai() public returns (MockADai) {
         return new MockADai();
+    }
+
+
+    function getMockADAI(address asset, address tokenOwner) public returns (MockADAI) {
+        return new MockADAI(asset, tokenOwner);
     }
 
     function getTokenAave() public returns (AAVEMockedToken) {
