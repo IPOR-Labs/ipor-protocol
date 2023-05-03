@@ -26,6 +26,7 @@ contract IporProtocolFactory is Test {
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         address[] approvalsForUsers;
         address miltonImplementation;
+        address spreadImplementation;
     }
     IporProtocolBuilder internal iporProtocolBuilder;
     AssetBuilder internal assetBuilder;
@@ -74,7 +75,7 @@ contract IporProtocolFactory is Test {
             .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
             .and()
             .spread()
-            .withDefaultValues()
+            .withSpreadImplementation(cfg.spreadImplementation)
             .and()
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
@@ -82,25 +83,8 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
-
+        vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
-
-        iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
-        iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
-        iporProtocol.miltonStorage.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.miltonStorage.setMilton(address(iporProtocol.milton));
-        iporProtocol.milton.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.stanley));
-
-        iporProtocol.stanley.setMilton(address(iporProtocol.milton));
-
-        vm.stopPrank();
 
         for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
             vm.startPrank(cfg.approvalsForUsers[i]);
@@ -141,7 +125,7 @@ contract IporProtocolFactory is Test {
             .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
             .and()
             .spread()
-            .withDefaultValues()
+            .withSpreadImplementation(cfg.spreadImplementation)
             .and()
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
@@ -149,25 +133,8 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
-
+        vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
-
-        iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
-        iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
-        iporProtocol.miltonStorage.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.miltonStorage.setMilton(address(iporProtocol.milton));
-        iporProtocol.milton.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.stanley));
-
-        iporProtocol.stanley.setMilton(address(iporProtocol.milton));
-
-        vm.stopPrank();
 
         for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
             vm.startPrank(cfg.approvalsForUsers[i]);
@@ -208,7 +175,7 @@ contract IporProtocolFactory is Test {
             .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
             .and()
             .spread()
-            .withDefaultValues()
+            .withSpreadImplementation(cfg.spreadImplementation)
             .and()
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
@@ -216,25 +183,8 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.startPrank(address(_owner));
-        iporProtocol.iporOracle.setIporAlgorithmFacade(address(iporProtocol.iporWeighted));
-
+        vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
-        iporProtocol.ipToken.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.ivToken.setStanley(address(iporProtocol.stanley));
-
-        iporProtocol.joseph.setMaxLiquidityPoolBalance(1000000000);
-        iporProtocol.joseph.setMaxLpAccountContribution(1000000000);
-        iporProtocol.miltonStorage.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.miltonStorage.setMilton(address(iporProtocol.milton));
-        iporProtocol.milton.setJoseph(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.joseph));
-        iporProtocol.milton.setupMaxAllowanceForAsset(address(iporProtocol.stanley));
-
-        iporProtocol.stanley.setMilton(address(iporProtocol.milton));
-
-        vm.stopPrank();
 
         for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
             vm.startPrank(cfg.approvalsForUsers[i]);
@@ -256,13 +206,4 @@ contract IporProtocolFactory is Test {
 
         return iporProtocol;
     }
-
-
-    //    function getUsdtInstance() public returns (IporProtocol memory iporProtocol) {
-    //        return IporProtocol();
-    //    }
-    //
-    //    function getUsdcInstance() public returns (IporProtocol memory iporProtocol) {
-    //        return IporProtocol();
-    //    }
 }

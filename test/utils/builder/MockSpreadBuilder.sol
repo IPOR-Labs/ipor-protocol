@@ -5,13 +5,13 @@ import "../../utils/TestConstants.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
 
-
-contract MockSpreadBuilder is Test{
+contract MockSpreadBuilder is Test {
     struct BuilderData {
         uint256 quotePayFixedValue;
         uint256 quoteReceiveFixedValue;
         int256 spreadPayFixedValue;
         int256 spreadReceiveFixedValue;
+        address spreadImplementation;
     }
 
     BuilderData private builderData;
@@ -57,24 +57,26 @@ contract MockSpreadBuilder is Test{
         return this;
     }
 
-    function withDefaultValues() public returns (MockSpreadBuilder) {
-        builderData.quotePayFixedValue = 0;
-        builderData.quoteReceiveFixedValue = 0;
-        builderData.spreadPayFixedValue = 0;
-        builderData.spreadReceiveFixedValue = 0;
+    function withSpreadImplementation(address spreadImplementation)
+        public
+        returns (MockSpreadBuilder)
+    {
+        builderData.spreadImplementation = spreadImplementation;
         return this;
     }
 
-    function build() public returns (MockSpreadModel) {
+    function build() public returns (MockSpreadModel spreadModel) {
         vm.startPrank(_owner);
-        MockSpreadModel mockSpreadModel =
-            new MockSpreadModel(
+        if (builderData.spreadImplementation != address(0)) {
+            spreadModel = MockSpreadModel(builderData.spreadImplementation);
+        } else {
+            spreadModel = new MockSpreadModel(
                 builderData.quotePayFixedValue,
                 builderData.quoteReceiveFixedValue,
                 builderData.spreadPayFixedValue,
                 builderData.spreadReceiveFixedValue
             );
+        }
         vm.stopPrank();
-        return mockSpreadModel;
     }
 }

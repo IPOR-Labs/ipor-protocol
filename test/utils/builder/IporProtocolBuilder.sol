@@ -133,9 +133,7 @@ contract IporProtocolBuilder is Test {
         iporWeightedBuilder.withIporOracle(address(iporOracle));
 
         MockIporWeighted iporWeighted = iporWeightedBuilder.build();
-
         MiltonStorage miltonStorage = miltonStorageBuilder.build();
-
         MockSpreadModel spreadModel = spreadBuilder.build();
 
         stanleyBuilder.withAsset(address(asset));
@@ -154,8 +152,26 @@ contract IporProtocolBuilder is Test {
         josephBuilder.withMiltonStorage(address(miltonStorage));
         josephBuilder.withMilton(address(milton));
         josephBuilder.withStanley(address(stanley));
-
         ItfJoseph joseph = josephBuilder.build();
+
+        vm.startPrank(address(_owner));
+        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+
+        ivToken.setStanley(address(stanley));
+
+        miltonStorage.setMilton(address(milton));
+        stanley.setMilton(address(milton));
+        milton.setupMaxAllowanceForAsset(address(stanley));
+
+        ipToken.setJoseph(address(joseph));
+        miltonStorage.setJoseph(address(joseph));
+        milton.setJoseph(address(joseph));
+        milton.setupMaxAllowanceForAsset(address(joseph));
+
+        joseph.setMaxLiquidityPoolBalance(1000000000);
+        joseph.setMaxLpAccountContribution(1000000000);
+
+        vm.stopPrank();
 
         iporProtocol = IporProtocol(
             asset,
