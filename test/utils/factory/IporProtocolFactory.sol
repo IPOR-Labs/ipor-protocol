@@ -26,7 +26,9 @@ contract IporProtocolFactory is Test {
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         address[] approvalsForUsers;
         address miltonImplementation;
+        address josephImplementation;
         address spreadImplementation;
+        address stanleyImplementation;
     }
     IporProtocolBuilder internal iporProtocolBuilder;
     AssetBuilder internal assetBuilder;
@@ -80,6 +82,12 @@ contract IporProtocolFactory is Test {
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
             .and()
+            .joseph()
+            .withJosephImplementation(cfg.josephImplementation)
+            .and()
+            .stanley()
+            .withStanleyImplementation(cfg.stanleyImplementation)
+            .and()
             .build();
 
         //setup
@@ -130,6 +138,12 @@ contract IporProtocolFactory is Test {
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
             .and()
+            .joseph()
+            .withJosephImplementation(cfg.josephImplementation)
+            .and()
+            .stanley()
+            .withStanleyImplementation(cfg.stanleyImplementation)
+            .and()
             .build();
 
         //setup
@@ -179,6 +193,12 @@ contract IporProtocolFactory is Test {
             .and()
             .milton()
             .withMiltonImplementation(cfg.miltonImplementation)
+            .and()
+            .joseph()
+            .withJosephImplementation(cfg.josephImplementation)
+            .and()
+            .stanley()
+            .withStanleyImplementation(cfg.stanleyImplementation)
             .and()
             .build();
 

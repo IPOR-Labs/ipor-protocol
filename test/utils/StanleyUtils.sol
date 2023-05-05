@@ -53,10 +53,13 @@ contract StanleyUtils {
         return new AAVEMockedToken(1000000000000000000000000000000, 18);
     }
 
-    function getCToken(address asset, address interestRateModel, uint8 decimal, string memory name, string memory code)
-        public
-        returns (MockCToken)
-    {
+    function getCToken(
+        address asset,
+        address interestRateModel,
+        uint8 decimal,
+        string memory name,
+        string memory code
+    ) public returns (MockCToken) {
         return new MockCToken(asset, interestRateModel, decimal, name, code);
     }
 
@@ -74,14 +77,14 @@ contract StanleyUtils {
 
         address itfStanleyProxyAddress = address(
             new ERC1967Proxy(
-            address(itfStanleyImpl),
-            abi.encodeWithSignature(
-                "initialize(address,address,address,address)",
-                asset,
-                ivToken,
-                address(strategyAave),
-                address(strategyCompound)
-            )
+                address(itfStanleyImpl),
+                abi.encodeWithSignature(
+                    "initialize(address,address,address,address)",
+                    asset,
+                    ivToken,
+                    address(strategyAave),
+                    address(strategyCompound)
+                )
             )
         );
 
@@ -102,14 +105,14 @@ contract StanleyUtils {
 
         address itfStanleyProxyAddress = address(
             new ERC1967Proxy(
-            address(itfStanleyImpl),
-            abi.encodeWithSignature(
-                "initialize(address,address,address,address)",
-                asset,
-                ivToken,
-                address(strategyAave),
-                address(strategyCompound)
-            )
+                address(itfStanleyImpl),
+                abi.encodeWithSignature(
+                    "initialize(address,address,address,address)",
+                    asset,
+                    ivToken,
+                    address(strategyAave),
+                    address(strategyCompound)
+                )
             )
         );
 
@@ -132,7 +135,10 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockTestnetStrategyCompoundUsdt(address asset) public returns (MockTestnetStrategy) {
+    function getMockTestnetStrategyCompoundUsdt(address asset)
+        public
+        returns (MockTestnetStrategy)
+    {
         MockTestnetStrategyCompoundUsdt strategyImpl = new MockTestnetStrategyCompoundUsdt();
         MockTestnetShareTokenCompoundUsdt shareToken = new MockTestnetShareTokenCompoundUsdt(0);
 
@@ -156,7 +162,10 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockTestnetShareTokenAaveUsdc(uint256 totalSupply) public returns (MockTestnetShareTokenAaveUsdc) {
+    function getMockTestnetShareTokenAaveUsdc(uint256 totalSupply)
+        public
+        returns (MockTestnetShareTokenAaveUsdc)
+    {
         return new MockTestnetShareTokenAaveUsdc(totalSupply);
     }
 
@@ -167,7 +176,10 @@ contract StanleyUtils {
         return new MockTestnetShareTokenCompoundUsdc(totalSupply);
     }
 
-    function getMockTestnetShareTokenAaveDai(uint256 totalSupply) public returns (MockTestnetShareTokenAaveDai) {
+    function getMockTestnetShareTokenAaveDai(uint256 totalSupply)
+        public
+        returns (MockTestnetShareTokenAaveDai)
+    {
         return new MockTestnetShareTokenAaveDai(totalSupply);
     }
 
@@ -191,39 +203,69 @@ contract StanleyUtils {
     }
 
     function getMockCase0Stanley(address asset) public returns (MockCase0Stanley) {
-        return new MockCase0Stanley(asset);
+        MockCase0Stanley stanley = new MockCase0Stanley();
+        stanley.setAsset(asset);
+        return stanley;
     }
 
     function getMockCaseBaseStanley(address asset) public returns (MockCaseBaseStanley) {
-        return new MockCaseBaseStanley(asset);
+        MockCaseBaseStanley stanley = new MockCaseBaseStanley();
+        stanley.setAsset(asset);
+        return stanley;
     }
 
-    function _getMockCase0Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
+    function _getMockCase0Stanleys(
+        address tokenUsdt,
+        address tokenUsdc,
+        address tokenDai
+    )
         internal
-        returns (MockCase0Stanley, MockCase0Stanley, MockCase0Stanley)
+        returns (
+            MockCase0Stanley,
+            MockCase0Stanley,
+            MockCase0Stanley
+        )
     {
-        MockCase0Stanley mockStanleyUsdt = new MockCase0Stanley(tokenUsdt);
-        MockCase0Stanley mockStanleyUsdc = new MockCase0Stanley(tokenUsdc);
-        MockCase0Stanley mockStanleyDai = new MockCase0Stanley(tokenDai);
+        MockCase0Stanley mockStanleyUsdt = new MockCase0Stanley();
+        mockStanleyUsdt.setAsset(tokenUsdt);
+        MockCase0Stanley mockStanleyUsdc = new MockCase0Stanley();
+        mockStanleyUsdc.setAsset(tokenUsdc);
+        MockCase0Stanley mockStanleyDai = new MockCase0Stanley();
+        mockStanleyDai.setAsset(tokenDai);
         return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
     }
 
     function getMockCase1Stanley(address asset) public returns (MockCase1Stanley) {
-        return new MockCase1Stanley(asset);
+        MockCase1Stanley stanley = new MockCase1Stanley();
+        stanley.setAsset(asset);
+        return stanley;
     }
 
-    function _getMockCase1Stanleys(address tokenUsdt, address tokenUsdc, address tokenDai)
+    function _getMockCase1Stanleys(
+        address tokenUsdt,
+        address tokenUsdc,
+        address tokenDai
+    )
         internal
-        returns (MockCase1Stanley, MockCase1Stanley, MockCase1Stanley)
+        returns (
+            MockCase1Stanley,
+            MockCase1Stanley,
+            MockCase1Stanley
+        )
     {
-        MockCase1Stanley mockStanleyUsdt = new MockCase1Stanley(tokenUsdt);
-        MockCase1Stanley mockStanleyUsdc = new MockCase1Stanley(tokenUsdc);
-        MockCase1Stanley mockStanleyDai = new MockCase1Stanley(tokenDai);
+        MockCase1Stanley mockStanleyUsdt = new MockCase1Stanley();
+        mockStanleyUsdt.setAsset(tokenUsdt);
+        MockCase1Stanley mockStanleyUsdc = new MockCase1Stanley();
+        mockStanleyUsdc.setAsset(tokenUsdc);
+        MockCase1Stanley mockStanleyDai = new MockCase1Stanley();
+        mockStanleyDai.setAsset(tokenDai);
         return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
     }
 
     function getMockCase2Stanley(address asset) public returns (MockCase2Stanley) {
-        return new MockCase2Stanley(asset);
+        MockCase2Stanley stanley = new MockCase2Stanley();
+        stanley.setAsset(asset);
+        return stanley;
     }
 
     function getMockLendingPoolAave(
@@ -237,17 +279,18 @@ contract StanleyUtils {
         address aUsdt,
         uint256 liquidityRatesUsdt
     ) public returns (MockLendingPoolAave) {
-        return new MockLendingPoolAave(
-            dai, 
-            aDai, 
-            liquidityRatesDai,
-            usdc, 
-            aUsdc,
-            liquidityRatesUsdc,
-            usdt,
-            aUsdt,
-            liquidityRatesUsdt
-        );
+        return
+            new MockLendingPoolAave(
+                dai,
+                aDai,
+                liquidityRatesDai,
+                usdc,
+                aUsdc,
+                liquidityRatesUsdc,
+                usdt,
+                aUsdt,
+                liquidityRatesUsdt
+            );
     }
 
     function getMockProviderAave(address lendingPoolAddress) public returns (MockProviderAave) {
@@ -258,7 +301,10 @@ contract StanleyUtils {
         return new MockStakedAave(aaveTokenAddress);
     }
 
-    function getMockAaveIncentivesController(address stakedAaveAddress) public returns (MockAaveIncentivesController) {
+    function getMockAaveIncentivesController(address stakedAaveAddress)
+        public
+        returns (MockAaveIncentivesController)
+    {
         return new MockAaveIncentivesController(stakedAaveAddress);
     }
 
@@ -273,7 +319,15 @@ contract StanleyUtils {
         StrategyAave strategyImpl = new StrategyAave();
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),
-            abi.encodeWithSignature("initialize(address,address,address,address,address,address)", tokenAddress, aTokenAddress, addressProviderAddress, stakedAaveAddress, aaveIncentivesControllerAddress, aaveTokenAddress)
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address,address,address)",
+                tokenAddress,
+                aTokenAddress,
+                addressProviderAddress,
+                stakedAaveAddress,
+                aaveIncentivesControllerAddress,
+                aaveTokenAddress
+            )
         );
         return StrategyAave(address(strategyProxy));
     }
@@ -282,50 +336,79 @@ contract StanleyUtils {
         return new MockWhitePaper();
     }
 
-    function getMockComptroller(address tokenCOMP, address cUSDT, address cUSDC, address cDAI)
-        public
-        returns (MockComptroller)
-    {
+    function getMockComptroller(
+        address tokenCOMP,
+        address cUSDT,
+        address cUSDC,
+        address cDAI
+    ) public returns (MockComptroller) {
         return new MockComptroller(tokenCOMP, cUSDT, cUSDC, cDAI);
     }
 
-    function getStrategyCompound(address asset, address shareToken, address comptroller, address tokenComp)
-        public
-        returns (StrategyCompound)
-    {
+    function getStrategyCompound(
+        address asset,
+        address shareToken,
+        address comptroller,
+        address tokenComp
+    ) public returns (StrategyCompound) {
         StrategyCompound strategyCompoundImpl = new StrategyCompound();
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyCompoundImpl),
-            abi.encodeWithSignature("initialize(address,address,address,address)", asset, shareToken, comptroller, tokenComp)
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                asset,
+                shareToken,
+                comptroller,
+                tokenComp
+            )
         );
         return StrategyCompound(address(strategyProxy));
     }
 
-    function getStanleyDai(address asset, address ivToken, address strategyAave, address strategyCompound)
-        public
-        returns (StanleyDai)
-    {
+    function getStanleyDai(
+        address asset,
+        address ivToken,
+        address strategyAave,
+        address strategyCompound
+    ) public returns (StanleyDai) {
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
             address(stanleyDaiImpl),
-            abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(asset),
+                address(ivToken),
+                address(strategyAave),
+                address(strategyCompound)
+            )
         );
         return StanleyDai(address(stanleyDaiProxy));
     }
 
-    function getStanleyUsdc(address asset, address ivToken, address strategyAave, address strategyCompound)
-        public
-        returns (StanleyUsdc)
-    {
+    function getStanleyUsdc(
+        address asset,
+        address ivToken,
+        address strategyAave,
+        address strategyCompound
+    ) public returns (StanleyUsdc) {
         StanleyUsdc stanleyUsdcImpl = new StanleyUsdc();
         ERC1967Proxy stanleyUsdcProxy = new ERC1967Proxy(
             address(stanleyUsdcImpl),
-            abi.encodeWithSignature("initialize(address,address,address,address)", address(asset), address(ivToken), address(strategyAave), address(strategyCompound))
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(asset),
+                address(ivToken),
+                address(strategyAave),
+                address(strategyCompound)
+            )
         );
         return StanleyUsdc(address(stanleyUsdcProxy));
     }
 
-    function getMockTestnetStrategy(address asset, address shareToken) public returns (MockTestnetStrategy) {
+    function getMockTestnetStrategy(address asset, address shareToken)
+        public
+        returns (MockTestnetStrategy)
+    {
         MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),

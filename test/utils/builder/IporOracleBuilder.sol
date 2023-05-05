@@ -96,6 +96,22 @@ contract IporOracleBuilder is Test {
             builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE3
         ) {
             exponentialMovingAverage = 50 * 1e16;
+        } else if (
+            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE4
+        ) {
+            exponentialMovingAverage = 120 * 1e16;
+        } else if (
+            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE5
+        ) {
+            exponentialMovingAverage = 5 * 1e16;
+        } else if (
+            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE6
+        ) {
+            exponentialMovingAverage = 160 * 1e16;
+        } else if (
+            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE7
+        ) {
+            exponentialMovingAverage = 0;
         }
 
         for (uint256 i = 0; i < builderData.assets.length; i++) {

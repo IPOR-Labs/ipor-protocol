@@ -266,66 +266,41 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
         assertEq(_iporProtocol.joseph.owner(), _admin);
     }
 
-    //
-    //    function testShouldNotSendETHToJosephDAIUSDCUSDT() public payable {
-    //        // given
-    //        address[] memory tokenAddresses =
-    //            addressesToArray(address(_iporProtocol.asset), address(_usdcMockedToken), address(_daiMockedToken));
-    //        address[] memory ipTokenAddresses =
-    //            addressesToArray(address(_iporProtocol.ipToken), address(_ipTokenUsdc), address(_iporProtocol.ipToken));
-    //        ItfIporOracle iporOracle = getIporOracleAssets(
-    //            _userOne,
-    //            tokenAddresses,
-    //            uint32(block.timestamp),
-    //            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
-    //            TestConstants.ZERO_64UINT
-    //        );
-    //        address[] memory mockCase0StanleyAddresses = addressesToArray(
-    //            address(getMockCase0Stanley(address(_iporProtocol.asset))),
-    //            address(getMockCase0Stanley(address(_usdcMockedToken))),
-    //            address(getMockCase0Stanley(address(_daiMockedToken)))
-    //        );
-    //        MiltonStorages memory miltonStorages = getMiltonStorages();
-    //        address[] memory miltonStorageAddresses = addressesToArray(
-    //            address(miltonStorages.miltonStorageUsdt),
-    //            address(miltonStorages.miltonStorageUsdc),
-    //            address(miltonStorages.miltonStorageDai)
-    //        );
-    //        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-    //            address(iporOracle),
-    //            address(_miltonSpreadModel),
-    //            address(_iporProtocol.asset),
-    //            address(_usdcMockedToken),
-    //            address(_daiMockedToken),
-    //            miltonStorageAddresses,
-    //            mockCase0StanleyAddresses
-    //        );
-    //        address[] memory mockCase0MiltonAddresses = addressesToArray(
-    //            address(mockCase0Miltons.mockCase0MiltonUsdt),
-    //            address(mockCase0Miltons.mockCase0MiltonUsdc),
-    //            address(mockCase0Miltons.mockCase0MiltonDai)
-    //        );
-    //        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-    //            tokenAddresses,
-    //            ipTokenAddresses,
-    //            mockCase0MiltonAddresses,
-    //            miltonStorageAddresses,
-    //            mockCase0StanleyAddresses
-    //        );
-    //        // when
-    //        vm.expectRevert(
-    //            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-    //        );
-    //        address(mockCase0Josephs.mockCase0JosephUsdt).call{value: msg.value}("");
-    //        vm.expectRevert(
-    //            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-    //        );
-    //        address(mockCase0Josephs.mockCase0JosephUsdc).call{value: msg.value}("");
-    //        vm.expectRevert(
-    //            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
-    //        );
-    //        address(mockCase0Josephs._iporProtocol.joseph).call{value: msg.value}("");
-    //    }
+    function testShouldNotSendETHToJosephDAI() public payable {
+        // given
+        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        // when
+        vm.expectRevert(
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+        address(_iporProtocol.joseph).call{value: msg.value}("");
+    }
+
+    function testShouldNotSendETHToJosephUSDC() public payable {
+        // given
+        _cfg.miltonImplementation = address(new MockCase0MiltonUsdc());
+        _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
+
+        // when
+        vm.expectRevert(
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+        address(_iporProtocol.joseph).call{value: msg.value}("");
+    }
+
+    function testShouldNotSendETHToJosephUSDT() public payable {
+        // given
+        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        // when
+        vm.expectRevert(
+            "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+        );
+        address(_iporProtocol.joseph).call{value: msg.value}("");
+    }
 
     function testShouldDeployJosephDai() public {
         // given

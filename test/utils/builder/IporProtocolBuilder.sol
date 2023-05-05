@@ -114,6 +114,14 @@ contract IporProtocolBuilder is Test {
         return miltonBuilder;
     }
 
+    function joseph() public view returns (JosephBuilder) {
+        return josephBuilder;
+    }
+
+    function stanley() public view returns (StanleyBuilder) {
+        return stanleyBuilder;
+    }
+
     function and() public view returns (IporProtocolBuilder) {
         return this;
     }

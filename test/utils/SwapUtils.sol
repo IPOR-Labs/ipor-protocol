@@ -74,10 +74,10 @@ contract SwapUtils is Test {
     ) public {
         vm.prank(from);
         milton.itfOpenSwapPayFixed(
-            openTimestamp, // openTimestamp
-            totalAmount, // totalAmount
-            acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage
+            openTimestamp,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
         );
     }
 
@@ -91,10 +91,10 @@ contract SwapUtils is Test {
     ) public {
         vm.prank(from);
         milton.itfOpenSwapReceiveFixed(
-            openTimestamp, // openTimestamp
-            totalAmount, // totalAmount
-            acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage
+            openTimestamp,
+            totalAmount,
+            acceptableFixedInterestRate,
+            leverage
         );
     }
 }

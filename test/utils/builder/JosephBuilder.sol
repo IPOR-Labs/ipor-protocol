@@ -8,7 +8,7 @@ import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
 
-contract JosephBuilder is Test{
+contract JosephBuilder is Test {
     struct BuilderData {
         BuilderUtils.AssetType assetType;
         bool paused;
@@ -17,6 +17,7 @@ contract JosephBuilder is Test{
         address milton;
         address miltonStorage;
         address stanley;
+        address josephImplementation;
     }
 
     BuilderData private builderData;
@@ -68,40 +69,33 @@ contract JosephBuilder is Test{
         return this;
     }
 
-    function build() public returns (ItfJoseph) {
-        if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-            return _buildDAI();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-            return _buildUSDC();
-        } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-            return _buildUSDT();
-        } else {
-            revert("Unsupported asset type");
-        }
+    function withJosephImplementation(address josephImplementation) public returns (JosephBuilder) {
+        builderData.josephImplementation = josephImplementation;
+        return this;
     }
 
-    function _buildDAI() internal returns (ItfJoseph) {
+    function build() public returns (ItfJoseph) {
         vm.startPrank(_owner);
-        ERC1967Proxy proxy = _constructProxy(address(new ItfJosephDai()));
+        ERC1967Proxy proxy = _constructProxy(_buildJosephImplementation());
         ItfJoseph joseph = ItfJoseph(address(proxy));
         vm.stopPrank();
         return joseph;
     }
 
-    function _buildUSDC() internal returns (ItfJoseph) {
-        vm.startPrank(_owner);
-        ERC1967Proxy proxy = _constructProxy(address(new ItfJosephUsdc()));
-        ItfJoseph joseph =  ItfJoseph(address(proxy));
-        vm.stopPrank();
-        return joseph;
-    }
-
-    function _buildUSDT() internal returns (ItfJoseph) {
-        vm.startPrank(_owner);
-        ERC1967Proxy proxy = _constructProxy(address(new ItfJosephUsdt()));
-        ItfJoseph joseph =  ItfJoseph(address(proxy));
-        vm.stopPrank();
-        return joseph;
+    function _buildJosephImplementation() internal returns (address josephImpl) {
+        if (builderData.josephImplementation != address(0)) {
+            josephImpl = builderData.josephImplementation;
+        } else {
+            if (builderData.assetType == BuilderUtils.AssetType.DAI) {
+                josephImpl = address(new ItfJosephDai());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
+                josephImpl = address(new ItfJosephUsdt());
+            } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
+                josephImpl = address(new ItfJosephUsdc());
+            } else {
+                revert("Asset type not supported");
+            }
+        }
     }
 
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
