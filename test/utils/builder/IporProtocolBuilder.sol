@@ -17,6 +17,11 @@ import "./JosephBuilder.sol";
 import "forge-std/Test.sol";
 
 contract IporProtocolBuilder is Test {
+    struct BuilderData {
+        address asset;
+        address iporOracle;
+    }
+
     struct IporProtocol {
         MockTestnetToken asset;
         IpToken ipToken;
@@ -43,6 +48,8 @@ contract IporProtocolBuilder is Test {
 
     address private _owner;
 
+    BuilderData private builderData;
+
     constructor(address owner) {
         _owner = owner;
         assetBuilder = new AssetBuilder(owner, this);
@@ -55,6 +62,16 @@ contract IporProtocolBuilder is Test {
         stanleyBuilder = new StanleyBuilder(owner, this);
         miltonBuilder = new MiltonBuilder(owner, this);
         josephBuilder = new JosephBuilder(owner, this);
+    }
+
+    function withAsset(address asset) public returns (IporProtocolBuilder) {
+        builderData.asset = asset;
+        return this;
+    }
+
+    function withIporOracle(address iporOracle) public returns (IporProtocolBuilder) {
+        builderData.iporOracle = iporOracle;
+        return this;
     }
 
     function daiBuilder() public returns (IporProtocolBuilder) {
@@ -127,7 +144,13 @@ contract IporProtocolBuilder is Test {
     }
 
     function build() public returns (IporProtocol memory iporProtocol) {
-        MockTestnetToken asset = assetBuilder.build();
+        MockTestnetToken asset;
+
+        if (builderData.asset == address(0)) {
+            asset = assetBuilder.build();
+        } else {
+            asset = MockTestnetToken(builderData.asset);
+        }
 
         ipTokenBuilder.withAsset(address(asset));
         IpToken ipToken = ipTokenBuilder.build();
@@ -135,8 +158,14 @@ contract IporProtocolBuilder is Test {
         ivTokenBuilder.withAsset(address(asset));
         IvToken ivToken = ivTokenBuilder.build();
 
-        iporOracleBuilder.withAsset(address(asset));
-        ItfIporOracle iporOracle = iporOracleBuilder.build();
+        ItfIporOracle iporOracle;
+
+        if (builderData.iporOracle == address(0)) {
+            iporOracleBuilder.withAsset(address(asset));
+            iporOracle = iporOracleBuilder.build();
+        } else {
+            iporOracle = ItfIporOracle(builderData.iporOracle);
+        }
 
         iporWeightedBuilder.withIporOracle(address(iporOracle));
 
