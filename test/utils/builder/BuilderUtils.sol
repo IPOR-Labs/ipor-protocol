@@ -31,7 +31,11 @@ contract BuilderUtils {
         /// @dev lastUpdateTimestamp = block.timestamp
         /// @dev exponentialMovingAverage = 0
         /// @dev exponentialWeightedMovingVariance = 0
-        CASE7
+        CASE7,
+        /// @dev lastUpdateTimestamp = block.timestamp
+        /// @dev exponentialMovingAverage = 6 * 1e16
+        /// @dev exponentialWeightedMovingVariance = 0
+        CASE8
     }
 
     enum MiltonTestCase {

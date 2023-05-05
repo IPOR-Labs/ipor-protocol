@@ -112,6 +112,10 @@ contract IporOracleBuilder is Test {
             builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE7
         ) {
             exponentialMovingAverage = 0;
+        } else if (
+            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE8
+        ) {
+            exponentialMovingAverage = 6 * 1e16;
         }
 
         for (uint256 i = 0; i < builderData.assets.length; i++) {
