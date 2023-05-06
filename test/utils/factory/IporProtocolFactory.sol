@@ -21,7 +21,19 @@ import "../builder/IporProtocolBuilder.sol";
 import "forge-std/Test.sol";
 
 contract IporProtocolFactory is Test {
-    struct TestCaseConfig {
+    struct Amm {
+        ItfIporOracle iporOracle;
+        IporProtocolBuilder.IporProtocol usdt;
+        IporProtocolBuilder.IporProtocol usdc;
+        IporProtocolBuilder.IporProtocol dai;
+    }
+
+    struct AmmConfig {
+        address iporOracleUpdater;
+        BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
+    }
+
+    struct IporProtocolConfig {
         address iporOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
         address[] approvalsForUsers;
@@ -30,6 +42,7 @@ contract IporProtocolFactory is Test {
         address spreadImplementation;
         address stanleyImplementation;
     }
+
     IporProtocolBuilder internal iporProtocolBuilder;
     AssetBuilder internal assetBuilder;
     IpTokenBuilder internal ipTokenBuilder;
@@ -59,7 +72,76 @@ contract IporProtocolFactory is Test {
         _owner = owner;
     }
 
-    function getDaiInstance(TestCaseConfig memory cfg)
+    function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
+
+        assetBuilder.withUSDT();
+        MockTestnetToken usdt = assetBuilder.build();
+
+        assetBuilder.withUSDC();
+        MockTestnetToken usdc = assetBuilder.build();
+
+        assetBuilder.withDAI();
+        MockTestnetToken dai = assetBuilder.build();
+
+        address[] memory assets = new address[](3);
+        assets[0] = address(dai);
+        assets[1] = address(usdt);
+        assets[2] = address(usdc);
+
+        iporOracleBuilder.withAssets(assets);
+        iporOracleBuilder.withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase);
+
+        ItfIporOracle iporOracle = iporOracleBuilder.build();
+
+        vm.prank(address(_owner));
+        iporOracle.addUpdater(cfg.iporOracleUpdater);
+
+        amm.iporOracle = iporOracle;
+
+        amm.usdt = iporProtocolBuilder
+            .usdtBuilder()
+            .withAsset(address(usdt))
+            .ipToken()
+            .withName("IP USDT")
+            .withSymbol("ipUSDT")
+            .and()
+            .ivToken()
+            .withName("IV USDT")
+            .withSymbol("ivUSDT")
+            .and()
+            .withIporOracle(address(iporOracle))
+            .build();
+
+        amm.usdc = iporProtocolBuilder
+            .usdcBuilder()
+            .withAsset(address(usdc))
+            .ipToken()
+            .withName("IP USDC")
+            .withSymbol("ipUSDC")
+            .and()
+            .ivToken()
+            .withName("IV USDC")
+            .withSymbol("ivUSDC")
+            .and()
+            .withIporOracle(address(iporOracle))
+            .build();
+
+        amm.dai = iporProtocolBuilder
+            .daiBuilder()
+            .withAsset(address(dai))
+            .ipToken()
+            .withName("IP DAI")
+            .withSymbol("ipDAI")
+            .and()
+            .ivToken()
+            .withName("IV DAI")
+            .withSymbol("ivDAI")
+            .and()
+            .withIporOracle(address(iporOracle))
+            .build();
+    }
+
+    function getDaiInstance(IporProtocolConfig memory cfg)
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
@@ -94,28 +176,12 @@ contract IporProtocolFactory is Test {
         vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
-        for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
-            vm.startPrank(cfg.approvalsForUsers[i]);
-            iporProtocol.asset.approve(
-                address(iporProtocol.joseph),
-                TestConstants.TOTAL_SUPPLY_18_DECIMALS
-            );
-            iporProtocol.asset.approve(
-                address(iporProtocol.milton),
-                TestConstants.TOTAL_SUPPLY_18_DECIMALS
-            );
-            vm.stopPrank();
-            deal(
-                address(iporProtocol.asset),
-                cfg.approvalsForUsers[i],
-                TestConstants.USER_SUPPLY_10MLN_18DEC
-            );
-        }
+        setupUsers(cfg, iporProtocol);
 
         return iporProtocol;
     }
 
-    function getUsdtInstance(TestCaseConfig memory cfg)
+    function getUsdtInstance(IporProtocolConfig memory cfg)
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
@@ -150,28 +216,12 @@ contract IporProtocolFactory is Test {
         vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
-        for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
-            vm.startPrank(cfg.approvalsForUsers[i]);
-            iporProtocol.asset.approve(
-                address(iporProtocol.joseph),
-                TestConstants.TOTAL_SUPPLY_6_DECIMALS
-            );
-            iporProtocol.asset.approve(
-                address(iporProtocol.milton),
-                TestConstants.TOTAL_SUPPLY_6_DECIMALS
-            );
-            vm.stopPrank();
-            deal(
-                address(iporProtocol.asset),
-                cfg.approvalsForUsers[i],
-                TestConstants.USER_SUPPLY_6_DECIMALS
-            );
-        }
+        setupUsers(cfg, iporProtocol);
 
         return iporProtocol;
     }
 
-    function getUsdcInstance(TestCaseConfig memory cfg)
+    function getUsdcInstance(IporProtocolConfig memory cfg)
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
@@ -206,24 +256,53 @@ contract IporProtocolFactory is Test {
         vm.prank(address(_owner));
         iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
 
-        for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
-            vm.startPrank(cfg.approvalsForUsers[i]);
-            iporProtocol.asset.approve(
-                address(iporProtocol.joseph),
-                TestConstants.TOTAL_SUPPLY_6_DECIMALS
-            );
-            iporProtocol.asset.approve(
-                address(iporProtocol.milton),
-                TestConstants.TOTAL_SUPPLY_6_DECIMALS
-            );
-            vm.stopPrank();
-            deal(
-                address(iporProtocol.asset),
-                cfg.approvalsForUsers[i],
-                TestConstants.USER_SUPPLY_6_DECIMALS
-            );
-        }
+        setupUsers(cfg, iporProtocol);
 
         return iporProtocol;
+    }
+
+    function setupUsers(
+        IporProtocolFactory.IporProtocolConfig memory cfg,
+        IporProtocolBuilder.IporProtocol memory iporProtocol
+    ) public {
+        if (iporProtocol.asset.decimals() == 18) {
+            for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
+                vm.startPrank(cfg.approvalsForUsers[i]);
+                iporProtocol.asset.approve(
+                    address(iporProtocol.joseph),
+                    TestConstants.TOTAL_SUPPLY_18_DECIMALS
+                );
+                iporProtocol.asset.approve(
+                    address(iporProtocol.milton),
+                    TestConstants.TOTAL_SUPPLY_18_DECIMALS
+                );
+                vm.stopPrank();
+                deal(
+                    address(iporProtocol.asset),
+                    cfg.approvalsForUsers[i],
+                    TestConstants.USER_SUPPLY_10MLN_18DEC
+                );
+            }
+        } else if (iporProtocol.asset.decimals() == 6) {
+            for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
+                vm.startPrank(cfg.approvalsForUsers[i]);
+                iporProtocol.asset.approve(
+                    address(iporProtocol.joseph),
+                    TestConstants.TOTAL_SUPPLY_6_DECIMALS
+                );
+                iporProtocol.asset.approve(
+                    address(iporProtocol.milton),
+                    TestConstants.TOTAL_SUPPLY_6_DECIMALS
+                );
+                vm.stopPrank();
+                deal(
+                    address(iporProtocol.asset),
+                    cfg.approvalsForUsers[i],
+                    TestConstants.USER_SUPPLY_10MLN_6DEC
+                );
+            }
+        } else {
+            revert("Unsupported decimals");
+        }
     }
 }

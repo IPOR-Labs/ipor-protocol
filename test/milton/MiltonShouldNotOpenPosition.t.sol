@@ -21,7 +21,7 @@ import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
 import "../../contracts/mocks/milton/MockMiltonStorage.sol";
 
 contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     event Transfer(address indexed from, address indexed to, uint256 value);

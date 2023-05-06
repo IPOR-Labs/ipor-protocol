@@ -24,7 +24,7 @@ import "./MockJosephDai.sol";
 import "../../contracts/itf/ItfJosephDai.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     MockTestnetToken internal _dai;

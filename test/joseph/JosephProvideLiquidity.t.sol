@@ -22,7 +22,7 @@ import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "../../contracts/libraries/Constants.sol";
 
 contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {

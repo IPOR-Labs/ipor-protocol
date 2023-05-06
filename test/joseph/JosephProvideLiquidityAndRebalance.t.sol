@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
     
     function setUp() public {

@@ -19,7 +19,7 @@ import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../../contracts/interfaces/types/AmmTypes.sol";
 
 contract MiltonEventsTest is Test, TestCommons, DataUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     MockSpreadModel internal _miltonSpreadModel;

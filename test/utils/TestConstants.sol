@@ -2,7 +2,8 @@
 pragma solidity 0.8.16;
 
 library TestConstants {
-    uint256 public constant MAX_VALUE = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    uint256 public constant MAX_VALUE =
+        115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
     uint256 public constant D54 = 1e54;
     uint256 public constant D36 = 1e36;
@@ -99,6 +100,7 @@ library TestConstants {
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
+    uint256 public constant USER_SUPPLY_10MLN_6DEC = 10000000 * 1e6;
     int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000 * 1e18;
 
     uint256 public constant LEVERAGE_18DEC = 10 * 1e18;

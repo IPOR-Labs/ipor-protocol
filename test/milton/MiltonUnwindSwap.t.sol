@@ -22,7 +22,7 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;
 
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     MockTestnetToken asset;

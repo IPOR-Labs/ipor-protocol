@@ -16,7 +16,7 @@ import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 
 contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     event MiltonSpreadModelChanged(

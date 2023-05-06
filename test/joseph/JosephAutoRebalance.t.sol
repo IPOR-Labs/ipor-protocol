@@ -24,7 +24,7 @@ import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
 import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {

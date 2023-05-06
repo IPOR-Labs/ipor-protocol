@@ -18,7 +18,7 @@ import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 
 contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {

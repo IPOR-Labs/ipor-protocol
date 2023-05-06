@@ -20,7 +20,7 @@ import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     MiltonStorageBuilder _miltonStorageBuilder;

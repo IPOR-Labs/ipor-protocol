@@ -19,7 +19,7 @@ import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {

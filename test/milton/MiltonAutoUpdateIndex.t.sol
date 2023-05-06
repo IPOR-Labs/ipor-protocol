@@ -31,7 +31,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         uint256 updateTimestamp
     );
 
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {

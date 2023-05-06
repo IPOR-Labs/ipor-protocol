@@ -18,7 +18,7 @@ contract AssetBuilder is Test {
     address private _owner;
     IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+        constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
         _iporProtocolBuilder = iporProtocolBuilder;
     }

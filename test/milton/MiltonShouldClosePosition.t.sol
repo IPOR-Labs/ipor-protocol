@@ -23,7 +23,7 @@ import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
 contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
-    IporProtocolFactory.TestCaseConfig private _cfg;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
