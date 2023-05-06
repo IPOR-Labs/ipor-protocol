@@ -139,24 +139,6 @@ contract MiltonUtils is Test {
         return ItfMiltonDai(address(miltonDaiProxy));
     }
 
-    function getItfMiltons(
-        address iporOracle,
-        address miltonSpreadModel,
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai,
-        address[] memory miltonStorageAddresses,
-        address[] memory stanleyAddresses
-    ) public returns (ItfMiltons memory) {
-        ItfMiltons memory mockCase0Miltons;
-        mockCase0Miltons.itfMiltonUsdt =
-            getItfMiltonUsdt(tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0]);
-        mockCase0Miltons.itfMiltonUsdc =
-            getItfMiltonUsdc(tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1]);
-        mockCase0Miltons.itfMiltonDai =
-            getItfMiltonDai(tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2]);
-        return mockCase0Miltons;
-    }
 
     function getMockCase0MiltonUsdt(
         address tokenUsdt,

@@ -31,6 +31,9 @@ contract IporProtocolFactory is Test {
     struct AmmConfig {
         address iporOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
+        address miltonUsdtImplementation;
+        address miltonUsdcImplementation;
+        address miltonDaiImplementation;
     }
 
     struct IporProtocolConfig {
@@ -73,7 +76,6 @@ contract IporProtocolFactory is Test {
     }
 
     function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
-
         assetBuilder.withUSDT();
         MockTestnetToken usdt = assetBuilder.build();
 
@@ -110,6 +112,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDT")
             .and()
             .withIporOracle(address(iporOracle))
+            .milton()
+            .withMiltonImplementation(cfg.miltonUsdtImplementation)
+            .and()
             .build();
 
         amm.usdc = iporProtocolBuilder
@@ -124,6 +129,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDC")
             .and()
             .withIporOracle(address(iporOracle))
+            .milton()
+            .withMiltonImplementation(cfg.miltonUsdcImplementation)
+            .and()
             .build();
 
         amm.dai = iporProtocolBuilder
@@ -138,6 +146,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivDAI")
             .and()
             .withIporOracle(address(iporOracle))
+            .milton()
+            .withMiltonImplementation(cfg.miltonDaiImplementation)
+            .and()
             .build();
     }
 

@@ -14,147 +14,118 @@ import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
 
 contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
-    MockSpreadModel internal _miltonSpreadModel;
-    MockTestnetToken internal _usdtMockedToken;
-    MockTestnetToken internal _usdcMockedToken;
-    MockTestnetToken internal _daiMockedToken;
-    IpToken internal _ipTokenUsdt;
-    IpToken internal _ipTokenUsdc;
-    IpToken internal _ipTokenDai;
-    address internal _miltonStorageAddress;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+    IporProtocolFactory.AmmConfig private _ammCfg;
 
     function setUp() public {
-        _miltonSpreadModel = prepareMockSpreadModel(
-            TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT
-        );
-        _usdtMockedToken = getTokenUsdt();
-        _usdcMockedToken = getTokenUsdc();
-        _daiMockedToken = getTokenDai();
-        _ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
-        _ipTokenUsdc = getIpTokenUsdc(address(_usdcMockedToken));
-        _ipTokenDai = getIpTokenDai(address(_daiMockedToken));
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
-        _miltonStorageAddress = _getUserAddress(5);
+
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+
+        _cfg.approvalsForUsers = _users;
+        _ammCfg.iporOracleUpdater = _userOne;
+        _ammCfg.miltonDaiImplementation = address(new MockCase0MiltonDai());
+        _ammCfg.miltonUsdtImplementation = address(new MockCase0MiltonUsdt());
+        _ammCfg.miltonUsdcImplementation = address(new MockCase0MiltonUsdc());
+    }
+
+    function prepareMiltonFacadeDataProvider(IporProtocolFactory.Amm memory amm)
+        public
+        returns (IMiltonFacadeDataProvider)
+    {
+        _iporProtocolFactory.setupUsers(_cfg, amm.usdt);
+        _iporProtocolFactory.setupUsers(_cfg, amm.usdc);
+        _iporProtocolFactory.setupUsers(_cfg, amm.dai);
+
+        address[] memory assets = new address[](3);
+        assets[0] = address(amm.dai.asset);
+        assets[1] = address(amm.usdt.asset);
+        assets[2] = address(amm.usdc.asset);
+
+        address[] memory miltons = new address[](3);
+        miltons[0] = address(amm.dai.milton);
+        miltons[1] = address(amm.usdt.milton);
+        miltons[2] = address(amm.usdc.milton);
+
+        address[] memory miltonStorages = new address[](3);
+        miltonStorages[0] = address(amm.dai.miltonStorage);
+        miltonStorages[1] = address(amm.usdt.miltonStorage);
+        miltonStorages[2] = address(amm.usdc.miltonStorage);
+
+        address[] memory josephs = new address[](3);
+        josephs[0] = address(amm.dai.joseph);
+        josephs[1] = address(amm.usdt.joseph);
+        josephs[2] = address(amm.usdc.joseph);
+
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
+            address(amm.iporOracle),
+            assets,
+            miltons,
+            miltonStorages,
+            josephs
+        );
+        return miltonFacadeDataProvider;
     }
 
     function testShouldListConfigurationUsdtUsdcDai() public {
         //given
-        _miltonSpreadModel.setCalculateSpreadPayFixed(1 * TestConstants.D16_INT);
-        _miltonSpreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            _usdtMockedToken,
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            _usdcMockedToken,
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Miltons.mockCase0MiltonUsdc)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonUsdt,
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            mockCase1StanleyAddresses[0]
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonUsdc,
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            mockCase1StanleyAddresses[1]
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
-        prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateSpreadPayFixed(1 * TestConstants.D16_INT);
+        amm.usdc.spreadModel.setCalculateSpreadPayFixed(1 * TestConstants.D16_INT);
+        amm.dai.spreadModel.setCalculateSpreadPayFixed(1 * TestConstants.D16_INT);
+
+        amm.usdt.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
+        amm.usdc.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
+        amm.dai.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
+
         vm.startPrank(_userOne);
-        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(address(_usdcMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.usdt.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.usdc.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
         vm.stopPrank();
+
         vm.startPrank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        amm.usdc.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.stopPrank();
+
         // when
-        MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider.getConfiguration();
+        MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider
+            .getConfiguration();
+
         // then
         for (uint256 i; i < assetConfigurations.length; ++i) {
             assertEq(TestConstants.LEVERAGE_18DEC, assetConfigurations[i].minLeverage);
             assertEq(TestConstants.LEVERAGE_1000_18DEC, assetConfigurations[i].maxLeverage);
             assertEq(3 * TestConstants.D14, assetConfigurations[i].openingFeeRate);
-            assertEq(TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC, assetConfigurations[i].iporPublicationFeeAmount);
-            assertEq(TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, assetConfigurations[i].liquidationDepositAmount);
+            assertEq(
+                TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC,
+                assetConfigurations[i].iporPublicationFeeAmount
+            );
+            assertEq(
+                TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
+                assetConfigurations[i].liquidationDepositAmount
+            );
             assertEq(1 * TestConstants.D17, assetConfigurations[i].incomeFeeRate);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadPayFixed);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadReceiveFixed);
@@ -165,134 +136,73 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldListCorrectNumberItemsUsdtUsdcDai() public {
         //given
-        _miltonSpreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_5_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            _usdtMockedToken,
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            _usdcMockedToken,
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Miltons.mockCase0MiltonUsdc)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonUsdt,
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            mockCase1StanleyAddresses[0]
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonUsdc,
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            mockCase1StanleyAddresses[1]
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephUsdt);
-        prepareJoseph(mockCase0Josephs.mockCase0JosephUsdc);
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenUsdt, mockCase0JosephAddresses[0]);
-        prepareIpToken(_ipTokenUsdc, mockCase0JosephAddresses[1]);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
+        amm.usdc.spreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
+        amm.dai.spreadModel.setCalculateSpreadPayFixed(6 * TestConstants.D16_INT);
+
         vm.startPrank(_userOne);
-        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(address(_usdcMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.usdt.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.usdc.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
         vm.stopPrank();
+
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        mockCase0Josephs.mockCase0JosephUsdc.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        amm.usdc.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
         vm.stopPrank();
+
         // when
         vm.startPrank(_userTwo);
-        mockCase0Miltons.mockCase0MiltonUsdt.itfOpenSwapPayFixed(
+        amm.usdt.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        mockCase0Miltons.mockCase0MiltonUsdc.itfOpenSwapPayFixed(
+        amm.usdc.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        mockCase0Miltons.mockCase0MiltonDai.itfOpenSwapPayFixed(
+        amm.dai.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        (uint256 totalCountUsdt, MiltonFacadeTypes.IporSwap[] memory swapsUsdt) =
-            miltonFacadeDataProvider.getMySwaps(address(_usdtMockedToken), TestConstants.ZERO, 50);
-        (uint256 totalCountUsdc, MiltonFacadeTypes.IporSwap[] memory swapsUsdc) =
-            miltonFacadeDataProvider.getMySwaps(address(_usdcMockedToken), TestConstants.ZERO, 50);
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), TestConstants.ZERO, 50);
+
+        (
+            uint256 totalCountUsdt,
+            MiltonFacadeTypes.IporSwap[] memory swapsUsdt
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.usdt.asset), TestConstants.ZERO, 50);
+        (
+            uint256 totalCountUsdc,
+            MiltonFacadeTypes.IporSwap[] memory swapsUsdc
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.usdc.asset), TestConstants.ZERO, 50);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), TestConstants.ZERO, 50);
         vm.stopPrank();
+
         // then
         assertEq(totalCountUsdt, 1);
         assertEq(totalCountUsdc, 1);
@@ -309,79 +219,27 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldFailWhenPageSizeIsZero() public {
         //given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        vm.prank(_userTwo);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
         // when
+        vm.prank(_userTwo);
         vm.expectRevert(abi.encodePacked("IPOR_009"));
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 0, 0);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 0, 0);
+
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -390,79 +248,25 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldFailWhenPageSizeIsGreaterThanFifty() public {
         //given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        vm.prank(_userTwo);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
         // when
+        vm.prank(_userTwo);
         vm.expectRevert(abi.encodePacked("IPOR_010"));
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 0, 51);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 0, 51);
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -471,158 +275,53 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReceiveEmptyListOfSwaps() public {
         //given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
         vm.prank(_userTwo);
         // when
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 0, 10);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 0, 10);
+
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
         assertEq(swapsDai.length, totalCountDai);
     }
 
-    function testShouldReceiveEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwap() public {
+    function testShouldReceiveEmptyListOfSwapsWhenUserPassesNonZeroOffsetAndDoesNotHaveAnySwap()
+        public
+    {
         //given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        vm.prank(_userTwo);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
         // when
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 10, 10);
+        vm.prank(_userTwo);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 10, 10);
+
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -631,83 +330,41 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReceiveLimitedSwapArray() public {
         //given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
+        amm.usdc.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
+        amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        iterateOpenSwapsPayFixed(
-            _userTwo, mockCase0Miltons.mockCase0MiltonDai, 11, TestConstants.USD_100_18DEC, TestConstants.LEVERAGE_18DEC
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
         );
+
+        vm.prank(_liquidityProvider);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
+        iterateOpenSwapsPayFixed(
+            _userTwo,
+            amm.dai.milton,
+            11,
+            TestConstants.USD_100_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
         // when
         vm.prank(_userTwo);
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 0, 10);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 0, 10);
+
         // then
         assertEq(totalCountDai, 11);
         assertEq(swapsDai.length, 10);
@@ -715,83 +372,41 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReceiveLimitedSwapArrayWithOffset() public {
         //given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+        amm.usdc.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+        amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        iterateOpenSwapsPayFixed(
-            _userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, TestConstants.USD_100_18DEC, TestConstants.LEVERAGE_18DEC
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
         );
+
+        vm.prank(_liquidityProvider);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
+        iterateOpenSwapsPayFixed(
+            _userTwo,
+            amm.dai.milton,
+            22,
+            TestConstants.USD_100_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
         // when
         vm.prank(_userTwo);
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 10, 10);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 10, 10);
+
         // then
         assertEq(totalCountDai, 22);
         assertEq(swapsDai.length, 10);
@@ -799,83 +414,40 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReceiveRestOfSwapsOnly() public {
         //given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+        amm.usdc.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+        amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
+        );
+
         vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+
         iterateOpenSwapsPayFixed(
-            _userTwo, mockCase0Miltons.mockCase0MiltonDai, 22, TestConstants.USD_100_18DEC, TestConstants.LEVERAGE_18DEC
+            _userTwo,
+            amm.dai.milton,
+            22,
+            TestConstants.USD_100_18DEC,
+            TestConstants.LEVERAGE_18DEC
         );
         // when
         vm.prank(_userTwo);
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 20, 10);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 20, 10);
+
         // then
         assertEq(totalCountDai, 22);
         assertEq(swapsDai.length, 2);
@@ -883,83 +455,39 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReceiveEmptyListOfSwapsWhenOffsetIsEqualToNumberOfSwaps() public {
         //given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne, tokenAddresses, uint32(block.timestamp), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT, 0
-        );
-        address[] memory mockCase1StanleyAddresses = addressesToArray(
-            address(getMockCase1Stanley(address(_usdtMockedToken))),
-            address(getMockCase1Stanley(address(_usdcMockedToken))),
-            address(getMockCase1Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase1StanleyAddresses
-        );
-        address[] memory mockCase0JosephAddresses = addressesToArray(
-            address(mockCase0Josephs.mockCase0JosephUsdt),
-            address(mockCase0Josephs.mockCase0JosephUsdc),
-            address(mockCase0Josephs.mockCase0JosephDai)
-        );
-        prepareApproveForUsersDai(
-            _users,
-            _daiMockedToken,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        prepareMilton(
-            mockCase0Miltons.mockCase0MiltonDai,
-            address(mockCase0Josephs.mockCase0JosephDai),
-            mockCase1StanleyAddresses[2]
-        );
-        prepareJoseph(mockCase0Josephs.mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, mockCase0JosephAddresses[2]);
-        IMiltonFacadeDataProvider miltonFacadeDataProvider = getMiltonFacadeDataProvider(
-            address(iporOracle),
-            tokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0JosephAddresses
-        );
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
+        IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
+
+        amm.usdt.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdt.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        amm.usdc.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+        amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+        amm.dai.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(address(_daiMockedToken), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-        vm.prank(_liquidityProvider);
-        mockCase0Josephs.mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-        iterateOpenSwapsPayFixed(
-            _userTwo, mockCase0Miltons.mockCase0MiltonDai, 20, TestConstants.USD_100_18DEC, TestConstants.LEVERAGE_18DEC
+        amm.iporOracle.itfUpdateIndex(
+            address(amm.dai.asset),
+            TestConstants.PERCENTAGE_5_18DEC,
+            block.timestamp
         );
+        vm.prank(_liquidityProvider);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        iterateOpenSwapsPayFixed(
+            _userTwo,
+            amm.dai.milton,
+            20,
+            TestConstants.USD_100_18DEC,
+            TestConstants.LEVERAGE_18DEC
+        );
+
         // when
         vm.prank(_userTwo);
-        (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) =
-            miltonFacadeDataProvider.getMySwaps(address(_daiMockedToken), 20, 10);
+        (
+            uint256 totalCountDai,
+            MiltonFacadeTypes.IporSwap[] memory swapsDai
+        ) = miltonFacadeDataProvider.getMySwaps(address(amm.dai.asset), 20, 10);
+
         // then
         assertEq(totalCountDai, 20);
         assertEq(0, swapsDai.length);
