@@ -259,19 +259,20 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
 
         vm.prank(address(_iporProtocol.milton));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+            .miltonStorage
+            .getSwapPayFixed(1);
 
         // when
         vm.prank(_miltonStorageAddress);
@@ -301,19 +302,20 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
 
         vm.prank(address(_iporProtocol.milton));
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+            .miltonStorage
+            .getSwapPayFixed(1);
 
         // when
         vm.prank(_miltonStorageAddress);
@@ -343,17 +345,18 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         _iporProtocol.miltonStorage.setMilton(_miltonStorageAddress);
-        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory derivativeItem = _iporProtocol
+            .miltonStorage
+            .getSwapPayFixed(1);
 
         // when
         vm.expectRevert("IPOR_008");
@@ -384,7 +387,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -410,7 +414,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -437,7 +442,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
         // then
@@ -472,7 +478,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -507,7 +514,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, 10, 10);
 
         // then
@@ -542,7 +550,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
         // then
@@ -577,7 +586,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsPayFixed(_userTwo, 20, 10);
 
         // then
@@ -611,7 +621,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -646,7 +657,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -673,7 +685,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -708,7 +721,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -743,7 +757,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, 10, 10);
 
         // then
@@ -778,7 +793,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
         // then
@@ -813,7 +829,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage
+        (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
+            .miltonStorage
             .getSwapsReceiveFixed(_userTwo, 20, 10);
 
         // then
@@ -1080,11 +1097,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_009");
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            TestConstants.ZERO,
-            TestConstants.ZERO
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1110,11 +1125,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            TestConstants.ZERO,
-            10
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1140,11 +1153,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            10,
-            10
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
         assertEq(totalCount, TestConstants.ZERO);
@@ -1178,11 +1189,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            10,
-            10
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
         assertEq(totalCount, 11);
@@ -1216,11 +1225,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            10,
-            10
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, 10, 10);
 
         // then
         assertEq(totalCount, 22);
@@ -1254,11 +1261,9 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, uint256[] memory ids) = _iporProtocol.miltonStorage.getSwapReceiveFixedIds(
-            _userTwo,
-            20,
-            10
-        );
+        (uint256 totalCount, uint256[] memory ids) = _iporProtocol
+            .miltonStorage
+            .getSwapReceiveFixedIds(_userTwo, 20, 10);
 
         // then
         assertEq(totalCount, 22);
@@ -1284,7 +1289,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_009");
 
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, TestConstants.ZERO);
 
         // then
@@ -1311,7 +1317,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1338,7 +1345,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_6DEC, block.timestamp);
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, 10, 10);
 
         // then
@@ -1373,7 +1381,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1408,7 +1417,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1450,7 +1460,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1492,7 +1503,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, TestConstants.ZERO, 10);
 
         // then
@@ -1534,7 +1546,8 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol.miltonStorage
+        (uint256 totalCount, MiltonStorageTypes.IporSwapId[] memory ids) = _iporProtocol
+            .miltonStorage
             .getSwapIds(_userTwo, 80, 10);
 
         // then

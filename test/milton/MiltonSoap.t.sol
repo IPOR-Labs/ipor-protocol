@@ -74,13 +74,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -107,13 +106,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         int256 expectedSoapBalance = -68267191075554066595;
@@ -147,13 +145,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         int256 expectedSoapBalance = TestConstants.ZERO_INT;
@@ -187,13 +184,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -227,13 +223,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -271,13 +266,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_liquidityProvider);
@@ -326,22 +320,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // when
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         (, , int256 soap) = calculateSoap(
@@ -378,22 +370,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         (, , int256 soap) = calculateSoap(
@@ -445,22 +435,21 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         // when
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        ammUsdt.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18,
-            ammUsdt.milton
+            10*Constants.D18
         );
 
-        openSwapPayFixed(
-            _userTwo,
+
+        vm.prank(_userTwo);
+        ammDai.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18,
-            ammDai.milton
+            10*Constants.D18
         );
 
         (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.milton);
@@ -497,22 +486,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -549,22 +536,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -614,22 +599,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        ammUsdt.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            ammUsdt.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        ammDai.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            ammDai.milton
+            9*TestConstants.D17,
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_liquidityProvider);
@@ -672,13 +655,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -725,13 +707,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -778,13 +759,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -845,22 +825,20 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // then
@@ -899,13 +877,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -915,13 +892,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            10 * Constants.D18,
-            _iporProtocol.milton
+            10 * Constants.D18
         );
 
         vm.prank(_userOne);
@@ -962,13 +938,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         (, , int256 soapBeforeUpdateIndex) = calculateSoap(
@@ -1034,13 +1009,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         int256 expectedSoap = TestConstants.ZERO_INT;
@@ -1087,13 +1061,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -1103,13 +1076,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -1157,13 +1129,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1000348983489384893923,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1173,13 +1144,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             1500000000000000000,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1231,13 +1201,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1040000000000000000000,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1247,13 +1216,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1040000000000000000000,
             1500000000000000000,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1305,13 +1273,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1000348983489384893923,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1321,13 +1288,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1378,13 +1344,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             1000348983489384893923,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1394,13 +1359,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1452,13 +1416,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             1000348983489384893923,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1468,13 +1431,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1526,13 +1488,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1040000000,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1542,13 +1503,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1040000000,
             1500000000000000000,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1600,13 +1560,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1000348983,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1616,13 +1575,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383,
             1500000000000000000,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -1675,13 +1633,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             1000348983,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.prank(_userOne);
@@ -1691,13 +1648,12 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            1492747383,
+            1000348983,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_1000_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_1000_18DEC
         );
 
         vm.startPrank(_userOne);

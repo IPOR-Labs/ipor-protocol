@@ -5437,7 +5437,7 @@ contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.USD_1_000_000_000_18DEC
         );
 
-        MockCaseBaseStanley(address(_iporProtocol.stanley)).testDeposit(
+        MockCaseBaseStanley(address(_iporProtocol.stanley)).forTestDeposit(
             address(_iporProtocol.milton),
             initStanleyBalance
         );

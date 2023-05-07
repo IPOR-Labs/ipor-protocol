@@ -100,58 +100,6 @@ contract MiltonUtils is Test {
         milton.setupMaxAllowanceForAsset(stanley);
     }
 
-    function getItfMiltonUsdt(
-        address tokenUsdt,
-        address iporOracle,
-        address miltonStorageUsdt,
-        address miltonSpreadModel,
-        address stanleyUsdt
-    ) public returns (ItfMiltonUsdt) {
-        ItfMiltonUsdt itfMiltonUsdtImplementation = new ItfMiltonUsdt();
-        ERC1967Proxy miltonUsdtProxy =
-        new ERC1967Proxy(address(itfMiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        return ItfMiltonUsdt(address(miltonUsdtProxy));
-    }
-
-    function getItfMiltonUsdc(
-        address tokenUsdc,
-        address iporOracle,
-        address miltonStorageUsdc,
-        address miltonSpreadModel,
-        address stanleyUsdc
-    ) public returns (ItfMiltonUsdc) {
-        ItfMiltonUsdc itfMiltonUsdcImplementation = new ItfMiltonUsdc();
-        ERC1967Proxy miltonUsdcProxy =
-        new ERC1967Proxy(address(itfMiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
-        return ItfMiltonUsdc(address(miltonUsdcProxy));
-    }
-
-    function getItfMiltonDai(
-        address tokenDai,
-        address iporOracle,
-        address miltonStorageDai,
-        address miltonSpreadModel,
-        address stanleyDai
-    ) public returns (ItfMiltonDai) {
-        ItfMiltonDai itfMiltonDaiImplementation = new ItfMiltonDai();
-        ERC1967Proxy miltonDaiProxy =
-        new ERC1967Proxy(address(itfMiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        return ItfMiltonDai(address(miltonDaiProxy));
-    }
-
-
-    function getMockCase0MiltonUsdt(
-        address tokenUsdt,
-        address iporOracle,
-        address miltonStorageUsdt,
-        address miltonSpreadModel,
-        address stanleyUsdt
-    ) public returns (MockCase0MiltonUsdt) {
-        MockCase0MiltonUsdt mockCase0MiltonUsdtImplementation = new MockCase0MiltonUsdt();
-        ERC1967Proxy miltonUsdtProxy =
-        new ERC1967Proxy(address(mockCase0MiltonUsdtImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdt, iporOracle, miltonStorageUsdt, miltonSpreadModel, stanleyUsdt));
-        return MockCase0MiltonUsdt(address(miltonUsdtProxy));
-    }
 
     function getMockCase0MiltonUsdc(
         address tokenUsdc,
@@ -179,27 +127,7 @@ contract MiltonUtils is Test {
         return MockCase0MiltonDai(address(miltonDaiProxy));
     }
 
-    function getMockCase0Miltons(
-        address iporOracle,
-        address miltonSpreadModel,
-        address tokenUsdt,
-        address tokenUsdc,
-        address tokenDai,
-        address[] memory miltonStorageAddresses,
-        address[] memory stanleyAddresses
-    ) public returns (MockCase0Miltons memory) {
-        MockCase0Miltons memory mockCase0Miltons;
-        mockCase0Miltons.mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
-            tokenUsdt, iporOracle, miltonStorageAddresses[0], miltonSpreadModel, stanleyAddresses[0]
-        );
-        mockCase0Miltons.mockCase0MiltonUsdc = getMockCase0MiltonUsdc(
-            tokenUsdc, iporOracle, miltonStorageAddresses[1], miltonSpreadModel, stanleyAddresses[1]
-        );
-        mockCase0Miltons.mockCase0MiltonDai = getMockCase0MiltonDai(
-            tokenDai, iporOracle, miltonStorageAddresses[2], miltonSpreadModel, stanleyAddresses[2]
-        );
-        return mockCase0Miltons;
-    }
+
 
 
     function getMockCase3MiltonDai(

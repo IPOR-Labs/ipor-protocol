@@ -54,14 +54,14 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_310");
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.ZERO,
             3,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
+
     }
 
     function testShouldNotOpenPositionWhenTotalAmountIsGreaterThanAssetBalance() public {
@@ -71,13 +71,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_003");
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.USER_SUPPLY_10MLN_18DEC + 3,
             3,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
     }
 
@@ -100,14 +99,14 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_313");
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             30000000000000000001,
             39999999999999999,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
+
     }
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInReceiveFixed18Decimals()
@@ -129,13 +128,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_313");
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             30000000000000000001,
             TestConstants.D16 + 48374213950104766,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
     }
 
@@ -158,13 +156,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_313");
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             30000001,
             39999999999999999,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
     }
 
@@ -187,13 +184,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_313");
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             30000001,
             48374213950069062 + TestConstants.D16,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
     }
 
@@ -204,14 +200,14 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_312");
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             1000000000000000000000001,
             3,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
+
     }
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseTwo() public {
@@ -221,13 +217,11 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_312");
-        openSwapPayFixed(
-            _userTwo,
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             100688870576704582165765,
             3,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
     }
 
@@ -249,13 +243,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.USD_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);

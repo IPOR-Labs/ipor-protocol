@@ -66,13 +66,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -115,13 +114,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -164,13 +162,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_121_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -213,13 +210,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -262,13 +258,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -311,13 +306,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);
@@ -358,13 +352,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         // when
@@ -395,21 +388,20 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
-        openSwapPayFixed(
-            _userTwo,
+
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         _iporProtocol.milton.addSwapLiquidator(_userThree);
@@ -444,22 +436,20 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         _iporProtocol.milton.addSwapLiquidator(_userThree);
@@ -502,13 +492,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -549,13 +538,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
-            openSwapPayFixed(
-                _userTwo,
+            vm.prank(_userTwo);
+            _iporProtocol.milton.itfOpenSwapPayFixed(
                 block.timestamp,
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
-                TestConstants.LEVERAGE_18DEC,
-                _iporProtocol.milton
+                TestConstants.LEVERAGE_18DEC
             );
         }
 
@@ -600,13 +588,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -647,13 +634,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
-            openSwapReceiveFixed(
-                _userTwo,
+            vm.prank(_userTwo);
+            _iporProtocol.milton.itfOpenSwapReceiveFixed(
                 block.timestamp,
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 TestConstants.ZERO,
-                TestConstants.LEVERAGE_18DEC,
-                _iporProtocol.milton
+                TestConstants.LEVERAGE_18DEC
             );
         }
 
@@ -700,13 +686,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
-            openSwapPayFixed(
-                _userTwo,
+            vm.prank(_userTwo);
+            _iporProtocol.milton.itfOpenSwapPayFixed(
                 block.timestamp,
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
-                TestConstants.LEVERAGE_18DEC,
-                _iporProtocol.milton
+                TestConstants.LEVERAGE_18DEC
             );
         }
 
@@ -748,13 +733,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -839,13 +823,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -886,13 +869,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
-            openSwapPayFixed(
-                _userTwo,
+            vm.prank(_userTwo);
+            _iporProtocol.milton.itfOpenSwapPayFixed(
                 block.timestamp,
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 9 * TestConstants.D17,
-                TestConstants.LEVERAGE_18DEC,
-                _iporProtocol.milton
+                TestConstants.LEVERAGE_18DEC
             );
         }
 
@@ -930,13 +912,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -979,13 +960,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         for (uint256 i = 0; i < swapsToCreate; i++) {
-            openSwapReceiveFixed(
-                _userTwo,
+            vm.prank(_userTwo);
+            _iporProtocol.milton.itfOpenSwapReceiveFixed(
                 block.timestamp,
                 TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
                 TestConstants.ZERO,
-                TestConstants.LEVERAGE_18DEC,
-                _iporProtocol.milton
+                TestConstants.LEVERAGE_18DEC
             );
         }
 
@@ -1023,13 +1003,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapReceiveFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.ZERO,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userOne);
@@ -1066,13 +1045,12 @@ contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        openSwapPayFixed(
-            _userTwo,
+        vm.prank(_userTwo);
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
-            TestConstants.LEVERAGE_18DEC,
-            _iporProtocol.milton
+            TestConstants.LEVERAGE_18DEC
         );
 
         vm.startPrank(_userOne);

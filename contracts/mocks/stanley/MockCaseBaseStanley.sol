@@ -41,7 +41,7 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function testDeposit(address recipient, uint256 assetAmount)
+    function forTestDeposit(address recipient, uint256 assetAmount)
         external
         returns (uint256 balance)
     {

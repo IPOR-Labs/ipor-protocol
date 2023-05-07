@@ -113,33 +113,4 @@ contract DataUtils is
         return users;
     }
 
-    function usersToArray(
-        address userOne,
-        address userTwo,
-        address userThree,
-        address userFour,
-        address userFive,
-        address userSix
-    ) public pure returns (address[] memory) {
-        address[] memory users = new address[](5);
-        users[0] = userOne;
-        users[1] = userTwo;
-        users[2] = userThree;
-        users[3] = userFour;
-        users[4] = userFive;
-        users[5] = userSix;
-        return users;
-    }
-
-    function addressesToArray(
-        address assetOneAddress,
-        address assetTwoAddress,
-        address assetThreeAddress
-    ) public pure returns (address[] memory) {
-        address[] memory assetAddresses = new address[](3);
-        assetAddresses[0] = assetOneAddress;
-        assetAddresses[1] = assetTwoAddress;
-        assetAddresses[2] = assetThreeAddress;
-        return assetAddresses;
-    }
 }
