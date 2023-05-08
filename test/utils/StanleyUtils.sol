@@ -26,6 +26,7 @@ import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockADai.sol";
 import "../../contracts/mocks/stanley/aave/MockADAI.sol";
+import "../../contracts/mocks/stanley/aave/MockADAI.sol";
 import "../../contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
 import "../../contracts/mocks/stanley/aave/MockProviderAave.sol";
 import "../../contracts/mocks/stanley/aave/MockStakedAave.sol";
@@ -49,7 +50,6 @@ contract StanleyUtils {
     function getTokenADai() public returns (MockADai) {
         return new MockADai();
     }
-
 
     function getMockADAI(address asset, address tokenOwner) public returns (MockADAI) {
         return new MockADAI(asset, tokenOwner);
@@ -124,6 +124,26 @@ contract StanleyUtils {
         strategyCompound.setStanley(itfStanleyProxyAddress);
 
         return ItfStanley(itfStanleyProxyAddress);
+    }
+
+    function getItfStanleyDai(address asset, address ivToken, address strategyAave, address strategyCompound)
+        public
+        returns (ItfStanleyDai)
+    {
+        ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
+        address itfStanleyProxyAddress = address(
+            new ERC1967Proxy(
+            address(itfStanleyImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                asset,
+                ivToken,
+                strategyAave,
+                strategyCompound
+            )
+            )
+        );
+        return ItfStanleyDai(itfStanleyProxyAddress);
     }
 
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
