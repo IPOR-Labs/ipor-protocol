@@ -40,17 +40,6 @@ import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 
 contract MiltonUtils is Test {
-    struct ItfMiltons {
-        ItfMiltonUsdt itfMiltonUsdt;
-        ItfMiltonUsdc itfMiltonUsdc;
-        ItfMiltonDai itfMiltonDai;
-    }
-
-    struct MockCase0Miltons {
-        MockCase0MiltonUsdt mockCase0MiltonUsdt;
-        MockCase0MiltonUsdc mockCase0MiltonUsdc;
-        MockCase0MiltonDai mockCase0MiltonDai;
-    }
 
     struct ExpectedMiltonBalances {
         uint256 expectedPayoffAbs;
@@ -126,29 +115,5 @@ contract MiltonUtils is Test {
         new ERC1967Proxy(address(mockCase0MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase0MiltonDai(address(miltonDaiProxy));
     }
-
-
-
-
-    function getMockCase3MiltonDai(
-        address tokenDai,
-        address iporOracle,
-        address miltonStorageDai,
-        address miltonSpreadModel,
-        address stanleyDai
-    ) public returns (MockCase3MiltonDai) {
-        MockCase3MiltonDai mockCase3MiltonDaiImplementation = new MockCase3MiltonDai();
-        ERC1967Proxy miltonDaiProxy =
-        new ERC1967Proxy(address(mockCase3MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
-        return MockCase3MiltonDai(address(miltonDaiProxy));
-    }
-
-    struct TestCaseWhenMiltonLostAndUserEarnedDai {
-        uint256 openerUserLost;
-        uint256 expectedMiltonUnderlyingTokenBalance;
-        uint256 expectedOpenerUserUnderlyingTokenBalanceAfterClose;
-        uint256 expectedCloserUserUnderlyingTokenBalanceAfterClose;
-    }
-
 
 }
