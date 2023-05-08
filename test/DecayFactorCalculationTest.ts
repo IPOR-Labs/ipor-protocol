@@ -3,7 +3,7 @@ import chai from "chai";
 import { BigNumber } from "ethers";
 import { MockDecayFactorCalculation } from "../types";
 const { expect } = chai;
-import linearFunctionTestData from "./asset/testDataForLinearFunction.json";
+import linearFunctionTestData from "./asset/testDataForLinearFunctionHardhat.json";
 const itParam = require("mocha-param");
 
 type LinearFunctionTestItem = {
