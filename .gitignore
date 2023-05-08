@@ -5,8 +5,6 @@
 /node_modules
 
 ### Smart Contracts build artifacts ###
-/app/src/contracts/
-/app/src/contracts.zip
 /contracts/oracles/artifacts/
 /contracts/amm/artifacts/
 /contracts/artifacts/
@@ -31,7 +29,6 @@
 /test/output
 /.nyc_output/
 slither-report.json
-app/.env
 .vscode/settings.json
 /logs/
 
