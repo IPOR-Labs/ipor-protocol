@@ -71,6 +71,15 @@ contract IporRiskManagementOracle is
                 maxUtilizationRate[i].toUint16(),
                 block.timestamp.toUint32()
             );
+
+            emit RiskIndicatorsUpdate(
+                assets[i],
+                maxNotionalPayFixed[i],
+                maxNotionalReceiveFixed[i],
+                maxUtilizationRatePayFixed[i],
+                maxUtilizationRateReceiveFixed[i],
+                maxUtilizationRate[i]
+            );
         }
     }
 
