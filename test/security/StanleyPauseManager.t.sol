@@ -23,7 +23,7 @@ contract StanleyPauseManagerTest is Test {
         _user2 = vm.rememberKey(3);
     }
 
-    function testShouldNotPauseIfNoGuardianIsSet() public {
+    function testShouldNotPauseIfNoPauseGuardianIsSet() public {
         // given
         Stanley stanley = createStanley();
 
@@ -33,11 +33,11 @@ contract StanleyPauseManagerTest is Test {
         stanley.pause();
     }
 
-    function testShouldNotPauseWhenCalledByNonGuardian() public {
+    function testShouldNotPauseWhenCalledByNonPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
 
         // when & then
         vm.startPrank(_user2);
@@ -45,12 +45,12 @@ contract StanleyPauseManagerTest is Test {
         stanley.pause();
     }
 
-    function testShouldPauseWhenCalledByGuardian() public {
+    function testShouldPauseWhenCalledByPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         assertFalse(stanley.paused());
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
 
         // when
         vm.startPrank(_user1);
@@ -60,16 +60,16 @@ contract StanleyPauseManagerTest is Test {
         assertTrue(stanley.paused());
     }
 
-    function testShouldNotPauseWhenCalledByRemovedGuardian() public {
+    function testShouldNotPauseWhenCalledByRemovedPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         assertFalse(stanley.paused());
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
 
         // when
         vm.prank(_owner);
-        stanley.removeGuardian(_user1);
+        stanley.removePauseGuardian(_user1);
 
         // then
         vm.startPrank(_user1);
@@ -78,24 +78,24 @@ contract StanleyPauseManagerTest is Test {
         assertFalse(stanley.paused());
     }
 
-    function testShouldNotRemoveGuardianWhenCalledByNonOwner() public {
+    function testShouldNotRemovePauseGuardianWhenCalledByNonOwner() public {
         // given
         Stanley stanley = createStanley();
 
         // when & then
         vm.startPrank(_user2);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.removeGuardian(_user1);
+        stanley.removePauseGuardian(_user1);
     }
 
-    function testShouldNotAddGuardianWhenCalledByNonOwner() public {
+    function testShouldNotAddPauseGuardianWhenCalledByNonOwner() public {
         // given
         Stanley stanley = createStanley();
 
         // when & then
         vm.startPrank(_user2);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
     }
 
     function testShouldUnpauseWhenCalledByOwner() public {
@@ -103,7 +103,7 @@ contract StanleyPauseManagerTest is Test {
         Stanley stanley = createStanley();
         assertFalse(stanley.paused());
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
         vm.prank(_user1);
         stanley.pause();
         assertTrue(stanley.paused());
@@ -116,12 +116,12 @@ contract StanleyPauseManagerTest is Test {
         assertFalse(stanley.paused());
     }
 
-    function testShouldNotUnpauseWhenCalledByGuardian() public {
+    function testShouldNotUnpauseWhenCalledByPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         assertFalse(stanley.paused());
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
         vm.prank(_user1);
         stanley.pause();
         assertTrue(stanley.paused());
@@ -135,7 +135,7 @@ contract StanleyPauseManagerTest is Test {
         assertTrue(stanley.paused());
     }
 
-    function testShouldOwnerCannotPauseWhenNotGuardian() public {
+    function testShouldOwnerCannotPauseWhenNotPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         assertFalse(stanley.paused());
@@ -147,30 +147,30 @@ contract StanleyPauseManagerTest is Test {
         assertFalse(stanley.paused());
     }
 
-    function testShouldGuardianCannotAddGuardian() public {
+    function testShouldPauseGuardianCannotAddPauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         vm.prank(_owner);
-        stanley.addGuardian(_user1);
+        stanley.addPauseGuardian(_user1);
 
         // when & then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.addGuardian(_user2);
+        stanley.addPauseGuardian(_user2);
     }
 
-    function testShouldGuardianCannotRemoveGuardian() public {
+    function testShouldPauseGuardianCannotRemovePauseGuardian() public {
         // given
         Stanley stanley = createStanley();
         vm.startPrank(_owner);
-        stanley.addGuardian(_user1);
-        stanley.addGuardian(_user2);
+        stanley.addPauseGuardian(_user1);
+        stanley.addPauseGuardian(_user2);
         vm.stopPrank();
 
         // when & then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.removeGuardian(_user2);
+        stanley.removePauseGuardian(_user2);
     }
 
     function createStrategy() internal returns (MockTestnetStrategy) {
@@ -204,7 +204,7 @@ contract StanleyPauseManagerTest is Test {
         return Stanley(address(proxy));
     }
 
-    event GuardianAdded(address indexed guardian);
+    event PauseGuardianAdded(address indexed guardian);
 
-    event GuardianRemoved(address indexed guardian);
+    event PauseGuardianRemoved(address indexed guardian);
 }

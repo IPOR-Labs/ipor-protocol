@@ -43,8 +43,8 @@ abstract contract Stanley is
         _;
     }
 
-    modifier onlyGuardian() {
-        require(PauseManager.isGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
@@ -333,7 +333,7 @@ abstract contract Stanley is
         emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
 
-    function pause() external override onlyGuardian {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
@@ -547,11 +547,11 @@ abstract contract Stanley is
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    function addGuardian(address _guardian) external onlyOwner {
-        PauseManager.addGuardian(_guardian);
+    function addPauseGuardian(address _guardian) external onlyOwner {
+        PauseManager.addPauseGuardian(_guardian);
     }
 
-    function removeGuardian(address _guardian) external onlyOwner {
-        PauseManager.removeGuardian(_guardian);
+    function removePauseGuardian(address _guardian) external onlyOwner {
+        PauseManager.removePauseGuardian(_guardian);
     }
 }

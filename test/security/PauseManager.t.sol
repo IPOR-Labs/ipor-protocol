@@ -16,55 +16,55 @@ contract PauseManagerTest is Test {
         _user2 = vm.rememberKey(3);
     }
 
-    function testShouldAddGuardian() public {
+    function testShouldAddPauseGuardian() public {
         // given
-        // no guardians added
+        // no pause guardians added
 
         // when
         vm.expectEmit(true, true, true, true);
-        emit GuardianAdded(_user1);
-        PauseManager.addGuardian(_user1);
+        emit PauseGuardianAdded(_user1);
+        PauseManager.addPauseGuardian(_user1);
 
         // then
-        assertTrue(PauseManager.isGuardian(_user1));
+        assertTrue(PauseManager.isPauseGuardian(_user1));
     }
 
-    function testShouldRemoveGuardian() public {
+    function testShouldRemovePauseGuardian() public {
         // given
-        PauseManager.addGuardian(_user1);
+        PauseManager.addPauseGuardian(_user1);
 
         // when
         vm.expectEmit(true, true, true, true);
-        emit GuardianRemoved(_user1);
-        PauseManager.removeGuardian(_user1);
+        emit PauseGuardianRemoved(_user1);
+        PauseManager.removePauseGuardian(_user1);
 
         // then
-        assertFalse(PauseManager.isGuardian(_user1));
+        assertFalse(PauseManager.isPauseGuardian(_user1));
     }
 
-    function testShouldReturnIsGuardianTrue() public {
+    function testShouldReturnIsPauseGuardianTrue() public {
         // given
-        PauseManager.addGuardian(_user1);
+        PauseManager.addPauseGuardian(_user1);
 
         // when
-        bool result = PauseManager.isGuardian(_user1);
+        bool result = PauseManager.isPauseGuardian(_user1);
 
         // then
         assertTrue(result);
     }
 
-    function testShouldReturnIsGuardianFalse() public {
+    function testShouldReturnIsPauseGuardianFalse() public {
         // given
-        PauseManager.addGuardian(_user1);
+        PauseManager.addPauseGuardian(_user1);
 
         // when
-        bool result = PauseManager.isGuardian(_user2);
+        bool result = PauseManager.isPauseGuardian(_user2);
 
         // then
         assertFalse(result);
     }
 
-    event GuardianAdded(address indexed guardian);
+    event PauseGuardianAdded(address indexed PauseGuardian);
 
-    event GuardianRemoved(address indexed guardian);
+    event PauseGuardianRemoved(address indexed PauseGuardian);
 }

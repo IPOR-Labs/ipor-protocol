@@ -169,7 +169,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
-        await stanley.addGuardian(await admin.getAddress());
+        await stanley.addPauseGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then
@@ -184,7 +184,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
-        await stanley.addGuardian(await admin.getAddress());
+        await stanley.addPauseGuardian(await admin.getAddress());
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
         //when
@@ -201,7 +201,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
-        await stanley.addGuardian(await admin.getAddress());
+        await stanley.addPauseGuardian(await admin.getAddress());
         await stanley.pause();
         expect(await stanley.paused()).to.be.true;
         //when
@@ -237,7 +237,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
-        await stanley.addGuardian(await admin.getAddress());
+        await stanley.addPauseGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then
@@ -252,7 +252,7 @@ describe("Stanley -> constructor", () => {
             strategyAave.address,
             strategyCompound.address,
         ])) as Stanley;
-        await stanley.addGuardian(await admin.getAddress());
+        await stanley.addPauseGuardian(await admin.getAddress());
         //when
         await stanley.pause();
         //then

@@ -142,7 +142,7 @@ contract IporLogicTest is TestCommons, DataUtils {
     abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
     );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
-        stanleyDai.addGuardian(address(this));
+        stanleyDai.addPauseGuardian(address(this));
 
         // when
         stanleyDai.pause();
@@ -158,7 +158,7 @@ contract IporLogicTest is TestCommons, DataUtils {
     abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
     );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
-        stanleyDai.addGuardian(address(this));
+        stanleyDai.addPauseGuardian(address(this));
         stanleyDai.pause();
         assertTrue(stanleyDai.paused());
         // when
@@ -175,7 +175,7 @@ contract IporLogicTest is TestCommons, DataUtils {
     abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
     );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
-        stanleyDai.addGuardian(address(this));
+        stanleyDai.addPauseGuardian(address(this));
         stanleyDai.pause();
         assertTrue(stanleyDai.paused());
         // when
@@ -210,7 +210,7 @@ contract IporLogicTest is TestCommons, DataUtils {
     abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
     );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
-        stanleyDai.addGuardian(address(this));
+        stanleyDai.addPauseGuardian(address(this));
         // when
         stanleyDai.pause();
         // then
@@ -225,7 +225,7 @@ contract IporLogicTest is TestCommons, DataUtils {
     abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
     );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
-        stanleyDai.addGuardian(address(this));
+        stanleyDai.addPauseGuardian(address(this));
         // when
         stanleyDai.pause();
         // then

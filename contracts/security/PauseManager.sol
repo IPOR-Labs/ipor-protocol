@@ -5,24 +5,24 @@ import "../libraries/StorageLib.sol";
 
 library PauseManager {
 
-    function addGuardian(address _guardian) internal {
-        mapping(address => bool) storage guardians = StorageLib.getPauseGuardianStorage();
-        guardians[_guardian] = true;
-        emit GuardianAdded(_guardian);
+    function addPauseGuardian(address _guardian) internal {
+        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        pauseGuardians[_guardian] = true;
+        emit PauseGuardianAdded(_guardian);
     }
 
-    function removeGuardian(address _guardian) internal {
-        mapping(address => bool) storage guardians = StorageLib.getPauseGuardianStorage();
-        guardians[_guardian] = false;
-        emit GuardianRemoved(_guardian);
+    function removePauseGuardian(address _guardian) internal {
+        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        pauseGuardians[_guardian] = false;
+        emit PauseGuardianRemoved(_guardian);
     }
 
-    function isGuardian(address _guardian) internal view returns (bool) {
-        mapping(address => bool) storage guardians = StorageLib.getPauseGuardianStorage();
-        return guardians[_guardian];
+    function isPauseGuardian(address _guardian) internal view returns (bool) {
+        mapping(address => bool) storage pauseGuardians = StorageLib.getPauseGuardianStorage();
+        return pauseGuardians[_guardian];
     }
 
-    event GuardianAdded(address indexed guardian);
+    event PauseGuardianAdded(address indexed guardian);
 
-    event GuardianRemoved(address indexed guardian);
+    event PauseGuardianRemoved(address indexed guardian);
 }
