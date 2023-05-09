@@ -110,7 +110,7 @@ contract CompoundPausableTest is TestCommons, DataUtils {
         vm.expectRevert("Pausable: paused");
         _strategyCompound.withdraw(TestConstants.TC_1000_18DEC);
         vm.expectRevert("Pausable: paused");
-        _strategyCompound.setBlocksPerYear(2102400);
+        _strategyCompound.setBlocksPerDay(7100);
         vm.expectRevert("Pausable: paused");
         _strategyCompound.doClaim();
         vm.expectRevert("Pausable: paused");

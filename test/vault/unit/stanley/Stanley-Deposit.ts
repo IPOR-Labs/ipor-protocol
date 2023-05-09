@@ -214,8 +214,8 @@ describe("Stanley -> Deposit", () => {
             await cDAI.setSupplyRate(BigNumber.from("10"));
             // then
             const apyAfter = await compoundStartegyInstance.getApr();
-            expect(apyBefore).to.be.equal(BigNumber.from("69059536870752000"));
-            expect(apyAfter).to.be.equal(BigNumber.from("21024000"));
+            expect(apyBefore).to.be.equal(BigNumber.from("90148815177415640"));
+            expect(apyAfter).to.be.equal(BigNumber.from("26280000"));
         });
     });
 

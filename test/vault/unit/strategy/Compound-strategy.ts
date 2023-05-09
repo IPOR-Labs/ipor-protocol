@@ -236,16 +236,16 @@ describe("Compound strategy", () => {
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 
-    it("Should setup new blocksPerYear", async () => {
+    it("Should setup new blocksPerDay", async () => {
         // whan
-        await expect(strategyCompoundInstanceDAI.setBlocksPerYear(BigNumber.from("2102500")))
-            .to.emit(strategyCompoundInstanceDAI, "BlocksPerYearChanged")
-            .withArgs(await admin.getAddress, BigNumber.from("2102400"), BigNumber.from("2102500"));
+        await expect(strategyCompoundInstanceDAI.setBlocksPerDay(BigNumber.from("7100")))
+            .to.emit(strategyCompoundInstanceDAI, "BlocksPerDayChanged")
+            .withArgs(await admin.getAddress, BigNumber.from("7200"), BigNumber.from("7100"));
     });
 
-    it("Should not setup new blocksPerYear to zero", async () => {
+    it("Should not setup new blocksPerDay to zero", async () => {
         // whan
-        await expect(strategyCompoundInstanceDAI.setBlocksPerYear(ZERO)).to.be.revertedWith(
+        await expect(strategyCompoundInstanceDAI.setBlocksPerDay(ZERO)).to.be.revertedWith(
             "IPOR_004"
         );
     });
@@ -265,10 +265,10 @@ describe("Compound strategy", () => {
         );
     });
 
-    it("Should not setup new blocksPerYear when no owner", async () => {
+    it("Should not setup new blocksPerDay when no owner", async () => {
         // whan
         await expect(
-            strategyCompoundInstanceDAI.connect(userOne).setBlocksPerYear(BigNumber.from("2102500"))
+            strategyCompoundInstanceDAI.connect(userOne).setBlocksPerDay(BigNumber.from("7200"))
         ).to.be.revertedWith("Ownable: caller is not the owner");
     });
 });
