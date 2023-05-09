@@ -67,6 +67,8 @@ contract VaultDaiCompoundTest is Test {
         Joseph joseph = amm.joseph();
         amm.overrideAaveStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
@@ -97,6 +99,8 @@ contract VaultDaiCompoundTest is Test {
         vm.startPrank(_admin);
         amm.joseph().depositToStanley(amount);
         vm.roll(block.number + 1);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 

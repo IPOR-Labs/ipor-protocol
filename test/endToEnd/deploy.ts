@@ -153,11 +153,20 @@ export const deploy = async (admin: Signer): Promise<DeployType> => {
     const strategyAaveUsdc = await aaveUsdcStrategyFactory();
     const strategyAaveUsdt = await aaveUsdtStrategyFactory();
 
+    await strategyAaveDai.addPauseGuardian(await admin.getAddress());
+    await strategyAaveDaiV2.addPauseGuardian(await admin.getAddress());
+    await strategyAaveUsdc.addPauseGuardian(await admin.getAddress());
+    await strategyAaveUsdt.addPauseGuardian(await admin.getAddress());
+
     const compToken = await compTokenFactory();
 
     const strategyCompoundDai = await compoundDaiStrategyFactory();
     const strategyCompoundUsdc = await compoundUsdcStrategyFactory();
     const strategyCompoundUsdt = await compoundUsdtStrategyFactory();
+
+    await strategyCompoundDai.addPauseGuardian(await admin.getAddress());
+    await strategyCompoundUsdc.addPauseGuardian(await admin.getAddress());
+    await strategyCompoundUsdt.addPauseGuardian(await admin.getAddress());
 
     const stanleyDai = await stanleyDaiFactory(
         ivTokenDai.address,
