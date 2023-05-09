@@ -219,13 +219,18 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assetBuilder.withDAI();
         MockTestnetToken dai = assetBuilder.build();
 
-        IporOracleBuilder iporOracleBuilder = new IporOracleBuilder(owner, iporProtocolBuilder);
+        IporOracleFactory iporOracleFactory = new IporOracleFactory(owner);
         address[] memory assets = new address[](2);
         assets[0] = address(dai);
         assets[1] = address(usdt);
 
-        iporOracleBuilder.withAssets(assets);
-        ItfIporOracle iporOracle = iporOracleBuilder.build();
+        BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase;
+
+        ItfIporOracle iporOracle = iporOracleFactory.getInstance(
+            assets,
+            owner,
+            initialParamsTestCase
+        );
 
         IporProtocolBuilder.IporProtocol memory ammUsdt = iporProtocolBuilder
             .usdtBuilder()

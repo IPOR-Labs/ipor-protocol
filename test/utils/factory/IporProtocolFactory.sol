@@ -1,3 +1,4 @@
+import "forge-std/Test.sol";
 import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../../contracts/tokens/IpToken.sol";
 import "../../../contracts/tokens/IvToken.sol";
@@ -18,7 +19,7 @@ import "../builder/JosephBuilder.sol";
 import "../builder/IporOracleBuilder.sol";
 import "../builder/IporWeightedBuilder.sol";
 import "../builder/IporProtocolBuilder.sol";
-import "forge-std/Test.sol";
+import "./IporOracleFactory.sol";
 
 contract IporProtocolFactory is Test {
     struct Amm {
@@ -46,61 +47,62 @@ contract IporProtocolFactory is Test {
         address stanleyImplementation;
     }
 
-    IporProtocolBuilder internal iporProtocolBuilder;
-    AssetBuilder internal assetBuilder;
-    IpTokenBuilder internal ipTokenBuilder;
-    IporOracleBuilder internal iporOracleBuilder;
-    IporWeightedBuilder internal iporWeightedBuilder;
-    MiltonStorageBuilder internal miltonStorageBuilder;
-    IvTokenBuilder internal ivTokenBuilder;
-    StanleyBuilder internal stanleyBuilder;
-    MiltonBuilder internal miltonBuilder;
-    JosephBuilder internal josephBuilder;
-    MockSpreadBuilder internal mockSpreadBuilder;
+    IporOracleFactory internal _iporOracleFactory;
+    IporProtocolBuilder internal _iporProtocolBuilder;
+    AssetBuilder internal _assetBuilder;
+    IpTokenBuilder internal _ipTokenBuilder;
+    IporWeightedBuilder internal _iporWeightedBuilder;
+    MiltonStorageBuilder internal _miltonStorageBuilder;
+    IvTokenBuilder internal _ivTokenBuilder;
+    StanleyBuilder internal _stanleyBuilder;
+    MiltonBuilder internal _miltonBuilder;
+    JosephBuilder internal _josephBuilder;
+    MockSpreadBuilder internal _mockSpreadBuilder;
 
     address internal _owner;
 
     constructor(address owner) {
-        iporProtocolBuilder = new IporProtocolBuilder(owner);
-        assetBuilder = new AssetBuilder(owner, iporProtocolBuilder);
-        ipTokenBuilder = new IpTokenBuilder(owner, iporProtocolBuilder);
-        iporOracleBuilder = new IporOracleBuilder(owner, iporProtocolBuilder);
-        iporWeightedBuilder = new IporWeightedBuilder(owner, iporProtocolBuilder);
-        miltonStorageBuilder = new MiltonStorageBuilder(owner, iporProtocolBuilder);
-        ivTokenBuilder = new IvTokenBuilder(owner, iporProtocolBuilder);
-        stanleyBuilder = new StanleyBuilder(owner, iporProtocolBuilder);
-        miltonBuilder = new MiltonBuilder(owner, iporProtocolBuilder);
-        josephBuilder = new JosephBuilder(owner, iporProtocolBuilder);
-        mockSpreadBuilder = new MockSpreadBuilder(owner, iporProtocolBuilder);
+        _iporOracleFactory = new IporOracleFactory(owner);
+        _iporProtocolBuilder = new IporProtocolBuilder(owner);
+        _assetBuilder = new AssetBuilder(owner, _iporProtocolBuilder);
+        _ipTokenBuilder = new IpTokenBuilder(owner, _iporProtocolBuilder);
+        _iporWeightedBuilder = new IporWeightedBuilder(owner, _iporProtocolBuilder);
+        _miltonStorageBuilder = new MiltonStorageBuilder(owner, _iporProtocolBuilder);
+        _ivTokenBuilder = new IvTokenBuilder(owner, _iporProtocolBuilder);
+        _stanleyBuilder = new StanleyBuilder(owner, _iporProtocolBuilder);
+        _miltonBuilder = new MiltonBuilder(owner, _iporProtocolBuilder);
+        _josephBuilder = new JosephBuilder(owner, _iporProtocolBuilder);
+        _mockSpreadBuilder = new MockSpreadBuilder(owner, _iporProtocolBuilder);
         _owner = owner;
     }
 
     function getFullInstance(AmmConfig memory cfg) public returns (Amm memory amm) {
-        assetBuilder.withUSDT();
-        MockTestnetToken usdt = assetBuilder.build();
+        _assetBuilder.withUSDT();
+        MockTestnetToken usdt = _assetBuilder.build();
 
-        assetBuilder.withUSDC();
-        MockTestnetToken usdc = assetBuilder.build();
+        _assetBuilder.withUSDC();
+        MockTestnetToken usdc = _assetBuilder.build();
 
-        assetBuilder.withDAI();
-        MockTestnetToken dai = assetBuilder.build();
+        _assetBuilder.withDAI();
+        MockTestnetToken dai = _assetBuilder.build();
 
         address[] memory assets = new address[](3);
         assets[0] = address(dai);
         assets[1] = address(usdt);
         assets[2] = address(usdc);
 
-        iporOracleBuilder.withAssets(assets);
-        iporOracleBuilder.withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase);
-
-        ItfIporOracle iporOracle = iporOracleBuilder.build();
+        ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
+            assets,
+            cfg.iporOracleUpdater,
+            cfg.iporOracleInitialParamsTestCase
+        );
 
         vm.prank(address(_owner));
         iporOracle.addUpdater(cfg.iporOracleUpdater);
 
         amm.iporOracle = iporOracle;
 
-        amm.usdt = iporProtocolBuilder
+        amm.usdt = _iporProtocolBuilder
             .usdtBuilder()
             .withAsset(address(usdt))
             .ipToken()
@@ -117,7 +119,7 @@ contract IporProtocolFactory is Test {
             .and()
             .build();
 
-        amm.usdc = iporProtocolBuilder
+        amm.usdc = _iporProtocolBuilder
             .usdcBuilder()
             .withAsset(address(usdc))
             .ipToken()
@@ -134,7 +136,7 @@ contract IporProtocolFactory is Test {
             .and()
             .build();
 
-        amm.dai = iporProtocolBuilder
+        amm.dai = _iporProtocolBuilder
             .daiBuilder()
             .withAsset(address(dai))
             .ipToken()
@@ -156,8 +158,21 @@ contract IporProtocolFactory is Test {
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        iporProtocol = iporProtocolBuilder
+        _assetBuilder.withDAI();
+        MockTestnetToken dai = _assetBuilder.build();
+
+        address[] memory assets = new address[](1);
+        assets[0] = address(dai);
+
+        ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
+            assets,
+            cfg.iporOracleUpdater,
+            cfg.iporOracleInitialParamsTestCase
+        );
+
+        iporProtocol = _iporProtocolBuilder
             .daiBuilder()
+            .withAsset(address(dai))
             .ipToken()
             .withName("IP DAI")
             .withSymbol("ipDAI")
@@ -166,8 +181,7 @@ contract IporProtocolFactory is Test {
             .withName("IV DAI")
             .withSymbol("ivDAI")
             .and()
-            .iporOracle()
-            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .withIporOracle(address(iporOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
@@ -184,9 +198,6 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.prank(address(_owner));
-        iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
         setupUsers(cfg, iporProtocol);
 
         return iporProtocol;
@@ -196,8 +207,21 @@ contract IporProtocolFactory is Test {
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        iporProtocol = iporProtocolBuilder
+        _assetBuilder.withUSDT();
+        MockTestnetToken usdt = _assetBuilder.build();
+
+        address[] memory assets = new address[](1);
+        assets[0] = address(usdt);
+
+        ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
+            assets,
+            cfg.iporOracleUpdater,
+            cfg.iporOracleInitialParamsTestCase
+        );
+
+        iporProtocol = _iporProtocolBuilder
             .usdtBuilder()
+            .withAsset(address(usdt))
             .ipToken()
             .withName("IP USDT")
             .withSymbol("ipUSDT")
@@ -206,8 +230,7 @@ contract IporProtocolFactory is Test {
             .withName("IV USDT")
             .withSymbol("ivUSDT")
             .and()
-            .iporOracle()
-            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .withIporOracle(address(iporOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
@@ -224,9 +247,6 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.prank(address(_owner));
-        iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
         setupUsers(cfg, iporProtocol);
 
         return iporProtocol;
@@ -236,8 +256,21 @@ contract IporProtocolFactory is Test {
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
-        iporProtocol = iporProtocolBuilder
+        _assetBuilder.withUSDC();
+        MockTestnetToken usdc = _assetBuilder.build();
+
+        address[] memory assets = new address[](1);
+        assets[0] = address(usdc);
+
+        ItfIporOracle iporOracle = _iporOracleFactory.getInstance(
+            assets,
+            cfg.iporOracleUpdater,
+            cfg.iporOracleInitialParamsTestCase
+        );
+
+        iporProtocol = _iporProtocolBuilder
             .usdcBuilder()
+            .withAsset(address(usdc))
             .ipToken()
             .withName("IP USDC")
             .withSymbol("ipUSDC")
@@ -246,8 +279,7 @@ contract IporProtocolFactory is Test {
             .withName("IV USDC")
             .withSymbol("ivUSDC")
             .and()
-            .iporOracle()
-            .withInitialParamsTestCase(cfg.iporOracleInitialParamsTestCase)
+            .withIporOracle(address(iporOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
@@ -264,9 +296,6 @@ contract IporProtocolFactory is Test {
             .build();
 
         //setup
-        vm.prank(address(_owner));
-        iporProtocol.iporOracle.addUpdater(cfg.iporOracleUpdater);
-
         setupUsers(cfg, iporProtocol);
 
         return iporProtocol;

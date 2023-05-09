@@ -7,7 +7,6 @@ import "./BuilderUtils.sol";
 
 contract IporOracleBuilder is Test {
     struct BuilderData {
-        BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase;
         address[] assets;
         uint32[] lastUpdateTimestamps;
         uint64[] exponentialMovingAverages;
@@ -61,77 +60,36 @@ contract IporOracleBuilder is Test {
         return this;
     }
 
+    function withLastUpdateTimestamps(uint32[] memory lastUpdateTimestamps)
+        public
+        returns (IporOracleBuilder)
+    {
+        builderData.lastUpdateTimestamps = lastUpdateTimestamps;
+        return this;
+    }
+
+    function withExponentialMovingAverages(uint64[] memory exponentialMovingAverages)
+        public
+        returns (IporOracleBuilder)
+    {
+        builderData.exponentialMovingAverages = exponentialMovingAverages;
+        return this;
+    }
+
+    function withExponentialWeightedMovingVariances(
+        uint64[] memory exponentialWeightedMovingVariances
+    ) public returns (IporOracleBuilder) {
+        builderData.exponentialWeightedMovingVariances = exponentialWeightedMovingVariances;
+        return this;
+    }
+
     function withAssets(address[] memory assets) public returns (IporOracleBuilder) {
         builderData.assets = assets;
         return this;
     }
 
-    function withInitialParamsTestCase(
-        BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase
-    ) public returns (IporOracleBuilder) {
-        builderData.initialParamsTestCase = initialParamsTestCase;
-        return this;
-    }
-
-    function _buildIndicatorsBasedOnInitialParamTestCase() internal {
-        builderData.lastUpdateTimestamps = new uint32[](builderData.assets.length);
-        builderData.exponentialMovingAverages = new uint64[](builderData.assets.length);
-        builderData.exponentialWeightedMovingVariances = new uint64[](builderData.assets.length);
-
-        uint32 lastUpdateTimestamp = uint32(block.timestamp);
-        uint64 exponentialMovingAverage = TestConstants.TC_DEFAULT_EMA_18DEC_64UINT;
-        uint64 exponentialWeightedMovingVariance = 0;
-
-        if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE1
-        ) {
-            lastUpdateTimestamp = 1;
-            exponentialMovingAverage = 1;
-            exponentialWeightedMovingVariance = 1;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE2
-        ) {
-            exponentialMovingAverage = 8 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE3
-        ) {
-            exponentialMovingAverage = 50 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE4
-        ) {
-            exponentialMovingAverage = 120 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE5
-        ) {
-            exponentialMovingAverage = 5 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE6
-        ) {
-            exponentialMovingAverage = 160 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE7
-        ) {
-            exponentialMovingAverage = 0;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE8
-        ) {
-            exponentialMovingAverage = 6 * 1e16;
-        } else if (
-            builderData.initialParamsTestCase == BuilderUtils.IporOracleInitialParamsTestCase.CASE9
-        ) {
-            exponentialMovingAverage = 150 * 1e16;
-        }
-
-        for (uint256 i = 0; i < builderData.assets.length; i++) {
-            builderData.lastUpdateTimestamps[i] = lastUpdateTimestamp;
-            builderData.exponentialMovingAverages[i] = exponentialMovingAverage;
-            builderData.exponentialWeightedMovingVariances[i] = exponentialWeightedMovingVariance;
-        }
-    }
-
     function build() public returns (ItfIporOracle) {
         vm.startPrank(_owner);
-        _buildIndicatorsBasedOnInitialParamTestCase();
         ERC1967Proxy proxy = _constructProxy(address(new ItfIporOracle()));
         ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
         vm.stopPrank();
