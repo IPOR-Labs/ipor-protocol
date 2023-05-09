@@ -57,9 +57,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_80_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_80_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MiltonStorages memory miltonStorages = getMiltonStorages();
         address[] memory miltonStorageAddresses = addressesToArray(
@@ -187,9 +187,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -338,9 +338,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -427,9 +427,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -516,9 +516,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -604,9 +604,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -694,9 +694,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -786,9 +786,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -878,9 +878,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),
@@ -970,9 +970,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(getMockCase1Stanley(address(_usdtMockedToken))),

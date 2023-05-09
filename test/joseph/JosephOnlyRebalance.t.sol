@@ -400,15 +400,15 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         address[] memory assets = new address[](1);
         assets[0] = address(dai);
         uint64[] memory maxNotionalPayFixed = new uint64[](1);
-        maxNotionalPayFixed[0] = TestConstants.MSO_NOTIONAL_1B;
+        maxNotionalPayFixed[0] = TestConstants.RMO_NOTIONAL_1B;
         uint64[] memory maxNotionalReceiveFixed = new uint64[](1);
-        maxNotionalReceiveFixed[0] = TestConstants.MSO_NOTIONAL_1B;
+        maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_1B;
         uint16[] memory maxUtilizationRatePayFixed = new uint16[](1);
-        maxUtilizationRatePayFixed[0] = TestConstants.MSO_UTILIZATION_RATE_48_PER;
+        maxUtilizationRatePayFixed[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
         uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](1);
-        maxUtilizationRateReceiveFixed[0] = TestConstants.MSO_UTILIZATION_RATE_48_PER;
+        maxUtilizationRateReceiveFixed[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
         uint16[] memory maxUtilizationRate = new uint16[](1);
-        maxUtilizationRate[0] = TestConstants.MSO_UTILIZATION_RATE_80_PER;
+        maxUtilizationRate[0] = TestConstants.RMO_UTILIZATION_RATE_80_PER;
 
         IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
         ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(

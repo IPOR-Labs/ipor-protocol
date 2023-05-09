@@ -73,9 +73,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         address[] memory mockCase1StanleyAddresses = addressesToArray(
             address(_usdtMockedToken),
@@ -138,9 +138,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -192,9 +192,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdtMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
@@ -246,9 +246,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -298,9 +298,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -350,9 +350,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -402,9 +402,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -454,9 +454,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -507,9 +507,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();

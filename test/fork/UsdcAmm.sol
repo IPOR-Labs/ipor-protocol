@@ -228,9 +228,9 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         iporRiskManagementOracle = getRiskManagementOracleAsset(
             address(this),
             address(usdc),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
     }
 

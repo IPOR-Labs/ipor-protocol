@@ -68,9 +68,9 @@ contract StanleyTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -129,9 +129,9 @@ contract StanleyTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
 		MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -191,9 +191,9 @@ contract StanleyTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
         _userOne,
         address(_daiMockedToken),
-        TestConstants.MSO_UTILIZATION_RATE_48_PER,
-        TestConstants.MSO_UTILIZATION_RATE_90_PER,
-        TestConstants.MSO_NOTIONAL_1B
+        TestConstants.RMO_UTILIZATION_RATE_48_PER,
+        TestConstants.RMO_UTILIZATION_RATE_90_PER,
+        TestConstants.RMO_NOTIONAL_1B
     );
     MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -253,9 +253,9 @@ contract StanleyTest is TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
 		MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();

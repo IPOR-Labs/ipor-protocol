@@ -472,9 +472,9 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
         return getRiskManagementOracleAsset(
             _owner,
             assetAddress,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_80_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_80_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
     }
 }

@@ -59,9 +59,9 @@ import {
     YEAR_IN_SECONDS,
     LEG_PAY_FIXED,
     LEG_RECEIVE_FIXED,
-    MSO_NOTIONAL_1B,
-    MSO_UTILIZATION_RATE_48_PER,
-    MSO_UTILIZATION_RATE_90_PER,
+    RMO_NOTIONAL_1B,
+    RMO_UTILIZATION_RATE_48_PER,
+    RMO_UTILIZATION_RATE_90_PER,
 } from "./Constants";
 
 const { ethers } = hre;
@@ -187,11 +187,11 @@ export const prepareTestData = async (
             exponentialWeightedMovingVariances.push(BigNumber.from("0"));
         }
 
-        maxNotionalPayFixed.push(MSO_NOTIONAL_1B);
-        maxNotionalReceiveFixed.push(MSO_NOTIONAL_1B);
-        maxUtilizationRatePayFixed.push(MSO_UTILIZATION_RATE_48_PER);
-        maxUtilizationRateReceiveFixed.push(MSO_UTILIZATION_RATE_48_PER);
-        maxUtilizationRate.push(MSO_UTILIZATION_RATE_90_PER);
+        maxNotionalPayFixed.push(RMO_NOTIONAL_1B);
+        maxNotionalReceiveFixed.push(RMO_NOTIONAL_1B);
+        maxUtilizationRatePayFixed.push(RMO_UTILIZATION_RATE_48_PER);
+        maxUtilizationRateReceiveFixed.push(RMO_UTILIZATION_RATE_48_PER);
+        maxUtilizationRate.push(RMO_UTILIZATION_RATE_90_PER);
 
         if (emas[k]) {
             exponentialMovingAverages.push(emas[k]);

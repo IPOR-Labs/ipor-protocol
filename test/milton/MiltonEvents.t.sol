@@ -93,9 +93,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -173,9 +173,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -253,9 +253,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(usdtMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -338,9 +338,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(usdtMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -419,9 +419,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
@@ -496,9 +496,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(usdtMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -578,9 +578,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(usdtMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
         MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
@@ -658,9 +658,9 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(daiMockedToken),
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();

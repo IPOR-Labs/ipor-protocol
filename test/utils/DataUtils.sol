@@ -72,9 +72,9 @@ contract DataUtils is
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
 
         MockSpreadModel miltonSpreadModel = prepareMockSpreadModel(0, 0, 0, 0);
@@ -136,9 +136,9 @@ contract DataUtils is
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
             _userOne,
             tokenAddresses,
-            TestConstants.MSO_UTILIZATION_RATE_48_PER,
-            TestConstants.MSO_UTILIZATION_RATE_90_PER,
-            TestConstants.MSO_NOTIONAL_1B
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
 
         ItfMilton milton = getItfMiltonDai(

@@ -143,6 +143,6 @@ export const PERIOD_14_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 14);
 // #################################################################################
 //                              IporRiskManagementOracle
 // #################################################################################
-export const MSO_NOTIONAL_1B = BigNumber.from("100000");
-export const MSO_UTILIZATION_RATE_48_PER = BigNumber.from("4800");
-export const MSO_UTILIZATION_RATE_90_PER = BigNumber.from("9000");
+export const RMO_NOTIONAL_1B = BigNumber.from("100000");
+export const RMO_UTILIZATION_RATE_48_PER = BigNumber.from("4800");
+export const RMO_UTILIZATION_RATE_90_PER = BigNumber.from("9000");
