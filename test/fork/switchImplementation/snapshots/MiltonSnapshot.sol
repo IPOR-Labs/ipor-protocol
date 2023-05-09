@@ -365,9 +365,14 @@ contract MiltonSnapshot is Script, Test {
             "Milton: Max LP Utilization Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(),
-            miltonSnapshot2.miltonMaxLpUtilizationPerLegRate(),
-            "Milton: Max LP Utilization Per Leg Rate should be the same"
+            miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed(),
+            "Milton: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed(),
+            "Milton: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             miltonSnapshot1.miltonIncomeFeeRate(),
@@ -400,9 +405,14 @@ contract MiltonSnapshot is Script, Test {
             "Milton: WAD Liquidation Deposit Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLeverage(),
-            miltonSnapshot2.miltonMaxLeverage(),
-            "Milton: Max Leverage should be the same"
+            miltonSnapshot1.miltonMaxLeveragePayFixed(),
+            miltonSnapshot2.miltonMaxLeveragePayFixed(),
+            "Milton: Max Leverage For Pay Fixed leg should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLeverageReceiveFixed(),
+            miltonSnapshot2.miltonMaxLeverageReceiveFixed(),
+            "Milton: Max Leverage For Receive Fixed leg should be the same"
         );
         assertEq(
             miltonSnapshot1.miltonMinLeverage(),

@@ -212,6 +212,14 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.TC_5_EMA_18DEC_64UINT
         );
 
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.MSO_UTILIZATION_RATE_48_PER,
+            TestConstants.MSO_UTILIZATION_RATE_90_PER,
+            TestConstants.MSO_NOTIONAL_1B
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
 
@@ -789,7 +797,6 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_daiMockedToken),
             TestConstants.TC_5_EMA_18DEC_64UINT
         );
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_daiMockedToken),

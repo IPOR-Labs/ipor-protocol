@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
+import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
 import {MiltonUtils} from "../utils/MiltonUtils.sol";
@@ -26,6 +27,7 @@ import "../../contracts/mocks/MockIporWeighted.sol";
 
 contract DataUtils is
     Test,
+    TestCommons,
     IporOracleUtils,
     IporRiskManagementOracleUtils,
     MiltonUtils,
@@ -46,7 +48,7 @@ contract DataUtils is
     }
 
     address internal _admin;
-    address internal _userOne;
+    address internal _userOne = _getUserAddress(1);
     address internal _userTwo;
     address internal _userThree;
     address internal _liquidityProvider;
