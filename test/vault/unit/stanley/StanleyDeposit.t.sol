@@ -114,7 +114,7 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 		_aDaiMockedToken = getMockADAI(address(_daiMockedToken), _admin);
         _aaveMockedToken = getTokenAave();
         _lendingPoolAave = new MockAaveLendingPoolV2(
-			address(_daiMockedToken), 
+			address(_daiMockedToken),
 			address(_aDaiMockedToken)
         );
         _mockStakedAave = getMockStakedAave(address(_aaveMockedToken));
@@ -147,7 +147,7 @@ contract StanleyDepositTest is TestCommons, DataUtils {
         _strategyCompoundDai = getStrategyCompound(
             address(_daiMockedToken), address(_mockCDAI), address(_mockComptroller), address(_compMockedToken)
         );
-			  
+
 		_setupStrategies();
 
         _stanleyDai = getStanleyDai(
@@ -157,7 +157,7 @@ contract StanleyDepositTest is TestCommons, DataUtils {
     }
 
 	function testShouldChangeAaveAPR() public {
-		// given 
+		// given
 		uint256 apyBefore = _strategyAaveDai.getApr();
 		// when
 		_lendingPoolAave.setCurrentLiquidityRate(TestConstants.RAY_UINT128 / 100 * 5);
@@ -168,14 +168,14 @@ contract StanleyDepositTest is TestCommons, DataUtils {
 	}
 
 	function testShouldChangeCompoundAPR() public {
-		// given 
+		// given
 		uint256 apyBefore = _strategyCompoundDai.getApr();
 		// when
 		_mockCDAI.setSupplyRate(uint128(10));
 		// then
 		uint256 apyAfter = _strategyCompoundDai.getApr();
-		assertEq(apyBefore, 69059536870752000);
-		assertEq(apyAfter, 21024000);
+		assertEq(apyBefore, 90148815177415640);
+		assertEq(apyAfter, 26280000);
 	}
 
 	function testShouldAcceptDepositAndTransferTokensIntoAave() public {

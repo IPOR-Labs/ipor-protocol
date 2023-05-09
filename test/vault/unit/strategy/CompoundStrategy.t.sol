@@ -156,8 +156,8 @@ contract CompoundStrategyTest is TestCommons, DataUtils {
     function testShouldSetupNewBlocksPerDay() public {
         // when
         vm.expectEmit(true, true, true, true);
-        emit BlocksPerDayChanged(_admin, 7100, 7200);
-        _strategyCompoundDai.setBlocksPerDay(7200);
+        emit BlocksPerDayChanged(_admin, 7200, 7100);
+        _strategyCompoundDai.setBlocksPerDay(7100);
     }
 
     function testShouldNotSetupNewBlocksPerDayToZero() public {
