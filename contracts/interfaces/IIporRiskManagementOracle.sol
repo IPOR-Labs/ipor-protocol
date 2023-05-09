@@ -7,7 +7,7 @@ interface IIporRiskManagementOracle {
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets risk indicators for a given asset
+    /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
     /// @return maxNotionalReceiveFixed maximum notional value for receive fixed leg
@@ -27,14 +27,14 @@ interface IIporRiskManagementOracle {
             uint256 lastUpdateTimestamp
         );
 
-    /// @notice Updates risk indicators for a given asset
+    /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.
     /// @dev Emmits {RiskIndicatorsUpdated} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
-    /// @param maxUtilizationRate maximum utilization rate for both legs
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
     function updateRiskIndicators(
         address asset,
         uint256 maxNotionalPayFixed,
@@ -44,14 +44,14 @@ interface IIporRiskManagementOracle {
         uint256 maxUtilizationRate
     ) external;
 
-    /// @notice Updates risk indicators for a multiple assets
+    /// @notice Updates risk indicators for a multiple assets. Values and rates are not represented in 18 decimals.
     /// @dev Emmits {RiskIndicatorsUpdated} event.
     /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
-    /// @param maxUtilizationRate maximum utilization rate for both legs
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
     function updateRiskIndicators(
         address[] memory asset,
         uint256[] memory maxNotionalPayFixed,
@@ -61,8 +61,13 @@ interface IIporRiskManagementOracle {
         uint256[] memory maxUtilizationRate
     ) external;
 
-    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner. Initialized with notional equals 0 and max utilization equals 0.
+    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner. Initialized with notional equals 0 and max utilization equals 0. Values and rates are not represented in 18 decimals.
     /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
     function addAsset(
         address asset,
         uint256 maxNotionalPayFixed,
@@ -101,13 +106,13 @@ interface IIporRiskManagementOracle {
     /// @dev Emits {Unpaused} event from IporOracle.
     function unpause() external;
 
-    /// @notice event emitted when risk indicators are updated
+    /// @notice event emitted when risk indicators are updated. Values and rates are not represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
-    /// @param maxUtilizationRate maximum utilization rate for both legs
+    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
+    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
+    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
+    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
     event RiskIndicatorsUpdated(
         address indexed asset,
         uint256 maxNotionalPayFixed,
