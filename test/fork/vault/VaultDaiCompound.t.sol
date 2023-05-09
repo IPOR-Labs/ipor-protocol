@@ -122,6 +122,7 @@ contract VaultDaiCompoundTest is Test {
         Joseph joseph = amm.joseph();
         amm.overrideAaveStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
+        amm.stanley().addPauseGuardian(_admin);
         amm.stanley().pause();
 
         deal(amm.dai(), address(amm.milton()), amount);
@@ -151,6 +152,7 @@ contract VaultDaiCompoundTest is Test {
         vm.startPrank(_admin);
         amm.joseph().depositToStanley(amount);
         vm.roll(block.number + 1);
+        amm.stanley().addPauseGuardian(_admin);
         amm.stanley().pause();
 
         uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
