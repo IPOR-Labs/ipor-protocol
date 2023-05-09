@@ -170,6 +170,77 @@ contract IporMathTest is Test {
         assertEq(IporMath.percentOf(2000000000000000000, 1), 2);
     }
 
+    function testShouldDivideIntNewAssert() public {
+        assertEq(IporMath.divisionInt(0, 1), 0);
+        assertEq(IporMath.divisionInt(0, -1), 0);
+
+        assertEq(IporMath.divisionInt(0, 1), 0);
+        assertEq(IporMath.divisionInt(1, 3), 0);
+        assertEq(IporMath.divisionInt(100, 3), 33);
+        assertEq(IporMath.divisionInt(100, 2), 50);
+
+        assertEq(IporMath.divisionInt(1, -3), 0);
+        assertEq(IporMath.divisionInt(-1, 3), 0);
+        assertEq(IporMath.divisionInt(-100, 3), -33);
+        assertEq(IporMath.divisionInt(100, -3), -33);
+        assertEq(IporMath.divisionInt(-100, 2), -50);
+        assertEq(IporMath.divisionInt(100, -2), -50);
+
+        assertEq(IporMath.divisionInt(5, 10), 1);
+        assertEq(IporMath.divisionInt(10, 10), 1);
+        assertEq(IporMath.divisionInt(11, 10), 1);
+        assertEq(IporMath.divisionInt(12, 10), 1);
+        assertEq(IporMath.divisionInt(13, 10), 1);
+        assertEq(IporMath.divisionInt(14, 10), 1);
+        assertEq(IporMath.divisionInt(15, 10), 2);
+        assertEq(IporMath.divisionInt(16, 10), 2);
+        assertEq(IporMath.divisionInt(17, 10), 2);
+        assertEq(IporMath.divisionInt(18, 10), 2);
+        assertEq(IporMath.divisionInt(19, 10), 2);
+        assertEq(IporMath.divisionInt(20, 10), 2);
+
+        assertEq(IporMath.divisionInt(0, 10), 0);
+        assertEq(IporMath.divisionInt(-1, 10), 0);
+        assertEq(IporMath.divisionInt(-2, 10), 0);
+        assertEq(IporMath.divisionInt(-3, 10), 0);
+        assertEq(IporMath.divisionInt(-4, 10), 0);
+        assertEq(IporMath.divisionInt(-5, 10), 0);
+        assertEq(IporMath.divisionInt(-6, 10), -1);
+        assertEq(IporMath.divisionInt(-7, 10), -1);
+        assertEq(IporMath.divisionInt(-8, 10), -1);
+        assertEq(IporMath.divisionInt(-9, 10), -1);
+        assertEq(IporMath.divisionInt(-10, 10), -1);
+        assertEq(IporMath.divisionInt(-11, 10), -1);
+        assertEq(IporMath.divisionInt(-12, 10), -1);
+        assertEq(IporMath.divisionInt(-13, 10), -1);
+        assertEq(IporMath.divisionInt(-14, 10), -1);
+        assertEq(IporMath.divisionInt(-15, 10), -1);
+        assertEq(IporMath.divisionInt(-16, 10), -2);
+        assertEq(IporMath.divisionInt(-17, 10), -2);
+        assertEq(IporMath.divisionInt(-18, 10), -2);
+        assertEq(IporMath.divisionInt(-19, 10), -2);
+        assertEq(IporMath.divisionInt(-20, 10), -2);
+
+        assertEq(IporMath.divisionInt(10, -10), -1);
+        assertEq(IporMath.divisionInt(11, -10), -1);
+        assertEq(IporMath.divisionInt(12, -10), -1);
+        assertEq(IporMath.divisionInt(13, -10), -1);
+        assertEq(IporMath.divisionInt(14, -10), -1);
+        assertEq(IporMath.divisionInt(15, -10), -1);
+        assertEq(IporMath.divisionInt(16, -10), -2);
+        assertEq(IporMath.divisionInt(17, -10), -2);
+        assertEq(IporMath.divisionInt(18, -10), -2);
+        assertEq(IporMath.divisionInt(19, -10), -2);
+        assertEq(IporMath.divisionInt(20, -10), -2);
+
+        vm.expectRevert();
+        IporMath.divisionInt(1, 0);
+        vm.expectRevert();
+        IporMath.divisionInt(-1, 0);
+        vm.expectRevert();
+        IporMath.divisionInt(0, 0);
+    }
+
     function assertDivision(
         uint256 x,
         uint256 y,

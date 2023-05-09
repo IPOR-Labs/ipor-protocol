@@ -17,6 +17,7 @@ library Constants {
     uint256 public constant WAD_YEAR_IN_SECONDS = D18 * YEAR_IN_SECONDS;
     int256 public constant WAD_YEAR_IN_SECONDS_INT = int256(WAD_YEAR_IN_SECONDS);
     uint256 public constant WAD_P2_YEAR_IN_SECONDS = D18 * D18 * YEAR_IN_SECONDS;
+    int256 public constant WAD_P3_YEAR_IN_SECONDS_INT = int256(D18 * D18 * D18 * YEAR_IN_SECONDS);
     int256 public constant WAD_P2_YEAR_IN_SECONDS_INT = int256(WAD_P2_YEAR_IN_SECONDS);
 
     uint256 public constant MAX_CHUNK_SIZE = 50;

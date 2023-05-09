@@ -78,6 +78,27 @@ library IporSwapLogic {
         );
     }
 
+    function calculateSwapUnwindValue(
+        IporTypes.IporSwapMemory memory swap,
+        uint256 closingTimestamp,
+        int256 swapPayoffToDate,
+        uint256 oppositeLegFixedRate,
+        uint256 openingFeeRateForSwapUnwind
+    ) internal pure returns (int256 swapUnwindValue) {
+        require(closingTimestamp <= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+
+        swapUnwindValue =
+            swapPayoffToDate +
+            IporMath.divisionInt(
+                swap.notional.toInt256() *
+                    (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
+                    ((swap.endTimestamp - swap.openTimestamp) -
+                        (closingTimestamp - swap.openTimestamp)).toInt256(),
+                Constants.WAD_YEAR_IN_SECONDS_INT
+            ) -
+            openingFeeRateForSwapUnwind.toInt256();
+    }
+
     /// @notice Calculates interests fixed and floating without division by Constants.D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiInterest(
         IporTypes.IporSwapMemory memory swap,

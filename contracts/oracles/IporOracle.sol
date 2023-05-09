@@ -147,12 +147,7 @@ contract IporOracle is
         onlyUpdater
         whenNotPaused
     {
-        uint256[] memory indexes = new uint256[](1);
-        indexes[0] = indexValue;
-        address[] memory assets = new address[](1);
-        assets[0] = asset;
-
-        _updateIndexes(assets, indexes, block.timestamp);
+        _updateIndex(asset, indexValue, block.timestamp);
     }
 
     function updateIndex(address asset)
@@ -253,7 +248,7 @@ contract IporOracle is
         address[] memory assets,
         uint256[] memory indexValues,
         uint256 updateTimestamp
-    ) internal onlyUpdater {
+    ) internal {
         require(assets.length == indexValues.length, IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH);
 
         for (uint256 i; i != assets.length; ++i) {

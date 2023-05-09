@@ -132,9 +132,11 @@ export const SWAP_DEFAULT_PERIOD_IN_SECONDS = "2419200"; //60 * 60 * 24 * 28
 export const PERIOD_60_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 60);
 export const PERIOD_50_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 50);
 export const PERIOD_56_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 56);
+
+export const PERIOD_27_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27);
 export const PERIOD_28_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 28);
 export const PERIOD_1_DAY_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 1);
-export const PERIOD_27_DAYS_19_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 19);
+export const PERIOD_27_DAYS_23_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 23);
 export const PERIOD_27_DAYS_17_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 17);
 export const PERIOD_14_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 14);
 

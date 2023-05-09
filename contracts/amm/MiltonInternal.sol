@@ -62,11 +62,11 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
-    uint256 internal constant _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY = 99 * 1e16;
-
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
+
+    uint256 internal constant _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE = 5 * 1e18;
 
     address internal _asset;
     address internal _joseph;
@@ -76,6 +76,8 @@ abstract contract MiltonInternal is
     IMiltonSpreadModel internal _miltonSpreadModel;
 
     uint32 internal _autoUpdateIporIndexThreshold;
+
+    mapping(address =>bool) internal _swapLiquidators;
 
     /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
     IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
@@ -200,7 +202,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffPayFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
     function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
@@ -209,7 +215,11 @@ abstract contract MiltonInternal is
         override
         returns (int256)
     {
-        return _calculatePayoffReceiveFixed(block.timestamp, swap);
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
+            _asset,
+            block.timestamp
+        );
+        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     /// @notice Joseph deposits to Stanley asset amount from Milton.
@@ -230,9 +240,7 @@ abstract contract MiltonInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function _withdrawFromStanley(uint256 assetAmount)
-        internal
-    {
+    function _withdrawFromStanley(uint256 assetAmount) internal {
         (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
         _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
@@ -296,6 +304,22 @@ abstract contract MiltonInternal is
         return _getAutoUpdateIporIndexThreshold();
     }
 
+    function addSwapLiquidator(address newSwapLiquidator) external override onlyOwner {
+        require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[newSwapLiquidator] = true;
+        emit SwapLiquidatorAdded(newSwapLiquidator);
+    }
+
+    function removeSwapLiquidator(address liquidator) external override onlyOwner {
+        require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
+        _swapLiquidators[liquidator] = false;
+        emit SwapLiquidatorRemoved(liquidator);
+    }
+
+    function isSwapLiquidator(address account) external view override returns (bool) {
+        return _swapLiquidators[account];
+    }
+
     function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
         return _autoUpdateIporIndexThreshold * Constants.D21;
     }
@@ -331,17 +355,17 @@ abstract contract MiltonInternal is
     }
 
     function _getSafetyIndicators(uint256 liquidityPool)
-        internal
-        view
-        virtual
-        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
+    internal
+    view
+    virtual
+    returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
     {
         (
-            uint256 maxNotionalPayFixed,
-            uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed,
+        uint256 maxUtilizationRate,
         ) = _iporRiskManagementOracle.getRiskIndicators(_asset);
         uint256 maxCollateralPayFixed = IporMath.division(
             liquidityPool * maxUtilizationRatePayFixed,
@@ -388,13 +412,22 @@ abstract contract MiltonInternal is
         }
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturity()
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
         internal
         view
         virtual
         returns (uint256)
     {
-        return _MIN_LIQUIDATION_THRESHOLD_TO_CLOSE_BEFORE_MATURITY;
+        return 99 * 1e16;
+    }
+
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
+        internal
+        view
+        virtual
+        returns (uint256)
+    {
+        return 995 * 1e15;
     }
 
     function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
@@ -460,27 +493,25 @@ abstract contract MiltonInternal is
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function _calculatePayoffPayFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
+    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
         internal
-        view
-        returns (int256)
+        pure
+        virtual
+        returns (uint256)
     {
-        return
-            swap.calculatePayoffPayFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
+        return 1 hours;
     }
 
-    function _calculatePayoffReceiveFixed(uint256 timestamp, IporTypes.IporSwapMemory memory swap)
+    function _getOpeningFeeRateForSwapUnwind() internal view virtual returns (uint256) {
+        return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
+    }
+
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
         internal
-        view
-        returns (int256)
+        pure
+        virtual
+        returns (uint256)
     {
-        return
-            swap.calculatePayoffReceiveFixed(
-                timestamp,
-                _getIporOracle().calculateAccruedIbtPrice(_asset, timestamp)
-            );
+        return 1 days;
     }
 }

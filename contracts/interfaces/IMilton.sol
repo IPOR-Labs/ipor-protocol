@@ -30,6 +30,34 @@ interface IMilton {
             int256 soap
         );
 
+    /// @notice Get closable status for Pay-Fixed swap.
+    /// @param swapId Pay-Fixed swap ID.
+    /// @return closableStatus Closable status for Pay-Fixed swap.
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    function getClosableStatusForPayFixedSwap(uint256 swapId)
+        external
+        view
+        returns (uint256 closableStatus);
+
+    /// @notice Get closable status for Receive-Fixed swap.
+    /// @param swapId Receive-Fixed swap ID.
+    /// @return closableStatus Closable status for Receive-Fixed swap.
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    function getClosableStatusForReceiveFixedSwap(uint256 swapId)
+        external
+        view
+        returns (uint256 closableStatus);
+
     /// @notice Opens Pay-Fixed (and Receive-Floating) swap with given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
     /// @param totalAmount Total amount transferred from the buyer to Milton for the purpose of opening a swap. Represented in decimals specific for asset.
@@ -115,5 +143,15 @@ interface IMilton {
         uint256 transferredToLiquidator,
         /// @notice incomeFeeValue value transferred to treasury
         uint256 incomeFeeValue
+    );
+
+    /// @notice Emmited when trader closes Swap.
+    event SwapUnwind(
+        /// @notice swap ID.
+        uint256 indexed swapId,
+        /// @notice payoff to date without unwind value, represented in 18 decimals
+        int256 swapPayoffToDate,
+        // @notice swap unwind value, represented in 18 decimals
+        int256 swapUnwindValue
     );
 }

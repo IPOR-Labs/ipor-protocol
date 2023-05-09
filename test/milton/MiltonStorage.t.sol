@@ -283,13 +283,10 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.prank(_miltonStorageAddress);
         miltonStorageDai.updateStorageWhenCloseSwapPayFixed(
-            address(_userTwo),
             derivativeItem,
             10 * TestConstants.D18_INT,
             1 * TestConstants.D18,
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            95 * TestConstants.D16,
-            TestConstants.PERIOD_6_HOURS_IN_SECONDS
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
         miltonStorageDai.setMilton(address(mockCase0MiltonDai));
     }
@@ -343,13 +340,10 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.prank(_miltonStorageAddress);
         miltonStorageUsdt.updateStorageWhenCloseSwapPayFixed(
-            address(_userTwo),
             derivativeItem,
             10 * TestConstants.D18_INT,
             1 * TestConstants.D18,
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            95 * TestConstants.D16,
-            TestConstants.PERIOD_6_HOURS_IN_SECONDS
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
         miltonStorageUsdt.setMilton(address(mockCase0MiltonUsdt));
     }
@@ -403,13 +397,10 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         vm.expectRevert("IPOR_008");
         vm.prank(_userThree);
         miltonStorageDai.updateStorageWhenCloseSwapPayFixed(
-            address(_userTwo),
             derivativeItem,
             10 * TestConstants.D18_INT,
             1 * TestConstants.D18,
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            95 * TestConstants.D16,
-            TestConstants.PERIOD_6_HOURS_IN_SECONDS
+            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }
 

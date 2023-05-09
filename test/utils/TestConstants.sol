@@ -4,6 +4,9 @@ pragma solidity 0.8.16;
 library TestConstants {
     uint256 public constant MAX_VALUE = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
+    uint256 public constant RAY_UINT256 = 1e27;
+    uint128 public constant RAY_UINT128 = 1e27;
+
     uint256 public constant D54 = 1e54;
     uint256 public constant D36 = 1e36;
     uint256 public constant D18 = 1e18;
@@ -14,6 +17,10 @@ library TestConstants {
     uint256 public constant D13 = 1e13;
     uint256 public constant D12 = 1e12;
 
+    uint128 public constant D18_128UINT = 1e18;
+
+    uint64 public constant D16_64UINT = 1e16;
+
     uint256 public constant USD_3_18DEC = 3 * 1e18;
     uint256 public constant USD_10_18DEC = 10 * 1e18;
     uint256 public constant USD_20_18DEC = 20 * 1e18;
@@ -23,6 +30,7 @@ library TestConstants {
     uint256 public constant USD_1_500_18DEC = 1500 * 1e18;
     uint256 public constant USD_2_000_18DEC = 2000 * 1e18;
     uint256 public constant USD_5_000_18DEC = 5000 * 1e18;
+    uint256 public constant USD_9_500_18DEC = 9500 * 1e18;
     uint256 public constant USD_10_000_18DEC = 10000 * 1e18;
     uint256 public constant USD_10_400_18DEC = 10400 * 1e18;
     uint256 public constant USD_13_000_18DEC = 13000 * 1e18;
@@ -75,6 +83,7 @@ library TestConstants {
 
     uint256 public constant TC_TOTAL_AMOUNT_100_18DEC = 100 * 1e18;
     uint256 public constant TC_1000_18DEC = 1000 * 1e18;
+    uint256 public constant TC_9_000_USD_18DEC = 9000 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
     uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
@@ -113,6 +122,8 @@ library TestConstants {
 
     uint64 public constant ZERO_64UINT = 0;
 
+    uint128 public constant ZERO_128UINT = 0;
+
     uint256 public constant ZERO = 0;
     uint256 public constant LEG_PAY_FIXED = 0;
     uint256 public constant LEG_RECEIVE_FLOATING = 1;
@@ -138,8 +149,11 @@ library TestConstants {
     uint256 public constant USD_10_000_000 = 10000000;
     uint256 public constant USD_1_000_000 = 1000000;
     uint256 public constant USD_100_6DEC = 100000000;
+    uint256 public constant USD_1_000_6DEC = 1000 * 1000000;
+    uint256 public constant USD_9_000_6DEC = 9000 * 1000000;
     uint256 public constant USD_10_000_6DEC = 10000 * 1000000;
     uint256 public constant USD_14_000_6DEC = 14000 * 1000000;
+    uint256 public constant USD_20_000_6DEC = 20000 * 1000000;
     uint256 public constant USD_28_000_6DEC = 28000 * 1000000;
     uint256 public constant USD_50_000_6DEC = 50000 * 1000000;
     uint256 public constant USD_100_000_6DEC = 100000 * 1000000;
@@ -193,6 +207,7 @@ library TestConstants {
     uint256 public constant PERIOD_56_DAYS_IN_SECONDS = 60 * 60 * 24 * 56;
     uint256 public constant PERIOD_28_DAYS_IN_SECONDS = 60 * 60 * 24 * 28;
     uint256 public constant PERIOD_1_DAY_IN_SECONDS = 60 * 60 * 24 * 1;
+    uint256 public constant PERIOD_27_DAYS_23_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 23;
     uint256 public constant PERIOD_27_DAYS_19_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 19;
     uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
     uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;

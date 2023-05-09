@@ -183,24 +183,94 @@ contract MiltonStorageSnapshot is Script, Test {
         console2.log("END: Save MiltonStorage data to json");
     }
 
-    function assert(MiltonStorageSnapshot miltonStorageSnapshot1, MiltonStorageSnapshot miltonStorageSnapshot2) external {
-        assertEq(miltonStorageSnapshot1.miltonStorageOwner(), miltonStorageSnapshot2.miltonStorageOwner());
-        assertEq(miltonStorageSnapshot1.miltonStorageLastSwapId(), miltonStorageSnapshot2.miltonStorageLastSwapId());
-        assertEq(miltonStorageSnapshot1.miltonStorageTotalNotionalPayFixed(), miltonStorageSnapshot2.miltonStorageTotalNotionalPayFixed());
-        assertEq(miltonStorageSnapshot1.miltonStorageTotalNotionalReceiveFixed(), miltonStorageSnapshot2.miltonStorageTotalNotionalReceiveFixed());
-        assertEq(miltonStorageSnapshot1.extendedBalanceTotalCollateralPayFixed(), miltonStorageSnapshot2.extendedBalanceTotalCollateralPayFixed());
-        assertEq(miltonStorageSnapshot1.extendedBalanceTotalCollateralReceiveFixed(), miltonStorageSnapshot2.extendedBalanceTotalCollateralReceiveFixed());
-        assertEq(miltonStorageSnapshot1.extendedBalanceLiquidityPool(), miltonStorageSnapshot2.extendedBalanceLiquidityPool());
-        assertEq(miltonStorageSnapshot1.extendedBalanceVault(), miltonStorageSnapshot2.extendedBalanceVault());
-        assertEq(miltonStorageSnapshot1.extendedBalanceIporPublicationFee(), miltonStorageSnapshot2.extendedBalanceIporPublicationFee());
-        assertEq(miltonStorageSnapshot1.extendedBalanceTreasury(), miltonStorageSnapshot2.extendedBalanceTreasury());
-        assertEq(miltonStorageSnapshot1.totalCollateralPayFixed(), miltonStorageSnapshot2.totalCollateralPayFixed());
-        assertEq(miltonStorageSnapshot1.totalCollateralReceiveFixed(), miltonStorageSnapshot2.totalCollateralReceiveFixed());
-        assertEq(miltonStorageSnapshot1.liquidityPool(), miltonStorageSnapshot2.liquidityPool());
-        assertEq(miltonStorageSnapshot1.vault(), miltonStorageSnapshot2.vault());
-        assertEq(miltonStorageSnapshot1.miltonStorageIsPaused(), miltonStorageSnapshot2.miltonStorageIsPaused());
-        assertEq(miltonStorageSnapshot1.blockNumber(), miltonStorageSnapshot2.blockNumber());
-        assertEq(miltonStorageSnapshot1.blockTimestamp(), miltonStorageSnapshot2.blockTimestamp());
+    function assert(MiltonStorageSnapshot miltonStorageSnapshot1, MiltonStorageSnapshot miltonStorageSnapshot2)
+    external
+    {
+        assertEq(
+            miltonStorageSnapshot1.miltonStorageOwner(),
+            miltonStorageSnapshot2.miltonStorageOwner(),
+            "MiltonStorage: Milton Storage Owner should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.miltonStorageLastSwapId(),
+            miltonStorageSnapshot2.miltonStorageLastSwapId(),
+            "MiltonStorage: Milton Storage Last Swap ID should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.miltonStorageTotalNotionalPayFixed(),
+            miltonStorageSnapshot2.miltonStorageTotalNotionalPayFixed(),
+            "MiltonStorage: Milton Storage Total Notional Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.miltonStorageTotalNotionalReceiveFixed(),
+            miltonStorageSnapshot2.miltonStorageTotalNotionalReceiveFixed(),
+            "MiltonStorage: Milton Storage Total Notional Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceTotalCollateralPayFixed(),
+            miltonStorageSnapshot2.extendedBalanceTotalCollateralPayFixed(),
+            "MiltonStorage: Extended Balance Total Collateral Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceTotalCollateralReceiveFixed(),
+            miltonStorageSnapshot2.extendedBalanceTotalCollateralReceiveFixed(),
+            "MiltonStorage: Extended Balance Total Collateral Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceLiquidityPool(),
+            miltonStorageSnapshot2.extendedBalanceLiquidityPool(),
+            "MiltonStorage: Extended Balance Liquidity Pool should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceVault(),
+            miltonStorageSnapshot2.extendedBalanceVault(),
+            "MiltonStorage: Extended Balance Vault should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceIporPublicationFee(),
+            miltonStorageSnapshot2.extendedBalanceIporPublicationFee(),
+            "MiltonStorage: Extended Balance IPOR Publication Fee should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.extendedBalanceTreasury(),
+            miltonStorageSnapshot2.extendedBalanceTreasury(),
+            "MiltonStorage: Extended Balance Treasury should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.totalCollateralPayFixed(),
+            miltonStorageSnapshot2.totalCollateralPayFixed(),
+            "MiltonStorage: Total Collateral Pay Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.totalCollateralReceiveFixed(),
+            miltonStorageSnapshot2.totalCollateralReceiveFixed(),
+            "MiltonStorage: Total Collateral Receive Fixed should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.liquidityPool(),
+            miltonStorageSnapshot2.liquidityPool(),
+            "MiltonStorage: Liquidity Pool should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.vault(),
+            miltonStorageSnapshot2.vault(),
+            "MiltonStorage: Vault should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.miltonStorageIsPaused(),
+            miltonStorageSnapshot2.miltonStorageIsPaused(),
+            "MiltonStorage: Milton Storage Is Paused should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.blockNumber(),
+            miltonStorageSnapshot2.blockNumber(),
+            "MiltonStorage: Block Number should be the same"
+        );
+        assertEq(
+            miltonStorageSnapshot1.blockTimestamp(),
+            miltonStorageSnapshot2.blockTimestamp(),
+            "MiltonStorage: Block Timestamp should be the same"
+        );
     }
 
 }
