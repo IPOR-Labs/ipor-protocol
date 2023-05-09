@@ -55,6 +55,14 @@ interface IStanleyInternal {
     /// @dev Emits {Unpaused} event from Stanley.
     function unpause() external;
 
+    /// @notice Adds a guardian to the list of guardians. Function available only for the Owner.
+    /// @param _guardian The address of the guardian to be added.
+    function addGuardian(address _guardian) external;
+
+    /// @notice Removes a guardian from the list of guardians. Function available only for the Owner.
+    /// @param _guardian The address of the guardian to be removed.
+    function removeGuardian(address _guardian) external;
+
     /// @notice Emmited when all Stanley's assets are migrated from old strategy to the new one. Function is available only by the Owner.
     /// @param changedBy account address that has executed migrations
     /// @param oldStrategy old strategy address where assets was before migration
