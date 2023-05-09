@@ -72,7 +72,7 @@ contract IporRiskManagementOracle is
                 block.timestamp.toUint32()
             );
 
-            emit RiskIndicatorsUpdate(
+            emit RiskIndicatorsUpdated(
                 assets[i],
                 maxNotionalPayFixed[i],
                 maxNotionalReceiveFixed[i],
@@ -131,12 +131,12 @@ contract IporRiskManagementOracle is
     }
 
     function updateRiskIndicators(
-        address[] memory asset,
-        uint256[] memory maxNotionalPayFixed,
-        uint256[] memory maxNotionalReceiveFixed,
-        uint256[] memory maxUtilizationRatePayFixed,
-        uint256[] memory maxUtilizationRateReceiveFixed,
-        uint256[] memory maxUtilizationRate
+        address[] calldata asset,
+        uint256[] calldata maxNotionalPayFixed,
+        uint256[] calldata maxNotionalReceiveFixed,
+        uint256[] calldata maxUtilizationRatePayFixed,
+        uint256[] calldata maxUtilizationRateReceiveFixed,
+        uint256[] calldata maxUtilizationRate
     ) external override onlyUpdater whenNotPaused {
         uint256 assetsLength = asset.length;
 
@@ -182,7 +182,7 @@ contract IporRiskManagementOracle is
             block.timestamp.toUint32()
         );
 
-        emit RiskIndicatorsUpdate(
+        emit RiskIndicatorsUpdated(
             asset,
             maxNotionalPayFixed,
             maxNotionalReceiveFixed,
@@ -199,7 +199,7 @@ contract IporRiskManagementOracle is
         uint256 maxUtilizationRatePayFixed,
         uint256 maxUtilizationRateReceiveFixed,
         uint256 maxUtilizationRate
-    ) external override onlyOwner whenNotPaused {
+    ) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
             _indicators[asset].lastUpdateTimestamp == 0,
@@ -215,15 +215,15 @@ contract IporRiskManagementOracle is
             block.timestamp.toUint32()
         );
 
-        emit IporRiskManagementOracleAddAsset(asset);
+        emit IporRiskManagementOracleAssetAdded(asset);
     }
 
-    function removeAsset(address asset) external override onlyOwner whenNotPaused {
+    function removeAsset(address asset) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(_indicators[asset].lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
 
         delete _indicators[asset];
-        emit IporRiskManagementOracleRemoveAsset(asset);
+        emit IporRiskManagementOracleAssetRemoved(asset);
     }
 
     function isAssetSupported(address asset) external view override returns (bool) {
@@ -238,18 +238,18 @@ contract IporRiskManagementOracle is
         _unpause();
     }
 
-    function addUpdater(address updater) external override onlyOwner whenNotPaused {
+    function addUpdater(address updater) external override onlyOwner {
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 1;
-        emit IporRiskManagementOracleAddUpdater(updater);
+        emit IporRiskManagementOracleUpdaterAdded(updater);
     }
 
-    function removeUpdater(address updater) external override onlyOwner whenNotPaused {
+    function removeUpdater(address updater) external override onlyOwner {
         require(updater != address(0), IporErrors.WRONG_ADDRESS);
 
         _updaters[updater] = 0;
-        emit IporRiskManagementOracleRemoveUpdater(updater);
+        emit IporRiskManagementOracleUpdaterRemoved(updater);
     }
 
     function isUpdater(address updater) external view override returns (uint256) {

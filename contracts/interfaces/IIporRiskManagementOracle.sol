@@ -28,7 +28,7 @@ interface IIporRiskManagementOracle {
         );
 
     /// @notice Updates risk indicators for a given asset
-    /// @dev Emmits {RiskIndicatorsUpdate} event.
+    /// @dev Emmits {RiskIndicatorsUpdated} event.
     /// @param asset underlying / stablecoin address supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
     /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
@@ -45,7 +45,7 @@ interface IIporRiskManagementOracle {
     ) external;
 
     /// @notice Updates risk indicators for a multiple assets
-    /// @dev Emmits {RiskIndicatorsUpdate} event.
+    /// @dev Emmits {RiskIndicatorsUpdated} event.
     /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
     /// @param maxNotionalPayFixed maximum notional value for pay fixed leg
     /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg
@@ -108,7 +108,7 @@ interface IIporRiskManagementOracle {
     /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg
     /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg
     /// @param maxUtilizationRate maximum utilization rate for both legs
-    event RiskIndicatorsUpdate(
+    event RiskIndicatorsUpdated(
         address indexed asset,
         uint256 maxNotionalPayFixed,
         uint256 maxNotionalReceiveFixed,
@@ -119,17 +119,17 @@ interface IIporRiskManagementOracle {
 
     /// @notice event emitted when new asset is added
     /// @param asset underlying / stablecoin address
-    event IporRiskManagementOracleAddAsset(address indexed asset);
+    event IporRiskManagementOracleAssetAdded(address indexed asset);
 
     /// @notice event emitted when asset is removed
     /// @param asset underlying / stablecoin address
-    event IporRiskManagementOracleRemoveAsset(address indexed asset);
+    event IporRiskManagementOracleAssetRemoved(address indexed asset);
 
     /// @notice event emitted when new updater is added
     /// @param updater address
-    event IporRiskManagementOracleAddUpdater(address indexed updater);
+    event IporRiskManagementOracleUpdaterAdded(address indexed updater);
 
     /// @notice event emitted when updater is removed
     /// @param updater address
-    event IporRiskManagementOracleRemoveUpdater(address indexed updater);
+    event IporRiskManagementOracleUpdaterRemoved(address indexed updater);
 }

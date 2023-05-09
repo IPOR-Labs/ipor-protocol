@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/oracles/RiskManagementOracle.sol";
+import "../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 
@@ -145,30 +145,12 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
             maxUtilizationRate
         );
 
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.addAsset(
-            address(randomStable),
-            TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_NOTIONAL_1B,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER
-        );
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.removeAsset(address(_daiTestnetToken));
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.addUpdater(address(this));
-
-        vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        _iporRiskManagementOracle.removeUpdater(address(this));
-
         // then
         bool pausedAfter = _iporRiskManagementOracle.paused();
         assertEq(pausedBefore, true);
         assertEq(pausedAfter, true);
     }
+
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
         _iporRiskManagementOracle.pause();

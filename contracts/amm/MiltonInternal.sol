@@ -355,10 +355,10 @@ abstract contract MiltonInternal is
     }
 
     function _getSafetyIndicators(uint256 liquidityPool)
-    internal
-    view
-    virtual
-    returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
+        internal
+        view
+        virtual
+        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
     {
         (
         uint256 maxNotionalPayFixed,

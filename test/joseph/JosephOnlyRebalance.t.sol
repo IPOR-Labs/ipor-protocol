@@ -21,7 +21,7 @@ import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/facades/IporOracleFacadeDataProvider.sol";
-import "../../contracts/oracles/RiskManagementOracle.sol";
+import "../../contracts/oracles/IporRiskManagementOracle.sol";
 import "./MockJosephDai.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
