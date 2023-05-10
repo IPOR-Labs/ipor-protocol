@@ -18,16 +18,16 @@ contract MiltonConfiguration is Test, TestCommons {
     MiltonDai internal _miltonDai;
 
     function setUp() public {
-        _miltonUsdt = new MiltonUsdt();
-        _miltonUsdc = new MiltonUsdc();
-        _miltonDai = new MiltonDai();
+        _miltonUsdt = new MiltonUsdt(address(0));
+        _miltonUsdc = new MiltonUsdc(address(0));
+        _miltonDai = new MiltonDai(address(0));
     }
 
     function testShouldCreateMiltonUsdt() public {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(6);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
@@ -48,7 +48,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(6);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
@@ -69,7 +69,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(18);
-        MiltonDai miltonDaiImplementation = new MiltonDai();
+        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
@@ -90,7 +90,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(8);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt();
+        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
             address(miltonUsdtImplementation),
@@ -110,7 +110,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(8);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc();
+        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(miltonUsdcImplementation),
@@ -130,7 +130,7 @@ contract MiltonConfiguration is Test, TestCommons {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(8);
-        MiltonDai miltonDaiImplementation = new MiltonDai();
+        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(miltonDaiImplementation),
@@ -151,20 +151,6 @@ contract MiltonConfiguration is Test, TestCommons {
         uint256 actualValue = _miltonDai.getMaxSwapCollateralAmount();
         // then
         assertEq(actualValue, TestConstants.USD_100_000_18DEC);
-    }
-
-    function testShouldSetupInitValueForMaxLpUtilizationPercentage() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationRate();
-        // then
-        assertEq(actualValue, 8 * TestConstants.D17);
-    }
-
-    function testShouldSetupInitValueForMaxLpUtilizationPerLegPercentage() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLpUtilizationPerLegRate();
-        // then
-        assertEq(actualValue, 15 * TestConstants.D15);
     }
 
     function testShouldSetupInitValueForIncomeFeePercentage() public {
@@ -207,27 +193,6 @@ contract MiltonConfiguration is Test, TestCommons {
         uint256 actualValue = _miltonDai.getWadLiquidationDepositAmount();
         // then
         assertEq(actualValue, 25 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageValueDai() public {
-        // when
-        uint256 actualValue = _miltonDai.getMaxLeverage();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageValueUsdc() public {
-        // when
-        uint256 actualValue = _miltonUsdc.getMaxLeverage();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
-    }
-
-    function testShouldSetupInitValueForMaxLeverageValueUsdt() public {
-        // when
-        uint256 actualValue = _miltonUsdt.getMaxLeverage();
-        // then
-        assertEq(actualValue, 500 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {

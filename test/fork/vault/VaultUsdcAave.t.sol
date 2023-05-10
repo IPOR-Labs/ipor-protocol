@@ -93,6 +93,8 @@ contract VaultUsdcAaveTest is Test {
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
@@ -123,6 +125,8 @@ contract VaultUsdcAaveTest is Test {
         vm.startPrank(_admin);
         amm.joseph().depositToStanley(amount * 1e12);
         vm.roll(block.number + 1000);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 

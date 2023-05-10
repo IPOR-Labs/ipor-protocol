@@ -36,6 +36,10 @@ contract MockStrategy is IStrategy {
 
     function unpause() external override {}
 
+    function addPauseGuardian(address _guardian) external {}
+
+    function removePauseGuardian(address _guardian) external {}
+
     function setAsset(address asset) external {
         _asset = asset;
     }

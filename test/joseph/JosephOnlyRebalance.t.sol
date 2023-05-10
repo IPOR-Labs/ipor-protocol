@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
+import "../utils/TestConstants.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
@@ -20,6 +21,7 @@ import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/facades/IporOracleFacadeDataProvider.sol";
+import "../../contracts/oracles/IporRiskManagementOracle.sol";
 import "./MockJosephDai.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
@@ -200,6 +202,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         amm.compoundStrategy = _createCompoundStrategy(amm);
         amm.miltonSpreadModel = new MiltonSpreadModelDai();
         amm.iporOracle = _createIporOracleDai(address(amm.ammTokens.dai));
+        amm.iporRiskManagementOracle = _createRiskManagementOracleDai(address(amm.ammTokens.dai));
         amm.miltonStorage = _createStorage();
         amm.stanley = _createStanley(amm);
         amm.milton = _createMilton(amm);
@@ -268,7 +271,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     }
 
     function _createMilton(Amm memory amm) internal returns (Milton) {
-        MiltonDai miltonImplementation = new MiltonDai();
+        MiltonDai miltonImplementation = new MiltonDai(address(amm.iporRiskManagementOracle));
         return
             Milton(
                 address(
@@ -392,6 +395,39 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
             );
     }
 
+    function _createRiskManagementOracleDai(address dai) internal returns (IIporRiskManagementOracle) {
+        ItfIporOracle iporOracleImplementation = new ItfIporOracle();
+        address[] memory assets = new address[](1);
+        assets[0] = address(dai);
+        uint64[] memory maxNotionalPayFixed = new uint64[](1);
+        maxNotionalPayFixed[0] = TestConstants.RMO_NOTIONAL_1B;
+        uint64[] memory maxNotionalReceiveFixed = new uint64[](1);
+        maxNotionalReceiveFixed[0] = TestConstants.RMO_NOTIONAL_1B;
+        uint16[] memory maxUtilizationRatePayFixed = new uint16[](1);
+        maxUtilizationRatePayFixed[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
+        uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](1);
+        maxUtilizationRateReceiveFixed[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
+        uint16[] memory maxUtilizationRate = new uint16[](1);
+        maxUtilizationRate[0] = TestConstants.RMO_UTILIZATION_RATE_80_PER;
+
+        IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
+        ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
+            address(iporRiskManagementOracleImplementation),
+            abi.encodeWithSignature(
+                "initialize(address[],uint256[],uint256[],uint256[],uint256[],uint256[])",
+                assets,
+                maxNotionalPayFixed,
+                maxNotionalReceiveFixed,
+                maxUtilizationRatePayFixed,
+                maxUtilizationRateReceiveFixed,
+                maxUtilizationRate
+            )
+        );
+        IporRiskManagementOracle iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
+        iporRiskManagementOracle.addUpdater(address(this));
+        return iporRiskManagementOracle;
+    }
+
     struct AmmTokens {
         MockTestnetToken dai;
         IpToken ipDai;
@@ -409,5 +445,6 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         MiltonSpreadModel miltonSpreadModel;
         Milton milton;
         Joseph joseph;
+        IIporRiskManagementOracle iporRiskManagementOracle;
     }
 }

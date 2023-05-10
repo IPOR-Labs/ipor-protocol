@@ -35,8 +35,10 @@ library MiltonFacadeTypes {
         address asset;
         /// @notice Minimal leverage value. Represented in 18 decimals.
         uint256 minLeverage;
-        /// @notice Maximum leverage value. Represented in 18 decimals.
-        uint256 maxLeverage;
+        /// @notice Maximum pay fixed swap leverage value. Represented in 18 decimals.
+        uint256 maxLeveragePayFixed;
+        /// @notice Maximum receive fixed swap leverage value. Represented in 18 decimals.
+        uint256 maxLeverageReceiveFixed;
         /// @notice Rate of collateral taken as a opening fee. Represented in 18 decimals.
         uint256 openingFeeRate;
         /// @notice IPOR publication fee amount taken from buyer when opening new swap. Represented in 18 decimals.
@@ -52,9 +54,12 @@ library MiltonFacadeTypes {
         /// @notice Maximum Liquidity Pool Utilization.
         /// @dev It is a ratio of total collateral balance / liquidity pool balance
         uint256 maxLpUtilizationRate;
-        /// @notice Maximum Liquidity Pool Utilization per one leg.
-        /// @dev It is a ratio of total collateral balance for one leg / liquidity pool balance
-        uint256 maxLpUtilizationPerLegRate;
+        /// @notice Maximum Liquidity Pool Utilization per pay fixed leg.
+        /// @dev It is a ratio of total collateral balance for pay fixed leg / liquidity pool balance
+        uint256 maxLpUtilizationRatePayFixed;
+        /// @notice Maximum Liquidity Pool Utilization per pay received fixed leg.
+        /// @dev It is a ratio of total collateral balance for received fixed leg / liquidity pool balance
+        uint256 maxLpUtilizationRateReceiveFixed;
         /// @notice Maximum amount which can be in Liquidity Pool, represented in 18 decimals.
         uint256 maxLiquidityPoolBalance;
         /// @notice Maximum amount which can be contributed by one account in Liquidity Pool, represented in 18 decimals.

@@ -139,3 +139,10 @@ export const PERIOD_1_DAY_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 1);
 export const PERIOD_27_DAYS_23_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 23);
 export const PERIOD_27_DAYS_17_HOURS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 27 + 60 * 60 * 17);
 export const PERIOD_14_DAYS_IN_SECONDS = BigNumber.from(60 * 60 * 24 * 14);
+
+// #################################################################################
+//                              IporRiskManagementOracle
+// #################################################################################
+export const RMO_NOTIONAL_1B = BigNumber.from("100000");
+export const RMO_UTILIZATION_RATE_48_PER = BigNumber.from("4800");
+export const RMO_UTILIZATION_RATE_90_PER = BigNumber.from("9000");

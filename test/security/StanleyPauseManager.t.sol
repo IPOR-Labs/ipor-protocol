@@ -23,6 +23,29 @@ contract StanleyPauseManagerTest is Test {
         _user2 = vm.rememberKey(3);
     }
 
+    function testShouldEmitPauseGuardianAddedEvent() public {
+        // given
+        Stanley stanley = createStanley();
+
+        // when & then
+        vm.startPrank(_owner);
+        vm.expectEmit(true, true, true, true);
+        emit PauseGuardianAdded(_user1);
+        stanley.addPauseGuardian(_user1);
+    }
+
+    function testShouldEmitPauseGuardianRemovedEvent() public {
+        // given
+        Stanley stanley = createStanley();
+        vm.startPrank(_owner);
+        stanley.addPauseGuardian(_user1);
+
+        // when & then
+        vm.expectEmit(true, true, true, true);
+        emit PauseGuardianRemoved(_user1);
+        stanley.removePauseGuardian(_user1);
+    }
+
     function testShouldNotPauseIfNoPauseGuardianIsSet() public {
         // given
         Stanley stanley = createStanley();
@@ -176,14 +199,14 @@ contract StanleyPauseManagerTest is Test {
     function createStrategy() internal returns (MockTestnetStrategy) {
         MockTestnetStrategy strategy = new MockTestnetStrategy();
         return
-        MockTestnetStrategy(
-            address(
-                new ERC1967Proxy(
-                    address(strategy),
-                    abi.encodeWithSignature("initialize(address,address)", address(usdc), address(ivUsdc))
+            MockTestnetStrategy(
+                address(
+                    new ERC1967Proxy(
+                        address(strategy),
+                        abi.encodeWithSignature("initialize(address,address)", address(usdc), address(ivUsdc))
+                    )
                 )
-            )
-        );
+            );
     }
 
     function createStanley() internal returns (Stanley) {
