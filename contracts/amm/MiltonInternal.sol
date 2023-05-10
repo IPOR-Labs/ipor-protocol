@@ -119,8 +119,8 @@ abstract contract MiltonInternal is
 
     function getMaxLpUtilizationRate() external view override returns (uint256) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return safetyIndicators.maxUtilizationRate;
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return riskIndicators.maxUtilizationRate;
     }
 
     function getMaxLpUtilizationPerLegRate() external view override returns (
@@ -128,8 +128,8 @@ abstract contract MiltonInternal is
         uint256 maxUtilizationRateReceiveFixed
     ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return (safetyIndicators.maxUtilizationRatePayFixed, safetyIndicators.maxUtilizationRateReceiveFixed);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxUtilizationRatePayFixed, riskIndicators.maxUtilizationRateReceiveFixed);
     }
 
     function getIncomeFeeRate() external view override returns (uint256) {
@@ -163,8 +163,8 @@ abstract contract MiltonInternal is
         uint256 maxLeverageReceiveFixed
     ) {
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
-        return (safetyIndicators.maxLeveragePayFixed, safetyIndicators.maxLeverageReceiveFixed);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxLeveragePayFixed, riskIndicators.maxLeverageReceiveFixed);
     }
 
     function getMinLeverage() external view override returns (uint256) {
@@ -354,7 +354,7 @@ abstract contract MiltonInternal is
         return _MIN_LEVERAGE;
     }
 
-    function _getSafetyIndicators(uint256 liquidityPool)
+    function _getRiskIndicators(uint256 liquidityPool)
         internal
         view
         virtual

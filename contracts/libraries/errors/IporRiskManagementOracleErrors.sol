@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 library IporRiskManagementOracleErrors {
-    // 700-799- market safety oracle
+    // 700-799- risk management oracle
     //@notice Asset address not supported
     string public constant ASSET_NOT_SUPPORTED = "IPOR_700";
 

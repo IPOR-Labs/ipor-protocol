@@ -11,7 +11,7 @@ import "./libraries/RiskManagementOracleStorageTypes.sol";
 import "../libraries/errors/IporRiskManagementOracleErrors.sol";
 
 /**
- * @title Market Safety Oracle contract
+ * @title Ipor Risk Management Oracle contract
  *
  * @author IPOR Labs
  */

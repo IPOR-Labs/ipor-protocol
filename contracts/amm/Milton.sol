@@ -432,16 +432,16 @@ abstract contract Milton is MiltonInternal, IMilton {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
-            safetyIndicators.maxLeveragePayFixed,
-            safetyIndicators.maxUtilizationRate,
-            safetyIndicators.maxUtilizationRatePayFixed
+            riskIndicators.maxLeveragePayFixed,
+            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxUtilizationRatePayFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -511,16 +511,16 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralReceiveFixed +
             bosStruct.collateral;
 
-        AmmMiltonTypes.OpenSwapRiskIndicators memory safetyIndicators = _getSafetyIndicators(balance.liquidityPool);
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralReceiveFixed,
             balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
             leverage,
-            safetyIndicators.maxLeverageReceiveFixed,
-            safetyIndicators.maxUtilizationRate,
-            safetyIndicators.maxUtilizationRateReceiveFixed
+            riskIndicators.maxLeverageReceiveFixed,
+            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxUtilizationRateReceiveFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
