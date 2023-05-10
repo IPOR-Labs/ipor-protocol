@@ -76,6 +76,7 @@ contract AavePausableTest is TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+        _strategyAave.addPauseGuardian(_admin);
     }
 
     function testShouldBeAbleToPauseContractWhenSenderIsOwner() public {

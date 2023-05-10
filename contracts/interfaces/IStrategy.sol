@@ -69,6 +69,14 @@ interface IStrategy {
     /// @dev Emits {Unpaused} event from Strategy implementation.
     function unpause() external;
 
+    /// @notice Adds a pause guardian to the list of guardians. Function available only for the Owner.
+    /// @param _guardian The address of the pause guardian to be added.
+    function addPauseGuardian(address _guardian) external;
+
+    /// @notice Removes a pause guardian from the list of guardians. Function available only for the Owner.
+    /// @param _guardian The address of the pause guardian to be removed.
+    function removePauseGuardian(address _guardian) external;
+
     /// @notice Emmited when Stanley address is changed by Owner.
     /// @param changedBy account address that has changed Stanley address
     /// @param oldStanley old Stanley address

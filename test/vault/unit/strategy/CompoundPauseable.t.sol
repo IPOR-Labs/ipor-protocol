@@ -55,6 +55,7 @@ contract CompoundPausableTest is TestCommons, DataUtils {
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         _strategyCompound.setTreasuryManager(_admin);
         _strategyCompound.setTreasury(_admin);
+        _strategyCompound.addPauseGuardian(_admin);
     }
 
     function testShouldBeAbleToPauseContractWhenSenderIsOwner() public {
