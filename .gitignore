@@ -14,6 +14,7 @@
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
 /docs
+/broadcast
 
 ### IntelliJ IDEA ###
 .idea

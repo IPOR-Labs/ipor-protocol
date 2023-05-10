@@ -22,6 +22,11 @@ abstract contract ItfMilton is Milton {
     uint256 internal _secondsBeforeMaturityWhenPositionCanBeClosed;
     uint256 internal _liquidationLegLimit;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address iporRiskManagementOracle) Milton(iporRiskManagementOracle) {
+    }
+
+
     function getVersion() external pure virtual override returns (uint256) {
         return 7;
     }
@@ -225,20 +230,6 @@ abstract contract ItfMilton is Milton {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxLpUtilizationRate() internal view virtual override returns (uint256) {
-        if (_maxLpUtilizationRate != 0) {
-            return _maxLpUtilizationRate;
-        }
-        return _MAX_LP_UTILIZATION_RATE;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
-        if (_maxLpUtilizationPerLegRate != 0) {
-            return _maxLpUtilizationPerLegRate;
-        }
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
-    }
-
     function _getIncomeFeeRate() internal view virtual override returns (uint256) {
         if (_incomeTaxRate != 0) {
             return _incomeTaxRate;
@@ -272,13 +263,6 @@ abstract contract ItfMilton is Milton {
             return _liquidationDepositAmount;
         }
         return _LIQUIDATION_DEPOSIT_AMOUNT;
-    }
-
-    function _getMaxLeverage() internal view virtual override returns (uint256) {
-        if (_maxLeverage != 0) {
-            return _maxLeverage;
-        }
-        return _MAX_LEVERAGE;
     }
 
     function _getMinLeverage() internal view virtual override returns (uint256) {

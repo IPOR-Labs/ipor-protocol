@@ -16,12 +16,14 @@ import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmMiltonTypes.sol";
 
 abstract contract MiltonInternal is
     Initializable,
@@ -75,7 +77,16 @@ abstract contract MiltonInternal is
 
     uint32 internal _autoUpdateIporIndexThreshold;
 
-    mapping(address => bool) internal _swapLiquidators;
+    mapping(address =>bool) internal _swapLiquidators;
+
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address iporRiskManagementOracle) {
+        /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
+        _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
+    }
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -98,16 +109,27 @@ abstract contract MiltonInternal is
         return address(_stanley);
     }
 
+    function getRiskManagementOracle() external view returns (address) {
+        return address(_iporRiskManagementOracle);
+    }
+
     function getMaxSwapCollateralAmount() external view override returns (uint256) {
         return _getMaxSwapCollateralAmount();
     }
 
     function getMaxLpUtilizationRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationRate();
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return riskIndicators.maxUtilizationRate;
     }
 
-    function getMaxLpUtilizationPerLegRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationPerLegRate();
+    function getMaxLpUtilizationPerLegRate() external view override returns (
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed
+    ) {
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxUtilizationRatePayFixed, riskIndicators.maxUtilizationRateReceiveFixed);
     }
 
     function getIncomeFeeRate() external view override returns (uint256) {
@@ -136,8 +158,13 @@ abstract contract MiltonInternal is
         return _getLiquidationDepositAmount() * Constants.D18;
     }
 
-    function getMaxLeverage() external view override returns (uint256) {
-        return _getMaxLeverage();
+    function getMaxLeverage() external view override returns (
+        uint256 maxLeveragePayFixed,
+        uint256 maxLeverageReceiveFixed
+    ) {
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxLeveragePayFixed, riskIndicators.maxLeverageReceiveFixed);
     }
 
     function getMinLeverage() external view override returns (uint256) {
@@ -303,14 +330,6 @@ abstract contract MiltonInternal is
         return _MAX_SWAP_COLLATERAL_AMOUNT;
     }
 
-    function _getMaxLpUtilizationRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_RATE;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
-    }
-
     function _getIncomeFeeRate() internal view virtual returns (uint256) {
         return _INCOME_TAX_RATE;
     }
@@ -331,10 +350,66 @@ abstract contract MiltonInternal is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal view virtual returns (uint256);
-
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;
+    }
+
+    function _getRiskIndicators(uint256 liquidityPool)
+        internal
+        view
+        virtual
+        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
+    {
+        (
+        uint256 maxNotionalPayFixed,
+        uint256 maxNotionalReceiveFixed,
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed,
+        uint256 maxUtilizationRate,
+        ) = _iporRiskManagementOracle.getRiskIndicators(_asset);
+        uint256 maxCollateralPayFixed = IporMath.division(
+            liquidityPool * maxUtilizationRatePayFixed,
+            Constants.D18
+        );
+        uint256 maxCollateralReceiveFixed = IporMath.division(
+            liquidityPool * maxUtilizationRateReceiveFixed,
+            Constants.D18
+        );
+        uint256 maxLeveragePayFixed;
+        if (maxCollateralPayFixed > 0) {
+            maxLeveragePayFixed = IporMath.division(
+                maxNotionalPayFixed * Constants.D18,
+                maxCollateralPayFixed
+            );
+        } else {
+            maxLeveragePayFixed = _MIN_LEVERAGE;
+        }
+        uint256 maxLeverageReceiveFixed;
+        if (maxCollateralReceiveFixed > 0) {
+            maxLeverageReceiveFixed = IporMath.division(
+                maxNotionalReceiveFixed * Constants.D18,
+                maxCollateralReceiveFixed
+            );
+        } else {
+            maxLeverageReceiveFixed = _MIN_LEVERAGE;
+        }
+        return AmmMiltonTypes.OpenSwapRiskIndicators(
+            maxUtilizationRate,
+            maxUtilizationRatePayFixed,
+            maxUtilizationRateReceiveFixed,
+            leverageInRange(maxLeveragePayFixed),
+            leverageInRange(maxLeverageReceiveFixed)
+        );
+    }
+
+    function leverageInRange(uint256 leverage) internal view returns (uint256) {
+        if (leverage > Constants.LEVERAGE_1000) {
+            return Constants.LEVERAGE_1000;
+        } else if (leverage < _MIN_LEVERAGE) {
+            return _MIN_LEVERAGE;
+        } else {
+            return leverage;
+        }
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()

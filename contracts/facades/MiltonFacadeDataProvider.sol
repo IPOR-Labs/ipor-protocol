@@ -193,11 +193,8 @@ contract MiltonFacadeDataProvider is
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        address miltonAddr = config.milton;
-        address josephAddr = config.joseph;
-
-        IMiltonInternal milton = IMiltonInternal(miltonAddr);
-        IJosephInternal joseph = IJosephInternal(josephAddr);
+        IMiltonInternal milton = IMiltonInternal(config.milton);
+        IJosephInternal joseph = IJosephInternal(config.joseph);
 
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(
@@ -205,25 +202,27 @@ contract MiltonFacadeDataProvider is
             asset
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = IMiltonInternal(miltonAddr)
-            .getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
 
-        int256 spreadPayFixed = spreadModel.calculateSpreadPayFixed(accruedIpor, balance);
+        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = milton.getMaxLeverage();
 
-        int256 spreadReceiveFixed = spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
+        (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed) =
+            milton.getMaxLpUtilizationPerLegRate();
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
             milton.getMinLeverage(),
-            milton.getMaxLeverage(),
+            maxLeveragePayFixed,
+            maxLeverageReceiveFixed,
             milton.getOpeningFeeRate(),
             milton.getIporPublicationFee(),
             milton.getWadLiquidationDepositAmount(),
             milton.getIncomeFeeRate(),
-            spreadPayFixed,
-            spreadReceiveFixed,
+            spreadModel.calculateSpreadPayFixed(accruedIpor, balance),
+            spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),
             milton.getMaxLpUtilizationRate(),
-            milton.getMaxLpUtilizationPerLegRate(),
+            maxUtilizationRatePayFixed,
+            maxUtilizationRateReceiveFixed,
             joseph.getMaxLiquidityPoolBalance() * Constants.D18,
             joseph.getMaxLpAccountContribution() * Constants.D18
         );

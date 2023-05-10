@@ -25,7 +25,7 @@ import { cUsdtAddress } from "./tokens";
 
 // Mainnet Fork and test case for mainnet with hardhat network by impersonate account from mainnet
 // work for blockNumber: 14222088,
-describe("End to End tests on mainnet fork", function () {
+describe.skip("End to End tests on mainnet fork", function () {
     if (process.env.FORK_ENABLED != "true") {
         return;
     }

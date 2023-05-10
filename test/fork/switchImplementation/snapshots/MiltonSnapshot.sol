@@ -23,14 +23,16 @@ contract MiltonSnapshot is Script, Test {
     uint256 public miltonFacadeDataProviderVersion;
     uint256 public miltonMaxSwapCollateralAmount;
     uint256 public miltonMaxLpUtilizationRate;
-    uint256 public miltonMaxLpUtilizationPerLegRate;
+    uint256 public miltonMaxLpUtilizationRatePayFixed;
+    uint256 public miltonMaxLpUtilizationRateReceiveFixed;
     uint256 public miltonIncomeFeeRate;
     uint256 public miltonOpeningFeeRate;
     uint256 public miltonOpeningFeeTreasuryPortionRate;
     uint256 public miltonIporPublicationFee;
     uint256 public miltonLiquidationDepositAmount;
     uint256 public miltonWadLiquidationDepositAmount;
-    uint256 public miltonMaxLeverage;
+    uint256 public miltonMaxLeveragePayFixed;
+    uint256 public miltonMaxLeverageReceiveFixed;
     uint256 public miltonMinLeverage;
     int256 public miltonSpreadPayFixed;
     int256 public miltonSpreadReceiveFixed;
@@ -66,8 +68,10 @@ contract MiltonSnapshot is Script, Test {
         miltonMaxSwapCollateralAmount = milton
         .getMaxSwapCollateralAmount();
         miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
-        miltonMaxLpUtilizationPerLegRate = milton
-        .getMaxLpUtilizationPerLegRate();
+//        miltonMaxLpUtilizationRatePayFixed = milton
+//        .getMaxLpUtilizationRatePayFixed(); TODO revert
+//        miltonMaxLpUtilizationRateReceiveFixed = milton
+//        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
         miltonIncomeFeeRate = milton.getIncomeFeeRate();
         miltonOpeningFeeRate = milton.getOpeningFeeRate();
         miltonOpeningFeeTreasuryPortionRate = milton
@@ -77,7 +81,8 @@ contract MiltonSnapshot is Script, Test {
         .getLiquidationDepositAmount();
         miltonWadLiquidationDepositAmount = milton
         .getWadLiquidationDepositAmount();
-        miltonMaxLeverage = milton.getMaxLeverage();
+//        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed(); TODO revert
+//        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed(); TODO revert
         miltonMinLeverage = milton.getMinLeverage();
 
         (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton
@@ -128,8 +133,13 @@ contract MiltonSnapshot is Script, Test {
         );
         vm.serializeUint(
             miltonJson,
-            "miltonMaxLpUtilizationPerLegRate",
-            miltonMaxLpUtilizationPerLegRate
+            "miltonMaxLpUtilizationRatePayFixed",
+            miltonMaxLpUtilizationRatePayFixed
+        );
+        vm.serializeUint(
+            miltonJson,
+            "miltonMaxLpUtilizationRateReceiveFixed",
+            miltonMaxLpUtilizationRateReceiveFixed
         );
         vm.serializeUint(
             miltonJson,
@@ -161,7 +171,8 @@ contract MiltonSnapshot is Script, Test {
             "miltonWadLiquidationDepositAmount",
             miltonWadLiquidationDepositAmount
         );
-        vm.serializeUint(miltonJson, "miltonMaxLeverage", miltonMaxLeverage);
+        vm.serializeUint(miltonJson, "miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
+        vm.serializeUint(miltonJson, "miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
         vm.serializeUint(miltonJson, "miltonMinLeverage", miltonMinLeverage);
 
         vm.serializeInt(
@@ -238,9 +249,14 @@ contract MiltonSnapshot is Script, Test {
             "Milton: Max LP Utilization Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(),
-            miltonSnapshot2.miltonMaxLpUtilizationPerLegRate(),
-            "Milton: Max LP Utilization Per Leg Rate should be the same"
+            miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed(),
+            "Milton: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed(),
+            "Milton: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             miltonSnapshot1.miltonIncomeFeeRate(),
@@ -349,9 +365,14 @@ contract MiltonSnapshot is Script, Test {
             "Milton: Max LP Utilization Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationPerLegRate(),
-            miltonSnapshot2.miltonMaxLpUtilizationPerLegRate(),
-            "Milton: Max LP Utilization Per Leg Rate should be the same"
+            miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed(),
+            "Milton: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(),
+            miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed(),
+            "Milton: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
             miltonSnapshot1.miltonIncomeFeeRate(),
@@ -384,9 +405,14 @@ contract MiltonSnapshot is Script, Test {
             "Milton: WAD Liquidation Deposit Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLeverage(),
-            miltonSnapshot2.miltonMaxLeverage(),
-            "Milton: Max Leverage should be the same"
+            miltonSnapshot1.miltonMaxLeveragePayFixed(),
+            miltonSnapshot2.miltonMaxLeveragePayFixed(),
+            "Milton: Max Leverage For Pay Fixed leg should be the same"
+        );
+        assertEq(
+            miltonSnapshot1.miltonMaxLeverageReceiveFixed(),
+            miltonSnapshot2.miltonMaxLeverageReceiveFixed(),
+            "Milton: Max Leverage For Receive Fixed leg should be the same"
         );
         assertEq(
             miltonSnapshot1.miltonMinLeverage(),
@@ -446,14 +472,16 @@ contract MiltonSnapshot is Script, Test {
         console2.log("miltonFacadeDataProviderVersion", miltonFacadeDataProviderVersion);
         console2.log("miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
         console2.log("miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
-        console2.log("miltonMaxLpUtilizationPerLegRate", miltonMaxLpUtilizationPerLegRate);
+        console2.log("miltonMaxLpUtilizationRatePayFixed", miltonMaxLpUtilizationRatePayFixed);
+        console2.log("miltonMaxLpUtilizationRateReceiveFixed", miltonMaxLpUtilizationRateReceiveFixed);
         console2.log("miltonIncomeFeeRate", miltonIncomeFeeRate);
         console2.log("miltonOpeningFeeRate", miltonOpeningFeeRate);
         console2.log("miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
         console2.log("miltonIporPublicationFee", miltonIporPublicationFee);
         console2.log("miltonLiquidationDepositAmount", miltonLiquidationDepositAmount);
         console2.log("miltonWadLiquidationDepositAmount", miltonWadLiquidationDepositAmount);
-        console2.log("miltonMaxLeverage", miltonMaxLeverage);
+        console2.log("miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
+        console2.log("miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
         console2.log("miltonMinLeverage", miltonMinLeverage);
         console2.logInt(miltonSpreadPayFixed);
         console2.logInt(miltonSpreadReceiveFixed);
