@@ -356,7 +356,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             openingFeeAmount,
             _getOpeningFeeTreasuryPortionRate()
         );
-        
+
         require(
             collateral <= _getMaxSwapCollateralAmount(),
             MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH

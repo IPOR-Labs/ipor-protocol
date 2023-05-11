@@ -73,9 +73,9 @@ contract MiltonSnapshot is Script, Test {
 //        miltonMaxLpUtilizationRateReceiveFixed = milton
 //        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
 
-        miltonOpeningFeeRate = milton.getOpeningFeeRate();
-        miltonOpeningFeeTreasuryPortionRate = milton
-        .getOpeningFeeTreasuryPortionRate();
+//        miltonOpeningFeeRate = milton.getOpeningFeeRate();
+//        miltonOpeningFeeTreasuryPortionRate = milton
+//        .getOpeningFeeTreasuryPortionRate();
         miltonIporPublicationFee = milton.getIporPublicationFee();
         miltonLiquidationDepositAmount = milton
         .getLiquidationDepositAmount();
