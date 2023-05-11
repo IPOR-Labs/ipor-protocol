@@ -4,19 +4,16 @@ pragma solidity 0.8.16;
 import "./Milton.sol";
 
 contract MiltonUsdc is Milton {
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address iporRiskManagementOracle) Milton(iporRiskManagementOracle) {
+    }
+
     function getVersion() external pure virtual override returns (uint256) {
-        return 8;
+        return 9;
     }
 
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 6;
-    }
-
-    function _getMaxLeverage() internal view virtual override returns (uint256) {
-        return 500 * 1e18;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual override returns (uint256) {
-        return 25 * 1e15;
     }
 }

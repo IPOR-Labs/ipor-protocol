@@ -19,8 +19,10 @@ import "../../contracts/amm/spread/MiltonSpreadModel.sol";
 import "../../contracts/mocks/stanley/MockStrategy.sol";
 import "./IAsset.sol";
 import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
+import "../utils/IporRiskManagementOracleUtils.sol";
+import "../utils/TestConstants.sol";
 
-contract UsdtAmm is Test, TestCommons {
+contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     address private constant _algorithmFacade = 0x9D4BD8CB9DA419A9cA1343A5340eD4Ce07E85140;
     address private constant _comptrollerAddress = 0x3d9819210A31b4961b30EF54bE2aeD79B9c9Cd3B;
     address private constant _compTokenAddress = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
@@ -38,6 +40,7 @@ contract UsdtAmm is Test, TestCommons {
     address public ipUsdt;
 
     IporOracle public iporOracle;
+    IIporRiskManagementOracle public iporRiskManagementOracle;
 
     Stanley public stanley;
     StrategyCompound public strategyCompound;
@@ -64,6 +67,7 @@ contract UsdtAmm is Test, TestCommons {
         _createMiltonStorage();
         _createMiltonSpreadModel();
         _createIporOracle();
+        _createRiskManagementOracle();
         _createMilton();
         _createJoseph();
         _createAaveIncentivesController();
@@ -227,8 +231,18 @@ contract UsdtAmm is Test, TestCommons {
         );
     }
 
+    function _createRiskManagementOracle() internal {
+        iporRiskManagementOracle = getRiskManagementOracleAsset(
+            address(this),
+            address(usdt),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
+    }
+
     function _createMilton() internal {
-        MiltonUsdt implementation = new MiltonUsdt();
+        MiltonUsdt implementation = new MiltonUsdt(address(iporRiskManagementOracle));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(

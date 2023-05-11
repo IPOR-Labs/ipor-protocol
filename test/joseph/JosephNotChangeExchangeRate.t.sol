@@ -15,6 +15,7 @@ import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase1JosephUsdt.sol";
 import "../../contracts/amm/MiltonStorage.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
 
 contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
@@ -48,6 +49,13 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
@@ -55,7 +63,8 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -91,6 +100,13 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
@@ -98,7 +114,8 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephDai mockCase1JosephDai = getMockCase1JosephDai(
             address(_daiMockedToken),
@@ -137,6 +154,13 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase1MiltonUsdt mockCase1MiltonUsdt = getMockCase1MiltonUsdt(
@@ -144,7 +168,8 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
-            address(stanleyUsdt)
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephUsdt mockCase1JosephUsdt = getMockCase1JosephUsdt(
             address(_usdtMockedToken),
@@ -182,6 +207,13 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase1MiltonUsdt mockCase1MiltonUsdt = getMockCase1MiltonUsdt(
@@ -189,7 +221,8 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
-            address(stanleyUsdt)
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephUsdt mockCase1JosephUsdt = getMockCase1JosephUsdt(
             address(_usdtMockedToken),
@@ -230,6 +263,13 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         // given
         ItfIporOracle iporOracle =
             getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase1MiltonUsdt mockCase1MiltonUsdt = getMockCase1MiltonUsdt(
@@ -237,7 +277,8 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
-            address(stanleyUsdt)
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
         );
         MockCase1JosephUsdt mockCase1JosephUsdt = getMockCase1JosephUsdt(
             address(_usdtMockedToken),

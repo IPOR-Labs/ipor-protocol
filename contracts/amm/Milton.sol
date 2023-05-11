@@ -7,6 +7,7 @@ import "../interfaces/IMilton.sol";
 import "../interfaces/IJoseph.sol";
 import "../interfaces/IStanley.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "./MiltonInternal.sol";
 import "./libraries/types/AmmMiltonTypes.sol";
 import "./MiltonStorage.sol";
@@ -29,7 +30,7 @@ abstract contract Milton is MiltonInternal, IMilton {
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor() {
+    constructor(address iporRiskManagementOracle) MiltonInternal(iporRiskManagementOracle) {
         _disableInitializers();
     }
 
@@ -333,9 +334,6 @@ abstract contract Milton is MiltonInternal, IMilton {
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
 
-        require(leverage >= _getMinLeverage(), MiltonErrors.LEVERAGE_TOO_LOW);
-        require(leverage <= _getMaxLeverage(), MiltonErrors.LEVERAGE_TOO_HIGH);
-
         uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
         uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
 
@@ -358,7 +356,7 @@ abstract contract Milton is MiltonInternal, IMilton {
             openingFeeAmount,
             _getOpeningFeeTreasuryPortionRate()
         );
-
+        
         require(
             collateral <= _getMaxSwapCollateralAmount(),
             MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH
@@ -422,10 +420,16 @@ abstract contract Milton is MiltonInternal, IMilton {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        _validateLiquidityPoolUtylization(
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+
+        _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralPayFixed,
-            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
+            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
+            leverage,
+            riskIndicators.maxLeveragePayFixed,
+            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxUtilizationRatePayFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuotePayFixed(
@@ -495,10 +499,16 @@ abstract contract Milton is MiltonInternal, IMilton {
             balance.totalCollateralReceiveFixed +
             bosStruct.collateral;
 
-        _validateLiquidityPoolUtylization(
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+
+        _validateLiquidityPoolUtilizationAndSwapLeverage(
             balance.liquidityPool,
             balance.totalCollateralReceiveFixed,
-            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed
+            balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
+            leverage,
+            riskIndicators.maxLeverageReceiveFixed,
+            riskIndicators.maxUtilizationRate,
+            riskIndicators.maxUtilizationRateReceiveFixed
         );
 
         uint256 quoteValue = _miltonSpreadModel.calculateQuoteReceiveFixed(
@@ -548,10 +558,14 @@ abstract contract Milton is MiltonInternal, IMilton {
         return newSwapId;
     }
 
-    function _validateLiquidityPoolUtylization(
+    function _validateLiquidityPoolUtilizationAndSwapLeverage(
         uint256 totalLiquidityPoolBalance,
         uint256 collateralPerLegBalance,
-        uint256 totalCollateralBalance
+        uint256 totalCollateralBalance,
+        uint256 leverage,
+        uint256 maxLeverage,
+        uint256 maxUtilizationRate,
+        uint256 maxUtilizationRatePerLeg
     ) internal view {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
@@ -572,14 +586,17 @@ abstract contract Milton is MiltonInternal, IMilton {
         }
 
         require(
-            utilizationRate <= _getMaxLpUtilizationRate(),
+            utilizationRate <= maxUtilizationRate,
             MiltonErrors.LP_UTILIZATION_EXCEEDED
         );
 
         require(
-            utilizationRatePerLeg <= _getMaxLpUtilizationPerLegRate(),
+            utilizationRatePerLeg <= maxUtilizationRatePerLeg,
             MiltonErrors.LP_UTILIZATION_PER_LEG_EXCEEDED
         );
+
+        require(leverage >= _getMinLeverage(), MiltonErrors.LEVERAGE_TOO_LOW);
+        require(leverage <= maxLeverage, MiltonErrors.LEVERAGE_TOO_HIGH);
     }
 
     function _emitOpenSwapEvent(

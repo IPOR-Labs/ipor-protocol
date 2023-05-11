@@ -18,6 +18,7 @@ import "../../contracts/mocks/milton/MockCase5MiltonDai.sol";
 import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
+import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
 
@@ -66,6 +67,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -73,7 +81,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -162,6 +171,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_usdtMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
         MiltonStorage miltonStorageUsdt = getMiltonStorage();
         MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
@@ -169,7 +185,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageUsdt),
             address(_miltonSpreadModel),
-            address(stanleyUsdt)
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
             address(_usdtMockedToken),
@@ -250,12 +267,97 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances, "incorrect sum of balances before payout");
     }
 
+    function testShouldOpenPositionPayFixedUSDTWhenRiskManagementOracleProvidesLargeValues() public {
+        // given
+        ItfIporOracle iporOracle =
+            getIporOracleAsset(_userOne, address(_usdtMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_usdtMockedToken),
+            type(uint16).max,
+            type(uint16).max,
+            type(uint64).max
+        );
+        MockCase1Stanley stanleyUsdt = getMockCase1Stanley(address(_usdtMockedToken));
+        MiltonStorage miltonStorageUsdt = getMiltonStorage();
+        MockCase0MiltonUsdt mockCase0MiltonUsdt = getMockCase0MiltonUsdt(
+            address(_usdtMockedToken),
+            address(iporOracle),
+            address(miltonStorageUsdt),
+            address(_miltonSpreadModel),
+            address(stanleyUsdt),
+            address(iporRiskManagementOracle)
+        );
+        MockCase0JosephUsdt mockCase0JosephUsdt = getMockCase0JosephUsdt(
+            address(_usdtMockedToken),
+            address(_ipTokenUsdt),
+            address(mockCase0MiltonUsdt),
+            address(miltonStorageUsdt),
+            address(stanleyUsdt)
+        );
+        prepareApproveForUsersUsd(_users, _usdtMockedToken, address(mockCase0JosephUsdt), address(mockCase0MiltonUsdt));
+        prepareMilton(mockCase0MiltonUsdt, address(mockCase0JosephUsdt), address(stanleyUsdt));
+        prepareJoseph(mockCase0JosephUsdt);
+        prepareIpToken(_ipTokenUsdt, address(mockCase0JosephUsdt));
+        vm.prank(_userOne);
+        iporOracle.itfUpdateIndex(address(_usdtMockedToken), TestConstants.PERCENTAGE_3_18DEC, block.timestamp);
+        vm.prank(_liquidityProvider);
+        mockCase0JosephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        ExpectedMiltonBalances memory expectedBalances;
+        expectedBalances.expectedMiltonBalance =
+            TestConstants.USD_28_000_6DEC + TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC;
+        expectedBalances.expectedOpenerUserBalance = 9990000000000;
+        expectedBalances.expectedLiquidityPoolBalance =
+            TestConstants.USD_28_000_18DEC + TestConstants.TC_OPENING_FEE_1000LEV_18DEC;
+        expectedBalances.expectedSumOfBalancesBeforePayout =
+            TestConstants.USD_28_000_6DEC + TestConstants.USD_10_000_000_6DEC;
+
+        uint256 expectedDerivativesTotalBalanceWad = TestConstants.TC_COLLATERAL_1000LEV_18DEC;
+        uint256 expectedIporPublicationFee = TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC;
+        // when
+        vm.prank(_userTwo);
+        mockCase0MiltonUsdt.itfOpenSwapPayFixed(
+            block.timestamp,
+            TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
+            TestConstants.PERCENTAGE_6_18DEC,
+            TestConstants.LEVERAGE_1000_18DEC
+        );
+        (, IporTypes.IporSwapMemory[] memory swaps) =
+            miltonStorageUsdt.getSwapsPayFixed(_userTwo, TestConstants.ZERO, 50);
+        uint256 actualOpenSwapsVolume;
+        for (uint256 i = 0; i < swaps.length; i++) {
+            if (swaps[i].state == 1) {
+                actualOpenSwapsVolume++;
+            }
+        }
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorageUsdt.getExtendedBalance();
+        uint256 actualSumOfBalances =
+            _usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)) + _usdtMockedToken.balanceOf(_userTwo);
+        uint256 actualDerivativesTotalBalanceWad = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
+        // then
+        assertEq(actualOpenSwapsVolume, 1, "incorrect open swaps volume");
+        assertEq(_usdtMockedToken.balanceOf(address(mockCase0MiltonUsdt)), expectedBalances.expectedMiltonBalance, "incorrect milton balance");
+        assertEq(int256(_usdtMockedToken.balanceOf(_userTwo)), expectedBalances.expectedOpenerUserBalance, "incorrect opener user balance");
+        assertEq(actualDerivativesTotalBalanceWad, expectedDerivativesTotalBalanceWad, "incorrect derivatives total balance");
+        assertEq(balance.iporPublicationFee, expectedIporPublicationFee, "incorrect ipor publication fee");
+        assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance, "incorrect liquidity pool balance");
+        assertEq(balance.treasury, TestConstants.ZERO, "incorrect treasury balance");
+        assertEq(expectedBalances.expectedSumOfBalancesBeforePayout, actualSumOfBalances, "incorrect sum of balances before payout");
+    }
+
     function testShouldOpenPositionPayFixedDAIWhenCustomOpeningFeeForTreasuryIs50Percent() public {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(
             _userOne,
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+        );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
         );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -264,7 +366,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -315,6 +418,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase5MiltonDai mockCase5MiltonDai = getMockCase5MiltonDai(
@@ -322,7 +432,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -373,6 +484,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -380,7 +498,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -430,6 +549,14 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
 
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -439,7 +566,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
 
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
@@ -557,6 +685,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -564,7 +699,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -641,6 +777,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -648,7 +791,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -737,6 +881,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -744,7 +895,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -837,6 +989,14 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
 
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
 
@@ -845,7 +1005,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
 
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
@@ -951,6 +1112,14 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
 
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -960,7 +1129,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
 
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
@@ -1053,6 +1223,14 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
 
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
+
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
 
         MiltonStorage miltonStorageDai = getMiltonStorage();
@@ -1062,7 +1240,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
 
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
@@ -1156,6 +1335,13 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(_daiMockedToken),
             TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
         );
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -1163,7 +1349,8 @@ contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),

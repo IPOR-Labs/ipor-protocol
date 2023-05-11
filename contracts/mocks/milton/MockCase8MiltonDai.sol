@@ -6,16 +6,13 @@ import "../../itf/ItfMilton.sol";
 contract MockCase8MiltonDai is ItfMilton {
     IMiltonStorage _mockMiltonStorage;
 
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {
+    }
+
+
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
-    }
-
-    function _getMaxLpUtilizationRate() internal pure virtual override returns (uint256) {
-        return 8 * 1e17;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal pure virtual override returns (uint256) {
-        return 48 * 1e16;
     }
 
     function _getOpeningFeeRate() internal pure virtual override returns (uint256) {
@@ -32,10 +29,6 @@ contract MockCase8MiltonDai is ItfMilton {
 
     function _getLiquidationDepositAmount() internal pure virtual override returns (uint256) {
         return 20;
-    }
-
-    function _getMaxLeverage() internal pure virtual override returns (uint256) {
-        return 1000 * 1e18;
     }
 
     function _getMinLeverage() internal pure virtual override returns (uint256) {

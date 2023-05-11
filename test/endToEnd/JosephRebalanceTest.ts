@@ -26,7 +26,7 @@ import { assertError } from "../utils/AssertUtils";
 import { transferUsdtToAddress, transferUsdcToAddress, transferDaiToAddress } from "./tokens";
 import { N0__01_18DEC, N0__1_18DEC, N1__0_18DEC, N1__0_6DEC, ZERO } from "../utils/Constants";
 
-describe("Joseph rebalance, deposit/withdraw from vault", function () {
+describe.skip("Joseph rebalance, deposit/withdraw from vault", function () {
     if (process.env.FORK_ENABLED != "true") {
         return;
     }

@@ -29,4 +29,12 @@ library AmmMiltonTypes {
         /// Namely, the interest that would be computed into IBT should the rebalance occur.
         IporTypes.AccruedIpor accruedIpor;
     }
+
+    struct OpenSwapRiskIndicators {
+        uint256 maxUtilizationRate;
+        uint256 maxUtilizationRatePayFixed;
+        uint256 maxUtilizationRateReceiveFixed;
+        uint256 maxLeveragePayFixed;
+        uint256 maxLeverageReceiveFixed;
+    }
 }

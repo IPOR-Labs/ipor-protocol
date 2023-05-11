@@ -5,6 +5,9 @@ library TestConstants {
     uint256 public constant MAX_VALUE =
         115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
+    uint256 public constant RAY_UINT256 = 1e27;
+    uint128 public constant RAY_UINT128 = 1e27;
+
     uint256 public constant D54 = 1e54;
     uint256 public constant D36 = 1e36;
     uint256 public constant D18 = 1e18;
@@ -28,6 +31,7 @@ library TestConstants {
     uint256 public constant USD_1_500_18DEC = 1500 * 1e18;
     uint256 public constant USD_2_000_18DEC = 2000 * 1e18;
     uint256 public constant USD_5_000_18DEC = 5000 * 1e18;
+    uint256 public constant USD_9_500_18DEC = 9500 * 1e18;
     uint256 public constant USD_10_000_18DEC = 10000 * 1e18;
     uint256 public constant USD_10_400_18DEC = 10400 * 1e18;
     uint256 public constant USD_13_000_18DEC = 13000 * 1e18;
@@ -93,12 +97,16 @@ library TestConstants {
     uint256 public constant TC_COLLATERAL_100LEV_99PERCENT_18DEC = 9827654878800000000000;
     uint256 public constant TC_COLLATERAL_100LEV_99_5PERCENT_18DEC = 9877289499400000000000;
 
+    uint256 public constant TC_COLLATERAL_1000LEV_18DEC = 9745715050883770758093;
+
 
     uint256 public constant TC_OPENING_FEE_6DEC = 2293938;
     int256 public constant TC_OPENING_FEE_6DEC_INT = 2293938;
 
     uint256 public constant TC_OPENING_FEE_18DEC = 2293937833484897992;
     int256 public constant TC_OPENING_FEE_18DEC_INT = 2293937833484897992;
+
+    uint256 public constant TC_OPENING_FEE_1000LEV_18DEC = 224284949116229241907;
 
     uint256 public constant TC_COLLATERAL_6DEC = 9967706062;
     int256 public constant TC_COLLATERAL_6DEC_INT = 9967706062;
@@ -118,8 +126,10 @@ library TestConstants {
     int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000 * 1e18;
 
     uint256 public constant LEVERAGE_18DEC = 10 * 1e18;
+    uint256 public constant LEVERAGE_11_18DEC = 11 * 1e18;
     int256 public constant LEVERAGE_18DEC_INT = 10 * 1e18;
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
+    uint256 public constant LEVERAGE_1001_18DEC = 1001 * 1e18;
 
     uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007932421031872131299;
     int256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1_INT = 6007932421031872131299;
@@ -162,6 +172,7 @@ library TestConstants {
     uint256 public constant USD_9_000_6DEC = 9000 * 1000000;
     uint256 public constant USD_10_000_6DEC = 10000 * 1000000;
     uint256 public constant USD_14_000_6DEC = 14000 * 1000000;
+    uint256 public constant USD_20_000_6DEC = 20000 * 1000000;
     uint256 public constant USD_28_000_6DEC = 28000 * 1000000;
     uint256 public constant USD_50_000_6DEC = 50000 * 1000000;
     uint256 public constant USD_100_000_6DEC = 100000 * 1000000;
@@ -217,4 +228,28 @@ library TestConstants {
     uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
     uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
     uint256 public constant MAX_CHUNK_SIZE = 50;
+
+    uint64 public constant RMO_NOTIONAL_100K = 10;
+    uint64 public constant RMO_NOTIONAL_1M = 100;
+    uint64 public constant RMO_NOTIONAL_1M_500K = 150;
+    uint64 public constant RMO_NOTIONAL_2M_220K = 222;
+    uint64 public constant RMO_NOTIONAL_10M = 1000;
+    uint64 public constant RMO_NOTIONAL_50M = 5000;
+    uint64 public constant RMO_NOTIONAL_100M = 10000;
+    uint64 public constant RMO_NOTIONAL_1B = 100000;
+    uint64 public constant RMO_NOTIONAL_2B = 200000;
+    uint64 public constant RMO_NOTIONAL_3B = 300000;
+    uint64 public constant RMO_NOTIONAL_10B = 1000000;
+    uint16 public constant RMO_UTILIZATION_RATE_0_1_PER = 10;
+    uint16 public constant RMO_UTILIZATION_RATE_5_PER = 500;
+    uint16 public constant RMO_UTILIZATION_RATE_20_PER = 2000;
+    uint16 public constant RMO_UTILIZATION_RATE_30_PER = 3000;
+    uint16 public constant RMO_UTILIZATION_RATE_35_PER = 3500;
+    uint16 public constant RMO_UTILIZATION_RATE_48_PER = 4800;
+    uint16 public constant RMO_UTILIZATION_RATE_60_PER = 6000;
+    uint16 public constant RMO_UTILIZATION_RATE_80_PER = 8000;
+    uint16 public constant RMO_UTILIZATION_RATE_90_PER = 9000;
+    uint16 public constant RMO_UTILIZATION_RATE_100_PER = 10000;
+    uint16 public constant RMO_UTILIZATION_RATE_150_PER = 15000;
+    uint16 public constant RMO_UTILIZATION_RATE_MAX = type(uint16).max;
 }

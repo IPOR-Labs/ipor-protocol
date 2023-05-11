@@ -6,13 +6,15 @@ library ItfDataProviderTypes {
     struct ItfMiltonData {
         uint256 maxSwapCollateralAmount;
         uint256 maxLpUtilizationRate;
-        uint256 maxLpUtilizationPerLegRate;
+        uint256 maxLpUtilizationRatePayFixed;
+        uint256 maxLpUtilizationRateReceiveFixed;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
         uint256 iporPublicationFee;
         uint256 liquidationDepositAmount;
         uint256 wadLiquidationDepositAmount;
-        uint256 maxLeverage;
+        uint256 maxLeveragePayFixed;
+        uint256 maxLeverageReceiveFixed;
         uint256 minLeverage;
         int256 spreadPayFixed;
         int256 spreadReceiveFixed;

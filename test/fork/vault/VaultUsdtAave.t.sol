@@ -93,6 +93,8 @@ contract VaultUsdtAaveTest is Test {
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
@@ -123,6 +125,8 @@ contract VaultUsdtAaveTest is Test {
         vm.startPrank(_admin);
         amm.joseph().depositToStanley(amount * 1e12);
         vm.roll(block.number + 1);
+        amm.strategyAave().addPauseGuardian(_admin);
+        amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
@@ -148,6 +152,7 @@ contract VaultUsdtAaveTest is Test {
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
+        amm.stanley().addPauseGuardian(_admin);
         amm.stanley().pause();
 
         deal(amm.usdt(), address(amm.milton()), amount);
@@ -177,6 +182,7 @@ contract VaultUsdtAaveTest is Test {
         vm.startPrank(_admin);
         amm.joseph().depositToStanley(amount * 1e12);
         vm.roll(block.number + 1);
+        amm.stanley().addPauseGuardian(_admin);
         amm.stanley().pause();
 
         uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
