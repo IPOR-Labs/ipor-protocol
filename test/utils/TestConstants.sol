@@ -83,10 +83,28 @@ library TestConstants {
     uint256 public constant TC_9_000_USD_18DEC = 9000 * 1e18;
     uint256 public constant TC_50_000_18DEC = 50000 * 1e18;
     uint256 public constant TC_TOTAL_AMOUNT_10_000_18DEC = 10000 * 1e18;
-    uint256 public constant TC_COLLATERAL_18DEC = 9967009897030890732780;
-    int256 public constant TC_COLLATERAL_18DEC_INT = 9967009897030890732780;
-    uint256 public constant TC_OPENING_FEE_18DEC = 2990102969109267220;
-    int256 public constant TC_OPENING_FEE_18DEC_INT = 2990102969109267220;
+    uint256 public constant TC_COLLATERAL_18DEC = 9967706062166515102008;
+
+    /// @dev 10 leverage, totalAmount 10 000, opening fee 3e14
+    uint256 public constant TC_COLLATERAL_10LEV_18DEC = 9967706062166515102008;
+
+    /// @dev 100 leverage, totalAmount 10 000, opening fee 3e14
+    uint256 public constant TC_COLLATERAL_100LEV_18DEC = 9926924126637554588946;
+    uint256 public constant TC_COLLATERAL_100LEV_99PERCENT_18DEC = 9827654878800000000000;
+    uint256 public constant TC_COLLATERAL_100LEV_99_5PERCENT_18DEC = 9877289499400000000000;
+
+
+    uint256 public constant TC_OPENING_FEE_6DEC = 2293938;
+    int256 public constant TC_OPENING_FEE_6DEC_INT = 2293938;
+
+    uint256 public constant TC_OPENING_FEE_18DEC = 2293937833484897992;
+    int256 public constant TC_OPENING_FEE_18DEC_INT = 2293937833484897992;
+
+    uint256 public constant TC_COLLATERAL_6DEC = 9967706062;
+    int256 public constant TC_COLLATERAL_6DEC_INT = 9967706062;
+
+    int256 public constant TC_COLLATERAL_18DEC_INT = 9967706062166515102008;
+
     uint256 public constant TC_LP_BALANCE_BEFORE_CLOSE_18DEC = 28000 * 1e18;
     uint256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC = 20 * 1e18;
     int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT = 20 * 1e18;
@@ -103,8 +121,8 @@ library TestConstants {
     int256 public constant LEVERAGE_18DEC_INT = 10 * 1e18;
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
 
-    uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007512814648756073133;
-    int256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1_INT = 6007512814648756073133;
+    uint256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1 = 6007932421031872131299;
+    int256 public constant SPECIFIC_INTEREST_AMOUNT_CASE_1_INT = 6007932421031872131299;
 
     int256 public constant D18_INT = 1e18;
     int256 public constant D17_INT = 1e17;
@@ -169,7 +187,7 @@ library TestConstants {
     uint64 public constant TC_161_EMA_18DEC_64UINT = 161 * 1e16;
     uint64 public constant TC_400_EMA_18DEC_64UINT = 400 * 1e16;
     uint256 public constant TC_DEFAULT_EMA_18DEC = 3 * 1e16;
-    uint256 public constant TC_NOTIONAL_18DEC = 99670098970308907327800;
+    uint256 public constant TC_NOTIONAL_18DEC = 99677060621665151020080;
     uint256 public constant TOTAL_SUPPLY_6_DECIMALS = 100000000000000 * 1000000;
     uint256 public constant TC_IBT_PRICE_DAI_6DEC = 1000000;
     uint256 public constant TC_TOTAL_AMOUNT_100_6DEC = 100 * 1000000;
@@ -179,10 +197,7 @@ library TestConstants {
     int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC_INT = 20 * 1000000;
     uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC = 10 * 1000000;
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT = 10 * 1000000;
-    uint256 public constant TC_OPENING_FEE_6DEC = 2990103;
-    int256 public constant TC_OPENING_FEE_6DEC_INT = 2990103;
-    uint256 public constant TC_COLLATERAL_6DEC = 9967009897;
-    int256 public constant TC_COLLATERAL_6DEC_INT = 9967009897;
+
 
     uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000 * 1000000;
 

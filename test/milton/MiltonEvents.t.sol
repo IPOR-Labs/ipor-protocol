@@ -431,7 +431,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(daiMockedToken), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
-            18957318804358692392282, // transferredToBuyer
+            19955412124333030204016, // transferredToBuyer
             TestConstants.ZERO // transferredToLiquidator
         );
         miltonDai.itfCloseSwapPayFixed(
@@ -504,7 +504,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(usdtMockedToken), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
-            18957318804000000000000, // transferredToBuyer
+            19955412124000000000000, // transferredToBuyer
             TestConstants.ZERO // transferredToLiquidator
         );
         miltonUsdt.itfCloseSwapPayFixed(
@@ -580,7 +580,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(usdtMockedToken), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
-            18937318804000000000000, // transferredToBuyer
+            19935412124000000000000, // transferredToBuyer
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
         );
         miltonUsdt.itfCloseSwapPayFixed(

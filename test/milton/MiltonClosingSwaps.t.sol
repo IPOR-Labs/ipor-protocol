@@ -2,6 +2,7 @@
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
+import "../utils/TestConstants.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
@@ -124,7 +125,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 25000000);
     }
 
@@ -164,7 +165,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -204,7 +205,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -246,7 +247,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
@@ -289,7 +290,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
@@ -334,7 +335,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
@@ -419,7 +420,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -584,7 +585,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 25000000);
     }
 
@@ -624,7 +625,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -664,7 +665,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -706,7 +707,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
@@ -749,7 +750,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
@@ -794,7 +795,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
@@ -878,7 +879,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
@@ -1043,7 +1044,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
@@ -1063,10 +1064,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1119,7 +1120,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18674521911);
+        assertEq(buyerBalanceAfter, 19773896175);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1138,10 +1139,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1194,7 +1195,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18674529204);
+        assertEq(buyerBalanceAfter, 19773904328);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1213,10 +1214,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1267,7 +1268,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18719460559);
+        assertEq(buyerBalanceAfter, 19821186272);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1286,10 +1287,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1340,7 +1341,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18693193926);
+        assertEq(buyerBalanceAfter, 19791821904);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1359,10 +1360,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1415,7 +1416,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18666669656);
+        assertEq(buyerBalanceAfter, 19765117870);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1432,10 +1433,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1486,7 +1487,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18691669656);
+        assertEq(buyerBalanceAfter, 19790117870);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1505,10 +1506,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1561,7 +1562,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18742538786);
+        assertEq(buyerBalanceAfter, 19849934569);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -1581,10 +1582,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1637,7 +1638,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18708537670);
+        assertEq(buyerBalanceAfter, 19811923556);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -1657,10 +1658,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1715,7 +1716,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -1735,10 +1736,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1793,7 +1794,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -1813,10 +1814,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1869,7 +1870,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -1889,10 +1890,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1945,7 +1946,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -1963,10 +1964,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2021,7 +2022,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -2039,10 +2040,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2095,7 +2096,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
@@ -2113,10 +2114,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2190,10 +2191,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2267,10 +2268,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2344,10 +2345,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2400,7 +2401,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceAfter > buyerBalanceBefore"
         );
-        assertEq(buyerBalanceAfter, 18734889292);
+        assertEq(buyerBalanceAfter, 19841382938);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2420,10 +2421,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;// TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;//TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2472,9 +2473,9 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 79464103);
-        assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
+        assertEq(buyerBalanceAfter < buyerBalanceBefore, true, "Failed buyerBalanceAfter < buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 79952078, "Incorrect buyerBalanceAfter");
+        assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000, "Incorrect liquidatorBalanceAfter - liquidatorBalanceBefore");
     }
 
     function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoffBuyerLost()
@@ -2492,10 +2493,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2545,7 +2546,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 79456000);
+        assertEq(buyerBalanceAfter, 79943926);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -2564,10 +2565,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2616,7 +2617,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 82310050);
+        assertEq(buyerBalanceAfter, 82661982);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2635,10 +2636,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2687,7 +2688,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 111495197);
+        assertEq(buyerBalanceAfter, 112026350);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2706,10 +2707,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2760,7 +2761,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 88188831);
+        assertEq(buyerBalanceAfter, 88730383);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -2779,10 +2780,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2831,7 +2832,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 113188831);
+        assertEq(buyerBalanceAfter, 113730383);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -2850,10 +2851,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2904,7 +2905,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 12389235);
+        assertEq(buyerBalanceAfter, 12465316);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2924,10 +2925,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2978,7 +2979,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 3889798);
+        assertEq(buyerBalanceAfter, 3913684);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -3000,10 +3001,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3054,7 +3055,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 41668816);
+        assertEq(buyerBalanceAfter, 41924697);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -3074,10 +3075,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3150,10 +3151,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3226,10 +3227,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3300,10 +3301,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3372,10 +3373,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3446,10 +3447,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3520,10 +3521,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3599,10 +3600,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3678,10 +3679,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3755,10 +3756,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3813,7 +3814,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
             true,
             "Failed buyerBalanceBefore > buyerBalanceAfter"
         );
-        assertEq(buyerBalanceAfter, 12389235);
+        assertEq(buyerBalanceAfter, 12465316);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }

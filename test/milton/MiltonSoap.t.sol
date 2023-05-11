@@ -152,7 +152,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoapBalance = -68267191075554066595;
+        int256 expectedSoapBalance = -68271959329907658167;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -280,7 +280,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
-        int256 expectedSoapBalance = -68267191075554025635;
+        int256 expectedSoapBalance = -68271959329907617203;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -493,7 +493,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase1StanleyDai)
         );
-        int256 expectedSoapBalance = -136534382151108092230;
+        int256 expectedSoapBalance = -136543918659815275370;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -567,7 +567,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase1StanleyUsdt)
         );
-        int256 expectedSoapBalance = -136534382151108092230;
+        int256 expectedSoapBalance = -136543918659815275370;
         prepareApproveForUsersUsd(
             _users,
             _usdtMockedToken,
@@ -672,8 +672,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(mockCase0Josephs.mockCase0JosephUsdc),
             address(mockCase0Josephs.mockCase0JosephDai)
         );
-        int256 expectedSoapUsdt = -68267191075554066595;
-        int256 expectedSoapDai = -68267191075554066595;
+        int256 expectedSoapUsdt = -68271959329907658167;
+        int256 expectedSoapDai = -68271959329907658167;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersUsd(
             _users,
@@ -786,7 +786,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(mockCase1StanleyDai)
         );
 
-        int256 expectedSoapBalance = -68267191075554025635;
+        int256 expectedSoapBalance = -68271959329907617203;
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -872,7 +872,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(mockCase1StanleyDai)
         );
 
-        int256 expectedSoapBalance = -68267191075554066595;
+        int256 expectedSoapBalance = -68271959329907658167;
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -999,7 +999,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         int256 expectedSoapUsdt = TestConstants.ZERO_INT;
-        int256 expectedSoapDai = -68267191075554066595;
+        int256 expectedSoapDai = -68271959329907658167;
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -1130,7 +1130,9 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoapBalance = 7918994164764269327487;
+
+        int256 expectedSoapBalance = 7919547282269285949611;
+
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersDai(
             _users,
@@ -1207,7 +1209,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageUsdt),
             address(mockCase1StanleyUsdt)
         );
-        int256 expectedSoapBalance = 7918994164764269327487;
+        int256 expectedSoapBalance = 7919547282269285949611;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
         prepareApproveForUsersUsd(
             _users,
@@ -1283,8 +1285,10 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoapBalanceAfter28Days = 7935378290622402313573;
-        int256 expectedSoapBalanceAfter50Days = 8055528546915377478426;
+
+        int256 expectedSoapBalanceAfter28Days = 7935932552508463797676;
+        int256 expectedSoapBalanceAfter50Days = 8056091200929101283695;
+
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -1369,7 +1373,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoapBalanceAfter50Days = -205221535441070939562;
+        int256 expectedSoapBalanceAfter50Days = -205235869537207026869;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -1444,7 +1448,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoapBalanceAfter50Days = -205221535441070939562;
+        int256 expectedSoapBalanceAfter50Days = -205235869537207026869;
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,
@@ -1589,9 +1593,9 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             mockCase0MiltonDai
         );
         // then
-        int256 expectedSoapBeforeUpdateIndex = -136534382151108133190;
-        int256 expectedSoapAfterUpdateIndex25Days = -136534382151108133190;
-        int256 expectedSoapBalanceAfter50Days = -136534382151108133190;
+        int256 expectedSoapBeforeUpdateIndex = -136543918659815316333;
+        int256 expectedSoapAfterUpdateIndex25Days = -136543918659815316333;
+        int256 expectedSoapBalanceAfter50Days = -136543918659815316333;
         assertEq(soapBeforeUpdateIndex, expectedSoapBeforeUpdateIndex);
         assertEq(soapAfterUpdateIndex25Days, expectedSoapAfterUpdateIndex25Days);
         assertEq(soapAfterUpdateIndex50Days, expectedSoapBalanceAfter50Days);
@@ -1695,7 +1699,9 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             address(miltonStorageDai),
             address(mockCase0StanleyDai)
         );
-        int256 expectedSoap50Days = -205221535441070939562;
+
+        int256 expectedSoap50Days = -205235869537207026869;
+
         prepareApproveForUsersDai(
             _users,
             _daiMockedToken,

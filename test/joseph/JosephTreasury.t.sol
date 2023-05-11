@@ -306,7 +306,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
 
-        uint256 expectedTreasuryBalance = 149505148455463261;
+        uint256 expectedTreasuryBalance = 114696891674244800;
 
         prepareApproveForUsersDai(
             _users,

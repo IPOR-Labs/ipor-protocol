@@ -102,7 +102,9 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 682671910755540429746;
+
+        expectedBalances.expectedPayoffAbs = 682719593299076345445;
+
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
@@ -354,7 +356,9 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 7918994164764269383466;
+
+        expectedBalances.expectedPayoffAbs = 7919547282269286005594;
+
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT +
@@ -589,7 +593,9 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 682671910755540429746;
+
+        expectedBalances.expectedPayoffAbs = 682719593299076345445;
+
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT -
@@ -842,7 +848,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         ExpectedMiltonBalances memory expectedBalances;
-        expectedBalances.expectedPayoffAbs = 7918994164764269383466;
+        expectedBalances.expectedPayoffAbs = 7919547282269286005594;
         //
         int256 openerUserLost = TestConstants.TC_OPENING_FEE_18DEC_INT +
             TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC_INT +

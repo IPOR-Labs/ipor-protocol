@@ -75,7 +75,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         );
     }
 
-    function testShouldCalculateSwapAmount100OpeninfFeeRate() public {
+    function testShouldCalculateSwapAmount100OpeningFeeRate() public {
         //given
         uint256 timeToMaturityInDays = 18;
         uint256 totalAmount = 1000e18;
@@ -105,7 +105,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         );
     }
 
-    function testShouldCalculateSwapAmountZeroPercentOpeninfFeeRate() public {
+    function testShouldCalculateSwapAmountZeroPercentOpeningFeeRate() public {
         //given
         uint256 timeToMaturityInDays = 18;
         uint256 totalAmount = 1000e18;
@@ -124,6 +124,36 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
                 iporPublicationFeeAmount,
                 openingFeeRate
             );
+
+        //then
+        assertEq(openingFee, 0, "incorrect opening fee");
+        assertEq(collateral, 970000000000000000000, "incorrect collateral");
+        assertEq(
+            totalAmount - liquidationDepositAmount - iporPublicationFeeAmount,
+            openingFee + collateral,
+            "incorrect total amount"
+        );
+    }
+
+    function testShouldCalculateSwapAmountOpeningFeeRateLeverageZero() public {
+        //given
+        uint256 timeToMaturityInDays = 18;
+        uint256 totalAmount = 1000e18;
+        uint256 leverage = 0;
+        uint256 liquidationDepositAmount = 20e18;
+        uint256 iporPublicationFeeAmount = 10e18;
+        uint256 openingFeeRate = 1e18;
+
+        //when
+        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
+        .calculateSwapAmount(
+            timeToMaturityInDays,
+            totalAmount,
+            leverage,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeeRate
+        );
 
         //then
         assertEq(openingFee, 0, "incorrect opening fee");

@@ -297,7 +297,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         // then
         IporTypes.IporSwapMemory memory swapPayFixed = miltonStorageDai.getSwapPayFixed(1);
         vm.stopPrank();
-        assertEq(9967009897030890732780, swapPayFixed.collateral);
+        assertEq(TestConstants.TC_COLLATERAL_18DEC, swapPayFixed.collateral);
     }
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {

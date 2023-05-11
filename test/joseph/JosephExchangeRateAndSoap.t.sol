@@ -86,7 +86,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertLt(soap, TestConstants.ZERO_INT);
         assertLt(soap * -1, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 1003093533812002519);
+        assertEq(actualExchangeRate, 1003063517802295728);
     }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance(
@@ -135,7 +135,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertLt(soap, TestConstants.ZERO_INT);
         assertLt(soap * -1, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 1009368340867602731);
+        assertEq(actualExchangeRate, 1009337599018308114);
     }
 
     function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance(
@@ -184,7 +184,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertLt(soap, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 987823434476506361);
+        assertEq(actualExchangeRate, 987791187781442077);
     }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance(
@@ -233,7 +233,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertLt(soap, int256(balance.liquidityPool));
-        assertEq(actualExchangeRate, 987823434476506362);
+        assertEq(actualExchangeRate, 987791187781442078);
     }
 
     function testShouldNotCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
@@ -288,8 +288,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertGt(soap, int256(balance.liquidityPool));
-        assertEq(soap, 8494848805632282803369);
-        assertEq(balance.liquidityPool, 5008088573427971608517);
+        assertEq(soap, 8495442144821465629202);
+        assertEq(balance.liquidityPool, 5006205366436217422150);
     }
 
     function testShouldNotCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsGreaterThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
@@ -344,8 +344,8 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         // then
         assertGt(soap, TestConstants.ZERO_INT);
         assertGt(soap, int256(balance.liquidityPool));
-        assertEq(soap, 8494848805632282973266);
-        assertEq(balance.liquidityPool, 5008088573427971608517);
+        assertEq(soap, 8495442144821465799111);
+        assertEq(balance.liquidityPool, 5006205366436217422150);
     }
 
     function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
@@ -397,9 +397,9 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         uint256 actualExchangeRate =
             mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // then
-        assertEq(actualExchangeRate, 231204643857984158);
-        assertEq(soap, -8864190058051077882738);
-        assertEq(balance.liquidityPool, 5008088573427971608517);
+        assertEq(actualExchangeRate, 231183576017208826);
+        assertEq(soap, -8864809194596312135794);
+        assertEq(balance.liquidityPool, 5006205366436217422150);
     }
 
     function testShouldCalculateExchangeRateReceiveFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsGreaterThanLiquidityPoolBalance(
@@ -451,9 +451,9 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         uint256 actualExchangeRate =
             mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         // then
-        assertEq(actualExchangeRate, 231204643857984155);
-        assertEq(soap, -8864190058051077712841);
-        assertEq(balance.liquidityPool, 5008088573427971608517);
+        assertEq(actualExchangeRate, 231183576017208823);
+        assertEq(soap, -8864809194596311965885);
+        assertEq(balance.liquidityPool, 5006205366436217422150);
     }
 
     function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days() public {
@@ -543,20 +543,20 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         uint256 exchangeRate56DaysAfterClose =
             mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
         assertEq(initialSoap, TestConstants.ZERO_INT);
-        assertEq(exchangeRateAndPayoff.initialExchangeRate, 1000059964010796761);
-        assertEq(liquidityPoolBalanceBeforeClose.liquidityPool, 1000059964010796760971708);
-        assertEq(soapAfter28Days, 76666315173940979346744);
-        assertEq(exchangeRateAndPayoff.exchangeRateAfter28Days, 923393648836855782);
-        assertEq(exchangeRateAndPayoff.payoff1After28Days, 38333157586970489673372);
-        assertEq(exchangeRateAndPayoff.payoff2After28Days, 38333157586970489673372);
-        assertEq(soapAfter56DaysBeforeClose, 153332630347881958693488);
-        assertEq(exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose, 846727333662914802);
-        assertEq(exchangeRateAndPayoff.payoff1After56Days, 76666315173940979346744);
-        assertEq(exchangeRateAndPayoff.payoff2After56Days, 76666315173940979346744);
-        assertEq(soapAfter56DaysAfterClose, TestConstants.ZERO_INT);
-        assertEq(exchangeRate56DaysAfterClose, 846727333662914802);
-        assertEq(liquidityPoolBalanceAfterClose.liquidityPool, 846727333662914802278220);
+        assertEq(exchangeRateAndPayoff.initialExchangeRate, 1004497846813069095, "incorrect initial exchange rate");
+        assertEq(liquidityPoolBalanceBeforeClose.liquidityPool, 1004497846813069094746924, "incorrect liquidity pool balance before close");
+        assertEq(soapAfter28Days, 74964113551151590806229, "incorrect SOAP after 28 days");
+        assertEq(exchangeRateAndPayoff.exchangeRateAfter28Days, 929533733261917504, "incorrect exchange rate after 28 days");
+        assertEq(exchangeRateAndPayoff.payoff1After28Days, 37482056775575795403115, "incorrect payoff1After28Days");
+        assertEq(exchangeRateAndPayoff.payoff2After28Days, 37482056775575795403115, "incorrect payoff2After28Days");
+        assertEq(soapAfter56DaysBeforeClose, 149928227102303181612459, "incorrect SOAP after 56 days before close");
+        assertEq(exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose, 854569619710765913, "incorrect exchange rate after 56 days before close");
+        assertEq(exchangeRateAndPayoff.payoff1After56Days, 74964113551151590806229, "incorrect payoff1After56Days");
+        assertEq(exchangeRateAndPayoff.payoff2After56Days, 74964113551151590806229, "incorrect payoff2After56Days");
+        assertEq(soapAfter56DaysAfterClose, TestConstants.ZERO_INT, "incorrect SOAP after close");
+        assertEq(exchangeRate56DaysAfterClose, 854569619710765913, "incorrect exchange rate after close");
+        assertEq(liquidityPoolBalanceAfterClose.liquidityPool, 854569619710765913134466, "incorrect Liquidity Pool balance after close");
         // SOAP + Liquidity Pool balance before close should be equal to Liquidity Pool balance after close swaps
-        assertEq(actualSOAPPlusLiquidityPoolBalanceBeforeClose, 846727333662914802278220);
+        assertEq(actualSOAPPlusLiquidityPoolBalanceBeforeClose, 854569619710765913134465, "incorrect SOAP + Liquidity Pool balance before close");
     }
 }

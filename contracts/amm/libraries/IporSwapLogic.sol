@@ -25,7 +25,7 @@ library IporSwapLogic {
         uint256 openingFeeRate
     )
         internal
-        pure
+        view
         returns (
             uint256 collateral,
             uint256 notional,
