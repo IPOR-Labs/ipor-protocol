@@ -236,4 +236,10 @@ library TestConstants {
     uint16 public constant RMO_UTILIZATION_RATE_100_PER = 10000;
     uint16 public constant RMO_UTILIZATION_RATE_150_PER = 15000;
     uint16 public constant RMO_UTILIZATION_RATE_MAX = type(uint16).max;
+    int64 public constant RMO_SPREAD_0_1_PER = 1e15;
+    int64 public constant RMO_SPREAD_0_15_PER = 15 * 1e14;
+    int64 public constant RMO_SPREAD_0_2_PER = 2 * 1e15;
+    int64 public constant RMO_SPREAD_0_25_PER = 25 * 1e14;
+    int64 public constant RMO_SPREAD_0_3_PER = 3 * 1e15;
+    int64 public constant RMO_SPREAD_0_35_PER = 35 * 1e15;
 }
