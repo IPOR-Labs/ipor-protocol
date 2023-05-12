@@ -19,19 +19,19 @@ library IporRiskManagementOracleStorageTypes {
     }
 
     struct BaseSpreadsStorage {
-        /// @notice spread for 28 days pay fixed swap
-        int64 spread28dPayFixed;
-        /// @notice spread for 28 days receive fixed swap
-        int64 spread28dReceiveFixed;
-        /// @notice spread for 60 days pay fixed swap
-        int64 spread60dPayFixed;
-        /// @notice spread for 60 days receive fixed swap
-        int64 spread60dReceiveFixed;
-        /// @notice spread for 90 days pay fixed swap
-        int64 spread90dPayFixed;
-        /// @notice spread for 90 days receive fixed swap
-        int64 spread90dReceiveFixed;
         /// @notice Timestamp of most recent indicators update
         uint32 lastUpdateTimestamp;
+        /// @notice spread for 28 days pay fixed swap
+        int24 spread28dPayFixed;
+        /// @notice spread for 28 days receive fixed swap
+        int24 spread28dReceiveFixed;
+        /// @notice spread for 60 days pay fixed swap
+        int24 spread60dPayFixed;
+        /// @notice spread for 60 days receive fixed swap
+        int24 spread60dReceiveFixed;
+        /// @notice spread for 90 days pay fixed swap
+        int24 spread90dPayFixed;
+        /// @notice spread for 90 days receive fixed swap
+        int24 spread90dReceiveFixed;
     }
 }

@@ -29,26 +29,26 @@ interface IIporRiskManagementOracle {
             uint256 lastUpdateTimestamp
         );
 
-    /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
+    /// @notice Gets base spreads for a given asset. Rates represented in 6 decimals. 1 = 0.0001%
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
     /// @return spread28dPayFixed spread for 28 days pay fixed swap
     /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
     /// @return spread60dPayFixed spread for 60 days pay fixed swap
     /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
     /// @return spread90dPayFixed spread for 90 days pay fixed swap
     /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
-    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
     function getBaseSpreads(address asset)
         external
         view
         returns (
+            uint256 lastUpdateTimestamp,
             int256 spread28dPayFixed,
             int256 spread28dReceiveFixed,
             int256 spread60dPayFixed,
             int256 spread60dReceiveFixed,
             int256 spread90dPayFixed,
-            int256 spread90dReceiveFixed,
-            uint256 lastUpdateTimestamp
+            int256 spread90dReceiveFixed
         );
 
     /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.

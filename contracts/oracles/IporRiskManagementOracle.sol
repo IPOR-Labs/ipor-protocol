@@ -77,13 +77,13 @@ contract IporRiskManagementOracle is
             );
 
             _baseSpreads[assets[i]] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
-                baseSpreads[i].spread28dPayFixed.toInt64(),
-                baseSpreads[i].spread28dReceiveFixed.toInt64(),
-                baseSpreads[i].spread60dPayFixed.toInt64(),
-                baseSpreads[i].spread60dReceiveFixed.toInt64(),
-                baseSpreads[i].spread90dPayFixed.toInt64(),
-                baseSpreads[i].spread90dReceiveFixed.toInt64(),
-                block.timestamp.toUint32()
+                block.timestamp.toUint32(),
+                baseSpreads[i].spread28dPayFixed.toInt24(),
+                baseSpreads[i].spread28dReceiveFixed.toInt24(),
+                baseSpreads[i].spread60dPayFixed.toInt24(),
+                baseSpreads[i].spread60dReceiveFixed.toInt24(),
+                baseSpreads[i].spread90dPayFixed.toInt24(),
+                baseSpreads[i].spread90dReceiveFixed.toInt24()
             );
 
             emit BaseSpreadsUpdated(
@@ -132,25 +132,25 @@ contract IporRiskManagementOracle is
         view
         override
         returns (
+            uint256 lastUpdateTimestamp,
             int256 spread28dPayFixed,
             int256 spread28dReceiveFixed,
             int256 spread60dPayFixed,
             int256 spread60dReceiveFixed,
             int256 spread90dPayFixed,
-            int256 spread90dReceiveFixed,
-            uint256 lastUpdateTimestamp
+            int256 spread90dReceiveFixed
         )
     {
         IporRiskManagementOracleStorageTypes.BaseSpreadsStorage memory baseSpreads = _baseSpreads[asset];
         require(baseSpreads.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
         return (
+            uint256(baseSpreads.lastUpdateTimestamp),
             int256(baseSpreads.spread28dPayFixed),
             int256(baseSpreads.spread28dReceiveFixed),
             int256(baseSpreads.spread60dPayFixed),
             int256(baseSpreads.spread60dReceiveFixed),
             int256(baseSpreads.spread90dPayFixed),
-            int256(baseSpreads.spread90dReceiveFixed),
-            uint256(baseSpreads.lastUpdateTimestamp)
+            int256(baseSpreads.spread90dReceiveFixed)
         );
     }
 
@@ -302,13 +302,13 @@ contract IporRiskManagementOracle is
         require(baseSpreads.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
 
         _baseSpreads[asset] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
-            spread28dPayFixed.toInt64(),
-            spread28dReceiveFixed.toInt64(),
-            spread60dPayFixed.toInt64(),
-            spread60dReceiveFixed.toInt64(),
-            spread90dPayFixed.toInt64(),
-            spread90dReceiveFixed.toInt64(),
-            block.timestamp.toUint32()
+            block.timestamp.toUint32(),
+            spread28dPayFixed.toInt24(),
+            spread28dReceiveFixed.toInt24(),
+            spread60dPayFixed.toInt24(),
+            spread60dReceiveFixed.toInt24(),
+            spread90dPayFixed.toInt24(),
+            spread90dReceiveFixed.toInt24()
         );
 
         emit BaseSpreadsUpdated(
@@ -343,13 +343,13 @@ contract IporRiskManagementOracle is
         );
 
         _baseSpreads[asset] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
-            baseSpreads.spread28dPayFixed.toInt64(),
-            baseSpreads.spread28dReceiveFixed.toInt64(),
-            baseSpreads.spread60dPayFixed.toInt64(),
-            baseSpreads.spread60dReceiveFixed.toInt64(),
-            baseSpreads.spread90dPayFixed.toInt64(),
-            baseSpreads.spread90dReceiveFixed.toInt64(),
-            block.timestamp.toUint32()
+            block.timestamp.toUint32(),
+            baseSpreads.spread28dPayFixed.toInt24(),
+            baseSpreads.spread28dReceiveFixed.toInt24(),
+            baseSpreads.spread60dPayFixed.toInt24(),
+            baseSpreads.spread60dReceiveFixed.toInt24(),
+            baseSpreads.spread90dPayFixed.toInt24(),
+            baseSpreads.spread90dReceiveFixed.toInt24()
         );
 
         emit IporRiskManagementOracleAssetAdded(asset);
