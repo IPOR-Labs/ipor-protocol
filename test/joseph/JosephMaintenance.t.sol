@@ -39,11 +39,12 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -58,7 +59,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldPauseSmartContractSpecificMethods() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.addAppointedToRebalance(_admin);
@@ -99,7 +100,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -128,7 +129,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -139,7 +140,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -162,7 +163,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotUnPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -176,7 +177,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldTransferOwnershipWhenSimpleCase1() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -192,7 +193,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -203,7 +204,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipWhenSenderIsNotAppointedOwner() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -218,7 +219,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderIsNotAppointedOwner() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -235,7 +236,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -251,7 +252,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.startPrank(_admin);
@@ -268,7 +269,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephDAI() public payable {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -280,7 +281,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephUSDC() public payable {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdc());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
 
         // when
@@ -292,7 +293,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotSendETHToJosephUSDT() public payable {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         // when
@@ -385,7 +386,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldReturnDefaultMiltonStanleyBalanceRatio() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -398,7 +399,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldChangeMiltonStanleyBalanceRatio() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -413,7 +414,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsZero() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -424,7 +425,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsGreaterThanOne() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when

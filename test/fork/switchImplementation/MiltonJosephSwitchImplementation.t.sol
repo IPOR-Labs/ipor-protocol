@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "../../TestCommons.sol";
@@ -19,8 +18,10 @@ import "../../../contracts/amm/MiltonUsdc.sol";
 import "../../../contracts/amm/pool/JosephUsdc.sol";
 import "../../../contracts/amm/MiltonUsdt.sol";
 import "../../../contracts/amm/pool/JosephUsdt.sol";
+import "../../utils/IporRiskManagementOracleUtils.sol";
+import "../../utils/TestConstants.sol";
 
-contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
+contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, IporRiskManagementOracleUtils {
     address private _dai = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address private _usdc = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address private _usdt = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
@@ -59,13 +60,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyDai);
         stanleySnapshotStart.snapshot();
 
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
+
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonDai();
+        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
 
@@ -132,7 +135,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonDai();
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_dai);
+        Milton newMilton = new MiltonDai(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyDai).upgradeTo(address(newMilton));
 
@@ -195,13 +199,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdc);
         stanleySnapshotStart.snapshot();
 
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
+
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdc();
+        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
 
@@ -272,7 +278,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdc();
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdc);
+        Milton newMilton = new MiltonUsdc(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdc).upgradeTo(address(newMilton));
 
@@ -336,13 +343,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         StanleySnapshot stanleySnapshotStart = new StanleySnapshot(_stanleyProxyUsdt);
         stanleySnapshotStart.snapshot();
 
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
+
         vm.makePersistent(address(miltonSnapshotStart));
         vm.makePersistent(address(josephSnapshotStart));
         vm.makePersistent(address(miltonStorageSnapshotStart));
         vm.makePersistent(address(stanleySnapshotStart));
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdt();
+        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
 
@@ -409,7 +418,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
         vm.rollFork(blockNumber);
 
         //Switch implementation of Milton
-        Milton newMilton = new MiltonUsdt();
+        IIporRiskManagementOracle iporRiskManagementOracle = createRiskManagementOracle(_usdt);
+        Milton newMilton = new MiltonUsdt(address(iporRiskManagementOracle));
         vm.prank(_owner);
         Milton(_miltonProxyUsdt).upgradeTo(address(newMilton));
 
@@ -455,5 +465,15 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils {
             miltonStorageSnapshotAfterUpgrade
         );
         stanleySnapshotStart.assert(stanleySnapshotStart, stanleySnapshotAfterUpgrade);
+    }
+
+    function createRiskManagementOracle(address assetAddress) internal returns (IIporRiskManagementOracle) {
+        return getRiskManagementOracleAsset(
+            _owner,
+            assetAddress,
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_80_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
     }
 }

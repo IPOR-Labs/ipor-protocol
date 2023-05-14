@@ -31,6 +31,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_4_18DEC,
@@ -45,7 +46,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -87,7 +88,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _cfg.josephImplementation = address(new MockCase1JosephDai());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -132,7 +133,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _cfg.josephImplementation = address(new MockCase1JosephUsdt());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -177,7 +178,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _cfg.josephImplementation = address(new MockCase1JosephUsdt());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -226,7 +227,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase1MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _cfg.josephImplementation = address(new MockCase1JosephUsdt());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 

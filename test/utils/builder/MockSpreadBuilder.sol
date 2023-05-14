@@ -78,5 +78,6 @@ contract MockSpreadBuilder is Test {
             );
         }
         vm.stopPrank();
+        delete builderData;
     }
 }

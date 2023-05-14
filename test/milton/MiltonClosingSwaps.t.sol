@@ -24,6 +24,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;
     address internal _community;
     address internal _liquidator;
+    address internal _updater;
 
     IporProtocolBuilder.IporProtocol internal _iporProtocol;
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -33,9 +34,11 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         _buyer = _getUserAddress(1);
         _community = _getUserAddress(2);
         _liquidator = _getUserAddress(3);
+        _updater = _getUserAddress(4);
         vm.warp(100);
 
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _updater;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
     }
 

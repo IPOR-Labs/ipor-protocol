@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -37,6 +36,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         _admin = address(this);
         _buyer = _getUserAddress(1);
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
+        _cfg.iporOracleUpdater = _admin;
+        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testShouldCalculatePnLForUnwindPayFixedSimple() public {

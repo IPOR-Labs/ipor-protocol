@@ -33,6 +33,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
     function setUp() public {
         _cfg.josephImplementation = address(new ItfJosephDai());
+        _cfg.iporRiskManagementOracleUpdater = address(this);
     }
 
     function testShouldNotRebalanceWhenNotAppointedSender() public {

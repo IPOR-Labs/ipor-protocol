@@ -15,6 +15,7 @@ import {MockCase0MiltonDai} from "../contracts/mocks/milton/MockCase0MiltonDai.s
 import {MockCase0JosephDai} from "../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import {MockCase0MiltonUsdt} from "../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
 import {MockCase0JosephUsdt} from "../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
+import {IIporRiskManagementOracle} from "../contracts/interfaces/IIporRiskManagementOracle.sol";
 import {IporTypes} from "../contracts/interfaces/types/IporTypes.sol";
 
 contract StanleyTest is TestCommons, DataUtils {
@@ -64,6 +65,13 @@ contract StanleyTest is TestCommons, DataUtils {
 	function testShouldRebalanceWhenAMVaultRatioIsGreaterThanOptimalAndDepositToVault() public {
         //given
         ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
         MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
         MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -71,7 +79,8 @@ contract StanleyTest is TestCommons, DataUtils {
             address(iporOracle),
             address(miltonStorageDai),
             address(_miltonSpreadModel),
-            address(stanleyDai)
+            address(stanleyDai),
+            address(iporRiskManagementOracle)
         );
         MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
@@ -117,6 +126,13 @@ contract StanleyTest is TestCommons, DataUtils {
 	function testShouldRebalanceWhenAMVaultRatioIsLessThanOptimalAndWithdrawFromVaultPartAmountCase1() public {
 		// given
 		ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
 		MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();
 		MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -124,7 +140,8 @@ contract StanleyTest is TestCommons, DataUtils {
 			address(iporOracle),
 			address(miltonStorageDai),
 			address(_miltonSpreadModel),
-			address(stanleyDai)
+			address(stanleyDai),
+            address(iporRiskManagementOracle)
 		);
 		MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
 			address(_daiMockedToken),
@@ -171,14 +188,22 @@ contract StanleyTest is TestCommons, DataUtils {
 	function testShouldRebalanceWhenAMVaultRatioIsLessThanOptimalAndWithdrawFromVaultPartAmountCase2() public {
 		// given
 		ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-		MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+        _userOne,
+        address(_daiMockedToken),
+        TestConstants.RMO_UTILIZATION_RATE_48_PER,
+        TestConstants.RMO_UTILIZATION_RATE_90_PER,
+        TestConstants.RMO_NOTIONAL_1B
+    );
+    MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();
 		MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
 			address(_daiMockedToken),
 			address(iporOracle),
 			address(miltonStorageDai),
 			address(_miltonSpreadModel),
-			address(stanleyDai)
+			address(stanleyDai),
+            address(iporRiskManagementOracle)
 		);
 		MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
 			address(_daiMockedToken),
@@ -207,7 +232,7 @@ contract StanleyTest is TestCommons, DataUtils {
 		//Force deposit to simulate that IporVault earn money for Milton $3
 		vm.prank(_liquidityProvider);
 		stanleyDai.forTestDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
-		// when 
+		// when
 		vm.prank(_admin);
 		mockCase0JosephDai.rebalance();
 		// then
@@ -225,6 +250,13 @@ contract StanleyTest is TestCommons, DataUtils {
 	function testShouldWithdrawAllFromStanley() public {
 		// given
 		ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
+        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
+            _userOne,
+            address(_daiMockedToken),
+            TestConstants.RMO_UTILIZATION_RATE_48_PER,
+            TestConstants.RMO_UTILIZATION_RATE_90_PER,
+            TestConstants.RMO_NOTIONAL_1B
+        );
 		MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
 		MiltonStorage miltonStorageDai = getMiltonStorage();
 		MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
@@ -232,7 +264,8 @@ contract StanleyTest is TestCommons, DataUtils {
 			address(iporOracle),
 			address(miltonStorageDai),
 			address(_miltonSpreadModel),
-			address(stanleyDai)
+			address(stanleyDai),
+            address(iporRiskManagementOracle)
 		);
 		MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
 			address(_daiMockedToken),

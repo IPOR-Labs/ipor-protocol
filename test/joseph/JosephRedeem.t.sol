@@ -32,6 +32,8 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
+
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_4_18DEC,
@@ -42,11 +44,12 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         _ammCfg.iporOracleUpdater = _userOne;
+        _ammCfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldRedeemIpToken18DecimalsSimpleCase1() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 redeemFee = 50 * TestConstants.D18;
@@ -67,24 +70,15 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
-        assertEq(
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider),
-            expectedBalances.expectedIpTokenBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedBalances.expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.ipToken.balanceOf(_liquidityProvider), expectedBalances.expectedIpTokenBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedBalances.expectedMiltonBalance);
         assertEq(actualLiquidityPoolBalance, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(
-            _iporProtocol.asset.balanceOf(_liquidityProvider),
-            expectedBalances.expectedTokenBalance
-        );
+        assertEq(_iporProtocol.asset.balanceOf(_liquidityProvider), expectedBalances.expectedTokenBalance);
     }
 
     function testShouldRedeemIpToken6DecimalsSimpleCase1() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 redeemFee18Dec = 50 * TestConstants.D18;
@@ -107,24 +101,15 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
-        assertEq(
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider),
-            expectedBalances.expectedIpTokenBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedBalances.expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.ipToken.balanceOf(_liquidityProvider), expectedBalances.expectedIpTokenBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedBalances.expectedMiltonBalance);
         assertEq(actualLiquidityPoolBalance, expectedBalances.expectedLiquidityPoolBalance);
-        assertEq(
-            _iporProtocol.asset.balanceOf(_liquidityProvider),
-            expectedBalances.expectedTokenBalance
-        );
+        assertEq(_iporProtocol.asset.balanceOf(_liquidityProvider), expectedBalances.expectedTokenBalance);
     }
 
     function testShouldRedeemIpTokensBecauseNoValidationForCoolOffPeriod() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 redeemFee = 50 * TestConstants.D18;
@@ -146,24 +131,15 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
-        assertEq(
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider),
-            expectedBalances.expectedIpTokenBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedBalances.expectedMiltonBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(_liquidityProvider),
-            expectedBalances.expectedTokenBalance
-        );
+        assertEq(_iporProtocol.ipToken.balanceOf(_liquidityProvider), expectedBalances.expectedIpTokenBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedBalances.expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(_liquidityProvider), expectedBalances.expectedTokenBalance);
         assertEq(actualLiquidityPoolBalance, expectedBalances.expectedLiquidityPoolBalance);
     }
 
     function testShouldRedeemIpTokensWhenTwoTimesProvidedLiquidity() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 redeemFee = 70 * TestConstants.D18;
@@ -175,14 +151,8 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance = 6000 * TestConstants.D18 + redeemFee;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            block.timestamp
-        );
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
 
         // when
         _iporProtocol.joseph.itfRedeem(TestConstants.USD_14_000_18DEC, block.timestamp);
@@ -192,18 +162,9 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
-        assertEq(
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider),
-            expectedBalances.expectedIpTokenBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedBalances.expectedMiltonBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(_liquidityProvider),
-            expectedBalances.expectedTokenBalance
-        );
+        assertEq(_iporProtocol.ipToken.balanceOf(_liquidityProvider), expectedBalances.expectedIpTokenBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedBalances.expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(_liquidityProvider), expectedBalances.expectedTokenBalance);
         assertEq(actualLiquidityPoolBalance, expectedBalances.expectedLiquidityPoolBalance);
     }
 
@@ -225,11 +186,13 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         assets[1] = address(usdt);
 
         BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase;
+        ItfIporOracle iporOracle = iporOracleFactory.getInstance(assets, owner, initialParamsTestCase);
 
-        ItfIporOracle iporOracle = iporOracleFactory.getInstance(
+        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
+        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
             assets,
             owner,
-            initialParamsTestCase
+            iporRiskManagementOracleInitialParamsTestCase
         );
 
         IporProtocolBuilder.IporProtocol memory ammUsdt = iporProtocolBuilder
@@ -244,6 +207,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
             .withSymbol("ivUSDT")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .build();
 
         IporProtocolBuilder.IporProtocol memory ammDai = iporProtocolBuilder
@@ -258,6 +222,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
             .withSymbol("ivDAI")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .build();
 
         _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
@@ -271,26 +236,14 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesDai.expectedIpTokenBalance = 4000 * TestConstants.D18;
         expectedBalancesDai.expectedTokenBalance = 9996000 * TestConstants.D18 - redeemFee18Dec;
         expectedBalancesDai.expectedMiltonBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
-        expectedBalancesDai.expectedLiquidityPoolBalance =
-            4000 *
-            TestConstants.D18 +
-            redeemFee18Dec;
+        expectedBalancesDai.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         ExpectedJosephBalances memory expectedBalancesUsdt;
 
         expectedBalancesUsdt.expectedIpTokenBalance = 4000 * TestConstants.D18;
-        expectedBalancesUsdt.expectedTokenBalance =
-            9996000 *
-            TestConstants.N1__0_6DEC -
-            redeemFee6Dec;
-        expectedBalancesUsdt.expectedMiltonBalance =
-            4000 *
-            TestConstants.N1__0_6DEC +
-            redeemFee6Dec;
-        expectedBalancesUsdt.expectedLiquidityPoolBalance =
-            4000 *
-            TestConstants.D18 +
-            redeemFee18Dec;
+        expectedBalancesUsdt.expectedTokenBalance = 9996000 * TestConstants.N1__0_6DEC - redeemFee6Dec;
+        expectedBalancesUsdt.expectedMiltonBalance = 4000 * TestConstants.N1__0_6DEC + redeemFee6Dec;
+        expectedBalancesUsdt.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.startPrank(_liquidityProvider);
         ammDai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
@@ -365,26 +318,14 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesDai.expectedIpTokenBalance = 4000 * TestConstants.D18;
         expectedBalancesDai.expectedTokenBalance = 9996000 * TestConstants.D18 - redeemFee18Dec;
         expectedBalancesDai.expectedMiltonBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
-        expectedBalancesDai.expectedLiquidityPoolBalance =
-            4000 *
-            TestConstants.D18 +
-            redeemFee18Dec;
+        expectedBalancesDai.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         ExpectedJosephBalances memory expectedBalancesUsdt;
 
         expectedBalancesUsdt.expectedIpTokenBalance = 4000 * TestConstants.D18;
-        expectedBalancesUsdt.expectedTokenBalance =
-            9996000 *
-            TestConstants.N1__0_6DEC -
-            redeemFee6Dec;
-        expectedBalancesUsdt.expectedMiltonBalance =
-            4000 *
-            TestConstants.N1__0_6DEC +
-            redeemFee6Dec;
-        expectedBalancesUsdt.expectedLiquidityPoolBalance =
-            4000 *
-            TestConstants.D18 +
-            redeemFee18Dec;
+        expectedBalancesUsdt.expectedTokenBalance = 9996000 * TestConstants.N1__0_6DEC - redeemFee6Dec;
+        expectedBalancesUsdt.expectedMiltonBalance = 4000 * TestConstants.N1__0_6DEC + redeemFee6Dec;
+        expectedBalancesUsdt.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.prank(_userOne);
         ammDai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
@@ -449,11 +390,9 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldRedeemWhenLiquidityProviderCanTransferTokensToAnotherUserAndUserCanRedeemTokens()
-        public
-    {
+    function testShouldRedeemWhenLiquidityProviderCanTransferTokensToAnotherUserAndUserCanRedeemTokens() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 redeemFee = 50 * TestConstants.D18;
@@ -461,14 +400,8 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         ExpectedJosephBalances memory expectedBalancesLiquidityProvider;
         expectedBalancesLiquidityProvider.expectedIpTokenBalance = 400 * TestConstants.D18;
         expectedBalancesLiquidityProvider.expectedTokenBalance = 9989600 * TestConstants.D18;
-        expectedBalancesLiquidityProvider.expectedMiltonBalance =
-            400 *
-            TestConstants.D18 +
-            redeemFee;
-        expectedBalancesLiquidityProvider.expectedLiquidityPoolBalance =
-            400 *
-            TestConstants.D18 +
-            redeemFee;
+        expectedBalancesLiquidityProvider.expectedMiltonBalance = 400 * TestConstants.D18 + redeemFee;
+        expectedBalancesLiquidityProvider.expectedLiquidityPoolBalance = 400 * TestConstants.D18 + redeemFee;
 
         ExpectedJosephBalances memory expectedBalancesUserThree;
         expectedBalancesUserThree.expectedIpTokenBalance = TestConstants.ZERO;
@@ -499,23 +432,14 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
             _iporProtocol.asset.balanceOf(_liquidityProvider),
             expectedBalancesLiquidityProvider.expectedTokenBalance
         );
-        assertEq(
-            actualLiquidityPoolBalance,
-            expectedBalancesLiquidityProvider.expectedLiquidityPoolBalance
-        );
-        assertEq(
-            _iporProtocol.ipToken.balanceOf(_userThree),
-            expectedBalancesUserThree.expectedIpTokenBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(_userThree),
-            expectedBalancesUserThree.expectedTokenBalance
-        );
+        assertEq(actualLiquidityPoolBalance, expectedBalancesLiquidityProvider.expectedLiquidityPoolBalance);
+        assertEq(_iporProtocol.ipToken.balanceOf(_userThree), expectedBalancesUserThree.expectedIpTokenBalance);
+        assertEq(_iporProtocol.asset.balanceOf(_userThree), expectedBalancesUserThree.expectedTokenBalance);
     }
 
     function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndPayFixed() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -538,8 +462,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
 
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
         uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
 
@@ -556,7 +479,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldRedeemWhenLiquidityPoolUtilizationNotExceededAndReceiveFixed() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -575,8 +498,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
         uint256 expectedIpTokenBalanceSender = 49000 * TestConstants.D18;
         // when
@@ -593,7 +515,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -642,7 +564,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);

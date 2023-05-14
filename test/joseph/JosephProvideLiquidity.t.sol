@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "forge-std/console2.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
@@ -35,6 +34,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldSetupInitValueForRedeemLPMaxUtilizationPercentageUSDT() public {
@@ -72,7 +72,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And18Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -95,7 +95,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And6Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         // when
@@ -118,7 +118,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotProvideLiquidityWhenLiquidyPoolIsEmpty() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_10_000_18DEC, block.timestamp);
@@ -136,7 +136,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotProvideLiquidityWhenMaxLiquidityPoolBalanceExceeded() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(20000);
@@ -154,7 +154,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -173,7 +173,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -192,7 +192,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -212,7 +212,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);

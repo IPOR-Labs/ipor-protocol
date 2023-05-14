@@ -20,6 +20,7 @@ import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
 import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/interfaces/types/MiltonTypes.sol";
+import "../utils/builder/BuilderUtils.sol";
 
 contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -69,6 +70,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_6_18DEC,
@@ -82,7 +84,8 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     function testShouldEmitCloseSwapEventWhenPayFixed() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -160,7 +163,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     function testShouldEmitCloseSwapEventWhenReceiveFixed() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -235,12 +238,11 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         itfLiquidator.itfLiquidate(payFixedSwapIds, receiveFixedSwapIds, endTimestamp);
     }
 
-    function testShouldClose10PayFixedSwapsAnd10ReceiveFixedSwapsInOneTransactionCase1WhenAllAreOpened()
-        public
-    {
+    function testShouldClose10PayFixedSwapsAnd10ReceiveFixedSwapsInOneTransactionCase1WhenAllAreOpened() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
+
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -267,8 +269,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
 
@@ -305,9 +306,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapPayFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.miltonStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
 
@@ -316,9 +315,9 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapReceiveFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
+                i + 1
+            );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
         }
     }
@@ -328,7 +327,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -365,8 +364,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
 
@@ -429,9 +427,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
             );
-            receiveFixedSwapIds[
-                i - (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps)
-            ] = i + 1;
+            receiveFixedSwapIds[i - (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps)] = i + 1;
         }
         vm.stopPrank();
 
@@ -442,9 +438,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapPayFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.miltonStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
         for (
@@ -452,9 +446,9 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapReceiveFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
+                i + 1
+            );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
         }
         for (
@@ -465,9 +459,9 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
                 volumeSwaps.volumePayFixedSwapsOpenLater;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwapOpenedLater = _iporProtocol
-                .miltonStorage
-                .getSwapPayFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporPayFixedSwapOpenedLater = _iporProtocol.miltonStorage.getSwapPayFixed(
+                i + 1
+            );
             assertEq(iporPayFixedSwapOpenedLater.state, expectedSwapStatusOpenLater);
         }
         for (
@@ -493,7 +487,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -520,8 +514,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
 
@@ -561,9 +554,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapPayFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporPayFixedSwap = _iporProtocol.miltonStorage.getSwapPayFixed(i + 1);
             assertEq(iporPayFixedSwap.state, expectedSwapStatus);
         }
         for (
@@ -571,18 +562,14 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol
-                .miltonStorage
-                .getSwapReceiveFixed(i + 1);
+            IporTypes.IporSwapMemory memory iporReceiveFixedSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
+                i + 1
+            );
             assertEq(iporReceiveFixedSwap.state, expectedSwapStatus);
         }
-        IporTypes.IporSwapMemory memory closedPayFixedSwap = _iporProtocol
-            .miltonStorage
-            .getSwapPayFixed(3);
+        IporTypes.IporSwapMemory memory closedPayFixedSwap = _iporProtocol.miltonStorage.getSwapPayFixed(3);
         assertEq(closedPayFixedSwap.state, expectedSwapStatus);
-        IporTypes.IporSwapMemory memory closedReceiveFixedSwap = _iporProtocol
-            .miltonStorage
-            .getSwapReceiveFixed(8);
+        IporTypes.IporSwapMemory memory closedReceiveFixedSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(8);
         assertEq(closedReceiveFixedSwap.state, expectedSwapStatus);
     }
 
@@ -591,7 +578,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -606,8 +593,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         volumeSwaps.volumeReceiveFixedSwaps = 10;
         uint256 endTimestamp = block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS;
         uint256 expectedBalanceTrader = 9997046420320479199074780;
-        uint256 expectedBalanceLiquidator = (volumeSwaps.volumePayFixedSwaps +
-            volumeSwaps.volumeReceiveFixedSwaps) *
+        uint256 expectedBalanceLiquidator = (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC;
         uint256[] memory payFixedSwapIds = new uint256[](volumeSwaps.volumePayFixedSwaps);
         uint256[] memory receiveFixedSwapIds = new uint256[](volumeSwaps.volumeReceiveFixedSwaps);
@@ -619,8 +605,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
         vm.startPrank(_userTwo);
@@ -664,7 +649,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -691,8 +676,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
         vm.startPrank(_userTwo);
@@ -744,7 +728,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -773,8 +757,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
 
@@ -821,11 +804,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             "actualBalanceLiquidator != expectedBalanceLiquidator"
         );
         uint256 actualBalanceTrader = _iporProtocol.asset.balanceOf(address(_userTwo));
-        assertEq(
-            actualBalanceTrader,
-            expectedBalanceTrader,
-            "actualBalanceTrader != expectedBalanceTrader"
-        );
+        assertEq(actualBalanceTrader, expectedBalanceTrader, "actualBalanceTrader != expectedBalanceTrader");
     }
 
     function testShouldCommitTransactionWhenTryToClose2PayFixedSwapsAnd2ReceiveFixedSwapsInOneTransactionWhenAllPositionsAreAlreadyClosed()
@@ -833,7 +812,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -860,8 +839,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) *
-                TestConstants.USD_28_000_18DEC,
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
             block.timestamp
         );
         vm.startPrank(_userTwo);
@@ -914,7 +892,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     function testShouldCommitTransactionEvenIfListsForClosingAreEmpty() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -941,7 +919,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -951,10 +929,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -988,8 +963,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -1012,10 +986,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1023,16 +994,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1042,19 +1007,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1067,7 +1023,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -1076,10 +1032,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1117,8 +1070,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -1146,10 +1098,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // then
         ActualBalances memory actualBalances;
 
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1157,16 +1106,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1176,19 +1119,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1202,7 +1136,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
@@ -1212,10 +1146,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1253,8 +1184,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -1282,10 +1212,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // then
         ActualBalances memory actualBalances;
 
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1293,16 +1220,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1312,19 +1233,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1337,7 +1249,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
@@ -1347,10 +1259,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1388,8 +1297,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -1417,10 +1325,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // then
         ActualBalances memory actualBalances;
 
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1428,16 +1333,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1447,19 +1346,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1473,7 +1363,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
@@ -1483,10 +1373,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1522,8 +1409,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -1562,16 +1448,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1585,19 +1465,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1610,7 +1481,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_151_18DEC);
@@ -1620,10 +1491,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1657,8 +1525,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -1683,10 +1550,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1694,16 +1558,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1713,19 +1571,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1739,7 +1588,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -1749,10 +1598,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1787,8 +1633,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             Constants.D18_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -1812,10 +1657,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1823,16 +1665,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1842,19 +1678,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -1867,7 +1694,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
@@ -1877,10 +1704,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -1916,8 +1740,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             Constants.D18_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -1945,10 +1768,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapPayFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -1956,16 +1776,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
-        );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsPayFixed(
             _userTwo,
             TestConstants.ZERO,
@@ -1975,19 +1789,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralPayFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2000,7 +1805,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_150_18DEC);
@@ -2010,10 +1815,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2050,8 +1852,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -2075,10 +1876,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2086,36 +1884,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2129,7 +1914,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2139,10 +1924,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2177,8 +1959,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -2213,19 +1994,15 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
@@ -2234,19 +2011,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2259,7 +2027,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2269,10 +2037,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2308,8 +2073,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -2334,10 +2098,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2345,36 +2106,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2388,7 +2136,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
@@ -2398,10 +2146,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2439,8 +2184,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -2464,10 +2208,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2475,36 +2216,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2517,7 +2245,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
@@ -2527,10 +2255,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2568,8 +2293,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             TestConstants.USD_10_000_000_18DEC_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC -
@@ -2593,10 +2317,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2604,36 +2325,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2647,7 +2355,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2657,10 +2365,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2697,8 +2402,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             Constants.D18_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -2723,10 +2427,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2734,36 +2435,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);
@@ -2776,7 +2464,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.stanleyImplementation = address(new MockCase0Stanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -2786,10 +2474,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
 
         vm.prank(_userTwo);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
@@ -2826,8 +2511,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             Constants.D18_INT +
             TestConstants.ZERO_INT -
             openerUserLost;
-        expectedBalances.expectedCloserUserBalance = TestConstants
-            .TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
+        expectedBalances.expectedCloserUserBalance = TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC_INT;
         expectedBalances.expectedLiquidityPoolBalance =
             TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC +
             TestConstants.TC_OPENING_FEE_18DEC +
@@ -2854,10 +2538,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
 
         // then
         ActualBalances memory actualBalances;
-        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(
-            endTimestamp,
-            1
-        );
+        actualBalances.actualPayoff = _iporProtocol.milton.itfCalculateSwapReceiveFixedValue(endTimestamp, 1);
         actualBalances.actualIncomeFeeValue = _iporProtocol.milton.itfCalculateIncomeFeeValue(
             actualBalances.actualPayoff
         );
@@ -2865,36 +2546,23 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) +
             _iporProtocol.asset.balanceOf(_userTwo) +
             _iporProtocol.asset.balanceOf(address(itfLiquidator));
-        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(
-            address(_iporProtocol.milton)
-        );
+        actualBalances.actualMiltonBalance = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         actualBalances.actualOpenerUserBalance = int256(_iporProtocol.asset.balanceOf(_userTwo));
-        actualBalances.actualCloserUserBalance = int256(
-            _iporProtocol.asset.balanceOf(address(itfLiquidator))
+        actualBalances.actualCloserUserBalance = int256(_iporProtocol.asset.balanceOf(address(itfLiquidator)));
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
+        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol.miltonStorage.getSwapsReceiveFixed(
+            _userTwo,
+            TestConstants.ZERO,
+            50
         );
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol
-            .miltonStorage
-            .getExtendedBalance();
-        (, IporTypes.IporSwapMemory[] memory swaps) = _iporProtocol
-            .miltonStorage
-            .getSwapsReceiveFixed(_userTwo, TestConstants.ZERO, 50);
         (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
         assertEq(TestConstants.ZERO, swaps.length);
         assertEq(actualBalances.actualPayoff, -int256(expectedBalances.expectedPayoffAbs));
         assertEq(actualBalances.actualIncomeFeeValue, expectedBalances.expectedIncomeFeeValue);
-        assertEq(
-            actualBalances.actualSumOfBalances,
-            expectedBalances.expectedSumOfBalancesBeforePayout
-        );
+        assertEq(actualBalances.actualSumOfBalances, expectedBalances.expectedSumOfBalancesBeforePayout);
         assertEq(actualBalances.actualMiltonBalance, expectedBalances.expectedMiltonBalance);
-        assertEq(
-            actualBalances.actualOpenerUserBalance,
-            expectedBalances.expectedOpenerUserBalance
-        );
-        assertEq(
-            actualBalances.actualCloserUserBalance,
-            expectedBalances.expectedCloserUserBalance
-        );
+        assertEq(actualBalances.actualOpenerUserBalance, expectedBalances.expectedOpenerUserBalance);
+        assertEq(actualBalances.actualCloserUserBalance, expectedBalances.expectedCloserUserBalance);
         assertEq(balance.totalCollateralReceiveFixed, TestConstants.ZERO);
         assertEq(balance.iporPublicationFee, TestConstants.TC_IPOR_PUBLICATION_AMOUNT_18DEC);
         assertEq(balance.liquidityPool, expectedBalances.expectedLiquidityPoolBalance);

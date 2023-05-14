@@ -3,11 +3,6 @@ import "forge-std/Test.sol";
 import "../builder/IporOracleBuilder.sol";
 
 contract IporOracleFactory is Test {
-    struct IporOracleConfig {
-        address updater;
-        BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase;
-    }
-
     address internal _owner;
 
     IporOracleBuilder internal iporOracleBuilder;
@@ -32,9 +27,7 @@ contract IporOracleFactory is Test {
 
         iporOracleBuilder.withLastUpdateTimestamps(lastUpdateTimestamps);
         iporOracleBuilder.withExponentialMovingAverages(exponentialMovingAverages);
-        iporOracleBuilder.withExponentialWeightedMovingVariances(
-            exponentialWeightedMovingVariances
-        );
+        iporOracleBuilder.withExponentialWeightedMovingVariances(exponentialWeightedMovingVariances);
 
         ItfIporOracle iporOracle = iporOracleBuilder.build();
 

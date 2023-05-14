@@ -83,11 +83,12 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -140,7 +141,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -193,7 +194,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -246,7 +247,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -299,7 +300,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -351,7 +352,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -403,7 +404,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonUsdt());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
@@ -456,7 +457,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitMiltonSpreadModelChanged() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

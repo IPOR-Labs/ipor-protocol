@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
+import "../utils/builder/BuilderUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
@@ -31,6 +32,8 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
+
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_4_18DEC,
@@ -46,7 +49,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase2MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
 
@@ -163,7 +166,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase2MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -277,7 +280,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase2MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
 
@@ -382,7 +385,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase2MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE2;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -479,7 +482,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
 
@@ -593,7 +596,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -707,7 +710,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_121_18DEC);
 
@@ -807,7 +810,7 @@ contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonImplementation = address(new MockCase3MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 

@@ -74,11 +74,32 @@ contract JosephBuilder is Test {
         return this;
     }
 
+    function isSetAsset() public view returns (bool) {
+        return builderData.asset != address(0);
+    }
+
+    function isSetIpToken() public view returns (bool) {
+        return builderData.ipToken != address(0);
+    }
+
+    function isSetMiltonStorage() public view returns (bool) {
+        return builderData.miltonStorage != address(0);
+    }
+
+    function isSetMilton() public view returns (bool) {
+        return builderData.milton != address(0);
+    }
+
+    function isSetStanley() public view returns (bool) {
+        return builderData.stanley != address(0);
+    }
+
     function build() public returns (ItfJoseph) {
         vm.startPrank(_owner);
         ERC1967Proxy proxy = _constructProxy(_buildJosephImplementation());
         ItfJoseph joseph = ItfJoseph(address(proxy));
         vm.stopPrank();
+        delete builderData;
         return joseph;
     }
 

@@ -56,13 +56,13 @@ contract MiltonUtils is Test {
         uint256 calculateQuotePayFixedValue,
         uint256 calculateQuoteReceiveFixedValue,
         int256 calculateSpreadPayFixedValue,
-        int256 calculatespreadReceiveFixedValue
+        int256 calculateSpreadReceiveFixedVaule
     ) public returns (MockSpreadModel) {
         MockSpreadModel miltonSpreadModel = new MockSpreadModel(
     calculateQuotePayFixedValue,
     calculateQuoteReceiveFixedValue,
     calculateSpreadPayFixedValue,
-    calculatespreadReceiveFixedValue
+    calculateSpreadReceiveFixedVaule
     );
         return miltonSpreadModel;
     }
@@ -95,9 +95,10 @@ contract MiltonUtils is Test {
         address iporOracle,
         address miltonStorageUsdc,
         address miltonSpreadModel,
-        address stanleyUsdc
+        address stanleyUsdc,
+        address iporRiskManagementOracle
     ) public returns (MockCase0MiltonUsdc) {
-        MockCase0MiltonUsdc mockCase0MiltonUsdcImplementation = new MockCase0MiltonUsdc();
+        MockCase0MiltonUsdc mockCase0MiltonUsdcImplementation = new MockCase0MiltonUsdc(iporRiskManagementOracle);
         ERC1967Proxy miltonUsdcProxy =
         new ERC1967Proxy(address(mockCase0MiltonUsdcImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenUsdc, iporOracle, miltonStorageUsdc, miltonSpreadModel, stanleyUsdc));
         return MockCase0MiltonUsdc(address(miltonUsdcProxy));
@@ -108,9 +109,10 @@ contract MiltonUtils is Test {
         address iporOracle,
         address miltonStorageDai,
         address miltonSpreadModel,
-        address stanleyDai
+        address stanleyDai,
+        address iporRiskManagementOracle
     ) public returns (MockCase0MiltonDai) {
-        MockCase0MiltonDai mockCase0MiltonDaiImplementation = new MockCase0MiltonDai();
+        MockCase0MiltonDai mockCase0MiltonDaiImplementation = new MockCase0MiltonDai(iporRiskManagementOracle);
         ERC1967Proxy miltonDaiProxy =
         new ERC1967Proxy(address(mockCase0MiltonDaiImplementation), abi.encodeWithSignature( "initialize(bool,address,address,address,address,address)", false, tokenDai, iporOracle, miltonStorageDai, miltonSpreadModel, stanleyDai));
         return MockCase0MiltonDai(address(miltonDaiProxy));

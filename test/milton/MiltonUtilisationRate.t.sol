@@ -24,13 +24,14 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldOpenPayFixedPositionWhenLiquidityPoolUtilizationPerLegIsNotExceededAndDefaultUtilization()
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -60,7 +61,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -90,7 +91,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -119,7 +120,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -149,7 +150,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -178,7 +179,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
+            .IporRiskManagementOracleInitialParamsTestCase
+            .CASE5;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -207,7 +211,7 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -236,7 +240,10 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase6MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE6;
+        _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
+            .IporRiskManagementOracleInitialParamsTestCase
+            .CASE5;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

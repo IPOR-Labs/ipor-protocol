@@ -32,6 +32,8 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
+
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_4_18DEC,
@@ -44,7 +46,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndPayFixed() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -88,7 +90,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -130,7 +132,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -166,7 +168,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndReceiveFixed() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -202,7 +204,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPool() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -221,7 +223,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPoolAfterRedeemLiquidity() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.josephImplementation = address(new MockCase1JosephDai());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -236,7 +238,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseRedeemAmountIsTooLow() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.josephImplementation = address(new MockCase1JosephDai());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

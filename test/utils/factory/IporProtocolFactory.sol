@@ -20,10 +20,12 @@ import "../builder/IporOracleBuilder.sol";
 import "../builder/IporWeightedBuilder.sol";
 import "../builder/IporProtocolBuilder.sol";
 import "./IporOracleFactory.sol";
+import "./IporRiskManagementOracleFactory.sol";
 
 contract IporProtocolFactory is Test {
     struct Amm {
         ItfIporOracle iporOracle;
+        IporRiskManagementOracle iporRiskManagementOracle;
         IporProtocolBuilder.IporProtocol usdt;
         IporProtocolBuilder.IporProtocol usdc;
         IporProtocolBuilder.IporProtocol dai;
@@ -31,23 +33,28 @@ contract IporProtocolFactory is Test {
 
     struct AmmConfig {
         address iporOracleUpdater;
+        address iporRiskManagementOracleUpdater;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
-        address miltonUsdtImplementation;
-        address miltonUsdcImplementation;
-        address miltonDaiImplementation;
+        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
+        BuilderUtils.MiltonTestCase miltonUsdtTestCase;
+        BuilderUtils.MiltonTestCase miltonUsdcTestCase;
+        BuilderUtils.MiltonTestCase miltonDaiTestCase;
     }
 
     struct IporProtocolConfig {
         address iporOracleUpdater;
+        address iporRiskManagementOracleUpdater;
+        BuilderUtils.MiltonTestCase miltonTestCase;
         BuilderUtils.IporOracleInitialParamsTestCase iporOracleInitialParamsTestCase;
+        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
         address[] approvalsForUsers;
-        address miltonImplementation;
         address josephImplementation;
         address spreadImplementation;
         address stanleyImplementation;
     }
 
     IporOracleFactory internal _iporOracleFactory;
+    IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory;
     IporProtocolBuilder internal _iporProtocolBuilder;
     AssetBuilder internal _assetBuilder;
     IpTokenBuilder internal _ipTokenBuilder;
@@ -63,6 +70,7 @@ contract IporProtocolFactory is Test {
 
     constructor(address owner) {
         _iporOracleFactory = new IporOracleFactory(owner);
+        _iporRiskManagementOracleFactory = new IporRiskManagementOracleFactory(owner);
         _iporProtocolBuilder = new IporProtocolBuilder(owner);
         _assetBuilder = new AssetBuilder(owner, _iporProtocolBuilder);
         _ipTokenBuilder = new IpTokenBuilder(owner, _iporProtocolBuilder);
@@ -97,10 +105,14 @@ contract IporProtocolFactory is Test {
             cfg.iporOracleInitialParamsTestCase
         );
 
-        vm.prank(address(_owner));
-        iporOracle.addUpdater(cfg.iporOracleUpdater);
+        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
+            assets,
+            cfg.iporRiskManagementOracleUpdater,
+            cfg.iporRiskManagementOracleInitialParamsTestCase
+        );
 
         amm.iporOracle = iporOracle;
+        amm.iporRiskManagementOracle = iporRiskManagementOracle;
 
         amm.usdt = _iporProtocolBuilder
             .usdtBuilder()
@@ -114,8 +126,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDT")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .milton()
-            .withMiltonImplementation(cfg.miltonUsdtImplementation)
+            .withTestCase(cfg.miltonUsdtTestCase)
             .and()
             .build();
 
@@ -131,8 +144,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDC")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .milton()
-            .withMiltonImplementation(cfg.miltonUsdcImplementation)
+            .withTestCase(cfg.miltonUsdcTestCase)
             .and()
             .build();
 
@@ -148,8 +162,9 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivDAI")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .milton()
-            .withMiltonImplementation(cfg.miltonDaiImplementation)
+            .withTestCase(cfg.miltonDaiTestCase)
             .and()
             .build();
     }
@@ -170,6 +185,12 @@ contract IporProtocolFactory is Test {
             cfg.iporOracleInitialParamsTestCase
         );
 
+        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
+            assets,
+            cfg.iporRiskManagementOracleUpdater,
+            cfg.iporRiskManagementOracleInitialParamsTestCase
+        );
+
         iporProtocol = _iporProtocolBuilder
             .daiBuilder()
             .withAsset(address(dai))
@@ -182,18 +203,19 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivDAI")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
-            .and()
-            .milton()
-            .withMiltonImplementation(cfg.miltonImplementation)
             .and()
             .joseph()
             .withJosephImplementation(cfg.josephImplementation)
             .and()
             .stanley()
             .withStanleyImplementation(cfg.stanleyImplementation)
+            .and()
+            .milton()
+            .withTestCase(cfg.miltonTestCase)
             .and()
             .build();
 
@@ -203,7 +225,7 @@ contract IporProtocolFactory is Test {
         return iporProtocol;
     }
 
-    function getUsdtInstance(IporProtocolConfig memory cfg)
+        function getUsdtInstance(IporProtocolConfig memory cfg)
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {
@@ -219,6 +241,12 @@ contract IporProtocolFactory is Test {
             cfg.iporOracleInitialParamsTestCase
         );
 
+        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
+            assets,
+            cfg.iporRiskManagementOracleUpdater,
+            cfg.iporRiskManagementOracleInitialParamsTestCase
+        );
+
         iporProtocol = _iporProtocolBuilder
             .usdtBuilder()
             .withAsset(address(usdt))
@@ -231,12 +259,13 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDT")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
             .and()
             .milton()
-            .withMiltonImplementation(cfg.miltonImplementation)
+            .withTestCase(cfg.miltonTestCase)
             .and()
             .joseph()
             .withJosephImplementation(cfg.josephImplementation)
@@ -268,6 +297,12 @@ contract IporProtocolFactory is Test {
             cfg.iporOracleInitialParamsTestCase
         );
 
+        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
+            assets,
+            cfg.iporRiskManagementOracleUpdater,
+            cfg.iporRiskManagementOracleInitialParamsTestCase
+        );
+
         iporProtocol = _iporProtocolBuilder
             .usdcBuilder()
             .withAsset(address(usdc))
@@ -280,12 +315,13 @@ contract IporProtocolFactory is Test {
             .withSymbol("ivUSDC")
             .and()
             .withIporOracle(address(iporOracle))
+            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
             .and()
             .spread()
             .withSpreadImplementation(cfg.spreadImplementation)
             .and()
             .milton()
-            .withMiltonImplementation(cfg.miltonImplementation)
+            .withTestCase(cfg.miltonTestCase)
             .and()
             .joseph()
             .withJosephImplementation(cfg.josephImplementation)
@@ -308,38 +344,18 @@ contract IporProtocolFactory is Test {
         if (iporProtocol.asset.decimals() == 18) {
             for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
-                iporProtocol.asset.approve(
-                    address(iporProtocol.joseph),
-                    TestConstants.TOTAL_SUPPLY_18_DECIMALS
-                );
-                iporProtocol.asset.approve(
-                    address(iporProtocol.milton),
-                    TestConstants.TOTAL_SUPPLY_18_DECIMALS
-                );
+                iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
+                iporProtocol.asset.approve(address(iporProtocol.milton), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
                 vm.stopPrank();
-                deal(
-                    address(iporProtocol.asset),
-                    cfg.approvalsForUsers[i],
-                    TestConstants.USER_SUPPLY_10MLN_18DEC
-                );
+                deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
             }
         } else if (iporProtocol.asset.decimals() == 6) {
             for (uint256 i = 0; i < cfg.approvalsForUsers.length; ++i) {
                 vm.startPrank(cfg.approvalsForUsers[i]);
-                iporProtocol.asset.approve(
-                    address(iporProtocol.joseph),
-                    TestConstants.TOTAL_SUPPLY_6_DECIMALS
-                );
-                iporProtocol.asset.approve(
-                    address(iporProtocol.milton),
-                    TestConstants.TOTAL_SUPPLY_6_DECIMALS
-                );
+                iporProtocol.asset.approve(address(iporProtocol.joseph), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
+                iporProtocol.asset.approve(address(iporProtocol.milton), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
                 vm.stopPrank();
-                deal(
-                    address(iporProtocol.asset),
-                    cfg.approvalsForUsers[i],
-                    TestConstants.USER_SUPPLY_10MLN_6DEC
-                );
+                deal(address(iporProtocol.asset), cfg.approvalsForUsers[i], TestConstants.USER_SUPPLY_10MLN_6DEC);
             }
         } else {
             revert("Unsupported decimals");

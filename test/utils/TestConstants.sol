@@ -107,8 +107,10 @@ library TestConstants {
     int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000 * 1e18;
 
     uint256 public constant LEVERAGE_18DEC = 10 * 1e18;
+    uint256 public constant LEVERAGE_11_18DEC = 11 * 1e18;
     int256 public constant LEVERAGE_18DEC_INT = 10 * 1e18;
     uint256 public constant LEVERAGE_1000_18DEC = 1000 * 1e18;
+    uint256 public constant LEVERAGE_1001_18DEC = 1001 * 1e18;
 
     uint256 public constant SPECIFIC_INCOME_TAX_CASE_1 = 600751281464875607313;
     int256 public constant SPECIFIC_INCOME_TAX_CASE_1_INT = 600751281464875607313;
@@ -212,4 +214,28 @@ library TestConstants {
     uint256 public constant PERIOD_27_DAYS_17_HOURS_IN_SECONDS = 60 * 60 * 24 * 27 + 60 * 60 * 17;
     uint256 public constant PERIOD_14_DAYS_IN_SECONDS = 60 * 60 * 24 * 14;
     uint256 public constant MAX_CHUNK_SIZE = 50;
+
+    uint64 public constant RMO_NOTIONAL_100K = 10;
+    uint64 public constant RMO_NOTIONAL_1M = 100;
+    uint64 public constant RMO_NOTIONAL_1M_500K = 150;
+    uint64 public constant RMO_NOTIONAL_2M_220K = 222;
+    uint64 public constant RMO_NOTIONAL_10M = 1000;
+    uint64 public constant RMO_NOTIONAL_50M = 5000;
+    uint64 public constant RMO_NOTIONAL_100M = 10000;
+    uint64 public constant  RMO_NOTIONAL_1B = 100000;
+    uint64 public constant RMO_NOTIONAL_2B = 200000;
+    uint64 public constant RMO_NOTIONAL_3B = 300000;
+    uint64 public constant RMO_NOTIONAL_10B = 1000000;
+    uint16 public constant RMO_UTILIZATION_RATE_0_1_PER = 10;
+    uint16 public constant RMO_UTILIZATION_RATE_5_PER = 500;
+    uint16 public constant RMO_UTILIZATION_RATE_20_PER = 2000;
+    uint16 public constant RMO_UTILIZATION_RATE_30_PER = 3000;
+    uint16 public constant RMO_UTILIZATION_RATE_35_PER = 3500;
+    uint16 public constant RMO_UTILIZATION_RATE_48_PER = 4800;
+    uint16 public constant RMO_UTILIZATION_RATE_60_PER = 6000;
+    uint16 public constant RMO_UTILIZATION_RATE_80_PER = 8000;
+    uint16 public constant RMO_UTILIZATION_RATE_90_PER = 9000;
+    uint16 public constant RMO_UTILIZATION_RATE_100_PER = 10000;
+    uint16 public constant RMO_UTILIZATION_RATE_150_PER = 15000;
+    uint16 public constant RMO_UTILIZATION_RATE_MAX = type(uint16).max;
 }

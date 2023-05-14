@@ -30,13 +30,14 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldCalculateExchangeRatePayFixedWhenSOAPChangedAndSOAPIsLowerThanZeroAndSOAPAbsoluteValueIsLowerThanLiquidityPoolBalance()
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -83,7 +84,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -137,7 +138,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -191,7 +192,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -246,7 +247,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -309,7 +310,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -373,7 +374,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -434,7 +435,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -494,7 +495,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

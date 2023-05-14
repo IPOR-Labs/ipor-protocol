@@ -93,6 +93,7 @@ contract IporOracleBuilder is Test {
         ERC1967Proxy proxy = _constructProxy(address(new ItfIporOracle()));
         ItfIporOracle iporOracle = ItfIporOracle(address(proxy));
         vm.stopPrank();
+        delete builderData;
         return iporOracle;
     }
 

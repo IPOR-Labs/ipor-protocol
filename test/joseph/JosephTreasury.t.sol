@@ -29,6 +29,8 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
         _cfg.approvalsForUsers = _users;
         _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
+
         _cfg.spreadImplementation = address(
             new MockSpreadModel(
                 TestConstants.PERCENTAGE_4_18DEC,
@@ -43,7 +45,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -56,7 +58,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -69,7 +71,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferPublicationFeeToCharlieTreasurySimpleCase1() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
@@ -122,7 +124,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferToTreasuryWhenCallerIsNotTreasuryTransferer() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -135,7 +137,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         public
     {
         // given
-        _cfg.miltonImplementation = address(new MockCase0MiltonDai());
+       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -149,7 +151,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferTreasuryToTreasuryTreasurerWhenSimpleCase1() public {
         // given
-        _cfg.miltonImplementation = address(new MockCase4MiltonDai());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE4;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;

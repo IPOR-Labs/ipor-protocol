@@ -7,6 +7,8 @@ import "./utils/factory/IporProtocolFactory.sol";
 
 contract TestCommons is Test {
     IporProtocolFactory internal _iporProtocolFactory = new IporProtocolFactory(address(this));
+    IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory =
+        new IporRiskManagementOracleFactory(address(this));
 
     function _getUserAddress(uint256 number) internal returns (address) {
         return vm.rememberKey(number);

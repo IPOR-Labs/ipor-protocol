@@ -88,6 +88,9 @@ contract AssetBuilder is Test {
             builderData.decimals
         );
         vm.stopPrank();
+
+        delete builderData;
+
         return token;
     }
 }
