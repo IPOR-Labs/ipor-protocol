@@ -5,7 +5,6 @@ import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
@@ -16,7 +15,6 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
 import "../../contracts/mocks/milton/MockCase0Milton6D.sol";
-import "../../contracts/mocks/joseph/MockCase1Joseph6D.sol";
 
 contract ItfDataProviderTest is TestCommons, DataUtils {
     MockBaseMiltonSpreadModelUsdc internal _miltonSpreadModel;

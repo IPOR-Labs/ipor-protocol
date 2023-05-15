@@ -2,24 +2,11 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
-import "../../contracts/mocks/MockStanleyStrategies.sol";
-import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/tokens/IporToken.sol";
-import "../../contracts/mocks/TestnetFaucet.sol";
-import "../../contracts/amm/spread/MiltonSpreadModelDai.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/vault/StanleyDai.sol";
-import "../../contracts/amm/MiltonDai.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
-import "../../contracts/facades/IporOracleFacadeDataProvider.sol";
 import "./MockJosephDai.sol";
 import "../../contracts/itf/ItfJosephDai.sol";
 

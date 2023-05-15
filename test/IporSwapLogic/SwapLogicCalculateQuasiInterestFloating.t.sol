@@ -5,7 +5,6 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/MockIporSwapLogic.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;

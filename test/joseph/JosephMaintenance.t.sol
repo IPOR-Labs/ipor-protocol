@@ -6,12 +6,9 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "../../contracts/amm/pool/JosephUsdt.sol";
 import "../../contracts/amm/pool/JosephUsdc.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

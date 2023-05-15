@@ -8,7 +8,6 @@ import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/joseph/MockCase1Joseph18D.sol";
-import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 
 contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
