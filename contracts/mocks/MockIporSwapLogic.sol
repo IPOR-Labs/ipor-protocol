@@ -5,6 +5,33 @@ import "../interfaces/types/IporTypes.sol";
 import "../amm/libraries/IporSwapLogic.sol";
 
 contract MockIporSwapLogic {
+    function calculateSwapAmount(
+        uint256 timeToMaturityInDays,
+        uint256 totalAmount,
+        uint256 leverage,
+        uint256 liquidationDepositAmount,
+        uint256 iporPublicationFeeAmount,
+        uint256 openingFeeRate
+    )
+        public
+        view
+        returns (
+            uint256 collateral,
+            uint256 notional,
+            uint256 openingFee
+        )
+    {
+        return
+            IporSwapLogic.calculateSwapAmount(
+                timeToMaturityInDays,
+                totalAmount,
+                leverage,
+                liquidationDepositAmount,
+                iporPublicationFeeAmount,
+                openingFeeRate
+            );
+    }
+
     function calculateQuasiInterest(
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp,

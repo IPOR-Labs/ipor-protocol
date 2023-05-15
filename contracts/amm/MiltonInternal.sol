@@ -46,13 +46,13 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 5 * 1e16;
 
-    uint256 internal constant _INCOME_TAX_RATE = 1e17;
-
-    uint256 internal constant _OPENING_FEE_RATE = 1e16;
+    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
+    uint256 internal constant _OPENING_FEE_RATE = 5e14;
 
     /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
     /// below value define how big pie going to Treasury Balance
-    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 0;
+    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
+    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 5e17;
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
@@ -130,10 +130,6 @@ abstract contract MiltonInternal is
         IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
         AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
         return (riskIndicators.maxUtilizationRatePayFixed, riskIndicators.maxUtilizationRateReceiveFixed);
-    }
-
-    function getIncomeFeeRate() external view override returns (uint256) {
-        return _getIncomeFeeRate();
     }
 
     function getOpeningFeeRate() external view override returns (uint256) {
@@ -328,10 +324,6 @@ abstract contract MiltonInternal is
 
     function _getMaxSwapCollateralAmount() internal view virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
-    }
-
-    function _getIncomeFeeRate() internal view virtual returns (uint256) {
-        return _INCOME_TAX_RATE;
     }
 
     function _getOpeningFeeRate() internal view virtual returns (uint256) {

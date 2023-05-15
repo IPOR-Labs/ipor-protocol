@@ -256,7 +256,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         // when
         uint256 actualExchangeRate = mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp);
         // then
-        assertEq(actualExchangeRate, 1000074977506747976);
+        assertEq(actualExchangeRate, 1000057521008863714);
     }
 
     function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceIsNotZeroAndIpTokenTotalSupplyIsZeroAnd18Decimals()
@@ -359,6 +359,6 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         // when
         uint256 actualExchangeRate = mockCase0JosephUsdt.itfCalculateExchangeRate(block.timestamp);
         // then
-        assertEq(actualExchangeRate, 1000074977506747976);
+        assertEq(actualExchangeRate, 1000057521008863714);
     }
 }

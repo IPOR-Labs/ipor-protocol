@@ -297,7 +297,6 @@ export const executeCloseSwapTestCase = async function (
     expectedSoap: BigNumber,
     openTimestamp: BigNumber,
     expectedPayoff: BigNumber,
-    expectedIncomeFeeValue: BigNumber,
     userOne: Signer,
     liquidityProvider: Signer
 ) {
@@ -370,7 +369,6 @@ export const executeCloseSwapTestCase = async function (
     let endTimestamp = params.openTimestamp.add(periodOfTimeElapsedInSeconds);
 
     let actualPayoff = ZERO;
-    let actualIncomeFeeValue = null;
 
     //when
     if (testData.miltonUsdt && testData.tokenUsdt && params.asset === testData.tokenUsdt.address) {
@@ -386,9 +384,6 @@ export const executeCloseSwapTestCase = async function (
 
             await testData.miltonUsdt.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
         }
-        actualIncomeFeeValue = await testData.miltonUsdt
-            .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
     if (testData.miltonUsdc && testData.tokenUsdc && params.asset === testData.tokenUsdc.address) {
@@ -404,9 +399,6 @@ export const executeCloseSwapTestCase = async function (
 
             await testData.miltonUsdc.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
         }
-        actualIncomeFeeValue = await testData.miltonUsdc
-            .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
     if (testData.miltonDai && testData.tokenDai && params.asset === testData.tokenDai.address) {
@@ -423,13 +415,9 @@ export const executeCloseSwapTestCase = async function (
 
             await testData.miltonDai.connect(closerUser).itfCloseSwapReceiveFixed(1, endTimestamp);
         }
-        actualIncomeFeeValue = await testData.miltonDai
-            .connect(params.from)
-            .itfCalculateIncomeFeeValue(actualPayoff);
     }
 
     expect(actualPayoff, "Incorrect position value").to.be.eq(expectedPayoff);
-    expect(actualIncomeFeeValue, "Incorrect income fee value").to.be.eq(expectedIncomeFeeValue);
 
     //then
     await assertExpectedValues(

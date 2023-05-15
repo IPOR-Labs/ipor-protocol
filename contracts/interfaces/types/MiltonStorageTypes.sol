@@ -26,7 +26,7 @@ library MiltonStorageTypes {
         uint256 vault;
         /// @notice IPOR publication fee balance. This balance is used to subsidise the oracle operations
         uint256 iporPublicationFee;
-        /// @notice Balance of the DAO's treasury. Fed by portion of the opening and income fees set by the DAO
+        /// @notice Balance of the DAO's treasury. Fed by portion of the opening fee set by the DAO
         uint256 treasury;
     }
 }

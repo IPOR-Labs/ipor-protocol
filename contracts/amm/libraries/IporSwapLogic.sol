@@ -10,12 +10,14 @@ import "../../libraries/math/IporMath.sol";
 library IporSwapLogic {
     using SafeCast for uint256;
 
+    /// @param timeToMaturityInDays time to maturity in days, not represented in 18 decimals
     /// @param totalAmount total amount represented in 18 decimals
     /// @param leverage swap leverage, represented in 18 decimals
     /// @param liquidationDepositAmount liquidation deposit amount, represented in 18 decimals
     /// @param iporPublicationFeeAmount IPOR publication fee amount, represented in 18 decimals
     /// @param openingFeeRate opening fee rate, represented in 18 decimals
     function calculateSwapAmount(
+        uint256 timeToMaturityInDays,
         uint256 totalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
@@ -23,19 +25,25 @@ library IporSwapLogic {
         uint256 openingFeeRate
     )
         internal
-        pure
+        view
         returns (
             uint256 collateral,
             uint256 notional,
             uint256 openingFee
         )
     {
+        uint256 availableAmount = totalAmount - liquidationDepositAmount - iporPublicationFeeAmount;
+
         collateral = IporMath.division(
-            (totalAmount - liquidationDepositAmount - iporPublicationFeeAmount) * Constants.D18,
-            Constants.D18 + openingFeeRate
+            availableAmount * Constants.D18,
+            Constants.D18 +
+                IporMath.division(
+                    leverage * openingFeeRate * timeToMaturityInDays,
+                    365 * Constants.D18
+                )
         );
         notional = IporMath.division(leverage * collateral, Constants.D18);
-        openingFee = IporMath.division(collateral * openingFeeRate, Constants.D18);
+        openingFee = availableAmount - collateral;
     }
 
     function calculatePayoffPayFixed(

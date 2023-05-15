@@ -30,7 +30,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     int256 unwindFlatFee = 5 * 1e18;
 
-    event SwapUnwind(uint256 indexed swapId, int256 swapPayoffToDate, int256 swapUnwindValue);
+    event SwapUnwind(uint256 indexed swapId, int256 swapPayoffToDate, int256 swapUnwindValue, uint256 swapUnwindOpeningFee);
 
     function setUp() public {
         _admin = address(this);
@@ -60,8 +60,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         int256 expectedSwapUnwindValue = 878561643835616438356;
         int256 expectedSwapPayoffToDate = 900 * 1e18;
-        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
-        uint256 expectedIncomeFeeValue = 90 * 1e18;
+        uint256 expectedUnwindOpeningFee = 3835616438356164400;
+
+        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue - int256(expectedUnwindOpeningFee);
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
@@ -71,10 +72,10 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
+        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue, expectedUnwindOpeningFee);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
+        int256 actualPayoff = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -85,7 +86,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //then
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
     }
 
     function testShouldCalculatePnLForUnwindPayFixedExcel() public {
@@ -111,8 +111,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         int256 expectedSwapUnwindValue = -749383561643835438356;
         int256 expectedSwapPayoffToDate = -180821917808219000000;
-        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue;
-        uint256 expectedIncomeFeeValue = 18082191780821900000;
+        uint256 expectedUnwindOpeningFee = 38356164383561644000;
+        int256 expectedPayoff = expectedSwapPayoffToDate + expectedSwapUnwindValue - int256(expectedUnwindOpeningFee);
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
@@ -122,10 +122,10 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //when
         vm.expectEmit(true, true, true, true);
-        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue);
+        emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue, expectedUnwindOpeningFee);
 
         vm.prank(_buyer);
-        (int256 actualPayoff, uint256 actualIncomeFeeValue) = milton.itfCalculatePayoff(
+        int256 actualPayoff = milton.itfCalculatePayoff(
             swap,
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
@@ -136,7 +136,6 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         //then
         assertEq(actualPayoff, expectedPayoff, "Incorrect payoff");
-        assertEq(actualIncomeFeeValue, expectedIncomeFeeValue, "Incorrect income fee value");
     }
 
     function testShouldCloseAndUnwindPayFixedSwapAsBuyerInMoreThanLast24hours() public {
@@ -174,7 +173,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366, "Incorrect buyer balance");
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873, "Incorrect buyer balance");
     }
 
     function testShouldCloseAndUnwindReceiveFixedSwapAsBuyerInMoreThanLast24hours() public {
@@ -213,7 +212,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 }

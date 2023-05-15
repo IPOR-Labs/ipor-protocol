@@ -8,7 +8,6 @@ library ItfDataProviderTypes {
         uint256 maxLpUtilizationRate;
         uint256 maxLpUtilizationRatePayFixed;
         uint256 maxLpUtilizationRateReceiveFixed;
-        uint256 incomeFeeRate;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
         uint256 iporPublicationFee;

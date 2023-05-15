@@ -91,9 +91,9 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		uint256 actualIpTokenBalanceForUserThree = _ipTokenDai.balanceOf(_userThree);
         uint256 actualExchangeRate = mockCase0JosephDai.itfCalculateExchangeRate(block.timestamp);
         // then
-		assertEq(actualIpTokenBalanceForUserThree, 1142857142857142857143);
-		assertEq(13125 * TestConstants.D14, exchangeRateBeforeProvideLiquidity);
-		assertEq(13125 * TestConstants.D14, actualExchangeRate);
+		assertEq(actualIpTokenBalanceForUserThree, 1187964338781575037555);
+		assertEq(1262664165103189493, exchangeRateBeforeProvideLiquidity);
+		assertEq(1262664165103189493, actualExchangeRate);
     }
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals() public {
@@ -144,9 +144,9 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		uint256 actualIpTokenBalanceForUserThree = _ipTokenDai.balanceOf(_userThree);
         uint256 actualExchangeRate = mockCase1JosephDai.itfCalculateExchangeRate(block.timestamp);
         // then
-		assertEq(267857142857142857289, actualIpTokenBalanceForUserThree);
-		assertEq(1312500000000000000, exchangeRateBeforeProvideLiquidity);
-		assertEq(1312500000000000000, actualExchangeRate);
+		assertEq(actualIpTokenBalanceForUserThree, 312964338781575037701);
+		assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493);
+		assertEq(actualExchangeRate, 1262664165103189493);
     }
 
 
@@ -198,9 +198,9 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		uint256 actualIpTokenBalanceForUserThree = _ipTokenUsdt.balanceOf(_userThree);
         uint256 actualExchangeRate = mockCase1JosephUsdt.itfCalculateExchangeRate(block.timestamp);
         // then
-		assertEq(267857142857142857289, actualIpTokenBalanceForUserThree);
-		assertEq(1312500000000000000, exchangeRateBeforeProvideLiquidity);
-		assertEq(1312500000000000000, actualExchangeRate);
+		assertEq(actualIpTokenBalanceForUserThree, 312964338781575037701);
+		assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493);
+		assertEq(actualExchangeRate, 1262664166047052506);
     }
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2() public {
@@ -254,9 +254,9 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		uint256 actualIpTokenBalanceForUserThree = _ipTokenUsdt.balanceOf(_userThree);
         uint256 actualExchangeRate = mockCase1JosephUsdt.itfCalculateExchangeRate(block.timestamp);
         // then
-		assertEq(271746142757142857289, actualIpTokenBalanceForUserThree);
-		assertEq(1312500000000000000, exchangeRateBeforeProvideLiquidity);
-		assertEq(1312499999183722969, actualExchangeRate);
+		assertEq(actualIpTokenBalanceForUserThree, 316853338681575037701);
+		assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493);
+		assertEq(actualExchangeRate, 1262664164405742069);
     }
 
     function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3() public {
@@ -310,9 +310,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 		uint256 actualIpTokenBalanceForUserThree = _ipTokenUsdt.balanceOf(_userThree);
         uint256 actualExchangeRate = mockCase1JosephUsdt.itfCalculateExchangeRate(block.timestamp);
         // then
-		assertEq(271747052857141857289, actualIpTokenBalanceForUserThree);
-		assertEq(1312500000000000000, exchangeRateBeforeProvideLiquidity);
-		assertEq(1312500000276706426, actualExchangeRate);
+		assertEq(actualIpTokenBalanceForUserThree, 316854248781574037701, "incorrect ipToken balance for user three");
+		assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493, "incorrect exchange rate before provide liquidity");
+		assertEq(actualExchangeRate, 1262664164102524851, "incorrect exchange rate");
+
     }
 
 }

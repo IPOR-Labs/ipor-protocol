@@ -247,7 +247,6 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         mockCase0MiltonDai.getMaxSwapCollateralAmount();
         mockCase0MiltonDai.getMaxLpUtilizationRate();
         mockCase0MiltonDai.getMaxLpUtilizationPerLegRate();
-        mockCase0MiltonDai.getIncomeFeeRate();
         mockCase0MiltonDai.getOpeningFeeRate();
         mockCase0MiltonDai.getOpeningFeeTreasuryPortionRate();
         mockCase0MiltonDai.getIporPublicationFee();
@@ -339,7 +338,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         // then
         IporTypes.IporSwapMemory memory swapPayFixed = miltonStorageDai.getSwapPayFixed(1);
         vm.stopPrank();
-        assertEq(9967009897030890732780, swapPayFixed.collateral);
+        assertEq(TestConstants.TC_COLLATERAL_18DEC, swapPayFixed.collateral);
     }
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
