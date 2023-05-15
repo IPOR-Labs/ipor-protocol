@@ -49,7 +49,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
         //given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -78,7 +78,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldPauseSmartContractSpecificMethods() public {
         //given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256[] memory swapIds = new uint256[](2);
@@ -153,7 +153,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         //given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -174,9 +174,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.miltonStorage.getSwapPayFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.miltonStorage.getSwapPayFixed(1);
         _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
@@ -184,9 +182,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        IporTypes.IporSwapMemory memory swapReceiveFixed = _iporProtocol
-            .miltonStorage
-            .getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory swapReceiveFixed = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
         vm.stopPrank();
 
         // when
@@ -209,7 +205,6 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.milton.getMaxSwapCollateralAmount();
         _iporProtocol.milton.getMaxLpUtilizationRate();
         _iporProtocol.milton.getMaxLpUtilizationPerLegRate();
-        _iporProtocol.milton.getIncomeFeeRate();
         _iporProtocol.milton.getOpeningFeeRate();
         _iporProtocol.milton.getOpeningFeeTreasuryPortionRate();
         _iporProtocol.milton.getIporPublicationFee();
@@ -223,7 +218,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
         //given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -234,7 +229,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
         //given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -270,16 +265,14 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // then
-        IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.miltonStorage.getSwapPayFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.miltonStorage.getSwapPayFixed(1);
         vm.stopPrank();
-        assertEq(9967009897030890732780, swapPayFixed.collateral);
+        assertEq(TestConstants.TC_COLLATERAL_18DEC, swapPayFixed.collateral);
     }
 
     function testShouldNotUnpauseSmartContractWhenSenderIsNotAnAdmin() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -293,7 +286,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldTransferOwnershipSimpleCase1() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -311,7 +304,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -322,7 +315,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipWhenSenderIsNotAppointedOwner() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -337,7 +330,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderIsNotAppointedOwner() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -354,7 +347,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -370,7 +363,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.startPrank(_admin);
@@ -448,7 +441,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldEmitMiltonSpreadModelChanged() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         address oldMiltonSpreadModel = _iporProtocol.milton.getMiltonSpreadModel();

@@ -281,7 +281,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }
@@ -324,7 +323,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }
@@ -366,7 +364,6 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.miltonStorage.updateStorageWhenCloseSwapPayFixed(
             derivativeItem,
             10 * TestConstants.D18_INT,
-            1 * TestConstants.D18,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
         );
     }

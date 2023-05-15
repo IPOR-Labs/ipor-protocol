@@ -114,7 +114,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        int256 expectedSoapBalance = -68267191075554066595;
+        int256 expectedSoapBalance = -68271959329907658167;
 
         // when
         (, , int256 soap) = calculateSoap(
@@ -170,8 +170,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        int256 expectedSoapBalance = -68267191075554025635;
-
+        int256 expectedSoapBalance = -68271959329907617203;
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
 
@@ -293,8 +292,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        int256 expectedSoapBalance = -136534382151108092230;
-
+        int256 expectedSoapBalance = -136543918659815275370;
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(2 * TestConstants.USD_28_000_18DEC, block.timestamp);
 
@@ -341,8 +339,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        int256 expectedSoapBalance = -136534382151108092230;
-
+        int256 expectedSoapBalance = -136543918659815275370;
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(2 * TestConstants.USD_28_000_6DEC, block.timestamp);
 
@@ -395,8 +392,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         ammDai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         ammDai.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapUsdt = -68267191075554066595;
-        int256 expectedSoapDai = -68267191075554066595;
+        int256 expectedSoapUsdt = -68271959329907658167;
+        int256 expectedSoapDai = -68271959329907658167;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
         vm.startPrank(_liquidityProvider);
@@ -443,7 +440,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        int256 expectedSoapBalance = -68267191075554025635;
+        int256 expectedSoapBalance = -68271959329907617203;
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -490,7 +487,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        int256 expectedSoapBalance = -68267191075554066595;
+        int256 expectedSoapBalance = -68271959329907658167;
 
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
@@ -546,7 +543,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         amm.dai.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
 
         int256 expectedSoapUsdt = TestConstants.ZERO_INT;
-        int256 expectedSoapDai = -68267191075554066595;
+        int256 expectedSoapDai = -68271959329907658167;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
         vm.startPrank(_liquidityProvider);
@@ -599,7 +596,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapBalance = 7918994164764269327487;
+        int256 expectedSoapBalance = 7919547282269285949611;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
         vm.prank(_liquidityProvider);
@@ -651,7 +648,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapBalance = 7918994164764269327487;
+        int256 expectedSoapBalance = 7919547282269285949611;
         uint256 endTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
 
         vm.prank(_userOne);
@@ -703,8 +700,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapBalanceAfter28Days = 7935378290622402313573;
-        int256 expectedSoapBalanceAfter50Days = 8055528546915377478426;
+        int256 expectedSoapBalanceAfter28Days = 7935932552508463797676;
+        int256 expectedSoapBalanceAfter50Days = 8056091200929101283695;
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
@@ -766,8 +763,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapBalanceAfter50Days = -205221535441070939562;
-
+        int256 expectedSoapBalanceAfter50Days = -205235869537207026869;
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(2 * TestConstants.USD_28_000_18DEC, block.timestamp);
 
@@ -815,8 +811,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoapBalanceAfter50Days = -205221535441070939562;
-
+        int256 expectedSoapBalanceAfter50Days = -205235869537207026869;
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(2 * TestConstants.USD_28_000_18DEC, block.timestamp);
 
@@ -930,10 +925,9 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         // then
-        int256 expectedSoapBeforeUpdateIndex = -136534382151108133190;
-        int256 expectedSoapAfterUpdateIndex25Days = -136534382151108133190;
-        int256 expectedSoapBalanceAfter50Days = -136534382151108133190;
-
+        int256 expectedSoapBeforeUpdateIndex = -136543918659815316333;
+        int256 expectedSoapAfterUpdateIndex25Days = -136543918659815316333;
+        int256 expectedSoapBalanceAfter50Days = -136543918659815316333;
         assertEq(soapBeforeUpdateIndex, expectedSoapBeforeUpdateIndex);
         assertEq(soapAfterUpdateIndex25Days, expectedSoapAfterUpdateIndex25Days);
         assertEq(soapAfterUpdateIndex50Days, expectedSoapBalanceAfter50Days);
@@ -994,7 +988,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
 
-        int256 expectedSoap50Days = -205221535441070939562;
+        int256 expectedSoap50Days = -205235869537207026869;
 
         vm.prank(_liquidityProvider);
         _iporProtocol.joseph.itfProvideLiquidity(2 * TestConstants.USD_28_000_18DEC, block.timestamp);

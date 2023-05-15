@@ -57,9 +57,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
         /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
-        uint256 transferredToLiquidator,
-        /// @notice incomeFeeValue value transferred to treasury
-        uint256 incomeFeeValue
+        uint256 transferredToLiquidator
     );
 
     event MiltonSpreadModelChanged(
@@ -88,7 +86,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -141,7 +139,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -300,7 +298,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -339,9 +337,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
-            18957318804358692392282, // transferredToBuyer
-            TestConstants.ZERO, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            19955412124333030204016, // transferredToBuyer
+            TestConstants.ZERO // transferredToLiquidator
         );
 
         _iporProtocol.milton.itfCloseSwapPayFixed(
@@ -391,9 +388,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
-            18957318804000000000000, // transferredToBuyer
-            TestConstants.ZERO, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            19955412124000000000000, // transferredToBuyer
+            TestConstants.ZERO // transferredToLiquidator
         );
 
         _iporProtocol.milton.itfCloseSwapPayFixed(
@@ -445,9 +441,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
-            18937318804000000000000, // transferredToBuyer
-            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC, // transferredToLiquidator
-            TestConstants.TC_INCOME_TAX_18DEC // incomeFeeValue
+            19935412124000000000000, // transferredToBuyer
+            TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
         );
         _iporProtocol.milton.itfCloseSwapPayFixed(
             1, // swapId
@@ -457,7 +452,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitMiltonSpreadModelChanged() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 

@@ -78,7 +78,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
-        assertEq(myBalanceBefore - myBalanceAfter, 108663366);
+        assertEq(myBalanceBefore - myBalanceAfter, 48075873);
     }
 
     function testOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
@@ -117,7 +117,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
-        assertEq(myBalanceBefore - myBalanceAfter, 108663366);
+        assertEq(myBalanceBefore - myBalanceAfter, 48075873);
     }
 
     function testOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
@@ -156,7 +156,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
-        assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366, "incorrect balance");
+
+        assertEq(myBalanceBefore - myBalanceAfter, 48075873362445411054, "incorrect balance");
     }
 
     function testOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
@@ -195,6 +196,6 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
-        assertEq(myBalanceBefore - myBalanceAfter, 108663366336633663366);
+        assertEq(myBalanceBefore - myBalanceAfter, 48075873362445411054);
     }
 }

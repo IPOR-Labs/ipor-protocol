@@ -190,12 +190,10 @@ interface IMiltonStorage {
     /// @notice Updates structures in the storage: balance, swaps, SOAP indicators when closing Pay-Fixed swap. Function is only available to Milton.
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param payoff amount that trader has earned or lost on the swap, represented in 18 decimals, it can be negative.
-    /// @param incomeFeeValue income fee rate used to calculate the income fee deducted from trader profit payoff, configuration param represented in 18 decimals
     /// @param closingTimestamp moment when the swap was closed
     function updateStorageWhenCloseSwapPayFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
-        uint256 incomeFeeValue,
         uint256 closingTimestamp
     ) external;
 
@@ -203,12 +201,10 @@ interface IMiltonStorage {
     /// Function is only available to Milton.
     /// @param iporSwap swap structure {IporTypes.IporSwapMemory}
     /// @param payoff amount that trader has earned or lost, represented in 18 decimals, can be negative.
-    /// @param incomeFeeValue amount of fee calculated based on payoff.
     /// @param closingTimestamp moment when swap was closed
     function updateStorageWhenCloseSwapReceiveFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
-        uint256 incomeFeeValue,
         uint256 closingTimestamp
     ) external;
 

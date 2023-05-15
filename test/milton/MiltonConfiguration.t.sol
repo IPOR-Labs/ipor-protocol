@@ -154,25 +154,18 @@ contract MiltonConfiguration is Test, TestCommons {
         assertEq(actualValue, TestConstants.USD_100_000_18DEC);
     }
 
-    function testShouldSetupInitValueForIncomeFeePercentage() public {
-        // when
-        uint256 actualValue = _miltonDai.getIncomeFeeRate();
-        // then
-        assertEq(actualValue, 1 * TestConstants.D17);
-    }
-
     function testShouldSetupInitValueForOpeningFeePercentage() public {
         // when
         uint256 actualValue = _miltonDai.getOpeningFeeRate();
         // then
-        assertEq(actualValue, 1 * TestConstants.D16);
+        assertEq(actualValue, 5 * TestConstants.D14);
     }
 
     function testShouldSetupInitValueForOpeningFeeTreasuryPercentage() public {
         // when
         uint256 actualValue = _miltonDai.getOpeningFeeTreasuryPortionRate();
         // then
-        assertEq(actualValue, TestConstants.ZERO);
+        assertEq(actualValue, 5 * TestConstants.D17);
     }
 
     function testShouldSetupInitValueForIporPublicationFeeAmount() public {
@@ -206,13 +199,6 @@ contract MiltonConfiguration is Test, TestCommons {
     function testShouldInitValueForOpeningFeeTreasuryPercentageLowerThanOneHundredPercent() public {
         // when
         uint256 actualValue = _miltonDai.getOpeningFeeTreasuryPortionRate();
-        // then
-        assertLe(actualValue, TestConstants.PERCENTAGE_100_18DEC);
-    }
-
-    function testShouldInitValueForIncomeFeePercentageLowerThanHundredPercent() public {
-        // when
-        uint256 actualValue = _miltonDai.getIncomeFeeRate();
         // then
         assertLe(actualValue, TestConstants.PERCENTAGE_100_18DEC);
     }

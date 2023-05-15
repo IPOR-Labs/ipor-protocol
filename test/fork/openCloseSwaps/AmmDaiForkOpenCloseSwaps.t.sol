@@ -123,8 +123,8 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
-        assertEq(swap.collateral, 64356435643564356436);
-        assertEq(swap.notional, 643564356435643564360);
+        assertEq(swap.collateral, 64975078052253930028);
+        assertEq(swap.notional, 649750780522539300280);
         assertEq(swapId, 1);
     }
 
@@ -157,8 +157,8 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
-        assertEq(swap.collateral, 64356435643564356436);
-        assertEq(swap.notional, 643564356435643564360);
+        assertEq(swap.collateral, 64975078052253930028);
+        assertEq(swap.notional, 649750780522539300280);
         assertEq(swapId, 1);
     }
 

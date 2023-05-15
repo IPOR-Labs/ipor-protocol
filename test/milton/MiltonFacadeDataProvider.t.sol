@@ -34,7 +34,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         _ammCfg.miltonDaiTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _ammCfg.miltonUsdtTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _ammCfg.miltonUsdcTestCase = BuilderUtils.MiltonTestCase.CASE0;
-
     }
 
     function prepareMiltonFacadeDataProvider(IporProtocolFactory.Amm memory amm)
@@ -101,7 +100,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.usdt.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
         amm.usdc.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
         amm.dai.spreadModel.setCalculateSpreadReceiveFixed(1 * TestConstants.D16_INT);
-
         vm.startPrank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.usdt.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         amm.iporOracle.itfUpdateIndex(address(amm.usdc.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
@@ -116,7 +114,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         MiltonFacadeTypes.AssetConfiguration[] memory assetConfigurations = miltonFacadeDataProvider.getConfiguration();
-
         // then
         for (uint256 i; i < assetConfigurations.length; ++i) {
             assertEq(TestConstants.LEVERAGE_18DEC, assetConfigurations[i].minLeverage);
@@ -128,7 +125,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
                 TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC,
                 assetConfigurations[i].liquidationDepositAmount
             );
-            assertEq(1 * TestConstants.D17, assetConfigurations[i].incomeFeeRate);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadPayFixed);
             assertEq(1 * TestConstants.D16_INT, assetConfigurations[i].spreadReceiveFixed);
             assertEq(8 * TestConstants.D17, assetConfigurations[i].maxLpUtilizationRate);
@@ -215,10 +211,8 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-
         vm.prank(_liquidityProvider);
         amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
 
@@ -230,7 +224,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             0,
             0
         );
-
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -241,7 +234,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
@@ -265,7 +257,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
@@ -277,7 +268,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             0,
             10
         );
-
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -288,12 +278,10 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
         IMiltonFacadeDataProvider miltonFacadeDataProvider = prepareMiltonFacadeDataProvider(amm);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
         amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-
         // when
         vm.prank(_userTwo);
         (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
@@ -301,7 +289,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             10,
             10
         );
-
         // then
         assertEq(totalCountDai, TestConstants.ZERO);
         assertEq(swapsDai.length, TestConstants.ZERO);
@@ -319,13 +306,10 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
         amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000047708334227);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-
         vm.prank(_liquidityProvider);
         amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -341,7 +325,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             0,
             10
         );
-
         // then
         assertEq(totalCountDai, 11);
         assertEq(swapsDai.length, 10);
@@ -358,13 +341,10 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
         amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-
         vm.prank(_liquidityProvider);
         amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -380,7 +360,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             10,
             10
         );
-
         // then
         assertEq(totalCountDai, 22);
         assertEq(swapsDai.length, 10);
@@ -397,13 +376,10 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
         amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.dai.spreadModel.setCalculateQuoteReceiveFixed(20000023854167113);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
-
         vm.prank(_liquidityProvider);
         amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
-
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -418,7 +394,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             20,
             10
         );
-
         // then
         assertEq(totalCountDai, 22);
         assertEq(swapsDai.length, 2);
@@ -435,7 +410,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         amm.usdc.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
         amm.dai.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         amm.dai.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
-
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
@@ -455,7 +429,6 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
             20,
             10
         );
-
         // then
         assertEq(totalCountDai, 20);
         assertEq(0, swapsDai.length);

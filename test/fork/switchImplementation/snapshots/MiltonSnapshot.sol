@@ -72,10 +72,10 @@ contract MiltonSnapshot is Script, Test {
 //        .getMaxLpUtilizationRatePayFixed(); TODO revert
 //        miltonMaxLpUtilizationRateReceiveFixed = milton
 //        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
-        miltonIncomeFeeRate = milton.getIncomeFeeRate();
-        miltonOpeningFeeRate = milton.getOpeningFeeRate();
-        miltonOpeningFeeTreasuryPortionRate = milton
-        .getOpeningFeeTreasuryPortionRate();
+
+//        miltonOpeningFeeRate = milton.getOpeningFeeRate();
+//        miltonOpeningFeeTreasuryPortionRate = milton
+//        .getOpeningFeeTreasuryPortionRate();
         miltonIporPublicationFee = milton.getIporPublicationFee();
         miltonLiquidationDepositAmount = milton
         .getLiquidationDepositAmount();
@@ -140,11 +140,6 @@ contract MiltonSnapshot is Script, Test {
             miltonJson,
             "miltonMaxLpUtilizationRateReceiveFixed",
             miltonMaxLpUtilizationRateReceiveFixed
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonIncomeFeeRate",
-            miltonIncomeFeeRate
         );
         vm.serializeUint(
             miltonJson,

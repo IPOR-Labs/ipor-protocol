@@ -78,7 +78,6 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
-            milton.getIncomeFeeRate(),
             milton.getOpeningFeeRate(),
             milton.getOpeningFeeTreasuryPortionRate(),
             milton.getIporPublicationFee(),
