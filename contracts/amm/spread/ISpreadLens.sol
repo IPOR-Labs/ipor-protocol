@@ -14,13 +14,13 @@ interface ISpreadLens {
     function calculateBaseSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue);
 
     function calculateSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue);
 
 }

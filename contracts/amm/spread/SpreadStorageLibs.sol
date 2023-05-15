@@ -94,6 +94,8 @@ library SpreadStorageLibs {
     }
 
     function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
+
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
+//        slot = uint256(keccak256("ipor.io.storage.spread"));
     }
 }

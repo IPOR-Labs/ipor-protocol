@@ -55,6 +55,8 @@ contract SpreadRouter is OpenzeppelinStorage {
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
         ) {
+            onlyAmm();
+            onlyNotPause();
             return SPREAD_28_DAYS;
         }
         if (
@@ -63,6 +65,7 @@ contract SpreadRouter is OpenzeppelinStorage {
             sig == ISpreadLens.calculateSpreadPayFixed28Days.selector ||
             sig == ISpreadLens.calculateBaseSpreadPayFixed28Days.selector
         ) {
+            nonReentrant();
             return LENS;
         }
         return address(0);
@@ -71,6 +74,7 @@ contract SpreadRouter is OpenzeppelinStorage {
     /// @dev Delegates the current call to `implementation`.
     /// This function does not return to its internal call site, it will return directly to the external caller.
     function _delegate(address implementation) private {
+
         // solhint-disable-next-line no-inline-assembly
         assembly {
         // Copy msg.data. We take full control of memory in this inline assembly
@@ -94,6 +98,10 @@ contract SpreadRouter is OpenzeppelinStorage {
                 return (0, returndatasize())
             }
         }
+        if(_status = _ENTERED){
+            _status = _NOT_ENTERED;
+        }
+
     }
 
     fallback() external {

@@ -68,4 +68,17 @@ library IporTypes {
         /// @notice Vault's balance, describes how much asset has been transfered to Asset Management Vault (Stanley)
         uint256 vault;
     }
+
+    struct SwapsBalanceMemory {
+        /// @notice Swap's balance for Pay Fixed leg
+        uint256 totalCollateralPayFixed;
+        /// @notice Swap's balance for Receive Fixed leg
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Liquidity Pool's Balance
+        uint256 liquidityPool;
+        /// @notice Swap's notional balance for Pay Fixed leg
+        uint256 totalNotionalPayFixed;
+        /// @notice Swap's notional balance for Receive Fixed leg
+        uint256 totalNotionalReceiveFixed;
+    }
 }

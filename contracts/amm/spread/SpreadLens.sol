@@ -47,7 +47,7 @@ contract SpreadLens is ISpreadLens{
     function calculateBaseSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view override returns (int256 spreadValue) {
         spreadValue = _calculateSpreadPremiumsPayFixed(
         asset,
@@ -59,7 +59,7 @@ contract SpreadLens is ISpreadLens{
     function calculateSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view override returns (int256 spreadValue) {
         // TODO: implement with imbalance part
         spreadValue = _calculateSpreadPremiumsPayFixed(
@@ -72,7 +72,7 @@ contract SpreadLens is ISpreadLens{
     function calculateBaseSpreadReceiveFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
         spreadValue = _calculateSpreadPremiumsReceiveFixed(asset, accruedIpor, accruedBalance);
     }
@@ -80,7 +80,7 @@ contract SpreadLens is ISpreadLens{
     function calculateSpreadReceiveFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
         // TODO: implement with imbalance part
         spreadValue = _calculateSpreadPremiumsReceiveFixed(asset, accruedIpor, accruedBalance);
@@ -89,7 +89,7 @@ contract SpreadLens is ISpreadLens{
     function _calculateSpreadPremiumsReceiveFixed(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) internal view virtual returns (int256 baseSpread) {
         return
         BaseSpread28DaysLibs._calculateSpreadPremiumsReceiveFixed(
@@ -102,7 +102,7 @@ contract SpreadLens is ISpreadLens{
     function _calculateSpreadPremiumsPayFixed(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) internal view virtual returns (int256 baseSpread) {
         return
         BaseSpread28DaysLibs._calculateSpreadPremiumsPayFixed(

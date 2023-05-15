@@ -14,7 +14,7 @@ library BaseSpread28DaysLibs {
 
     function _calculateSpreadPremiumsPayFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance,
+        IporTypes.SwapsBalanceMemory memory accruedBalance,
         Spread28DaysConfigLibs.BaseSpreadConfig memory config
     ) internal view returns (int256 spreadPremiums) {
         require(
@@ -89,7 +89,7 @@ library BaseSpread28DaysLibs {
 
     function _calculateSpreadPremiumsReceiveFixed(
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance,
+        IporTypes.SwapsBalanceMemory memory accruedBalance,
         Spread28DaysConfigLibs.BaseSpreadConfig memory config
     ) internal view returns (int256 spreadPremiums) {
         require(

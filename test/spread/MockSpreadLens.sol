@@ -33,7 +33,7 @@ contract MockSpreadLens is ISpreadLens {
     function calculateBaseSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
         spreadValue = -1;
     }
@@ -41,7 +41,7 @@ contract MockSpreadLens is ISpreadLens {
     function calculateSpreadPayFixed28Days(
         address asset,
         IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory accruedBalance
+        IporTypes.SwapsBalanceMemory memory accruedBalance
     ) external view returns (int256 spreadValue) {
         spreadValue = -2;
     }

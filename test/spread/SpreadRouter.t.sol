@@ -1,15 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-
 import "../TestCommons.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
 import "./MockSpread28Days.sol";
 import "./MockSpreadLens.sol";
 
-
 contract SpreadRouterTest is TestCommons {
-
     MockTestnetToken internal _dai;
     MockTestnetToken internal _usdc;
     MockTestnetToken internal _usdt;
@@ -32,12 +29,20 @@ contract SpreadRouterTest is TestCommons {
         );
 
         IporTypes.AccruedIpor memory accruedIpor;
-        IporTypes.MiltonBalancesMemory memory accruedBalance;
+        IporTypes.SwapsBalanceMemory memory accruedBalance;
         // when
 
         SpreadRouter router = new SpreadRouter(deployedContracts);
-        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(address(_dai), accruedIpor, accruedBalance);
-        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(address(_dai), accruedIpor, accruedBalance);
+        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(
+            address(_dai),
+            accruedIpor,
+            accruedBalance,
+            0,
+            0,
+            0
+        );
+        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router))
+            .calculateQuoteReceiveFixed28Days(address(_dai), accruedIpor, accruedBalance, 0, 0, 0);
 
         // then
         assertEq(spreadQuotePayFixed, 1);
@@ -58,12 +63,17 @@ contract SpreadRouterTest is TestCommons {
         );
 
         IporTypes.AccruedIpor memory accruedIpor;
-        IporTypes.MiltonBalancesMemory memory accruedBalance;
+        IporTypes.SwapsBalanceMemory memory accruedBalance;
         // when
 
         SpreadRouter router = new SpreadRouter(deployedContracts);
-        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(address(_usdc), accruedIpor, accruedBalance);
-        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(address(_usdc), accruedIpor, accruedBalance);
+        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(
+            address(_usdc),
+            accruedIpor,
+            accruedBalance,0,0,0
+        );
+        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router))
+            .calculateQuoteReceiveFixed28Days(address(_usdc), accruedIpor, accruedBalance,0,0,0);
 
         // then
         assertEq(spreadQuotePayFixed, 1);
@@ -84,12 +94,17 @@ contract SpreadRouterTest is TestCommons {
         );
 
         IporTypes.AccruedIpor memory accruedIpor;
-        IporTypes.MiltonBalancesMemory memory accruedBalance;
+        IporTypes.SwapsBalanceMemory memory accruedBalance;
         // when
 
         SpreadRouter router = new SpreadRouter(deployedContracts);
-        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(address(_usdt), accruedIpor, accruedBalance);
-        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router)).calculateQuoteReceiveFixed28Days(address(_usdt), accruedIpor, accruedBalance);
+        uint256 spreadQuotePayFixed = ISpread28Days(address(router)).calculateQuotePayFixed28Days(
+            address(_usdt),
+            accruedIpor,
+            accruedBalance,0,0,0
+        );
+        uint256 spreadQuoteReceiveFixed = ISpread28Days(address(router))
+            .calculateQuoteReceiveFixed28Days(address(_usdt), accruedIpor, accruedBalance,0,0,0);
 
         // then
         assertEq(spreadQuotePayFixed, 1);
