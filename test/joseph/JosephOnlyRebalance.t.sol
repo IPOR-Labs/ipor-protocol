@@ -8,7 +8,7 @@ import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/amm/MiltonStorage.sol";
 import "../../contracts/amm/pool/JosephDai.sol";
 import "./MockJosephDai.sol";
-import "../../contracts/itf/ItfJoseph18D.sol";
+import "../../contracts/itf/ItfJoseph.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -19,7 +19,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     uint32 private _blockTimestamp = 1641701;
 
     function setUp() public {
-        _cfg.josephImplementation = address(new ItfJoseph18D());
+        _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _cfg.iporRiskManagementOracleUpdater = address(this);
     }
 

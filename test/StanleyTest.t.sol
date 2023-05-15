@@ -80,7 +80,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -145,7 +145,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -211,7 +211,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -277,7 +277,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),

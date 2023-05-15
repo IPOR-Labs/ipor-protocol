@@ -7,9 +7,7 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/joseph/MockCase1Joseph18D.sol";
-import "../../contracts/mocks/joseph/MockCase1Joseph6D.sol";
-
+import "../../contracts/itf/ItfJoseph.sol";
 
 contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -36,9 +34,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidity18Decimals()
-        public
-    {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidity18Decimals() public {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -61,9 +57,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
-        );
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         // when
         vm.prank(_userThree);
@@ -78,12 +72,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         assertEq(1262664165103189493, actualExchangeRate);
     }
 
-    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals()
-        public
-    {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems18Decimals() public {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1Joseph18D());
+        _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -104,9 +96,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
-        );
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         // when
         vm.startPrank(_userThree);
@@ -123,12 +113,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         assertEq(actualExchangeRate, 1262664165103189493);
     }
 
-    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase1()
-        public
-    {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase1() public {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1Joseph6D());
+        _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -149,9 +137,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
-        );
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         // when
         vm.startPrank(_userThree);
@@ -168,12 +154,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         assertEq(actualExchangeRate, 1262664166047052506);
     }
 
-    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2()
-        public
-    {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase2() public {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1Joseph6D());
+        _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -194,9 +178,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
-        );
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         //Redeemed amount represented in 18 decimals after conversion to 6 decimals makes rounding up
         //and then user takes a little bit more stable,
@@ -217,12 +199,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         assertEq(actualExchangeRate, 1262664164405742069);
     }
 
-    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3()
-        public
-    {
+    function testShouldNotChangeExchangeRateWhenLiquidityProviderProvidesLiquidityAndRedeems6DecimalsCase3() public {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1Joseph6D());
+        _cfg.josephImplementation = address(new ItfJoseph(6, true));
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -243,9 +223,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
             TestConstants.LEVERAGE_18DEC
         );
 
-        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
-        );
+        uint256 exchangeRateBeforeProvideLiquidity = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         //Redeemed amount represented in 18 decimals after conversion to 6 decimals makes rounding down
         //and then user takes a little bit less stable,
@@ -262,7 +240,11 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
 
         assertEq(actualIpTokenBalanceForUserThree, 316854248781574037701, "incorrect ipToken balance for user three");
-        assertEq(exchangeRateBeforeProvideLiquidity, 1262664165103189493, "incorrect exchange rate before provide liquidity");
+        assertEq(
+            exchangeRateBeforeProvideLiquidity,
+            1262664165103189493,
+            "incorrect exchange rate before provide liquidity"
+        );
         assertEq(actualExchangeRate, 1262664164102524851, "incorrect exchange rate");
     }
 }

@@ -7,11 +7,9 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 import "../../contracts/interfaces/IJosephInternal.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/itf/ItfJoseph18D.sol";
-import "../../contracts/itf/ItfJoseph6D.sol";
+import "../../contracts/itf/ItfJoseph.sol";
 
 contract JosephUtils is Test {
-
     struct ExchangeRateAndPayoff {
         uint256 initialExchangeRate;
         uint256 exchangeRateAfter28Days;
@@ -40,11 +38,21 @@ contract JosephUtils is Test {
         address miltonUsdc,
         address miltonStorageUsdc,
         address stanleyUsdc
-    ) public returns (ItfJoseph6D) {
-        ItfJoseph6D josephUsdcImplementation = new ItfJoseph6D();
-        ERC1967Proxy josephProxy =
-        new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
-        return ItfJoseph6D(address(josephProxy));
+    ) public returns (ItfJoseph) {
+        ItfJoseph josephUsdcImplementation = new ItfJoseph(6, true);
+        ERC1967Proxy josephProxy = new ERC1967Proxy(
+            address(josephUsdcImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                tokenUsdc,
+                ipTokenUsdc,
+                miltonUsdc,
+                miltonStorageUsdc,
+                stanleyUsdc
+            )
+        );
+        return ItfJoseph(address(josephProxy));
     }
 
     function getMockCase0JosephDai(
@@ -53,11 +61,20 @@ contract JosephUtils is Test {
         address miltonDai,
         address miltonStorageDai,
         address stanleyDai
-    ) public returns (ItfJoseph18D) {
-        ItfJoseph18D josephDaiImplementation = new ItfJoseph18D();
-        ERC1967Proxy josephProxy =
-        new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
-        return ItfJoseph18D(address(josephProxy));
+    ) public returns (ItfJoseph) {
+        ItfJoseph josephDaiImplementation = new ItfJoseph(18, true);
+        ERC1967Proxy josephProxy = new ERC1967Proxy(
+            address(josephDaiImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                tokenDai,
+                ipTokenDai,
+                miltonDai,
+                miltonStorageDai,
+                stanleyDai
+            )
+        );
+        return ItfJoseph(address(josephProxy));
     }
-
 }
