@@ -14,9 +14,9 @@ import "../../contracts/itf/ItfDataProvider.sol";
 import "../../contracts/itf/types/ItfDataProviderTypes.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonUsdc.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephUsdc.sol";
+import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "../../contracts/mocks/milton/MockCase0Milton6D.sol";
+import "../../contracts/mocks/joseph/MockCase1Joseph6D.sol";
 
 contract ItfDataProviderTest is TestCommons, DataUtils {
     MockBaseMiltonSpreadModelUsdc internal _miltonSpreadModel;
@@ -29,9 +29,9 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 	ItfDataProvider internal _itfDataProvider;
 	ItfIporOracle internal _iporOracle;
 	MiltonStorage internal _miltonStorage;
-	MockCase0MiltonUsdc internal _milton;
-	MockCase0JosephUsdc internal _joseph;
-	MockCase1Stanley internal _stanley;
+	MockCase0Milton6D internal _milton;
+	ItfJosephUsdc internal _joseph;
+	MockCaseBaseStanley internal _stanley;
 	IIporRiskManagementOracle internal _RiskManagementOracle;
 
     function getItfDataProvider(

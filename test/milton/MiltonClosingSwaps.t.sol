@@ -9,17 +9,7 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import "../../contracts/libraries/math/IporMath.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../contracts/itf/ItfMiltonDai.sol";
-import "../../contracts/itf/ItfJosephUsdt.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
 
 contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;

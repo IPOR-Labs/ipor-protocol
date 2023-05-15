@@ -6,16 +6,10 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/milton/MockCase1MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase1MiltonUsdt.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/joseph/MockCase1JosephDai.sol";
-import "../../contracts/mocks/joseph/MockCase1JosephUsdt.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
+import "../../contracts/mocks/joseph/MockCase1Joseph18D.sol";
+import "../../contracts/mocks/joseph/MockCase1Joseph6D.sol";
+
 
 contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -89,7 +83,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1JosephDai());
+        _cfg.josephImplementation = address(new MockCase1Joseph18D());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -134,7 +128,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1JosephUsdt());
+        _cfg.josephImplementation = address(new MockCase1Joseph6D());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -179,7 +173,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1JosephUsdt());
+        _cfg.josephImplementation = address(new MockCase1Joseph6D());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -228,7 +222,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
-        _cfg.josephImplementation = address(new MockCase1JosephUsdt());
+        _cfg.josephImplementation = address(new MockCase1Joseph6D());
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);

@@ -7,20 +7,11 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfDataProvider.sol";
-import "../../contracts/itf/types/ItfDataProviderTypes.sol";
 import "../../contracts/itf/ItfLiquidator.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
 import "../../contracts/interfaces/types/IporTypes.sol";
 import "../../contracts/interfaces/types/MiltonTypes.sol";
 import "../utils/builder/BuilderUtils.sol";
+import {MockCaseBaseStanley} from "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
 
 contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -83,7 +74,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         ItfLiquidator itfLiquidator = new ItfLiquidator(
@@ -159,7 +150,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         ItfLiquidator itfLiquidator = new ItfLiquidator(
@@ -236,7 +227,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
 
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -321,7 +312,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -481,7 +472,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -572,7 +563,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -645,7 +636,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -726,7 +717,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -812,7 +803,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -892,7 +883,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE3;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         ItfLiquidator itfLiquidator = new ItfLiquidator(
@@ -919,7 +910,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
 
@@ -1016,7 +1007,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         ItfLiquidator itfLiquidator = new ItfLiquidator(
@@ -1121,7 +1112,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_1_18DEC);
 
@@ -1225,7 +1216,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -1331,7 +1322,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
 
@@ -1444,7 +1435,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_151_18DEC);
 
@@ -1544,7 +1535,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_10_18DEC);
 
@@ -1643,7 +1634,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_161_18DEC);
 
@@ -1746,7 +1737,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE9;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_150_18DEC);
 
@@ -1846,7 +1837,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -1951,7 +1942,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -2054,7 +2045,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_159_18DEC);
 
@@ -2155,7 +2146,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE4;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_10_18DEC);
 
@@ -2256,7 +2247,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -2360,7 +2351,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
         _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.stanleyImplementation = address(new MockCase0Stanley());
+        _cfg.stanleyImplementation = address(new MockCaseBaseStanley());
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_4_18DEC);
 

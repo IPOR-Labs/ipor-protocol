@@ -4,43 +4,27 @@ import "../../../contracts/itf/ItfMilton.sol";
 import "../../../contracts/itf/ItfMiltonUsdt.sol";
 import "../../../contracts/itf/ItfMiltonUsdc.sol";
 import "../../../contracts/itf/ItfMiltonDai.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase7MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 
-import "../../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonUsdt.sol";
+import "../../../contracts/mocks/milton/MockCase0Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase1Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase2Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase3Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase4Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase5Milton6D.sol";
+import "../../../contracts/mocks/milton/MockCase6Milton6D.sol";
 
-import "../../../contracts/mocks/milton/MockCase0MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonUsdc.sol";
+import "../../../contracts/mocks/milton/MockCase0Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase1Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase2Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase3Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase4Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase5Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase6Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase7Milton18D.sol";
+import "../../../contracts/mocks/milton/MockCase8Milton18D.sol";
 
-import "./AssetBuilder.sol";
+
 import "./BuilderUtils.sol";
-import "./IporOracleBuilder.sol";
-import "./IporWeightedBuilder.sol";
-import "./MockSpreadBuilder.sol";
-import "./MiltonStorageBuilder.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
 import "../../../contracts/itf/ItfMiltonDai.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
@@ -193,23 +177,23 @@ contract MiltonBuilder is Test {
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
             return new ItfMiltonDai(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonDai(iporRiskManagementOracle);
+            return new MockCase0Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonDai(iporRiskManagementOracle);
+            return new MockCase1Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonDai(iporRiskManagementOracle);
+            return new MockCase2Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonDai(iporRiskManagementOracle);
+            return new MockCase3Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonDai(iporRiskManagementOracle);
+            return new MockCase4Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonDai(iporRiskManagementOracle);
+            return new MockCase5Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonDai(iporRiskManagementOracle);
+            return new MockCase6Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE7) {
-            return new MockCase7MiltonDai(iporRiskManagementOracle);
+            return new MockCase7Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE8) {
-            return new MockCase8MiltonDai(iporRiskManagementOracle);
+            return new MockCase8Milton18D(iporRiskManagementOracle);
         } else {
             revert("Unsupported test case");
         }
@@ -223,19 +207,19 @@ contract MiltonBuilder is Test {
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
             return new ItfMiltonUsdt(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase0Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase1Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase2Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase3Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase4Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase5Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonUsdt(iporRiskManagementOracle);
+            return new MockCase6Milton6D(iporRiskManagementOracle);
         } else {
             revert("Unsupported test case");
         }
@@ -249,19 +233,19 @@ contract MiltonBuilder is Test {
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
             return new ItfMiltonUsdc(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase0Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase1Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase2Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase3Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase4Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase5Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonUsdc(iporRiskManagementOracle);
+            return new MockCase6Milton6D(iporRiskManagementOracle);
         } else {
             revert("Unsupported test case");
         }

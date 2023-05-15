@@ -11,6 +11,7 @@ import "../../../contracts/amm/MiltonStorage.sol";
 import "./AssetBuilder.sol";
 import "./IpTokenBuilder.sol";
 import "./IporOracleBuilder.sol";
+import "./IporWeightedBuilder.sol";
 import "./IporRiskManagementOracleBuilder.sol";
 import "./MiltonStorageBuilder.sol";
 import "./MockSpreadBuilder.sol";

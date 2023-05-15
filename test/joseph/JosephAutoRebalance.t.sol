@@ -8,20 +8,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../../contracts/libraries/math/IporMath.sol";
 import "../../contracts/libraries/Constants.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../contracts/itf/ItfMiltonDai.sol";
-import "../../contracts/itf/ItfJosephUsdt.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/itf/ItfStanley.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenUsdt.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -1416,10 +1402,7 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
-        uint256 userPositionCalculated = IporMath.division(
-            wadUserPosition * Constants.D18,
-            exchangeRate
-        );
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
 
         vm.prank(address(_userOne));
 
@@ -1427,14 +1410,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 
     function testRedeemAndNOTRebalanceUsdtCaseAutoRebalanceThresholdZEROMiltonBalanceIsOK() public {
@@ -1491,14 +1468,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
 
-        assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 
     function _executeProvideLiquidityDai(
@@ -1531,14 +1502,8 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         //then
 
-        assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 
     function _executeRedeemUsdt(
@@ -1570,24 +1535,15 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
 
-        uint256 userPositionCalculated = IporMath.division(
-            wadUserPosition * Constants.D18,
-            exchangeRate
-        );
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
 
         //when
         vm.prank(address(_userOne));
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 
     function _executeRedeemDai(
@@ -1619,23 +1575,14 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
         _iporProtocol.milton.depositToStanley(stanleyInitBalance);
 
         uint256 exchangeRate = _iporProtocol.joseph.calculateExchangeRate();
-        uint256 userPositionCalculated = IporMath.division(
-            wadUserPosition * Constants.D18,
-            exchangeRate
-        );
+        uint256 userPositionCalculated = IporMath.division(wadUserPosition * Constants.D18, exchangeRate);
 
         //when
         vm.prank(address(_userOne));
         _iporProtocol.joseph.redeem(userPositionCalculated);
 
         //then
-        assertEq(
-            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
-            expectedStanleyBalance
-        );
-        assertEq(
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)),
-            expectedMiltonBalance
-        );
+        assertEq(_iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)), expectedStanleyBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 }

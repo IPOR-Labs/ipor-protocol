@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "./MockCase5Milton.sol";
 
-contract MockCase5MiltonUsdt is MockCase5Milton {
+contract MockCase5Milton6D is MockCase5Milton {
 
     constructor(address iporRiskManagementOracle) MockCase5Milton(iporRiskManagementOracle) {
     }

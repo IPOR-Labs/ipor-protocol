@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "../../itf/ItfMilton.sol";
 
-contract MockCase8MiltonDai is ItfMilton {
+contract MockCase8Milton18D is ItfMilton {
     IMiltonStorage _mockMiltonStorage;
 
     /// @custom:oz-upgrades-unsafe-allow constructor

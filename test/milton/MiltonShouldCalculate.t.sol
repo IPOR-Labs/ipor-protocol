@@ -13,10 +13,9 @@ import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/milton/MockCase2MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase3MiltonDai.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
+import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "../../contracts/mocks/milton/MockCase2Milton18D.sol";
+import "../../contracts/mocks/milton/MockCase3Milton18D.sol";
 
 contract MiltonShouldCalculateTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

@@ -11,7 +11,7 @@ import "../../contracts/itf/ItfIporOracle.sol";
 import "../../contracts/tokens/IpToken.sol";
 import "../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
+import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
 import "../utils/builder/BuilderUtils.sol";
 
 contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {

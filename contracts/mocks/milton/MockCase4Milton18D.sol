@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "./MockCase1Milton.sol";
+import "./MockCase4Milton.sol";
 
-contract MockCase1MiltonDai is MockCase1Milton {
+contract MockCase4Milton18D is MockCase4Milton {
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) MockCase1Milton(iporRiskManagementOracle) {
+    constructor(address iporRiskManagementOracle) MockCase4Milton(iporRiskManagementOracle) {
     }
 
     function _getDecimals() internal pure virtual override returns (uint256) {
