@@ -40,8 +40,7 @@ on:
 
 jobs:
   foundry-tests:
-    runs-on:
-      group: ipor-protocol
+    runs-on: ipor-large-runner-01
     steps:
       - name: Checkout
         # from tag: v3.5.0
