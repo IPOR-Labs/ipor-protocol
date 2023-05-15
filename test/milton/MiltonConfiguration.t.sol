@@ -18,9 +18,10 @@ contract MiltonConfiguration is Test, TestCommons {
     MiltonDai internal _miltonDai;
 
     function setUp() public {
-        _miltonUsdt = new MiltonUsdt(address(0));
-        _miltonUsdc = new MiltonUsdc(address(0));
-        _miltonDai = new MiltonDai(address(0));
+        address fakeRiskOracle = address(this);
+        _miltonUsdt = new MiltonUsdt(fakeRiskOracle);
+        _miltonUsdc = new MiltonUsdc(fakeRiskOracle);
+        _miltonDai = new MiltonDai(fakeRiskOracle);
     }
 
     function testShouldCreateMiltonUsdt() public {

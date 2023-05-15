@@ -107,7 +107,7 @@ contract StanleyTest is TestCommons, DataUtils {
 		mockCase0JosephDai.depositToStanley(TestConstants.USD_1_000_18DEC);
         //Force deposit to simulate that IporVault earn money for Milton $3
 		vm.prank(_liquidityProvider);
-		stanleyDai.testDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
+		stanleyDai.forTestDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
 		// when
 		vm.prank(_admin);
 		mockCase0JosephDai.rebalance();
@@ -169,7 +169,7 @@ contract StanleyTest is TestCommons, DataUtils {
 		mockCase0JosephDai.depositToStanley(TestConstants.USD_19_997_18DEC);
         //Force deposit to simulate that IporVault earn money for Milton $3
 		vm.prank(_liquidityProvider);
-		stanleyDai.testDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
+		stanleyDai.forTestDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
 		// when
 		vm.prank(_admin);
 		mockCase0JosephDai.rebalance();
@@ -231,7 +231,7 @@ contract StanleyTest is TestCommons, DataUtils {
 		mockCase0JosephDai.depositToStanley(TestConstants.USD_19_997_18DEC);
 		//Force deposit to simulate that IporVault earn money for Milton $3
 		vm.prank(_liquidityProvider);
-		stanleyDai.testDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
+		stanleyDai.forTestDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
 		// when
 		vm.prank(_admin);
 		mockCase0JosephDai.rebalance();
@@ -287,7 +287,7 @@ contract StanleyTest is TestCommons, DataUtils {
 		mockCase0JosephDai.depositToStanley(TestConstants.USD_19_997_18DEC);
 		//Force deposit to simulate that IporVault earn money for Milton $3
 		vm.prank(_liquidityProvider);
-		stanleyDai.testDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
+		stanleyDai.forTestDeposit(address(mockCase0MiltonDai), TestConstants.USD_3_18DEC);
 		uint256 stanleyBalanceBefore = stanleyDai.totalBalance(address(mockCase0MiltonDai));
 		// when
 		vm.prank(_admin);

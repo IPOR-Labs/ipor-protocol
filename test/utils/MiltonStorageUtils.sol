@@ -23,13 +23,6 @@ contract MiltonStorageUtils is Test {
         return MiltonStorage(address(miltonStorageProxy));
     }
 
-    function getMiltonStorages() public returns (MiltonStorages memory) {
-        MiltonStorages memory miltonStorages;
-        miltonStorages.miltonStorageUsdt = getMiltonStorage();
-        miltonStorages.miltonStorageUsdc = getMiltonStorage();
-        miltonStorages.miltonStorageDai = getMiltonStorage();
-        return miltonStorages;
-    }
 
     function prepareSwapPayFixedStruct18DecSimpleCase1(address buyer) public view returns (AmmTypes.NewSwap memory) {
         AmmTypes.NewSwap memory newSwap;
