@@ -84,6 +84,8 @@ abstract contract MiltonInternal is
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporRiskManagementOracle) {
+        require(iporRiskManagementOracle != address(0), IporErrors.WRONG_ADDRESS);
+
         /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
         _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
     }

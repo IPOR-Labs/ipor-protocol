@@ -55,46 +55,22 @@ contract SwapUtils is Test {
         }
     }
 
-    function calculateSoap(address from, uint256 calculateTimestamp, ItfMilton milton)
+    function calculateSoap(
+        address from,
+        uint256 calculateTimestamp,
+        ItfMilton milton
+    )
         public
-        returns (int256, int256, int256)
+        returns (
+            int256,
+            int256,
+            int256
+        )
     {
         vm.prank(from);
-        (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) = milton.itfCalculateSoap(calculateTimestamp);
+        (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) = milton.itfCalculateSoap(
+            calculateTimestamp
+        );
         return (soapPayFixed, soapReceiveFixed, soap);
-    }
-
-    function openSwapPayFixed(
-        address from,
-        uint256 openTimestamp,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        ItfMilton milton
-    ) public {
-        vm.prank(from);
-        milton.itfOpenSwapPayFixed(
-            openTimestamp, // openTimestamp
-            totalAmount, // totalAmount
-            acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage
-        );
-    }
-
-    function openSwapReceiveFixed(
-        address from,
-        uint256 openTimestamp,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage,
-        ItfMilton milton
-    ) public {
-        vm.prank(from);
-        milton.itfOpenSwapReceiveFixed(
-            openTimestamp, // openTimestamp
-            totalAmount, // totalAmount
-            acceptableFixedInterestRate, // acceptableFixedInterestRate
-            leverage // leverage
-        );
     }
 }

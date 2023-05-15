@@ -2,8 +2,7 @@
 pragma solidity 0.8.16;
 
 library TestConstants {
-    uint256 public constant MAX_VALUE =
-        115792089237316195423570985008687907853269984665640564039457584007913129639935;
+    uint256 public constant MAX_VALUE = 115792089237316195423570985008687907853269984665640564039457584007913129639935;
 
     uint256 public constant RAY_UINT256 = 1e27;
     uint128 public constant RAY_UINT128 = 1e27;
@@ -99,7 +98,6 @@ library TestConstants {
 
     uint256 public constant TC_COLLATERAL_1000LEV_18DEC = 9745715050883770758093;
 
-
     uint256 public constant TC_OPENING_FEE_6DEC = 2293938;
     int256 public constant TC_OPENING_FEE_6DEC_INT = 2293938;
 
@@ -123,6 +121,7 @@ library TestConstants {
 
     uint256 public constant TOTAL_SUPPLY_18_DECIMALS = 10000000000000000 * 1e18;
     uint256 public constant USER_SUPPLY_10MLN_18DEC = 10000000 * 1e18;
+    uint256 public constant USER_SUPPLY_10MLN_6DEC = 10000000 * 1e6;
     int256 public constant USER_SUPPLY_10MLN_18DEC_INT = 10000000 * 1e18;
 
     uint256 public constant LEVERAGE_18DEC = 10 * 1e18;
@@ -208,7 +207,6 @@ library TestConstants {
     int256 public constant TC_LIQUIDATION_DEPOSIT_AMOUNT_6DEC_INT = 20 * 1000000;
     uint256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC = 10 * 1000000;
     int256 public constant TC_IPOR_PUBLICATION_AMOUNT_6DEC_INT = 10 * 1000000;
-
 
     uint256 public constant USER_SUPPLY_6_DECIMALS = 10000000 * 1000000;
 

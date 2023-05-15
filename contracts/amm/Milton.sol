@@ -367,7 +367,6 @@ abstract contract Milton is MiltonInternal, IMilton {
                 wadLiquidationDepositAmount + _getIporPublicationFee() + openingFeeAmount,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
-
         IporTypes.AccruedIpor memory accruedIndex;
 
         uint256 autoUpdateIporIndexThreshold = _getAutoUpdateIporIndexThreshold();

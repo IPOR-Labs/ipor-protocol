@@ -15,11 +15,21 @@ contract MockCaseBaseStanley is IStanley {
 
     mapping(address => uint256) private _balance;
 
-    uint256 private constant _FIXED_IV_TOKEN_PRICE = 1e18;
-
-    constructor(address asset) {
+    function initialize(
+        address asset,
+        address ivToken,
+        address strategyAave,
+        address strategyCompound
+    ) public {
         _asset = IERC20(asset);
     }
+
+    function setAsset(address asset) external {
+        require(asset != address(0), IporErrors.WRONG_ADDRESS);
+        _asset = IERC20(asset);
+    }
+
+    function setMilton(address newMilton) external {}
 
     function totalBalance(address who) external view override returns (uint256) {
         //@dev for simplicity we assume that reading total balance not include interest
@@ -31,7 +41,7 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function testDeposit(address recipient, uint256 assetAmount)
+    function forTestDeposit(address recipient, uint256 assetAmount)
         external
         returns (uint256 balance)
     {
