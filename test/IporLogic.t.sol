@@ -12,8 +12,6 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         IporOracleTypes.IPOR memory ipor;
         ipor.quasiIbtPrice = uint128(TestConstants.YEAR_IN_SECONDS * TestConstants.D18);
-        ipor.exponentialMovingAverage = uint64(TestConstants.P_0_3_DEC18);
-        ipor.exponentialWeightedMovingVariance = uint64(TestConstants.P_0_3_DEC18);
         ipor.indexValue = uint64(TestConstants.P_0_3_DEC18);
         ipor.lastUpdateTimestamp = uint32(block.timestamp);
         uint256 accrueTimestamp = block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS;
@@ -27,8 +25,6 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         IporOracleTypes.IPOR memory ipor;
         ipor.quasiIbtPrice = uint128(TestConstants.YEAR_IN_SECONDS * TestConstants.D18);
-        ipor.exponentialMovingAverage = uint64(TestConstants.P_0_3_DEC18);
-        ipor.exponentialWeightedMovingVariance = uint64(TestConstants.P_0_3_DEC18);
         ipor.indexValue = uint64(TestConstants.P_0_3_DEC18);
         ipor.lastUpdateTimestamp = uint32(block.timestamp);
         uint256 accrueTimestampSecond = block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS;

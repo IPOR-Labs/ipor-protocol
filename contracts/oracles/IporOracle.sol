@@ -49,9 +49,7 @@ contract IporOracle is
 
     function initialize(
         address[] memory assets,
-        uint32[] memory updateTimestamps,
-        uint64[] memory exponentialMovingAverages,
-        uint64[] memory exponentialWeightedMovingVariances
+        uint32[] memory updateTimestamps
     ) public initializer {
         __Pausable_init_unchained();
         __Ownable_init_unchained();
@@ -64,8 +62,6 @@ contract IporOracle is
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
                 Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-                exponentialMovingAverages[i],
-                exponentialWeightedMovingVariances[i],
                 0,
                 updateTimestamps[i]
             );
@@ -83,8 +79,6 @@ contract IporOracle is
         returns (
             uint256 indexValue,
             uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
             uint256 lastUpdateTimestamp
         )
     {
@@ -93,8 +87,6 @@ contract IporOracle is
         return (
             indexValue = ipor.indexValue,
             ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
-            exponentialMovingAverage = ipor.exponentialMovingAverage,
-            exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
             lastUpdateTimestamp = ipor.lastUpdateTimestamp
         );
     }
@@ -112,8 +104,8 @@ contract IporOracle is
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
             _calculateAccruedIbtPrice(calculateTimestamp, asset),
-            ipor.exponentialMovingAverage,
-            ipor.exponentialWeightedMovingVariance
+            0,
+            0
         );
     }
 
@@ -170,8 +162,6 @@ contract IporOracle is
         (
             accruedIpor.indexValue,
             accruedIpor.ibtPrice,
-            accruedIpor.exponentialMovingAverage,
-            accruedIpor.exponentialWeightedMovingVariance,
 
         ) = _updateIndex(asset, newIndexValue, block.timestamp);
     }
@@ -201,9 +191,7 @@ contract IporOracle is
 
     function addAsset(
         address asset,
-        uint256 updateTimestamp,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        uint256 updateTimestamp
     ) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -212,15 +200,11 @@ contract IporOracle is
         );
         _indexes[asset] = IporOracleTypes.IPOR(
             Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            exponentialMovingAverage.toUint64(),
-            exponentialWeightedMovingVariance.toUint64(),
             0,
             updateTimestamp.toUint32()
         );
         emit IporIndexAddAsset(
             asset,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
             updateTimestamp
         );
     }
@@ -265,8 +249,6 @@ contract IporOracle is
         returns (
             uint256 newIndexValue,
             uint256 newIbtPrice,
-            uint256 newExponentialMovingAverage,
-            uint256 newExponentialWeightedMovingVariance,
             uint256 lastUpdateTimestamp
         )
     {
@@ -279,25 +261,11 @@ contract IporOracle is
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
 
-        newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
-            ipor.exponentialMovingAverage,
-            indexValue,
-            _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-        );
-
-        newExponentialWeightedMovingVariance = IporLogic.calculateExponentialWeightedMovingVariance(
-                ipor.exponentialWeightedMovingVariance,
-                newExponentialMovingAverage,
-                indexValue,
-                _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-            );
 
         uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
             newQuasiIbtPrice.toUint128(),
-            newExponentialMovingAverage.toUint64(),
-            newExponentialWeightedMovingVariance.toUint64(),
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
@@ -310,8 +278,6 @@ contract IporOracle is
             asset,
             indexValue,
             newQuasiIbtPrice,
-            newExponentialMovingAverage,
-            newExponentialWeightedMovingVariance,
             updateTimestamp
         );
     }

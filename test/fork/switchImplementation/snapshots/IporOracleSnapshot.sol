@@ -44,8 +44,6 @@ contract IporOracleSnapshot is Script, Test {
         (
             indexValue,
             ibtPrice,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
             lastUpdateTimestamp
         ) = iporOracle.getIndex(_asset);
         blockNumber = block.number;

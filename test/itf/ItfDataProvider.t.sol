@@ -63,7 +63,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        _iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        _iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken));
         _RiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdcMockedToken),
@@ -138,8 +138,6 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         assertEq(iporOracleData.decayFactorValue, 999997217008929160);
         assertEq(iporOracleData.indexValue, TestConstants.ZERO);
         assertEq(iporOracleData.ibtPrice, TestConstants.D18);
-        assertEq(iporOracleData.exponentialMovingAverage, TestConstants.TC_5_EMA_18DEC_64UINT);
-        assertEq(iporOracleData.exponentialWeightedMovingVariance, TestConstants.ZERO);
         assertEq(iporOracleData.lastUpdateTimestamp, 1);
         assertEq(iporOracleData.accruedIndexValue, TestConstants.ZERO);
         assertEq(iporOracleData.accruedIbtPrice, TestConstants.D18);

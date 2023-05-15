@@ -30,9 +30,7 @@ contract ItfIporOracleTest is TestCommons, DataUtils {
         _iporOracle = getIporOracleAssets(
             _userOne,
             _assets,
-            uint32(block.timestamp),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
-            TestConstants.ZERO_64UINT
+            uint32(block.timestamp)
         );
     }
 

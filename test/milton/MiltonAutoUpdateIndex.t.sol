@@ -14,8 +14,6 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         address asset,
         uint256 indexValue,
         uint256 quasiIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
         uint256 updateTimestamp
     );
 
@@ -58,7 +56,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -97,7 +95,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -136,7 +134,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -176,7 +174,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
