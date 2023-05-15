@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "./ItfStanley.sol";
+import "./ItfJoseph.sol";
 
-contract ItfStanleyUsdt is ItfStanley {
+contract ItfJoseph18D is ItfJoseph {
     function _getDecimals() internal pure virtual override returns (uint256) {
-        return 6;
+        return 18;
     }
 }

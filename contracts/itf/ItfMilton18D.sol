@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "./ItfMilton.sol";
 
-contract ItfMiltonDai is ItfMilton {
+contract ItfMilton18D is ItfMilton {
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {

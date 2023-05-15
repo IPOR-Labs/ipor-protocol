@@ -27,4 +27,6 @@ contract MockTestnetToken is ERC20, IporOwnable {
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
+    /// @dev used only for Compound Share Token
+    function accrueInterest() public returns (uint) {}
 }

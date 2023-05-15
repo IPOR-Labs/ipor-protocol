@@ -7,8 +7,6 @@ import {TestConstants} from "../../../utils/TestConstants.sol";
 import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
 import {StanleyDai} from "../../../../contracts/vault/StanleyDai.sol";
 import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockTestnetShareTokenAaveDai} from "../../../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import {MockTestnetShareTokenCompoundDai} from "../../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
 import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
 
 contract StanleySetStrategyTest is TestCommons, DataUtils {
@@ -16,8 +14,8 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
     MockStrategy internal _strategyCompoundDai;
     MockTestnetToken internal _daiMockedToken;
     MockTestnetToken internal _usdtMockedToken;
-    MockTestnetShareTokenAaveDai internal _aDai;
-    MockTestnetShareTokenCompoundDai internal _cDai;
+    MockTestnetToken internal _aDai;
+    MockTestnetToken internal _cDai;
     StanleyDai internal _stanleyDai;
     IvToken internal _ivTokenDai;
 

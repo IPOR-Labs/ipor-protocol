@@ -7,8 +7,8 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
 import "../../contracts/interfaces/IJosephInternal.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
+import "../../contracts/itf/ItfJoseph18D.sol";
+import "../../contracts/itf/ItfJoseph6D.sol";
 
 contract JosephUtils is Test {
 
@@ -40,11 +40,11 @@ contract JosephUtils is Test {
         address miltonUsdc,
         address miltonStorageUsdc,
         address stanleyUsdc
-    ) public returns (ItfJosephUsdc) {
-        ItfJosephUsdc josephUsdcImplementation = new ItfJosephUsdc();
+    ) public returns (ItfJoseph6D) {
+        ItfJoseph6D josephUsdcImplementation = new ItfJoseph6D();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenUsdc, ipTokenUsdc, miltonUsdc, miltonStorageUsdc, stanleyUsdc));
-        return ItfJosephUsdc(address(josephProxy));
+        return ItfJoseph6D(address(josephProxy));
     }
 
     function getMockCase0JosephDai(
@@ -53,11 +53,11 @@ contract JosephUtils is Test {
         address miltonDai,
         address miltonStorageDai,
         address stanleyDai
-    ) public returns (ItfJosephDai) {
-        ItfJosephDai josephDaiImplementation = new ItfJosephDai();
+    ) public returns (ItfJoseph18D) {
+        ItfJoseph18D josephDaiImplementation = new ItfJoseph18D();
         ERC1967Proxy josephProxy =
         new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, tokenDai, ipTokenDai, miltonDai, miltonStorageDai, stanleyDai));
-        return ItfJosephDai(address(josephProxy));
+        return ItfJoseph18D(address(josephProxy));
     }
 
 }

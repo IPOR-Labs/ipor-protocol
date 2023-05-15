@@ -3,20 +3,14 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../contracts/itf/ItfStanley.sol";
-import "../../contracts/itf/ItfStanleyUsdt.sol";
-import "../../contracts/itf/ItfStanleyDai.sol";
+import "../../contracts/itf/ItfStanley6D.sol";
+import "../../contracts/itf/ItfStanley18D.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
 import "../../contracts/vault/StanleyDai.sol";
 import "../../contracts/vault/StanleyUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdc.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/mocks/tokens/AAVEMockedToken.sol";
-import "../../contracts/mocks/MockStanleyStrategies.sol";
 import "../../contracts/mocks/stanley/MockCase2Stanley.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
 import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
@@ -76,7 +70,7 @@ contract StanleyUtils {
         MockTestnetStrategy strategyAave = getMockTestnetStrategyAaveUsdt(asset);
         MockTestnetStrategy strategyCompound = getMockTestnetStrategyCompoundUsdt(asset);
 
-        ItfStanleyUsdt itfStanleyImpl = new ItfStanleyUsdt();
+        ItfStanley6D itfStanleyImpl = new ItfStanley6D();
 
         address itfStanleyProxyAddress = address(
             new ERC1967Proxy(
@@ -104,7 +98,7 @@ contract StanleyUtils {
         MockTestnetStrategy strategyAave = getMockTestnetStrategyAaveDai(asset);
         MockTestnetStrategy strategyCompound = getMockTestnetStrategyCompoundDai(asset);
 
-        ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
+        ItfStanley18D itfStanleyImpl = new ItfStanley18D();
 
         address itfStanleyProxyAddress = address(
             new ERC1967Proxy(
@@ -131,8 +125,8 @@ contract StanleyUtils {
         address ivToken,
         address strategyAave,
         address strategyCompound
-    ) public returns (ItfStanleyDai) {
-        ItfStanleyDai itfStanleyImpl = new ItfStanleyDai();
+    ) public returns (ItfStanley18D) {
+        ItfStanley18D itfStanleyImpl = new ItfStanley18D();
         address itfStanleyProxyAddress = address(
             new ERC1967Proxy(
                 address(itfStanleyImpl),
@@ -145,12 +139,12 @@ contract StanleyUtils {
                 )
             )
         );
-        return ItfStanleyDai(itfStanleyProxyAddress);
+        return ItfStanley18D(itfStanleyProxyAddress);
     }
 
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
-        MockTestnetStrategyAaveUsdt strategyImpl = new MockTestnetStrategyAaveUsdt();
-        MockTestnetShareTokenAaveUsdt shareToken = new MockTestnetShareTokenAaveUsdt(0);
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6);
 
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),
@@ -161,8 +155,8 @@ contract StanleyUtils {
     }
 
     function getMockTestnetStrategyCompoundUsdt(address asset) public returns (MockTestnetStrategy) {
-        MockTestnetStrategyCompoundUsdt strategyImpl = new MockTestnetStrategyCompoundUsdt();
-        MockTestnetShareTokenCompoundUsdt shareToken = new MockTestnetShareTokenCompoundUsdt(0);
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share cUSDT", "cUSDT", 0, 6);
 
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),
@@ -173,8 +167,8 @@ contract StanleyUtils {
     }
 
     function getMockTestnetStrategyAaveDai(address asset) public returns (MockTestnetStrategy) {
-        MockTestnetStrategyAaveDai strategyImpl = new MockTestnetStrategyAaveDai();
-        MockTestnetShareTokenAaveDai shareToken = new MockTestnetShareTokenAaveDai(0);
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18);
 
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),
@@ -184,31 +178,25 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockTestnetShareTokenAaveUsdc(uint256 totalSupply) public returns (MockTestnetShareTokenAaveUsdc) {
-        return new MockTestnetShareTokenAaveUsdc(totalSupply);
+    function getMockTestnetShareTokenAaveUsdc(uint256 totalSupply) public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked Share aUSDC", "aUSDC", totalSupply, 6);
     }
 
-    function getMockTestnetShareTokenCompoundUsdc(uint256 totalSupply)
-        public
-        returns (MockTestnetShareTokenCompoundUsdc)
-    {
-        return new MockTestnetShareTokenCompoundUsdc(totalSupply);
+    function getMockTestnetShareTokenCompoundUsdc(uint256 totalSupply) public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked Share cUSDC", "cUSDC", totalSupply, 6);
     }
 
-    function getMockTestnetShareTokenAaveDai(uint256 totalSupply) public returns (MockTestnetShareTokenAaveDai) {
-        return new MockTestnetShareTokenAaveDai(totalSupply);
+    function getMockTestnetShareTokenAaveDai(uint256 totalSupply) public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked Share aDAI", "aDAI", totalSupply, 18);
     }
 
-    function getMockTestnetShareTokenCompoundDai(uint256 totalSupply)
-        public
-        returns (MockTestnetShareTokenCompoundDai)
-    {
-        return new MockTestnetShareTokenCompoundDai(totalSupply);
+    function getMockTestnetShareTokenCompoundDai(uint256 totalSupply) public returns (MockTestnetToken) {
+        return new MockTestnetToken("Mocked Share cDAI", "cDAI", totalSupply, 18);
     }
 
     function getMockTestnetStrategyCompoundDai(address asset) public returns (MockTestnetStrategy) {
-        MockTestnetStrategyCompoundDai strategyImpl = new MockTestnetStrategyCompoundDai();
-        MockTestnetShareTokenCompoundDai shareToken = new MockTestnetShareTokenCompoundDai(0);
+        MockTestnetStrategy strategyImpl = new MockTestnetStrategy();
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share cDAI", "cDAI", 0, 18);
 
         ERC1967Proxy strategyProxy = new ERC1967Proxy(
             address(strategyImpl),

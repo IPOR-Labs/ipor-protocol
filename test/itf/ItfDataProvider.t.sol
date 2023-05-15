@@ -28,7 +28,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
 	ItfIporOracle internal _iporOracle;
 	MiltonStorage internal _miltonStorage;
 	MockCase0Milton6D internal _milton;
-	ItfJosephUsdc internal _joseph;
+	ItfJoseph6D internal _joseph;
 	MockCaseBaseStanley internal _stanley;
 	IIporRiskManagementOracle internal _RiskManagementOracle;
 

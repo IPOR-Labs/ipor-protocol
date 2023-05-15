@@ -9,7 +9,6 @@ import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../contracts/tokens/IvToken.sol";
 import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/mocks/MockStanleyStrategies.sol";
 import "../../contracts/vault/strategies/StrategyCompound.sol";
 
 contract StrategyPauseManagerTest is Test {

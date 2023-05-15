@@ -2,13 +2,11 @@
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../../contracts/mocks/stanley/MockTestnetStrategy.sol";
-import "../../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import "../../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
-import "../../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdc.sol";
+import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
 
-contract StrategyAaveBuilder is Test{
+contract StrategyAaveBuilder is Test {
     struct BuilderData {
         address asset;
         address shareToken;
@@ -39,21 +37,21 @@ contract StrategyAaveBuilder is Test{
     }
 
     function withShareTokenDai() public returns (StrategyAaveBuilder) {
-        MockTestnetShareTokenAaveDai shareToken = new MockTestnetShareTokenAaveDai(0);
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share aDAI", "aDAI", 0, 18);
         builderData.shareToken = address(shareToken);
 
         return this;
     }
 
     function withShareTokenUsdt() public returns (StrategyAaveBuilder) {
-        MockTestnetShareTokenAaveUsdt shareToken = new MockTestnetShareTokenAaveUsdt(0);
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share aUSDT", "aUSDT", 0, 6);
         builderData.shareToken = address(shareToken);
 
         return this;
     }
 
     function withShareTokenUsdc() public returns (StrategyAaveBuilder) {
-        MockTestnetShareTokenAaveUsdc shareToken = new MockTestnetShareTokenAaveUsdc(0);
+        MockTestnetToken shareToken = new MockTestnetToken("Mocked Share aUSDC", "aUSDC", 0, 6);
         builderData.shareToken = address(shareToken);
 
         return this;
@@ -73,11 +71,7 @@ contract StrategyAaveBuilder is Test{
     function _constructProxy(address impl) internal returns (ERC1967Proxy proxy) {
         proxy = new ERC1967Proxy(
             address(impl),
-            abi.encodeWithSignature(
-                "initialize(address,address)",
-                builderData.asset,
-                builderData.shareToken
-            )
+            abi.encodeWithSignature("initialize(address,address)", builderData.asset, builderData.shareToken)
         );
     }
 }

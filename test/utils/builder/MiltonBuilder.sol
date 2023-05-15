@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../../contracts/itf/ItfMiltonDai.sol";
+import "../../../contracts/itf/ItfMilton6D.sol";
+import "../../../contracts/itf/ItfMilton18D.sol";
 
 import "../../../contracts/mocks/milton/MockCase0Milton6D.sol";
 import "../../../contracts/mocks/milton/MockCase1Milton6D.sol";
@@ -23,9 +22,8 @@ import "../../../contracts/mocks/milton/MockCase6Milton18D.sol";
 import "../../../contracts/mocks/milton/MockCase7Milton18D.sol";
 import "../../../contracts/mocks/milton/MockCase8Milton18D.sol";
 
-
 import "./BuilderUtils.sol";
-import "../../../contracts/itf/ItfMiltonDai.sol";
+import "../../../contracts/itf/ItfMilton18D.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
@@ -175,7 +173,7 @@ contract MiltonBuilder is Test {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
 
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonDai(iporRiskManagementOracle);
+            return new ItfMilton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
             return new MockCase0Milton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
@@ -205,7 +203,7 @@ contract MiltonBuilder is Test {
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonUsdt(iporRiskManagementOracle);
+            return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
             return new MockCase0Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
@@ -231,7 +229,7 @@ contract MiltonBuilder is Test {
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonUsdc(iporRiskManagementOracle);
+            return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
             return new MockCase0Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {

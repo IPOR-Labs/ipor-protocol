@@ -5,18 +5,18 @@ import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "../../contracts/libraries/Constants.sol";
 import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetTokenDai.sol";
+import "../../contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract IvTokenTest is Test, TestCommons {
     IvToken internal _ivToken;
-    MockTestnetTokenDai internal _mockTestnetTokenDai;
+    MockTestnetToken internal _mockTestnetTokenDai;
     address internal _admin;
     address internal _userOne;
     address internal _userTwo;
 
     function setUp() public {
         _ivToken = new IvToken("IvToken", "IVT", address(0x6B175474E89094C44Da98b954EedeAC495271d0F)); // random address
-        _mockTestnetTokenDai = new MockTestnetTokenDai(Constants.D18);
+        _mockTestnetTokenDai = new MockTestnetToken("Mocked DAI", "DAI", Constants.D18, 18);
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);

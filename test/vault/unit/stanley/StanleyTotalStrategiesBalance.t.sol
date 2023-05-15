@@ -8,11 +8,6 @@ import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol
 import {StanleyDai} from "../../../../contracts/vault/StanleyDai.sol";
 import {StanleyUsdc} from "../../../../contracts/vault/StanleyUsdc.sol";
 import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockTestnetShareTokenAaveDai} from "../../../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import {MockTestnetShareTokenAaveUsdc} from "../../../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdc.sol";
-import {MockTestnetShareTokenCompoundDai} from "../../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
-import {MockTestnetShareTokenCompoundUsdc} from
-    "../../../../contracts/mocks/tokens/MockTestnetShareTokenCompoundUsdc.sol";
 import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
 
 contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
@@ -22,10 +17,10 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
     MockStrategy internal _strategyCompoundUsdc;
     MockTestnetToken internal _daiMockedToken;
     MockTestnetToken internal _usdcMockedToken;
-    MockTestnetShareTokenAaveDai internal _aDai;
-    MockTestnetShareTokenAaveUsdc internal _aUsdc;
-    MockTestnetShareTokenCompoundDai internal _cDai;
-    MockTestnetShareTokenCompoundUsdc internal _cUsdc;
+    MockTestnetToken internal _aDai;
+    MockTestnetToken internal _aUsdc;
+    MockTestnetToken internal _cDai;
+    MockTestnetToken internal _cUsdc;
     StanleyDai internal _stanleyDai;
     StanleyUsdc internal _stanleyUsdc;
     IvToken internal _ivTokenDai;

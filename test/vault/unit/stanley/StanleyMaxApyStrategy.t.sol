@@ -7,7 +7,7 @@ import {TestConstants} from "../../../utils/TestConstants.sol";
 import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
 import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
-import {ItfStanleyDai} from "../../../../contracts/itf/ItfStanleyDai.sol";
+import {ItfStanley18D} from "../../../../contracts/itf/ItfStanley18D.sol";
 
 contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -16,7 +16,7 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
     IvToken internal _ivTokenDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
-    ItfStanleyDai internal _stanleyDai;
+    ItfStanley18D internal _stanleyDai;
 
     function _setupStrategies() internal {
         _strategyAaveDai.setAsset(address(_daiMockedToken));

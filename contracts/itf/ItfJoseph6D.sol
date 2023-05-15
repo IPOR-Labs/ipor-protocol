@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "./ItfJoseph.sol";
 
-contract ItfJosephUsdt is ItfJoseph {
+contract ItfJoseph6D is ItfJoseph {
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 6;
     }

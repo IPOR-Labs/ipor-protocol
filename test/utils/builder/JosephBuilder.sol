@@ -2,9 +2,9 @@
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../../../contracts/itf/ItfJoseph.sol";
-import "../../../contracts/itf/ItfJosephDai.sol";
-import "../../../contracts/itf/ItfJosephUsdc.sol";
-import "../../../contracts/itf/ItfJosephUsdt.sol";
+import "../../../contracts/itf/ItfJoseph18D.sol";
+import "../../../contracts/itf/ItfJoseph6D.sol";
+import "../../../contracts/itf/ItfJoseph6D.sol";
 
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
@@ -110,11 +110,11 @@ contract JosephBuilder is Test {
             josephImpl = builderData.josephImplementation;
         } else {
             if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-                josephImpl = address(new ItfJosephDai());
+                josephImpl = address(new ItfJoseph18D());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-                josephImpl = address(new ItfJosephUsdt());
+                josephImpl = address(new ItfJoseph6D());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-                josephImpl = address(new ItfJosephUsdc());
+                josephImpl = address(new ItfJoseph6D());
             } else {
                 revert("Asset type not supported");
             }
