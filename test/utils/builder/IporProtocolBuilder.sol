@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.16;
 import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../../contracts/tokens/IpToken.sol";

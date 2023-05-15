@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity 0.8.16;
 import "../../../contracts/itf/ItfMilton.sol";
 import "../../../contracts/itf/ItfMiltonUsdt.sol";
 import "../../../contracts/itf/ItfMiltonUsdc.sol";
