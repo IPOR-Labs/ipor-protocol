@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "../../../contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/math/IporMath.sol";
 import "../TestConstants.sol";
 
 contract IporMathTest is Test {

@@ -6,840 +6,413 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/milton/MockCase1MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase1MiltonUsdt.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/stanley/aave/TestERC20.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/amm/pool/JosephDai.sol";
-import "../../contracts/amm/pool/JosephUsdt.sol";
-import "../../contracts/amm/pool/JosephUsdc.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/amm/pool/JosephDai.sol";
+import "contracts/amm/pool/JosephUsdt.sol";
+import "contracts/amm/pool/JosephUsdc.sol";
 
-contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
-    MockSpreadModel internal _miltonSpreadModel;
-    MockTestnetToken internal _usdtMockedToken;
-    MockTestnetToken internal _usdcMockedToken;
-    MockTestnetToken internal _daiMockedToken;
-    IpToken internal _ipTokenUsdt;
-    IpToken internal _ipTokenUsdc;
-    IpToken internal _ipTokenDai;
+contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
 
     function setUp() public {
-        _usdtMockedToken = getTokenUsdt();
-        _usdcMockedToken = getTokenUsdc();
-        _daiMockedToken = getTokenDai();
-        _ipTokenUsdt = getIpTokenUsdt(address(_usdtMockedToken));
-        _ipTokenUsdc = getIpTokenUsdc(address(_usdcMockedToken));
-        _ipTokenDai = getIpTokenDai(address(_daiMockedToken));
         _admin = address(this);
         _userOne = _getUserAddress(1);
         _userTwo = _getUserAddress(2);
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        _miltonSpreadModel = prepareMockSpreadModel(
-            TestConstants.ZERO, TestConstants.ZERO, TestConstants.ZERO_INT, TestConstants.ZERO_INT
-        );
+
+        _cfg.approvalsForUsers = _users;
+        _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldPauseSmartContractWhenSenderIsAnAdmin() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
+
         // then
         vm.prank(_userOne);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.provideLiquidity(123);
+        _iporProtocol.joseph.provideLiquidity(123);
     }
 
     function testShouldPauseSmartContractSpecificMethods() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
-        mockCase0JosephDai.addAppointedToRebalance(_admin);
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        _iporProtocol.joseph.addAppointedToRebalance(_admin);
+
         // when
         vm.startPrank(_admin);
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
+
         // then
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.rebalance();
+        _iporProtocol.joseph.rebalance();
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.depositToStanley(123);
+        _iporProtocol.joseph.depositToStanley(123);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.withdrawFromStanley(123);
+        _iporProtocol.joseph.withdrawFromStanley(123);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.withdrawAllFromStanley();
+        _iporProtocol.joseph.withdrawAllFromStanley();
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.setCharlieTreasury(_userTwo);
+        _iporProtocol.joseph.setCharlieTreasury(_userTwo);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.setTreasury(_userTwo);
+        _iporProtocol.joseph.setTreasury(_userTwo);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.setCharlieTreasuryManager(_userTwo);
+        _iporProtocol.joseph.setCharlieTreasuryManager(_userTwo);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.setTreasuryManager(_userTwo);
+        _iporProtocol.joseph.setTreasuryManager(_userTwo);
         vm.stopPrank();
         vm.startPrank(_userOne);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.provideLiquidity(123);
+        _iporProtocol.joseph.provideLiquidity(123);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.redeem(123);
+        _iporProtocol.joseph.redeem(123);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.transferToTreasury(123);
+        _iporProtocol.joseph.transferToTreasury(123);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.transferToCharlieTreasury(123);
+        _iporProtocol.joseph.transferToCharlieTreasury(123);
         vm.stopPrank();
     }
 
     function testShouldNotPauseSmartContractSpecificMethodsWhenPaused() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         vm.prank(_liquidityProvider);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
+
         // then
         vm.startPrank(_userOne);
-        mockCase0JosephDai.getVersion();
-        mockCase0JosephDai.getCharlieTreasury();
-        mockCase0JosephDai.getTreasury();
-        mockCase0JosephDai.getCharlieTreasuryManager();
-        mockCase0JosephDai.getTreasuryManager();
-        mockCase0JosephDai.getRedeemLpMaxUtilizationRate();
-        mockCase0JosephDai.getMiltonStanleyBalanceRatio();
-        mockCase0JosephDai.getAsset();
-        mockCase0JosephDai.calculateExchangeRate();
+        _iporProtocol.joseph.getVersion();
+        _iporProtocol.joseph.getCharlieTreasury();
+        _iporProtocol.joseph.getTreasury();
+        _iporProtocol.joseph.getCharlieTreasuryManager();
+        _iporProtocol.joseph.getTreasuryManager();
+        _iporProtocol.joseph.getRedeemLpMaxUtilizationRate();
+        _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
+        _iporProtocol.joseph.getAsset();
+        _iporProtocol.joseph.calculateExchangeRate();
         vm.stopPrank();
     }
 
     function testShouldNotPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_userThree);
         vm.expectRevert("Ownable: caller is not the owner");
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
     }
 
     function testShouldUnpauseSmartContractWhenSenderIsAdmin() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         vm.prank(_admin);
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
+
         vm.prank(_userOne);
         vm.expectRevert("Pausable: paused");
-        mockCase0JosephDai.provideLiquidity(123);
+        _iporProtocol.joseph.provideLiquidity(123);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.unpause();
+        _iporProtocol.joseph.unpause();
+
         vm.prank(_userOne);
-        mockCase0JosephDai.provideLiquidity(123);
+        _iporProtocol.joseph.provideLiquidity(123);
+
         // then
-        assertEq(_ipTokenDai.balanceOf(_userOne), 123);
+        assertEq(_iporProtocol.ipToken.balanceOf(_userOne), 123);
     }
 
     function testShouldNotUnPauseSmartContractWhenSenderIsNotAdmin() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         vm.prank(_admin);
-        mockCase0JosephDai.pause();
+        _iporProtocol.joseph.pause();
+
         // when
         vm.prank(_userThree);
         vm.expectRevert("Ownable: caller is not the owner");
-        mockCase0JosephDai.unpause();
+        _iporProtocol.joseph.unpause();
     }
 
     function testShouldTransferOwnershipWhenSimpleCase1() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
         vm.prank(_userTwo);
-        mockCase0JosephDai.confirmTransferOwnership();
+        _iporProtocol.joseph.confirmTransferOwnership();
+
         // then
         vm.prank(_userOne);
-        assertEq(mockCase0JosephDai.owner(), _userTwo);
+        assertEq(_iporProtocol.joseph.owner(), _userTwo);
     }
 
     function testShouldNotTransferOwnershipWhenSenderIsNotCurrentOwner() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_userThree);
         vm.expectRevert("Ownable: caller is not the owner");
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
     }
 
     function testShouldNotConfirmTransferOwnershipWhenSenderIsNotAppointedOwner() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
+
         // then
         vm.prank(_userThree);
         vm.expectRevert("IPOR_007");
-        mockCase0JosephDai.confirmTransferOwnership();
+        _iporProtocol.joseph.confirmTransferOwnership();
     }
 
     function testShouldNotConfirmTransferOwnershipTwiceWhenSenderIsNotAppointedOwner() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
         vm.prank(_userTwo);
-        mockCase0JosephDai.confirmTransferOwnership();
+        _iporProtocol.joseph.confirmTransferOwnership();
+
         // then
         vm.prank(_userTwo);
         vm.expectRevert("IPOR_007");
-        mockCase0JosephDai.confirmTransferOwnership();
+        _iporProtocol.joseph.confirmTransferOwnership();
     }
 
     function testShouldNotTransferOwnershipWhenSenderAlreadyLostOwnership() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         vm.prank(_admin);
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
         vm.prank(_userTwo);
-        mockCase0JosephDai.confirmTransferOwnership();
+        _iporProtocol.joseph.confirmTransferOwnership();
+
         // when
         vm.prank(_admin);
         vm.expectRevert("Ownable: caller is not the owner");
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
     }
 
     function testShouldHaveRightsToTransferOwnershipWhenSenderStillHasRights() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai mockCase0MiltonDai = getMockCase0MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase0MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase0MiltonDai));
-        prepareMilton(mockCase0MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         vm.startPrank(_admin);
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
+
         // when
-        mockCase0JosephDai.transferOwnership(_userTwo);
+        _iporProtocol.joseph.transferOwnership(_userTwo);
         vm.stopPrank();
+
         // then
         vm.prank(_userOne);
-        assertEq(mockCase0JosephDai.owner(), _admin);
+        assertEq(_iporProtocol.joseph.owner(), _admin);
     }
 
-    function testShouldNotSendETHToJosephDAIUSDCUSDT() public payable {
+    function testShouldNotSendETHToJosephDAI() public payable {
         // given
-        address[] memory tokenAddresses =
-            addressesToArray(address(_usdtMockedToken), address(_usdcMockedToken), address(_daiMockedToken));
-        address[] memory ipTokenAddresses =
-            addressesToArray(address(_ipTokenUsdt), address(_ipTokenUsdc), address(_ipTokenDai));
-        ItfIporOracle iporOracle = getIporOracleAssets(
-            _userOne,
-            tokenAddresses,
-            uint32(block.timestamp),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
-            TestConstants.ZERO_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAssets(
-            _userOne,
-            tokenAddresses,
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        address[] memory mockCase0StanleyAddresses = addressesToArray(
-            address(getMockCase0Stanley(address(_usdtMockedToken))),
-            address(getMockCase0Stanley(address(_usdcMockedToken))),
-            address(getMockCase0Stanley(address(_daiMockedToken)))
-        );
-        MiltonStorages memory miltonStorages = getMiltonStorages();
-        address[] memory miltonStorageAddresses = addressesToArray(
-            address(miltonStorages.miltonStorageUsdt),
-            address(miltonStorages.miltonStorageUsdc),
-            address(miltonStorages.miltonStorageDai)
-        );
-        MockCase0Miltons memory mockCase0Miltons = getMockCase0Miltons(
-            address(iporOracle),
-            address(_miltonSpreadModel),
-            address(_usdtMockedToken),
-            address(_usdcMockedToken),
-            address(_daiMockedToken),
-            miltonStorageAddresses,
-            mockCase0StanleyAddresses,
-            address(iporRiskManagementOracle)
-        );
-        address[] memory mockCase0MiltonAddresses = addressesToArray(
-            address(mockCase0Miltons.mockCase0MiltonUsdt),
-            address(mockCase0Miltons.mockCase0MiltonUsdc),
-            address(mockCase0Miltons.mockCase0MiltonDai)
-        );
-        MockCase0Josephs memory mockCase0Josephs = getMockCase0Josephs(
-            tokenAddresses,
-            ipTokenAddresses,
-            mockCase0MiltonAddresses,
-            miltonStorageAddresses,
-            mockCase0StanleyAddresses
-        );
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.expectRevert(
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
-        address(mockCase0Josephs.mockCase0JosephUsdt).call{value: msg.value}("");
+        address(_iporProtocol.joseph).call{value: msg.value}("");
+    }
+
+    function testShouldNotSendETHToJosephUSDC() public payable {
+        // given
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
+
+        // when
         vm.expectRevert(
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
-        address(mockCase0Josephs.mockCase0JosephUsdc).call{value: msg.value}("");
+        address(_iporProtocol.joseph).call{value: msg.value}("");
+    }
+
+    function testShouldNotSendETHToJosephUSDT() public payable {
+        // given
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        // when
         vm.expectRevert(
             "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
         );
-        address(mockCase0Josephs.mockCase0JosephDai).call{value: msg.value}("");
+        address(_iporProtocol.joseph).call{value: msg.value}("");
     }
 
     function testShouldDeployJosephDai() public {
         // given
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         JosephDai josephDaiImplementation = new JosephDai();
-        ERC1967Proxy josephDaiProxy =
-        new ERC1967Proxy(address(josephDaiImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(_daiMockedToken), address(_ipTokenDai), address(_daiMockedToken), address(_daiMockedToken), address(_daiMockedToken)));
+        ERC1967Proxy josephDaiProxy = new ERC1967Proxy(
+            address(josephDaiImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(_iporProtocol.asset),
+                address(_iporProtocol.ipToken),
+                address(_iporProtocol.milton),
+                address(_iporProtocol.miltonStorage),
+                address(_iporProtocol.stanley)
+            )
+        );
+
         JosephDai josephDai = JosephDai(address(josephDaiProxy));
+
         // when
         address josephDaiAddress = josephDai.getAsset();
+
         // then
-        assertEq(josephDaiAddress, address(_daiMockedToken));
+        assertEq(josephDaiAddress, address(_iporProtocol.asset));
     }
 
     function testShouldDeployJosephUsdc() public {
         // given
+        _iporProtocol = _iporProtocolFactory.getUsdcInstance(_cfg);
+
         JosephUsdc josephUsdcImplementation = new JosephUsdc();
-        ERC1967Proxy josephUsdcProxy =
-        new ERC1967Proxy(address(josephUsdcImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(_usdcMockedToken), address(_ipTokenUsdc), address(_usdcMockedToken), address(_usdcMockedToken), address(_usdcMockedToken)));
+        ERC1967Proxy josephUsdcProxy = new ERC1967Proxy(
+            address(josephUsdcImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(_iporProtocol.asset),
+                address(_iporProtocol.ipToken),
+                address(_iporProtocol.milton),
+                address(_iporProtocol.miltonStorage),
+                address(_iporProtocol.stanley)
+            )
+        );
+
         JosephUsdc josephUsdc = JosephUsdc(address(josephUsdcProxy));
+
         // when
         address josephUsdcAddress = josephUsdc.getAsset();
+
         // then
-        assertEq(josephUsdcAddress, address(_usdcMockedToken));
+        assertEq(josephUsdcAddress, address(_iporProtocol.asset));
     }
 
     function testShouldDeployJosephUsdt() public {
         // given
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
         JosephUsdt josephUsdtImplementation = new JosephUsdt();
-        ERC1967Proxy josephUsdtProxy =
-        new ERC1967Proxy(address(josephUsdtImplementation), abi.encodeWithSignature("initialize(bool,address,address,address,address,address)", false, address(_usdtMockedToken), address(_ipTokenUsdt), address(_usdtMockedToken), address(_usdtMockedToken), address(_usdtMockedToken)));
+        ERC1967Proxy josephUsdtProxy = new ERC1967Proxy(
+            address(josephUsdtImplementation),
+            abi.encodeWithSignature(
+                "initialize(bool,address,address,address,address,address)",
+                false,
+                address(_iporProtocol.asset),
+                address(_iporProtocol.ipToken),
+                address(_iporProtocol.milton),
+                address(_iporProtocol.miltonStorage),
+                address(_iporProtocol.stanley)
+            )
+        );
+
         JosephUsdt josephUsdt = JosephUsdt(address(josephUsdtProxy));
+
         // when
         address josephUsdtAddress = josephUsdt.getAsset();
+
         // then
-        assertEq(josephUsdtAddress, address(_usdtMockedToken));
+        assertEq(josephUsdtAddress, address(_iporProtocol.asset));
     }
 
     function testShouldReturnDefaultMiltonStanleyBalanceRatio() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
-        uint256 ratio = mockCase0JosephDai.getMiltonStanleyBalanceRatio();
+        uint256 ratio = _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
+
         // then
         assertEq(ratio, 85 * TestConstants.D16);
     }
 
     function testShouldChangeMiltonStanleyBalanceRatio() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.startPrank(_admin);
-        mockCase0JosephDai.setMiltonStanleyBalanceRatio(TestConstants.PERCENTAGE_50_18DEC);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.PERCENTAGE_50_18DEC);
+
         // then
         vm.stopPrank();
-        uint256 ratio = mockCase0JosephDai.getMiltonStanleyBalanceRatio();
+        uint256 ratio = _iporProtocol.joseph.getMiltonStanleyBalanceRatio();
         assertEq(ratio, TestConstants.PERCENTAGE_50_18DEC);
     }
 
     function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsZero() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
         vm.expectRevert("IPOR_409");
-        mockCase0JosephDai.setMiltonStanleyBalanceRatio(TestConstants.ZERO);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.ZERO);
     }
 
     function testShouldNotChangeMiltonStanleyBalanceRatioWhenNewRatioIsGreaterThanOne() public {
         // given
-        ItfIporOracle iporOracle =
-            getIporOracleAsset(_userOne, address(_daiMockedToken), TestConstants.TC_DEFAULT_EMA_18DEC_64UINT);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(_daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase1Stanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase1MiltonDai mockCase1MiltonDai = getMockCase1MiltonDai(
-            address(_daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai mockCase0JosephDai = getMockCase0JosephDai(
-            address(_daiMockedToken),
-            address(_ipTokenDai),
-            address(mockCase1MiltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, _daiMockedToken, address(mockCase0JosephDai), address(mockCase1MiltonDai));
-        prepareMilton(mockCase1MiltonDai, address(mockCase0JosephDai), address(stanleyDai));
-        prepareJoseph(mockCase0JosephDai);
-        prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE1;
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         // when
         vm.prank(_admin);
         vm.expectRevert("IPOR_409");
-        mockCase0JosephDai.setMiltonStanleyBalanceRatio(TestConstants.D18);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(TestConstants.D18);
     }
 }

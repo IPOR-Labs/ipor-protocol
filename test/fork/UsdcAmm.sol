@@ -4,20 +4,20 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/oracles/IporOracle.sol";
-import "../../contracts/vault/StanleyUsdc.sol";
-import "../../contracts/vault/strategies/StrategyCompound.sol";
-import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/amm/pool/Joseph.sol";
-import "../../contracts/amm/pool/JosephUsdc.sol";
-import "../../contracts/amm/Milton.sol";
-import "../../contracts/amm/MiltonUsdc.sol";
-import "../../contracts/amm/spread/MiltonSpreadModelUsdc.sol";
-import "../../contracts/amm/spread/MiltonSpreadModel.sol";
-import "../../contracts/mocks/stanley/MockStrategy.sol";
-import "../../contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/oracles/IporOracle.sol";
+import "contracts/vault/StanleyUsdc.sol";
+import "contracts/vault/strategies/StrategyCompound.sol";
+import "contracts/vault/strategies/StrategyAave.sol";
+import "contracts/amm/pool/Joseph.sol";
+import "contracts/amm/pool/JosephUsdc.sol";
+import "contracts/amm/Milton.sol";
+import "contracts/amm/MiltonUsdc.sol";
+import "contracts/amm/spread/MiltonSpreadModelUsdc.sol";
+import "contracts/amm/spread/MiltonSpreadModel.sol";
+import "contracts/mocks/stanley/MockStrategy.sol";
+import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/TestConstants.sol";
 import "../utils/IporRiskManagementOracleUtils.sol";
 
@@ -182,10 +182,7 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
 
     function _createMiltonStorage() internal {
         MiltonStorageUsdc implementation = new MiltonStorageUsdc();
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(implementation),
-            abi.encodeWithSignature("initialize()")
-        );
+        ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature("initialize()"));
         miltonStorage = MiltonStorage(address(proxy));
     }
 
@@ -269,7 +266,7 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     }
 
     function _createAaveIncentivesController() internal {
-       aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
+        aaveIncentivesController = IAaveIncentivesController(_aaveIncentiveAddress);
     }
 
     function _setupJoseph(address owner) internal {

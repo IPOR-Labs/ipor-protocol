@@ -2,41 +2,38 @@
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "../utils/TestConstants.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../contracts/itf/ItfMiltonDai.sol";
-import "../../contracts/itf/ItfJosephUsdt.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;
     address internal _community;
     address internal _liquidator;
+    address internal _updater;
 
-    IporProtocol private _iporProtocol;
+    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
 
     function setUp() public {
         _admin = address(this);
         _buyer = _getUserAddress(1);
         _community = _getUserAddress(2);
         _liquidator = _getUserAddress(3);
+        _updater = _getUserAddress(4);
         vm.warp(100);
+
+        _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _updater;
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
     }
 
     function testShouldAddSwapLiquidatorAsIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         //when
@@ -50,7 +47,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldRemoveSwapLiquidatorAsIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         milton.addSwapLiquidator(_liquidator);
@@ -66,7 +63,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotAddLiquidatorAsNotIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         //when
@@ -77,7 +74,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotRemoveLiquidatorAsNotIporOwner() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         ItfMilton milton = _iporProtocol.milton;
 
         milton.addSwapLiquidator(_liquidator);
@@ -90,7 +87,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -124,13 +121,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 25000000);
     }
 
     function testShouldClosePayFixedSwapAsBuyerInLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -164,13 +161,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
     function testShouldClosePayFixedSwapAsBuyerInLast20hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -204,13 +201,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
     function testShouldClosePayFixedAsCommunityInLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -246,14 +243,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
     function testShouldClosePayFixedAsCommunityInLast30Minutes() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -289,14 +286,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
     function testShouldClosePayFixedAsLiquidatorAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -334,15 +331,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-
     function testShouldNotClosePayFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -385,7 +381,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapAsBuyerAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -419,15 +415,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapAsCommunityInMoreThanLastOneHourBelow100Percentage()
-        public
-    {
+    function testShouldNotClosePayFixedSwapAsCommunityInMoreThanLastOneHourBelow100Percentage() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -468,7 +462,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapAsAnyoneAfterMaturityBelow100Percentage() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -509,7 +503,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotClosePayFixedSwapAsLiquidatorBeforeMaturityMoreThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -550,7 +544,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -584,13 +578,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 25000000);
     }
 
     function testShouldCloseReceiveFixedSwapAsBuyerInLast24hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -624,13 +618,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
     function testShouldCloseReceiveFixedSwapAsBuyerInLast20hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -664,13 +658,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366 - 25000000);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873 - 25000000);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
     function testShouldCloseReceiveFixedByCommunityInLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -706,14 +700,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
     function testShouldCloseReceiveFixedByCommunityInLast30Minutes() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -749,14 +743,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceAfter = _iporProtocol.asset.balanceOf(_community);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(anyoneBalanceAfter - anyoneBalanceBefore, 25000000);
     }
 
     function testShouldCloseReceiveFixedAsLiquidatorAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -794,14 +788,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-      function testShouldNotCloseReceiveFixedSwapAsLiquidatorInMoreThanLast4hours() public {
+    function testShouldNotCloseReceiveFixedSwapAsLiquidatorInMoreThanLast4hours() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -844,7 +838,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapAsBuyerAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -878,13 +872,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 108663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 48075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
     }
 
     function testShouldNotCloseReceiveFixedSwapAsAnyoneInMoreThanLastOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -925,7 +919,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotCloseReceiveFixedSwapAsAnyoneAfterMaturity() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -966,7 +960,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldNotCloseReceiveFixedSwapAsLiquidatorBeforeMaturityMoreThenOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -1007,7 +1001,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -1043,7 +1037,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 adminBalanceAfter = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceBefore - buyerBalanceAfter, 133663366);
+        assertEq(buyerBalanceBefore - buyerBalanceAfter, 73075873);
         assertEq(adminBalanceAfter - adminBalanceBefore, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
@@ -1052,7 +1046,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1063,10 +1057,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1114,12 +1108,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18674521911);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19773896175);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
@@ -1127,7 +1117,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1138,10 +1128,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1189,20 +1179,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18674529204);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19773904328);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1213,10 +1197,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1262,20 +1246,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18719460559);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19821186272);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1286,10 +1264,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1335,20 +1313,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18693193926);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19791821904);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1359,10 +1331,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1410,18 +1382,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18666669656);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19765117870);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
     function testShouldClosePayFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1432,10 +1400,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1481,12 +1449,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18691669656);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19790117870);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
@@ -1494,7 +1458,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1505,10 +1469,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1556,12 +1520,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18742538786);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19849934569);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -1570,7 +1530,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1581,10 +1541,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1632,21 +1592,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18708537670);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19811923556);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1657,10 +1611,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1710,21 +1664,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1735,10 +1683,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1788,21 +1736,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1813,10 +1755,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1864,21 +1806,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1889,10 +1825,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -1940,19 +1876,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
     function testShouldClosePayFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -1963,10 +1895,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2016,19 +1948,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18746039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19853848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
     function testShouldClosePayFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2039,10 +1967,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2090,19 +2018,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18771039604);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19878848253);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
     function testShouldNotClosePayFixedSwapByCommunityAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2113,10 +2037,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2165,21 +2089,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2190,10 +2108,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2242,21 +2160,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldNotClosePayFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2267,10 +2179,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2319,21 +2231,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldClosePayFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff()
-        public
-    {
+    function testShouldClosePayFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2344,10 +2250,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2395,12 +2301,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceAfter > buyerBalanceBefore,
-            true,
-            "Failed buyerBalanceAfter > buyerBalanceBefore"
-        );
-        assertEq(buyerBalanceAfter, 18734889292);
+        assertEq(buyerBalanceAfter > buyerBalanceBefore, true, "Failed buyerBalanceAfter > buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 19841382938);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2409,7 +2311,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2420,10 +2322,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC; // TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC; //TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2444,9 +2346,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2472,16 +2372,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 79464103);
-        assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
+        assertEq(buyerBalanceAfter < buyerBalanceBefore, true, "Failed buyerBalanceAfter < buyerBalanceBefore");
+        assertEq(buyerBalanceAfter, 79952078, "Incorrect buyerBalanceAfter");
+        assertEq(
+            liquidatorBalanceAfter - liquidatorBalanceBefore,
+            25000000,
+            "Incorrect liquidatorBalanceAfter - liquidatorBalanceBefore"
+        );
     }
 
     function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHourFrom99to100PercentagePayoffBuyerLost()
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2492,10 +2396,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2516,9 +2420,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2545,15 +2447,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 79456000);
+        assertEq(buyerBalanceAfter, 79943926);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24HoursFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2564,10 +2464,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2588,9 +2488,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2616,15 +2514,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 82310050);
+        assertEq(buyerBalanceAfter, 82661982);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24HoursFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2635,10 +2531,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2659,9 +2555,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2687,15 +2581,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 111495197);
+        assertEq(buyerBalanceAfter, 112026350);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturityFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2706,10 +2598,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2730,9 +2622,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2760,15 +2650,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 88188831);
+        assertEq(buyerBalanceAfter, 88730383);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByBuyerAfterMaturityFrom99to100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2779,10 +2667,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2803,9 +2691,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2831,15 +2717,13 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 113188831);
+        assertEq(buyerBalanceAfter, 113730383);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByCommunityAfterMaturityFrom99HalfTo100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2850,10 +2734,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2875,9 +2759,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2904,7 +2786,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 12389235);
+        assertEq(buyerBalanceAfter, 12465316);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2913,7 +2795,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         public
     {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -2924,10 +2806,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -2949,9 +2831,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -2978,7 +2858,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 3889798);
+        assertEq(buyerBalanceAfter, 3913684);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
@@ -2989,7 +2869,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         vm.warp(100);
 
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3000,10 +2880,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3025,9 +2905,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3054,16 +2932,14 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
         assertEq(buyerBalanceAfter < buyerBalanceBefore, true);
-        assertEq(buyerBalanceAfter, 41668816);
+        assertEq(buyerBalanceAfter, 41924697);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3074,10 +2950,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3099,9 +2975,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3135,11 +3009,9 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3150,10 +3022,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3175,9 +3047,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3211,11 +3081,9 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityMoreThan24Hours100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3226,10 +3094,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3251,9 +3119,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3285,11 +3151,9 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff()
-        public
-    {
+    function testShouldCloseReceiveFixedSwapByBuyerBeforeMaturityLessThan24Hours100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3300,10 +3164,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3325,9 +3189,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3361,7 +3223,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByLiquidatorAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3372,10 +3234,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3397,9 +3259,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3435,7 +3295,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByBuyerAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3446,10 +3306,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3471,9 +3331,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3505,11 +3363,9 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityAfterMaturity100PercentagePayoff()
-        public
-    {
+    function testShouldNotCloseReceiveFixedSwapByCommunityAfterMaturity100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3520,10 +3376,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3545,9 +3401,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3574,21 +3428,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityLessThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3599,10 +3447,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3624,9 +3472,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3653,21 +3499,15 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
     }
 
-    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff()
-        public
-    {
+    function testShouldNotCloseReceiveFixedSwapByCommunityBeforeMaturityMoreThanOneHour100PercentagePayoff() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3678,10 +3518,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3703,9 +3543,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3732,11 +3570,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
         assertEq(buyerBalanceAfter, 0);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 0);
@@ -3744,7 +3578,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
     function testShouldCloseReceiveFixedSwapByLiquidatorBeforeMaturityLessThanOneHour() public {
         //given
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
@@ -3755,10 +3589,10 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         ///@dev 99% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByBuyer = 9767673267326732673268;
+        uint256 minPayoffToCloseBeforeMaturityByBuyer = TestConstants.TC_COLLATERAL_100LEV_99PERCENT_18DEC;
 
         ///@dev 99.5% of payoff
-        uint256 minPayoffToCloseBeforeMaturityByCommunity = 9817004950495049504951;
+        uint256 minPayoffToCloseBeforeMaturityByCommunity = TestConstants.TC_COLLATERAL_100LEV_99_5PERCENT_18DEC;
 
         asset.approve(address(_iporProtocol.joseph), liquidityAmount);
         _iporProtocol.joseph.provideLiquidity(liquidityAmount);
@@ -3780,9 +3614,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(
-            1
-        );
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
 
         int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
@@ -3808,12 +3640,8 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         uint256 communityBalanceAfter = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceAfter = _iporProtocol.asset.balanceOf(_liquidator);
 
-        assertEq(
-            buyerBalanceBefore > buyerBalanceAfter,
-            true,
-            "Failed buyerBalanceBefore > buyerBalanceAfter"
-        );
-        assertEq(buyerBalanceAfter, 12389235);
+        assertEq(buyerBalanceBefore > buyerBalanceAfter, true, "Failed buyerBalanceBefore > buyerBalanceAfter");
+        assertEq(buyerBalanceAfter, 12465316);
         assertEq(liquidatorBalanceAfter - liquidatorBalanceBefore, 0);
         assertEq(communityBalanceAfter - communityBalanceBefore, 25000000);
     }

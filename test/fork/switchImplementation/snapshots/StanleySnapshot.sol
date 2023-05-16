@@ -5,8 +5,8 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../../../contracts/vault/Stanley.sol";
-import "../../../../contracts/vault/strategies/StrategyCore.sol";
+import "contracts/vault/Stanley.sol";
+import "contracts/vault/strategies/StrategyCore.sol";
 import "forge-std/Test.sol";
 
 contract StanleySnapshot is Script, Test {
@@ -92,135 +92,44 @@ contract StanleySnapshot is Script, Test {
         string memory path = vm.projectRoot();
         string memory stanleyJson = "";
         vm.serializeUint(stanleyJson, "stanleyVersion", stanleyVersion);
-        vm.serializeUint(
-            stanleyJson,
-            "stanleyExchangeRate",
-            stanleyExchangeRate
-        );
+        vm.serializeUint(stanleyJson, "stanleyExchangeRate", stanleyExchangeRate);
         vm.serializeAddress(stanleyJson, "stanleyAsset", stanleyAsset);
         vm.serializeAddress(stanleyJson, "stanleyMilton", stanleyMilton);
         vm.serializeAddress(stanleyJson, "strategyAave", strategyAave);
         vm.serializeAddress(stanleyJson, "strategyCompound", strategyCompound);
         vm.serializeBool(stanleyJson, "stanleyIsPaused", stanleyIsPaused);
-        vm.serializeUint(
-            stanleyJson,
-            "stanleyTotalBalance",
-            stanleyTotalBalance
-        );
+        vm.serializeUint(stanleyJson, "stanleyTotalBalance", stanleyTotalBalance);
         vm.serializeAddress(stanleyJson, "stanleyOwner", stanleyOwner);
-        vm.serializeUint(
-            stanleyJson,
-            "strategyAaveVersion",
-            strategyAaveVersion
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveAsset",
-            strategyAaveAsset
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveOwner",
-            strategyAaveOwner
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveShareToken",
-            strategyAaveShareToken
-        );
+        vm.serializeUint(stanleyJson, "strategyAaveVersion", strategyAaveVersion);
+        vm.serializeAddress(stanleyJson, "strategyAaveAsset", strategyAaveAsset);
+        vm.serializeAddress(stanleyJson, "strategyAaveOwner", strategyAaveOwner);
+        vm.serializeAddress(stanleyJson, "strategyAaveShareToken", strategyAaveShareToken);
         vm.serializeUint(stanleyJson, "strategyAaveApr", strategyAaveApr);
-        vm.serializeUint(
-            stanleyJson,
-            "strategyAaveBalance",
-            strategyAaveBalance
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveStanley",
-            strategyAaveStanley
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveTreasury",
-            strategyAaveTreasury
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyAaveTreasuryManager",
-            strategyAaveTreasuryManager
-        );
-        vm.serializeBool(
-            stanleyJson,
-            "strategyAaveIsPaused",
-            strategyAaveIsPaused
-        );
+        vm.serializeUint(stanleyJson, "strategyAaveBalance", strategyAaveBalance);
+        vm.serializeAddress(stanleyJson, "strategyAaveStanley", strategyAaveStanley);
+        vm.serializeAddress(stanleyJson, "strategyAaveTreasury", strategyAaveTreasury);
+        vm.serializeAddress(stanleyJson, "strategyAaveTreasuryManager", strategyAaveTreasuryManager);
+        vm.serializeBool(stanleyJson, "strategyAaveIsPaused", strategyAaveIsPaused);
 
-        vm.serializeUint(
-            stanleyJson,
-            "strategyCompoundVersion",
-            strategyCompoundVersion
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundAsset",
-            strategyCompoundAsset
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundOwner",
-            strategyCompoundOwner
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundShareToken",
-            strategyCompoundShareToken
-        );
-        vm.serializeUint(
-            stanleyJson,
-            "strategyCompoundApr",
-            strategyCompoundApr
-        );
-        vm.serializeUint(
-            stanleyJson,
-            "strategyCompoundBalance",
-            strategyCompoundBalance
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundStanley",
-            strategyCompoundStanley
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundTreasury",
-            strategyCompoundTreasury
-        );
-        vm.serializeAddress(
-            stanleyJson,
-            "strategyCompoundTreasuryManager",
-            strategyCompoundTreasuryManager
-        );
-        vm.serializeBool(
-            stanleyJson,
-            "strategyCompoundIsPaused",
-            strategyCompoundIsPaused
-        );
+        vm.serializeUint(stanleyJson, "strategyCompoundVersion", strategyCompoundVersion);
+        vm.serializeAddress(stanleyJson, "strategyCompoundAsset", strategyCompoundAsset);
+        vm.serializeAddress(stanleyJson, "strategyCompoundOwner", strategyCompoundOwner);
+        vm.serializeAddress(stanleyJson, "strategyCompoundShareToken", strategyCompoundShareToken);
+        vm.serializeUint(stanleyJson, "strategyCompoundApr", strategyCompoundApr);
+        vm.serializeUint(stanleyJson, "strategyCompoundBalance", strategyCompoundBalance);
+        vm.serializeAddress(stanleyJson, "strategyCompoundStanley", strategyCompoundStanley);
+        vm.serializeAddress(stanleyJson, "strategyCompoundTreasury", strategyCompoundTreasury);
+        vm.serializeAddress(stanleyJson, "strategyCompoundTreasuryManager", strategyCompoundTreasuryManager);
+        vm.serializeBool(stanleyJson, "strategyCompoundIsPaused", strategyCompoundIsPaused);
 
-        string memory finalJson = vm.serializeUint(
-            stanleyJson,
-            "blockNumber",
-            blockNumber
-        );
-        string memory fileBlockNumber = string.concat(
-            Strings.toString(blockNumber),
-            ".json"
-        );
+        string memory finalJson = vm.serializeUint(stanleyJson, "blockNumber", blockNumber);
+        string memory fileBlockNumber = string.concat(Strings.toString(blockNumber), ".json");
         string memory finalFileName = string.concat(fileName, fileBlockNumber);
         vm.writeJson(finalJson, string.concat(path, finalFileName));
         console2.log("END: Save Stanley data to json");
     }
 
-    function assert(StanleySnapshot stanleySnapshot1, StanleySnapshot stanleySnapshot2) external {
+    function assertStanley(StanleySnapshot stanleySnapshot1, StanleySnapshot stanleySnapshot2) external {
         assertEq(stanleySnapshot1.stanleyExchangeRate(), stanleySnapshot1.stanleyExchangeRate());
         assertEq(stanleySnapshot1.stanleyAsset(), stanleySnapshot1.stanleyAsset());
         assertEq(stanleySnapshot1.stanleyMilton(), stanleySnapshot1.stanleyMilton());
@@ -244,9 +153,11 @@ contract StanleySnapshot is Script, Test {
         assertEq(stanleySnapshot1.strategyCompoundBalance(), stanleySnapshot1.strategyCompoundBalance());
         assertEq(stanleySnapshot1.strategyCompoundStanley(), stanleySnapshot1.strategyCompoundStanley());
         assertEq(stanleySnapshot1.strategyCompoundTreasury(), stanleySnapshot1.strategyCompoundTreasury());
-        assertEq(stanleySnapshot1.strategyCompoundTreasuryManager(), stanleySnapshot1.strategyCompoundTreasuryManager());
+        assertEq(
+            stanleySnapshot1.strategyCompoundTreasuryManager(),
+            stanleySnapshot1.strategyCompoundTreasuryManager()
+        );
         assertEq(stanleySnapshot1.strategyCompoundIsPaused(), stanleySnapshot1.strategyCompoundIsPaused());
         assertEq(stanleySnapshot1.blockNumber(), stanleySnapshot1.blockNumber());
     }
-
 }

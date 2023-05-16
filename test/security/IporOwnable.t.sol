@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/security/IporOwnable.sol";
-import "../../contracts/libraries/errors/IporErrors.sol";
+import "contracts/security/IporOwnable.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 
 contract IporOwnableTest is Test, TestCommons {
     IporOwnable internal _iporOwnable;

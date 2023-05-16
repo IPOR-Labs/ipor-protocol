@@ -8,9 +8,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../contracts/security/IporOwnableUpgradeable.sol";
-import "../../contracts/libraries/errors/MocksErrors.sol";
-import "../../contracts/interfaces/ITestnetFaucet.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/libraries/errors/MocksErrors.sol";
+import "contracts/interfaces/ITestnetFaucet.sol";
 
 contract MockOldTestnetFaucet is
     Initializable,
@@ -62,13 +62,7 @@ contract MockOldTestnetFaucet is
         uint256 secondsToNextClaim = _couldClaimInSeconds();
         require(
             secondsToNextClaim == 0,
-            string(
-                abi.encodePacked(
-                    MocksErrors.CAN_CLAIM_ONCE_EVERY_24H,
-                    ": ",
-                    Strings.toString(secondsToNextClaim)
-                )
-            )
+            string(abi.encodePacked(MocksErrors.CAN_CLAIM_ONCE_EVERY_24H, ": ", Strings.toString(secondsToNextClaim)))
         );
         _transfer(_dai);
         _transfer(_usdc);
@@ -110,7 +104,7 @@ contract MockOldTestnetFaucet is
     function _transfer(address asset) internal {
         IERC20MetadataUpgradeable token = IERC20MetadataUpgradeable(asset);
         uint256 value;
-        value = 10_000 * 10 ** token.decimals();
+        value = 10_000 * 10**token.decimals();
         IERC20Upgradeable(asset).safeTransfer(msg.sender, value);
         emit Claim(_msgSender(), address(asset), value);
     }
@@ -132,7 +126,8 @@ contract MockOldTestnetFaucet is
 
     function updateAmountToTransfer(address asset, uint256 amount) external override {}
 
-    function getAmountToTransfer(address asset) external view override returns (uint256) {
-    return 0;
+    function getAmountToTransfer(address asset) external pure override returns (uint256) {
+        // only for warning in tests
+        return asset != address(0) ? 0 : 0;
     }
 }

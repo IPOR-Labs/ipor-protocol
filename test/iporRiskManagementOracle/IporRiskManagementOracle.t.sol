@@ -2,12 +2,11 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "forge-std/console2.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/oracles/IporRiskManagementOracle.sol";
+import "contracts/oracles/IporRiskManagementOracle.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
 
 contract IporRiskManagementOracleTest is Test, TestCommons {
     uint32 private _blockTimestamp = 1641701;
@@ -114,12 +113,7 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         _iporRiskManagementOracle.pause();
         bool pausedBefore = _iporRiskManagementOracle.paused();
 
-        MockTestnetToken randomStable = new MockTestnetToken(
-            "Random Stable",
-            "SandomStable",
-            100_000_000 * 1e18,
-            uint8(18)
-        );
+        new MockTestnetToken("Random Stable", "SandomStable", 100_000_000 * 1e18, uint8(18));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
@@ -671,7 +665,6 @@ contract IporRiskManagementOracleTest is Test, TestCommons {
         uint256[] memory maxUtilizationRate = new uint256[](2);
         maxUtilizationRate[0] = TestConstants.RMO_UTILIZATION_RATE_48_PER;
         maxUtilizationRate[1] = TestConstants.RMO_UTILIZATION_RATE_60_PER;
-
 
         // when
         _iporRiskManagementOracle.updateRiskIndicators(

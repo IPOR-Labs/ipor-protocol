@@ -2,8 +2,8 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "../../../contracts/vault/StanleyUsdc.sol";
-import "../../../contracts/tokens/IvToken.sol";
+import "contracts/vault/StanleyUsdc.sol";
+import "contracts/tokens/IvToken.sol";
 import "../UsdcAmm.sol";
 
 contract StanleyCompoundUsdcTest is Test {
