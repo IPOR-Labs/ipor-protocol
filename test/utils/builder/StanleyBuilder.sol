@@ -8,13 +8,11 @@ import "contracts/itf/ItfMilton18D.sol";
 import "contracts/itf/ItfStanley6D.sol";
 
 import "./BuilderUtils.sol";
-import "./IvTokenBuilder.sol";
 import "./StrategyAaveBuilder.sol";
 import "./StrategyCompoundBuilder.sol";
 import "contracts/itf/ItfStanley.sol";
 import "contracts/itf/ItfStanley18D.sol";
 import "forge-std/Test.sol";
-import "./IporProtocolBuilder.sol";
 
 contract StanleyBuilder is Test {
     struct BuilderData {
@@ -29,15 +27,9 @@ contract StanleyBuilder is Test {
     BuilderData private builderData;
 
     address private _owner;
-    IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner) {
         _owner = owner;
-        _iporProtocolBuilder = iporProtocolBuilder;
-    }
-
-    function and() public view returns (IporProtocolBuilder) {
-        return _iporProtocolBuilder;
     }
 
     function withAssetType(BuilderUtils.AssetType assetType) public returns (StanleyBuilder) {
@@ -65,38 +57,21 @@ contract StanleyBuilder is Test {
         return this;
     }
 
-    function withStanleyImplementation(address stanleyImplementation)
-        public
-        returns (StanleyBuilder)
-    {
+    function withStanleyImplementation(address stanleyImplementation) public returns (StanleyBuilder) {
         builderData.stanleyImplementation = stanleyImplementation;
         return this;
-    }
-
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
-    function isSetIvToken() public view returns (bool) {
-        return builderData.ivToken != address(0);
     }
 
     function _buildStrategiesDai() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenDai();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenDai();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
@@ -109,18 +84,12 @@ contract StanleyBuilder is Test {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();
@@ -133,18 +102,12 @@ contract StanleyBuilder is Test {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");
 
-        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyAaveBuilder strategyAaveBuilder = new StrategyAaveBuilder(_owner);
         strategyAaveBuilder.withAsset(builderData.asset);
         strategyAaveBuilder.withShareTokenUsdt();
         MockTestnetStrategy strategyAave = strategyAaveBuilder.build();
 
-        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(
-            _owner,
-            _iporProtocolBuilder
-        );
+        StrategyCompoundBuilder strategyCompoundBuilder = new StrategyCompoundBuilder(_owner);
         strategyCompoundBuilder.withAsset(builderData.asset);
         strategyCompoundBuilder.withShareTokenUsdc();
         MockTestnetStrategy strategyCompound = strategyCompoundBuilder.build();

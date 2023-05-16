@@ -11,7 +11,7 @@ contract IporOracleFactory is Test {
 
     constructor(address owner) {
         _owner = owner;
-        iporOracleBuilder = new IporOracleBuilder(owner, IporProtocolBuilder(address(0)));
+        iporOracleBuilder = new IporOracleBuilder(owner);
     }
 
     function getInstance(

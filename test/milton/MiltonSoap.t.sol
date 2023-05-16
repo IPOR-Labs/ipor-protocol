@@ -10,7 +10,7 @@ import "contracts/mocks/spread/MockSpreadModel.sol";
 contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolFactory.AmmConfig private _ammCfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
         _admin = address(this);
@@ -370,8 +370,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         //given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        IporProtocolBuilder.IporProtocol memory ammUsdt = amm.usdt;
-        IporProtocolBuilder.IporProtocol memory ammDai = amm.dai;
+        BuilderUtils.IporProtocol memory ammUsdt = amm.usdt;
+        BuilderUtils.IporProtocol memory ammDai = amm.dai;
 
         _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
         _iporProtocolFactory.setupUsers(_cfg, ammDai);
@@ -417,8 +417,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.milton);
 
         // then
-        assertEq(soapUsdt, expectedSoapUsdt);
-        assertEq(soapDai, expectedSoapDai);
+        assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
+        assertEq(soapDai, expectedSoapDai, "incorrect soapDai");
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixedAndClosePayFixed() public {
@@ -521,8 +521,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         // given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        IporProtocolBuilder.IporProtocol memory ammUsdt = amm.usdt;
-        IporProtocolBuilder.IporProtocol memory ammDai = amm.dai;
+        BuilderUtils.IporProtocol memory ammUsdt = amm.usdt;
+        BuilderUtils.IporProtocol memory ammDai = amm.dai;
 
         _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
         _iporProtocolFactory.setupUsers(_cfg, ammDai);
@@ -571,8 +571,8 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         // then
         (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.milton);
         (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.milton);
-        assertEq(soapUsdt, expectedSoapUsdt);
-        assertEq(soapDai, expectedSoapDai);
+        assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
+        assertEq(soapDai, expectedSoapDai, "incorrect soapDai");
     }
 
     function testShouldCalculateSoapWhenDAIPayFixedAndChangeIbtPriceAndWait25DaysAndThenCalculateSoap18Decimals()

@@ -11,7 +11,7 @@ contract IporRiskManagementOracleFactory is Test {
 
     constructor(address owner) {
         _owner = owner;
-        _iporRiskManagementOracleBuilder = new IporRiskManagementOracleBuilder(owner, IporProtocolBuilder(address(0)));
+        _iporRiskManagementOracleBuilder = new IporRiskManagementOracleBuilder(owner);
     }
 
     function getInstance(

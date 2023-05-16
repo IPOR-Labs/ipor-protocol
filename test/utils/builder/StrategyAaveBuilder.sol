@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/mocks/stanley/MockTestnetStrategy.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "forge-std/Test.sol";
-import "./IporProtocolBuilder.sol";
 
 contract StrategyAaveBuilder is Test {
     struct BuilderData {
@@ -15,15 +14,9 @@ contract StrategyAaveBuilder is Test {
     BuilderData private builderData;
 
     address private _owner;
-    IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner) {
         _owner = owner;
-        _iporProtocolBuilder = iporProtocolBuilder;
-    }
-
-    function and() public view returns (IporProtocolBuilder) {
-        return _iporProtocolBuilder;
     }
 
     function withAsset(address asset) public returns (StrategyAaveBuilder) {

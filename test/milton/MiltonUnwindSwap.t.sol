@@ -19,7 +19,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;
 
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     MockTestnetToken asset;
     ItfMilton milton;

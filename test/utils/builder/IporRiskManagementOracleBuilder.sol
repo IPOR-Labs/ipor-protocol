@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/oracles/IporRiskManagementOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
-import "./IporProtocolBuilder.sol";
 import "./BuilderUtils.sol";
 
 contract IporRiskManagementOracleBuilder is Test {
@@ -20,15 +19,9 @@ contract IporRiskManagementOracleBuilder is Test {
     BuilderData private builderData;
 
     address private _owner;
-    IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner) {
         _owner = owner;
-        _iporProtocolBuilder = iporProtocolBuilder;
-    }
-
-    function and() public view returns (IporProtocolBuilder) {
-        return _iporProtocolBuilder;
     }
 
     function withAsset(address asset) public returns (IporRiskManagementOracleBuilder) {

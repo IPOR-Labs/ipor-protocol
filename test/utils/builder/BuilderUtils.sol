@@ -1,6 +1,31 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
+import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "../../../contracts/tokens/IpToken.sol";
+import "../../../contracts/tokens/IvToken.sol";
+import "../../../contracts/itf/ItfIporOracle.sol";
+import "../../../contracts/oracles/IporRiskManagementOracle.sol";
+import "../../../contracts/mocks/MockIporWeighted.sol";
+import "../../../contracts/amm/MiltonStorage.sol";
+import "../../../contracts/mocks/spread/MockSpreadModel.sol";
+import "../../../contracts/itf/ItfStanley.sol";
+import "../../../contracts/itf/ItfMilton.sol";
+import "../../../contracts/itf/ItfJoseph.sol";
 contract BuilderUtils {
+    struct IporProtocol {
+        MockTestnetToken asset;
+        IpToken ipToken;
+        IvToken ivToken;
+        ItfIporOracle iporOracle;
+        IporRiskManagementOracle iporRiskManagementOracle;
+        MockIporWeighted iporWeighted;
+        MiltonStorage miltonStorage;
+        MockSpreadModel spreadModel;
+        ItfStanley stanley;
+        ItfMilton milton;
+        ItfJoseph joseph;
+    }
+
     enum IporOracleInitialParamsTestCase {
         /// @dev lastUpdateTimestamp = block.timestamp
         /// @dev exponentialMovingAverage = 3 * 1e16
