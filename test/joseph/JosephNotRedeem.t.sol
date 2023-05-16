@@ -5,10 +5,10 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/joseph/MockCase1Joseph18D.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/itf/ItfJoseph.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -38,7 +38,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndPayFixed() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -67,8 +67,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
         // when
@@ -78,11 +77,9 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         assertGt(actualCollateral, actualLiquidityPoolBalance);
     }
 
-    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed()
-        public
-    {
+    function testShouldNotRedeemWhenLiquidityPoolUtilizationAlreadyExceededAndReceiveFixed() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -111,8 +108,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
         // when
@@ -124,7 +120,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndPayFixed() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -147,8 +143,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
         // when
@@ -160,7 +155,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemWhenLiquidityPoolUtilizationExceededAndReceiveFixed() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -183,8 +178,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
-        uint256 actualCollateral = balance.totalCollateralPayFixed +
-            balance.totalCollateralReceiveFixed;
+        uint256 actualCollateral = balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed;
         uint256 actualLiquidityPoolBalance = balance.liquidityPool;
 
         // when
@@ -196,7 +190,7 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPool() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -215,8 +209,8 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseOfEmptyLiquidityPoolAfterRedeemLiquidity() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.josephImplementation = address(new MockCase1Joseph18D());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -230,8 +224,8 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotRedeemIpTokensBecauseRedeemAmountIsTooLow() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _cfg.josephImplementation = address(new MockCase1Joseph18D());
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when

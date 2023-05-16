@@ -2,11 +2,11 @@
 pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
-import "../../contracts/interfaces/types/MiltonFacadeTypes.sol";
+import "contracts/interfaces/types/MiltonFacadeTypes.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/interfaces/IMiltonFacadeDataProvider.sol";
+import "contracts/interfaces/IMiltonFacadeDataProvider.sol";
 import "../utils/builder/BuilderUtils.sol";
 
 contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {

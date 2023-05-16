@@ -54,10 +54,7 @@ abstract contract JosephInternal is
     mapping(address => bool) internal _appointedToRebalance;
 
     modifier onlyCharlieTreasuryManager() {
-        require(
-            _msgSender() == _charlieTreasuryManager,
-            JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
-        );
+        require(_msgSender() == _charlieTreasuryManager, JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
         _;
     }
 
@@ -67,10 +64,7 @@ abstract contract JosephInternal is
     }
 
     modifier onlyAppointedToRebalance() {
-        require(
-            _appointedToRebalance[_msgSender()],
-            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
-        );
+        require(_appointedToRebalance[_msgSender()], JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE);
         _;
     }
 
@@ -96,10 +90,7 @@ abstract contract JosephInternal is
         require(milton != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(initAsset).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
+        require(_getDecimals() == IERC20MetadataUpgradeable(initAsset).decimals(), IporErrors.WRONG_DECIMALS);
 
         if (paused) {
             _pause();
@@ -149,7 +140,7 @@ abstract contract JosephInternal is
         _miltonStanleyBalanceRatio = newRatio;
     }
 
-    function _getRedeemFeeRate() internal pure virtual returns (uint256) {
+    function _getRedeemFeeRate() internal view virtual returns (uint256) {
         return _REDEEM_FEE_RATE;
     }
 
@@ -189,10 +180,8 @@ abstract contract JosephInternal is
                 _getMilton().depositToStanley(assetAmount);
             }
         } else {
-            uint256 assetAmount = IporMath.division(
-                miltonStanleyBalanceRatio * totalBalance,
-                Constants.D18
-            ) - wadMiltonAssetBalance;
+            uint256 assetAmount = IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18) -
+                wadMiltonAssetBalance;
             if (assetAmount > 0) {
                 _getMilton().withdrawFromStanley(assetAmount);
             }
@@ -215,30 +204,17 @@ abstract contract JosephInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function transferToTreasury(uint256 assetAmount)
-        external
-        override
-        nonReentrant
-        whenNotPaused
-        onlyTreasuryManager
-    {
+    function transferToTreasury(uint256 assetAmount) external override nonReentrant whenNotPaused onlyTreasuryManager {
         address treasury = _treasury;
         require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetAmount,
-            _getDecimals()
-        );
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, _getDecimals());
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
 
         _getMiltonStorage().updateStorageWhenTransferToTreasury(wadAssetAmount);
 
-        IERC20Upgradeable(_getAsset()).safeTransferFrom(
-            address(_getMilton()),
-            treasury,
-            assetAmountAssetDecimals
-        );
+        IERC20Upgradeable(_getAsset()).safeTransferFrom(address(_getMilton()), treasury, assetAmountAssetDecimals);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
@@ -253,10 +229,7 @@ abstract contract JosephInternal is
 
         require(address(0) != charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetAmount,
-            _getDecimals()
-        );
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, _getDecimals());
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
 
@@ -281,12 +254,7 @@ abstract contract JosephInternal is
         return _charlieTreasury;
     }
 
-    function setCharlieTreasury(address newCharlieTreasury)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setCharlieTreasury(address newCharlieTreasury) external override onlyOwner whenNotPaused {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
         address oldCharlieTreasury = _charlieTreasury;
         _charlieTreasury = newCharlieTreasury;
@@ -308,32 +276,18 @@ abstract contract JosephInternal is
         return _charlieTreasuryManager;
     }
 
-    function setCharlieTreasuryManager(address newCharlieTreasuryManager)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setCharlieTreasuryManager(address newCharlieTreasuryManager) external override onlyOwner whenNotPaused {
         require(address(0) != newCharlieTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldCharlieTreasuryManager = _charlieTreasuryManager;
         _charlieTreasuryManager = newCharlieTreasuryManager;
-        emit CharlieTreasuryManagerChanged(
-            _msgSender(),
-            oldCharlieTreasuryManager,
-            newCharlieTreasuryManager
-        );
+        emit CharlieTreasuryManagerChanged(_msgSender(), oldCharlieTreasuryManager, newCharlieTreasuryManager);
     }
 
     function getTreasuryManager() external view override returns (address) {
         return _treasuryManager;
     }
 
-    function setTreasuryManager(address newTreasuryManager)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setTreasuryManager(address newTreasuryManager) external override onlyOwner whenNotPaused {
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
         address oldTreasuryManager = _treasuryManager;
         _treasuryManager = newTreasuryManager;
@@ -344,12 +298,7 @@ abstract contract JosephInternal is
         return _maxLiquidityPoolBalance;
     }
 
-    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance) external override onlyOwner whenNotPaused {
         uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
         _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
         emit MaxLiquidityPoolBalanceChanged(
@@ -382,16 +331,11 @@ abstract contract JosephInternal is
         return _getAutoRebalanceThreshold();
     }
 
-    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) external override onlyOwner whenNotPaused {
         _setAutoRebalanceThreshold(newAutoRebalanceThreshold);
     }
 
-    function getRedeemFeeRate() external pure override returns (uint256) {
+    function getRedeemFeeRate() external view override returns (uint256) {
         return _getRedeemFeeRate();
     }
 
@@ -418,11 +362,7 @@ abstract contract JosephInternal is
         return _appointedToRebalance[appointed];
     }
 
-    function _getIporTotalBalance()
-        internal
-        view
-        returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
-    {
+    function _getIporTotalBalance() internal view returns (uint256 totalBalance, uint256 wadMiltonAssetBalance) {
         address miltonAddr = address(_getMilton());
 
         wadMiltonAssetBalance = IporMath.convertToWad(
@@ -451,7 +391,7 @@ abstract contract JosephInternal is
         return _asset;
     }
 
-    function _getDecimals() internal pure virtual returns (uint256);
+    function _getDecimals() internal view virtual returns (uint256);
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}

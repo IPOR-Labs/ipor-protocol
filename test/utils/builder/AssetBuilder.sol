@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 import "./BuilderUtils.sol";
 import "./IporProtocolBuilder.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../utils/TestConstants.sol";
 import "forge-std/Test.sol";
 
@@ -20,7 +20,7 @@ contract AssetBuilder is Test {
     address private _owner;
     IporProtocolBuilder private _iporProtocolBuilder;
 
-        constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
         _owner = owner;
         _iporProtocolBuilder = iporProtocolBuilder;
     }

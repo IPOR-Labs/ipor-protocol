@@ -5,17 +5,15 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/interfaces/types/MiltonTypes.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
-import "../../contracts/mocks/milton/MockCase2Milton18D.sol";
-import "../../contracts/mocks/milton/MockCase3Milton18D.sol";
+import "contracts/interfaces/types/MiltonTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
 
 contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;
@@ -29,7 +27,12 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
     int256 unwindFlatFee = 5 * 1e18;
 
-    event SwapUnwind(uint256 indexed swapId, int256 swapPayoffToDate, int256 swapUnwindValue, uint256 swapUnwindOpeningFee);
+    event SwapUnwind(
+        uint256 indexed swapId,
+        int256 swapPayoffToDate,
+        int256 swapUnwindValue,
+        uint256 swapUnwindOpeningFee
+    );
 
     function setUp() public {
         _admin = address(this);
@@ -146,8 +149,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        MockTestnetToken assetTemp = _iporProtocol.asset;
+        ItfMilton miltonTemp = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -155,25 +158,24 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         uint256 acceptableFixedInterestRate = 10 * 10**16;
         uint256 leverage = 100 * 10**18;
 
-        asset.approve(address(joseph), liquidityAmount);
+        assetTemp.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
 
-        asset.transfer(_buyer, totalAmount);
+        assetTemp.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        assetTemp.approve(address(miltonTemp), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
-        uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        miltonTemp.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        miltonTemp.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -185,8 +187,8 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        MockTestnetToken assetTemp = _iporProtocol.asset;
+        ItfMilton miltonTemp = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -194,25 +196,25 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         uint256 acceptableFixedInterestRate = 0;
         uint256 leverage = 100 * 10**18;
 
-        asset.approve(address(joseph), liquidityAmount);
+        assetTemp.approve(address(joseph), liquidityAmount);
         joseph.provideLiquidity(liquidityAmount);
 
-        asset.transfer(_buyer, totalAmount);
+        assetTemp.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        assetTemp.approve(address(miltonTemp), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        miltonTemp.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        miltonTemp.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);

@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/tokens/IvToken.sol";
-import "../../../contracts/itf/ItfMilton18D.sol";
-import "../../../contracts/itf/ItfStanley6D.sol";
+import "contracts/mocks/MockIporWeighted.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/itf/ItfMilton18D.sol";
+import "contracts/itf/ItfStanley6D.sol";
 
 import "./BuilderUtils.sol";
 import "./IvTokenBuilder.sol";
 import "./StrategyAaveBuilder.sol";
 import "./StrategyCompoundBuilder.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/itf/ItfStanley18D.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfStanley18D.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
 

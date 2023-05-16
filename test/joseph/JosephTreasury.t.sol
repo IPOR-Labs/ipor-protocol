@@ -4,9 +4,9 @@ pragma solidity 0.8.16;
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import "../../contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import "contracts/amm/MiltonStorage.sol";
 
 contract JosephTreasuryTest is TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

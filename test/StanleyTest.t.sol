@@ -4,14 +4,14 @@ pragma solidity 0.8.16;
 import "./TestCommons.sol";
 import {DataUtils} from "./utils/DataUtils.sol";
 import {TestConstants} from "./utils/TestConstants.sol";
-import {IpToken} from "../contracts/tokens/IpToken.sol";
-import {MiltonStorage} from "../contracts/amm/MiltonStorage.sol";
-import {ItfIporOracle} from "../contracts/itf/ItfIporOracle.sol";
-import {MockSpreadModel} from "../contracts/mocks/spread/MockSpreadModel.sol";
-import {MockCaseBaseStanley} from "../contracts/mocks/stanley/MockCaseBaseStanley.sol";
-import {MockCase2Stanley} from "../contracts/mocks/stanley/MockCase2Stanley.sol";
-import {IIporRiskManagementOracle} from "../contracts/interfaces/IIporRiskManagementOracle.sol";
-import {IporTypes} from "../contracts/interfaces/types/IporTypes.sol";
+import {IpToken} from "contracts/tokens/IpToken.sol";
+import {MiltonStorage} from "contracts/amm/MiltonStorage.sol";
+import {ItfIporOracle} from "contracts/itf/ItfIporOracle.sol";
+import {MockSpreadModel} from "contracts/mocks/spread/MockSpreadModel.sol";
+import {MockCaseBaseStanley} from "contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import {MockCase2Stanley} from "contracts/mocks/stanley/MockCase2Stanley.sol";
+import {IIporRiskManagementOracle} from "contracts/interfaces/IIporRiskManagementOracle.sol";
+import {IporTypes} from "contracts/interfaces/types/IporTypes.sol";
 
 contract StanleyTest is TestCommons, DataUtils {
     MockSpreadModel internal _miltonSpreadModel;
@@ -72,7 +72,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCaseBaseStanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -80,7 +80,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -137,7 +137,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCaseBaseStanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -145,7 +145,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -203,7 +203,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -211,7 +211,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),
@@ -269,7 +269,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -277,7 +277,7 @@ contract StanleyTest is TestCommons, DataUtils {
             address(stanleyDai),
             address(iporRiskManagementOracle)
         );
-        ItfJoseph18D mockCase0JosephDai = getMockCase0JosephDai(
+        ItfJoseph mockCase0JosephDai = getMockCase0JosephDai(
             address(_daiMockedToken),
             address(_ipTokenDai),
             address(mockCase0MiltonDai),

@@ -2,32 +2,32 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/itf/ItfStanley.sol";
-import "../../contracts/itf/ItfStanley6D.sol";
-import "../../contracts/itf/ItfStanley18D.sol";
-import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/vault/strategies/StrategyAave.sol";
-import "../../contracts/vault/StanleyDai.sol";
-import "../../contracts/vault/StanleyUsdc.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/tokens/AAVEMockedToken.sol";
-import "../../contracts/mocks/stanley/MockCase2Stanley.sol";
-import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
-import "../../contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
-import "../../contracts/mocks/stanley/aave/aTokens/MockADai.sol";
-import "../../contracts/mocks/stanley/aave/MockADAI.sol";
-import "../../contracts/mocks/stanley/aave/MockADAI.sol";
-import "../../contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
-import "../../contracts/mocks/stanley/aave/MockProviderAave.sol";
-import "../../contracts/mocks/stanley/aave/MockStakedAave.sol";
-import "../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
-import "../../contracts/mocks/stanley/compound/MockWhitePaper.sol";
-import "../../contracts/mocks/stanley/compound/MockCToken.sol";
-import "../../contracts/mocks/stanley/compound/MockComptroller.sol";
-import "../../contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfStanley6D.sol";
+import "contracts/itf/ItfStanley18D.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/vault/strategies/StrategyAave.sol";
+import "contracts/vault/StanleyDai.sol";
+import "contracts/vault/StanleyUsdc.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/AAVEMockedToken.sol";
+import "contracts/mocks/stanley/MockCase2Stanley.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockADai.sol";
+import "contracts/mocks/stanley/aave/MockADAI.sol";
+import "contracts/mocks/stanley/aave/MockADAI.sol";
+import "contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
+import "contracts/mocks/stanley/aave/MockProviderAave.sol";
+import "contracts/mocks/stanley/aave/MockStakedAave.sol";
+import "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import "contracts/mocks/stanley/compound/MockWhitePaper.sol";
+import "contracts/mocks/stanley/compound/MockCToken.sol";
+import "contracts/mocks/stanley/compound/MockComptroller.sol";
+import "contracts/mocks/stanley/MockTestnetStrategy.sol";
 
-import "../../contracts/mocks/tokens/MockedCOMPToken.sol";
-import "../../contracts/vault/strategies/StrategyCompound.sol";
+import "contracts/mocks/tokens/MockedCOMPToken.sol";
+import "contracts/vault/strategies/StrategyCompound.sol";
 
 contract StanleyUtils {
     function getTokenAUsdt() public returns (MockAUsdt) {

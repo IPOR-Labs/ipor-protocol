@@ -4,10 +4,10 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     event IporIndexUpdate(

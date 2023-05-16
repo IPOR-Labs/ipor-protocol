@@ -5,7 +5,7 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
 
 contract MiltonShouldNotClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

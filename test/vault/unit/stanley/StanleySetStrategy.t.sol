@@ -4,10 +4,10 @@ pragma solidity 0.8.16;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
-import {StanleyDai} from "../../../../contracts/vault/StanleyDai.sol";
-import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
+import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
+import {StanleyDai} from "contracts/vault/StanleyDai.sol";
+import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {IvToken} from "contracts/tokens/IvToken.sol";
 
 contract StanleySetStrategyTest is TestCommons, DataUtils {
     MockStrategy internal _strategyAaveDai;
@@ -34,7 +34,10 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         _strategyCompoundDai.setAsset(address(_daiMockedToken));
         _strategyCompoundDai.setShareToken(address(_cDai));
         _stanleyDai = getStanleyDai(
-            address(_daiMockedToken), address(_ivTokenDai), address(_strategyAaveDai), address(_strategyCompoundDai)
+            address(_daiMockedToken),
+            address(_ivTokenDai),
+            address(_strategyAaveDai),
+            address(_strategyCompoundDai)
         );
         _admin = address(this);
         _userOne = _getUserAddress(1);
@@ -51,7 +54,6 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         MockStrategy newStrategyAaveDai = new MockStrategy();
         newStrategyAaveDai.setShareToken(address(_aDai));
         newStrategyAaveDai.setAsset(address(_daiMockedToken));
-        address oldStrategyAddress = address(_strategyAaveDai);
         uint256 newStrategyBalanceBefore = newStrategyAaveDai.balanceOf();
         _aDai.mint(address(_strategyAaveDai), TestConstants.USD_1_000_18DEC);
         _strategyAaveDai.setBalance(TestConstants.USD_1_000_18DEC);
@@ -69,7 +71,6 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         MockStrategy newStrategyAaveDai = new MockStrategy();
         newStrategyAaveDai.setShareToken(address(_aDai));
         newStrategyAaveDai.setAsset(address(_daiMockedToken));
-        address oldStrategyAddress = address(_strategyAaveDai);
         uint256 oldStrategyBalanceBefore = _strategyAaveDai.balanceOf();
         uint256 newStrategyBalanceBefore = newStrategyAaveDai.balanceOf();
         // when
@@ -108,7 +109,6 @@ contract StanleySetStrategyTest is TestCommons, DataUtils {
         MockStrategy newStrategyCompoundDai = new MockStrategy();
         newStrategyCompoundDai.setShareToken(address(_cDai));
         newStrategyCompoundDai.setAsset(address(_daiMockedToken));
-        address oldStrategyAddress = address(_strategyCompoundDai);
         uint256 newStrategyBalanceBefore = newStrategyCompoundDai.balanceOf();
         _cDai.mint(address(_strategyCompoundDai), TestConstants.USD_1_000_18DEC);
         _strategyCompoundDai.setBalance(TestConstants.USD_1_000_18DEC);

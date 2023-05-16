@@ -5,9 +5,9 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -35,11 +35,9 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         );
     }
 
-    function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceAndIpTokenTotalSupplyIsZero()
-        public
-    {
+    function testShouldCalculateExchangeRateWhenLiquidityPoolBalanceAndIpTokenTotalSupplyIsZero() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -53,7 +51,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
@@ -87,14 +85,11 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         _iporProtocol.miltonStorage.setJoseph(_userOne);
@@ -111,7 +106,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRateWhenExchangeRateIsGreaterThan1And18Decimals() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -144,7 +139,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);

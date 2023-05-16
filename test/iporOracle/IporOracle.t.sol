@@ -4,9 +4,9 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/mocks/MockIporWeighted.sol";
-import {IporTypes} from "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/MockIporWeighted.sol";
+import {IporTypes} from "contracts/interfaces/types/IporTypes.sol";
 import "./MockOldIporOracleV2.sol";
 import "./MockItfIporOracleV2.sol";
 

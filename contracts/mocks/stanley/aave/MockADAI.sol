@@ -40,6 +40,7 @@ contract MockADAI is ERC20, AToken {
         uint256 amount,
         uint256 index
     ) external override {
+        require(index < type(uint256).max);
         _burn(user, amount);
         require(IERC20(_dai).transfer(receiverOfUnderlying, amount), "Error during transfer");
     }

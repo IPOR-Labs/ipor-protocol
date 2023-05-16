@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/ItfIporOracle.sol";
 import "../TestConstants.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
@@ -35,19 +35,13 @@ contract IporOracleBuilder is Test {
         return this;
     }
 
-    function withLastUpdateTimestamp(uint32 lastUpdateTimestamp)
-        public
-        returns (IporOracleBuilder)
-    {
+    function withLastUpdateTimestamp(uint32 lastUpdateTimestamp) public returns (IporOracleBuilder) {
         builderData.lastUpdateTimestamps = new uint32[](1);
         builderData.lastUpdateTimestamps[0] = lastUpdateTimestamp;
         return this;
     }
 
-    function withExponentialMovingAverage(uint64 exponentialMovingAverage)
-        public
-        returns (IporOracleBuilder)
-    {
+    function withExponentialMovingAverage(uint64 exponentialMovingAverage) public returns (IporOracleBuilder) {
         builderData.exponentialMovingAverages = new uint64[](1);
         builderData.exponentialMovingAverages[0] = exponentialMovingAverage;
         return this;
@@ -62,10 +56,7 @@ contract IporOracleBuilder is Test {
         return this;
     }
 
-    function withLastUpdateTimestamps(uint32[] memory lastUpdateTimestamps)
-        public
-        returns (IporOracleBuilder)
-    {
+    function withLastUpdateTimestamps(uint32[] memory lastUpdateTimestamps) public returns (IporOracleBuilder) {
         builderData.lastUpdateTimestamps = lastUpdateTimestamps;
         return this;
     }
@@ -78,9 +69,10 @@ contract IporOracleBuilder is Test {
         return this;
     }
 
-    function withExponentialWeightedMovingVariances(
-        uint64[] memory exponentialWeightedMovingVariances
-    ) public returns (IporOracleBuilder) {
+    function withExponentialWeightedMovingVariances(uint64[] memory exponentialWeightedMovingVariances)
+        public
+        returns (IporOracleBuilder)
+    {
         builderData.exponentialWeightedMovingVariances = exponentialWeightedMovingVariances;
         return this;
     }

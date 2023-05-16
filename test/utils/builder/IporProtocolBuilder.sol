@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../../contracts/tokens/IpToken.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfJoseph.sol";
-import "../../../contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfJoseph.sol";
+import "contracts/amm/MiltonStorage.sol";
 import "./AssetBuilder.sol";
 import "./IpTokenBuilder.sol";
 import "./IporOracleBuilder.sol";
@@ -72,29 +72,32 @@ contract IporProtocolBuilder is Test {
         josephBuilder = new JosephBuilder(owner, this);
     }
 
-    function withAsset(address asset) public returns (IporProtocolBuilder) {
-        builderData.asset = asset;
-        ipTokenBuilder.withAsset(asset);
-        ivTokenBuilder.withAsset(asset);
-        iporOracleBuilder.withAsset(asset);
-        iporRiskManagementOracleBuilder.withAsset(asset);
-        stanleyBuilder.withAsset(asset);
-        miltonBuilder.withAsset(asset);
-        josephBuilder.withAsset(asset);
+    function withAsset(address assetInput) public returns (IporProtocolBuilder) {
+        builderData.asset = assetInput;
+        ipTokenBuilder.withAsset(assetInput);
+        ivTokenBuilder.withAsset(assetInput);
+        iporOracleBuilder.withAsset(assetInput);
+        iporRiskManagementOracleBuilder.withAsset(assetInput);
+        stanleyBuilder.withAsset(assetInput);
+        miltonBuilder.withAsset(assetInput);
+        josephBuilder.withAsset(assetInput);
 
         return this;
     }
 
-    function withIporOracle(address iporOracle) public returns (IporProtocolBuilder) {
-        builderData.iporOracle = iporOracle;
-        iporWeightedBuilder.withIporOracle(iporOracle);
-        miltonBuilder.withIporOracle(iporOracle);
+    function withIporOracle(address iporOracleAddress) public returns (IporProtocolBuilder) {
+        builderData.iporOracle = iporOracleAddress;
+        iporWeightedBuilder.withIporOracle(iporOracleAddress);
+        miltonBuilder.withIporOracle(iporOracleAddress);
         return this;
     }
 
-    function withIporRiskManagementOracle(address iporRiskManagementOracle) public returns (IporProtocolBuilder) {
-        builderData.iporRiskManagementOracle = iporRiskManagementOracle;
-        miltonBuilder.withIporRiskManagementOracle(iporRiskManagementOracle);
+    function withIporRiskManagementOracle(address iporRiskManagementOracleAddress)
+        public
+        returns (IporProtocolBuilder)
+    {
+        builderData.iporRiskManagementOracle = iporRiskManagementOracleAddress;
+        miltonBuilder.withIporRiskManagementOracle(iporRiskManagementOracleAddress);
         return this;
     }
 
@@ -172,42 +175,42 @@ contract IporProtocolBuilder is Test {
     }
 
     function build() public returns (IporProtocol memory iporProtocol) {
-        MockTestnetToken asset;
+        MockTestnetToken assetTemp;
 
         if (builderData.asset == address(0)) {
-            asset = assetBuilder.build();
+            assetTemp = assetBuilder.build();
         } else {
-            asset = MockTestnetToken(builderData.asset);
+            assetTemp = MockTestnetToken(builderData.asset);
         }
 
         if (ipTokenBuilder.isSetAsset() == false) {
-            ipTokenBuilder.withAsset(address(asset));
+            ipTokenBuilder.withAsset(address(assetTemp));
         }
-        IpToken ipToken = ipTokenBuilder.build();
+        IpToken ipTokenTemp = ipTokenBuilder.build();
 
         if (ivTokenBuilder.isSetAsset() == false) {
-            ivTokenBuilder.withAsset(address(asset));
+            ivTokenBuilder.withAsset(address(assetTemp));
         }
-        IvToken ivToken = ivTokenBuilder.build();
+        IvToken ivTokenTemp = ivTokenBuilder.build();
 
-        ItfIporOracle iporOracle;
+        ItfIporOracle iporOracleTemp;
 
         if (builderData.iporOracle == address(0)) {
-            iporOracle = iporOracleBuilder.build();
+            iporOracleTemp = iporOracleBuilder.build();
         } else {
-            iporOracle = ItfIporOracle(builderData.iporOracle);
+            iporOracleTemp = ItfIporOracle(builderData.iporOracle);
         }
 
-        IporRiskManagementOracle iporRiskManagementOracle;
+        IporRiskManagementOracle iporRiskManagementOracleTemp;
 
         if (builderData.iporRiskManagementOracle == address(0)) {
-            iporRiskManagementOracle = iporRiskManagementOracleBuilder.build();
+            iporRiskManagementOracleTemp = iporRiskManagementOracleBuilder.build();
         } else {
-            iporRiskManagementOracle = IporRiskManagementOracle(builderData.iporRiskManagementOracle);
+            iporRiskManagementOracleTemp = IporRiskManagementOracle(builderData.iporRiskManagementOracle);
         }
 
         if (iporWeightedBuilder.isSetIporOracle() == false) {
-            iporWeightedBuilder.withIporOracle(address(iporOracle));
+            iporWeightedBuilder.withIporOracle(address(iporOracleTemp));
         }
         MockIporWeighted iporWeighted = iporWeightedBuilder.build();
 
@@ -215,83 +218,83 @@ contract IporProtocolBuilder is Test {
         MockSpreadModel spreadModel = spreadBuilder.build();
 
         if (stanleyBuilder.isSetAsset() == false) {
-            stanleyBuilder.withAsset(address(asset));
+            stanleyBuilder.withAsset(address(assetTemp));
         }
         if (stanleyBuilder.isSetIvToken() == false) {
-            stanleyBuilder.withIvToken(address(ivToken));
+            stanleyBuilder.withIvToken(address(ivTokenTemp));
         }
-        ItfStanley stanley = stanleyBuilder.build();
+        ItfStanley stanleyTemp = stanleyBuilder.build();
 
         if (miltonBuilder.isSetAsset() == false) {
-            miltonBuilder.withAsset(address(asset));
+            miltonBuilder.withAsset(address(assetTemp));
         }
         if (miltonBuilder.isSetIporOracle() == false) {
-            miltonBuilder.withIporOracle(address(iporOracle));
+            miltonBuilder.withIporOracle(address(iporOracleTemp));
         }
         if (miltonBuilder.isSetMiltonStorage() == false) {
             miltonBuilder.withMiltonStorage(address(miltonStorage));
         }
         if (miltonBuilder.isSetStanley() == false) {
-            miltonBuilder.withStanley(address(stanley));
+            miltonBuilder.withStanley(address(stanleyTemp));
         }
         if (miltonBuilder.isSetSpreadModel() == false) {
             miltonBuilder.withSpreadModel(address(spreadModel));
         }
         if (miltonBuilder.isSetIporRiskManagementOracle() == false) {
-            miltonBuilder.withIporRiskManagementOracle(address(iporRiskManagementOracle));
+            miltonBuilder.withIporRiskManagementOracle(address(iporRiskManagementOracleTemp));
         }
 
-        ItfMilton milton = miltonBuilder.build();
+        ItfMilton miltonTemp = miltonBuilder.build();
 
         if (josephBuilder.isSetAsset() == false) {
-            josephBuilder.withAsset(address(asset));
+            josephBuilder.withAsset(address(assetTemp));
         }
         if (josephBuilder.isSetIpToken() == false) {
-            josephBuilder.withIpToken(address(ipToken));
+            josephBuilder.withIpToken(address(ipTokenTemp));
         }
         if (josephBuilder.isSetMiltonStorage() == false) {
             josephBuilder.withMiltonStorage(address(miltonStorage));
         }
         if (josephBuilder.isSetMilton() == false) {
-            josephBuilder.withMilton(address(milton));
+            josephBuilder.withMilton(address(miltonTemp));
         }
         if (josephBuilder.isSetStanley() == false) {
-            josephBuilder.withStanley(address(stanley));
+            josephBuilder.withStanley(address(stanleyTemp));
         }
 
-        ItfJoseph joseph = josephBuilder.build();
+        ItfJoseph josephTemp = josephBuilder.build();
 
         vm.startPrank(address(_owner));
-        iporOracle.setIporAlgorithmFacade(address(iporWeighted));
+        iporOracleTemp.setIporAlgorithmFacade(address(iporWeighted));
 
-        ivToken.setStanley(address(stanley));
+        ivTokenTemp.setStanley(address(stanleyTemp));
 
-        miltonStorage.setMilton(address(milton));
-        stanley.setMilton(address(milton));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+        miltonStorage.setMilton(address(miltonTemp));
+        stanleyTemp.setMilton(address(miltonTemp));
+        miltonTemp.setupMaxAllowanceForAsset(address(stanleyTemp));
 
-        ipToken.setJoseph(address(joseph));
-        miltonStorage.setJoseph(address(joseph));
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
+        ipTokenTemp.setJoseph(address(josephTemp));
+        miltonStorage.setJoseph(address(josephTemp));
+        miltonTemp.setJoseph(address(josephTemp));
+        miltonTemp.setupMaxAllowanceForAsset(address(josephTemp));
 
-        joseph.setMaxLiquidityPoolBalance(1000000000);
-        joseph.setMaxLpAccountContribution(1000000000);
+        josephTemp.setMaxLiquidityPoolBalance(1000000000);
+        josephTemp.setMaxLpAccountContribution(1000000000);
 
         vm.stopPrank();
 
         iporProtocol = IporProtocol(
-            asset,
-            ipToken,
-            ivToken,
-            iporOracle,
-            iporRiskManagementOracle,
+            assetTemp,
+            ipTokenTemp,
+            ivTokenTemp,
+            iporOracleTemp,
+            iporRiskManagementOracleTemp,
             iporWeighted,
             miltonStorage,
             spreadModel,
-            stanley,
-            milton,
-            joseph
+            stanleyTemp,
+            miltonTemp,
+            josephTemp
         );
 
         delete builderData;

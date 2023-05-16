@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "forge-std/Test.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/tokens/IpToken.sol";
-import "../../../contracts/tokens/IvToken.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/amm/MiltonStorage.sol";
-import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfJoseph.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfJoseph.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/MockIporWeighted.sol";
 
 import "../builder/AssetBuilder.sol";
 import "../builder/IpTokenBuilder.sol";

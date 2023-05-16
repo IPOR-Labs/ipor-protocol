@@ -2,9 +2,9 @@
 pragma solidity 0.8.16;
 import "./BuilderUtils.sol";
 import "./IporProtocolBuilder.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../utils/TestConstants.sol";
-import "../../../contracts/tokens/IpToken.sol";
+import "contracts/tokens/IpToken.sol";
 import "forge-std/Test.sol";
 
 contract IpTokenBuilder is Test {
