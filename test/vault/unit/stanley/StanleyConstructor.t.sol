@@ -5,12 +5,12 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {StanleyDai} from "../../../../contracts/vault/StanleyDai.sol";
-import {StanleyUsdt} from "../../../../contracts/vault/StanleyUsdt.sol";
-import {StanleyUsdc} from "../../../../contracts/vault/StanleyUsdc.sol";
-import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
-import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
+import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {StanleyDai} from "contracts/vault/StanleyDai.sol";
+import {StanleyUsdt} from "contracts/vault/StanleyUsdt.sol";
+import {StanleyUsdc} from "contracts/vault/StanleyUsdc.sol";
+import {IvToken} from "contracts/tokens/IvToken.sol";
+import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
 
 contract IporLogicTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -48,11 +48,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_000");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(0), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
-        StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(0),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldDeployNewIporVault() public {
@@ -60,9 +65,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         assertTrue(address(stanleyDaiProxy) != address(0));
     }
 
@@ -71,10 +82,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_000");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(0), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(0),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldThrowErrorWhenStrategyAaveAddressIsZero() public {
@@ -82,10 +99,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_000");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(0), address(_mockStrategyCompound))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(0),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldThrowErrorWhenStrategyCompoundAddressIsZero() public {
@@ -93,10 +116,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_000");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(0))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(0)
+            )
+        );
     }
 
     function testShouldThrowErrorWhenStrategyAaveAssetIsNotEqualToIporVaultAsset() public {
@@ -105,10 +134,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_500");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldThrowErrorWhenStrategyCompoundAssetIsNotEqualToIporVaultAsset() public {
@@ -117,10 +152,16 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_500");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldThrowErrorWhenStanleyAssetIsNotEqualToIvTokenAsset() public {
@@ -128,19 +169,31 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyDai stanleyDaiImpl = new StanleyDai();
         vm.expectRevert("IPOR_001");
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_usdtMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+        new ERC1967Proxy(
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_usdtMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
     }
 
     function testShouldBeAbleToPauseContractWhenSenderIsOwner() public {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         stanleyDai.addPauseGuardian(address(this));
 
@@ -154,9 +207,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         stanleyDai.addPauseGuardian(address(this));
         stanleyDai.pause();
@@ -171,9 +230,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         stanleyDai.addPauseGuardian(address(this));
         stanleyDai.pause();
@@ -190,9 +255,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         // when
         vm.expectRevert("IPOR_011");
@@ -206,9 +277,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         stanleyDai.addPauseGuardian(address(this));
         // when
@@ -221,9 +298,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         stanleyDai.addPauseGuardian(address(this));
         // when
@@ -249,9 +332,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         // when
         uint256 version = stanleyDai.getVersion();
@@ -263,9 +352,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // given
         StanleyDai stanleyDaiImpl = new StanleyDai();
         ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-    address(stanleyDaiImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiMockedToken), address(_ivTokenDai), address(_mockStrategyAave), address(_mockStrategyCompound))
-    );
+            address(stanleyDaiImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiMockedToken),
+                address(_ivTokenDai),
+                address(_mockStrategyAave),
+                address(_mockStrategyCompound)
+            )
+        );
         StanleyDai stanleyDai = StanleyDai(address(stanleyDaiProxy));
         // when
         address asset = stanleyDai.getAsset();
@@ -285,9 +380,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyUsdt stanleyUsdtImpl = new StanleyUsdt();
         ERC1967Proxy stanleyUsdtProxy = new ERC1967Proxy(
-    address(stanleyUsdtImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_usdtMockedToken), address(_ivTokenUsdt), address(_mockStrategyAaveUsdt), address(_mockStrategyCompoundUsdt))
-    );
+            address(stanleyUsdtImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_usdtMockedToken),
+                address(_ivTokenUsdt),
+                address(_mockStrategyAaveUsdt),
+                address(_mockStrategyCompoundUsdt)
+            )
+        );
         StanleyUsdt stanleyUsdt = StanleyUsdt(address(stanleyUsdtProxy));
         // then
         assertTrue(address(stanleyUsdt) != address(0));
@@ -306,9 +407,15 @@ contract IporLogicTest is TestCommons, DataUtils {
         // when
         StanleyUsdc stanleyUsdcImpl = new StanleyUsdc();
         ERC1967Proxy stanleyUsdcProxy = new ERC1967Proxy(
-    address(stanleyUsdcImpl),
-    abi.encodeWithSignature("initialize(address,address,address,address)", address(_usdcMockedToken), address(_ivTokenUsdc), address(_mockStrategyAaveUsdc), address(_mockStrategyCompoundUsdc))
-    );
+            address(stanleyUsdcImpl),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_usdcMockedToken),
+                address(_ivTokenUsdc),
+                address(_mockStrategyAaveUsdc),
+                address(_mockStrategyCompoundUsdc)
+            )
+        );
         StanleyUsdc stanleyUsdc = StanleyUsdc(address(stanleyUsdcProxy));
         // then
         assertTrue(address(stanleyUsdc) != address(0));

@@ -5,10 +5,10 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../../../contracts/interfaces/types/IporTypes.sol";
-import "../../../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import "../../../../contracts/interfaces/IMiltonStorage.sol";
-import "../../../../contracts/amm/MiltonStorage.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import "contracts/interfaces/IMiltonStorage.sol";
+import "contracts/amm/MiltonStorage.sol";
 import "forge-std/Test.sol";
 
 contract MiltonStorageSnapshot is Script, Test {
@@ -22,17 +22,16 @@ contract MiltonStorageSnapshot is Script, Test {
     uint256 public miltonStorageTotalNotionalReceiveFixed;
 
     IporTypes.MiltonBalancesMemory public miltonStorageBalance;
-    MiltonStorageTypes.ExtendedBalancesMemory
-        public miltonStorageExtendedBalance;
+    MiltonStorageTypes.ExtendedBalancesMemory public miltonStorageExtendedBalance;
 
-//getExtendedBalance
+    //getExtendedBalance
     uint256 public extendedBalanceTotalCollateralPayFixed;
     uint256 public extendedBalanceTotalCollateralReceiveFixed;
     uint256 public extendedBalanceLiquidityPool;
     uint256 public extendedBalanceVault;
     uint256 public extendedBalanceIporPublicationFee;
     uint256 public extendedBalanceTreasury;
-//getBalance
+    //getBalance
     uint256 public totalCollateralPayFixed;
     uint256 public totalCollateralReceiveFixed;
     uint256 public liquidityPool;
@@ -59,9 +58,8 @@ contract MiltonStorageSnapshot is Script, Test {
         extendedBalanceTotalCollateralReceiveFixed = miltonStorageExtendedBalance.totalCollateralReceiveFixed;
         extendedBalanceLiquidityPool = miltonStorageExtendedBalance.liquidityPool;
         extendedBalanceVault = miltonStorageExtendedBalance.vault;
-        extendedBalanceIporPublicationFee =  miltonStorageExtendedBalance.iporPublicationFee;
+        extendedBalanceIporPublicationFee = miltonStorageExtendedBalance.iporPublicationFee;
         extendedBalanceTreasury = miltonStorageExtendedBalance.treasury;
-
 
         miltonStorageBalance = miltonStorage.getBalance();
         totalCollateralPayFixed = miltonStorageBalance.totalCollateralPayFixed;
@@ -69,10 +67,8 @@ contract MiltonStorageSnapshot is Script, Test {
         liquidityPool = miltonStorageBalance.liquidityPool;
         vault = miltonStorageBalance.vault;
 
-        (
-            miltonStorageTotalNotionalPayFixed,
-            miltonStorageTotalNotionalReceiveFixed
-        ) = miltonStorage.getTotalOutstandingNotional();
+        (miltonStorageTotalNotionalPayFixed, miltonStorageTotalNotionalReceiveFixed) = miltonStorage
+            .getTotalOutstandingNotional();
 
         miltonStorageIsPaused = miltonStorage.paused();
 
@@ -86,105 +82,46 @@ contract MiltonStorageSnapshot is Script, Test {
         string memory path = vm.projectRoot();
         string memory miltonStorageJson = "";
 
-        vm.serializeAddress(
-            miltonStorageJson,
-            "miltonStorageOwner",
-            miltonStorageOwner
-        );
+        vm.serializeAddress(miltonStorageJson, "miltonStorageOwner", miltonStorageOwner);
 
-        vm.serializeUint(
-            miltonStorageJson,
-            "miltonStorageVersion",
-            miltonStorageVersion
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "miltonStorageLastSwapId",
-            miltonStorageLastSwapId
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "miltonStorageTotalNotionalPayFixed",
-            miltonStorageTotalNotionalPayFixed
-        );
+        vm.serializeUint(miltonStorageJson, "miltonStorageVersion", miltonStorageVersion);
+        vm.serializeUint(miltonStorageJson, "miltonStorageLastSwapId", miltonStorageLastSwapId);
+        vm.serializeUint(miltonStorageJson, "miltonStorageTotalNotionalPayFixed", miltonStorageTotalNotionalPayFixed);
         vm.serializeUint(
             miltonStorageJson,
             "miltonStorageTotalNotionalReceiveFixed",
             miltonStorageTotalNotionalReceiveFixed
         );
-        vm.serializeUint(
-            miltonStorageJson,
-            "totalCollateralPayFixed",
-            totalCollateralPayFixed
-        );
+        vm.serializeUint(miltonStorageJson, "totalCollateralPayFixed", totalCollateralPayFixed);
 
-        vm.serializeUint(
-            miltonStorageJson,
-            "totalCollateralReceiveFixed",
-            totalCollateralReceiveFixed
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "liquidityPool",
-            liquidityPool
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "vault",
-            vault
-        );
+        vm.serializeUint(miltonStorageJson, "totalCollateralReceiveFixed", totalCollateralReceiveFixed);
+        vm.serializeUint(miltonStorageJson, "liquidityPool", liquidityPool);
+        vm.serializeUint(miltonStorageJson, "vault", vault);
         vm.serializeUint(
             miltonStorageJson,
             "extendedBalanceTotalCollateralPayFixed",
-                extendedBalanceTotalCollateralPayFixed
+            extendedBalanceTotalCollateralPayFixed
         );
         vm.serializeUint(
             miltonStorageJson,
             "extendedBalanceTotalCollateralReceiveFixed",
-                extendedBalanceTotalCollateralReceiveFixed
+            extendedBalanceTotalCollateralReceiveFixed
         );
-        vm.serializeUint(
-            miltonStorageJson,
-            "extendedBalanceLiquidityPool",
-                extendedBalanceLiquidityPool
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "extendedBalanceVault",
-                extendedBalanceVault
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "extendedBalanceIporPublicationFee",
-                extendedBalanceIporPublicationFee
-        );
-        vm.serializeUint(
-            miltonStorageJson,
-            "extendedBalanceTreasury",
-                extendedBalanceTreasury
-        );
-        vm.serializeBool(
-            miltonStorageJson,
-            "miltonStorageIsPaused",
-            miltonStorageIsPaused
-        );
+        vm.serializeUint(miltonStorageJson, "extendedBalanceLiquidityPool", extendedBalanceLiquidityPool);
+        vm.serializeUint(miltonStorageJson, "extendedBalanceVault", extendedBalanceVault);
+        vm.serializeUint(miltonStorageJson, "extendedBalanceIporPublicationFee", extendedBalanceIporPublicationFee);
+        vm.serializeUint(miltonStorageJson, "extendedBalanceTreasury", extendedBalanceTreasury);
+        vm.serializeBool(miltonStorageJson, "miltonStorageIsPaused", miltonStorageIsPaused);
 
-        string memory finalJson = vm.serializeUint(
-            miltonStorageJson,
-            "blockNumber",
-            blockNumber
-        );
-        string memory fileBlockNumber = string.concat(
-            Strings.toString(blockNumber),
-            ".json"
-        );
+        string memory finalJson = vm.serializeUint(miltonStorageJson, "blockNumber", blockNumber);
+        string memory fileBlockNumber = string.concat(Strings.toString(blockNumber), ".json");
         string memory finalFileName = string.concat(fileName, fileBlockNumber);
         vm.writeJson(finalJson, string.concat(path, finalFileName));
         console2.log("END: Save MiltonStorage data to json");
     }
 
-    function assert(MiltonStorageSnapshot miltonStorageSnapshot1, MiltonStorageSnapshot miltonStorageSnapshot2)
-    external
+    function assertMilton(MiltonStorageSnapshot miltonStorageSnapshot1, MiltonStorageSnapshot miltonStorageSnapshot2)
+        external
     {
         assertEq(
             miltonStorageSnapshot1.miltonStorageOwner(),
@@ -272,5 +209,4 @@ contract MiltonStorageSnapshot is Script, Test {
             "MiltonStorage: Block Timestamp should be the same"
         );
     }
-
 }

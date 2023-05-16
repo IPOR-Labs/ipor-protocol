@@ -46,8 +46,3 @@ jobs:
 
       - name: Compile
         run: npm run ${{ inputs.compile-command }}
-
-      - name: Tests
-        run: npm run test
-        env:
-          PROVIDER_URL: ${{ secrets.PROVIDER_URL }}

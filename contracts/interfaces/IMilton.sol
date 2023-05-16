@@ -140,9 +140,7 @@ interface IMilton {
         /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
         /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
-        uint256 transferredToLiquidator,
-        /// @notice incomeFeeValue value transferred to treasury
-        uint256 incomeFeeValue
+        uint256 transferredToLiquidator
     );
 
     /// @notice Emmited when trader closes Swap.
@@ -152,6 +150,8 @@ interface IMilton {
         /// @notice payoff to date without unwind value, represented in 18 decimals
         int256 swapPayoffToDate,
         // @notice swap unwind value, represented in 18 decimals
-        int256 swapUnwindValue
+        int256 swapUnwindValue,
+        // @notice swap unwind value, represented in 18 decimals
+        uint256 swapUnwindOpeningFee
     );
 }

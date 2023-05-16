@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "../../contracts/libraries/errors/IporErrors.sol";
-import "../../contracts/libraries/errors/MiltonErrors.sol";
-import "../../contracts/libraries/errors/JosephErrors.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/IporErrors.sol";
+import "contracts/libraries/errors/MiltonErrors.sol";
+import "contracts/libraries/errors/JosephErrors.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
 import "./MockJosephInternal.sol";
 
 abstract contract MockJoseph is MockJosephInternal {
@@ -80,14 +80,7 @@ abstract contract MockJoseph is MockJosephInternal {
 
         _getIpToken().mint(msgSender, ipTokenAmount);
 
-        emit ProvideLiquidity(
-            timestamp,
-            msgSender,
-            address(milton),
-            exchangeRate,
-            wadAssetAmount,
-            ipTokenAmount
-        );
+        emit ProvideLiquidity(timestamp, msgSender, address(milton), exchangeRate, wadAssetAmount, ipTokenAmount);
     }
 
     function _redeem(uint256 ipTokenAmount, uint256 timestamp) internal nonReentrant {
@@ -103,15 +96,9 @@ abstract contract MockJoseph is MockJosephInternal {
 
         uint256 wadAssetAmount = IporMath.division(ipTokenAmount * exchangeRate, Constants.D18);
 
-        uint256 wadRedeemFee = IporMath.division(
-            wadAssetAmount * _getRedeemFeeRate(),
-            Constants.D18
-        );
+        uint256 wadRedeemFee = IporMath.division(wadAssetAmount * _getRedeemFeeRate(), Constants.D18);
 
-        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(
-            wadAssetAmount - wadRedeemFee,
-            _getDecimals()
-        );
+        uint256 redeemAmount = IporMath.convertWadToAssetDecimals(wadAssetAmount - wadRedeemFee, _getDecimals());
 
         uint256 wadRedeemAmount = IporMath.convertToWad(redeemAmount, _getDecimals());
 
@@ -123,20 +110,13 @@ abstract contract MockJoseph is MockJosephInternal {
             wadRedeemAmount
         );
 
-        require(
-            utilizationRate <= _getRedeemLpMaxUtilizationRate(),
-            JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
-        );
+        require(utilizationRate <= _getRedeemLpMaxUtilizationRate(), JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED);
 
         _getIpToken().burn(_msgSender(), ipTokenAmount);
 
         _getMiltonStorage().subtractLiquidity(wadRedeemAmount);
 
-        IERC20Upgradeable(_asset).safeTransferFrom(
-            address(_getMilton()),
-            _msgSender(),
-            redeemAmount
-        );
+        IERC20Upgradeable(_asset).safeTransferFrom(address(_getMilton()), _msgSender(), redeemAmount);
 
         emit Redeem(
             timestamp,
@@ -158,10 +138,7 @@ abstract contract MockJoseph is MockJosephInternal {
         uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
         if (denominator > 0) {
             return
-                IporMath.division(
-                    totalCollateralBalance * Constants.D18,
-                    totalLiquidityPoolBalance - redeemedAmount
-                );
+                IporMath.division(totalCollateralBalance * Constants.D18, totalLiquidityPoolBalance - redeemedAmount);
         } else {
             return Constants.MAX_VALUE;
         }

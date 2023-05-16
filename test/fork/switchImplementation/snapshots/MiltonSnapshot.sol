@@ -5,11 +5,10 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "../../../../contracts/interfaces/types/IporTypes.sol";
-import "../../../../contracts/amm/Milton.sol";
-import "../../../../contracts/facades/MiltonFacadeDataProvider.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/amm/Milton.sol";
+import "contracts/facades/MiltonFacadeDataProvider.sol";
 import "forge-std/Test.sol";
-
 
 contract MiltonSnapshot is Script, Test {
     using stdJson for string;
@@ -53,9 +52,7 @@ contract MiltonSnapshot is Script, Test {
 
     function snapshot() public {
         Milton milton = Milton(_milton);
-        MiltonFacadeDataProvider miltonFacadeDataProvider = MiltonFacadeDataProvider(
-            _milton
-        );
+        MiltonFacadeDataProvider miltonFacadeDataProvider = MiltonFacadeDataProvider(_milton);
 
         miltonJoseph = milton.getJoseph();
         miltonSpreadModel = milton.getMiltonSpreadModel();
@@ -65,30 +62,25 @@ contract MiltonSnapshot is Script, Test {
 
         miltonVersion = milton.getVersion();
         miltonFacadeDataProviderVersion = miltonFacadeDataProvider.getVersion();
-        miltonMaxSwapCollateralAmount = milton
-        .getMaxSwapCollateralAmount();
+        miltonMaxSwapCollateralAmount = milton.getMaxSwapCollateralAmount();
         miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
-//        miltonMaxLpUtilizationRatePayFixed = milton
-//        .getMaxLpUtilizationRatePayFixed(); TODO revert
-//        miltonMaxLpUtilizationRateReceiveFixed = milton
-//        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
-        miltonIncomeFeeRate = milton.getIncomeFeeRate();
-        miltonOpeningFeeRate = milton.getOpeningFeeRate();
-        miltonOpeningFeeTreasuryPortionRate = milton
-        .getOpeningFeeTreasuryPortionRate();
+        //        miltonMaxLpUtilizationRatePayFixed = milton
+        //        .getMaxLpUtilizationRatePayFixed(); TODO revert
+        //        miltonMaxLpUtilizationRateReceiveFixed = milton
+        //        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
+
+        //        miltonOpeningFeeRate = milton.getOpeningFeeRate();
+        //        miltonOpeningFeeTreasuryPortionRate = milton
+        //        .getOpeningFeeTreasuryPortionRate();
         miltonIporPublicationFee = milton.getIporPublicationFee();
-        miltonLiquidationDepositAmount = milton
-        .getLiquidationDepositAmount();
-        miltonWadLiquidationDepositAmount = milton
-        .getWadLiquidationDepositAmount();
-//        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed(); TODO revert
-//        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed(); TODO revert
+        miltonLiquidationDepositAmount = milton.getLiquidationDepositAmount();
+        miltonWadLiquidationDepositAmount = milton.getWadLiquidationDepositAmount();
+        //        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed(); TODO revert
+        //        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed(); TODO revert
         miltonMinLeverage = milton.getMinLeverage();
 
-        (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton
-        .calculateSpread();
-        (miltonSoapPayFixed, miltonSoapReceiveFixed, miltonSoap) = milton
-        .calculateSoap();
+        (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton.calculateSpread();
+        (miltonSoapPayFixed, miltonSoapReceiveFixed, miltonSoap) = milton.calculateSoap();
 
         IporTypes.MiltonBalancesMemory memory miltonAccruedBalance = milton.getAccruedBalance();
         totalCollateralPayFixed = miltonAccruedBalance.totalCollateralPayFixed;
@@ -109,123 +101,42 @@ contract MiltonSnapshot is Script, Test {
         vm.serializeAddress(miltonJson, "miltonSpreadModel", miltonSpreadModel);
         vm.serializeAddress(miltonJson, "miltonAsset", miltonAsset);
         vm.serializeAddress(miltonJson, "miltonOwner", miltonOwner);
-        vm.serializeAddress(
-            miltonJson,
-            "miltonFacadeDataProviderOwner",
-            miltonFacadeDataProviderOwner
-        );
+        vm.serializeAddress(miltonJson, "miltonFacadeDataProviderOwner", miltonFacadeDataProviderOwner);
 
         vm.serializeUint(miltonJson, "miltonVersion", miltonVersion);
-        vm.serializeUint(
-            miltonJson,
-            "miltonFacadeDataProviderVersion",
-            miltonFacadeDataProviderVersion
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonMaxSwapCollateralAmount",
-            miltonMaxSwapCollateralAmount
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonMaxLpUtilizationRate",
-            miltonMaxLpUtilizationRate
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonMaxLpUtilizationRatePayFixed",
-            miltonMaxLpUtilizationRatePayFixed
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonMaxLpUtilizationRateReceiveFixed",
-            miltonMaxLpUtilizationRateReceiveFixed
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonIncomeFeeRate",
-            miltonIncomeFeeRate
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonOpeningFeeRate",
-            miltonOpeningFeeRate
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonOpeningFeeTreasuryPortionRate",
-            miltonOpeningFeeTreasuryPortionRate
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonIporPublicationFee",
-            miltonIporPublicationFee
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonLiquidationDepositAmount",
-            miltonLiquidationDepositAmount
-        );
-        vm.serializeUint(
-            miltonJson,
-            "miltonWadLiquidationDepositAmount",
-            miltonWadLiquidationDepositAmount
-        );
+        vm.serializeUint(miltonJson, "miltonFacadeDataProviderVersion", miltonFacadeDataProviderVersion);
+        vm.serializeUint(miltonJson, "miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
+        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
+        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRatePayFixed", miltonMaxLpUtilizationRatePayFixed);
+        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRateReceiveFixed", miltonMaxLpUtilizationRateReceiveFixed);
+        vm.serializeUint(miltonJson, "miltonOpeningFeeRate", miltonOpeningFeeRate);
+        vm.serializeUint(miltonJson, "miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
+        vm.serializeUint(miltonJson, "miltonIporPublicationFee", miltonIporPublicationFee);
+        vm.serializeUint(miltonJson, "miltonLiquidationDepositAmount", miltonLiquidationDepositAmount);
+        vm.serializeUint(miltonJson, "miltonWadLiquidationDepositAmount", miltonWadLiquidationDepositAmount);
         vm.serializeUint(miltonJson, "miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
         vm.serializeUint(miltonJson, "miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
         vm.serializeUint(miltonJson, "miltonMinLeverage", miltonMinLeverage);
 
-        vm.serializeInt(
-            miltonJson,
-            "miltonSpreadPayFixed",
-            miltonSpreadPayFixed
-        );
-        vm.serializeInt(
-            miltonJson,
-            "miltonSpreadReceiveFixed",
-            miltonSpreadReceiveFixed
-        );
+        vm.serializeInt(miltonJson, "miltonSpreadPayFixed", miltonSpreadPayFixed);
+        vm.serializeInt(miltonJson, "miltonSpreadReceiveFixed", miltonSpreadReceiveFixed);
         vm.serializeInt(miltonJson, "miltonSoapPayFixed", miltonSoapPayFixed);
-        vm.serializeInt(
-            miltonJson,
-            "miltonSoapReceiveFixed",
-            miltonSoapReceiveFixed
-        );
+        vm.serializeInt(miltonJson, "miltonSoapReceiveFixed", miltonSoapReceiveFixed);
         vm.serializeInt(miltonJson, "miltonSoap", miltonSoap);
 
-        vm.serializeUint(
-            miltonJson,
-            "totalCollateralPayFixed",
-            totalCollateralPayFixed
-        );
-        vm.serializeUint(
-            miltonJson,
-            "totalCollateralReceiveFixed",
-            totalCollateralReceiveFixed
-        );
-        vm.serializeUint(
-            miltonJson,
-            "liquidityPool",
-            liquidityPool
-        );
-        vm.serializeUint(
-            miltonJson,
-            "vault",
-            vault
-        );
+        vm.serializeUint(miltonJson, "totalCollateralPayFixed", totalCollateralPayFixed);
+        vm.serializeUint(miltonJson, "totalCollateralReceiveFixed", totalCollateralReceiveFixed);
+        vm.serializeUint(miltonJson, "liquidityPool", liquidityPool);
+        vm.serializeUint(miltonJson, "vault", vault);
 
         vm.serializeBool(miltonJson, "miltonIsPaused", miltonIsPaused);
         vm.serializeUint(miltonJson, "blockNumber", blockNumber);
 
-        string memory finalJson = vm.serializeUint(
-            miltonJson,
-            "blockTimestamp",
-            blockTimestamp
-        );
+        string memory finalJson = vm.serializeUint(miltonJson, "blockTimestamp", blockTimestamp);
         vm.writeJson(finalJson, string.concat(path, fileName));
     }
 
-    function assert(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
+    function assertMilton(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
         assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph(), "Milton: Joseph should be the same");
         assertEq(
             miltonSnapshot1.miltonSpreadModel(),
@@ -462,7 +373,7 @@ contract MiltonSnapshot is Script, Test {
         );
     }
 
-    function consoleLog() public {
+    function consoleLog() public view {
         console2.log("milton", _milton);
         console2.log("miltonJoseph", miltonJoseph);
         console2.log("miltonSpreadModel", miltonSpreadModel);
@@ -487,7 +398,7 @@ contract MiltonSnapshot is Script, Test {
         console2.logInt(miltonSpreadReceiveFixed);
         console2.logInt(miltonSoapPayFixed);
         console2.logInt(miltonSoapReceiveFixed);
-        console2.logInt( miltonSoap);
+        console2.logInt(miltonSoap);
         console2.log("totalCollateralPayFixed", totalCollateralPayFixed);
         console2.log("totalCollateralReceiveFixed", totalCollateralReceiveFixed);
         console2.log("liquidityPool", liquidityPool);

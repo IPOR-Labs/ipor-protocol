@@ -45,8 +45,6 @@ library MiltonFacadeTypes {
         uint256 iporPublicationFeeAmount;
         /// @notice Liquidation deposit amount take from buyer when opening new swap. Represented in 18 decimals.
         uint256 liquidationDepositAmount;
-        /// @notice Rate of income taken from buyer when closing swap. Represented in 18 decimals.
-        uint256 incomeFeeRate;
         /// @notice Calculated Spread for leg Pay Fixed - Receive Floating. Represented in 18 decimals.
         int256 spreadPayFixed;
         /// @notice Calculated Spread for leg Receive Fixed - Pay Floating. Represented in 18 decimals.

@@ -4,12 +4,12 @@ pragma solidity 0.8.16;
 import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import "../../../../contracts/vault/strategies/StrategyCompound.sol";
-import "../../../../contracts/mocks/tokens/MockedCOMPToken.sol";
-import "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../../contracts/mocks/stanley/compound/MockCToken.sol";
-import "../../../../contracts/mocks/stanley/compound/MockComptroller.sol";
-import "../../../../contracts/mocks/stanley/compound/MockWhitePaper.sol";
+import "contracts/vault/strategies/StrategyCompound.sol";
+import "contracts/mocks/tokens/MockedCOMPToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/stanley/compound/MockCToken.sol";
+import "contracts/mocks/stanley/compound/MockComptroller.sol";
+import "contracts/mocks/stanley/compound/MockWhitePaper.sol";
 
 contract CompoundStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;

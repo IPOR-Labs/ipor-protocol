@@ -33,7 +33,7 @@ interface IJosephInternal {
 
     /// @notice Gets the redeem fee rate - config param used in calculation of redeem fee applied by Joseph when trader redeems his ipTokens.
     /// @return redeem fee rate represented in 18 decimals
-    function getRedeemFeeRate() external pure returns (uint256);
+    function getRedeemFeeRate() external view returns (uint256);
 
     /// @notice Gets redeem Liquidity Pool max utilization rate config param which is used by Joseph to validate
     /// Liquidity Pool utilization rate threshold during redemption of ipTokens by the trader.
@@ -191,11 +191,7 @@ interface IJosephInternal {
     /// @param changedBy account address that changed Treasury address
     /// @param oldTreasury Treasury's old address
     /// @param newTreasury Treasury's new address
-    event TreasuryChanged(
-        address indexed changedBy,
-        address indexed oldTreasury,
-        address indexed newTreasury
-    );
+    event TreasuryChanged(address indexed changedBy, address indexed oldTreasury, address indexed newTreasury);
 
     /// @notice Emmited after the max liquidity pool balance has changed
     /// @param changedBy account address that changed max liquidity pool balance
@@ -222,11 +218,7 @@ interface IJosephInternal {
     /// @param appointed address that has been added/removed to the list of addresses allowed to rebalance Milton
     /// @param status true if address has been added to the list of addresses allowed to rebalance Milton,
     ///        false if address has been removed from the list of addresses allowed to rebalance Milton
-    event AppointedToRebalanceChanged(
-        address indexed changedBy,
-        address indexed appointed,
-        bool status
-    );
+    event AppointedToRebalanceChanged(address indexed changedBy, address indexed appointed, bool status);
 
     /// @notice Emmited after the auto rebalance threshold has changed
     /// @param changedBy account address that changed auto rebalance threshold

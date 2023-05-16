@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "../../TestCommons.sol";
 import {DataUtils} from "../../utils/DataUtils.sol";
-import "../../../contracts/mocks/MockIporSwapLogic.sol";
+import "contracts/mocks/MockIporSwapLogic.sol";
 
 contract IporSwapLogicTest is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;

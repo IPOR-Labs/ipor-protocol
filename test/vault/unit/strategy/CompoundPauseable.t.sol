@@ -5,15 +5,15 @@ import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {StanleyUtils} from "../../../utils/StanleyUtils.sol";
 import "../../../utils/TestConstants.sol";
-import "../../../../contracts/amm/MiltonStorage.sol";
-import "../../../../contracts/itf/ItfIporOracle.sol";
-import "../../../../contracts/tokens/IpToken.sol";
-import "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../../contracts/mocks/tokens/MockedCOMPToken.sol";
-import "../../../../contracts/mocks/stanley/compound/MockWhitePaper.sol";
-import "../../../../contracts/mocks/stanley/compound/MockCToken.sol";
-import "../../../../contracts/mocks/stanley/compound/MockComptroller.sol";
-import "../../../../contracts/vault/strategies/StrategyCompound.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/MockedCOMPToken.sol";
+import "contracts/mocks/stanley/compound/MockWhitePaper.sol";
+import "contracts/mocks/stanley/compound/MockCToken.sol";
+import "contracts/mocks/stanley/compound/MockComptroller.sol";
+import "contracts/vault/strategies/StrategyCompound.sol";
 
 contract CompoundPausableTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;
