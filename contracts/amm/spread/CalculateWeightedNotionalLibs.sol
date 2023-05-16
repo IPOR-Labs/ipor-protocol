@@ -91,34 +91,28 @@ library CalculateWeightedNotionalLibs {
         SpreadStorageLibs.saveWeightedNotional(weightedNotional.storageId, weightedNotional);
     }
 
-    function getWeightedNotional(
-        SpreadStorageLibs.StorageId storageId28Days,
-        SpreadStorageLibs.StorageId storageId90Days
-    ) internal returns (uint256 weightedNotionalPayFixed, uint256 weightedNotionalReceiveFixed) {
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional28days = SpreadStorageLibs
-            .getWeightedNotional(storageId28Days);
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional90days = SpreadStorageLibs
-            .getWeightedNotional(storageId90Days);
 
-        weightedNotionalPayFixed =
-            calculateWeightedNotional(
-                weightedNotional28days.weightedNotionalPayFixed,
-                block.timestamp - weightedNotional28days.lastUpdateTimePayFixed,
-                28 days
-            ) +
-            calculateWeightedNotional(
-                weightedNotional90days.weightedNotionalPayFixed,
-                block.timestamp - weightedNotional90days.lastUpdateTimePayFixed,
-                90 days
+    function getWeightedNotional(SpreadStorageLibs.StorageId[] storageIds)
+        internal
+        returns (uint256 weightedNotionalPayFixed, uint256 weightedNotionalReceiveFixed)
+    {
+        uint256 length = storageIds.length;
+        for (uint256 i; i != length; ) {
+            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
+                .getWeightedNotional(storageIds[i]);
+            weightedNotionalPayFixed += calculateWeightedNotional(
+                weightedNotional.weightedNotionalPayFixed,
+                block.timestamp - weightedNotional.lastUpdateTimePayFixed,
+                weightedNotional.maturity
             );
-        weightedNotionalReceiveFixed = calculateWeightedNotional(
-            weightedNotional28days.weightedNotionalReceiveFixed,
-            block.timestamp - weightedNotional28days.lastUpdateTimeReceiveFixed,
-            28 days
-        ) + calculateWeightedNotional(
-            weightedNotional90days.weightedNotionalReceiveFixed,
-            block.timestamp - weightedNotional90days.lastUpdateTimeReceiveFixed,
-            90 days
-        );
+            weightedNotionalReceiveFixed += calculateWeightedNotional(
+                weightedNotional.weightedNotionalReceiveFixed,
+                block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
+                weightedNotional.maturity
+            );
+            unchecked {
+                ++i;
+            }
+        }
     }
 }

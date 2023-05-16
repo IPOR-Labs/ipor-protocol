@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/console2.sol";
 import "./ISpread28Days.sol";
-import "./ISpreadLens.sol";
+import "./ISpread28DaysLens.sol";
 import "./OpenzeppelinStorage.sol";
 
 
@@ -60,13 +60,12 @@ contract SpreadRouter is OpenzeppelinStorage {
             return SPREAD_28_DAYS;
         }
         if (
-            sig == ISpreadLens.getSupportedAssets.selector ||
-            sig == ISpreadLens.getBaseSpreadConfig.selector ||
-            sig == ISpreadLens.calculateSpreadPayFixed28Days.selector ||
-            sig == ISpreadLens.calculateBaseSpreadPayFixed28Days.selector
+            sig == ISpread28DaysLens.getSupportedAssets.selector ||
+            sig == ISpread28DaysLens.calculateSpreadPayFixed28Days.selector ||
+            sig == ISpread28DaysLens.calculateBaseSpreadPayFixed28Days.selector ||
+            sig == ISpread28DaysLens.SpreadFunction28DaysConfig.selector
         ) {
-            nonReentrant();
-            return LENS;
+            return SPREAD_28_DAYS;
         }
         return address(0);
     }
