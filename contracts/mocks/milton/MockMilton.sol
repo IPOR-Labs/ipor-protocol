@@ -20,6 +20,8 @@ contract MockMilton is ItfMilton {
     uint256 public immutable minLeverage;
     uint256 public immutable decimals;
 
+    IMiltonStorage _mockMiltonStorage;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address iporRiskManagementOracle,
@@ -33,6 +35,17 @@ contract MockMilton is ItfMilton {
         liquidationDepositAmount = initParam.liquidationDepositAmount;
         minLeverage = initParam.minLeverage;
         decimals = decimalsTemp;
+    }
+
+    function setMockMiltonStorage(address mockMiltonStorage) external {
+        _mockMiltonStorage = IMiltonStorage(mockMiltonStorage);
+    }
+
+    function _getMiltonStorage() internal view override returns (IMiltonStorage) {
+        if (address(_mockMiltonStorage) != address(0)) {
+            return _mockMiltonStorage;
+        }
+        return _miltonStorage;
     }
 
     function _getMaxSwapCollateralAmount() internal view virtual override returns (uint256) {

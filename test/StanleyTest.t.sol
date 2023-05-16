@@ -72,7 +72,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCaseBaseStanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -137,7 +137,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCaseBaseStanley stanleyDai = getMockCase1Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -203,7 +203,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),
@@ -269,7 +269,7 @@ contract StanleyTest is TestCommons, DataUtils {
         );
         MockCase2Stanley stanleyDai = getMockCase2Stanley(address(_daiMockedToken));
         MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0Milton18D mockCase0MiltonDai = getMockCase0MiltonDai(
+        MockMilton mockCase0MiltonDai = getMockCase0MiltonDai(
             address(_daiMockedToken),
             address(iporOracle),
             address(miltonStorageDai),

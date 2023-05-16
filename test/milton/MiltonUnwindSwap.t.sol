@@ -14,8 +14,6 @@ import "contracts/tokens/IpToken.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
-import "contracts/mocks/milton/MockCase2Milton18D.sol";
-import "contracts/mocks/milton/MockCase3Milton18D.sol";
 
 contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;

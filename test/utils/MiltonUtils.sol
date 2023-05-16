@@ -8,7 +8,6 @@ import "contracts/interfaces/IMiltonStorage.sol";
 import "contracts/interfaces/IMiltonInternal.sol";
 import "contracts/facades/MiltonFacadeDataProvider.sol";
 import "contracts/mocks/milton/MockMilton.sol";
-import "contracts/mocks/milton/MockCase0Milton18D.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 import "contracts/mocks/milton/MockMilton.sol";
 
@@ -108,8 +107,12 @@ contract MiltonUtils is Test {
         address miltonSpreadModel,
         address stanleyDai,
         address iporRiskManagementOracle
-    ) public returns (MockCase0Milton18D) {
-        MockCase0Milton18D mockCase0MiltonDaiImplementation = new MockCase0Milton18D(iporRiskManagementOracle);
+    ) public returns (MockMilton) {
+        MockMilton mockCase0MiltonDaiImplementation = new MockMilton(
+            iporRiskManagementOracle,
+            MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+            18
+        );
         ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
             address(mockCase0MiltonDaiImplementation),
             abi.encodeWithSignature(
@@ -122,6 +125,6 @@ contract MiltonUtils is Test {
                 stanleyDai
             )
         );
-        return MockCase0Milton18D(address(miltonDaiProxy));
+        return MockMilton(address(miltonDaiProxy));
     }
 }
