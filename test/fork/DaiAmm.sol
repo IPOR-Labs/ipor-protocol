@@ -210,7 +210,7 @@ contract DaiAmm is Test, TestCommons, IporRiskManagementOracleUtils {
                 new ERC1967Proxy(
                     address(iporOracleImplementation),
                     abi.encodeWithSignature(
-                        "initialize(address[],uint32[],uint64[],uint64[])",
+                        "initialize(address[],uint32[])",
                         assets,
                         updateTimestamps,
                         exponentialMovingAverages,

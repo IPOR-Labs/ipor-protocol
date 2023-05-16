@@ -6,7 +6,6 @@ import "contracts/itf/ItfJoseph.sol";
 
 import "./BuilderUtils.sol";
 import "forge-std/Test.sol";
-import "./IporProtocolBuilder.sol";
 
 contract JosephBuilder is Test {
     struct BuilderData {
@@ -23,15 +22,9 @@ contract JosephBuilder is Test {
     BuilderData private builderData;
 
     address private _owner;
-    IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner) {
         _owner = owner;
-        _iporProtocolBuilder = iporProtocolBuilder;
-    }
-
-    function and() public view returns (IporProtocolBuilder) {
-        return _iporProtocolBuilder;
     }
 
     function withAssetType(BuilderUtils.AssetType assetType) public returns (JosephBuilder) {
@@ -72,26 +65,6 @@ contract JosephBuilder is Test {
     function withJosephImplementation(address josephImplementation) public returns (JosephBuilder) {
         builderData.josephImplementation = josephImplementation;
         return this;
-    }
-
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
-    function isSetIpToken() public view returns (bool) {
-        return builderData.ipToken != address(0);
-    }
-
-    function isSetMiltonStorage() public view returns (bool) {
-        return builderData.miltonStorage != address(0);
-    }
-
-    function isSetMilton() public view returns (bool) {
-        return builderData.milton != address(0);
-    }
-
-    function isSetStanley() public view returns (bool) {
-        return builderData.stanley != address(0);
     }
 
     function build() public returns (ItfJoseph) {

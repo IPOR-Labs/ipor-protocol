@@ -30,21 +30,8 @@ contract ItfIporOracleTest is TestCommons, DataUtils {
         _iporOracle = getIporOracleAssets(
             _userOne,
             _assets,
-            uint32(block.timestamp),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT,
-            TestConstants.ZERO_64UINT
+            uint32(block.timestamp)
         );
     }
 
-    function testShouldSetNewAbsoluteValueForDecayFactor() public {
-        // given
-        uint256 timestamp = 2225022130;
-        uint256 decayFactorBefore = _iporOracle.itfGetDecayFactorValue(timestamp);
-        // when
-        _iporOracle.setDecayFactor(TestConstants.D16);
-        // then
-        uint256 decayFactorAfter = _iporOracle.itfGetDecayFactorValue(timestamp);
-        assertEq(decayFactorBefore, TestConstants.ZERO);
-        assertEq(decayFactorAfter, TestConstants.D16);
-    }
 }

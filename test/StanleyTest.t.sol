@@ -60,8 +60,7 @@ contract StanleyTest is TestCommons, DataUtils {
         //given
         ItfIporOracle iporOracle = getIporOracleAsset(
             _userOne,
-            address(_daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+            address(_daiMockedToken)
         );
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
@@ -126,8 +125,7 @@ contract StanleyTest is TestCommons, DataUtils {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(
             _userOne,
-            address(_daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+            address(_daiMockedToken)
         );
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
@@ -193,8 +191,7 @@ contract StanleyTest is TestCommons, DataUtils {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(
             _userOne,
-            address(_daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+            address(_daiMockedToken)
         );
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
@@ -260,8 +257,7 @@ contract StanleyTest is TestCommons, DataUtils {
         // given
         ItfIporOracle iporOracle = getIporOracleAsset(
             _userOne,
-            address(_daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
+            address(_daiMockedToken)
         );
         IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,

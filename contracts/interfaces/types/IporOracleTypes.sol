@@ -7,11 +7,6 @@ library IporOracleTypes {
     struct IPOR {
         //@notice Quasi Interest Bearing Token Price - IBT Price without division by year in seconds
         uint128 quasiIbtPrice;
-        /// @notice Exponential Moving Average
-        /// @dev used in calculating spread in MiltonSpreadModel smart contract
-        uint64 exponentialMovingAverage;
-        //@notice exponential weighted moving variance - required for calculating spread in Milton
-        uint64 exponentialWeightedMovingVariance;
         //@notice IPOR Index value.
         uint64 indexValue;
         //@notice Tiestamp of most recent IPOR index update, action performed by Charlie (refer to the documentation for more details)

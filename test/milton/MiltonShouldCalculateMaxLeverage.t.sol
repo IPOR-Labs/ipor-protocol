@@ -9,8 +9,8 @@ import "../TestCommons.sol";
 contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
 
-    IporProtocolBuilder.IporProtocol internal _iporProtocolDai;
-    IporProtocolBuilder.IporProtocol internal _iporProtocolUsdt;
+    BuilderUtils.IporProtocol internal _iporProtocolDai;
+    BuilderUtils.IporProtocol internal _iporProtocolUsdt;
 
     function setUp() public {
         _admin = address(this);
@@ -186,7 +186,7 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
     }
 
     function updateIndicatorsAndAssertMaxLeverage(
-        IporProtocolBuilder.IporProtocol memory iporProtocol,
+        BuilderUtils.IporProtocol memory iporProtocol,
         uint64 maxNotionalPayFixed,
         uint64 maxNotionalReceiveFixed,
         uint16 maxUtilizationRatePayFixed,

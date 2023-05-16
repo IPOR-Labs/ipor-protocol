@@ -15,7 +15,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     address internal _liquidator;
     address internal _updater;
 
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
     IporProtocolFactory.IporProtocolConfig private _cfg;
 
     function setUp() public {

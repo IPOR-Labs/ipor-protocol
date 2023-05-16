@@ -11,7 +11,6 @@ import "./BuilderUtils.sol";
 import "contracts/itf/ItfMilton18D.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
-import "./IporProtocolBuilder.sol";
 import "contracts/mocks/milton/MockMilton.sol";
 
 contract MiltonBuilder is Test {
@@ -29,15 +28,9 @@ contract MiltonBuilder is Test {
     BuilderData private builderData;
 
     address private _owner;
-    IporProtocolBuilder private _iporProtocolBuilder;
 
-    constructor(address owner, IporProtocolBuilder iporProtocolBuilder) {
+    constructor(address owner) {
         _owner = owner;
-        _iporProtocolBuilder = iporProtocolBuilder;
-    }
-
-    function and() public view returns (IporProtocolBuilder) {
-        return _iporProtocolBuilder;
     }
 
     function withTestCase(BuilderUtils.MiltonTestCase testCase) public returns (MiltonBuilder) {
@@ -78,30 +71,6 @@ contract MiltonBuilder is Test {
     function withStanley(address stanley) public returns (MiltonBuilder) {
         builderData.stanley = stanley;
         return this;
-    }
-
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
-    function isSetIporOracle() public view returns (bool) {
-        return builderData.iporOracle != address(0);
-    }
-
-    function isSetIporRiskManagementOracle() public view returns (bool) {
-        return builderData.iporRiskManagementOracle != address(0);
-    }
-
-    function isSetMiltonStorage() public view returns (bool) {
-        return builderData.miltonStorage != address(0);
-    }
-
-    function isSetSpreadModel() public view returns (bool) {
-        return builderData.spreadModel != address(0);
-    }
-
-    function isSetStanley() public view returns (bool) {
-        return builderData.stanley != address(0);
     }
 
     function build() public returns (ItfMilton) {

@@ -12,7 +12,7 @@ import "contracts/itf/ItfJoseph.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     MockTestnetToken internal _dai;
     IpToken internal _ipDai;
