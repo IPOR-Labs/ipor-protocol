@@ -16,7 +16,6 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IIporAlgorithm.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "./libraries/IporLogic.sol";
-import "./libraries/DecayFactorCalculation.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -280,15 +279,6 @@ contract IporOracle is
             newQuasiIbtPrice,
             updateTimestamp
         );
-    }
-
-    function _decayFactorValue(uint256 timeFromLastPublication)
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
-        return DecayFactorCalculation.calculate(timeFromLastPublication);
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)

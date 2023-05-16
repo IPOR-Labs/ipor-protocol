@@ -135,7 +135,6 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
             address(_usdcMockedToken)
         );
         // then
-        assertEq(iporOracleData.decayFactorValue, 999997217008929160);
         assertEq(iporOracleData.indexValue, TestConstants.ZERO);
         assertEq(iporOracleData.ibtPrice, TestConstants.D18);
         assertEq(iporOracleData.lastUpdateTimestamp, 1);

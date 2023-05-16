@@ -107,11 +107,8 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
         IporTypes.AccruedIpor memory accruedIndex = _iporOracle.getAccruedIndex(timestamp, asset);
 
         iporOracleData = ItfDataProviderTypes.ItfIporOracleData(
-            _iporOracle.itfGetDecayFactorValue(timestamp),
             indexValue,
             ibtPrice,
-            0,
-            0,
             lastUpdateTimestamp,
             accruedIndex.indexValue,
             accruedIndex.ibtPrice,

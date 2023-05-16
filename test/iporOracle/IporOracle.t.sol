@@ -61,17 +61,6 @@ contract IporOracleTest is Test, TestCommons {
         assertEq(assetSupportedAfter, false);
     }
 
-    function testShouldDecayFactorBeLowerThanOrEqual100Percentage() public {
-        // given
-        uint256 decayFactorZero = _iporOracle.itfGetDecayFactorValue(0);
-        uint256 decayFactorOne = _iporOracle.itfGetDecayFactorValue(119780);
-        uint256 decayFactorTwo = _iporOracle.itfGetDecayFactorValue(3024001);
-        // then
-        assertEq(decayFactorZero <= 100e16, true);
-        assertEq(decayFactorOne <= 100e16, true);
-        assertEq(decayFactorTwo <= 100e16, true);
-    }
-
     function testShouldReturnContractVersion() public {
         // given
         uint256 version = _iporOracle.getVersion();
