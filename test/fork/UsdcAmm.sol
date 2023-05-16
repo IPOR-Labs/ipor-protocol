@@ -227,7 +227,8 @@ contract UsdcAmm is Test, TestCommons, IporRiskManagementOracleUtils {
             address(usdc),
             TestConstants.RMO_UTILIZATION_RATE_48_PER,
             TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_SPREAD_0_1_PER
         );
     }
 

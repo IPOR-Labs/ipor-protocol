@@ -69,7 +69,8 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
             address(_usdcMockedToken),
             TestConstants.RMO_UTILIZATION_RATE_48_PER,
             TestConstants.RMO_UTILIZATION_RATE_80_PER,
-            TestConstants.RMO_NOTIONAL_1B
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_SPREAD_0_1_PER
         );
         _miltonStorage = getMiltonStorage();
         _miltonSpreadModel = new MockBaseMiltonSpreadModelUsdc();

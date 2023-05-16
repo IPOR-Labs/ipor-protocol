@@ -77,7 +77,7 @@ contract IporProtocolBuilder is Test {
         ipTokenBuilder.withAsset(assetInput);
         ivTokenBuilder.withAsset(assetInput);
         iporOracleBuilder.withAsset(assetInput);
-        iporRiskManagementOracleBuilder.withAsset(assetInput);
+        iporRiskManagementOracleBuilder.withAssetAndDefaultIndicators(assetInput);
         stanleyBuilder.withAsset(assetInput);
         miltonBuilder.withAsset(assetInput);
         josephBuilder.withAsset(assetInput);
