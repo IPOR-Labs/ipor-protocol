@@ -90,17 +90,15 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         vm.startPrank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -166,18 +164,16 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         vm.startPrank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -252,15 +248,13 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
 
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -273,8 +267,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -347,15 +340,13 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
 
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -368,8 +359,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -497,15 +487,13 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
 
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -518,8 +506,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -590,14 +577,12 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -609,8 +594,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -663,14 +647,12 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -682,8 +664,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -746,15 +727,13 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC,
-            block.timestamp
+        _iporProtocol.joseph.provideLiquidity(
+            (volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps) * TestConstants.USD_28_000_18DEC
         );
 
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -767,8 +746,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -834,8 +812,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
         );
         vm.startPrank(_userTwo);
         for (uint256 i; i < volumeSwaps.volumePayFixedSwaps; ++i) {
-            _iporProtocol.milton.itfOpenSwapPayFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapPayFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_6_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -847,8 +824,7 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             i < volumeSwaps.volumePayFixedSwaps + volumeSwaps.volumeReceiveFixedSwaps;
             ++i
         ) {
-            _iporProtocol.milton.itfOpenSwapReceiveFixed(
-                block.timestamp,
+            _iporProtocol.milton.openSwapReceiveFixed(
                 TestConstants.USD_10_000_18DEC,
                 TestConstants.PERCENTAGE_1_18DEC,
                 TestConstants.LEVERAGE_18DEC
@@ -919,11 +895,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1015,11 +990,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1121,11 +1095,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1225,11 +1198,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1331,11 +1303,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_161_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1444,11 +1415,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_151_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1544,11 +1514,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_10_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1643,11 +1612,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_161_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1746,11 +1714,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_150_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1846,11 +1813,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_4_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -1951,11 +1917,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_4_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -2054,11 +2019,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_159_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -2155,11 +2119,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_10_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -2256,11 +2219,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_4_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -2360,11 +2322,10 @@ contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUti
             address(_iporProtocol.miltonStorage)
         );
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_LP_BALANCE_BEFORE_CLOSE_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_4_18DEC,
             TestConstants.LEVERAGE_18DEC

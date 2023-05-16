@@ -99,7 +99,7 @@ contract StanleyTest is TestCommons, DataUtils {
         mockCase0JosephDai.addAppointedToRebalance(_admin);
         vm.startPrank(_liquidityProvider);
         _daiMockedToken.approve(address(stanleyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_20_000_18DEC, block.timestamp);
+        mockCase0JosephDai.provideLiquidity(TestConstants.USD_20_000_18DEC);
         vm.stopPrank();
         vm.prank(_admin);
         mockCase0JosephDai.depositToStanley(TestConstants.USD_1_000_18DEC);
@@ -164,7 +164,7 @@ contract StanleyTest is TestCommons, DataUtils {
         mockCase0JosephDai.addAppointedToRebalance(_admin);
         vm.startPrank(_liquidityProvider);
         _daiMockedToken.approve(address(stanleyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_1_000_18DEC, block.timestamp);
+        mockCase0JosephDai.provideLiquidity(TestConstants.USD_1_000_18DEC);
         vm.stopPrank();
         _daiMockedToken.transfer(address(mockCase0MiltonDai), TestConstants.USD_19_997_18DEC);
         vm.prank(_admin);
@@ -230,7 +230,7 @@ contract StanleyTest is TestCommons, DataUtils {
         mockCase0JosephDai.addAppointedToRebalance(_admin);
         vm.startPrank(_liquidityProvider);
         _daiMockedToken.approve(address(stanleyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_1_000_18DEC, block.timestamp);
+        mockCase0JosephDai.provideLiquidity(TestConstants.USD_1_000_18DEC);
         vm.stopPrank();
         _daiMockedToken.transfer(address(mockCase0MiltonDai), TestConstants.USD_19_997_18DEC);
         vm.prank(_admin);
@@ -290,7 +290,7 @@ contract StanleyTest is TestCommons, DataUtils {
         prepareIpToken(_ipTokenDai, address(mockCase0JosephDai));
         vm.startPrank(_liquidityProvider);
         _daiMockedToken.approve(address(stanleyDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-        mockCase0JosephDai.itfProvideLiquidity(TestConstants.USD_1_000_18DEC, block.timestamp);
+        mockCase0JosephDai.provideLiquidity(TestConstants.USD_1_000_18DEC);
         vm.stopPrank();
         _daiMockedToken.transfer(address(mockCase0MiltonDai), TestConstants.USD_19_997_18DEC);
         vm.prank(_admin);

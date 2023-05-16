@@ -43,12 +43,11 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -73,12 +72,11 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -102,12 +100,11 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -132,12 +129,11 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -160,13 +156,12 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -192,13 +187,12 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -221,13 +215,12 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             14000 * TestConstants.D18,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -253,13 +246,12 @@ contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC

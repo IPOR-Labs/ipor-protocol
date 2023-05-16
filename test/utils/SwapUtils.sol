@@ -17,8 +17,7 @@ contract SwapUtils is Test {
             if (i % 2 == 0) {
                 uint256 acceptableFixedInterestRate = 9 * TestConstants.D17;
                 vm.prank(user);
-                milton.itfOpenSwapPayFixed(
-                    block.timestamp, // openTimestamp
+                milton.openSwapPayFixed(
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
                     leverage // leverage
@@ -26,8 +25,7 @@ contract SwapUtils is Test {
             } else {
                 uint256 acceptableFixedInterestRate = 1 * TestConstants.D17;
                 vm.prank(user);
-                milton.itfOpenSwapPayFixed(
-                    block.timestamp, // openTimestamp
+                milton.openSwapPayFixed(
                     totalAmount, // totalAmount
                     acceptableFixedInterestRate, // acceptableFixedInterestRate
                     leverage // leverage
@@ -46,8 +44,7 @@ contract SwapUtils is Test {
         for (uint256 i; i < numberIterations; ++i) {
             uint256 acceptableFixedInterestRate = 1 * TestConstants.D16;
             vm.prank(user);
-            milton.itfOpenSwapReceiveFixed(
-                block.timestamp, // openTimestamp
+            milton.openSwapReceiveFixed(
                 totalAmount, // totalAmount
                 acceptableFixedInterestRate, // acceptableFixedInterestRate
                 leverage // leverage

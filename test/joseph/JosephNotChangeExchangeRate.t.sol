@@ -47,11 +47,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(180 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(180 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             180 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -61,7 +60,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userThree);
-        _iporProtocol.joseph.itfProvideLiquidity(1500 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(1500 * TestConstants.D18);
 
         // then
         uint256 actualIpTokenBalanceForUserThree = _iporProtocol.ipToken.balanceOf(_userThree);
@@ -86,11 +85,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(180 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(180 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             180 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -100,7 +98,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.startPrank(_userThree);
-        _iporProtocol.joseph.itfProvideLiquidity(1500 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(1500 * TestConstants.D18);
         _iporProtocol.joseph.itfRedeem(874999999999999999854, block.timestamp);
         vm.stopPrank();
 
@@ -127,11 +125,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(180 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -141,7 +138,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.startPrank(_userThree);
-        _iporProtocol.joseph.itfProvideLiquidity(1500 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(1500 * TestConstants.N1__0_6DEC);
         _iporProtocol.joseph.itfRedeem(874999999999999999854, block.timestamp);
         vm.stopPrank();
 
@@ -168,11 +165,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(180 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -186,7 +182,7 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.startPrank(_userThree);
-        _iporProtocol.joseph.itfProvideLiquidity(1500 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(1500 * TestConstants.N1__0_6DEC);
         _iporProtocol.joseph.itfRedeem(871111000099999999854, block.timestamp);
         vm.stopPrank();
 
@@ -213,11 +209,10 @@ contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(180 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(180 * TestConstants.N1__0_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             180 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC

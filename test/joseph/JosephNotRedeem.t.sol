@@ -49,11 +49,10 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(60000 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -90,11 +89,10 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(60000 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -131,11 +129,10 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(60000 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -166,11 +163,10 @@ contract JosephNotRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(60000 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(60000 * TestConstants.D18);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC

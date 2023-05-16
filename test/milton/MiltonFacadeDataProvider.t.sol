@@ -102,9 +102,9 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         vm.startPrank(_liquidityProvider);
-        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        amm.usdc.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        amm.usdt.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
+        amm.usdc.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
         vm.stopPrank();
 
         // when
@@ -145,27 +145,24 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         vm.prank(_liquidityProvider);
-        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        amm.usdc.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        amm.usdt.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
+        amm.usdc.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
         vm.stopPrank();
 
         // when
         vm.startPrank(_userTwo);
-        amm.usdt.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        amm.usdt.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        amm.usdc.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        amm.usdc.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
-        amm.dai.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        amm.dai.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -209,7 +206,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         // when
         vm.prank(_userTwo);
@@ -232,7 +229,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         // when
         vm.prank(_userTwo);
@@ -255,7 +252,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         vm.prank(_userTwo);
         // when
         (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
@@ -276,7 +273,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         // when
         vm.prank(_userTwo);
         (uint256 totalCountDai, MiltonFacadeTypes.IporSwap[] memory swapsDai) = miltonFacadeDataProvider.getMySwaps(
@@ -304,7 +301,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -339,7 +336,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -374,7 +371,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,
@@ -408,7 +405,7 @@ contract MiltonFacadeDataProviderTest is TestCommons, DataUtils, SwapUtils {
         vm.prank(_userOne);
         amm.iporOracle.itfUpdateIndex(address(amm.dai.asset), TestConstants.PERCENTAGE_5_18DEC, block.timestamp);
         vm.prank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         iterateOpenSwapsPayFixed(
             _userTwo,
             amm.dai.milton,

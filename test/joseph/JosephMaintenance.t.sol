@@ -89,7 +89,7 @@ contract JosephMaintenance is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         // when
         vm.prank(_admin);

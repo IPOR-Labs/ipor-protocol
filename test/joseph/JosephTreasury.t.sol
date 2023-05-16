@@ -76,11 +76,10 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -149,12 +148,11 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
 
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC

@@ -54,7 +54,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_admin);
@@ -88,7 +88,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.startPrank(_admin);
         _iporProtocol.milton.setJoseph(_userTwo);
@@ -158,19 +158,17 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_50_000_18DEC);
 
         vm.startPrank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_6_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         IporTypes.IporSwapMemory memory swapPayFixed = _iporProtocol.miltonStorage.getSwapPayFixed(1);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -234,7 +232,7 @@ contract MiltonMaintenanceTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_50_000_18DEC);
 
         vm.prank(_admin);
         _iporProtocol.milton.pause();
