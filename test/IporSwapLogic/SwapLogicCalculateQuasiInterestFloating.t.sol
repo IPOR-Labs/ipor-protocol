@@ -4,8 +4,7 @@ pragma solidity 0.8.16;
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/MockIporSwapLogic.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/mocks/MockIporSwapLogic.sol";
 
 contract IporSwapLogicCalculateQuasiInterestFloating is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;

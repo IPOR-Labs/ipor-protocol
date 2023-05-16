@@ -47,12 +47,8 @@ contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
         _currentLiquidityRate = v;
     }
 
-    function getReserveData(address reserve)
-        external
-        view
-        override
-        returns (DataTypesContract.ReserveData memory)
-    {
+    function getReserveData(address reserve) external view override returns (DataTypesContract.ReserveData memory) {
+        require(reserve != address(0));
         DataTypesContract.ReserveData memory d;
         d.stableDebtTokenAddress = _stableDebtTokenAddress;
         d.variableDebtTokenAddress = _variableDebtTokenAddress;
@@ -66,6 +62,7 @@ contract MockAaveLendingPoolV2 is AaveLendingPoolV2 {
         uint256 amount,
         address to
     ) external override returns (uint256) {
+        require(asset != address(0));
         AToken(_aDai).burn(msg.sender, to, amount, 0);
         return amount;
     }

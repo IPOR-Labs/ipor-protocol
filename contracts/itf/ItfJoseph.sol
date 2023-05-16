@@ -10,12 +10,27 @@ import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../amm/pool/Joseph.sol";
 
-abstract contract ItfJoseph is Joseph {
+contract ItfJoseph is Joseph {
+    uint256 internal immutable _decimals;
+    bool internal immutable _overrideRedeemFeeRate;
+
+    constructor(uint256 decimal, bool overrideRedeemFeeRate) {
+        _decimals = decimal;
+        _overrideRedeemFeeRate = overrideRedeemFeeRate;
+    }
+
+    function _getDecimals() internal view virtual override returns (uint256) {
+        return _decimals;
+    }
+
+    function _getRedeemFeeRate() internal view virtual override returns (uint256) {
+        return _overrideRedeemFeeRate ? 0 : _REDEEM_FEE_RATE;
+    }
+
     function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
         IMiltonInternal milton = _getMilton();
         (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
-        return
-            _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
+        return _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
     }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken

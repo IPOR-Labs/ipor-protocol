@@ -5,8 +5,7 @@ import "forge-std/console2.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/MockIporSwapLogic.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/mocks/MockIporSwapLogic.sol";
 
 contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
     MockIporSwapLogic internal _iporSwapLogic;
@@ -25,15 +24,14 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         uint256 openingFeeRate = 1e16;
 
         //when
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
-            .calculateSwapAmount(
-                timeToMaturityInDays,
-                totalAmount,
-                leverage,
-                liquidationDepositAmount,
-                iporPublicationFeeAmount,
-                openingFeeRate
-            );
+        (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
+            timeToMaturityInDays,
+            totalAmount,
+            leverage,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeeRate
+        );
 
         //then
         assertEq(openingFee, 320366972477064220046, "incorrect opening fee");
@@ -55,15 +53,14 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         uint256 openingFeeRate = 1e16;
 
         //when
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
-            .calculateSwapAmount(
-                timeToMaturityInDays,
-                totalAmount,
-                leverage,
-                liquidationDepositAmount,
-                iporPublicationFeeAmount,
-                openingFeeRate
-            );
+        (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
+            timeToMaturityInDays,
+            totalAmount,
+            leverage,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeeRate
+        );
 
         //then
         assertEq(openingFee, 4760087241003271064, "incorrect opening fee");
@@ -85,15 +82,14 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         uint256 openingFeeRate = 1e18;
 
         //when
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
-            .calculateSwapAmount(
-                timeToMaturityInDays,
-                totalAmount,
-                leverage,
-                liquidationDepositAmount,
-                iporPublicationFeeAmount,
-                openingFeeRate
-            );
+        (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
+            timeToMaturityInDays,
+            totalAmount,
+            leverage,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeeRate
+        );
 
         //then
         assertEq(openingFee, 950721481078137762048, "incorrect opening fee");
@@ -115,15 +111,14 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         uint256 openingFeeRate = 0;
 
         //when
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
-            .calculateSwapAmount(
-                timeToMaturityInDays,
-                totalAmount,
-                leverage,
-                liquidationDepositAmount,
-                iporPublicationFeeAmount,
-                openingFeeRate
-            );
+        (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
+            timeToMaturityInDays,
+            totalAmount,
+            leverage,
+            liquidationDepositAmount,
+            iporPublicationFeeAmount,
+            openingFeeRate
+        );
 
         //then
         assertEq(openingFee, 0, "incorrect opening fee");
@@ -145,8 +140,7 @@ contract IporSwapLogicCalculateQuasiInterest is TestCommons, DataUtils {
         uint256 openingFeeRate = 1e18;
 
         //when
-        (uint256 collateral, uint256 notional, uint256 openingFee) = _iporSwapLogic
-        .calculateSwapAmount(
+        (uint256 collateral, , uint256 openingFee) = _iporSwapLogic.calculateSwapAmount(
             timeToMaturityInDays,
             totalAmount,
             leverage,

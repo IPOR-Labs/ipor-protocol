@@ -17,12 +17,12 @@ contract MockSpreadModel is IMiltonSpreadModel {
         uint256 calculateQuotePayFixedValue,
         uint256 calculateQuoteReceiveFixedValue,
         int256 calculateSpreadPayFixedValue,
-        int256 calculateSpreadReceiveFixedVaule
+        int256 calculatespreadReceiveFixedValue
     ) {
         _calculateQuotePayFixed = calculateQuotePayFixedValue;
         _calculateQuoteReceiveFixed = calculateQuoteReceiveFixedValue;
         _calculateSpreadPayFixed = calculateSpreadPayFixedValue;
-        _calculateSpreadReceiveFixed = calculateSpreadReceiveFixedVaule;
+        _calculateSpreadReceiveFixed = calculatespreadReceiveFixedValue;
     }
 
     function calculateQuotePayFixed(

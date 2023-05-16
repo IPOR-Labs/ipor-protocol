@@ -4,10 +4,10 @@ pragma solidity 0.8.16;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
-import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
-import {ItfStanleyDai} from "../../../../contracts/itf/ItfStanleyDai.sol";
+import {IvToken} from "contracts/tokens/IvToken.sol";
+import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
+import {ItfStanley18D} from "contracts/itf/ItfStanley18D.sol";
 
 contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _daiMockedToken;
@@ -16,7 +16,7 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
     IvToken internal _ivTokenDai;
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
-    ItfStanleyDai internal _stanleyDai;
+    ItfStanley18D internal _stanleyDai;
 
     function _setupStrategies() internal {
         _strategyAaveDai.setAsset(address(_daiMockedToken));
@@ -34,7 +34,10 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
         _strategyCompoundDai = new MockStrategy();
         _setupStrategies();
         _stanleyDai = getItfStanleyDai(
-            address(_daiMockedToken), address(_ivTokenDai), address(_strategyAaveDai), address(_strategyCompoundDai)
+            address(_daiMockedToken),
+            address(_ivTokenDai),
+            address(_strategyAaveDai),
+            address(_strategyCompoundDai)
         );
         _ivTokenDai.setStanley(address(_stanleyDai));
         _admin = address(this);
@@ -50,7 +53,7 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
         _strategyAaveDai.setApr(100000);
         _strategyCompoundDai.setApr(99999);
         // when
-        (address strategyMaxApy,,) = _stanleyDai.getMaxApyStrategy();
+        (address strategyMaxApy, , ) = _stanleyDai.getMaxApyStrategy();
         // then
         assertEq(strategyMaxApy, address(_strategyAaveDai));
     }
@@ -60,7 +63,7 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
         _strategyAaveDai.setApr(10);
         _strategyCompoundDai.setApr(10);
         // when
-        (address strategyMaxApy,,) = _stanleyDai.getMaxApyStrategy();
+        (address strategyMaxApy, , ) = _stanleyDai.getMaxApyStrategy();
         // then
         assertEq(strategyMaxApy, address(_strategyAaveDai));
     }
@@ -70,7 +73,7 @@ contract StanleyMaxApyStrategyTest is TestCommons, DataUtils {
         _strategyAaveDai.setApr(1000);
         _strategyCompoundDai.setApr(99999);
         // when
-        (address strategyMaxApy,,) = _stanleyDai.getMaxApyStrategy();
+        (address strategyMaxApy, , ) = _stanleyDai.getMaxApyStrategy();
         // then
         assertEq(strategyMaxApy, address(_strategyCompoundDai));
     }

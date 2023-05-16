@@ -7,10 +7,10 @@ remappings = [
     '@ensdomains/=node_modules/@ensdomains/',
     '@openzeppelin/=node_modules/@openzeppelin/',
     'eth-gas-reporter/=node_modules/eth-gas-reporter/',
-    'hardhat/=node_modules/hardhat/',
-    'truffle/=node_modules/truffle/',
     'ds-test/=lib/forge-std/lib/ds-test/src/',
-    'forge-std/=lib/forge-std/src/'
+    'forge-std/=lib/forge-std/src/',
+    'contracts/=contracts/'
 ]
 optimizer_runs = 200
+ignored_error_codes = [5667, 9302, 2462, 5574, 8760]
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

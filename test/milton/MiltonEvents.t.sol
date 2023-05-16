@@ -5,21 +5,14 @@ import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/interfaces/types/MiltonTypes.sol";
-import "../../contracts/interfaces/types/AmmTypes.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/interfaces/types/MiltonTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 
 contract MiltonEventsTest is Test, TestCommons, DataUtils {
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+    BuilderUtils.IporProtocol internal _iporProtocol;
+
     MockSpreadModel internal _miltonSpreadModel;
 
     /// @notice Emmited when trader opens new swap.
@@ -77,61 +70,36 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
+        _cfg.approvalsForUsers = _users;
+        _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
     }
 
     function testShouldEmitEventWhenOpenPayFixedSwap18Decimals() public {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai miltonDai = getMockCase0MiltonDai(
-            address(daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai josephDai = getMockCase0JosephDai(
-            address(daiMockedToken),
-            address(ipTokenDai),
-            address(miltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
-        prepareJoseph(josephDai);
-        prepareIpToken(ipTokenDai, address(josephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(daiMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
-        ); // 3%, PERCENTAGE_3_18DEC
+        );
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+
         // when
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit OpenSwap(
             1, // swapId
             _userTwo, // buyer
-            address(daiMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
@@ -151,7 +119,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
                 fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
             }) // indicator
         );
-        miltonDai.itfOpenSwapPayFixed(
+
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
@@ -161,57 +130,29 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap18Decimals() public {
         // given
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
-        MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai miltonDai = getMockCase0MiltonDai(
-            address(daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai josephDai = getMockCase0JosephDai(
-            address(daiMockedToken),
-            address(ipTokenDai),
-            address(miltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
-        prepareJoseph(josephDai);
-        prepareIpToken(ipTokenDai, address(josephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(daiMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
-        ); // 3%, PERCENTAGE_3_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit OpenSwap(
             1, // swapId
             _userTwo, // buyer
-            address(daiMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
@@ -231,7 +172,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
                 fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
             }) // indicator
         );
-        miltonDai.itfOpenSwapReceiveFixed(
+
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
@@ -241,62 +183,29 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenPayFixedSwap6Decimals() public {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC); // 4%
-        MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
-        MiltonStorage miltonStorageUsdt = getMiltonStorage();
-        MockCase0MiltonUsdt miltonUsdt = getMockCase0MiltonUsdt(
-            address(usdtMockedToken),
-            address(iporOracle),
-            address(miltonStorageUsdt),
-            address(_miltonSpreadModel),
-            address(stanleyUsdt),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephUsdt josephUsdt = getMockCase0JosephUsdt(
-            address(usdtMockedToken),
-            address(ipTokenUsdt),
-            address(miltonUsdt),
-            address(miltonStorageUsdt),
-            address(stanleyUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            usdtMockedToken,
-            address(josephUsdt),
-            address(miltonUsdt)
-        );
-        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareJoseph(josephUsdt);
-        prepareIpToken(ipTokenUsdt, address(josephUsdt));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
+
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
-        ); // 3%, PERCENTAGE_3_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit OpenSwap(
             1, // swapId
             _userTwo, // buyer
-            address(usdtMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
@@ -316,7 +225,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
                 fixedInterestRate: TestConstants.PERCENTAGE_4_18DEC // fixedInterestRate, 4%
             }) // indicator
         );
-        miltonUsdt.itfOpenSwapPayFixed(
+
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
@@ -326,62 +236,29 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenOpenReceiveFixedSwap6Decimals() public {
         // given
-        _miltonSpreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC); // 2%
-        MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
-        MiltonStorage miltonStorageUsdt = getMiltonStorage();
-        MockCase0MiltonUsdt miltonUsdt = getMockCase0MiltonUsdt(
-            address(usdtMockedToken),
-            address(iporOracle),
-            address(miltonStorageUsdt),
-            address(_miltonSpreadModel),
-            address(stanleyUsdt),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephUsdt josephUsdt = getMockCase0JosephUsdt(
-            address(usdtMockedToken),
-            address(ipTokenUsdt),
-            address(miltonUsdt),
-            address(miltonStorageUsdt),
-            address(stanleyUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            usdtMockedToken,
-            address(josephUsdt),
-            address(miltonUsdt)
-        );
-        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareJoseph(josephUsdt);
-        prepareIpToken(ipTokenUsdt, address(josephUsdt));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
+
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_3_18DEC,
             block.timestamp
-        ); // 3%, PERCENTAGE_3_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit OpenSwap(
             1, // swapId
             _userTwo, // buyer
-            address(usdtMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             MiltonTypes.SwapDirection.PAY_FLOATING_RECEIVE_FIXED, // direction
             AmmTypes.OpenSwapMoney({
                 totalAmount: TestConstants.USD_10_000_18DEC, // totalAmount
@@ -401,7 +278,8 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
                 fixedInterestRate: TestConstants.PERCENTAGE_2_18DEC // fixedInterestRate, 2%
             }) // indicator
         );
-        miltonUsdt.itfOpenSwapReceiveFixed(
+
+        _iporProtocol.milton.itfOpenSwapReceiveFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
@@ -411,71 +289,50 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap18Decimals() public {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), 5e16);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenDai = getIpTokenDai(address(daiMockedToken));
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai miltonDai = getMockCase0MiltonDai(
-            address(daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephDai josephDai = getMockCase0JosephDai(
-            address(daiMockedToken),
-            address(ipTokenDai),
-            address(miltonDai),
-            address(miltonStorageDai),
-            address(stanleyDai)
-        );
-        prepareApproveForUsersDai(_users, daiMockedToken, address(josephDai), address(miltonDai));
-        prepareMilton(miltonDai, address(josephDai), address(stanleyDai));
-        prepareJoseph(josephDai);
-        prepareIpToken(ipTokenDai, address(josephDai));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(daiMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_5_18DEC,
             block.timestamp
-        ); // 5%, PERCENTAGE_5_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephDai.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
+
         vm.prank(_userTwo);
-        miltonDai.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
         );
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(daiMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_160_18DEC,
             block.timestamp
-        ); // PERCENTAGE_160_18DEC
+        );
+
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit CloseSwap(
             1, // swapId
-            address(daiMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             19955412124333030204016, // transferredToBuyer
             TestConstants.ZERO // transferredToLiquidator
         );
-        miltonDai.itfCloseSwapPayFixed(
+
+        _iporProtocol.milton.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
@@ -483,80 +340,50 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndTakerClosedSwap() public {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
-        MiltonStorage miltonStorageUsdt = getMiltonStorage();
-        MockCase0MiltonUsdt miltonUsdt = getMockCase0MiltonUsdt(
-            address(usdtMockedToken),
-            address(iporOracle),
-            address(miltonStorageUsdt),
-            address(_miltonSpreadModel),
-            address(stanleyUsdt),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephUsdt josephUsdt = getMockCase0JosephUsdt(
-            address(usdtMockedToken),
-            address(ipTokenUsdt),
-            address(miltonUsdt),
-            address(miltonStorageUsdt),
-            address(stanleyUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            usdtMockedToken,
-            address(josephUsdt),
-            address(miltonUsdt)
-        );
-        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareJoseph(josephUsdt);
-        prepareIpToken(ipTokenUsdt, address(josephUsdt));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_5_18DEC,
             block.timestamp
-        ); // 5%, PERCENTAGE_5_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+
         vm.prank(_userTwo);
-        miltonUsdt.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
         );
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_160_18DEC,
             block.timestamp
-        ); // PERCENTAGE_160_18DEC
+        );
+
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
         emit CloseSwap(
             1, // swapId
-            address(usdtMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userTwo, // liquidator
             19955412124000000000000, // transferredToBuyer
             TestConstants.ZERO // transferredToLiquidator
         );
-        miltonUsdt.itfCloseSwapPayFixed(
+
+        _iporProtocol.milton.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
@@ -564,83 +391,51 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitEventWhenClosePayFixedSwap6DecimalsAndNotTakerClosedSwap() public {
         // given
-        _miltonSpreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC); // 6%
-        MockTestnetToken usdtMockedToken = getTokenUsdt();
-        ItfIporOracle iporOracle = getIporOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.TC_DEFAULT_EMA_18DEC_64UINT
-        );
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(usdtMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        IpToken ipTokenUsdt = getIpTokenUsdt(address(usdtMockedToken));
-        MockCase0Stanley stanleyUsdt = getMockCase0Stanley(address(usdtMockedToken));
-        MiltonStorage miltonStorageUsdt = getMiltonStorage();
-        MockCase0MiltonUsdt miltonUsdt = getMockCase0MiltonUsdt(
-            address(usdtMockedToken),
-            address(iporOracle),
-            address(miltonStorageUsdt),
-            address(_miltonSpreadModel),
-            address(stanleyUsdt),
-            address(iporRiskManagementOracle)
-        );
-        MockCase0JosephUsdt josephUsdt = getMockCase0JosephUsdt(
-            address(usdtMockedToken),
-            address(ipTokenUsdt),
-            address(miltonUsdt),
-            address(miltonStorageUsdt),
-            address(stanleyUsdt)
-        );
-        prepareApproveForUsersUsd(
-            _users,
-            usdtMockedToken,
-            address(josephUsdt),
-            address(miltonUsdt)
-        );
-        prepareMilton(miltonUsdt, address(josephUsdt), address(stanleyUsdt));
-        prepareJoseph(josephUsdt);
-        prepareIpToken(ipTokenUsdt, address(josephUsdt));
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
-        miltonUsdt.addSwapLiquidator(_userThree);
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
+        _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
+
+        _iporProtocol.milton.addSwapLiquidator(_userThree);
 
         // when
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_5_18DEC,
             block.timestamp
-        ); // 5%, PERCENTAGE_5_18DEC
+        );
+
         vm.prank(_liquidityProvider);
-        josephUsdt.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+
         vm.prank(_userTwo);
-        miltonUsdt.itfOpenSwapPayFixed(
+        _iporProtocol.milton.itfOpenSwapPayFixed(
             block.timestamp, // openTimestamp
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
         );
+
         vm.prank(_userOne);
-        iporOracle.itfUpdateIndex(
-            address(usdtMockedToken),
+        _iporProtocol.iporOracle.itfUpdateIndex(
+            address(_iporProtocol.asset),
             TestConstants.PERCENTAGE_160_18DEC,
             block.timestamp
-        ); // PERCENTAGE_160_18DEC
+        );
+
         vm.prank(_userThree);
         vm.expectEmit(true, true, true, true);
         emit CloseSwap(
             1, // swapId
-            address(usdtMockedToken), // asset
+            address(_iporProtocol.asset), // asset
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS, // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
             _userThree, // liquidator
             19935412124000000000000, // transferredToBuyer
             TestConstants.TC_LIQUIDATION_DEPOSIT_AMOUNT_18DEC // transferredToLiquidator
         );
-        miltonUsdt.itfCloseSwapPayFixed(
+        _iporProtocol.milton.itfCloseSwapPayFixed(
             1, // swapId
             block.timestamp + TestConstants.SWAP_DEFAULT_PERIOD_IN_SECONDS // closeTimestamp, 28 days, PERIOD_28_DAYS_IN_SECONDS
         );
@@ -648,30 +443,17 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
 
     function testShouldEmitMiltonSpreadModelChanged() public {
         // given
-        MockTestnetToken daiMockedToken = getTokenDai();
-        ItfIporOracle iporOracle = getIporOracleAsset(_userOne, address(daiMockedToken), 0);
-        IIporRiskManagementOracle iporRiskManagementOracle = getRiskManagementOracleAsset(
-            _userOne,
-            address(daiMockedToken),
-            TestConstants.RMO_UTILIZATION_RATE_48_PER,
-            TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
-        );
-        MockCase0Stanley stanleyDai = getMockCase0Stanley(address(daiMockedToken));
-        MiltonStorage miltonStorageDai = getMiltonStorage();
-        MockCase0MiltonDai miltonDai = getMockCase0MiltonDai(
-            address(daiMockedToken),
-            address(iporOracle),
-            address(miltonStorageDai),
-            address(_miltonSpreadModel),
-            address(stanleyDai),
-            address(iporRiskManagementOracle)
-        );
-        address oldMiltonSpreadModel = miltonDai.getMiltonSpreadModel();
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
+        address oldMiltonSpreadModel = _iporProtocol.milton.getMiltonSpreadModel();
         address newMiltonSpreadModel = address(_userThree);
-        // when
+
+        // then
         vm.expectEmit(true, true, true, true);
         emit MiltonSpreadModelChanged(_admin, oldMiltonSpreadModel, newMiltonSpreadModel);
-        miltonDai.setMiltonSpreadModel(newMiltonSpreadModel);
+        // when
+        _iporProtocol.milton.setMiltonSpreadModel(newMiltonSpreadModel);
     }
 }

@@ -43,6 +43,7 @@ contract MockLendingPoolAave is AaveLendingPoolV2 {
         address owner,
         uint16 referralCode
     ) external {
+        require(referralCode < type(uint16).max);
         MockIAToken aToken = MockIAToken(_aTokens[asset]);
         IERC20(asset).safeTransferFrom(owner, address(this), amount);
         aToken.mint(owner, amount);
@@ -59,11 +60,7 @@ contract MockLendingPoolAave is AaveLendingPoolV2 {
         return amount;
     }
 
-    function getReserveData(address asset)
-        external
-        view
-        returns (DataTypesContract.ReserveData memory)
-    {
+    function getReserveData(address asset) external view returns (DataTypesContract.ReserveData memory) {
         return _liquidityRates[asset];
     }
 }

@@ -3,45 +3,36 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../contracts/itf/ItfMiltonDai.sol";
-import "../../contracts/itf/ItfJosephUsdt.sol";
-import "../../contracts/itf/ItfJosephUsdc.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
-    IporProtocol private _iporProtocol;
-
     event IporIndexUpdate(
         address asset,
         uint256 indexValue,
         uint256 quasiIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
         uint256 updateTimestamp
     );
+
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
+        _cfg.iporOracleUpdater = _admin;
+        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testOpenAndCloseSwapPayFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
-        _iporProtocol = setupIporProtocolForUsdt();
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -65,7 +56,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -79,7 +70,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     function testOpenAndCloseSwapReceiveFixedUsdtAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
-        _iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
+
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -103,7 +95,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, false, false);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -117,7 +109,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     function testOpenAndCloseSwapPayFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
-        _iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -141,7 +134,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
@@ -149,13 +142,15 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
-        assertEq(myBalanceBefore - myBalanceAfter, 48075873362445411054);
+
+        assertEq(myBalanceBefore - myBalanceAfter, 48075873362445411054, "incorrect balance");
     }
 
     function testOpenAndCloseSwapReceiveFixedDaiAndAutoUpdateIndex() public {
         //given
         vm.warp(100);
-        _iporProtocol = setupIporProtocolForDai();
+        _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
+
         MockTestnetToken asset = _iporProtocol.asset;
         ItfMilton milton = _iporProtocol.milton;
         ItfJoseph joseph = _iporProtocol.joseph;
@@ -179,7 +174,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
 
         //then
         vm.expectEmit(true, true, true, true);
-        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 1, 1, 100);
+        emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
         milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);

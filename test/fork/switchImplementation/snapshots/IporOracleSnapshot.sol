@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "../../../../contracts/oracles/IporOracle.sol";
+import "contracts/oracles/IporOracle.sol";
 import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
@@ -31,7 +31,6 @@ contract IporOracleSnapshot is Script, Test {
     uint256 public accruedExponentialMovingAverage;
     uint256 public accruedExponentialWeightedMovingVariance;
 
-
     constructor(address iporOracle, address asset) {
         _iporOracle = iporOracle;
         _asset = asset;
@@ -43,11 +42,9 @@ contract IporOracleSnapshot is Script, Test {
         iporOracleVersion = iporOracle.getVersion();
         iporOracleIsPaused = iporOracle.paused();
         (
-        indexValue,
-        ibtPrice,
-        exponentialMovingAverage,
-        exponentialWeightedMovingVariance,
-        lastUpdateTimestamp
+            indexValue,
+            ibtPrice,
+            lastUpdateTimestamp
         ) = iporOracle.getIndex(_asset);
         blockNumber = block.number;
         timestamp = block.timestamp;
@@ -57,104 +54,43 @@ contract IporOracleSnapshot is Script, Test {
         accruedIbtPrice = accruedIpor.ibtPrice;
         accruedExponentialMovingAverage = accruedIpor.exponentialMovingAverage;
         accruedExponentialWeightedMovingVariance = accruedIpor.exponentialWeightedMovingVariance;
-
     }
 
-    function toJson(string memory fileName) external returns(string memory pathToFile) {
+    function toJson(string memory fileName) external returns (string memory pathToFile) {
         string memory path = vm.projectRoot();
         string memory iporOracleJson = "";
 
         vm.serializeAddress(iporOracleJson, "iporOracle", _iporOracle);
-        vm.serializeAddress(
-            iporOracleJson,
-            "asset",
-            _asset
-        );
+        vm.serializeAddress(iporOracleJson, "asset", _asset);
 
-        vm.serializeAddress(
-            iporOracleJson,
-            "iporOracleOwner",
-            iporOracleOwner
-        );
+        vm.serializeAddress(iporOracleJson, "iporOracleOwner", iporOracleOwner);
 
-        vm.serializeBool(
-            iporOracleJson,
-            "iporOracleIsPaused",
-            iporOracleIsPaused
-        );
+        vm.serializeBool(iporOracleJson, "iporOracleIsPaused", iporOracleIsPaused);
 
-        vm.serializeUint(
-            iporOracleJson,
-            "iporOracleVersion",
-            iporOracleVersion
-        );
-        vm.serializeUint(
-            iporOracleJson,
-            "timestamp",
-            timestamp
-        );
-        vm.serializeUint(
-            iporOracleJson,
-            "indexValue",
-            indexValue
-        );
-        vm.serializeUint(
-            iporOracleJson,
-            "ibtPrice",
-            ibtPrice
-        );
-        vm.serializeUint(
-            iporOracleJson,
-            "exponentialMovingAverage",
-            exponentialMovingAverage
-        );
+        vm.serializeUint(iporOracleJson, "iporOracleVersion", iporOracleVersion);
+        vm.serializeUint(iporOracleJson, "timestamp", timestamp);
+        vm.serializeUint(iporOracleJson, "indexValue", indexValue);
+        vm.serializeUint(iporOracleJson, "ibtPrice", ibtPrice);
+        vm.serializeUint(iporOracleJson, "exponentialMovingAverage", exponentialMovingAverage);
 
-        vm.serializeUint(
-            iporOracleJson,
-            "exponentialWeightedMovingVariance",
-            exponentialWeightedMovingVariance
-        );
+        vm.serializeUint(iporOracleJson, "exponentialWeightedMovingVariance", exponentialWeightedMovingVariance);
 
-        vm.serializeUint(
-            iporOracleJson,
-            "lastUpdateTimestamp",
-            lastUpdateTimestamp
-        );
-        vm.serializeUint(
-            iporOracleJson,
-            "accruedIndexValue",
-            accruedIndexValue
-        );
+        vm.serializeUint(iporOracleJson, "lastUpdateTimestamp", lastUpdateTimestamp);
+        vm.serializeUint(iporOracleJson, "accruedIndexValue", accruedIndexValue);
 
-        vm.serializeUint(
-            iporOracleJson,
-            "accruedIbtPrice",
-            accruedIbtPrice
-        );
+        vm.serializeUint(iporOracleJson, "accruedIbtPrice", accruedIbtPrice);
 
-        vm.serializeUint(
-            iporOracleJson,
-            "accruedExponentialMovingAverage",
-            accruedExponentialMovingAverage
-        );
+        vm.serializeUint(iporOracleJson, "accruedExponentialMovingAverage", accruedExponentialMovingAverage);
         vm.serializeUint(
             iporOracleJson,
             "accruedExponentialWeightedMovingVariance",
             accruedExponentialWeightedMovingVariance
         );
 
-        string memory finalJson = vm.serializeUint(
-            iporOracleJson,
-            "blockNumber",
-            blockNumber
-        );
-        string memory fileBlockNumber = string.concat(
-            Strings.toString(blockNumber),
-            ".json"
-        );
-        string memory pathToFile = string.concat(path, fileName);
-        vm.writeJson(finalJson, pathToFile);
-        return pathToFile;
+        string memory finalJson = vm.serializeUint(iporOracleJson, "blockNumber", blockNumber);
+        string memory pathToFileTemp = string.concat(path, fileName);
+        vm.writeJson(finalJson, pathToFileTemp);
+        return pathToFileTemp;
     }
 
     function fromJson(string memory fileName) public {
@@ -162,61 +98,29 @@ contract IporOracleSnapshot is Script, Test {
         string memory pathToFile = string.concat(path, fileName);
         string memory data = vm.readFile(pathToFile);
 
-        _iporOracle = data.readAddress(
-        "iporOracle"
-        );
-         _asset = data.readAddress(
-             "asset"
-         );
-        iporOracleOwner = data.readAddress(
-            "iporOracleOwner"
-        );
+        _iporOracle = data.readAddress("iporOracle");
+        _asset = data.readAddress("asset");
+        iporOracleOwner = data.readAddress("iporOracleOwner");
 
-        iporOracleVersion = data.readUint(
-            "iporOracleVersion"
-        );
-        iporOracleIsPaused = data.readBool(
-            "iporOracleIsPaused"
-        );
-        blockNumber = data.readUint(
-            "blockNumber"
-        );
-        timestamp = data.readUint(
-            "timestamp"
-        );
+        iporOracleVersion = data.readUint("iporOracleVersion");
+        iporOracleIsPaused = data.readBool("iporOracleIsPaused");
+        blockNumber = data.readUint("blockNumber");
+        timestamp = data.readUint("timestamp");
 
         // getIndex
-        indexValue = data.readUint(
-            "indexValue"
-        );
-        ibtPrice = data.readUint(
-            "ibtPrice"
-        );
-        exponentialMovingAverage = data.readUint(
-            "exponentialMovingAverage"
-        );
-        exponentialWeightedMovingVariance = data.readUint(
-            "exponentialWeightedMovingVariance"
-        );
-        lastUpdateTimestamp = data.readUint(
-            "lastUpdateTimestamp"
-        );
+        indexValue = data.readUint("indexValue");
+        ibtPrice = data.readUint("ibtPrice");
+        exponentialMovingAverage = data.readUint("exponentialMovingAverage");
+        exponentialWeightedMovingVariance = data.readUint("exponentialWeightedMovingVariance");
+        lastUpdateTimestamp = data.readUint("lastUpdateTimestamp");
         //getAccruedIndex
-        accruedIndexValue = data.readUint(
-            "accruedIndexValue"
-        );
-        accruedIbtPrice = data.readUint(
-            "accruedIbtPrice"
-        );
-        accruedExponentialMovingAverage = data.readUint(
-            "accruedExponentialMovingAverage"
-        );
-        accruedExponentialWeightedMovingVariance = data.readUint(
-            "accruedExponentialWeightedMovingVariance"
-        );
+        accruedIndexValue = data.readUint("accruedIndexValue");
+        accruedIbtPrice = data.readUint("accruedIbtPrice");
+        accruedExponentialMovingAverage = data.readUint("accruedExponentialMovingAverage");
+        accruedExponentialWeightedMovingVariance = data.readUint("accruedExponentialWeightedMovingVariance");
     }
 
-    function consoleLog() public {
+    function consoleLog() public view {
         console2.log("iporOracleOwner", iporOracleOwner);
         console2.log("iporOracleVersion", iporOracleVersion);
         console2.log("iporOracleIsPaused", iporOracleIsPaused);
@@ -233,7 +137,7 @@ contract IporOracleSnapshot is Script, Test {
         console2.log("accruedExponentialWeightedMovingVariance", accruedExponentialWeightedMovingVariance);
     }
 
-    function assert(IporOracleSnapshot iporOracleSnapshot1, IporOracleSnapshot iporOracleSnapshot2) external {
+    function assertIporOracle(IporOracleSnapshot iporOracleSnapshot1, IporOracleSnapshot iporOracleSnapshot2) external {
         assertEq(iporOracleSnapshot1.iporOracleOwner(), iporOracleSnapshot2.iporOracleOwner());
         assertEq(iporOracleSnapshot1.iporOracleIsPaused(), iporOracleSnapshot2.iporOracleIsPaused());
         assertEq(iporOracleSnapshot1.blockNumber(), iporOracleSnapshot2.blockNumber());
@@ -241,11 +145,20 @@ contract IporOracleSnapshot is Script, Test {
         assertEq(iporOracleSnapshot1.indexValue(), iporOracleSnapshot2.indexValue());
         assertEq(iporOracleSnapshot1.ibtPrice(), iporOracleSnapshot2.ibtPrice());
         assertEq(iporOracleSnapshot1.exponentialMovingAverage(), iporOracleSnapshot2.exponentialMovingAverage());
-        assertEq(iporOracleSnapshot1.exponentialWeightedMovingVariance(), iporOracleSnapshot2.exponentialWeightedMovingVariance());
+        assertEq(
+            iporOracleSnapshot1.exponentialWeightedMovingVariance(),
+            iporOracleSnapshot2.exponentialWeightedMovingVariance()
+        );
         assertEq(iporOracleSnapshot1.lastUpdateTimestamp(), iporOracleSnapshot2.lastUpdateTimestamp());
         assertEq(iporOracleSnapshot1.accruedIndexValue(), iporOracleSnapshot2.accruedIndexValue());
         assertEq(iporOracleSnapshot1.accruedIbtPrice(), iporOracleSnapshot2.accruedIbtPrice());
-        assertEq(iporOracleSnapshot1.accruedExponentialMovingAverage(), iporOracleSnapshot2.accruedExponentialMovingAverage());
-        assertEq(iporOracleSnapshot1.accruedExponentialWeightedMovingVariance(), iporOracleSnapshot2.accruedExponentialWeightedMovingVariance());
+        assertEq(
+            iporOracleSnapshot1.accruedExponentialMovingAverage(),
+            iporOracleSnapshot2.accruedExponentialMovingAverage()
+        );
+        assertEq(
+            iporOracleSnapshot1.accruedExponentialWeightedMovingVariance(),
+            iporOracleSnapshot2.accruedExponentialWeightedMovingVariance()
+        );
     }
 }

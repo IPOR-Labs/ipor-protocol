@@ -32,14 +32,15 @@ contract MockStakedAave is ERC20 {
     }
 
     function stakersCooldowns(address _addr) external view returns (uint256) {
+        require(_addr != address(0));
         return _cooldownStartTimestamp;
     }
 
-    function COOLDOWN_SECONDS() external returns (uint256) {
+    function COOLDOWN_SECONDS() external pure returns (uint256) {
         return 0;
     }
 
-    function UNSTAKE_WINDOW() external returns (uint256) {
+    function UNSTAKE_WINDOW() external pure returns (uint256) {
         return 1e18;
     }
 }

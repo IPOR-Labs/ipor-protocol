@@ -15,8 +15,6 @@ interface IIporOracle {
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return value IPOR Index value for a given asset
     /// @return ibtPrice Interest Bearing Token Price for a given IPOR Index
-    /// @return exponentialMovingAverage Exponential moving average for a given IPOR Index
-    /// @return exponentialWeightedMovingVariance Exponential weighted movien variance for a given IPOR Index
     /// @return lastUpdateTimestamp Last IPOR Index update done by Charlie off-chain service
     function getIndex(address asset)
         external
@@ -24,8 +22,6 @@ interface IIporOracle {
         returns (
             uint256 value,
             uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
             uint256 lastUpdateTimestamp
         );
 
@@ -87,13 +83,9 @@ interface IIporOracle {
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address
     /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated
-    /// @param exponentialMovingAverage initial Exponential Moving Average for this asset
-    /// @param exponentialWeightedMovingVariance initial Exponential Weighted Moving Variance for asset.
     function addAsset(
         address newAsset,
-        uint256 updateTimestamp,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        uint256 updateTimestamp
     ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
@@ -116,15 +108,11 @@ interface IIporOracle {
     /// @param asset underlying / stablecoin address
     /// @param indexValue IPOR Index value represented in 18 decimals
     /// @param quasiIbtPrice quasi Interest Bearing Token price represented in 18 decimals.
-    /// @param exponentialMovingAverage Exponential Moving Average represented in 18 decimals.
-    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance
     /// @param updateTimestamp moment when IPOR Index was updated.
     event IporIndexUpdate(
         address asset,
         uint256 indexValue,
         uint256 quasiIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
         uint256 updateTimestamp
     );
 
@@ -139,13 +127,9 @@ interface IIporOracle {
     /// @notice event emitted when new asset is added by Owner to list of assets supported in IPOR Protocol.
     /// @param newAsset new asset address
     /// @param updateTimestamp update timestamp
-    /// @param exponentialMovingAverage Exponential Moving Average for asset
-    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance for asset
     event IporIndexAddAsset(
         address newAsset,
-        uint256 updateTimestamp,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        uint256 updateTimestamp
     );
 
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.

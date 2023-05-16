@@ -3,19 +3,22 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+    BuilderUtils.IporProtocol internal _iporProtocol;
+    
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
+        _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE1;
+        _cfg.iporRiskManagementOracleUpdater = _admin;
     }
 
     function testProvideLiquidityAndRebalanceSameTimestamp() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -23,37 +26,37 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         vm.warp(100);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(_userOne), userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), userPosition);
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        uint256 stanleyBalanceBefore = iporProtocol.stanley.totalBalance(
-            address(iporProtocol.milton)
+        uint256 stanleyBalanceBefore = _iporProtocol.stanley.totalBalance(
+            address(_iporProtocol.milton)
         );
-        uint256 miltonBalanceBefore = iporProtocol.asset.balanceOf(address(iporProtocol.milton));
+        uint256 miltonBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
 
-        iporProtocol.joseph.addAppointedToRebalance(address(this));
+        _iporProtocol.joseph.addAppointedToRebalance(address(this));
 
         //when
-        iporProtocol.joseph.rebalance();
+        _iporProtocol.joseph.rebalance();
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             stanleyBalanceBefore
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), miltonBalanceBefore);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), miltonBalanceBefore);
     }
 
     function testProvideLiquidityAndRebalanceDifferentTimestamp() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -61,39 +64,39 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         vm.warp(100);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(_userOne), userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), userPosition);
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        uint256 stanleyBalanceBefore = iporProtocol.stanley.totalBalance(
-            address(iporProtocol.milton)
+        uint256 stanleyBalanceBefore = _iporProtocol.stanley.totalBalance(
+            address(_iporProtocol.milton)
         );
-        uint256 miltonBalanceBefore = iporProtocol.asset.balanceOf(address(iporProtocol.milton));
+        uint256 miltonBalanceBefore = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
 
-        iporProtocol.joseph.addAppointedToRebalance(address(this));
+        _iporProtocol.joseph.addAppointedToRebalance(address(this));
 
         //when
         vm.warp(101);
-        iporProtocol.joseph.rebalance();
+        _iporProtocol.joseph.rebalance();
 
         //then
         assertTrue(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)) != stanleyBalanceBefore
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)) != stanleyBalanceBefore
         );
         assertTrue(
-            iporProtocol.asset.balanceOf(address(iporProtocol.milton)) != miltonBalanceBefore
+            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)) != miltonBalanceBefore
         );
     }
 
     function testRebalanceAndProvideLiquiditySameTimestamp() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -104,34 +107,34 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         vm.warp(100);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(_userOne), 2 * userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), 2 * userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), 2 * userPosition);
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), 2 * userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        iporProtocol.joseph.addAppointedToRebalance(address(this));
-        iporProtocol.joseph.rebalance();
+        _iporProtocol.joseph.addAppointedToRebalance(address(this));
+        _iporProtocol.joseph.rebalance();
 
         //when
         vm.prank(address(_userOne));
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 
     function testRebalanceAndProvideLiquidityDifferentTimestamp() public {
         //given
-        IporProtocol memory iporProtocol = setupIporProtocolForUsdt();
+        _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         uint256 autoRebalanceThreshold = 10;
         uint256 miltonStanleyRatio = 150000000000000000;
@@ -142,29 +145,29 @@ contract JosephAutoRebalance is Test, TestCommons, DataUtils {
 
         vm.warp(100);
 
-        iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
-        iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
+        _iporProtocol.joseph.setAutoRebalanceThreshold(autoRebalanceThreshold);
+        _iporProtocol.joseph.setMiltonStanleyBalanceRatio(miltonStanleyRatio);
 
-        deal(address(iporProtocol.asset), address(_userOne), 2 * userPosition);
+        deal(address(_iporProtocol.asset), address(_userOne), 2 * userPosition);
 
         vm.startPrank(address(_userOne));
-        iporProtocol.asset.approve(address(iporProtocol.joseph), 2 * userPosition);
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.asset.approve(address(_iporProtocol.joseph), 2 * userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
         vm.stopPrank();
 
-        iporProtocol.joseph.addAppointedToRebalance(address(this));
-        iporProtocol.joseph.rebalance();
+        _iporProtocol.joseph.addAppointedToRebalance(address(this));
+        _iporProtocol.joseph.rebalance();
 
         //when
         vm.warp(105);
         vm.prank(address(_userOne));
-        iporProtocol.joseph.provideLiquidity(userPosition);
+        _iporProtocol.joseph.provideLiquidity(userPosition);
 
         //then
         assertEq(
-            iporProtocol.stanley.totalBalance(address(iporProtocol.milton)),
+            _iporProtocol.stanley.totalBalance(address(_iporProtocol.milton)),
             expectedStanleyBalance
         );
-        assertEq(iporProtocol.asset.balanceOf(address(iporProtocol.milton)), expectedMiltonBalance);
+        assertEq(_iporProtocol.asset.balanceOf(address(_iporProtocol.milton)), expectedMiltonBalance);
     }
 }

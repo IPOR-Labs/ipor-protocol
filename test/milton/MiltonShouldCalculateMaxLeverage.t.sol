@@ -7,16 +7,27 @@ import "../utils/TestConstants.sol";
 import "../TestCommons.sol";
 
 contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
-    IporProtocol private _iporProtocolDai;
-    IporProtocol private _iporProtocolUsdt;
+    IporProtocolFactory.IporProtocolConfig private _cfg;
+
+    BuilderUtils.IporProtocol internal _iporProtocolDai;
+    BuilderUtils.IporProtocol internal _iporProtocolUsdt;
 
     function setUp() public {
         _admin = address(this);
         _userOne = _getUserAddress(1);
-        _iporProtocolDai = setupIporProtocolForDai();
+        address[] memory users = new address[](2);
+        users[0] = _admin;
+        users[1] = _userOne;
+
+        _cfg.approvalsForUsers = _users;
+        _cfg.iporOracleUpdater = _userOne;
+        _cfg.iporRiskManagementOracleUpdater = _userOne;
+
+        _iporProtocolDai = _iporProtocolFactory.getDaiInstance(_cfg);
+        _iporProtocolUsdt = _iporProtocolFactory.getUsdtInstance(_cfg);
+
         _iporProtocolDai.asset.approve(address(_iporProtocolDai.joseph), TestConstants.USD_100_000_18DEC);
         _iporProtocolDai.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
-        _iporProtocolUsdt = setupIporProtocolForUsdt();
         _iporProtocolUsdt.asset.approve(address(_iporProtocolUsdt.joseph), TestConstants.USD_100_000_6DEC);
         _iporProtocolUsdt.joseph.provideLiquidity(TestConstants.USD_100_000_6DEC);
     }
@@ -175,7 +186,7 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
     }
 
     function updateIndicatorsAndAssertMaxLeverage(
-        IporProtocol memory iporProtocol,
+        BuilderUtils.IporProtocol memory iporProtocol,
         uint64 maxNotionalPayFixed,
         uint64 maxNotionalReceiveFixed,
         uint16 maxUtilizationRatePayFixed,

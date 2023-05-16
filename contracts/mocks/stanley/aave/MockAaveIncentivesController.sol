@@ -21,7 +21,8 @@ contract MockAaveIncentivesController is IAaveIncentivesController {
         address[] calldata,
         uint256 amount,
         address to
-    ) external override returns (uint256) {
+    ) external pure override returns (uint256) {
+        require(to != address(0));
         // require(amount == rewards, 'Rewards are different');
         // IERC20(_stkAaveMock).transfer(to, 100e18);
         return amount;
