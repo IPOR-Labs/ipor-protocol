@@ -5,12 +5,12 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/interfaces/types/MiltonTypes.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import {MockCaseBaseStanley} from "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/MiltonTypes.sol";
+import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import {MockCaseBaseStanley} from "contracts/mocks/stanley/MockCaseBaseStanley.sol";
 
 contract MiltonShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

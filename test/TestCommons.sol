@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "./utils/factory/IporProtocolFactory.sol";
 
 contract TestCommons is Test {
@@ -26,6 +26,4 @@ contract TestCommons is Test {
         usdc = new MockTestnetToken("Mocked USDC", "USDC", 100_000_000 * 1e6, uint8(6));
         usdt = new MockTestnetToken("Mocked USDT", "USDT", 100_000_000 * 1e6, uint8(6));
     }
-
-
 }

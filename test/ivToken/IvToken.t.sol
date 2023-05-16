@@ -3,9 +3,9 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 
 contract IvTokenTest is Test, TestCommons {
     IvToken internal _ivToken;
@@ -22,7 +22,7 @@ contract IvTokenTest is Test, TestCommons {
         _userTwo = _getUserAddress(2);
     }
 
-    function testShouldNotBeAbleToSetupVaultAddressWhenNotOwner () public {
+    function testShouldNotBeAbleToSetupVaultAddressWhenNotOwner() public {
         // given
         vm.prank(_userOne);
         // when
@@ -80,7 +80,7 @@ contract IvTokenTest is Test, TestCommons {
         // given
         IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         address ownerBefore = ivTokenDai.owner();
-        // when 
+        // when
         ivTokenDai.transferOwnership(_userOne);
         vm.prank(_userTwo);
         vm.expectRevert(abi.encodePacked("IPOR_007"));
@@ -115,7 +115,7 @@ contract IvTokenTest is Test, TestCommons {
         ivTokenDai.transferOwnership(_userOne);
         vm.prank(_userOne);
         ivTokenDai.confirmTransferOwnership();
-        // when 
+        // when
         vm.prank(_admin);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         ivTokenDai.transferOwnership(_userOne);
@@ -131,7 +131,7 @@ contract IvTokenTest is Test, TestCommons {
         ivTokenDai.transferOwnership(_userOne);
         // when
         ivTokenDai.transferOwnership(_userTwo);
-        // then 
+        // then
         address actualOwner = ivTokenDai.owner();
         assertEq(actualOwner, _admin);
     }
@@ -151,8 +151,11 @@ contract IvTokenTest is Test, TestCommons {
         IvToken ivTokenDai = new IvToken("IV DAI", "ivDAI", address(_mockTestnetTokenDai));
         // when
         // then
-        vm.expectRevert(abi.encodePacked("Transaction reverted: function selector was not recognized and there's no fallback nor receive function"));
+        vm.expectRevert(
+            abi.encodePacked(
+                "Transaction reverted: function selector was not recognized and there's no fallback nor receive function"
+            )
+        );
         address(ivTokenDai).call{value: msg.value}("");
     }
-
 }

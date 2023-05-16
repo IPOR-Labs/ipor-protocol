@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/tokens/IvToken.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/tokens/IvToken.sol";
 
 contract IvTokenBurnTest is Test, TestCommons {
     IvToken internal _ivToken;

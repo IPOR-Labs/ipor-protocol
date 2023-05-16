@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/tokens/IpToken.sol";
+import "contracts/tokens/IpToken.sol";
 import "../utils/TestConstants.sol";
 
 contract IpTokenTest is Test, TestCommons {

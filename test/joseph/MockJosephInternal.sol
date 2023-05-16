@@ -11,14 +11,14 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
-import "../../contracts/libraries/errors/JosephErrors.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/interfaces/IIpToken.sol";
-import "../../contracts/interfaces/IMiltonInternal.sol";
-import "../../contracts/interfaces/IMiltonStorage.sol";
-import "../../contracts/interfaces/IStanley.sol";
-import "../../contracts/security/IporOwnableUpgradeable.sol";
+import "contracts/libraries/errors/JosephErrors.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/interfaces/IIpToken.sol";
+import "contracts/interfaces/IMiltonInternal.sol";
+import "contracts/interfaces/IMiltonStorage.sol";
+import "contracts/interfaces/IStanley.sol";
+import "contracts/security/IporOwnableUpgradeable.sol";
 
 abstract contract MockJosephInternal is
     Initializable,
@@ -52,10 +52,7 @@ abstract contract MockJosephInternal is
     uint32 internal _autoRebalanceThresholdInThousands;
 
     modifier onlyCharlieTreasuryManager() {
-        require(
-            _msgSender() == _charlieTreasuryManager,
-            JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
-        );
+        require(_msgSender() == _charlieTreasuryManager, JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER);
         _;
     }
 
@@ -86,10 +83,7 @@ abstract contract MockJosephInternal is
         require(milton != address(0), IporErrors.WRONG_ADDRESS);
         require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
         require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(initAsset).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
+        require(_getDecimals() == IERC20MetadataUpgradeable(initAsset).decimals(), IporErrors.WRONG_DECIMALS);
 
         if (paused) {
             _pause();
@@ -177,10 +171,8 @@ abstract contract MockJosephInternal is
                 IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
             _getMilton().depositToStanley(assetAmount);
         } else {
-            uint256 assetAmount = IporMath.division(
-                miltonStanleyBalanceRatio * totalBalance,
-                Constants.D18
-            ) - wadMiltonAssetBalance;
+            uint256 assetAmount = IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18) -
+                wadMiltonAssetBalance;
             _getMilton().withdrawFromStanley(assetAmount);
         }
     }
@@ -201,29 +193,17 @@ abstract contract MockJosephInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function transferToTreasury(uint256 assetAmount)
-        external
-        nonReentrant
-        whenNotPaused
-        onlyTreasuryManager
-    {
+    function transferToTreasury(uint256 assetAmount) external nonReentrant whenNotPaused onlyTreasuryManager {
         address treasury = _treasury;
         require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetAmount,
-            _getDecimals()
-        );
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, _getDecimals());
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
 
         _getMiltonStorage().updateStorageWhenTransferToTreasury(wadAssetAmount);
 
-        IERC20Upgradeable(_getAsset()).safeTransferFrom(
-            address(_getMilton()),
-            treasury,
-            assetAmountAssetDecimals
-        );
+        IERC20Upgradeable(_getAsset()).safeTransferFrom(address(_getMilton()), treasury, assetAmountAssetDecimals);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
@@ -237,10 +217,7 @@ abstract contract MockJosephInternal is
 
         require(address(0) != charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
-        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(
-            assetAmount,
-            _getDecimals()
-        );
+        uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, _getDecimals());
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, _getDecimals());
 
@@ -267,7 +244,6 @@ abstract contract MockJosephInternal is
 
     function setCharlieTreasury(address newCharlieTreasury) external onlyOwner whenNotPaused {
         require(newCharlieTreasury != address(0), JosephErrors.INCORRECT_CHARLIE_TREASURER);
-        address oldCharlieTreasury = _charlieTreasury;
         _charlieTreasury = newCharlieTreasury;
     }
 
@@ -277,7 +253,6 @@ abstract contract MockJosephInternal is
 
     function setTreasury(address newTreasury) external onlyOwner whenNotPaused {
         require(newTreasury != address(0), IporErrors.WRONG_ADDRESS);
-        address oldTreasury = _treasury;
         _treasury = newTreasury;
     }
 
@@ -285,13 +260,8 @@ abstract contract MockJosephInternal is
         return _charlieTreasuryManager;
     }
 
-    function setCharlieTreasuryManager(address newCharlieTreasuryManager)
-        external
-        onlyOwner
-        whenNotPaused
-    {
+    function setCharlieTreasuryManager(address newCharlieTreasuryManager) external onlyOwner whenNotPaused {
         require(address(0) != newCharlieTreasuryManager, IporErrors.WRONG_ADDRESS);
-        address oldCharlieTreasuryManager = _charlieTreasuryManager;
         _charlieTreasuryManager = newCharlieTreasuryManager;
     }
 
@@ -301,7 +271,6 @@ abstract contract MockJosephInternal is
 
     function setTreasuryManager(address newTreasuryManager) external onlyOwner whenNotPaused {
         require(address(0) != newTreasuryManager, IporErrors.WRONG_ADDRESS);
-        address oldTreasuryManager = _treasuryManager;
         _treasuryManager = newTreasuryManager;
     }
 
@@ -309,12 +278,7 @@ abstract contract MockJosephInternal is
         return _maxLiquidityPoolBalance;
     }
 
-    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance)
-        external
-        onlyOwner
-        whenNotPaused
-    {
-        uint256 oldMaxLiquidityPoolBalance = _maxLiquidityPoolBalance;
+    function setMaxLiquidityPoolBalance(uint256 newMaxLiquidityPoolBalance) external onlyOwner whenNotPaused {
         _maxLiquidityPoolBalance = newMaxLiquidityPoolBalance.toUint32();
     }
 
@@ -322,12 +286,7 @@ abstract contract MockJosephInternal is
         return _maxLpAccountContribution;
     }
 
-    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution)
-        external
-        onlyOwner
-        whenNotPaused
-    {
-        uint256 oldMaxLpAccountContribution = _maxLpAccountContribution;
+    function setMaxLpAccountContribution(uint256 newMaxLpAccountContribution) external onlyOwner whenNotPaused {
         _maxLpAccountContribution = newMaxLpAccountContribution.toUint32();
     }
 
@@ -335,11 +294,7 @@ abstract contract MockJosephInternal is
         return _getAutoRebalanceThreshold();
     }
 
-    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold)
-        external
-        onlyOwner
-        whenNotPaused
-    {
+    function setAutoRebalanceThreshold(uint256 newAutoRebalanceThreshold) external onlyOwner whenNotPaused {
         _setAutoRebalanceThreshold(newAutoRebalanceThreshold);
     }
 
@@ -355,11 +310,7 @@ abstract contract MockJosephInternal is
         return _miltonStanleyBalanceRatio;
     }
 
-    function _getIporTotalBalance()
-        internal
-        view
-        returns (uint256 totalBalance, uint256 wadMiltonAssetBalance)
-    {
+    function _getIporTotalBalance() internal view returns (uint256 totalBalance, uint256 wadMiltonAssetBalance) {
         address miltonAddr = address(_getMilton());
 
         wadMiltonAssetBalance = IporMath.convertToWad(
@@ -375,7 +326,6 @@ abstract contract MockJosephInternal is
     }
 
     function _setAutoRebalanceThreshold(uint256 newAutoRebalanceThresholdInThousands) internal {
-        uint256 oldAutoRebalanceThresholdInThousands = _autoRebalanceThresholdInThousands;
         _autoRebalanceThresholdInThousands = newAutoRebalanceThresholdInThousands.toUint32();
     }
 

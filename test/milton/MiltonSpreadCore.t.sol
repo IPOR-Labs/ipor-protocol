@@ -3,9 +3,9 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdt.sol";
-import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
-import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "contracts/mocks/spread/MockBaseMiltonSpreadModelUsdt.sol";
+import "contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
+import "contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
 
 contract MiltonSpreadCoreTest is Test, TestCommons {
     function testShouldReturnProperConstantForUsdt() public {

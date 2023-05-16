@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "./BuilderUtils.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
 import "../../utils/TestConstants.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
@@ -35,34 +35,22 @@ contract MockSpreadBuilder is Test {
         return this;
     }
 
-    function withQuoteReceiveFixedValue(uint256 quoteReceiveFixedValue)
-        public
-        returns (MockSpreadBuilder)
-    {
+    function withQuoteReceiveFixedValue(uint256 quoteReceiveFixedValue) public returns (MockSpreadBuilder) {
         builderData.quoteReceiveFixedValue = quoteReceiveFixedValue;
         return this;
     }
 
-    function withSpreadPayFixedValue(int256 spreadPayFixedValue)
-        public
-        returns (MockSpreadBuilder)
-    {
+    function withSpreadPayFixedValue(int256 spreadPayFixedValue) public returns (MockSpreadBuilder) {
         builderData.spreadPayFixedValue = spreadPayFixedValue;
         return this;
     }
 
-    function withSpreadReceiveFixedValue(int256 spreadReceiveFixedValue)
-        public
-        returns (MockSpreadBuilder)
-    {
+    function withSpreadReceiveFixedValue(int256 spreadReceiveFixedValue) public returns (MockSpreadBuilder) {
         builderData.spreadReceiveFixedValue = spreadReceiveFixedValue;
         return this;
     }
 
-    function withSpreadImplementation(address spreadImplementation)
-        public
-        returns (MockSpreadBuilder)
-    {
+    function withSpreadImplementation(address spreadImplementation) public returns (MockSpreadBuilder) {
         builderData.spreadImplementation = spreadImplementation;
         return this;
     }

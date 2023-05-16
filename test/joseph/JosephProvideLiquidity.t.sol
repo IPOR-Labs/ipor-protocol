@@ -5,9 +5,9 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
-import "../../contracts/libraries/Constants.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/interfaces/types/IporTypes.sol";
+import "contracts/libraries/Constants.sol";
 
 contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -61,7 +61,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldProvideLiquidityAndTakeIpTokenWhemSimpleCase1And18Decimals() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -70,14 +70,8 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
         // then
-        assertEq(
-            TestConstants.USD_14_000_18DEC,
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider)
-        );
-        assertEq(
-            TestConstants.USD_14_000_18DEC,
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton))
-        );
+        assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.ipToken.balanceOf(_liquidityProvider));
+        assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)));
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
         assertEq(9986000 * TestConstants.D18, _iporProtocol.asset.balanceOf(_liquidityProvider));
     }
@@ -93,21 +87,15 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
         // then
-        assertEq(
-            TestConstants.USD_14_000_18DEC,
-            _iporProtocol.ipToken.balanceOf(_liquidityProvider)
-        );
-        assertEq(
-            TestConstants.USD_14_000_6DEC,
-            _iporProtocol.asset.balanceOf(address(_iporProtocol.milton))
-        );
+        assertEq(TestConstants.USD_14_000_18DEC, _iporProtocol.ipToken.balanceOf(_liquidityProvider));
+        assertEq(TestConstants.USD_14_000_6DEC, _iporProtocol.asset.balanceOf(address(_iporProtocol.milton)));
         assertEq(TestConstants.USD_14_000_18DEC, balance.liquidityPool);
         assertEq(9986000000000, _iporProtocol.asset.balanceOf(_liquidityProvider));
     }
 
     function testShouldNotProvideLiquidityWhenLiquidyPoolIsEmpty() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_10_000_18DEC, block.timestamp);
@@ -125,7 +113,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotProvideLiquidityWhenMaxLiquidityPoolBalanceExceeded() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(20000);
@@ -139,11 +127,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_15_000_18DEC, block.timestamp);
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase1()
-        public
-    {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase1() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -158,11 +144,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase2()
-        public
-    {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase2() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -177,11 +161,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase3()
-        public
-    {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase3() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -197,11 +179,9 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
     }
 
-    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase4()
-        public
-    {
+    function testShouldNotProvideLiquidityWhenMaxLiquidityPoolAccountContributionExceededCase4() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         _iporProtocol.joseph.setMaxLiquidityPoolBalance(2000000);
@@ -212,9 +192,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
         _iporProtocol.ipToken.transfer(_userThree, TestConstants.USD_50_000_18DEC);
 
-        uint256 ipTokenLiquidityProviderBalance = _iporProtocol.ipToken.balanceOf(
-            _liquidityProvider
-        );
+        uint256 ipTokenLiquidityProviderBalance = _iporProtocol.ipToken.balanceOf(_liquidityProvider);
         assertEq(ipTokenLiquidityProviderBalance, TestConstants.ZERO);
 
         // when

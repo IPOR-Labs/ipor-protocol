@@ -4,8 +4,8 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../TestCommons.sol";
-import "../../contracts/amm/pool/Joseph.sol";
-import "../../contracts/amm/Milton.sol";
+import "contracts/amm/pool/Joseph.sol";
+import "contracts/amm/Milton.sol";
 import "./IAsset.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -28,16 +28,8 @@ contract ForkUtils is Test, TestCommons {
         IAsset(asset).approve(milton, 1_000_000 * 10**assetDecimals);
         Joseph(joseph).provideLiquidity(10_000 * 10**assetDecimals);
 
-        uint256 swapPayFixedId = Milton(milton).openSwapPayFixed(
-            10_000 * 10**assetDecimals,
-            1e18,
-            100e18
-        );
-        uint256 swapPayReceiveId = Milton(milton).openSwapReceiveFixed(
-            10_000 * 10**assetDecimals,
-            0,
-            100e18
-        );
+        uint256 swapPayFixedId = Milton(milton).openSwapPayFixed(10_000 * 10**assetDecimals, 1e18, 100e18);
+        uint256 swapPayReceiveId = Milton(milton).openSwapReceiveFixed(10_000 * 10**assetDecimals, 0, 100e18);
         vm.stopPrank();
 
         vm.warp(block.timestamp + 60 * 60 * 24 * 7);

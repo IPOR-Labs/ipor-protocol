@@ -19,7 +19,6 @@ contract IporRiskManagementOracleFactory is Test {
         address updater,
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParams
     ) public returns (IporRiskManagementOracle) {
-
         _iporRiskManagementOracleBuilder.withAssets(assets);
 
         (
@@ -49,6 +48,7 @@ contract IporRiskManagementOracleFactory is Test {
         BuilderUtils.IporRiskManagementOracleInitialParamsTestCase initialParamsTestCase
     )
         internal
+        pure
         returns (
             uint256[] memory maxNotionalPayFixedList,
             uint256[] memory maxNotionalReceiveFixedList,

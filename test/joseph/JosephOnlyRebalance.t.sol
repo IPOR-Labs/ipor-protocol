@@ -3,12 +3,12 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/amm/pool/JosephDai.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/pool/JosephDai.sol";
 import "./MockJosephDai.sol";
-import "../../contracts/itf/ItfJoseph.sol";
+import "contracts/itf/ItfJoseph.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;

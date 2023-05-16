@@ -5,11 +5,11 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/amm/MiltonDai.sol";
-import "../../contracts/amm/MiltonUsdc.sol";
-import "../../contracts/amm/MiltonUsdt.sol";
-import "../../contracts/mocks/stanley/aave/TestERC20.sol";
-import "../../contracts/interfaces/IMiltonInternal.sol";
+import "contracts/amm/MiltonDai.sol";
+import "contracts/amm/MiltonUsdc.sol";
+import "contracts/amm/MiltonUsdt.sol";
+import "contracts/mocks/stanley/aave/TestERC20.sol";
+import "contracts/interfaces/IMiltonInternal.sol";
 
 contract MiltonConfiguration is Test, TestCommons {
     MiltonUsdt internal _miltonUsdt;
@@ -92,7 +92,7 @@ contract MiltonConfiguration is Test, TestCommons {
         usdt.setDecimals(8);
         MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
+        new ERC1967Proxy(
             address(miltonUsdtImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
@@ -112,7 +112,7 @@ contract MiltonConfiguration is Test, TestCommons {
         usdc.setDecimals(8);
         MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
+        new ERC1967Proxy(
             address(miltonUsdcImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
@@ -132,7 +132,7 @@ contract MiltonConfiguration is Test, TestCommons {
         dai.setDecimals(8);
         MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
-        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
+        new ERC1967Proxy(
             address(miltonDaiImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",

@@ -4,10 +4,8 @@ pragma solidity 0.8.16;
 import "../../itf/ItfMilton.sol";
 
 contract MockCase7Milton18D is ItfMilton {
-
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {
-    }
+    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {}
 
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
@@ -33,7 +31,7 @@ contract MockCase7Milton18D is ItfMilton {
         return 10 * 1e18;
     }
 
-    function _getDecimals() internal pure virtual override returns (uint256) {
+    function _getDecimals() internal view virtual override returns (uint256) {
         return 18;
     }
 }

@@ -5,16 +5,16 @@ import "../TestCommons.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfDataProvider.sol";
-import "../../contracts/itf/types/ItfDataProviderTypes.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
-import "../../contracts/mocks/milton/MockCase0Milton6D.sol";
+import "contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/ItfDataProvider.sol";
+import "contracts/itf/types/ItfDataProviderTypes.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "contracts/mocks/milton/MockMilton.sol";
 
 contract ItfDataProviderTest is TestCommons, DataUtils {
     MockBaseMiltonSpreadModelUsdc internal _miltonSpreadModel;
@@ -27,7 +27,7 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
     ItfDataProvider internal _itfDataProvider;
     ItfIporOracle internal _iporOracle;
     MiltonStorage internal _miltonStorage;
-    MockCase0Milton6D internal _milton;
+    MockMilton internal _milton;
     ItfJoseph internal _joseph;
     MockCaseBaseStanley internal _stanley;
     IIporRiskManagementOracle internal _RiskManagementOracle;

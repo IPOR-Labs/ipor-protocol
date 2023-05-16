@@ -5,9 +5,9 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-import "../../contracts/interfaces/IJosephInternal.sol";
+import "contracts/interfaces/IJosephInternal.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/itf/ItfJoseph.sol";
+import "contracts/itf/ItfJoseph.sol";
 
 contract JosephUtils is Test {
     struct ExchangeRateAndPayoff {

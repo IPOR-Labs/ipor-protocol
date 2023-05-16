@@ -21,6 +21,10 @@ contract MockCaseBaseStanley is IStanley {
         address strategyAave,
         address strategyCompound
     ) public {
+        require(
+            ivToken != address(0) || strategyAave != address(0) || strategyCompound != address(0),
+            IporErrors.WRONG_ADDRESS
+        );
         _asset = IERC20(asset);
     }
 
@@ -41,21 +45,14 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //@dev for test purposes, simulation that IporVault earn some money for recipient
-    function forTestDeposit(address recipient, uint256 assetAmount)
-        external
-        returns (uint256 balance)
-    {
+    function forTestDeposit(address recipient, uint256 assetAmount) external returns (uint256 balance) {
         balance = _balance[recipient] + assetAmount;
         _balance[recipient] = balance;
 
         _asset.safeTransferFrom(msg.sender, address(this), assetAmount);
     }
 
-    function deposit(uint256 wadAssetAmount)
-        external
-        override
-        returns (uint256 balance, uint256 depositedAmount)
-    {
+    function deposit(uint256 wadAssetAmount) external override returns (uint256 balance, uint256 depositedAmount) {
         balance = _balance[msg.sender] + wadAssetAmount;
 
         _balance[msg.sender] = balance;
@@ -69,15 +66,8 @@ contract MockCaseBaseStanley is IStanley {
         depositedAmount = IporMath.convertToWad(assetAmount, decimals);
     }
 
-    function withdraw(uint256 wadAssetAmount)
-        external
-        override
-        returns (uint256 withdrawnAmount, uint256 balance)
-    {
-        uint256 wadFinalAssetAmount = IporMath.division(
-            wadAssetAmount * _withdrawRate(),
-            Constants.D18
-        );
+    function withdraw(uint256 wadAssetAmount) external override returns (uint256 withdrawnAmount, uint256 balance) {
+        uint256 wadFinalAssetAmount = IporMath.division(wadAssetAmount * _withdrawRate(), Constants.D18);
         if (wadFinalAssetAmount > _balance[msg.sender]) {
             return (0, _balance[msg.sender]);
         }
@@ -94,11 +84,7 @@ contract MockCaseBaseStanley is IStanley {
     }
 
     //solhint-disable no-empty-blocks
-    function withdrawAll()
-        external
-        override
-        returns (uint256 withdrawnAmount, uint256 vaultBalance)
-    {
+    function withdrawAll() external override returns (uint256 withdrawnAmount, uint256 vaultBalance) {
         uint256 toWithdraw = _balance[msg.sender];
         _asset.safeTransfer(msg.sender, toWithdraw);
         withdrawnAmount = _balance[msg.sender];

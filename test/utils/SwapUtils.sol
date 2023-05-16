@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfMilton.sol";
 
 contract SwapUtils is Test {
     function iterateOpenSwapsPayFixed(
@@ -68,9 +68,7 @@ contract SwapUtils is Test {
         )
     {
         vm.prank(from);
-        (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) = milton.itfCalculateSoap(
-            calculateTimestamp
-        );
+        (int256 soapPayFixed, int256 soapReceiveFixed, int256 soap) = milton.itfCalculateSoap(calculateTimestamp);
         return (soapPayFixed, soapReceiveFixed, soap);
     }
 }

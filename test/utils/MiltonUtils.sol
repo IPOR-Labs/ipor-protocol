@@ -3,13 +3,14 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/interfaces/IMiltonFacadeDataProvider.sol";
-import "../../contracts/interfaces/IMiltonStorage.sol";
-import "../../contracts/interfaces/IMiltonInternal.sol";
-import "../../contracts/facades/MiltonFacadeDataProvider.sol";
-import "../../contracts/mocks/milton/MockCase0Milton6D.sol";
-import "../../contracts/mocks/milton/MockCase0Milton18D.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/interfaces/IMiltonFacadeDataProvider.sol";
+import "contracts/interfaces/IMiltonStorage.sol";
+import "contracts/interfaces/IMiltonInternal.sol";
+import "contracts/facades/MiltonFacadeDataProvider.sol";
+import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/mocks/milton/MockCase0Milton18D.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/milton/MockMilton.sol";
 
 contract MiltonUtils is Test {
     struct ExpectedMiltonBalances {
@@ -79,8 +80,12 @@ contract MiltonUtils is Test {
         address miltonSpreadModel,
         address stanleyUsdc,
         address iporRiskManagementOracle
-    ) public returns (MockCase0Milton6D) {
-        MockCase0Milton6D mockCase0MiltonUsdcImplementation = new MockCase0Milton6D(iporRiskManagementOracle);
+    ) public returns (MockMilton) {
+        MockMilton mockCase0MiltonUsdcImplementation = new MockMilton(
+            iporRiskManagementOracle,
+            MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+            6
+        );
         ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
             address(mockCase0MiltonUsdcImplementation),
             abi.encodeWithSignature(
@@ -93,7 +98,7 @@ contract MiltonUtils is Test {
                 stanleyUsdc
             )
         );
-        return MockCase0Milton6D(address(miltonUsdcProxy));
+        return MockMilton(address(miltonUsdcProxy));
     }
 
     function getMockCase0MiltonDai(

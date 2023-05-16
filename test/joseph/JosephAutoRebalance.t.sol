@@ -4,8 +4,8 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
-import "../../contracts/libraries/math/IporMath.sol";
-import "../../contracts/libraries/Constants.sol";
+import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/Constants.sol";
 
 contract JosephAutoRebalance is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

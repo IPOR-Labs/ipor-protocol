@@ -6,9 +6,9 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/mocks/milton/MockCase0Milton18D.sol";
-import "../../contracts/mocks/milton/MockCase6Milton18D.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/milton/MockCase0Milton18D.sol";
+import "contracts/mocks/milton/MockCase6Milton18D.sol";
 
 contract MiltonUtilisationRateTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

@@ -1,32 +1,34 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
-import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfMilton6D.sol";
-import "../../../contracts/itf/ItfMilton18D.sol";
 
-import "../../../contracts/mocks/milton/MockCase0Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase1Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase2Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase3Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase4Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase5Milton6D.sol";
-import "../../../contracts/mocks/milton/MockCase6Milton6D.sol";
+import "contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfMilton6D.sol";
+import "contracts/itf/ItfMilton18D.sol";
 
-import "../../../contracts/mocks/milton/MockCase0Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase1Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase2Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase3Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase4Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase5Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase6Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase7Milton18D.sol";
-import "../../../contracts/mocks/milton/MockCase8Milton18D.sol";
+import "contracts/mocks/milton/MockMilton.sol";
+import "contracts/mocks/milton/MockCase1Milton6D.sol";
+import "contracts/mocks/milton/MockCase2Milton6D.sol";
+import "contracts/mocks/milton/MockCase3Milton6D.sol";
+import "contracts/mocks/milton/MockCase4Milton6D.sol";
+import "contracts/mocks/milton/MockCase5Milton6D.sol";
+import "contracts/mocks/milton/MockCase6Milton6D.sol";
+
+import "contracts/mocks/milton/MockCase0Milton18D.sol";
+import "contracts/mocks/milton/MockCase1Milton18D.sol";
+import "contracts/mocks/milton/MockCase2Milton18D.sol";
+import "contracts/mocks/milton/MockCase3Milton18D.sol";
+import "contracts/mocks/milton/MockCase4Milton18D.sol";
+import "contracts/mocks/milton/MockCase5Milton18D.sol";
+import "contracts/mocks/milton/MockCase6Milton18D.sol";
+import "contracts/mocks/milton/MockCase7Milton18D.sol";
+import "contracts/mocks/milton/MockCase8Milton18D.sol";
 
 import "./BuilderUtils.sol";
-import "../../../contracts/itf/ItfMilton18D.sol";
+import "contracts/itf/ItfMilton18D.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
+import "contracts/mocks/milton/MockMilton.sol";
 
 contract MiltonBuilder is Test {
     struct BuilderData {
@@ -205,7 +207,12 @@ contract MiltonBuilder is Test {
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
             return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0Milton6D(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
             return new MockCase1Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
@@ -231,7 +238,12 @@ contract MiltonBuilder is Test {
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
             return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0Milton6D(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
             return new MockCase1Milton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {

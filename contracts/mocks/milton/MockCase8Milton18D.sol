@@ -7,9 +7,7 @@ contract MockCase8Milton18D is ItfMilton {
     IMiltonStorage _mockMiltonStorage;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {
-    }
-
+    constructor(address iporRiskManagementOracle) ItfMilton(iporRiskManagementOracle) {}
 
     function _getMaxSwapCollateralAmount() internal pure virtual override returns (uint256) {
         return 1e23;
@@ -35,7 +33,7 @@ contract MockCase8Milton18D is ItfMilton {
         return 10 * 1e18;
     }
 
-    function _getDecimals() internal pure virtual override returns (uint256) {
+    function _getDecimals() internal view virtual override returns (uint256) {
         return 18;
     }
 

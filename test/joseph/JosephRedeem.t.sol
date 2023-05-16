@@ -5,11 +5,11 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -337,9 +337,6 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         // then
         IporTypes.MiltonBalancesMemory memory balanceDai = ammDai.milton.getAccruedBalance();
         IporTypes.MiltonBalancesMemory memory balanceUsdt = ammUsdt.milton.getAccruedBalance();
-
-        uint256 actualLiquidityPoolBalanceDai = balanceDai.liquidityPool;
-        uint256 actualLiquidityPoolBalanceUsdt = balanceUsdt.liquidityPool;
 
         assertEq(
             ammDai.ipToken.balanceOf(_userOne),

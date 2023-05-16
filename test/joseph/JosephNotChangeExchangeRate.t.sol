@@ -5,9 +5,9 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/itf/ItfJoseph.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/itf/ItfJoseph.sol";
 
 contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;

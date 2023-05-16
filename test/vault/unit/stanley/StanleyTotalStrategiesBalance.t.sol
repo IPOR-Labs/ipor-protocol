@@ -4,11 +4,11 @@ pragma solidity 0.8.16;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockStrategy} from "../../../../contracts/mocks/stanley/MockStrategy.sol";
-import {StanleyDai} from "../../../../contracts/vault/StanleyDai.sol";
-import {StanleyUsdc} from "../../../../contracts/vault/StanleyUsdc.sol";
-import {MockTestnetToken} from "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import {IvToken} from "../../../../contracts/tokens/IvToken.sol";
+import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
+import {StanleyDai} from "contracts/vault/StanleyDai.sol";
+import {StanleyUsdc} from "contracts/vault/StanleyUsdc.sol";
+import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
+import {IvToken} from "contracts/tokens/IvToken.sol";
 
 contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
     MockStrategy internal _strategyAaveDai;
@@ -34,7 +34,10 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         _strategyCompoundDai.setAsset(address(_daiMockedToken));
         _strategyCompoundDai.setShareToken(address(_cDai));
         _stanleyDai = getStanleyDai(
-            address(_daiMockedToken), address(_ivTokenDai), address(_strategyAaveDai), address(_strategyCompoundDai)
+            address(_daiMockedToken),
+            address(_ivTokenDai),
+            address(_strategyAaveDai),
+            address(_strategyCompoundDai)
         );
         _stanleyDai.setMilton(_admin);
         _ivTokenDai.setStanley(address(_stanleyDai));
@@ -48,7 +51,10 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         _strategyCompoundUsdc.setAsset(address(_usdcMockedToken));
         _strategyCompoundUsdc.setShareToken(address(_cUsdc));
         _stanleyUsdc = getStanleyUsdc(
-            address(_usdcMockedToken), address(_ivTokenUsdc), address(_strategyAaveUsdc), address(_strategyCompoundUsdc)
+            address(_usdcMockedToken),
+            address(_ivTokenUsdc),
+            address(_strategyAaveUsdc),
+            address(_strategyCompoundUsdc)
         );
         _stanleyUsdc.setMilton(_admin);
         _ivTokenUsdc.setStanley(address(_stanleyUsdc));

@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/oracles/IporRiskManagementOracle.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/oracles/IporRiskManagementOracle.sol";
 
 contract IporRiskManagementOracleUtils is Test {
     function getRiskManagementOracleAsset(

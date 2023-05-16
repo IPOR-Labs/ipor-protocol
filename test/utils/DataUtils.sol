@@ -10,19 +10,19 @@ import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
 import {StanleyUtils} from "../utils/StanleyUtils.sol";
 import {IporRiskManagementOracleUtils} from "../utils/IporRiskManagementOracleUtils.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/stanley/MockCaseBaseStanley.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/itf/ItfMilton.sol";
-import "../../contracts/itf/ItfStanley.sol";
-import "../../contracts/itf/ItfJoseph.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/MockIporWeighted.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "contracts/interfaces/IIporRiskManagementOracle.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfJoseph.sol";
+import "contracts/itf/ItfIporOracle.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/mocks/MockIporWeighted.sol";
 
 contract DataUtils is
     Test,
@@ -42,18 +42,15 @@ contract DataUtils is
     address[] internal _users;
 
     function getTokenUsdt() public returns (MockTestnetToken) {
-        return
-            new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
+        return new MockTestnetToken("Mocked USDT", "USDT", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
     }
 
     function getTokenUsdc() public returns (MockTestnetToken) {
-        return
-            new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
+        return new MockTestnetToken("Mocked USDC", "USDC", TestConstants.TOTAL_SUPPLY_6_DECIMALS, 6);
     }
 
     function getTokenDai() public returns (MockTestnetToken) {
-        return
-            new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
+        return new MockTestnetToken("Mocked DAI", "DAI", TestConstants.TOTAL_SUPPLY_18_DECIMALS, 18);
     }
 
     function prepareIpToken(IpToken ipToken, address joseph) public {
@@ -117,5 +114,4 @@ contract DataUtils is
         users[4] = userFive;
         return users;
     }
-
 }
