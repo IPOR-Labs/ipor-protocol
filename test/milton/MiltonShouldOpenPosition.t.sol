@@ -12,7 +12,7 @@ import "contracts/interfaces/types/MiltonStorageTypes.sol";
 
 contract MiltonShouldOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     struct ActualBalances {
         uint256 actualSumOfBalances;

@@ -20,7 +20,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
     );
 
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
         _admin = address(this);

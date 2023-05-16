@@ -14,7 +14,7 @@ import "contracts/interfaces/types/IporTypes.sol";
 contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolFactory.AmmConfig private _ammCfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
         _admin = address(this);
@@ -164,63 +164,10 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
 
     function testShouldRedeemIpDaiAndIpUsdtWhenSimpleCase1() public {
         // given
-        address owner = address(this);
-        IporProtocolBuilder iporProtocolBuilder = new IporProtocolBuilder(owner);
+        IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        AssetBuilder assetBuilder = new AssetBuilder(owner);
-        assetBuilder.withUSDT();
-        MockTestnetToken usdt = assetBuilder.build();
-
-        assetBuilder.withDAI();
-        MockTestnetToken dai = assetBuilder.build();
-
-        IporOracleFactory iporOracleFactory = new IporOracleFactory(owner);
-        address[] memory assets = new address[](2);
-        assets[0] = address(dai);
-        assets[1] = address(usdt);
-
-        BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase;
-        ItfIporOracle iporOracle = iporOracleFactory.getInstance(assets, owner, initialParamsTestCase);
-
-        BuilderUtils.IporRiskManagementOracleInitialParamsTestCase iporRiskManagementOracleInitialParamsTestCase;
-        IporRiskManagementOracle iporRiskManagementOracle = _iporRiskManagementOracleFactory.getInstance(
-            assets,
-            owner,
-            iporRiskManagementOracleInitialParamsTestCase
-        );
-
-        IporProtocolBuilder.IporProtocol memory ammUsdt = iporProtocolBuilder
-            .usdtBuilder()
-            .withAsset(address(usdt))
-            .ipToken()
-            .withName("IP USDT")
-            .withSymbol("ipUSDT")
-            .and()
-            .ivToken()
-            .withName("IV USDT")
-            .withSymbol("ivUSDT")
-            .and()
-            .withIporOracle(address(iporOracle))
-            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .build();
-
-        IporProtocolBuilder.IporProtocol memory ammDai = iporProtocolBuilder
-            .daiBuilder()
-            .withAsset(address(dai))
-            .ipToken()
-            .withName("IP DAI")
-            .withSymbol("ipDAI")
-            .and()
-            .ivToken()
-            .withName("IV DAI")
-            .withSymbol("ivDAI")
-            .and()
-            .withIporOracle(address(iporOracle))
-            .withIporRiskManagementOracle(address(iporRiskManagementOracle))
-            .build();
-
-        _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
-        _iporProtocolFactory.setupUsers(_cfg, ammDai);
+        _iporProtocolFactory.setupUsers(_cfg, amm.usdt);
+        _iporProtocolFactory.setupUsers(_cfg, amm.dai);
 
         uint256 redeemFee18Dec = 50 * TestConstants.D18;
         uint256 redeemFee6Dec = 50 * TestConstants.N1__0_6DEC;
@@ -240,50 +187,50 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesUsdt.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.startPrank(_liquidityProvider);
-        ammDai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
-        ammUsdt.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
 
         // when
-        ammDai.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
-        ammUsdt.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        amm.dai.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        amm.usdt.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
         vm.stopPrank();
 
         // then
-        IporTypes.MiltonBalancesMemory memory balanceDai = ammDai.milton.getAccruedBalance();
-        IporTypes.MiltonBalancesMemory memory balanceUsdt = ammUsdt.milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balanceDai = amm.dai.milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balanceUsdt = amm.usdt.milton.getAccruedBalance();
 
         uint256 actualLiquidityPoolBalanceDai = balanceDai.liquidityPool;
         uint256 actualLiquidityPoolBalanceUsdt = balanceUsdt.liquidityPool;
 
         assertEq(
-            ammDai.ipToken.balanceOf(_liquidityProvider),
+            amm.dai.ipToken.balanceOf(_liquidityProvider),
             expectedBalancesDai.expectedIpTokenBalance,
             "incorrect ip token balance for DAI"
         );
         assertEq(
-            ammDai.asset.balanceOf(address(ammDai.milton)),
+            amm.dai.asset.balanceOf(address(amm.dai.milton)),
             expectedBalancesDai.expectedMiltonBalance,
             "incorrect milton balance for DAI"
         );
         assertEq(
-            ammDai.asset.balanceOf(_liquidityProvider),
+            amm.dai.asset.balanceOf(_liquidityProvider),
             expectedBalancesDai.expectedTokenBalance,
             "incorrect token balance for DAI"
         );
         assertEq(actualLiquidityPoolBalanceDai, expectedBalancesDai.expectedLiquidityPoolBalance);
 
         assertEq(
-            ammUsdt.ipToken.balanceOf(_liquidityProvider),
+            amm.usdt.ipToken.balanceOf(_liquidityProvider),
             expectedBalancesUsdt.expectedIpTokenBalance,
             "incorrect ip token balance for USDT"
         );
         assertEq(
-            ammUsdt.asset.balanceOf(address(ammUsdt.milton)),
+            amm.usdt.asset.balanceOf(address(amm.usdt.milton)),
             expectedBalancesUsdt.expectedMiltonBalance,
             "incorrect milton balance for USDT"
         );
         assertEq(
-            ammUsdt.asset.balanceOf(_liquidityProvider),
+            amm.usdt.asset.balanceOf(_liquidityProvider),
             expectedBalancesUsdt.expectedTokenBalance,
             "incorrect token balance for USDT"
         );
@@ -298,8 +245,8 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         // given
         IporProtocolFactory.Amm memory amm = _iporProtocolFactory.getFullInstance(_ammCfg);
 
-        IporProtocolBuilder.IporProtocol memory ammUsdt = amm.usdt;
-        IporProtocolBuilder.IporProtocol memory ammDai = amm.dai;
+        BuilderUtils.IporProtocol memory ammUsdt = amm.usdt;
+        BuilderUtils.IporProtocol memory ammDai = amm.dai;
 
         _iporProtocolFactory.setupUsers(_cfg, ammUsdt);
         _iporProtocolFactory.setupUsers(_cfg, ammDai);

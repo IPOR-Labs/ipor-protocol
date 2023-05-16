@@ -11,7 +11,7 @@ import "contracts/itf/ItfJoseph.sol";
 
 contract JosephNotExchangeRate is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     function setUp() public {
         _admin = address(this);

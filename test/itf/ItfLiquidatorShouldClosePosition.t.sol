@@ -15,7 +15,7 @@ import {MockCaseBaseStanley} from "contracts/mocks/stanley/MockCaseBaseStanley.s
 
 contract ItfLiquidatorShouldClosePositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
-    IporProtocolBuilder.IporProtocol internal _iporProtocol;
+    BuilderUtils.IporProtocol internal _iporProtocol;
 
     /// @notice Emmited when trader closes Swap.
     event CloseSwap(
