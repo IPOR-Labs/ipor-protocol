@@ -24,7 +24,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
 
     function setUp() public {}
 
-    function testShouldUpgradeImplementationCheckDai() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpgradeImplementationCheckDai() public {
         //Get snapshot of iporOracle before switch implementation
         IporOracleSnapshot iporOracleSnapshotStart = new IporOracleSnapshot(_IporOracleProxy, _dai);
         iporOracleSnapshotStart.snapshot();
@@ -42,7 +43,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         iporOracleSnapshotStart.assertIporOracle(iporOracleSnapshotStart, iporOracleSnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeImplementationCheckUsdc() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpgradeImplementationCheckUsdc() public {
         //Get snapshot of iporOracle before switch implementation
         IporOracleSnapshot iporOracleSnapshotStart = new IporOracleSnapshot(_IporOracleProxy, _usdc);
         iporOracleSnapshotStart.snapshot();
@@ -58,7 +60,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         iporOracleSnapshotStart.assertIporOracle(iporOracleSnapshotStart, iporOracleSnapshotAfterUpgrade);
     }
 
-    function testShouldUpgradeImplementationCheckUsdt() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpgradeImplementationCheckUsdt() public {
         //Get snapshot of iporOracle before switch implementation
         IporOracleSnapshot iporOracleSnapshotStart = new IporOracleSnapshot(_IporOracleProxy, _usdt);
         iporOracleSnapshotStart.snapshot();
@@ -73,7 +76,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         iporOracleSnapshotStart.assertIporOracle(iporOracleSnapshotStart, iporOracleSnapshotAfterUpgrade);
     }
 
-    function testShouldUpdateIndexForDaiWhenUpgradeImplementation() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForDaiWhenUpgradeImplementation() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.prank(_IporOracleUpdater);
@@ -97,7 +101,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         cleanAfterUpdateIndex.assertIporOracle(cleanAfterUpdateIndex, newImplAfterUpdateIndex);
     }
 
-    function testShouldUpdateIndexForUsdcWhenUpgradeImplementation() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForUsdcWhenUpgradeImplementation() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.prank(_IporOracleUpdater);
@@ -121,7 +126,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         cleanAfterUpdateIndex.assertIporOracle(cleanAfterUpdateIndex, newImplAfterUpdateIndex);
     }
 
-    function testShouldUpdateIndexForUsdtWhenUpgradeImplementation() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForUsdtWhenUpgradeImplementation() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.prank(_IporOracleUpdater);
@@ -145,7 +151,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         cleanAfterUpdateIndex.assertIporOracle(cleanAfterUpdateIndex, newImplAfterUpdateIndex);
     }
 
-    function testShouldUpdateIndexForDaiWhenUpgradeImplementation2() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForDaiWhenUpgradeImplementation2() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.warp(block.timestamp + 60 * 60);
@@ -171,7 +178,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         cleanAfterUpdateIndex.assertIporOracle(cleanAfterUpdateIndex, newImplAfterUpdateIndex);
     }
 
-    function testShouldUpdateIndexForUsdcWhenUpgradeImplementation2() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForUsdcWhenUpgradeImplementation2() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.warp(block.timestamp + 60 * 60);
@@ -197,7 +205,8 @@ contract SwitchIporOracleImplementation is Test, TestCommons {
         cleanAfterUpdateIndex.assertIporOracle(cleanAfterUpdateIndex, newImplAfterUpdateIndex);
     }
 
-    function testShouldUpdateIndexForUsdtWhenUpgradeImplementation2() public {
+    // TODO: IL-2888 Turn on tests after the first index publication
+    function skipTestShouldUpdateIndexForUsdtWhenUpgradeImplementation2() public {
         // update index old implementation
         uint256 blockNumber = block.number;
         vm.warp(block.timestamp + 60 * 60);
