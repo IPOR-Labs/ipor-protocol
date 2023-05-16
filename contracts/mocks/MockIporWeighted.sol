@@ -31,7 +31,7 @@ contract MockIporWeighted is IporOwnableUpgradeable, UUPSUpgradeable, IIporAlgor
     /// @return iporIndex IPOR index value represented in 18 decimals
     function calculateIpor(address asset) external view returns (uint256 iporIndex) {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        (uint256 value, , , , ) = IIporOracle(_iporOracleAddress).getIndex(asset);
+        (uint256 value, , ) = IIporOracle(_iporOracleAddress).getIndex(asset);
 
         return value + 1;
     }

@@ -24,11 +24,8 @@ library ItfDataProviderTypes {
     }
 
     struct ItfIporOracleData {
-        uint256 decayFactorValue;
         uint256 indexValue;
         uint256 ibtPrice;
-        uint256 exponentialMovingAverage;
-        uint256 exponentialWeightedMovingVariance;
         uint256 lastUpdateTimestamp;
         uint256 accruedIndexValue;
         uint256 accruedIbtPrice;
