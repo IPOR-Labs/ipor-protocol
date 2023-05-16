@@ -33,10 +33,6 @@ contract IvTokenBuilder is Test {
         return this;
     }
 
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
     function build() public returns (IvToken) {
         vm.startPrank(_owner);
         IvToken ivToken = new IvToken(builderData.name, builderData.symbol, builderData.asset);

@@ -21,10 +21,6 @@ contract IporWeightedBuilder is Test {
         return this;
     }
 
-    function isSetIporOracle() public view returns (bool) {
-        return builderData.iporOracle != address(0);
-    }
-
     function build() public returns (MockIporWeighted) {
         vm.startPrank(_owner);
         ERC1967Proxy proxy = _constructProxy(address(new MockIporWeighted()));

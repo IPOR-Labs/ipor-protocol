@@ -62,14 +62,6 @@ contract StanleyBuilder is Test {
         return this;
     }
 
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
-    function isSetIvToken() public view returns (bool) {
-        return builderData.ivToken != address(0);
-    }
-
     function _buildStrategiesDai() internal {
         require(builderData.asset != address(0), "Asset address is not set");
         require(builderData.ivToken != address(0), "IvToken address is not set");

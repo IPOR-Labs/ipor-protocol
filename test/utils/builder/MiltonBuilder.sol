@@ -73,30 +73,6 @@ contract MiltonBuilder is Test {
         return this;
     }
 
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
-    function isSetIporOracle() public view returns (bool) {
-        return builderData.iporOracle != address(0);
-    }
-
-    function isSetIporRiskManagementOracle() public view returns (bool) {
-        return builderData.iporRiskManagementOracle != address(0);
-    }
-
-    function isSetMiltonStorage() public view returns (bool) {
-        return builderData.miltonStorage != address(0);
-    }
-
-    function isSetSpreadModel() public view returns (bool) {
-        return builderData.spreadModel != address(0);
-    }
-
-    function isSetStanley() public view returns (bool) {
-        return builderData.stanley != address(0);
-    }
-
     function build() public returns (ItfMilton) {
         vm.startPrank(_owner);
         ERC1967Proxy miltonProxy = _constructProxy(_buildMiltonImplementation());

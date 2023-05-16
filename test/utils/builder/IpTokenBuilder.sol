@@ -33,10 +33,6 @@ contract IpTokenBuilder is Test {
         return this;
     }
 
-    function isSetAsset() public view returns (bool) {
-        return builderData.asset != address(0);
-    }
-
     function build() public returns (IpToken) {
         vm.startPrank(_owner);
         IpToken ipToken = new IpToken(builderData.name, builderData.symbol, builderData.asset);
