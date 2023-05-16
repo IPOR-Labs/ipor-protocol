@@ -3,9 +3,9 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract MiltonSpreadReceiveFixedTest is Test, TestCommons {
     MockBaseMiltonSpreadModelDai internal _miltonSpread;

@@ -2,8 +2,8 @@
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "./BuilderUtils.sol";
-import "../../../contracts/amm/MiltonStorage.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "../../utils/TestConstants.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";

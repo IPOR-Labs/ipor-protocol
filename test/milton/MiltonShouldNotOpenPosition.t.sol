@@ -6,21 +6,9 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {BuilderUtils} from "../utils/builder/BuilderUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/interfaces/IIporRiskManagementOracle.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/stanley/MockCase1Stanley.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase7MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase8MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephUsdt.sol";
-import "../../contracts/mocks/milton/MockMiltonStorage.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/mocks/milton/MockMiltonStorage.sol";
 
 contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -421,7 +409,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
         MockMiltonStorage mockMiltonStorage = new MockMiltonStorage();
 
-        MockCase8MiltonDai(address(_iporProtocol.milton)).setMockMiltonStorage(address(mockMiltonStorage));
+        MockMilton(address(_iporProtocol.milton)).setMockMiltonStorage(address(mockMiltonStorage));
 
         // when
         vm.expectRevert("IPOR_301");

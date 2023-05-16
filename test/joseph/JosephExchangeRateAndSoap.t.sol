@@ -5,15 +5,7 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/interfaces/types/IporTypes.sol";
+import "contracts/interfaces/types/IporTypes.sol";
 
 contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -37,7 +29,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -84,7 +76,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -138,7 +130,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -192,7 +184,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -247,7 +239,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -295,9 +287,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_316");
-        _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-        );
+        _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         // then
         assertGt(soap, TestConstants.ZERO_INT);
@@ -310,7 +300,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -359,9 +349,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_316");
-        _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
-        );
+        _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
 
         // then
         assertGt(soap, TestConstants.ZERO_INT);
@@ -374,7 +362,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -435,7 +423,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -491,11 +479,9 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         assertEq(balance.liquidityPool, 5006205366436217422150);
     }
 
-    function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days()
-        public
-    {
+    function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -509,10 +495,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(
-            TestConstants.USD_1_000_000_18DEC,
-            block.timestamp
-        );
+        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_1_000_000_18DEC, block.timestamp);
 
         vm.startPrank(_userTwo);
         _iporProtocol.milton.itfOpenSwapPayFixed(
@@ -549,55 +532,38 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         );
 
         ExchangeRateAndPayoff memory exchangeRateAndPayoff;
-        exchangeRateAndPayoff.initialExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
-            block.timestamp
+        exchangeRateAndPayoff.initialExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
+        exchangeRateAndPayoff.exchangeRateAfter28Days = _iporProtocol.joseph.itfCalculateExchangeRate(
+            block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS
         );
-        exchangeRateAndPayoff.exchangeRateAfter28Days = _iporProtocol
-            .joseph
-            .itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS);
-        exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol
-            .joseph
-            .itfCalculateExchangeRate(block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
-        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol
-            .milton
-            .itfCalculateSwapPayFixedValue(
-                block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
-                1
-            );
-        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol
-            .milton
-            .itfCalculateSwapPayFixedValue(
-                block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
-                2
-            );
-        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol
-            .milton
-            .itfCalculateSwapPayFixedValue(
-                block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
-                1
-            );
-        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol
-            .milton
-            .itfCalculateSwapPayFixedValue(
-                block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
-                2
-            );
+        exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol.joseph.itfCalculateExchangeRate(
+            block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
+        );
+        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+            block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
+            1
+        );
+        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+            block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
+            2
+        );
+        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+            block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
+            1
+        );
+        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+            block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
+            2
+        );
         IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceBeforeClose = _iporProtocol
             .miltonStorage
             .getBalance();
-        int256 actualSOAPPlusLiquidityPoolBalanceBeforeClose = int256(
-            liquidityPoolBalanceBeforeClose.liquidityPool
-        ) - soapAfter56DaysBeforeClose;
+        int256 actualSOAPPlusLiquidityPoolBalanceBeforeClose = int256(liquidityPoolBalanceBeforeClose.liquidityPool) -
+            soapAfter56DaysBeforeClose;
 
         // when
-        _iporProtocol.milton.itfCloseSwapPayFixed(
-            1,
-            block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
-        );
-        _iporProtocol.milton.itfCloseSwapPayFixed(
-            2,
-            block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
-        );
+        _iporProtocol.milton.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
+        _iporProtocol.milton.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soapAfter56DaysAfterClose) = calculateSoap(
@@ -605,27 +571,45 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
             _iporProtocol.milton
         );
-        IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol
-            .miltonStorage
-            .getBalance();
+        IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol.miltonStorage.getBalance();
         uint256 exchangeRate56DaysAfterClose = _iporProtocol.joseph.itfCalculateExchangeRate(
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
         );
         assertEq(initialSoap, TestConstants.ZERO_INT);
         assertEq(exchangeRateAndPayoff.initialExchangeRate, 1004497846813069095, "incorrect initial exchange rate");
-        assertEq(liquidityPoolBalanceBeforeClose.liquidityPool, 1004497846813069094746924, "incorrect liquidity pool balance before close");
+        assertEq(
+            liquidityPoolBalanceBeforeClose.liquidityPool,
+            1004497846813069094746924,
+            "incorrect liquidity pool balance before close"
+        );
         assertEq(soapAfter28Days, 74964113551151590806229, "incorrect SOAP after 28 days");
-        assertEq(exchangeRateAndPayoff.exchangeRateAfter28Days, 929533733261917504, "incorrect exchange rate after 28 days");
+        assertEq(
+            exchangeRateAndPayoff.exchangeRateAfter28Days,
+            929533733261917504,
+            "incorrect exchange rate after 28 days"
+        );
         assertEq(exchangeRateAndPayoff.payoff1After28Days, 37482056775575795403115, "incorrect payoff1After28Days");
         assertEq(exchangeRateAndPayoff.payoff2After28Days, 37482056775575795403115, "incorrect payoff2After28Days");
         assertEq(soapAfter56DaysBeforeClose, 149928227102303181612459, "incorrect SOAP after 56 days before close");
-        assertEq(exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose, 854569619710765913, "incorrect exchange rate after 56 days before close");
+        assertEq(
+            exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose,
+            854569619710765913,
+            "incorrect exchange rate after 56 days before close"
+        );
         assertEq(exchangeRateAndPayoff.payoff1After56Days, 74964113551151590806229, "incorrect payoff1After56Days");
         assertEq(exchangeRateAndPayoff.payoff2After56Days, 74964113551151590806229, "incorrect payoff2After56Days");
         assertEq(soapAfter56DaysAfterClose, TestConstants.ZERO_INT, "incorrect SOAP after close");
         assertEq(exchangeRate56DaysAfterClose, 854569619710765913, "incorrect exchange rate after close");
-        assertEq(liquidityPoolBalanceAfterClose.liquidityPool, 854569619710765913134466, "incorrect Liquidity Pool balance after close");
+        assertEq(
+            liquidityPoolBalanceAfterClose.liquidityPool,
+            854569619710765913134466,
+            "incorrect Liquidity Pool balance after close"
+        );
         // SOAP + Liquidity Pool balance before close should be equal to Liquidity Pool balance after close swaps
-        assertEq(actualSOAPPlusLiquidityPoolBalanceBeforeClose, 854569619710765913134465, "incorrect SOAP + Liquidity Pool balance before close");
+        assertEq(
+            actualSOAPPlusLiquidityPoolBalanceBeforeClose,
+            854569619710765913134465,
+            "incorrect SOAP + Liquidity Pool balance before close"
+        );
     }
 }

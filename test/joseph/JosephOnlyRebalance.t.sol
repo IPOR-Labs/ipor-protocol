@@ -2,26 +2,13 @@
 pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
-import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveUsdt.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenAaveDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetShareTokenCompoundDai.sol";
-import "../../contracts/mocks/MockStanleyStrategies.sol";
-import "../../contracts/tokens/IvToken.sol";
-import "../../contracts/tokens/IporToken.sol";
-import "../../contracts/mocks/TestnetFaucet.sol";
-import "../../contracts/amm/spread/MiltonSpreadModelDai.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/vault/StanleyDai.sol";
-import "../../contracts/amm/MiltonDai.sol";
-import "../../contracts/amm/pool/JosephDai.sol";
-import "../../contracts/facades/IporOracleFacadeDataProvider.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IpToken.sol";
+import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/pool/JosephDai.sol";
 import "./MockJosephDai.sol";
-import "../../contracts/itf/ItfJosephDai.sol";
+import "contracts/itf/ItfJoseph.sol";
 
 contract JosephOnlyRebalanceTest is Test, TestCommons {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -32,7 +19,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
     uint32 private _blockTimestamp = 1641701;
 
     function setUp() public {
-        _cfg.josephImplementation = address(new ItfJosephDai());
+        _cfg.josephImplementation = address(new ItfJoseph(18, true));
         _cfg.iporRiskManagementOracleUpdater = address(this);
     }
 

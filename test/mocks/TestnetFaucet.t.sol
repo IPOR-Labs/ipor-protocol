@@ -5,15 +5,14 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../TestCommons.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/tokens/IporToken.sol";
-import "../../contracts/mocks/TestnetFaucet.sol";
-import "../../contracts/interfaces/ITestnetFaucet.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IporToken.sol";
+import "contracts/mocks/TestnetFaucet.sol";
+import "contracts/interfaces/ITestnetFaucet.sol";
 import "./MockOldTestnetFaucet.sol";
 import "./IMockProxy.sol";
 
 contract TestnetFaucetTest is Test, TestCommons {
-
     struct BalanceUserAndFaucet {
         uint256 daiUser;
         uint256 usdcUser;
@@ -26,17 +25,17 @@ contract TestnetFaucetTest is Test, TestCommons {
     }
 
     event TransferFailed(
-    /// @notice address to which stable were transfer
+        /// @notice address to which stable were transfer
         address to,
-    /// @notice underlying asset
+        /// @notice underlying asset
         address asset,
-    /// @notice amount of stable
+        /// @notice amount of stable
         uint256 amount
     );
 
     address private _userOne;
     MockTestnetToken private _daiTestnetToken;
-    MockTestnetToken private  _usdcTestnetToken;
+    MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
     IporToken private _iporToken;
     ERC1967Proxy private _testnetFaucetProxy;
@@ -48,7 +47,16 @@ contract TestnetFaucetTest is Test, TestCommons {
         _usdtTestnetToken = new MockTestnetToken("Mocked USDT", "USDT", 100_000_000 * 1e6, uint8(6));
         _iporToken = new IporToken("Mocked IPOR", "IPOR", address(this));
         TestnetFaucet testnetFaucetImplementation = new TestnetFaucet();
-        _testnetFaucetProxy = new ERC1967Proxy(address(testnetFaucetImplementation), abi.encodeWithSignature("initialize(address,address,address,address)", address(_daiTestnetToken), address(_usdcTestnetToken), address(_usdtTestnetToken), address(_iporToken)));
+        _testnetFaucetProxy = new ERC1967Proxy(
+            address(testnetFaucetImplementation),
+            abi.encodeWithSignature(
+                "initialize(address,address,address,address)",
+                address(_daiTestnetToken),
+                address(_usdcTestnetToken),
+                address(_usdtTestnetToken),
+                address(_iporToken)
+            )
+        );
 
         _daiTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e18);
         _usdcTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e6);
@@ -59,17 +67,18 @@ contract TestnetFaucetTest is Test, TestCommons {
         vm.warp(_blockTimestamp);
     }
 
-    function _getBalances(address user, address testnetFaucet) internal returns(BalanceUserAndFaucet memory) {
-        return BalanceUserAndFaucet({
-            daiUser: _daiTestnetToken.balanceOf(user),
-            usdcUser: _usdcTestnetToken.balanceOf(user),
-            usdtUser: _usdtTestnetToken.balanceOf(user),
-            iporUser: _iporToken.balanceOf(user),
-            daiFaucet: _daiTestnetToken.balanceOf(testnetFaucet),
-            usdcFaucet: _usdcTestnetToken.balanceOf(testnetFaucet),
-            usdtFaucet: _usdtTestnetToken.balanceOf(testnetFaucet),
-            iporFaucet: _iporToken.balanceOf(testnetFaucet)
-        });
+    function _getBalances(address user, address testnetFaucet) internal view returns (BalanceUserAndFaucet memory) {
+        return
+            BalanceUserAndFaucet({
+                daiUser: _daiTestnetToken.balanceOf(user),
+                usdcUser: _usdcTestnetToken.balanceOf(user),
+                usdtUser: _usdtTestnetToken.balanceOf(user),
+                iporUser: _iporToken.balanceOf(user),
+                daiFaucet: _daiTestnetToken.balanceOf(testnetFaucet),
+                usdcFaucet: _usdcTestnetToken.balanceOf(testnetFaucet),
+                usdtFaucet: _usdtTestnetToken.balanceOf(testnetFaucet),
+                iporFaucet: _iporToken.balanceOf(testnetFaucet)
+            });
     }
 
     function testShouldNotBeAbleToClaimTwice() public {
@@ -94,7 +103,6 @@ contract TestnetFaucetTest is Test, TestCommons {
         assertEq(balanceUserAndFaucetBefore.daiFaucet - 10_000 * 1e18, balanceUserAndFaucetAfter.daiFaucet);
         assertEq(balanceUserAndFaucetBefore.usdcFaucet - 10_000 * 1e6, balanceUserAndFaucetAfter.usdcFaucet);
         assertEq(balanceUserAndFaucetBefore.usdtFaucet - 10_000 * 1e6, balanceUserAndFaucetAfter.usdtFaucet);
-
     }
 
     function testShouldClaimTwice() public {
@@ -168,7 +176,7 @@ contract TestnetFaucetTest is Test, TestCommons {
         testnetFaucet.transfer(address(0), 1e18);
     }
 
-    function testShouldBeAbleToTransferAssetWhenSenderIsOwner() public{
+    function testShouldBeAbleToTransferAssetWhenSenderIsOwner() public {
         // given
         ITestnetFaucet testnetFaucet = ITestnetFaucet(address(_testnetFaucetProxy));
         uint256 daiUserBalanceBefore = _daiTestnetToken.balanceOf(address(this));
@@ -220,7 +228,15 @@ contract TestnetFaucetTest is Test, TestCommons {
         _iporToken = new IporToken("Mocked IPOR", "IPOR", address(this));
         TestnetFaucet newTestnetFaucetImplementation = new TestnetFaucet();
         MockOldTestnetFaucet testnetFaucetImplementation = new MockOldTestnetFaucet();
-        _testnetFaucetProxy = new ERC1967Proxy(address(testnetFaucetImplementation), abi.encodeWithSignature("initialize(address,address,address)", address(_daiTestnetToken), address(_usdcTestnetToken), address(_usdtTestnetToken)));
+        _testnetFaucetProxy = new ERC1967Proxy(
+            address(testnetFaucetImplementation),
+            abi.encodeWithSignature(
+                "initialize(address,address,address)",
+                address(_daiTestnetToken),
+                address(_usdcTestnetToken),
+                address(_usdtTestnetToken)
+            )
+        );
 
         ITestnetFaucet testnetFaucet = ITestnetFaucet(address(_testnetFaucetProxy));
         uint256 versionBefore = testnetFaucet.getVersion();
@@ -242,7 +258,15 @@ contract TestnetFaucetTest is Test, TestCommons {
         _iporToken = new IporToken("Mocked IPOR", "IPOR", address(this));
         TestnetFaucet newTestnetFaucetImplementation = new TestnetFaucet();
         MockOldTestnetFaucet testnetFaucetImplementation = new MockOldTestnetFaucet();
-        _testnetFaucetProxy = new ERC1967Proxy(address(testnetFaucetImplementation), abi.encodeWithSignature("initialize(address,address,address)", address(_daiTestnetToken), address(_usdcTestnetToken), address(_usdtTestnetToken)));
+        _testnetFaucetProxy = new ERC1967Proxy(
+            address(testnetFaucetImplementation),
+            abi.encodeWithSignature(
+                "initialize(address,address,address)",
+                address(_daiTestnetToken),
+                address(_usdcTestnetToken),
+                address(_usdtTestnetToken)
+            )
+        );
 
         _daiTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e18);
         _usdcTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e6);
@@ -282,7 +306,15 @@ contract TestnetFaucetTest is Test, TestCommons {
         _iporToken = new IporToken("Mocked IPOR", "IPOR", address(this));
         TestnetFaucet newTestnetFaucetImplementation = new TestnetFaucet();
         MockOldTestnetFaucet testnetFaucetImplementation = new MockOldTestnetFaucet();
-        _testnetFaucetProxy = new ERC1967Proxy(address(testnetFaucetImplementation), abi.encodeWithSignature("initialize(address,address,address)", address(_daiTestnetToken), address(_usdcTestnetToken), address(_usdtTestnetToken)));
+        _testnetFaucetProxy = new ERC1967Proxy(
+            address(testnetFaucetImplementation),
+            abi.encodeWithSignature(
+                "initialize(address,address,address)",
+                address(_daiTestnetToken),
+                address(_usdcTestnetToken),
+                address(_usdtTestnetToken)
+            )
+        );
 
         _daiTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e18);
         _usdcTestnetToken.transfer(address(_testnetFaucetProxy), 5_000_000 * 1e6);
@@ -313,13 +345,10 @@ contract TestnetFaucetTest is Test, TestCommons {
         assertEq(balanceUserAndFaucetBefore.daiUser + 20_000 * 1e18, balanceUserAndFaucetAfter.daiUser);
         assertEq(balanceUserAndFaucetBefore.usdcUser + 20_000 * 1e6, balanceUserAndFaucetAfter.usdcUser);
         assertEq(balanceUserAndFaucetBefore.usdtUser + 20_000 * 1e6, balanceUserAndFaucetAfter.usdtUser);
-        assertEq(balanceUserAndFaucetBefore.iporUser + 1_000 * 1e18 , balanceUserAndFaucetAfter.iporUser);
+        assertEq(balanceUserAndFaucetBefore.iporUser + 1_000 * 1e18, balanceUserAndFaucetAfter.iporUser);
         assertEq(balanceUserAndFaucetBefore.iporFaucet - 1_000 * 1e18, balanceUserAndFaucetAfter.iporFaucet);
         assertEq(balanceUserAndFaucetBefore.daiFaucet - 20_000 * 1e18, balanceUserAndFaucetAfter.daiFaucet);
         assertEq(balanceUserAndFaucetBefore.usdcFaucet - 20_000 * 1e6, balanceUserAndFaucetAfter.usdcFaucet);
         assertEq(balanceUserAndFaucetBefore.usdtFaucet - 20_000 * 1e6, balanceUserAndFaucetAfter.usdtFaucet);
     }
-
-
-
 }

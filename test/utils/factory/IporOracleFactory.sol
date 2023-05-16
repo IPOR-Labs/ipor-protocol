@@ -44,6 +44,7 @@ contract IporOracleFactory is Test {
         BuilderUtils.IporOracleInitialParamsTestCase initialParamsTestCase
     )
         internal
+        view
         returns (
             uint32[] memory lastUpdateTimestamps,
             uint64[] memory exponentialMovingAverages,

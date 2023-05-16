@@ -1,19 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/tokens/IvToken.sol";
-import "../../../contracts/itf/ItfMiltonDai.sol";
-import "../../../contracts/itf/ItfStanleyUsdt.sol";
-import "../../../contracts/itf/ItfStanleyUsdc.sol";
+import "contracts/mocks/MockIporWeighted.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/tokens/IvToken.sol";
+import "contracts/itf/ItfMilton18D.sol";
+import "contracts/itf/ItfStanley6D.sol";
 
 import "./BuilderUtils.sol";
 import "./IvTokenBuilder.sol";
 import "./StrategyAaveBuilder.sol";
 import "./StrategyCompoundBuilder.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/itf/ItfStanleyDai.sol";
+import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfStanley18D.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
 
@@ -180,11 +179,11 @@ contract StanleyBuilder is Test {
             stanleyImpl = builderData.stanleyImplementation;
         } else {
             if (builderData.assetType == BuilderUtils.AssetType.DAI) {
-                stanleyImpl = address(new ItfStanleyDai());
+                stanleyImpl = address(new ItfStanley18D());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDT) {
-                stanleyImpl = address(new ItfStanleyUsdt());
+                stanleyImpl = address(new ItfStanley6D());
             } else if (builderData.assetType == BuilderUtils.AssetType.USDC) {
-                stanleyImpl = address(new ItfStanleyUsdc());
+                stanleyImpl = address(new ItfStanley6D());
             } else {
                 revert("Asset type not supported");
             }

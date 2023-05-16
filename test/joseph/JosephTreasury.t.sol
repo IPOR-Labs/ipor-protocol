@@ -4,16 +4,9 @@ pragma solidity 0.8.16;
 import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
-import "../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../contracts/mocks/milton/MockCase4MiltonDai.sol";
-import "../../contracts/mocks/stanley/MockCase0Stanley.sol";
-import "../../contracts/mocks/joseph/MockCase0JosephDai.sol";
-import "../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../contracts/interfaces/types/MiltonStorageTypes.sol";
-import "../../contracts/tokens/IpToken.sol";
-import "../../contracts/amm/MiltonStorage.sol";
-import "../../contracts/itf/ItfIporOracle.sol";
+import "contracts/mocks/spread/MockSpreadModel.sol";
+import "contracts/interfaces/types/MiltonStorageTypes.sol";
+import "contracts/amm/MiltonStorage.sol";
 
 contract JosephTreasuryTest is TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
@@ -41,11 +34,9 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         );
     }
 
-    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer()
-        public
-    {
+    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCallerIsNotPublicationFeeTransferer() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
@@ -54,11 +45,9 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol.joseph.transferToCharlieTreasury(100);
     }
 
-    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect()
-        public
-    {
+    function testShouldNotTransferPublicationFeToCharlieTreasuryWhenCharlieTreasuryAddressIsIncorrect() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_admin);
@@ -71,17 +60,15 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldTransferPublicationFeeToCharlieTreasurySimpleCase1() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
-        uint256 expectedERC20BalanceCharlieTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC +
-            transferredAmount;
+        uint256 expectedERC20BalanceCharlieTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
         uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
-        uint256 expectedPublicationFeeBalanceMilton = TestConstants.USD_10_18DEC -
-            transferredAmount;
+        uint256 expectedPublicationFeeBalanceMilton = TestConstants.USD_10_18DEC - transferredAmount;
         vm.prank(_userOne);
         _iporProtocol.iporOracle.itfUpdateIndex(
             address(_iporProtocol.asset),
@@ -109,8 +96,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol.joseph.transferToCharlieTreasury(transferredAmount);
 
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage
-            .getExtendedBalance();
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         uint256 actualERC20BalanceCharlieTreasury = _iporProtocol.asset.balanceOf(_userOne);
         uint256 actualERC20BalanceMilton = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
         uint256 actualPublicationFeeBalanceMilton = balance.iporPublicationFee;
@@ -122,7 +108,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
 
     function testShouldNotTransferToTreasuryWhenCallerIsNotTreasuryTransferer() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         // when
         vm.expectRevert("IPOR_404");
@@ -130,11 +116,9 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol.joseph.transferToTreasury(100);
     }
 
-    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect()
-        public
-    {
+    function testShouldNotTransferPublicationFeeToCharlieTreasuryWhenTreasuryManagerAddressIsIncorrect() public {
         // given
-       _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         vm.prank(_admin);
         _iporProtocol.joseph.setTreasuryManager(_userThree);
@@ -152,8 +136,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         uint256 transferredAmount = 100;
-        uint256 expectedERC20BalanceTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC +
-            transferredAmount;
+        uint256 expectedERC20BalanceTreasury = TestConstants.USER_SUPPLY_10MLN_18DEC + transferredAmount;
         uint256 expectedERC20BalanceMilton = TestConstants.USD_28_000_18DEC +
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC -
             transferredAmount;
@@ -186,8 +169,7 @@ contract JosephTreasuryTest is TestCommons, DataUtils {
         vm.prank(_userThree);
         _iporProtocol.joseph.transferToTreasury(transferredAmount);
         // then
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage
-            .getExtendedBalance();
+        MiltonStorageTypes.ExtendedBalancesMemory memory balance = _iporProtocol.miltonStorage.getExtendedBalance();
         uint256 actualERC20BalanceTreasury = _iporProtocol.asset.balanceOf(_userOne);
         uint256 actualERC20BalanceMilton = _iporProtocol.asset.balanceOf(address(_iporProtocol.milton));
 

@@ -5,16 +5,16 @@ import "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {StanleyUtils} from "../../../utils/StanleyUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import "../../../../contracts/vault/strategies/StrategyAave.sol";
-import "../../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../../contracts/mocks/tokens/AAVEMockedToken.sol";
-import "../../../../contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
-import "../../../../contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
-import "../../../../contracts/mocks/stanley/aave/aTokens/MockADai.sol";
-import "../../../../contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
-import "../../../../contracts/mocks/stanley/aave/MockProviderAave.sol";
-import "../../../../contracts/mocks/stanley/aave/MockStakedAave.sol";
-import "../../../../contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
+import "contracts/vault/strategies/StrategyAave.sol";
+import "contracts/mocks/tokens/MockTestnetToken.sol";
+import "contracts/mocks/tokens/AAVEMockedToken.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
+import "contracts/mocks/stanley/aave/aTokens/MockADai.sol";
+import "contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
+import "contracts/mocks/stanley/aave/MockProviderAave.sol";
+import "contracts/mocks/stanley/aave/MockStakedAave.sol";
+import "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
 
 contract AaveStrategyTest is TestCommons, DataUtils {
     MockTestnetToken internal _usdtMockedToken;

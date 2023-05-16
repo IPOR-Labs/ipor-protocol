@@ -1,50 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
-import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfMiltonUsdt.sol";
-import "../../../contracts/itf/ItfMiltonUsdc.sol";
-import "../../../contracts/itf/ItfMiltonDai.sol";
-import "../../../contracts/itf/ItfStanley.sol";
-import "../../../contracts/mocks/tokens/MockTestnetToken.sol";
-import "../../../contracts/mocks/MockIporWeighted.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
-import "../../../contracts/mocks/milton/MockCase0MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase7MiltonDai.sol";
-import "../../../contracts/mocks/milton/MockCase8MiltonDai.sol";
 
-import "../../../contracts/mocks/milton/MockCase0MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonUsdt.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonUsdt.sol";
+import "contracts/itf/ItfMilton.sol";
+import "contracts/itf/ItfMilton6D.sol";
+import "contracts/itf/ItfMilton18D.sol";
 
-import "../../../contracts/mocks/milton/MockCase0MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase1MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase2MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase3MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase4MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase5MiltonUsdc.sol";
-import "../../../contracts/mocks/milton/MockCase6MiltonUsdc.sol";
+import "contracts/mocks/milton/MockMilton.sol";
 
-import "./AssetBuilder.sol";
 import "./BuilderUtils.sol";
-import "./IporOracleBuilder.sol";
-import "./IporWeightedBuilder.sol";
-import "./MockSpreadBuilder.sol";
-import "./MiltonStorageBuilder.sol";
-import "../../../contracts/itf/ItfIporOracle.sol";
-import "../../../contracts/itf/ItfMiltonDai.sol";
+import "contracts/itf/ItfMilton18D.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "forge-std/Test.sol";
 import "./IporProtocolBuilder.sol";
+import "contracts/mocks/milton/MockMilton.sol";
 
 contract MiltonBuilder is Test {
     struct BuilderData {
@@ -191,25 +159,70 @@ contract MiltonBuilder is Test {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
 
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonDai(iporRiskManagementOracle);
+            return new ItfMilton18D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE7) {
-            return new MockCase7MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE8) {
-            return new MockCase8MiltonDai(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 100000 * 1e18, 20, 10 * 1e18),
+                    18
+                );
         } else {
             revert("Unsupported test case");
         }
@@ -221,21 +234,56 @@ contract MiltonBuilder is Test {
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonUsdt(iporRiskManagementOracle);
+            return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonUsdt(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else {
             revert("Unsupported test case");
         }
@@ -247,21 +295,56 @@ contract MiltonBuilder is Test {
     {
         require(iporRiskManagementOracle != address(0), "iporRiskManagementOracle is required");
         if (testCase == BuilderUtils.MiltonTestCase.DEFAULT) {
-            return new ItfMiltonUsdc(iporRiskManagementOracle);
+            return new ItfMilton6D(iporRiskManagementOracle);
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE0) {
-            return new MockCase0MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE1) {
-            return new MockCase1MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 600000000000000000, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE2) {
-            return new MockCase2MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE3) {
-            return new MockCase3MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE4) {
-            return new MockCase4MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 50000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE5) {
-            return new MockCase5MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 25000000000000000, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else if (testCase == BuilderUtils.MiltonTestCase.CASE6) {
-            return new MockCase6MiltonUsdc(iporRiskManagementOracle);
+            return
+                new MockMilton(
+                    iporRiskManagementOracle,
+                    MockMilton.InitParam(1e23, 3e14, 0, 10 * 1e18, 20, 10 * 1e18),
+                    6
+                );
         } else {
             revert("Unsupported test case");
         }

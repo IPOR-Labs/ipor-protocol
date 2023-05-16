@@ -14,7 +14,7 @@ contract MockIporSwapLogic {
         uint256 openingFeeRate
     )
         public
-        view
+        pure
         returns (
             uint256 collateral,
             uint256 notional,
@@ -46,12 +46,7 @@ contract MockIporSwapLogic {
         uint256 swapFixedInterestRate,
         uint256 swapPeriodInSeconds
     ) public pure returns (uint256) {
-        return
-            IporSwapLogic.calculateQuasiInterestFixed(
-                notional,
-                swapFixedInterestRate,
-                swapPeriodInSeconds
-            );
+        return IporSwapLogic.calculateQuasiInterestFixed(notional, swapFixedInterestRate, swapPeriodInSeconds);
     }
 
     //@notice for final value divide by Constants.D18 * Constants.YEAR_IN_SECONDS

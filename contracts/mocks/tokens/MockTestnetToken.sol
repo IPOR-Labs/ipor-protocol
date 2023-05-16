@@ -10,9 +10,9 @@ contract MockTestnetToken is ERC20, IporOwnable {
         string memory name,
         string memory symbol,
         uint256 initialSupply,
-        uint8 decimals
+        uint8 decimalsInput
     ) ERC20(name, symbol) {
-        _customDecimals = decimals;
+        _customDecimals = decimalsInput;
         _mint(msg.sender, initialSupply);
     }
 
@@ -27,4 +27,7 @@ contract MockTestnetToken is ERC20, IporOwnable {
     function mint(address account, uint256 amount) external onlyOwner {
         _mint(account, amount);
     }
+
+    /// @dev used only for Compound Share Token
+    function accrueInterest() public returns (uint256) {}
 }

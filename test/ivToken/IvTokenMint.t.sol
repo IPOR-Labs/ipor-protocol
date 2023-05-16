@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "../../contracts/libraries/Constants.sol";
-import "../../contracts/tokens/IvToken.sol";
+import "contracts/libraries/Constants.sol";
+import "contracts/tokens/IvToken.sol";
 
 contract IvTokenMintTest is Test, TestCommons {
     IvToken internal _ivToken;
@@ -22,59 +22,58 @@ contract IvTokenMintTest is Test, TestCommons {
         _userTwo = _getUserAddress(2);
     }
 
-	function testShouldNotMintIvTokenWhenNotStanley () public {
-		// given
-		// when
-		vm.expectRevert(abi.encodePacked("IPOR_501"));
-		_ivToken.mint(_userOne, Constants.D18);
-	}
+    function testShouldNotMintIvTokenWhenNotStanley() public {
+        // given
+        // when
+        vm.expectRevert(abi.encodePacked("IPOR_501"));
+        _ivToken.mint(_userOne, Constants.D18);
+    }
 
-	function testShouldNotMintIvTokenWhenAmountIsZero() public {
-		// given
-		address mockIporVaultAddress = _admin;
-		_ivToken.setStanley(mockIporVaultAddress);
-		// when
-		vm.expectRevert(abi.encodePacked("IPOR_503"));
-		_ivToken.mint(_userOne, 0);
-	}
+    function testShouldNotMintIvTokenWhenAmountIsZero() public {
+        // given
+        address mockIporVaultAddress = _admin;
+        _ivToken.setStanley(mockIporVaultAddress);
+        // when
+        vm.expectRevert(abi.encodePacked("IPOR_503"));
+        _ivToken.mint(_userOne, 0);
+    }
 
-	function testShouldNotMintIvTokenWhenZeroAddress() public {
-		// given
-		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
-		// when
-		vm.prank(_userOne);
-		vm.expectRevert(abi.encodePacked("ERC20: mint to the zero address"));
-		_ivToken.mint(address(0), Constants.D18);
-	}
+    function testShouldNotMintIvTokenWhenZeroAddress() public {
+        // given
+        address mockIporVaultAddress = _userOne;
+        _ivToken.setStanley(mockIporVaultAddress);
+        // when
+        vm.prank(_userOne);
+        vm.expectRevert(abi.encodePacked("ERC20: mint to the zero address"));
+        _ivToken.mint(address(0), Constants.D18);
+    }
 
-	function testShouldMintNewTokens() public {
-		// given
-		address mockIporVaultAddress = _userOne;
-		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = Constants.D18;
-		// when
-		vm.prank(_userOne);
-		vm.expectEmit(true, true, false, true);
-		emit Transfer(address(0), _userOne, amount);
-		vm.expectEmit(true, false, false, true);
-		emit Mint(_userOne, amount);
-		_ivToken.mint(_userOne, amount);
-	}
+    function testShouldMintNewTokens() public {
+        // given
+        address mockIporVaultAddress = _userOne;
+        _ivToken.setStanley(mockIporVaultAddress);
+        uint256 amount = Constants.D18;
+        // when
+        vm.prank(_userOne);
+        vm.expectEmit(true, true, false, true);
+        emit Transfer(address(0), _userOne, amount);
+        vm.expectEmit(true, false, false, true);
+        emit Mint(_userOne, amount);
+        _ivToken.mint(_userOne, amount);
+    }
 
-	function testShouldEmitMintEvent() public {
-		// given
-		address mockIporVaultAddress = _admin;
-		_ivToken.setStanley(mockIporVaultAddress);
-		uint256 amount = Constants.D18;
-		uint256 balanceBefore = _ivToken.balanceOf(_userOne);
-		// when
-		vm.expectEmit(true, false, false, true);
-		emit Mint(_userOne, amount);
-		_ivToken.mint(_userOne, amount);
-		// then
-		uint256 balanceAfter = _ivToken.balanceOf(_userOne);
-		assertEq(balanceBefore + amount, balanceAfter);
-	}
+    function testShouldEmitMintEvent() public {
+        // given
+        address mockIporVaultAddress = _admin;
+        _ivToken.setStanley(mockIporVaultAddress);
+        uint256 amount = Constants.D18;
+        uint256 balanceBefore = _ivToken.balanceOf(_userOne);
+        // when
+        vm.expectEmit(true, false, false, true);
+        emit Mint(_userOne, amount);
+        _ivToken.mint(_userOne, amount);
+        // then
+        uint256 balanceAfter = _ivToken.balanceOf(_userOne);
+        assertEq(balanceBefore + amount, balanceAfter);
+    }
 }
-

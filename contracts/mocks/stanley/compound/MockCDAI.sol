@@ -39,10 +39,7 @@ contract MockCDAI is ERC20, CErc20Mock {
     }
 
     function mint(uint256 amount) external override returns (uint256) {
-        require(
-            IERC20(_dai).transferFrom(msg.sender, address(this), amount),
-            "Error during transferFrom"
-        ); // 1 DAI
+        require(IERC20(_dai).transferFrom(msg.sender, address(this), amount), "Error during transferFrom"); // 1 DAI
         _mint(msg.sender, IporMath.division((amount * 10**18), _exchangeRate));
 
         return 0;
@@ -72,6 +69,7 @@ contract MockCDAI is ERC20, CErc20Mock {
 
     function setExchangeRateStored(uint256 rate) external returns (uint256) {
         _exchangeRate = rate;
+        return _exchangeRate;
     }
 
     function setComptroller(address comp) external {
