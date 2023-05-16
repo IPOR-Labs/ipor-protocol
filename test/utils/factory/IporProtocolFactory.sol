@@ -4,22 +4,9 @@ import "forge-std/Test.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/itf/ItfStanley.sol";
-import "contracts/amm/MiltonStorage.sol";
-import "contracts/itf/ItfMilton.sol";
-import "contracts/itf/ItfJoseph.sol";
 import "contracts/itf/ItfIporOracle.sol";
-import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/MockIporWeighted.sol";
 
 import "../builder/AssetBuilder.sol";
-import "../builder/IpTokenBuilder.sol";
-import "../builder/StanleyBuilder.sol";
-import "../builder/MiltonStorageBuilder.sol";
-import "../builder/MiltonBuilder.sol";
-import "../builder/JosephBuilder.sol";
-import "../builder/IporOracleBuilder.sol";
-import "../builder/IporWeightedBuilder.sol";
 import "../builder/IporProtocolBuilder.sol";
 import "./IporOracleFactory.sol";
 import "./IporRiskManagementOracleFactory.sol";
@@ -59,14 +46,6 @@ contract IporProtocolFactory is Test {
     IporRiskManagementOracleFactory internal _iporRiskManagementOracleFactory;
     IporProtocolBuilder internal _iporProtocolBuilder;
     AssetBuilder internal _assetBuilder;
-    IpTokenBuilder internal _ipTokenBuilder;
-    IporWeightedBuilder internal _iporWeightedBuilder;
-    MiltonStorageBuilder internal _miltonStorageBuilder;
-    IvTokenBuilder internal _ivTokenBuilder;
-    StanleyBuilder internal _stanleyBuilder;
-    MiltonBuilder internal _miltonBuilder;
-    JosephBuilder internal _josephBuilder;
-    MockSpreadBuilder internal _mockSpreadBuilder;
 
     address internal _owner;
 
@@ -74,15 +53,7 @@ contract IporProtocolFactory is Test {
         _iporOracleFactory = new IporOracleFactory(owner);
         _iporRiskManagementOracleFactory = new IporRiskManagementOracleFactory(owner);
         _iporProtocolBuilder = new IporProtocolBuilder(owner);
-        _assetBuilder = new AssetBuilder(owner, _iporProtocolBuilder);
-        _ipTokenBuilder = new IpTokenBuilder(owner, _iporProtocolBuilder);
-        _iporWeightedBuilder = new IporWeightedBuilder(owner, _iporProtocolBuilder);
-        _miltonStorageBuilder = new MiltonStorageBuilder(owner, _iporProtocolBuilder);
-        _ivTokenBuilder = new IvTokenBuilder(owner, _iporProtocolBuilder);
-        _stanleyBuilder = new StanleyBuilder(owner, _iporProtocolBuilder);
-        _miltonBuilder = new MiltonBuilder(owner, _iporProtocolBuilder);
-        _josephBuilder = new JosephBuilder(owner, _iporProtocolBuilder);
-        _mockSpreadBuilder = new MockSpreadBuilder(owner, _iporProtocolBuilder);
+        _assetBuilder = new AssetBuilder(owner);
         _owner = owner;
     }
 
@@ -227,7 +198,7 @@ contract IporProtocolFactory is Test {
         return iporProtocol;
     }
 
-        function getUsdtInstance(IporProtocolConfig memory cfg)
+    function getUsdtInstance(IporProtocolConfig memory cfg)
         public
         returns (IporProtocolBuilder.IporProtocol memory iporProtocol)
     {

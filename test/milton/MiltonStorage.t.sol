@@ -42,8 +42,7 @@ contract MiltonStorageTest is TestCommons, DataUtils, SwapUtils {
         );
 
         _miltonStorageBuilder = new MiltonStorageBuilder(
-            address(this),
-            IporProtocolBuilder(address(0))
+            address(this)
         );
     }
 

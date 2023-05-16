@@ -167,7 +167,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         address owner = address(this);
         IporProtocolBuilder iporProtocolBuilder = new IporProtocolBuilder(owner);
 
-        AssetBuilder assetBuilder = new AssetBuilder(owner, iporProtocolBuilder);
+        AssetBuilder assetBuilder = new AssetBuilder(owner);
         assetBuilder.withUSDT();
         MockTestnetToken usdt = assetBuilder.build();
 
