@@ -100,10 +100,106 @@ contract IporRiskManagementOracle is
         return 1;
     }
 
+    function getOpenSwapParameters(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    )
+        external
+        view
+        override
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxUtilizationRatePerLeg,
+            uint256 maxUtilizationRate,
+            int256 spread
+        )
+    {
+        (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate) = _getRiskIndicatorsPerLeg(asset, direction);
+        spread = _getSpread(asset, direction, duration);
+        return (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate, spread);
+    }
+
+    function _getRiskIndicatorsPerLeg(address asset, uint256 direction)
+        internal
+        view
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxUtilizationRatePerLeg,
+            uint256 maxUtilizationRate
+        )
+    {
+        (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRate,
+
+        ) = _getRiskIndicators(asset);
+
+        if (direction == 0) {
+            return (maxNotionalPayFixed, maxUtilizationRatePayFixed, maxUtilizationRate);
+        } else {
+            return (maxNotionalReceiveFixed, maxUtilizationRateReceiveFixed, maxUtilizationRate);
+        }
+    }
+
+    function _getSpread(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    ) internal view returns (int256) {
+        (
+            ,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        ) = _getBaseSpreads(asset);
+
+        if (duration == 0) {
+            if (direction == 0) {
+                return spread28dPayFixed;
+            } else {
+                return spread28dReceiveFixed;
+            }
+        } else if (duration == 1) {
+            if (direction == 0) {
+                return spread60dPayFixed;
+            } else {
+                return spread60dReceiveFixed;
+            }
+        } else {
+            if (direction == 0) {
+                return spread90dPayFixed;
+            } else {
+                return spread90dReceiveFixed;
+            }
+        }
+    }
+
     function getRiskIndicators(address asset)
         external
         view
         override
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRate,
+            uint256 lastUpdateTimestamp
+        )
+    {
+        return _getRiskIndicators(asset);
+    }
+
+    function _getRiskIndicators(address asset)
+        internal
+        view
         returns (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
@@ -139,16 +235,32 @@ contract IporRiskManagementOracle is
             int256 spread90dReceiveFixed
         )
     {
+        return _getBaseSpreads(asset);
+    }
+
+    function _getBaseSpreads(address asset)
+        internal
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        )
+    {
         IporRiskManagementOracleStorageTypes.BaseSpreadsStorage memory baseSpreads = _baseSpreads[asset];
         require(baseSpreads.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
         return (
             uint256(baseSpreads.lastUpdateTimestamp),
-            int256(baseSpreads.spread28dPayFixed),
-            int256(baseSpreads.spread28dReceiveFixed),
-            int256(baseSpreads.spread60dPayFixed),
-            int256(baseSpreads.spread60dReceiveFixed),
-            int256(baseSpreads.spread90dPayFixed),
-            int256(baseSpreads.spread90dReceiveFixed)
+            int256(baseSpreads.spread28dPayFixed) * 1e12, // 1 = 0.01%
+            int256(baseSpreads.spread28dReceiveFixed) * 1e12,
+            int256(baseSpreads.spread60dPayFixed) * 1e12,
+            int256(baseSpreads.spread60dReceiveFixed) * 1e12,
+            int256(baseSpreads.spread90dPayFixed) * 1e12,
+            int256(baseSpreads.spread90dReceiveFixed) * 1e12
         );
     }
 

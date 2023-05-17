@@ -9,6 +9,24 @@ interface IIporRiskManagementOracle {
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
 
+    /// @notice Gets risk indicators and base spread for a given asset, swap direction and duration. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
+    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @return maxNotionalPerLeg maximum notional value for given leg
+    /// @return maxUtilizationRatePerLeg maximum utilization rate for given leg
+    /// @return maxUtilizationRate maximum utilization rate for both legs
+    /// @return spread spread for given direction and duration
+    function getOpenSwapParameters(address asset, uint256 direction, uint256 duration)
+    external
+    view
+    returns (
+        uint256 maxNotionalPerLeg,
+        uint256 maxUtilizationRatePerLeg,
+        uint256 maxUtilizationRate,
+        int256 spread
+    );
+
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return maxNotionalPayFixed maximum notional value for pay fixed leg
@@ -29,7 +47,7 @@ interface IIporRiskManagementOracle {
             uint256 lastUpdateTimestamp
         );
 
-    /// @notice Gets base spreads for a given asset. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
     /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
     /// @return spread28dPayFixed spread for 28 days pay fixed swap
