@@ -25,9 +25,11 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         _USDT = usdt;
     }
 
+
+
     function calculateQuotePayFixed28Days(
-        address asset,
         IporTypes.SwapsBalanceMemory memory accruedBalance,
+        address asset,
         uint256 swapNotional
     ) external override returns (uint256 quoteValue) {
         uint256 maxLeverage = 1_000 * 1e18; // TODO get this data;

@@ -51,6 +51,8 @@ contract SpreadRouter is OpenzeppelinStorage {
     }
 
     function getRouterImplementation(bytes4 sig, bytes32 asset) public view returns (address) {
+        if( sig && isNotPause)
+
         if (
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
