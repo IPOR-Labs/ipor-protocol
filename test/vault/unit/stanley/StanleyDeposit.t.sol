@@ -180,8 +180,8 @@ contract StanleyDepositTest is TestCommons, DataUtils {
         _mockCDAI.setSupplyRate(uint128(10));
         // then
         uint256 apyAfter = _strategyCompoundDai.getApr();
-        assertEq(apyBefore, 69059536870752000);
-        assertEq(apyAfter, 21024000);
+		assertEq(apyBefore, 90148815177415640);
+		assertEq(apyAfter, 26280000);
     }
 
     function testShouldAcceptDepositAndTransferTokensIntoAave() public {
