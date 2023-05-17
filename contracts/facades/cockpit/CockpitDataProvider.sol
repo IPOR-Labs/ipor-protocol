@@ -179,8 +179,6 @@ contract CockpitDataProvider is
         (
             uint256 value,
             uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
             uint256 date
         ) = IIporOracle(_iporOracle).getIndex(asset);
 
@@ -188,8 +186,8 @@ contract CockpitDataProvider is
             IERC20MetadataUpgradeable(asset).symbol(),
             value,
             ibtPrice,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
+            0,
+            0,
             date
         );
     }

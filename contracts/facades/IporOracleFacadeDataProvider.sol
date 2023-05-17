@@ -63,7 +63,7 @@ contract IporOracleFacadeDataProvider is
         view
         returns (IporOracleFacadeTypes.IporFront memory iporFront)
     {
-        (uint256 value, uint256 ibtPrice, , , uint256 date) = IIporOracle(_getIporOracle())
+        (uint256 value, uint256 ibtPrice, uint256 date) = IIporOracle(_getIporOracle())
             .getIndex(asset);
         iporFront = IporOracleFacadeTypes.IporFront(
             IERC20MetadataUpgradeable(asset).symbol(),

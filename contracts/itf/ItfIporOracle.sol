@@ -4,19 +4,6 @@ pragma solidity 0.8.16;
 import "../oracles/IporOracle.sol";
 
 contract ItfIporOracle is IporOracle {
-    uint256 _decayFactor;
-
-    function itfGetDecayFactorValue(uint256 timeFromLastPublication)
-        external
-        view
-        returns (uint256)
-    {
-        return _decayFactorValue(timeFromLastPublication);
-    }
-
-    function setDecayFactor(uint256 decayFactor) external onlyOwner {
-        _decayFactor = decayFactor;
-    }
 
     function itfUpdateIndex(
         address asset,
@@ -38,15 +25,4 @@ contract ItfIporOracle is IporOracle {
         _updateIndexes(assets, indexValues, updateTimestamp);
     }
 
-    function _decayFactorValue(uint256 timeFromLastPublication)
-        internal
-        view
-        override
-        returns (uint256)
-    {
-        if (_decayFactor != 0) {
-            return _decayFactor;
-        }
-        return DecayFactorCalculation.calculate(timeFromLastPublication);
-    }
 }

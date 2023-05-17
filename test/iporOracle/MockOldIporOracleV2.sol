@@ -15,7 +15,6 @@ import "contracts/libraries/math/IporMath.sol";
 import "contracts/interfaces/IIporOracle.sol";
 import "contracts/security/IporOwnableUpgradeable.sol";
 import "contracts/oracles/libraries/IporLogic.sol";
-import "contracts/oracles/libraries/DecayFactorCalculation.sol";
 
 /**
  * @title IPOR Index Oracle Contract
@@ -47,9 +46,7 @@ contract MockOldIporOracleV2 is
 
     function initialize(
         address[] memory assets,
-        uint32[] memory updateTimestamps,
-        uint64[] memory exponentialMovingAverages,
-        uint64[] memory exponentialWeightedMovingVariances
+        uint32[] memory updateTimestamps
     ) public initializer {
         __Pausable_init();
         __Ownable_init();
@@ -62,8 +59,6 @@ contract MockOldIporOracleV2 is
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
                 Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-                exponentialMovingAverages[i],
-                exponentialWeightedMovingVariances[i],
                 0,
                 updateTimestamps[i]
             );
@@ -80,8 +75,6 @@ contract MockOldIporOracleV2 is
         returns (
             uint256 indexValue,
             uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
             uint256 lastUpdateTimestamp
         )
     {
@@ -90,8 +83,6 @@ contract MockOldIporOracleV2 is
         return (
             indexValue = ipor.indexValue,
             ibtPrice = IporMath.division(ipor.quasiIbtPrice, Constants.YEAR_IN_SECONDS),
-            exponentialMovingAverage = ipor.exponentialMovingAverage,
-            exponentialWeightedMovingVariance = ipor.exponentialWeightedMovingVariance,
             lastUpdateTimestamp = ipor.lastUpdateTimestamp
         );
     }
@@ -108,8 +99,8 @@ contract MockOldIporOracleV2 is
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
             _calculateAccruedIbtPrice(calculateTimestamp, asset),
-            ipor.exponentialMovingAverage,
-            ipor.exponentialWeightedMovingVariance
+            0,
+            0
         );
     }
 
@@ -154,9 +145,7 @@ contract MockOldIporOracleV2 is
 
     function addAsset(
         address asset,
-        uint256 updateTimestamp,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        uint256 updateTimestamp
     ) external onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -165,15 +154,11 @@ contract MockOldIporOracleV2 is
         );
         _indexes[asset] = IporOracleTypes.IPOR(
             Constants.WAD_YEAR_IN_SECONDS.toUint128(),
-            exponentialMovingAverage.toUint64(),
-            exponentialWeightedMovingVariance.toUint64(),
             0,
             updateTimestamp.toUint32()
         );
         emit IporIndexAddAsset(
             asset,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
             updateTimestamp
         );
     }
@@ -217,26 +202,10 @@ contract MockOldIporOracleV2 is
             IporOracleErrors.INDEX_TIMESTAMP_HIGHER_THAN_ACCRUE_TIMESTAMP
         );
 
-        uint256 newExponentialMovingAverage = IporLogic.calculateExponentialMovingAverage(
-            ipor.exponentialMovingAverage,
-            indexValue,
-            _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-        );
-
-        uint256 newExponentialWeightedMovingVariance = IporLogic
-            .calculateExponentialWeightedMovingVariance(
-                ipor.exponentialWeightedMovingVariance,
-                newExponentialMovingAverage,
-                indexValue,
-                _decayFactorValue(updateTimestamp - ipor.lastUpdateTimestamp)
-            );
-
         uint256 newQuasiIbtPrice = ipor.accrueQuasiIbtPrice(updateTimestamp);
 
         _indexes[asset] = IporOracleTypes.IPOR(
             newQuasiIbtPrice.toUint128(),
-            newExponentialMovingAverage.toUint64(),
-            newExponentialWeightedMovingVariance.toUint64(),
             indexValue.toUint64(),
             updateTimestamp.toUint32()
         );
@@ -245,19 +214,8 @@ contract MockOldIporOracleV2 is
             asset,
             indexValue,
             newQuasiIbtPrice,
-            newExponentialMovingAverage,
-            newExponentialWeightedMovingVariance,
             updateTimestamp
         );
-    }
-
-    function _decayFactorValue(uint256 timeFromLastPublication)
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
-        return DecayFactorCalculation.calculate(timeFromLastPublication);
     }
 
     function _calculateAccruedIbtPrice(uint256 calculateTimestamp, address asset)
@@ -279,15 +237,11 @@ contract MockOldIporOracleV2 is
     /// @param asset underlying / stablecoin address
     /// @param indexValue IPOR Index value represented in 18 decimals
     /// @param quasiIbtPrice quasi Interest Bearing Token price represented in 18 decimals.
-    /// @param exponentialMovingAverage Exponential Moving Average represented in 18 decimals.
-    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance
     /// @param updateTimestamp moment when IPOR Index was updated.
     event IporIndexUpdate(
         address asset,
         uint256 indexValue,
         uint256 quasiIbtPrice,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance,
         uint256 updateTimestamp
     );
 
@@ -302,13 +256,9 @@ contract MockOldIporOracleV2 is
     /// @notice event emitted when new asset is added by Owner to list of assets supported in IPOR Protocol.
     /// @param newAsset new asset address
     /// @param updateTimestamp update timestamp
-    /// @param exponentialMovingAverage Exponential Moving Average for asset
-    /// @param exponentialWeightedMovingVariance Exponential Weighted Moving Variance for asset
     event IporIndexAddAsset(
         address newAsset,
-        uint256 updateTimestamp,
-        uint256 exponentialMovingAverage,
-        uint256 exponentialWeightedMovingVariance
+        uint256 updateTimestamp
     );
 
     /// @notice event emitted when asset is removed by Owner from list of assets supported in IPOR Protocol.

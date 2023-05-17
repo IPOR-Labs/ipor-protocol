@@ -7,10 +7,10 @@ import "../../../security/IporOwnable.sol";
 contract MockWhitePaper is WhitePaperInterestRateModel, IporOwnable {
     uint256 private _borrowRate;
     uint256 private _supplyRate;
-    uint256 public blocksPerYear;
+    uint256 public blocksPerDay;
 
     constructor() {
-        blocksPerYear = 2102400;
+        blocksPerDay = 7200;
     }
 
     function setSupplyRate(uint256 rate) external onlyOwner {

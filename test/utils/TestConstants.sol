@@ -144,7 +144,11 @@ library TestConstants {
 
     uint256 public constant ZERO = 0;
     uint256 public constant LEG_PAY_FIXED = 0;
-    uint256 public constant LEG_RECEIVE_FLOATING = 1;
+    uint256 public constant LEG_RECEIVE_FIXED = 1;
+
+    uint256 public constant SWAP_DURATION_28D = 0;
+    uint256 public constant SWAP_DURATION_60D = 1;
+    uint256 public constant SWAP_DURATION_90D = 2;
 
     uint256 public constant N1__0_18DEC = 1000000000000000000;
     uint256 public constant N1__0_6DEC = 1000000;
@@ -250,4 +254,10 @@ library TestConstants {
     uint16 public constant RMO_UTILIZATION_RATE_100_PER = 10000;
     uint16 public constant RMO_UTILIZATION_RATE_150_PER = 15000;
     uint16 public constant RMO_UTILIZATION_RATE_MAX = type(uint16).max;
+    int24 public constant RMO_SPREAD_0_1_PER = 1000;
+    int24 public constant RMO_SPREAD_0_15_PER = 1500;
+    int24 public constant RMO_SPREAD_0_2_PER = 2000;
+    int24 public constant RMO_SPREAD_0_25_PER = 2500;
+    int24 public constant RMO_SPREAD_0_3_PER = 3000;
+    int24 public constant RMO_SPREAD_0_35_PER = 3500;
 }

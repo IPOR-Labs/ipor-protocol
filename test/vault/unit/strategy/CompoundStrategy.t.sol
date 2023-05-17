@@ -27,7 +27,7 @@ contract CompoundStrategyTest is TestCommons, DataUtils {
 
     event StanleyChanged(address changedBy, address oldStanley, address newStanley);
 
-    event BlocksPerYearChanged(address changedBy, uint256 oldBlocksPerYear, uint256 newBlocksPerYear);
+    event BlocksPerDayChanged(address changedBy, uint256 oldBlocksPerDay, uint256 newBlocksPerDay);
 
     event DoClaim(address indexed claimedBy, address indexed shareToken, address indexed treasury, uint256 amount);
 
@@ -153,17 +153,17 @@ contract CompoundStrategyTest is TestCommons, DataUtils {
         _strategyCompoundUsdc.setTreasuryManager(address(0));
     }
 
-    function testShouldSetupNewBlocksPerYear() public {
+    function testShouldSetupNewBlocksPerDay() public {
         // when
         vm.expectEmit(true, true, true, true);
-        emit BlocksPerYearChanged(_admin, 2102400, 2102500);
-        _strategyCompoundDai.setBlocksPerYear(2102500);
+        emit BlocksPerDayChanged(_admin, 7200, 7100);
+        _strategyCompoundDai.setBlocksPerDay(7100);
     }
 
-    function testShouldNotSetupNewBlocksPerYearToZero() public {
+    function testShouldNotSetupNewBlocksPerDayToZero() public {
         // when
         vm.expectRevert("IPOR_004");
-        _strategyCompoundDai.setBlocksPerYear(TestConstants.ZERO);
+        _strategyCompoundDai.setBlocksPerDay(TestConstants.ZERO);
     }
 
     function testShouldBeAbleDoClaim() public {
@@ -179,9 +179,9 @@ contract CompoundStrategyTest is TestCommons, DataUtils {
         _strategyCompoundDai.doClaim();
     }
 
-    function testShouldNotSetupNewBlocksPerYearWhenNotOwner() public {
+    function testShouldNotSetupNewBlocksPerDayWhenNotOwner() public {
         vm.expectRevert("Ownable: caller is not the owner");
         vm.prank(_userOne);
-        _strategyCompoundDai.setBlocksPerYear(2102500);
+        _strategyCompoundDai.setBlocksPerDay(7100);
     }
 }

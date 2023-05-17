@@ -432,7 +432,8 @@ contract DaiMiltonJosephSwitchImplementation is Test, TestCommons, ForkUtils, Ip
                 assetAddress,
                 TestConstants.RMO_UTILIZATION_RATE_48_PER,
                 TestConstants.RMO_UTILIZATION_RATE_80_PER,
-                TestConstants.RMO_NOTIONAL_1B
+                TestConstants.RMO_NOTIONAL_1B,
+                TestConstants.RMO_SPREAD_0_1_PER
             );
     }
 }

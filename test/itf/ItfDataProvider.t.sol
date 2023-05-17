@@ -63,13 +63,14 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         _userThree = _getUserAddress(3);
         _liquidityProvider = _getUserAddress(4);
         _users = usersToArray(_admin, _userOne, _userTwo, _userThree, _liquidityProvider);
-        _iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken), TestConstants.TC_5_EMA_18DEC_64UINT);
+        _iporOracle = getIporOracleAsset(_userOne, address(_usdcMockedToken));
         _RiskManagementOracle = getRiskManagementOracleAsset(
             _userOne,
             address(_usdcMockedToken),
             TestConstants.RMO_UTILIZATION_RATE_48_PER,
             TestConstants.RMO_UTILIZATION_RATE_80_PER,
-            TestConstants.RMO_NOTIONAL_1B
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_SPREAD_0_1_PER
         );
         _miltonStorage = getMiltonStorage();
         _miltonSpreadModel = new MockBaseMiltonSpreadModelUsdc();
@@ -135,15 +136,12 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
             address(_usdcMockedToken)
         );
         // then
-        assertEq(iporOracleData.decayFactorValue, 999997217008929160);
         assertEq(iporOracleData.indexValue, TestConstants.ZERO);
         assertEq(iporOracleData.ibtPrice, TestConstants.D18);
-        assertEq(iporOracleData.exponentialMovingAverage, TestConstants.TC_5_EMA_18DEC_64UINT);
-        assertEq(iporOracleData.exponentialWeightedMovingVariance, TestConstants.ZERO);
         assertEq(iporOracleData.lastUpdateTimestamp, 1);
         assertEq(iporOracleData.accruedIndexValue, TestConstants.ZERO);
         assertEq(iporOracleData.accruedIbtPrice, TestConstants.D18);
-        assertEq(iporOracleData.accruedExponentialMovingAverage, TestConstants.TC_5_EMA_18DEC_64UINT);
+        assertEq(iporOracleData.accruedExponentialMovingAverage, TestConstants.ZERO);
         assertEq(iporOracleData.accruedExponentialWeightedMovingVariance, TestConstants.ZERO);
         assertEq(miltonData.maxSwapCollateralAmount, 100000 * TestConstants.D18);
         assertEq(miltonData.maxLpUtilizationRate, 8 * TestConstants.D17);
@@ -157,8 +155,8 @@ contract ItfDataProviderTest is TestCommons, DataUtils {
         assertEq(miltonData.maxLeveragePayFixed, TestConstants.LEVERAGE_1000_18DEC);
         assertEq(miltonData.maxLeverageReceiveFixed, TestConstants.LEVERAGE_1000_18DEC);
         assertEq(miltonData.minLeverage, TestConstants.LEVERAGE_18DEC);
-        assertEq(miltonData.spreadPayFixed, 50194572076283301);
-        assertEq(miltonData.spreadReceiveFixed, -50249999865446651);
+        assertEq(miltonData.spreadPayFixed, 250000000000000);
+        assertEq(miltonData.spreadReceiveFixed, -250000000201288);
         assertEq(miltonData.soapPayFixed, TestConstants.ZERO_INT);
         assertEq(miltonData.soapReceiveFixed, TestConstants.ZERO_INT);
         assertEq(miltonData.soap, TestConstants.ZERO_INT);

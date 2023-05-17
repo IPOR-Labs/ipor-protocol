@@ -217,7 +217,7 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
                 new ERC1967Proxy(
                     address(iporOracleImplementation),
                     abi.encodeWithSignature(
-                        "initialize(address[],uint32[],uint64[],uint64[])",
+                        "initialize(address[],uint32[])",
                         assets,
                         updateTimestamps,
                         exponentialMovingAverages,
@@ -234,7 +234,8 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
             address(usdt),
             TestConstants.RMO_UTILIZATION_RATE_48_PER,
             TestConstants.RMO_UTILIZATION_RATE_90_PER,
-            TestConstants.RMO_NOTIONAL_1B
+            TestConstants.RMO_NOTIONAL_1B,
+            TestConstants.RMO_SPREAD_0_1_PER
         );
     }
 
