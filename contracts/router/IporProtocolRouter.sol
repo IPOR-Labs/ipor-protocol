@@ -4,34 +4,37 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./AccessControl.sol";
-import "../libraries/errors/Errors.sol";
-import "../interfaces/IAmmStorageLens.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../interfaces/IAmmSwapsLens.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
-    address public immutable AMM_STORAGE_LENS;
+    address public immutable AMM_SWAPS_LENS;
 
     using Address for address;
 
     struct DeployedContracts {
-        address ammStorageLens;
+        address ammSwapsLens;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
-        AMM_STORAGE_LENS = deployedContracts.ammStorageLens;
+        AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         _disableInitializers();
     }
 
     function getRouterImplementation(bytes4 sig) public returns (address) {
         if (
-            sig == IAmmStorageLens.calculateSpread.selector ||
-            sig == IAmmStorageLens.calculateSoap.selector ||
-            sig == IAmmStorageLens.getClosableStatusForPayFixedSwap.selector ||
-            sig == IAmmStorageLens.getClosableStatusForReceiveFixedSwap.selector
+            sig == IAmmSwapsLens.getClosableStatusForPayFixedSwap.selector ||
+            sig == IAmmSwapsLens.getClosableStatusForReceiveFixedSwap.selector ||
+            sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
+            sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
+            sig == IAmmSwapsLens.getMySwapsPayFixed.selector ||
+            sig == IAmmSwapsLens.getMySwapsReceiveFixed.selector ||
+            sig == IAmmSwapsLens.getMySwaps.selector
         ) {
-            return AMM_STORAGE_LENS;
+            return AMM_SWAPS_LENS;
         }
 
-        revert(Errors.ROUTER_INVALID_SIGNATURE);
+        revert(IporErrors.ROUTER_INVALID_SIGNATURE);
     }
 
     fallback() external {

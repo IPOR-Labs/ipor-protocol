@@ -3,28 +3,7 @@ pragma solidity 0.8.16;
 
 import "./types/IporTypes.sol";
 
-interface IAmmStorageLens {
-    /// @notice Calculates spread for the current block.
-    /// @dev All values represented in 18 decimals.
-    /// @param asset Address of the asset.
-    /// @return spreadPayFixed spread for Pay-Fixed leg.
-    /// @return spreadReceiveFixed spread for Receive-Fixed leg.
-    function calculateSpread(address asset) external view returns (int256 spreadPayFixed, int256 spreadReceiveFixed);
-
-    /// @notice Calculates the SOAP for the current block
-    /// @dev All values represented in 18 decimals.
-    /// @param asset Address of the asset.
-    /// @return soapPayFixed SOAP for Pay-Fixed leg.
-    /// @return soapReceiveFixed SOAP for Receive-Fixed leg.
-    /// @return soap total SOAP - sum of Pay-Fixed and Receive-Fixed SOAP.
-    function calculateSoap(address asset)
-        external
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        );
+interface IAmmSwapsLens {
 
     /// @notice Get closable status for Pay-Fixed swap.
     /// @param asset Address of the asset.
@@ -136,7 +115,7 @@ interface IAmmStorageLens {
         uint256 leverage;
         /// @notice Swap direction
         /// @dev 0 - Pay Fixed-Receive Floating, 1 - Receive Fixed - Pay Floading
-        uint8 direction;
+        uint256 direction;
         /// @notice Swap's notional amount denominated in the Interest Bearing Token (IBT)
         /// @dev value represented in 18 decimals
         uint256 ibtQuantity;
@@ -146,7 +125,7 @@ interface IAmmStorageLens {
         int256 payoff;
         /// @notice Moment when swap was opened.
         uint256 openTimestamp;
-        /// @notice Mopment when swap achieve its maturity.
+        /// @notice Moment when swap achieve its maturity.
         uint256 endTimestamp;
         /// @notice Liqudidation deposit value on day when swap was opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;

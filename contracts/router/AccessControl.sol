@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.16;
 
-import "../libraries/errors/Errors.sol";
+import "../libraries/errors/IporErrors.sol";
 
 contract AccessControl {
     event AppointedToTransferOwnership(address indexed appointedOwner);
@@ -28,11 +28,11 @@ contract AccessControl {
     uint256[49] private __gap;
 
     modifier onlyAppointedOwner() {
-        require(_appointedOwner == msg.sender, Errors.SENDER_NOT_APPOINTED_OWNER);
+        require(_appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
         _;
     }
     modifier onlyPauseGuardian() {
-        require(pauseGuardians[msg.sender] == 1, Errors.CALLER_NOT_GUARDIAN);
+        require(pauseGuardians[msg.sender] == 1, IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
@@ -42,7 +42,7 @@ contract AccessControl {
     }
 
     function transferOwnership(address appointedOwner) public onlyOwner {
-        require(appointedOwner != address(0), Errors.WRONG_ADDRESS);
+        require(appointedOwner != address(0), IporErrors.WRONG_ADDRESS);
         _appointedOwner = appointedOwner;
         emit AppointedToTransferOwnership(appointedOwner);
     }
