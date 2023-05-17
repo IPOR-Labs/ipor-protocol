@@ -66,7 +66,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
         // then
@@ -83,7 +83,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
         IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
 
         // then
@@ -153,11 +153,11 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.setMaxLpAccountContribution(50000);
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         // when
         vm.expectRevert("IPOR_305");
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         vm.stopPrank();
     }
 
@@ -170,12 +170,12 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.setMaxLpAccountContribution(50000);
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         _iporProtocol.joseph.itfRedeem(TestConstants.USD_50_000_18DEC, block.timestamp);
 
         // when
         vm.expectRevert("IPOR_305");
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         vm.stopPrank();
     }
 
@@ -188,7 +188,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.setMaxLpAccountContribution(50000);
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
 
         _iporProtocol.ipToken.transfer(_userThree, TestConstants.USD_50_000_18DEC);
 
@@ -197,7 +197,7 @@ contract JosephProvideLiquidity is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.expectRevert("IPOR_305");
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_50_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_50_000_18DEC);
         vm.stopPrank();
     }
 }

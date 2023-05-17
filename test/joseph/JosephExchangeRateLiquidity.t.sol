@@ -55,7 +55,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
@@ -72,7 +72,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(block.timestamp);
@@ -89,7 +89,7 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         //simulation that Liquidity Pool Balance equal 0, but ipToken is not burned
         _iporProtocol.miltonStorage.setJoseph(_userOne);
@@ -117,12 +117,11 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(40 * TestConstants.D18, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(40 * TestConstants.D18);
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             40 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -185,12 +184,11 @@ contract JosephExchangeRateLiquidity is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(40 * TestConstants.N1__0_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(40 * TestConstants.N1__0_6DEC);
 
         // open position to have something in the pool
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             40 * TestConstants.N1__0_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC

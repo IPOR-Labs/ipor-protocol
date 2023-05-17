@@ -54,7 +54,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
 
         // when
         _iporProtocol.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
@@ -85,7 +85,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
 
         // when
         _iporProtocol.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
@@ -115,7 +115,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
 
         // when
         _iporProtocol.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
@@ -145,8 +145,8 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalances.expectedLiquidityPoolBalance = 6000 * TestConstants.D18 + redeemFee;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         // when
         _iporProtocol.joseph.itfRedeem(TestConstants.USD_14_000_18DEC, block.timestamp);
@@ -187,12 +187,12 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesUsdt.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.startPrank(_liquidityProvider);
-        amm.dai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
-        amm.usdt.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        amm.dai.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
+        amm.usdt.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
 
         // when
-        amm.dai.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
-        amm.usdt.joseph.itfRedeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC, block.timestamp);
+        amm.dai.joseph.redeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
+        amm.usdt.joseph.redeem(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
         vm.stopPrank();
 
         // then
@@ -269,10 +269,10 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesUsdt.expectedLiquidityPoolBalance = 4000 * TestConstants.D18 + redeemFee18Dec;
 
         vm.prank(_userOne);
-        ammDai.joseph.itfProvideLiquidity(TestConstants.USD_14_000_18DEC, block.timestamp);
+        ammDai.joseph.provideLiquidity(TestConstants.USD_14_000_18DEC);
 
         vm.prank(_userTwo);
-        ammUsdt.joseph.itfProvideLiquidity(TestConstants.USD_14_000_6DEC, block.timestamp);
+        ammUsdt.joseph.provideLiquidity(TestConstants.USD_14_000_6DEC);
 
         // when
         vm.prank(_userOne);
@@ -346,7 +346,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         expectedBalancesUserThree.expectedTokenBalance = 10010000 * TestConstants.D18 - redeemFee;
 
         vm.startPrank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_10_400_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_10_400_18DEC);
         _iporProtocol.ipToken.transfer(_userThree, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         // when
@@ -388,11 +388,10 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -427,10 +426,9 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             40000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -464,11 +462,10 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             48000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -479,8 +476,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         //show that currently liquidity pool utilization for opening position is achieved
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapPayFixed(
             50 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -513,11 +509,10 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_100_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_100_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             48000 * TestConstants.D18,
             TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -529,8 +524,7 @@ contract JosephRedeem is TestCommons, DataUtils, SwapUtils {
         //show that currently liquidity pool utilization for opening position is achieved
         vm.expectRevert("IPOR_303");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp,
+        _iporProtocol.milton.openSwapReceiveFixed(
             50 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC

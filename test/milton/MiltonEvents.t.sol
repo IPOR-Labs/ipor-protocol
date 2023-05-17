@@ -91,7 +91,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
         vm.prank(_liquidityProvider);
 
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         // when
         vm.prank(_userTwo);
@@ -120,8 +120,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
@@ -145,7 +144,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
@@ -173,8 +172,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -198,7 +196,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp);
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
@@ -226,8 +224,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -251,7 +248,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
 
         vm.prank(_userTwo);
         vm.expectEmit(true, true, true, true);
@@ -279,8 +276,7 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
             }) // indicator
         );
 
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapReceiveFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount
             TestConstants.PERCENTAGE_1_18DEC, // acceptableFixedInterestRate, 1%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -304,11 +300,10 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_18DEC, block.timestamp); // TestConstants.USD_28_000_18DEC
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC); // TestConstants.USD_28_000_18DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC, // totalAmount
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -355,11 +350,10 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage
@@ -408,11 +402,10 @@ contract MiltonEventsTest is Test, TestCommons, DataUtils {
         );
 
         vm.prank(_liquidityProvider);
-        _iporProtocol.joseph.itfProvideLiquidity(TestConstants.USD_28_000_6DEC, block.timestamp); // USD_28_000_6DEC
+        _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC); // USD_28_000_6DEC
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
-            block.timestamp, // openTimestamp
+        _iporProtocol.milton.openSwapPayFixed(
             TestConstants.USD_10_000_6DEC, // totalAmount, USD_10_000_6DEC
             TestConstants.PERCENTAGE_6_18DEC, // acceptableFixedInterestRate, 6%
             TestConstants.LEVERAGE_18DEC // leverage, LEVERAGE_18DEC
