@@ -51,15 +51,6 @@ IPOR smart contracts
 -   `./run.sh p`
 -   `exit`
 
-### How to deploy new version of `Cockpit` on `Goerli` environment?
-
-Do following steps:
-
--   Go to Github Actions in `ipor-protocol` repository
--   Select `Deploy Cockpit` -> Run workflow:
--   Select branch: `env/goerli`
--   IPOR cockpit Amplify application name: `ipor-goerli-cockpit`
-
 #### How to run all tests?
 
 `npm run test`

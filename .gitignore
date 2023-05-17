@@ -5,8 +5,6 @@
 /node_modules
 
 ### Smart Contracts build artifacts ###
-/app/src/contracts/
-/app/src/contracts.zip
 /contracts/oracles/artifacts/
 /contracts/amm/artifacts/
 /contracts/artifacts/
@@ -14,6 +12,7 @@
 /contracts/libraries/types/artifacts/
 /test-eth-gas-report.log
 /docs
+/broadcast
 
 ### IntelliJ IDEA ###
 .idea
@@ -31,7 +30,6 @@
 /test/output
 /.nyc_output/
 slither-report.json
-app/.env
 .vscode/settings.json
 /logs/
 

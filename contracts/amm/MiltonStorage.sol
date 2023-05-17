@@ -379,22 +379,20 @@ contract MiltonStorage is
     function updateStorageWhenCloseSwapPayFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
-        uint256 incomeFeeValue,
         uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenClosePayFixed(iporSwap);
-        _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff, incomeFeeValue);
+        _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
     }
 
     function updateStorageWhenCloseSwapReceiveFixed(
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
-        uint256 incomeFeeValue,
         uint256 closingTimestamp
     ) external override onlyMilton {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
-        _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff, incomeFeeValue);
+        _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
     }
 
@@ -642,10 +640,9 @@ contract MiltonStorage is
 
     function _updateBalancesWhenCloseSwapPayFixed(
         IporTypes.IporSwapMemory memory swap,
-        int256 payoff,
-        uint256 incomeFeeValue
+        int256 payoff
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, incomeFeeValue);
+        _updateBalancesWhenCloseSwap(payoff);
 
         _balances.totalCollateralPayFixed =
             _balances.totalCollateralPayFixed -
@@ -654,20 +651,17 @@ contract MiltonStorage is
 
     function _updateBalancesWhenCloseSwapReceiveFixed(
         IporTypes.IporSwapMemory memory swap,
-        int256 payoff,
-        uint256 incomeFeeValue
+        int256 payoff
     ) internal {
-        _updateBalancesWhenCloseSwap(payoff, incomeFeeValue);
+        _updateBalancesWhenCloseSwap(payoff);
 
         _balances.totalCollateralReceiveFixed =
             _balances.totalCollateralReceiveFixed -
             swap.collateral.toUint128();
     }
 
-    function _updateBalancesWhenCloseSwap(int256 payoff, uint256 incomeFeeValue) internal {
+    function _updateBalancesWhenCloseSwap(int256 payoff) internal {
         uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-        _balances.treasury = _balances.treasury + incomeFeeValue.toUint128();
 
         if (payoff > 0) {
             /// @dev Buyer earns, Milton (LP) looses
@@ -676,14 +670,11 @@ contract MiltonStorage is
                 MiltonErrors.CANNOT_CLOSE_SWAP_LP_IS_TOO_LOW
             );
 
-            /// @dev When Milton (LP) looses, then  always substract all payoff,
-            /// income fee is added in separate balance - treasury
+            /// @dev When Milton (LP) looses, then  always substract all payoff
             _balances.liquidityPool = _balances.liquidityPool - absPayoff.toUint128();
         } else {
             /// @dev Milton earns, Buyer looses,
-            _balances.liquidityPool =
-                _balances.liquidityPool +
-                (absPayoff - incomeFeeValue).toUint128();
+            _balances.liquidityPool = _balances.liquidityPool + absPayoff.toUint128();
         }
     }
 

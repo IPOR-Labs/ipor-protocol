@@ -25,13 +25,13 @@ contract MockCToken is ERC20, CErc20Mock {
 
     constructor(
         address asset,
-        address interestRateModel,
+        address interestRateModelInput,
         uint8 decimal,
         string memory name,
         string memory code
     ) public ERC20(name, code) {
         _asset = asset;
-        _interestRateModel = interestRateModel;
+        _interestRateModel = interestRateModelInput;
         _detiomal = decimal;
         _exchangeRate = 1325321471291866029;
         _supplyRate = 32847953230;
@@ -48,10 +48,7 @@ contract MockCToken is ERC20, CErc20Mock {
     }
 
     function mint(uint256 amount) external override returns (uint256) {
-        require(
-            IERC20(_asset).transferFrom(msg.sender, address(this), amount),
-            "Error during transferFrom"
-        );
+        require(IERC20(_asset).transferFrom(msg.sender, address(this), amount), "Error during transferFrom");
         _mint(msg.sender, IporMath.division((amount * Constants.D18), _exchangeRate));
 
         return 0;
@@ -60,10 +57,7 @@ contract MockCToken is ERC20, CErc20Mock {
     function redeem(uint256 amount) external override returns (uint256) {
         _burn(msg.sender, amount);
         require(
-            IERC20(_asset).transfer(
-                msg.sender,
-                IporMath.division(amount * _exchangeRate, Constants.D18)
-            ),
+            IERC20(_asset).transfer(msg.sender, IporMath.division(amount * _exchangeRate, Constants.D18)),
             "Error during transfer"
         );
         return 0;
@@ -84,6 +78,7 @@ contract MockCToken is ERC20, CErc20Mock {
 
     function setExchangeRateStored(uint256 rate) external returns (uint256) {
         _exchangeRate = rate;
+        return _exchangeRate;
     }
 
     function setComptroller(address comp) external {

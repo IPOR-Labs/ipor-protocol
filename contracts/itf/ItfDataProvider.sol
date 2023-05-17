@@ -69,17 +69,22 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             timestamp
         );
 
+        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = milton.getMaxLeverage();
+        (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed) =
+            milton.getMaxLpUtilizationPerLegRate();
+
         miltonData = ItfDataProviderTypes.ItfMiltonData(
             milton.getMaxSwapCollateralAmount(),
             milton.getMaxLpUtilizationRate(),
-            milton.getMaxLpUtilizationPerLegRate(),
-            milton.getIncomeFeeRate(),
+            maxUtilizationRatePayFixed,
+            maxUtilizationRateReceiveFixed,
             milton.getOpeningFeeRate(),
             milton.getOpeningFeeTreasuryPortionRate(),
             milton.getIporPublicationFee(),
             milton.getLiquidationDepositAmount(),
             milton.getWadLiquidationDepositAmount(),
-            milton.getMaxLeverage(),
+            maxLeveragePayFixed,
+            maxLeverageReceiveFixed,
             milton.getMinLeverage(),
             spreadPayFixed,
             spreadReceiveFixed,
@@ -97,18 +102,13 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
         (
             uint256 indexValue,
             uint256 ibtPrice,
-            uint256 exponentialMovingAverage,
-            uint256 exponentialWeightedMovingVariance,
             uint256 lastUpdateTimestamp
         ) = _iporOracle.getIndex(asset);
         IporTypes.AccruedIpor memory accruedIndex = _iporOracle.getAccruedIndex(timestamp, asset);
 
         iporOracleData = ItfDataProviderTypes.ItfIporOracleData(
-            _iporOracle.itfGetDecayFactorValue(timestamp),
             indexValue,
             ibtPrice,
-            exponentialMovingAverage,
-            exponentialWeightedMovingVariance,
             lastUpdateTimestamp,
             accruedIndex.indexValue,
             accruedIndex.ibtPrice,

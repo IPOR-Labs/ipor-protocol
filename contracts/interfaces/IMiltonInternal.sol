@@ -31,6 +31,11 @@ interface IMiltonInternal {
     /// @return Stanley address used by Milton
     function getStanley() external view returns (address);
 
+    /// @notice Gets address of IporRiskManagementOracle used by Milton
+    /// @dev IporRiskManagementOracle is Milton's
+    /// @return Stanley address used by Milton
+    function getRiskManagementOracle() external view returns (address);
+
     /// @notice Gets max swap's collateral amount value.
     /// @dev Param used in swap validation.
     /// @return max swap's collateral amount represented in 18 decimals
@@ -43,13 +48,12 @@ interface IMiltonInternal {
 
     /// @notice Gets max liquidity pool utilization per leg.
     /// @dev Param used in swap validation.
-    /// @return max Liquidity Pool Utilization Per Leg rate represented in 18 decimals
-    function getMaxLpUtilizationPerLegRate() external view returns (uint256);
-
-    /// @notice Gets income fee rate.
-    /// @dev Param used when closing the swap. When trader earns then fee is deducted from accrued profit.
-    /// @return income fee rate param value represented in 18 decimals
-    function getIncomeFeeRate() external view returns (uint256);
+    /// @return maxUtilizationRatePayFixed max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
+    /// @return maxUtilizationRateReceiveFixed max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
+    function getMaxLpUtilizationPerLegRate() external view returns (
+        uint256 maxUtilizationRatePayFixed,
+        uint256 maxUtilizationRateReceiveFixed
+    );
 
     /// @notice Gets opening fee rate. When the trader opens swap position then fee is charged from the amount used to open the swap.
     /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
@@ -80,10 +84,14 @@ interface IMiltonInternal {
     /// @return liquidation deposit is represented in 18 decimals
     function getWadLiquidationDepositAmount() external view returns (uint256);
 
-    /// @notice Gets max leverage value.
+    /// @notice Gets max leverage value per leg.
     /// @dev Param used in swap validation.
-    /// @return max leverage value represented in 18 decimals
-    function getMaxLeverage() external view returns (uint256);
+    /// @return maxLeveragePayFixed max leverage per Pay Fixed leg rate represented in 18 decimals
+    /// @return maxLeverageReceiveFixed max leverage per Receive Fixed leg rate represented in 18 decimals
+    function getMaxLeverage() external view returns (
+        uint256 maxLeveragePayFixed,
+        uint256 maxLeverageReceiveFixed
+    );
 
     /// @notice Gets min leverage value.
     /// @dev Param used in swap validation.

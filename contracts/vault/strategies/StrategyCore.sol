@@ -9,6 +9,7 @@ import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/errors/StanleyErrors.sol";
 
 import "../../security/IporOwnableUpgradeable.sol";
+import "../../security/PauseManager.sol";
 import "../../interfaces/IStrategy.sol";
 
 abstract contract StrategyCore is
@@ -27,6 +28,11 @@ abstract contract StrategyCore is
 
     modifier onlyStanley() {
         require(_msgSender() == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
+        _;
+    }
+
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(_msgSender()), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
@@ -83,7 +89,7 @@ abstract contract StrategyCore is
         emit TreasuryChanged(_msgSender(), oldTreasury, newTreasury);
     }
 
-    function pause() external override onlyOwner {
+    function pause() external override onlyPauseGuardian {
         _pause();
     }
 
@@ -93,4 +99,12 @@ abstract contract StrategyCore is
 
     //solhint-disable no-empty-blocks
     function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    function addPauseGuardian(address _guardian) external onlyOwner {
+        PauseManager.addPauseGuardian(_guardian);
+    }
+
+    function removePauseGuardian(address _guardian) external onlyOwner {
+        PauseManager.removePauseGuardian(_guardian);
+    }
 }

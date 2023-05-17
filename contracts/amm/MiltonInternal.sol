@@ -16,12 +16,14 @@ import "../libraries/Constants.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
+import "./libraries/types/AmmMiltonTypes.sol";
 
 abstract contract MiltonInternal is
     Initializable,
@@ -44,13 +46,13 @@ abstract contract MiltonInternal is
 
     uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 5 * 1e16;
 
-    uint256 internal constant _INCOME_TAX_RATE = 1e17;
-
-    uint256 internal constant _OPENING_FEE_RATE = 1e16;
+    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
+    uint256 internal constant _OPENING_FEE_RATE = 5e14;
 
     /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
     /// below value define how big pie going to Treasury Balance
-    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 0;
+    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
+    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 5e17;
 
     uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
 
@@ -77,6 +79,17 @@ abstract contract MiltonInternal is
 
     mapping(address => bool) internal _swapLiquidators;
 
+    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
+    IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
+
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor(address iporRiskManagementOracle) {
+        require(iporRiskManagementOracle != address(0), IporErrors.WRONG_ADDRESS);
+
+        /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
+        _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
+    }
+
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
         _;
@@ -98,20 +111,29 @@ abstract contract MiltonInternal is
         return address(_stanley);
     }
 
+    function getRiskManagementOracle() external view returns (address) {
+        return address(_iporRiskManagementOracle);
+    }
+
     function getMaxSwapCollateralAmount() external view override returns (uint256) {
         return _getMaxSwapCollateralAmount();
     }
 
     function getMaxLpUtilizationRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationRate();
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return riskIndicators.maxUtilizationRate;
     }
 
-    function getMaxLpUtilizationPerLegRate() external view override returns (uint256) {
-        return _getMaxLpUtilizationPerLegRate();
-    }
-
-    function getIncomeFeeRate() external view override returns (uint256) {
-        return _getIncomeFeeRate();
+    function getMaxLpUtilizationPerLegRate()
+        external
+        view
+        override
+        returns (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed)
+    {
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxUtilizationRatePayFixed, riskIndicators.maxUtilizationRateReceiveFixed);
     }
 
     function getOpeningFeeRate() external view override returns (uint256) {
@@ -136,20 +158,22 @@ abstract contract MiltonInternal is
         return _getLiquidationDepositAmount() * Constants.D18;
     }
 
-    function getMaxLeverage() external view override returns (uint256) {
-        return _getMaxLeverage();
+    function getMaxLeverage()
+        external
+        view
+        override
+        returns (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed)
+    {
+        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
+        return (riskIndicators.maxLeveragePayFixed, riskIndicators.maxLeverageReceiveFixed);
     }
 
     function getMinLeverage() external view override returns (uint256) {
         return _getMinLeverage();
     }
 
-    function getAccruedBalance()
-        external
-        view
-        override
-        returns (IporTypes.MiltonBalancesMemory memory)
-    {
+    function getAccruedBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
         return _getAccruedBalance();
     }
 
@@ -163,35 +187,17 @@ abstract contract MiltonInternal is
             int256 soap
         )
     {
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(
-            calculateTimestamp
-        );
+        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        override
-        returns (int256)
-    {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
-            _asset,
-            block.timestamp
-        );
+    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, block.timestamp);
         return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap)
-        external
-        view
-        override
-        returns (int256)
-    {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
-            _asset,
-            block.timestamp
-        );
+    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, block.timestamp);
         return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
@@ -203,12 +209,7 @@ abstract contract MiltonInternal is
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetAmount)
-        external
-        nonReentrant
-        onlyJoseph
-        whenNotPaused
-    {
+    function withdrawFromStanley(uint256 assetAmount) external nonReentrant onlyJoseph whenNotPaused {
         _withdrawFromStanley(assetAmount);
     }
 
@@ -246,12 +247,7 @@ abstract contract MiltonInternal is
         return _getJoseph();
     }
 
-    function setMiltonSpreadModel(address newMiltonSpreadModel)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setMiltonSpreadModel(address newMiltonSpreadModel) external override onlyOwner whenNotPaused {
         require(newMiltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
         address oldMiltonSpreadModel = address(_miltonSpreadModel);
         _miltonSpreadModel = IMiltonSpreadModel(newMiltonSpreadModel);
@@ -262,12 +258,7 @@ abstract contract MiltonInternal is
         return address(_miltonSpreadModel);
     }
 
-    function setAutoUpdateIporIndexThreshold(uint256 newThreshold)
-        external
-        override
-        onlyOwner
-        whenNotPaused
-    {
+    function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external override onlyOwner whenNotPaused {
         uint256 oldThreshold = _autoUpdateIporIndexThreshold;
         _autoUpdateIporIndexThreshold = newThreshold.toUint32();
         emit AutoUpdateIporIndexThresholdChanged(_msgSender(), oldThreshold, newThreshold);
@@ -297,22 +288,10 @@ abstract contract MiltonInternal is
         return _autoUpdateIporIndexThreshold * Constants.D21;
     }
 
-    function _getDecimals() internal pure virtual returns (uint256);
+    function _getDecimals() internal view virtual returns (uint256);
 
     function _getMaxSwapCollateralAmount() internal view virtual returns (uint256) {
         return _MAX_SWAP_COLLATERAL_AMOUNT;
-    }
-
-    function _getMaxLpUtilizationRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_RATE;
-    }
-
-    function _getMaxLpUtilizationPerLegRate() internal view virtual returns (uint256) {
-        return _MAX_LP_UTILIZATION_PER_LEG_RATE;
-    }
-
-    function _getIncomeFeeRate() internal view virtual returns (uint256) {
-        return _INCOME_TAX_RATE;
     }
 
     function _getOpeningFeeRate() internal view virtual returns (uint256) {
@@ -331,36 +310,73 @@ abstract contract MiltonInternal is
         return _LIQUIDATION_DEPOSIT_AMOUNT;
     }
 
-    function _getMaxLeverage() internal view virtual returns (uint256);
-
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
+    function _getRiskIndicators(uint256 liquidityPool)
         internal
         view
         virtual
-        returns (uint256)
+        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
     {
+        (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRate,
+
+        ) = _iporRiskManagementOracle.getRiskIndicators(_asset);
+        uint256 maxCollateralPayFixed = IporMath.division(liquidityPool * maxUtilizationRatePayFixed, Constants.D18);
+        uint256 maxCollateralReceiveFixed = IporMath.division(
+            liquidityPool * maxUtilizationRateReceiveFixed,
+            Constants.D18
+        );
+        uint256 maxLeveragePayFixed;
+        if (maxCollateralPayFixed > 0) {
+            maxLeveragePayFixed = IporMath.division(maxNotionalPayFixed * Constants.D18, maxCollateralPayFixed);
+        } else {
+            maxLeveragePayFixed = _MIN_LEVERAGE;
+        }
+        uint256 maxLeverageReceiveFixed;
+        if (maxCollateralReceiveFixed > 0) {
+            maxLeverageReceiveFixed = IporMath.division(
+                maxNotionalReceiveFixed * Constants.D18,
+                maxCollateralReceiveFixed
+            );
+        } else {
+            maxLeverageReceiveFixed = _MIN_LEVERAGE;
+        }
+        return
+            AmmMiltonTypes.OpenSwapRiskIndicators(
+                maxUtilizationRate,
+                maxUtilizationRatePayFixed,
+                maxUtilizationRateReceiveFixed,
+                leverageInRange(maxLeveragePayFixed),
+                leverageInRange(maxLeverageReceiveFixed)
+            );
+    }
+
+    function leverageInRange(uint256 leverage) internal pure returns (uint256) {
+        if (leverage > Constants.LEVERAGE_1000) {
+            return Constants.LEVERAGE_1000;
+        } else if (leverage < _MIN_LEVERAGE) {
+            return _MIN_LEVERAGE;
+        } else {
+            return leverage;
+        }
+    }
+
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer() internal view virtual returns (uint256) {
         return 99 * 1e16;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity()
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
+    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity() internal view virtual returns (uint256) {
         return 995 * 1e15;
     }
 
-    function _getSecondsBeforeMaturityWhenPositionCanBeClosed()
-        internal
-        view
-        virtual
-        returns (uint256)
-    {
+    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal view virtual returns (uint256) {
         return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
     }
 
@@ -409,21 +425,15 @@ abstract contract MiltonInternal is
             int256 soap
         )
     {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(
-            _asset,
+        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _getMiltonStorage().calculateSoap(
+            accruedIbtPrice,
             calculateTimestamp
         );
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _getMiltonStorage()
-            .calculateSoap(accruedIbtPrice, calculateTimestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() internal pure virtual returns (uint256) {
         return 1 hours;
     }
 
@@ -431,12 +441,7 @@ abstract contract MiltonInternal is
         return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
     }
 
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer()
-        internal
-        pure
-        virtual
-        returns (uint256)
-    {
+    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() internal pure virtual returns (uint256) {
         return 1 days;
     }
 }
