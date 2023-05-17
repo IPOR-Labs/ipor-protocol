@@ -134,14 +134,14 @@ contract IporRiskManagementOracle is
             uint256 maxNotionalReceiveFixed,
             uint256 maxUtilizationRatePayFixed,
             uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
+            uint256 maxUtilizationRateBothLegs,
 
         ) = _getRiskIndicators(asset);
 
         if (direction == 0) {
-            return (maxNotionalPayFixed, maxUtilizationRatePayFixed, maxUtilizationRate);
+            return (maxNotionalPayFixed, maxUtilizationRatePayFixed, maxUtilizationRateBothLegs);
         } else {
-            return (maxNotionalReceiveFixed, maxUtilizationRateReceiveFixed, maxUtilizationRate);
+            return (maxNotionalReceiveFixed, maxUtilizationRateReceiveFixed, maxUtilizationRateBothLegs);
         }
     }
 
