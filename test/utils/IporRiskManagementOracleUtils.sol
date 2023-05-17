@@ -12,30 +12,31 @@ contract IporRiskManagementOracleUtils is Test {
         address asset,
         uint16 maxUtilizationRatePerLeg,
         uint16 maxUtilizationRate,
-        uint64 maxNotional
+        uint64 maxNotional,
+        int24 baseSpread
     ) public returns (IIporRiskManagementOracle) {
+        IporRiskManagementOracleTypes.RiskIndicators[]
+            memory riskIndicatorsList = new IporRiskManagementOracleTypes.RiskIndicators[](1);
+        riskIndicatorsList[0] = IporRiskManagementOracleTypes.RiskIndicators({
+            maxNotionalPayFixed: maxNotional,
+            maxNotionalReceiveFixed: maxNotional,
+            maxUtilizationRatePayFixed: maxUtilizationRatePerLeg,
+            maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
+            maxUtilizationRate: maxUtilizationRate
+        });
+        IporRiskManagementOracleTypes.BaseSpreads[]
+            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreads[](1);
+        baseSpreadsList[0] = IporRiskManagementOracleTypes.BaseSpreads({
+            spread28dPayFixed: baseSpread,
+            spread28dReceiveFixed: baseSpread,
+            spread60dPayFixed: baseSpread,
+            spread60dReceiveFixed: baseSpread,
+            spread90dPayFixed: baseSpread,
+            spread90dReceiveFixed: baseSpread
+        });
         address[] memory assets = new address[](1);
         assets[0] = asset;
-        uint64[] memory maxNotionalPayFixed = new uint64[](1);
-        maxNotionalPayFixed[0] = maxNotional;
-        uint64[] memory maxNotionalReceiveFixed = new uint64[](1);
-        maxNotionalReceiveFixed[0] = maxNotional;
-        uint16[] memory maxUtilizationRatePayFixed = new uint16[](1);
-        maxUtilizationRatePayFixed[0] = maxUtilizationRatePerLeg;
-        uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](1);
-        maxUtilizationRateReceiveFixed[0] = maxUtilizationRatePerLeg;
-        uint16[] memory maxUtilizationRates = new uint16[](1);
-        maxUtilizationRates[0] = maxUtilizationRate;
-        return
-            _prepareRiskManagementOracle(
-                updater,
-                assets,
-                maxNotionalPayFixed,
-                maxNotionalReceiveFixed,
-                maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed,
-                maxUtilizationRates
-            );
+        return _prepareRiskManagementOracle(updater, assets, riskIndicatorsList, baseSpreadsList);
     }
 
     function getRiskManagementOracleAssets(
@@ -43,56 +44,53 @@ contract IporRiskManagementOracleUtils is Test {
         address[] memory assets,
         uint16 maxUtilizationRatePerLeg,
         uint16 maxUtilizationRate,
-        uint64 maxNotional
+        uint64 maxNotional,
+        int24 baseSpread
     ) public returns (IIporRiskManagementOracle) {
-        uint64[] memory maxNotionalPayFixed = new uint64[](assets.length);
-        uint64[] memory maxNotionalReceiveFixed = new uint64[](assets.length);
-        uint16[] memory maxUtilizationRatePayFixed = new uint16[](assets.length);
-        uint16[] memory maxUtilizationRateReceiveFixed = new uint16[](assets.length);
-        uint16[] memory maxUtilizationRates = new uint16[](assets.length);
+        IporRiskManagementOracleTypes.RiskIndicators[]
+            memory riskIndicatorsList = new IporRiskManagementOracleTypes.RiskIndicators[](assets.length);
+        IporRiskManagementOracleTypes.BaseSpreads[]
+            memory baseSpreadsList = new IporRiskManagementOracleTypes.BaseSpreads[](assets.length);
 
         for (uint256 i = 0; i < assets.length; i++) {
-            maxNotionalPayFixed[i] = maxNotional;
-            maxNotionalReceiveFixed[i] = maxNotional;
-            maxUtilizationRatePayFixed[i] = maxUtilizationRatePerLeg;
-            maxUtilizationRateReceiveFixed[i] = maxUtilizationRatePerLeg;
-            maxUtilizationRates[i] = maxUtilizationRate;
+            riskIndicatorsList[i] = IporRiskManagementOracleTypes.RiskIndicators({
+                maxNotionalPayFixed: maxNotional,
+                maxNotionalReceiveFixed: maxNotional,
+                maxUtilizationRatePayFixed: maxUtilizationRatePerLeg,
+                maxUtilizationRateReceiveFixed: maxUtilizationRatePerLeg,
+                maxUtilizationRate: maxUtilizationRate
+            });
+            baseSpreadsList[i] = IporRiskManagementOracleTypes.BaseSpreads({
+                spread28dPayFixed: baseSpread,
+                spread28dReceiveFixed: baseSpread,
+                spread60dPayFixed: baseSpread,
+                spread60dReceiveFixed: baseSpread,
+                spread90dPayFixed: baseSpread,
+                spread90dReceiveFixed: baseSpread
+            });
         }
-        return
-            _prepareRiskManagementOracle(
-                updater,
-                assets,
-                maxNotionalPayFixed,
-                maxNotionalReceiveFixed,
-                maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed,
-                maxUtilizationRates
-            );
+        return _prepareRiskManagementOracle(updater, assets, riskIndicatorsList, baseSpreadsList);
     }
 
     function _prepareRiskManagementOracle(
         address updater,
         address[] memory assets,
-        uint64[] memory maxNotionalPayFixed,
-        uint64[] memory maxNotionalReceiveFixed,
-        uint16[] memory maxUtilizationRatePayFixed,
-        uint16[] memory maxUtilizationRateReceiveFixed,
-        uint16[] memory maxUtilizationRate
+        IporRiskManagementOracleTypes.RiskIndicators[] memory riskIndicatorsList,
+        IporRiskManagementOracleTypes.BaseSpreads[] memory baseSpreadsList
     ) internal returns (IporRiskManagementOracle) {
         IporRiskManagementOracle iporRiskManagementOracleImplementation = new IporRiskManagementOracle();
         ERC1967Proxy iporRiskManagementOracleProxy = new ERC1967Proxy(
             address(iporRiskManagementOracleImplementation),
             abi.encodeWithSignature(
-                "initialize(address[],uint256[],uint256[],uint256[],uint256[],uint256[])",
+                "initialize(address[],(uint256,uint256,uint256,uint256,uint256)[],(int256,int256,int256,int256,int256,int256)[])",
                 assets,
-                maxNotionalPayFixed,
-                maxNotionalReceiveFixed,
-                maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed,
-                maxUtilizationRate
+                riskIndicatorsList,
+                baseSpreadsList
             )
         );
-        IporRiskManagementOracle iporRiskManagementOracle = IporRiskManagementOracle(address(iporRiskManagementOracleProxy));
+        IporRiskManagementOracle iporRiskManagementOracle = IporRiskManagementOracle(
+            address(iporRiskManagementOracleProxy)
+        );
         iporRiskManagementOracle.addUpdater(updater);
         return iporRiskManagementOracle;
     }
