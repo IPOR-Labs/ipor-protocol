@@ -15,7 +15,7 @@ import "./StrategyCore.sol";
 contract StrategyCompound is StrategyCore, IStrategyCompound {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    uint256 private _blocksPerYear;
+    uint256 private _blocksPerDay;
     ComptrollerInterface private _comptroller;
     IERC20Upgradeable private _compToken;
 
@@ -52,7 +52,7 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         _comptroller = ComptrollerInterface(comptroller);
         _compToken = IERC20Upgradeable(compToken);
         IERC20Upgradeable(_asset).safeApprove(shareToken, type(uint256).max);
-        _blocksPerYear = 2102400;
+        _blocksPerDay = 7200;
         _treasuryManager = _msgSender();
     }
 
@@ -61,7 +61,17 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
      */
     function getApr() external view override returns (uint256 apr) {
         uint256 cRate = CErc20(_shareToken).supplyRatePerBlock(); // interest % per block
-        apr = cRate * _blocksPerYear;
+        uint256 ratePerDay = cRate * _blocksPerDay + Constants.D18;
+
+        uint256 ratePerDay4 = IporMath.division(ratePerDay * ratePerDay * ratePerDay * ratePerDay, Constants.D54);
+        uint256 ratePerDay8 = IporMath.division(ratePerDay4 * ratePerDay4, Constants.D18);
+        uint256 ratePerDay32 = IporMath.division(ratePerDay8 * ratePerDay8 * ratePerDay8 * ratePerDay8, Constants.D54);
+        uint256 ratePerDay64 = IporMath.division(ratePerDay32 * ratePerDay32, Constants.D18);
+        uint256 ratePerDay256 = IporMath.division(ratePerDay64 * ratePerDay64 * ratePerDay64 * ratePerDay64, Constants.D54);
+        uint256 ratePerDay360 = IporMath.division(ratePerDay256 * ratePerDay64 * ratePerDay32 * ratePerDay8, Constants.D54);
+        uint256 ratePerDay365 = IporMath.division(ratePerDay360 * ratePerDay4 * ratePerDay, Constants.D36);
+
+        apr = ratePerDay365 - Constants.D18;
     }
 
     /// @notice Gets Stanley Compound Strategy's asset amount in Compound Protocol.
@@ -158,11 +168,11 @@ contract StrategyCompound is StrategyCore, IStrategyCompound {
         emit DoClaim(_msgSender(), assets[0], treasury, balance);
     }
 
-    function setBlocksPerYear(uint256 newBlocksPerYear) external whenNotPaused onlyOwner {
-        require(newBlocksPerYear > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
-        uint256 oldBlocksPerYear = _blocksPerYear;
-        _blocksPerYear = newBlocksPerYear;
-        emit BlocksPerYearChanged(_msgSender(), oldBlocksPerYear, newBlocksPerYear);
+    function setBlocksPerDay(uint256 newBlocksPerDay) external whenNotPaused onlyOwner {
+        require(newBlocksPerDay > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
+        uint256 oldBlocksPerDay = _blocksPerDay;
+        _blocksPerDay = newBlocksPerDay;
+        emit BlocksPerDayChanged(_msgSender(), oldBlocksPerDay, newBlocksPerDay);
     }
 }
 
