@@ -9,7 +9,7 @@ import "./SpreadTypes.sol";
 
 library SpreadStorageLibs {
     using SafeCast for uint256;
-    uint256 private constant STORAGE_SLOT_BASE = 10000;
+    uint256 private constant STORAGE_SLOT_BASE = 10_000;
 
     /// Only allowed to append new value to the end of the enum
     enum StorageId {
@@ -98,9 +98,30 @@ library SpreadStorageLibs {
             );
     }
 
-    function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
+    function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
+        storageIds = new StorageId[](9);
+        keys = new string[](9);
+        storageIds[0] = StorageId.WeightedNotional28DaysDai;
+        keys[0] = "WeightedNotional28DaysDai";
+        storageIds[1] = StorageId.WeightedNotional28DaysUsdc;
+        keys[1] = "WeightedNotional28DaysUsdc";
+        storageIds[2] = StorageId.WeightedNotional28DaysUsdt;
+        keys[2] = "WeightedNotional28DaysUsdt";
+        storageIds[3] = StorageId.WeightedNotional60DaysDai;
+        keys[3] = "WeightedNotional60DaysDai";
+        storageIds[4] = StorageId.WeightedNotional60DaysUsdc;
+        keys[4] = "WeightedNotional60DaysUsdc";
+        storageIds[5] = StorageId.WeightedNotional60DaysUsdt;
+        keys[5] = "WeightedNotional60DaysUsdt";
+        storageIds[6] = StorageId.WeightedNotional90DaysDai;
+        keys[6] = "WeightedNotional90DaysDai";
+        storageIds[7] = StorageId.WeightedNotional90DaysUsdc;
+        keys[7] = "WeightedNotional90DaysUsdc";
+        storageIds[8] = StorageId.WeightedNotional90DaysUsdt;
+        keys[8] = "WeightedNotional90DaysUsdt";
+    }
 
+    function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
-//        slot = uint256(keccak256("ipor.io.storage.spread"));
     }
 }

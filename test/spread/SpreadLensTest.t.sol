@@ -20,16 +20,5 @@ contract SpreadRouterTest is SpreadBaseTestUtils {
 
     }
 
-    function testShouldReturnSupportedAssets() public {
-        // given
-        // when
-        address[] memory supportedAssets = ISpread28DaysLens(_spreadRouter).getSupportedAssets();
-
-        // then
-        assertEq(_dai, supportedAssets[0], "dai address should be the same");
-        assertEq(_usdc, supportedAssets[1], "usdc address should be the same");
-        assertEq(_usdt, supportedAssets[2], "usdt address should be the same");
-    }
-
 
 }

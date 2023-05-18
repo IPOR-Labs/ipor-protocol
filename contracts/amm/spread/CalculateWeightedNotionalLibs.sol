@@ -100,18 +100,10 @@ library CalculateWeightedNotionalLibs {
                 block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
                 maturities[i]
             );
-            weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp +  weightedNotionalReceiveFixed;
+            weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp + weightedNotionalReceiveFixed;
             unchecked {
                 ++i;
             }
         }
     }
 }
-//1928571428571428571
-//6928571428571428571
-//14928571428571428571
-
-//-----
-//1928571428571428571
-//5000000000000000000
-//8000000000000000000

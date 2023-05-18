@@ -1,26 +1,34 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "forge-std/console2.sol";
 import "./ISpread28Days.sol";
+import "./ISpread60Days.sol";
+import "./ISpread90Days.sol";
 import "./ISpread28DaysLens.sol";
 import "./OpenzeppelinStorage.sol";
 
-contract SpreadRouter is OpenzeppelinStorage {
-    bytes32 public immutable DAI;
-    bytes32 public immutable USDC;
-    bytes32 public immutable USDT;
-    address public immutable GOVERNANCE;
-    address public immutable LENS;
-    address public immutable SPREAD_28_DAYS;
+contract SpreadRouter is UUPSUpgradeable {
+    bytes32 internal immutable DAI;
+    bytes32 internal immutable USDC;
+    bytes32 internal immutable USDT;
+    address internal immutable SPREAD_28_DAYS;
+    address internal immutable SPREAD_60_DAYS;
+    address internal immutable SPREAD_90_DAYS;
+    address internal immutable AMM_ADDRESS;
+    address internal immutable STORAGE_LENS;
 
     struct DeployedContracts {
+        address ammAddress;
         address dai;
         address usdc;
         address usdt;
-        address governance;
         address lens;
         address spread28Days;
+        address spread60Days;
+        address spread90Days;
+        address storageLens;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
@@ -44,7 +52,7 @@ contract SpreadRouter is OpenzeppelinStorage {
         }
     }
 
-    function getRouterImplementation(bytes4 sig, bytes32 asset) public view returns (address) {
+    function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
@@ -52,12 +60,35 @@ contract SpreadRouter is OpenzeppelinStorage {
             //            onlyAmm();
             //            onlyNotPause();
             return SPREAD_28_DAYS;
-        }
-        if (
-            sig == ISpread28DaysLens.getSupportedAssets.selector ||
-            sig == ISpread28DaysLens.calculatePayFixed28Days.selector
+        } else if (
+            sig == ISpread60Days.calculateQuotePayFixed60Days.selector ||
+            sig == ISpread60Days.calculateQuoteReceiveFixed60Days.selector
+        ) {
+            //            onlyAmm();
+            //            onlyNotPause();
+            return SPREAD_60_DAYS;
+        } else if (
+            sig == ISpread90Days.calculateQuotePayFixed90Days.selector ||
+            sig == ISpread90Days.calculateQuoteReceiveFixed90Days.selector
+        ) {
+            //            onlyAmm();
+            //            onlyNotPause();
+            return SPREAD_90_DAYS;
+        } else if (
+            sig == ISpread28DaysLens.calculatePayFixed28Days.selector ||
+            sig == ISpread28DaysLens.calculateReceiveFixed28Days.selector
         ) {
             return SPREAD_28_DAYS;
+        } else if (
+            sig == ISpread60DaysLens.calculatePayFixed60Days.selector ||
+            sig == ISpread60DaysLens.calculateReceiveFixed60Days.selector
+        ) {
+            return SPREAD_60_DAYS;
+        } else if (
+            sig == ISpread90DaysLens.calculatePayFixed90Days.selector ||
+            sig == ISpread90DaysLens.calculateReceiveFixed90Days.selector
+        ) {
+            return SPREAD_90_DAYS;
         }
         return address(0);
     }
@@ -94,8 +125,7 @@ contract SpreadRouter is OpenzeppelinStorage {
     }
 
     fallback() external {
-        bytes32 assetBytes = msg.data.length >= 36 ? bytes32(msg.data[4:36]) : bytes32(0);
-        _delegate(getRouterImplementation(msg.sig, assetBytes));
+        _delegate(getRouterImplementation(msg.sig));
     }
 
     /**
