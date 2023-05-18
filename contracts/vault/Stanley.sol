@@ -39,7 +39,7 @@ abstract contract Stanley is
     address internal _strategyCompound;
 
     modifier onlyMilton() {
-        require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
+        require(_msgSender() == _milton, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
@@ -70,10 +70,7 @@ abstract contract Stanley is
 
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(ivToken != address(0), IporErrors.WRONG_ADDRESS);
-        require(
-            _getDecimals() == IERC20MetadataUpgradeable(asset).decimals(),
-            IporErrors.WRONG_DECIMALS
-        );
+        require(_getDecimals() == IERC20MetadataUpgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
 
         IIvToken iivToken = IIvToken(ivToken);
         require(asset == iivToken.getAsset(), IporErrors.ADDRESSES_MISMATCH);
@@ -135,11 +132,7 @@ abstract contract Stanley is
         uint256 assetAmount = IporMath.convertWadToAssetDecimals(amount, _getDecimals());
         require(assetAmount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
 
-        (
-            address strategyMaxApy,
-            address strategyAaveAddr,
-            address strategyCompoundAddr
-        ) = _getMaxApyStrategy();
+        (address strategyMaxApy, address strategyAaveAddr, address strategyCompoundAddr) = _getMaxApyStrategy();
 
         (
             ,
@@ -156,14 +149,7 @@ abstract contract Stanley is
 
         _ivToken.mint(_msgSender(), ivTokenAmount);
 
-        emit Deposit(
-            block.timestamp,
-            _msgSender(),
-            strategyMaxApy,
-            exchangeRate,
-            depositedAmount,
-            ivTokenAmount
-        );
+        emit Deposit(block.timestamp, _msgSender(), strategyMaxApy, exchangeRate, depositedAmount, ivTokenAmount);
 
         vaultBalance = assetBalanceAaveStrategy + assetBalanceCompoundStrategy + depositedAmount;
     }
@@ -191,15 +177,11 @@ abstract contract Stanley is
 
         uint256 senderIvTokens = ivToken.balanceOf(_msgSender());
 
-        (
-            address selectedStrategy,
-            uint256 selectedWithdrawAmount,
-
-        ) = _selectStrategyAndWithdrawAmount(
-                amount,
-                assetBalanceAaveStrategy,
-                assetBalanceCompoundStrategy
-            );
+        (address selectedStrategy, uint256 selectedWithdrawAmount, ) = _selectStrategyAndWithdrawAmount(
+            amount,
+            assetBalanceAaveStrategy,
+            assetBalanceCompoundStrategy
+        );
 
         if (selectedWithdrawAmount > 0) {
             //Transfer from Strategy to Stanley
@@ -285,11 +267,7 @@ abstract contract Stanley is
     }
 
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
-        (
-            address strategyMaxApy,
-            address strategyAave,
-            address strategyCompound
-        ) = _getMaxApyStrategy();
+        (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
 
         address from;
 
@@ -317,12 +295,7 @@ abstract contract Stanley is
         _strategyAave = _setStrategy(_strategyAave, newStrategyAddr);
     }
 
-    function setStrategyCompound(address newStrategyAddr)
-        external
-        override
-        whenNotPaused
-        onlyOwner
-    {
+    function setStrategyCompound(address newStrategyAddr) external override whenNotPaused onlyOwner {
         _strategyCompound = _setStrategy(_strategyCompound, newStrategyAddr);
     }
 
@@ -398,36 +371,24 @@ abstract contract Stanley is
             _revokeStrategyAllowance(oldStrategyAddress);
         }
 
-        emit StrategyChanged(
-            _msgSender(),
-            oldStrategyAddress,
-            newStrategyAddress,
-            address(newShareToken)
-        );
+        emit StrategyChanged(_msgSender(), oldStrategyAddress, newStrategyAddress, address(newShareToken));
 
         return newStrategyAddress;
     }
 
-    function _transferFromOldToNewStrategy(address oldStrategyAddress, address newStrategyAddress)
-        internal
-    {
+    function _transferFromOldToNewStrategy(address oldStrategyAddress, address newStrategyAddress) internal {
         uint256 assetAmount = IStrategy(oldStrategyAddress).balanceOf();
 
         if (assetAmount > 0) {
             IStrategy(oldStrategyAddress).withdraw(assetAmount);
             uint256 stanleyAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-            IStrategy(newStrategyAddress).deposit(
-                IporMath.convertToWad(stanleyAssetAmount, _getDecimals())
-            );
+            IStrategy(newStrategyAddress).deposit(IporMath.convertToWad(stanleyAssetAmount, _getDecimals()));
         }
     }
 
     function _revokeStrategyAllowance(address strategyAddress) internal {
         IERC20Upgradeable(_asset).safeApprove(strategyAddress, 0);
-        IERC20Upgradeable(IStrategy(strategyAddress).getShareToken()).safeApprove(
-            strategyAddress,
-            0
-        );
+        IERC20Upgradeable(IStrategy(strategyAddress).getShareToken()).safeApprove(strategyAddress, 0);
     }
 
     /**
@@ -462,16 +423,10 @@ abstract contract Stanley is
             if (totalBalanceWithWithdrawnAmount == 0 || ivTokenTotalSupply == 0) {
                 exchangeRate = Constants.D18;
             } else {
-                exchangeRate = IporMath.division(
-                    totalBalanceWithWithdrawnAmount * Constants.D18,
-                    ivTokenTotalSupply
-                );
+                exchangeRate = IporMath.division(totalBalanceWithWithdrawnAmount * Constants.D18, ivTokenTotalSupply);
             }
 
-            ivTokenWithdrawnAmount = IporMath.division(
-                withdrawnAmount * Constants.D18,
-                exchangeRate
-            );
+            ivTokenWithdrawnAmount = IporMath.division(withdrawnAmount * Constants.D18, exchangeRate);
 
             emit Withdraw(
                 block.timestamp,
@@ -521,11 +476,7 @@ abstract contract Stanley is
             uint256
         )
     {
-        (
-            address strategyMaxApy,
-            address strategyAave,
-            address strategyCompound
-        ) = _getMaxApyStrategy();
+        (address strategyMaxApy, address strategyAave, address strategyCompound) = _getMaxApyStrategy();
 
         if (strategyMaxApy == strategyCompound && amount <= assetBalanceAaveStrategy) {
             return (strategyAave, amount, assetBalanceAaveStrategy);

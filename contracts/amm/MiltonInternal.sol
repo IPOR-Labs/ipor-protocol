@@ -39,28 +39,9 @@ abstract contract MiltonInternal is
     using SafeCast for int256;
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
-    //@notice max total amount used when opening position
-    uint256 internal constant _MAX_SWAP_COLLATERAL_AMOUNT = 1e23;
-
-    uint256 internal constant _MAX_LP_UTILIZATION_RATE = 8 * 1e17;
-
-    uint256 internal constant _MAX_LP_UTILIZATION_PER_LEG_RATE = 5 * 1e16;
 
     /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
     uint256 internal constant _OPENING_FEE_RATE = 5e14;
-
-    /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
-    /// below value define how big pie going to Treasury Balance
-    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
-    uint256 internal constant _OPENING_FEE_FOR_TREASURY_PORTION_RATE = 5e17;
-
-    uint256 internal constant _IPOR_PUBLICATION_FEE = 10 * 1e18;
-
-    uint256 internal constant _LIQUIDATION_DEPOSIT_AMOUNT = 25;
-
-    uint256 internal constant _MAX_LEVERAGE = 100 * 1e18;
-
-    uint256 internal constant _MIN_LEVERAGE = 10 * 1e18;
 
     uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
 
@@ -113,32 +94,6 @@ abstract contract MiltonInternal is
 
     function getRiskManagementOracle() external view returns (address) {
         return address(_iporRiskManagementOracle);
-    }
-
-    function getMaxSwapCollateralAmount() external view override returns (uint256) {
-        return _getMaxSwapCollateralAmount();
-    }
-
-    function getOpeningFeeRate() external view override returns (uint256) {
-        return _getOpeningFeeRate();
-    }
-
-    function getOpeningFeeTreasuryPortionRate() external view override returns (uint256) {
-        return _getOpeningFeeTreasuryPortionRate();
-    }
-
-    function getIporPublicationFee() external view override returns (uint256) {
-        return _getIporPublicationFee();
-    }
-
-    /// @notice Returns configured liquidation deposit amount
-    /// @return liquidation deposit amount, value represented WITHOUT decimals
-    function getLiquidationDepositAmount() external view override returns (uint256) {
-        return _getLiquidationDepositAmount();
-    }
-
-    function getWadLiquidationDepositAmount() external view override returns (uint256) {
-        return _getLiquidationDepositAmount() * Constants.D18;
     }
 
     function getAccruedBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
@@ -226,12 +181,6 @@ abstract contract MiltonInternal is
         return address(_miltonSpreadModel);
     }
 
-    function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external override onlyOwner whenNotPaused {
-        uint256 oldThreshold = _autoUpdateIporIndexThreshold;
-        _autoUpdateIporIndexThreshold = newThreshold.toUint32();
-        emit AutoUpdateIporIndexThresholdChanged(_msgSender(), oldThreshold, newThreshold);
-    }
-
     function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
         return _getAutoUpdateIporIndexThreshold();
     }
@@ -258,28 +207,8 @@ abstract contract MiltonInternal is
 
     function _getDecimals() internal view virtual returns (uint256);
 
-    function _getMaxSwapCollateralAmount() internal view virtual returns (uint256) {
-        return _MAX_SWAP_COLLATERAL_AMOUNT;
-    }
-
     function _getOpeningFeeRate() internal view virtual returns (uint256) {
         return _OPENING_FEE_RATE;
-    }
-
-    function _getOpeningFeeTreasuryPortionRate() internal view virtual returns (uint256) {
-        return _OPENING_FEE_FOR_TREASURY_PORTION_RATE;
-    }
-
-    function _getIporPublicationFee() internal view virtual returns (uint256) {
-        return _IPOR_PUBLICATION_FEE;
-    }
-
-    function _getLiquidationDepositAmount() internal view virtual returns (uint256) {
-        return _LIQUIDATION_DEPOSIT_AMOUNT;
-    }
-
-    function _getMinLeverage() internal view virtual returns (uint256) {
-        return _MIN_LEVERAGE;
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer() internal view virtual returns (uint256) {

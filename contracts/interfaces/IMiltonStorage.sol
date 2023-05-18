@@ -12,7 +12,7 @@ interface IMiltonStorage {
     /// @return current Milton Storage version, integer
     function getVersion() external pure returns (uint256);
 
-    function getMilton() external view returns (address);
+    function getIporProtocolRouter() external view returns (address);
 
     function getJoseph() external view returns (address);
 

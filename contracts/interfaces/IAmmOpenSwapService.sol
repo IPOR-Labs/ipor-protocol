@@ -132,7 +132,7 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    /// @notice Emmited when trader opens new swap.
+    /// @notice Emitted when trader opens new swap.
     event OpenSwap(
         /// @notice swap ID.
         uint256 indexed swapId,

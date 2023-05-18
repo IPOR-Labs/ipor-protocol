@@ -20,7 +20,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
     using SoapIndicatorLogic for AmmMiltonStorageTypes.SoapIndicatorsMemory;
 
     uint32 private _lastSwapId;
-    address private _milton;
+    address private _iporProtocolRouter;
     address private _joseph;
 
     AmmMiltonStorageTypes.Balances internal _balances;
@@ -31,8 +31,8 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
 
     mapping(address => uint128) private _liquidityPoolAccountContribution;
 
-    modifier onlyMilton() {
-        require(_msgSender() == _milton, IporErrors.CALLER_NOT_MILTON);
+    modifier onlyRouter() {
+        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
@@ -60,8 +60,8 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
         return _lastSwapId;
     }
 
-    function getMilton() external view returns (address) {
-        return _milton;
+    function getIporProtocolRouter() external view returns (address) {
+        return _iporProtocolRouter;
     }
 
     function getJoseph() external view returns (address) {
@@ -308,7 +308,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
     function updateStorageWhenOpenSwapPayFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
         external
         override
-        onlyMilton
+        onlyRouter
         returns (uint256)
     {
         uint256 id = _updateSwapsWhenOpenPayFixed(newSwap);
@@ -331,7 +331,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
     function updateStorageWhenOpenSwapReceiveFixed(AmmTypes.NewSwap memory newSwap, uint256 cfgIporPublicationFee)
         external
         override
-        onlyMilton
+        onlyRouter
         returns (uint256)
     {
         uint256 id = _updateSwapsWhenOpenReceiveFixed(newSwap);
@@ -354,7 +354,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external override onlyMilton {
+    ) external override onlyRouter {
         _updateSwapsWhenClosePayFixed(iporSwap);
         _updateBalancesWhenCloseSwapPayFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapPayFixed(iporSwap, closingTimestamp);
@@ -364,7 +364,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closingTimestamp
-    ) external override onlyMilton {
+    ) external override onlyRouter {
         _updateSwapsWhenCloseReceiveFixed(iporSwap);
         _updateBalancesWhenCloseSwapReceiveFixed(iporSwap, payoff);
         _updateSoapIndicatorsWhenCloseSwapReceiveFixed(iporSwap, closingTimestamp);
@@ -373,7 +373,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
     function updateStorageWhenWithdrawFromStanley(uint256 withdrawnAmount, uint256 vaultBalance)
         external
         override
-        onlyMilton
+        onlyRouter
     {
         uint256 currentVaultBalance = _balances.vault;
         // We nedd this because for compound if we deposit and withdraw we could get negative intrest based on rounds
@@ -390,7 +390,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
     function updateStorageWhenDepositToStanley(uint256 depositAmount, uint256 vaultBalance)
         external
         override
-        onlyMilton
+        onlyRouter
     {
         require(vaultBalance >= depositAmount, MiltonErrors.VAULT_BALANCE_LOWER_THAN_DEPOSIT_VALUE);
 
@@ -430,8 +430,8 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
 
     function setMilton(address newMilton) external override onlyOwner {
         require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
-        address oldMilton = _milton;
-        _milton = newMilton;
+        address oldMilton = _iporProtocolRouter;
+        _iporProtocolRouter = newMilton;
         emit MiltonChanged(_msgSender(), oldMilton, newMilton);
     }
 

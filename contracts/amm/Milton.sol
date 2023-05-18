@@ -74,10 +74,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         _stanley = IStanley(stanley);
     }
 
-    function calculateSpread() external view override returns (int256 spreadPayFixed, int256 spreadReceiveFixed) {
-        (spreadPayFixed, spreadReceiveFixed) = _calculateSpread(block.timestamp);
-    }
-
     function calculateSoap()
         external
         view
@@ -238,92 +234,6 @@ abstract contract Milton is MiltonInternal, IMilton {
         uint256 payoutForLiquidator;
         (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(swapIds, closeTimestamp);
         _transferLiquidationDepositAmount(_msgSender(), payoutForLiquidator);
-    }
-
-    function _calculateSpread(uint256 calculateTimestamp)
-        internal
-        view
-        returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
-    {
-        IporTypes.AccruedIpor memory accruedIpor = _iporOracle.getAccruedIndex(calculateTimestamp, _asset);
-
-        IporTypes.MiltonBalancesMemory memory balance = _getAccruedBalance();
-
-        IMiltonSpreadModel miltonSpreadModel = _miltonSpreadModel;
-
-        spreadPayFixed = miltonSpreadModel.calculateSpreadPayFixed(accruedIpor, balance);
-        spreadReceiveFixed = miltonSpreadModel.calculateSpreadReceiveFixed(accruedIpor, balance);
-    }
-
-    function _beforeOpenSwap(
-        uint256 openTimestamp,
-        uint256 totalAmount,
-        uint256 leverage
-    ) internal returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
-        require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
-
-        require(IERC20Upgradeable(_asset).balanceOf(_msgSender()) >= totalAmount, IporErrors.ASSET_BALANCE_TOO_LOW);
-
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, _getDecimals());
-
-        uint256 liquidationDepositAmount = _getLiquidationDepositAmount();
-        uint256 wadLiquidationDepositAmount = liquidationDepositAmount * Constants.D18;
-
-        require(
-            wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee(),
-            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-
-        (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
-            28,
-            wadTotalAmount,
-            leverage,
-            wadLiquidationDepositAmount,
-            _getIporPublicationFee(),
-            _getOpeningFeeRate()
-        );
-
-        (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = _splitOpeningFeeAmount(
-            openingFeeAmount,
-            _getOpeningFeeTreasuryPortionRate()
-        );
-
-        require(collateral <= _getMaxSwapCollateralAmount(), MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH);
-
-        require(
-            wadTotalAmount > wadLiquidationDepositAmount + _getIporPublicationFee() + openingFeeAmount,
-            MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
-        );
-        IporTypes.AccruedIpor memory accruedIndex;
-
-        uint256 autoUpdateIporIndexThreshold = _getAutoUpdateIporIndexThreshold();
-
-        if (autoUpdateIporIndexThreshold != 0 && collateral > autoUpdateIporIndexThreshold) {
-            accruedIndex = _iporOracle.updateIndex(_asset);
-        } else {
-            accruedIndex = _iporOracle.getAccruedIndex(openTimestamp, _asset);
-        }
-
-        return
-            AmmMiltonTypes.BeforeOpenSwapStruct(
-                wadTotalAmount,
-                collateral,
-                notional,
-                openingFeeLPAmount,
-                openingFeeTreasuryAmount,
-                _getIporPublicationFee(),
-                liquidationDepositAmount,
-                accruedIndex
-            );
-    }
-
-    function _splitOpeningFeeAmount(uint256 openingFeeAmount, uint256 openingFeeForTreasureRate)
-        internal
-        pure
-        returns (uint256 liquidityPoolAmount, uint256 treasuryAmount)
-    {
-        treasuryAmount = IporMath.division(openingFeeAmount * openingFeeForTreasureRate, Constants.D18);
-        liquidityPoolAmount = openingFeeAmount - treasuryAmount;
     }
 
     function _calculatePayoff(

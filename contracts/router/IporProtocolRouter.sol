@@ -25,7 +25,7 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         _disableInitializers();
     }
 
-    function getRouterImplementation(bytes4 sig) public view returns (address) {
+    function getRouterImplementation(bytes4 sig) public returns (address) {
         if (
             sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
             sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
@@ -52,6 +52,9 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmOpenSwapService.openSwapReceiveFixed60daysDai.selector ||
             sig == IAmmOpenSwapService.openSwapReceiveFixed90daysDai.selector
         ) {
+            whenNotPaused();
+            nonReentrant();
+            _reentrancyStatus = _ENTERED;
             return AMM_OPEN_SWAP_SERVICE_ADDRESS;
         }
 

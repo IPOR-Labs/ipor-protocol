@@ -68,7 +68,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     struct Context {
-        address behalfOf;
+        address onBehalfOf;
         address asset;
         address ammStorage;
         address ammTreasury;
@@ -84,19 +84,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 maxLeverage;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
-    }
-
-    struct SpreadInputs {
-        address asset;
-        uint256 swapNotional;
-        uint256 maxLeverage;
-        uint256 maxLpUtilizationPerLegRate;
-        int256 baseSpread;
-        uint256 totalCollateralPayFixed;
-        uint256 totalCollateralReceiveFixed;
-        uint256 liquidityPool;
-        uint256 totalNotionalPayFixed;
-        uint256 totalNotionalReceiveFixed;
     }
 
     constructor(
@@ -138,13 +125,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -155,13 +142,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -172,13 +159,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -189,13 +176,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -207,13 +194,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -224,13 +211,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysUsdt(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdt,
             ammStorage: _usdtAmmStorage,
             ammTreasury: _usdtAmmTreasury,
@@ -241,13 +228,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -259,13 +246,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -276,13 +263,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -293,13 +280,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -310,13 +297,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -327,13 +314,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysUsdc(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _usdc,
             ammStorage: _usdcAmmStorage,
             ammTreasury: _usdcAmmTreasury,
@@ -344,13 +331,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed28daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -361,13 +348,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed60daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -378,13 +365,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapPayFixed90daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -395,13 +382,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed28daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -412,13 +399,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed60daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -429,13 +416,13 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function openSwapReceiveFixed90daysDai(
-        address behalfOf,
+        address onBehalfOf,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
         Context memory context = Context({
-            behalfOf: behalfOf,
+            onBehalfOf: onBehalfOf,
             asset: _dai,
             ammStorage: _daiAmmStorage,
             ammTreasury: _daiAmmTreasury,
@@ -455,7 +442,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             context.asset,
             block.timestamp,
             totalAmount,
-            leverage
+            leverage,
+            context.maturity
         );
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(context.ammStorage)
@@ -512,7 +500,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            msg.sender,
+            context.onBehalfOf,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -543,24 +531,18 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         return newSwapId;
     }
 
-    //@param totalAmount underlying tokens transferred from buyer to Milton, represented in decimals specific for asset
     function _openSwapReceiveFixed(
         Context memory context,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
-    )
-        internal
-        returns (
-            //        string memory spreadMethodSig
-            uint256
-        )
-    {
+    ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             context.asset,
             block.timestamp,
             totalAmount,
-            leverage
+            leverage,
+            context.maturity
         );
 
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(context.ammStorage)
@@ -614,7 +596,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            msg.sender,
+            context.onBehalfOf,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -649,11 +631,12 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         address asset,
         uint256 openTimestamp,
         uint256 totalAmount,
-        uint256 leverage
+        uint256 leverage,
+        uint256 maturity
     ) internal returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
-        require(IERC20Upgradeable(asset).balanceOf(msg.sender) >= totalAmount, IporErrors.ASSET_BALANCE_TOO_LOW);
+        require(IERC20Upgradeable(asset).balanceOf(msg.sender) >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
 
         uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, IERC20MetadataUpgradeable(asset).decimals());
 
@@ -663,7 +646,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
-            28,
+            maturity,
             wadTotalAmount,
             leverage,
             _liquidationDepositAmountWad,
@@ -721,7 +704,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         if (maxCollateralPerLeg > 0) {
-            riskIndicators.maxLeveragePerLeg = leverageInRange(
+            riskIndicators.maxLeveragePerLeg = _leverageInRange(
                 IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg)
             );
         } else {
@@ -729,7 +712,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         }
     }
 
-    function leverageInRange(uint256 leverage) internal view returns (uint256) {
+    function _leverageInRange(uint256 leverage) internal view returns (uint256) {
         if (leverage > Constants.LEVERAGE_1000) {
             return Constants.LEVERAGE_1000;
         } else if (leverage < _minLeverage) {

@@ -149,9 +149,9 @@ contract MiltonFacadeDataProvider is
 //            milton.getMinLeverage(),
             maxLeveragePayFixed,
             maxLeverageReceiveFixed,
-            milton.getOpeningFeeRate(),
-            milton.getIporPublicationFee(),
-            milton.getWadLiquidationDepositAmount(),
+            0,//milton.getOpeningFeeRate(), TODO: fixit
+           0,// milton.getIporPublicationFee(), TODO: fixit
+           0,// milton.getWadLiquidationDepositAmount(), TODO: fixit
             spreadModel.calculateSpreadPayFixed(accruedIpor, balance),
             spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),
         0,//TODO:fixit

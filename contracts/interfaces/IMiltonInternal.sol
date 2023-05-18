@@ -36,68 +36,6 @@ interface IMiltonInternal {
     /// @return Stanley address used by Milton
     function getRiskManagementOracle() external view returns (address);
 
-    /// @notice Gets max swap's collateral amount value.
-    /// @dev Param used in swap validation.
-    /// @return max swap's collateral amount represented in 18 decimals
-    function getMaxSwapCollateralAmount() external view returns (uint256);
-
-    /// @notice Gets max allowed liquidity pool utilization rate.
-    /// @dev Param used in swap validation.
-    /// @return max liquidity pool utilization rate represented in 18 decimals
-//    function getMaxLpUtilizationRate() external view returns (uint256);
-
-    /// @notice Gets max liquidity pool utilization per leg.
-    /// @dev Param used in swap validation.
-    /// @return maxUtilizationRatePayFixed max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
-    /// @return maxUtilizationRateReceiveFixed max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
-//    function getMaxLpUtilizationPerLegRate() external view returns (
-//        uint256 maxUtilizationRatePayFixed,
-//        uint256 maxUtilizationRateReceiveFixed
-//    );
-
-    /// @notice Gets opening fee rate. When the trader opens swap position then fee is charged from the amount used to open the swap.
-    /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
-    /// @dev Param is used during swap opening.
-    /// @return opening fee rate represented in 18 decimals
-    function getOpeningFeeRate() external view returns (uint256);
-
-    /// @notice Gets opening fee rate used to calculate the part of the fee transferred to the Treasury. When the trader opens a position then fee is deducted from the collateral.
-    /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
-    /// This param defines the proportion how the fee is divided and distributed to either liquidity pool or threasury
-    /// @dev Param used in swap opening.
-    /// @return opening fee for treasury rate is represented in 18 decimals
-    function getOpeningFeeTreasuryPortionRate() external view returns (uint256);
-
-    /// @notice Gets IPOR publication fee. When swap is opened then publication fee is charged. This fee is intended to subsidize the publication of IPOR.
-    /// IPOR publication fee is deducted from the total amount used to open the swap.
-    /// @dev Param used in swap opening.
-    /// @return IPOR publication fee is represented in 18 decimals
-    function getIporPublicationFee() external view returns (uint256);
-
-    /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap.
-    /// Deposit is refunded to whoever closes the swap: either the buyer or the liquidator.
-    /// @return liquidation deposit is represented without decimals
-    function getLiquidationDepositAmount() external view returns (uint256);
-
-    /// @notice Gets liquidation deposit. When the swap is opened then liquidation deposit is deducted from the amount used to open the swap.
-    /// Deposit is refunded to whoever closes the swap: either the buyer or the liquidator.
-    /// @return liquidation deposit is represented in 18 decimals
-    function getWadLiquidationDepositAmount() external view returns (uint256);
-
-    /// @notice Gets max leverage value per leg.
-    /// @dev Param used in swap validation.
-    /// @return maxLeveragePayFixed max leverage per Pay Fixed leg rate represented in 18 decimals
-    /// @return maxLeverageReceiveFixed max leverage per Receive Fixed leg rate represented in 18 decimals
-//    function getMaxLeverage() external view returns (
-//        uint256 maxLeveragePayFixed,
-//        uint256 maxLeverageReceiveFixed
-//    );
-
-    /// @notice Gets min leverage value.
-    /// @dev Param used in swap validation.
-    /// @return min leverage value represented in 18 decimals
-//    function getMinLeverage() external view returns (uint256);
-
     /// @notice Gets Milton's balances including balance held by Stanley in external protocols.
     /// @dev Balances including sum of all collateral for Pay-Fixed and  Receive-Fixed legs,
     /// liquidity pool balance, and vault balance held by Stanley.
@@ -207,10 +145,6 @@ interface IMiltonInternal {
     /// @notice Sets Milton Spread Model smart contract address (contract responsible for spread calculation).
     /// @param newMiltonSpreadModel new Milton Spread Model address
     function setMiltonSpreadModel(address newMiltonSpreadModel) external;
-
-    /// @notice Sets new treshold for auto update of ipor index. Function available only to the Owner.
-    /// @param newThreshold new treshold for auto update of IPOR Index. Notice! Value represented without decimals. The value represents multiples of 1000.
-    function setAutoUpdateIporIndexThreshold(uint256 newThreshold) external;
 
     /// @notice Gets treshold for auto update of ipor index.
     /// @return treshold for auto update of IPOR Index. Represented in 18 decimals.
