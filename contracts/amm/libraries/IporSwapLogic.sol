@@ -3,6 +3,7 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/MiltonErrors.sol";
+import "../../interfaces/types/AmmTypes.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -140,5 +141,109 @@ library IporSwapLogic {
                 return swapValue;
             }
         }
+    }
+
+    /// @notice Check closable status for Swap given as a parameter.
+    /// @param iporSwap The swap to be checked
+    /// @param inputParameters The input parameters for closing swap
+    /// @param configuration The configuration for closing swap
+    /// @return closableStatus Closable status for Swap.
+    /// @dev Closable status is a one of the following values:
+    /// 0 - Swap is closable
+    /// 1 - Swap is already closed
+    /// 2 - Swap state required Buyer or Liquidator to close. Account is not Buyer nor Liquidator.
+    /// 3 - Cannot close swap, closing is too early for Buyer
+    /// 4 - Cannot close swap, closing is too early for Community
+    function getClosableStatus(
+        IporTypes.IporSwapMemory memory iporSwap,
+        CloseSwapInputParameters memory inputParameters,
+        CloseSwapConfiguration memory configuration
+    ) internal view returns (uint256) {
+        if (iporSwap.state != uint256(AmmTypes.SwapState.ACTIVE)) {
+            return 1;
+        }
+
+        if (inputParameters.account != configuration.owner) {
+            uint256 absPayoff = IporMath.absoluteValue(inputParameters.payoff);
+
+            uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
+                iporSwap.collateral,
+                configuration.minLiquidationThresholdToCloseBeforeMaturityByCommunity
+            );
+
+            if (inputParameters.closeTimestamp >= iporSwap.endTimestamp) {
+                if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
+                    if (
+                        !_isLiquidator(inputParameters.account, configuration.liquidators) &&
+                        inputParameters.account != iporSwap.buyer
+                    ) {
+                        return 2;
+                    }
+                }
+            } else {
+                uint256 minPayoffToCloseBeforeMaturityByBuyer = IporMath.percentOf(
+                    iporSwap.collateral,
+                    configuration.minLiquidationThresholdToCloseBeforeMaturityByBuyer
+                );
+
+                if (
+                    (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer &&
+                        absPayoff < minPayoffToCloseBeforeMaturityByCommunity) || absPayoff == iporSwap.collateral
+                ) {
+                    if (
+                        !_isLiquidator(inputParameters.account, configuration.liquidators) &&
+                        inputParameters.account != iporSwap.buyer
+                    ) {
+                        return 2;
+                    }
+                }
+
+                if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
+                    if (inputParameters.account == iporSwap.buyer) {
+                        if (
+                            iporSwap.endTimestamp - configuration.timeBeforeMaturityAllowedToCloseSwapByBuyer >
+                            inputParameters.closeTimestamp
+                        ) {
+                            return 3;
+                        }
+                    } else {
+                        if (
+                            iporSwap.endTimestamp - configuration.timeBeforeMaturityAllowedToCloseSwapByCommunity >
+                            inputParameters.closeTimestamp
+                        ) {
+                            return 4;
+                        }
+                    }
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    function _isLiquidator(address account, address[] memory liquidators) internal view returns (bool) {
+        bool isLiquidator = false;
+        for (uint256 i = 0; i < liquidators.length; i++) {
+            if (liquidators[i] == account) {
+                isLiquidator = true;
+                break;
+            }
+        }
+        return isLiquidator;
+    }
+
+    struct CloseSwapInputParameters {
+        address account;
+        int256 payoff;
+        uint256 closeTimestamp;
+    }
+
+    struct CloseSwapConfiguration {
+        address owner;
+        address[] liquidators;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
     }
 }

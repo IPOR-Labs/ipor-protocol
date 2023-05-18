@@ -79,123 +79,44 @@ contract AmmSwapsLens is IAmmSwapsLens {
         liquidator0 = _liquidator0;
     }
 
-    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId, address account)
-        external
-        view
-        override
-        returns (uint256 closableStatus)
-    {
+    function getClosableStatusForPayFixedSwap(
+        address asset,
+        uint256 swapId,
+        address account
+    ) external view override returns (uint256 closableStatus) {
         AssetConfiguration memory assetConfiguration = _getAssetConfiguration(asset);
         IMiltonStorage miltonStorage = IMiltonStorage(assetConfiguration.miltonStorage);
         IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
         uint256 accruedIbtPrice = iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
 
-        closableStatus = _getClosableStatusForSwap(
-            assetConfiguration,
-            account,
-            iporSwap,
-            iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice),
-            block.timestamp
+        closableStatus = iporSwap.getClosableStatus(
+            IporSwapLogic.CloseSwapInputParameters({
+                account: account,
+                payoff: iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice),
+                closeTimestamp: block.timestamp
+            }),
+            _getCloseSwapConfiguration(assetConfiguration)
         );
     }
 
-    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId, address account)
-        external
-        view
-        override
-        returns (uint256 closableStatus)
-    {
+    function getClosableStatusForReceiveFixedSwap(
+        address asset,
+        uint256 swapId,
+        address account
+    ) external view override returns (uint256 closableStatus) {
         AssetConfiguration memory assetConfiguration = _getAssetConfiguration(asset);
         IMiltonStorage miltonStorage = IMiltonStorage(assetConfiguration.miltonStorage);
         IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(swapId);
         uint256 accruedIbtPrice = iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
 
-        closableStatus = _getClosableStatusForSwap(
-            assetConfiguration,
-            account,
-            iporSwap,
-            iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice),
-            block.timestamp
+        closableStatus = iporSwap.getClosableStatus(
+            IporSwapLogic.CloseSwapInputParameters({
+                account: account,
+                payoff: iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice),
+                closeTimestamp: block.timestamp
+            }),
+            _getCloseSwapConfiguration(assetConfiguration)
         );
-    }
-
-    /// @notice Check closable status for Swap given as a parameter.
-    /// @param account Account address for which closable status is scoped
-    /// @param iporSwap The swap to be checked
-    /// @param payoff The payoff of the swap
-    /// @param closeTimestamp The timestamp of closing
-    /// @return closableStatus Closable status for Swap.
-    /// @dev Closable status is a one of the following values:
-    /// 0 - Swap is closable
-    /// 1 - Swap is already closed
-    /// 2 - Swap state required Buyer or Liquidator to close. Account is not Buyer nor Liquidator.
-    /// 3 - Cannot close swap, closing is too early for Buyer
-    /// 4 - Cannot close swap, closing is too early for Community
-    function _getClosableStatusForSwap(
-        AssetConfiguration memory assetConfiguration,
-        address account,
-        IporTypes.IporSwapMemory memory iporSwap,
-        int256 payoff,
-        uint256 closeTimestamp
-    ) internal view returns (uint256) {
-        if (iporSwap.state != uint256(AmmTypes.SwapState.ACTIVE)) {
-            return 1;
-        }
-
-        if (account != owner()) {
-            uint256 absPayoff = IporMath.absoluteValue(payoff);
-
-            uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
-                iporSwap.collateral,
-                assetConfiguration.minLiquidationThresholdToCloseBeforeMaturityByCommunity
-            );
-
-            if (closeTimestamp >= iporSwap.endTimestamp) {
-                if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
-                    if (!_isLiquidator(account) && account != iporSwap.buyer) {
-                        return 2;
-                    }
-                }
-            } else {
-                uint256 minPayoffToCloseBeforeMaturityByBuyer = IporMath.percentOf(
-                    iporSwap.collateral,
-                    assetConfiguration.minLiquidationThresholdToCloseBeforeMaturityByBuyer
-                );
-
-                if (
-                    (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer &&
-                        absPayoff < minPayoffToCloseBeforeMaturityByCommunity) || absPayoff == iporSwap.collateral
-                ) {
-                    if (!_isLiquidator(account) && account != iporSwap.buyer) {
-                        return 2;
-                    }
-                }
-
-                if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
-                    if (account == iporSwap.buyer) {
-                        if (
-                            iporSwap.endTimestamp - assetConfiguration.timeBeforeMaturityAllowedToCloseSwapByBuyer >
-                            closeTimestamp
-                        ) {
-                            return 3;
-                        }
-                    } else {
-                        if (
-                            iporSwap.endTimestamp - assetConfiguration.timeBeforeMaturityAllowedToCloseSwapByCommunity >
-                            closeTimestamp
-                        ) {
-                            return 4;
-                        }
-                    }
-                }
-            }
-        }
-
-        return 0;
-    }
-
-    function _isLiquidator(address liquidator) internal view returns (bool) {
-        return liquidator0 == liquidator;
     }
 
     function getSwapsPayFixed(
@@ -357,6 +278,29 @@ contract AmmSwapsLens is IAmmSwapsLens {
         } else {
             revert("Unsupported asset");
         }
+    }
+
+    function _getCloseSwapConfiguration(AssetConfiguration memory assetConfiguration)
+        internal
+        view
+        returns (IporSwapLogic.CloseSwapConfiguration memory configuration)
+    {
+        configuration = IporSwapLogic.CloseSwapConfiguration({
+            owner: owner(),
+            liquidators: _getLiquidators(),
+            minLiquidationThresholdToCloseBeforeMaturityByBuyer: assetConfiguration
+                .minLiquidationThresholdToCloseBeforeMaturityByBuyer,
+            minLiquidationThresholdToCloseBeforeMaturityByCommunity: assetConfiguration
+                .minLiquidationThresholdToCloseBeforeMaturityByCommunity,
+            timeBeforeMaturityAllowedToCloseSwapByBuyer: assetConfiguration.timeBeforeMaturityAllowedToCloseSwapByBuyer,
+            timeBeforeMaturityAllowedToCloseSwapByCommunity: assetConfiguration
+                .timeBeforeMaturityAllowedToCloseSwapByCommunity
+        });
+    }
+
+    function _getLiquidators() internal view returns (address[] memory liquidators) {
+        liquidators = new address[](1);
+        liquidators[0] = liquidator0;
     }
 
     struct AssetConfiguration {
