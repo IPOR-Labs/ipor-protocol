@@ -1,11 +1,31 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
+import "./types/IporRiskManagementOracleTypes.sol";
+
 interface IIporRiskManagementOracle {
     /// @notice Returns current version of IIporRiskManagementOracle's
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
     /// @return current IIporRiskManagementOracle version
     function getVersion() external pure returns (uint256);
+
+    /// @notice Gets risk indicators and base spread for a given asset, swap direction and duration. Rates represented in 6 decimals. 1 = 0.0001%
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @param direction swap direction, 0 = pay fixed, 1 = receive fixed
+    /// @param duration swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+    /// @return maxNotionalPerLeg maximum notional value for given leg
+    /// @return maxUtilizationRatePerLeg maximum utilization rate for given leg
+    /// @return maxUtilizationRate maximum utilization rate for both legs
+    /// @return spread spread for given direction and duration
+    function getOpenSwapParameters(address asset, uint256 direction, uint256 duration)
+    external
+    view
+    returns (
+        uint256 maxNotionalPerLeg,
+        uint256 maxUtilizationRatePerLeg,
+        uint256 maxUtilizationRate,
+        int256 spread
+    );
 
     /// @notice Gets risk indicators for a given asset. Amounts and rates represented in 18 decimals.
     /// @param asset underlying / stablecoin address supported in Ipor Protocol
@@ -25,6 +45,28 @@ interface IIporRiskManagementOracle {
             uint256 maxUtilizationRateReceiveFixed,
             uint256 maxUtilizationRate,
             uint256 lastUpdateTimestamp
+        );
+
+    /// @notice Gets base spreads for a given asset. Rates represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported in Ipor Protocol
+    /// @return lastUpdateTimestamp Last base spreads update done by off-chain service
+    /// @return spread28dPayFixed spread for 28 days pay fixed swap
+    /// @return spread28dReceiveFixed spread for 28 days receive fixed swap
+    /// @return spread60dPayFixed spread for 60 days pay fixed swap
+    /// @return spread60dReceiveFixed spread for 60 days receive fixed swap
+    /// @return spread90dPayFixed spread for 90 days pay fixed swap
+    /// @return spread90dReceiveFixed spread for 90 days receive fixed swap
+    function getBaseSpreads(address asset)
+        external
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
         );
 
     /// @notice Updates risk indicators for a given asset. Values and rates are not represented in 18 decimals.
@@ -61,20 +103,52 @@ interface IIporRiskManagementOracle {
         uint256[] memory maxUtilizationRate
     ) external;
 
-    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner. Initialized with notional equals 0 and max utilization equals 0. Values and rates are not represented in 18 decimals.
+    /// @notice Updates base spreads for a given asset. Rates are not represented in 18 decimals
+    /// @dev Emmits {BaseSpreadsUpdated} event.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param spread28dPayFixed spread for 28 days pay fixed swap
+    /// @param spread28dReceiveFixed spread for 28 days receive fixed swap
+    /// @param spread60dPayFixed spread for 60 days pay fixed swap
+    /// @param spread60dReceiveFixed spread for 60 days receive fixed swap
+    /// @param spread90dPayFixed spread for 90 days pay fixed swap
+    /// @param spread90dReceiveFixed spread for 90 days receive fixed swap
+    function updateBaseSpreads(
+        address asset,
+        int256 spread28dPayFixed,
+        int256 spread28dReceiveFixed,
+        int256 spread60dPayFixed,
+        int256 spread60dReceiveFixed,
+        int256 spread90dPayFixed,
+        int256 spread90dReceiveFixed
+    ) external;
+
+    /// @notice Updates base spreads for a multiple assets.
+    /// @dev Emmits {BaseSpreadsUpdated} event.
+    /// @param asset underlying / stablecoin addresses supported by IPOR Protocol
+    /// @param spread28dPayFixed spread for 28 days pay fixed swap
+    /// @param spread28dReceiveFixed spread for 28 days receive fixed swap
+    /// @param spread60dPayFixed spread for 60 days pay fixed swap
+    /// @param spread60dReceiveFixed spread for 60 days receive fixed swap
+    /// @param spread90dPayFixed spread for 90 days pay fixed swap
+    /// @param spread90dReceiveFixed spread for 90 days receive fixed swap
+    function updateBaseSpreads(
+        address[] memory asset,
+        int256[] memory spread28dPayFixed,
+        int256[] memory spread28dReceiveFixed,
+        int256[] memory spread60dPayFixed,
+        int256[] memory spread60dReceiveFixed,
+        int256[] memory spread90dPayFixed,
+        int256[] memory spread90dReceiveFixed
+    ) external;
+
+    /// @notice Adds asset which IPOR Protocol will support. Function available only for Owner.
     /// @param asset underlying / stablecoin address which will be supported by IPOR Protocol.
-    /// @param maxNotionalPayFixed maximum notional value for pay fixed leg, 1 = 10k
-    /// @param maxNotionalReceiveFixed maximum notional value for receive fixed leg, 1 = 10k
-    /// @param maxUtilizationRatePayFixed maximum utilization rate for pay fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRateReceiveFixed maximum utilization rate for receive fixed leg, 1 = 0.01%
-    /// @param maxUtilizationRate maximum utilization rate for both legs, 1 = 0.01%
+    /// @param riskIndicators risk indicators
+    /// @param baseSpreads base spread for each maturities and both legs
     function addAsset(
         address asset,
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
+        IporRiskManagementOracleTypes.BaseSpreads calldata baseSpreads
     ) external;
 
     /// @notice Removes asset which IPOR Protocol will not support. Function available only for Owner.
@@ -120,6 +194,24 @@ interface IIporRiskManagementOracle {
         uint256 maxUtilizationRatePayFixed,
         uint256 maxUtilizationRateReceiveFixed,
         uint256 maxUtilizationRate
+    );
+
+    /// @notice event emitted when base spreads are updated. Rates are represented in 18 decimals.
+    /// @param asset underlying / stablecoin address supported by IPOR Protocol
+    /// @param baseSpreads28dPayFixed spread for 28 days pay fixed swap
+    /// @param baseSpreads28dReceiveFixed spread for 28 days receive fixed swap
+    /// @param baseSpreads60dPayFixed spread for 60 days pay fixed swap
+    /// @param baseSpreads60dReceiveFixed spread for 60 days receive fixed swap
+    /// @param baseSpreads90dPayFixed spread for 90 days pay fixed swap
+    /// @param baseSpreads90dReceiveFixed spread for 90 days receive fixed swap
+    event BaseSpreadsUpdated(
+        address indexed asset,
+        int256 baseSpreads28dPayFixed,
+        int256 baseSpreads28dReceiveFixed,
+        int256 baseSpreads60dPayFixed,
+        int256 baseSpreads60dReceiveFixed,
+        int256 baseSpreads90dPayFixed,
+        int256 baseSpreads90dReceiveFixed
     );
 
     /// @notice event emitted when new asset is added

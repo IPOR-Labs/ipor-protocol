@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/RiskManagementOracleStorageTypes.sol";
+import "./libraries/IporRiskManagementOracleStorageTypes.sol";
 import "../libraries/errors/IporRiskManagementOracleErrors.sol";
 
 /**
@@ -22,9 +22,11 @@ contract IporRiskManagementOracle is
     IIporRiskManagementOracle
 {
     using SafeCast for uint256;
+    using SafeCast for int256;
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage) internal _indicators;
+    mapping(address => IporRiskManagementOracleStorageTypes.BaseSpreadsStorage) internal _baseSpreads;
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporRiskManagementOracleErrors.CALLER_NOT_UPDATER);
@@ -38,11 +40,8 @@ contract IporRiskManagementOracle is
 
     function initialize(
         address[] memory assets,
-        uint256[] memory maxNotionalPayFixed,
-        uint256[] memory maxNotionalReceiveFixed,
-        uint256[] memory maxUtilizationRatePayFixed,
-        uint256[] memory maxUtilizationRateReceiveFixed,
-        uint256[] memory maxUtilizationRate
+        IporRiskManagementOracleTypes.RiskIndicators[] calldata riskIndicators,
+        IporRiskManagementOracleTypes.BaseSpreads[] calldata baseSpreads
     ) public initializer {
         __Pausable_init_unchained();
         __Ownable_init_unchained();
@@ -51,32 +50,48 @@ contract IporRiskManagementOracle is
         uint256 assetsLength = assets.length;
 
         require(
-            assetsLength == maxNotionalPayFixed.length &&
-                assetsLength == maxNotionalReceiveFixed.length &&
-                assetsLength == maxUtilizationRatePayFixed.length &&
-                assetsLength == maxUtilizationRateReceiveFixed.length &&
-                assetsLength == maxUtilizationRate.length,
+            assetsLength == riskIndicators.length && assetsLength == baseSpreads.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
         for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             _indicators[assets[i]] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
-                maxNotionalPayFixed[i].toUint64(),
-                maxNotionalReceiveFixed[i].toUint64(),
-                maxUtilizationRatePayFixed[i].toUint16(),
-                maxUtilizationRateReceiveFixed[i].toUint16(),
-                maxUtilizationRate[i].toUint16(),
+                riskIndicators[i].maxNotionalPayFixed.toUint64(),
+                riskIndicators[i].maxNotionalReceiveFixed.toUint64(),
+                riskIndicators[i].maxUtilizationRatePayFixed.toUint16(),
+                riskIndicators[i].maxUtilizationRateReceiveFixed.toUint16(),
+                riskIndicators[i].maxUtilizationRate.toUint16(),
                 block.timestamp.toUint32()
             );
 
             emit RiskIndicatorsUpdated(
                 assets[i],
-                maxNotionalPayFixed[i],
-                maxNotionalReceiveFixed[i],
-                maxUtilizationRatePayFixed[i],
-                maxUtilizationRateReceiveFixed[i],
-                maxUtilizationRate[i]
+                riskIndicators[i].maxNotionalPayFixed,
+                riskIndicators[i].maxNotionalReceiveFixed,
+                riskIndicators[i].maxUtilizationRatePayFixed,
+                riskIndicators[i].maxUtilizationRateReceiveFixed,
+                riskIndicators[i].maxUtilizationRate
+            );
+
+            _baseSpreads[assets[i]] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
+                block.timestamp.toUint32(),
+                baseSpreads[i].spread28dPayFixed.toInt24(),
+                baseSpreads[i].spread28dReceiveFixed.toInt24(),
+                baseSpreads[i].spread60dPayFixed.toInt24(),
+                baseSpreads[i].spread60dReceiveFixed.toInt24(),
+                baseSpreads[i].spread90dPayFixed.toInt24(),
+                baseSpreads[i].spread90dReceiveFixed.toInt24()
+            );
+
+            emit BaseSpreadsUpdated(
+                assets[i],
+                baseSpreads[i].spread28dPayFixed,
+                baseSpreads[i].spread28dReceiveFixed,
+                baseSpreads[i].spread60dPayFixed,
+                baseSpreads[i].spread60dReceiveFixed,
+                baseSpreads[i].spread90dPayFixed,
+                baseSpreads[i].spread90dReceiveFixed
             );
         }
     }
@@ -85,10 +100,106 @@ contract IporRiskManagementOracle is
         return 1;
     }
 
+    function getOpenSwapParameters(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    )
+        external
+        view
+        override
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxUtilizationRatePerLeg,
+            uint256 maxUtilizationRate,
+            int256 spread
+        )
+    {
+        (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate) = _getRiskIndicatorsPerLeg(asset, direction);
+        spread = _getSpread(asset, direction, duration);
+        return (maxNotionalPerLeg, maxUtilizationRatePerLeg, maxUtilizationRate, spread);
+    }
+
+    function _getRiskIndicatorsPerLeg(address asset, uint256 direction)
+        internal
+        view
+        returns (
+            uint256 maxNotionalPerLeg,
+            uint256 maxUtilizationRatePerLeg,
+            uint256 maxUtilizationRate
+        )
+    {
+        (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRateBothLegs,
+
+        ) = _getRiskIndicators(asset);
+
+        if (direction == 0) {
+            return (maxNotionalPayFixed, maxUtilizationRatePayFixed, maxUtilizationRateBothLegs);
+        } else {
+            return (maxNotionalReceiveFixed, maxUtilizationRateReceiveFixed, maxUtilizationRateBothLegs);
+        }
+    }
+
+    function _getSpread(
+        address asset,
+        uint256 direction,
+        uint256 duration
+    ) internal view returns (int256) {
+        (
+            ,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        ) = _getBaseSpreads(asset);
+
+        if (duration == 0) {
+            if (direction == 0) {
+                return spread28dPayFixed;
+            } else {
+                return spread28dReceiveFixed;
+            }
+        } else if (duration == 1) {
+            if (direction == 0) {
+                return spread60dPayFixed;
+            } else {
+                return spread60dReceiveFixed;
+            }
+        } else {
+            if (direction == 0) {
+                return spread90dPayFixed;
+            } else {
+                return spread90dReceiveFixed;
+            }
+        }
+    }
+
     function getRiskIndicators(address asset)
         external
         view
         override
+        returns (
+            uint256 maxNotionalPayFixed,
+            uint256 maxNotionalReceiveFixed,
+            uint256 maxUtilizationRatePayFixed,
+            uint256 maxUtilizationRateReceiveFixed,
+            uint256 maxUtilizationRate,
+            uint256 lastUpdateTimestamp
+        )
+    {
+        return _getRiskIndicators(asset);
+    }
+
+    function _getRiskIndicators(address asset)
+        internal
+        view
         returns (
             uint256 maxNotionalPayFixed,
             uint256 maxNotionalReceiveFixed,
@@ -107,6 +218,49 @@ contract IporRiskManagementOracle is
             uint256(indicators.maxUtilizationRateReceiveFixed) * 1e14,
             uint256(indicators.maxUtilizationRate) * 1e14,
             uint256(indicators.lastUpdateTimestamp)
+        );
+    }
+
+    function getBaseSpreads(address asset)
+        external
+        view
+        override
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        )
+    {
+        return _getBaseSpreads(asset);
+    }
+
+    function _getBaseSpreads(address asset)
+        internal
+        view
+        returns (
+            uint256 lastUpdateTimestamp,
+            int256 spread28dPayFixed,
+            int256 spread28dReceiveFixed,
+            int256 spread60dPayFixed,
+            int256 spread60dReceiveFixed,
+            int256 spread90dPayFixed,
+            int256 spread90dReceiveFixed
+        )
+    {
+        IporRiskManagementOracleStorageTypes.BaseSpreadsStorage memory baseSpreads = _baseSpreads[asset];
+        require(baseSpreads.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+        return (
+            uint256(baseSpreads.lastUpdateTimestamp),
+            int256(baseSpreads.spread28dPayFixed) * 1e12, // 1 = 0.01%
+            int256(baseSpreads.spread28dReceiveFixed) * 1e12,
+            int256(baseSpreads.spread60dPayFixed) * 1e12,
+            int256(baseSpreads.spread60dReceiveFixed) * 1e12,
+            int256(baseSpreads.spread90dPayFixed) * 1e12,
+            int256(baseSpreads.spread90dReceiveFixed) * 1e12
         );
     }
 
@@ -190,13 +344,98 @@ contract IporRiskManagementOracle is
         );
     }
 
+    function updateBaseSpreads(
+        address asset,
+        int256 spread28dPayFixed,
+        int256 spread28dReceiveFixed,
+        int256 spread60dPayFixed,
+        int256 spread60dReceiveFixed,
+        int256 spread90dPayFixed,
+        int256 spread90dReceiveFixed
+    ) external override onlyUpdater whenNotPaused {
+        _updateBaseSpreads(
+            asset,
+            spread28dPayFixed,
+            spread28dReceiveFixed,
+            spread60dPayFixed,
+            spread60dReceiveFixed,
+            spread90dPayFixed,
+            spread90dReceiveFixed
+        );
+    }
+
+    function updateBaseSpreads(
+        address[] memory asset,
+        int256[] memory spread28dPayFixed,
+        int256[] memory spread28dReceiveFixed,
+        int256[] memory spread60dPayFixed,
+        int256[] memory spread60dReceiveFixed,
+        int256[] memory spread90dPayFixed,
+        int256[] memory spread90dReceiveFixed
+    ) external override onlyUpdater whenNotPaused {
+        uint256 assetsLength = asset.length;
+
+        require(
+            assetsLength == spread28dPayFixed.length &&
+                assetsLength == spread28dReceiveFixed.length &&
+                assetsLength == spread60dPayFixed.length &&
+                assetsLength == spread60dReceiveFixed.length &&
+                assetsLength == spread90dPayFixed.length &&
+                assetsLength == spread90dReceiveFixed.length,
+            IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
+        );
+
+        for (uint256 i; i != assetsLength; ++i) {
+            _updateBaseSpreads(
+                asset[i],
+                spread28dPayFixed[i],
+                spread28dReceiveFixed[i],
+                spread60dPayFixed[i],
+                spread60dReceiveFixed[i],
+                spread90dPayFixed[i],
+                spread90dReceiveFixed[i]
+            );
+        }
+    }
+
+    function _updateBaseSpreads(
+        address asset,
+        int256 spread28dPayFixed,
+        int256 spread28dReceiveFixed,
+        int256 spread60dPayFixed,
+        int256 spread60dReceiveFixed,
+        int256 spread90dPayFixed,
+        int256 spread90dReceiveFixed
+    ) internal {
+        IporRiskManagementOracleStorageTypes.BaseSpreadsStorage memory baseSpreads = _baseSpreads[asset];
+
+        require(baseSpreads.lastUpdateTimestamp > 0, IporRiskManagementOracleErrors.ASSET_NOT_SUPPORTED);
+
+        _baseSpreads[asset] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
+            block.timestamp.toUint32(),
+            spread28dPayFixed.toInt24(),
+            spread28dReceiveFixed.toInt24(),
+            spread60dPayFixed.toInt24(),
+            spread60dReceiveFixed.toInt24(),
+            spread90dPayFixed.toInt24(),
+            spread90dReceiveFixed.toInt24()
+        );
+
+        emit BaseSpreadsUpdated(
+            asset,
+            spread28dPayFixed,
+            spread28dReceiveFixed,
+            spread60dPayFixed,
+            spread60dReceiveFixed,
+            spread90dPayFixed,
+            spread90dReceiveFixed
+        );
+    }
+
     function addAsset(
         address asset,
-        uint256 maxNotionalPayFixed,
-        uint256 maxNotionalReceiveFixed,
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed,
-        uint256 maxUtilizationRate
+        IporRiskManagementOracleTypes.RiskIndicators calldata riskIndicators,
+        IporRiskManagementOracleTypes.BaseSpreads calldata baseSpreads
     ) external override onlyOwner {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(
@@ -205,12 +444,22 @@ contract IporRiskManagementOracle is
         );
 
         _indicators[asset] = IporRiskManagementOracleStorageTypes.RiskIndicatorsStorage(
-            maxNotionalPayFixed.toUint64(),
-            maxNotionalReceiveFixed.toUint64(),
-            maxUtilizationRatePayFixed.toUint16(),
-            maxUtilizationRateReceiveFixed.toUint16(),
-            maxUtilizationRate.toUint16(),
+            riskIndicators.maxNotionalPayFixed.toUint64(),
+            riskIndicators.maxNotionalReceiveFixed.toUint64(),
+            riskIndicators.maxUtilizationRatePayFixed.toUint16(),
+            riskIndicators.maxUtilizationRateReceiveFixed.toUint16(),
+            riskIndicators.maxUtilizationRate.toUint16(),
             block.timestamp.toUint32()
+        );
+
+        _baseSpreads[asset] = IporRiskManagementOracleStorageTypes.BaseSpreadsStorage(
+            block.timestamp.toUint32(),
+            baseSpreads.spread28dPayFixed.toInt24(),
+            baseSpreads.spread28dReceiveFixed.toInt24(),
+            baseSpreads.spread60dPayFixed.toInt24(),
+            baseSpreads.spread60dReceiveFixed.toInt24(),
+            baseSpreads.spread90dPayFixed.toInt24(),
+            baseSpreads.spread90dReceiveFixed.toInt24()
         );
 
         emit IporRiskManagementOracleAssetAdded(asset);
