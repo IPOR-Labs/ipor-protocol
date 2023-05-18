@@ -26,16 +26,4 @@ interface IMiltonFacadeDataProvider {
     /// @param asset asset address
     /// @return ipToken current exchange rate represented in 18 decimals
     function getIpTokenExchangeRate(address asset) external view returns (uint256);
-
-    /// @notice Gets active swaps for a given asset sender address (aka buyer).
-    /// @param asset asset address
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of sender's active swaps in Milton
-    /// @return swaps list of active sender's swaps
-    function getMySwaps(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, MiltonFacadeTypes.IporSwap[] memory swaps);
 }

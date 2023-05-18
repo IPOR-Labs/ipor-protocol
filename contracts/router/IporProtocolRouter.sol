@@ -1,33 +1,38 @@
-// SPDX-License-Identifier: BSD-3-Clause
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 import "./AccessControl.sol";
+import "../libraries/errors/IporErrors.sol";
+import "../interfaces/IAmmSwapsLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
 
-contract IporRouter is UUPSUpgradeable, AccessControl {
+contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
+    address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
 
     using Address for address;
 
     struct DeployedContracts {
+        address ammSwapsLens;
         address ammOpenSwapServiceAddress;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
+        AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
         _disableInitializers();
     }
 
-    function initialize(uint256 paused) external initializer {
-        __UUPSUpgradeable_init();
-        _owner = msg.sender;
-        _paused = paused;
-    }
-
     function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
+            sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
+            sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
+            sig == IAmmSwapsLens.getSwaps.selector
+        ) {
+            return AMM_SWAPS_LENS;
+        } else if (
             sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector ||
             sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector ||
             sig == IAmmOpenSwapService.openSwapPayFixed90daysUsdt.selector ||
@@ -104,6 +109,12 @@ contract IporRouter is UUPSUpgradeable, AccessControl {
                 ++i;
             }
         }
+    }
+
+    function initialize(uint256 paused) external initializer {
+        __UUPSUpgradeable_init();
+        _owner = msg.sender;
+        _paused = paused;
     }
 
     //solhint-disable no-empty-blocks
