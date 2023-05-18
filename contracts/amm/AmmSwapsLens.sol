@@ -11,33 +11,33 @@ contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
     address internal immutable _usdcAsset;
-    IMiltonStorage internal immutable _usdcMiltonStorage;
+    IMiltonStorage internal immutable _usdcAmmStorage;
 
     address internal immutable _usdtAsset;
-    IMiltonStorage internal immutable _usdtMiltonStorage;
+    IMiltonStorage internal immutable _usdtAmmStorage;
 
     address internal immutable _daiAsset;
-    IMiltonStorage internal immutable _daiMiltonStorage;
+    IMiltonStorage internal immutable _daiAmmStorage;
 
     IIporOracle internal immutable _iporOracle;
 
     constructor(
         address usdcAsset,
-        IMiltonStorage usdcMiltonStorage,
+        IMiltonStorage usdcAmmStorage,
         address usdtAsset,
-        IMiltonStorage usdtMiltonStorage,
+        IMiltonStorage usdtAmmStorage,
         address daiAsset,
-        IMiltonStorage daiMiltonStorage,
+        IMiltonStorage daiAmmStorage,
         IIporOracle iporOracle
     ) {
         _usdcAsset = usdcAsset;
-        _usdcMiltonStorage = usdcMiltonStorage;
+        _usdcAmmStorage = usdcAmmStorage;
 
         _usdtAsset = usdtAsset;
-        _usdtMiltonStorage = usdtMiltonStorage;
+        _usdtAmmStorage = usdtAmmStorage;
 
         _daiAsset = daiAsset;
-        _daiMiltonStorage = daiMiltonStorage;
+        _daiAmmStorage = daiAmmStorage;
 
         _iporOracle = iporOracle;
     }
@@ -48,9 +48,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        IMiltonStorage miltonStorage = _getMiltonStorageImplementation(asset);
-        (uint256 count, uint256[] memory swapIds) = miltonStorage.getSwapPayFixedIds(account, offset, chunkSize);
-        return (count, _mapSwapsPayFixed(asset, miltonStorage, swapIds));
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+        (uint256 count, uint256[] memory swapIds) = ammStorage.getSwapPayFixedIds(account, offset, chunkSize);
+        return (count, _mapSwapsPayFixed(asset, ammStorage, swapIds));
     }
 
     function getSwapsReceiveFixed(
@@ -59,9 +59,9 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 offset,
         uint256 chunkSize
     ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        IMiltonStorage miltonStorage = _getMiltonStorageImplementation(asset);
-        (uint256 count, uint256[] memory swapIds) = miltonStorage.getSwapReceiveFixedIds(account, offset, chunkSize);
-        return (count, _mapSwapsReceiveFixed(asset, miltonStorage, swapIds));
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+        (uint256 count, uint256[] memory swapIds) = ammStorage.getSwapReceiveFixedIds(account, offset, chunkSize);
+        return (count, _mapSwapsReceiveFixed(asset, ammStorage, swapIds));
     }
 
     function getSwaps(
@@ -70,18 +70,18 @@ contract AmmSwapsLens is IAmmSwapsLens {
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        IMiltonStorage miltonStorage = _getMiltonStorageImplementation(asset);
-        (uint256 count, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage.getSwapIds(
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+        (uint256 count, MiltonStorageTypes.IporSwapId[] memory swapIds) = ammStorage.getSwapIds(
             account,
             offset,
             chunkSize
         );
-        return (count, _mapSwaps(asset, miltonStorage, swapIds));
+        return (count, _mapSwaps(asset, ammStorage, swapIds));
     }
 
     function _mapSwapsPayFixed(
         address asset,
-        IMiltonStorage miltonStorage,
+        IMiltonStorage ammStorage,
         uint256[] memory swapIds
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
@@ -89,12 +89,12 @@ contract AmmSwapsLens is IAmmSwapsLens {
         for (uint256 i; i != swapCount; ++i) {
             swapIdsWithDirection[i] = MiltonStorageTypes.IporSwapId({id: swapIds[i], direction: 0});
         }
-        return _mapSwaps(asset, miltonStorage, swapIdsWithDirection);
+        return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
 
     function _mapSwapsReceiveFixed(
         address asset,
-        IMiltonStorage miltonStorage,
+        IMiltonStorage ammStorage,
         uint256[] memory swapIds
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 swapCount = swapIds.length;
@@ -102,12 +102,12 @@ contract AmmSwapsLens is IAmmSwapsLens {
         for (uint256 i; i != swapCount; ++i) {
             swapIdsWithDirection[i] = MiltonStorageTypes.IporSwapId({id: swapIds[i], direction: 1});
         }
-        return _mapSwaps(asset, miltonStorage, swapIdsWithDirection);
+        return _mapSwaps(asset, ammStorage, swapIdsWithDirection);
     }
 
     function _mapSwaps(
         address asset,
-        IMiltonStorage miltonStorage,
+        IMiltonStorage ammStorage,
         MiltonStorageTypes.IporSwapId[] memory swapIds
     ) internal view returns (IAmmSwapsLens.IporSwap[] memory swaps) {
         uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
@@ -116,11 +116,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
         for (uint256 i; i != swapCount; ++i) {
             MiltonStorageTypes.IporSwapId memory swapId = swapIds[i];
             if (swapId.direction == 0) {
-                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
+                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId.id);
                 int256 swapValue = iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, iporSwap, 0, swapValue);
             } else {
-                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(swapId.id);
+                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapReceiveFixed(swapId.id);
                 int256 swapValue = iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
                 mappedSwaps[i] = _mapSwap(asset, iporSwap, 1, swapValue);
             }
@@ -153,15 +153,39 @@ contract AmmSwapsLens is IAmmSwapsLens {
             });
     }
 
-    function _getMiltonStorageImplementation(address asset) internal view returns (IMiltonStorage miltonStorage) {
+    function _getAmmStorageImplementation(address asset) internal view returns (IMiltonStorage ammStorage) {
         if (asset == _usdcAsset) {
-            return _usdcMiltonStorage;
+            return _usdcAmmStorage;
         } else if (asset == _usdtAsset) {
-            return _usdtMiltonStorage;
+            return _usdtAmmStorage;
         } else if (asset == _daiAsset) {
-            return _daiMiltonStorage;
+            return _daiAmmStorage;
         } else {
             revert("Unsupported asset");
         }
+    }
+
+    function getConfiguration()
+        public
+        pure
+        returns (
+            address usdcAsset,
+            address usdcAmmStorage,
+            address usdtAsset,
+            address usdtAmmStorage,
+            address daiAsset,
+            address daiAmmStorage,
+            address iporOracle
+        )
+    {
+        return (
+            usdcAsset,
+            address(usdcAmmStorage),
+            usdtAsset,
+            address(usdtAmmStorage),
+            daiAsset,
+            address(daiAmmStorage),
+            address(iporOracle)
+        );
     }
 }
