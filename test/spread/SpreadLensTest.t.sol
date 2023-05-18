@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 
 import "../TestCommons.sol";
 import "../../contracts/amm/spread/SpreadRouter.sol";
-import "../../contracts/amm/spread/Spread28DaysConfigLibs.sol";
 import "./SpreadBaseTestUtils.sol";
 
 
@@ -24,7 +23,7 @@ contract SpreadRouterTest is SpreadBaseTestUtils {
     function testShouldReturnSupportedAssets() public {
         // given
         // when
-        address[] memory supportedAssets = ISpreadLens(_spreadRouter).getSupportedAssets();
+        address[] memory supportedAssets = ISpread28DaysLens(_spreadRouter).getSupportedAssets();
 
         // then
         assertEq(_dai, supportedAssets[0], "dai address should be the same");
@@ -32,13 +31,5 @@ contract SpreadRouterTest is SpreadBaseTestUtils {
         assertEq(_usdt, supportedAssets[2], "usdt address should be the same");
     }
 
-    function testShouldReturnBaseSpreadConfig() public parameterizedSpreadBaseDataTest(_getSpreadBaseConfigTestData()) {
-        // given
-        // when
-        Spread28DaysConfigLibs.BaseSpreadConfig memory baseSpreadConfig = ISpreadLens(_spreadRouter).getBaseSpreadConfig(_spreadBaseConfigTestData.asset);
-
-        // then
-        _assertSpreadBaseConfig(_spreadBaseConfigTestData.expectedBaseSpreadConfig, baseSpreadConfig, _spreadBaseConfigTestData.assetName);
-    }
 
 }

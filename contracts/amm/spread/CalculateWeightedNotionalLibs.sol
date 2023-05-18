@@ -47,20 +47,14 @@ library CalculateWeightedNotionalLibs {
         uint256 maturity
     ) internal {
         if (weightedNotional.weightedNotionalReceiveFixed == 0) {
-            weightedNotional.weightedNotionalReceiveFixed = calculateWeightedNotional(
-                newSwapNotional,
-                0,
-                maturity
-            );
+            weightedNotional.weightedNotionalReceiveFixed = calculateWeightedNotional(newSwapNotional, 0, maturity);
         } else {
             uint256 oldWeightedNotionalReceiveFixed = calculateWeightedNotional(
                 weightedNotional.weightedNotionalReceiveFixed,
                 block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
                 maturity
             );
-            weightedNotional.weightedNotionalReceiveFixed =
-                newSwapNotional +
-                oldWeightedNotionalReceiveFixed;
+            weightedNotional.weightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
         weightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
         SpreadStorageLibs.saveWeightedNotional(weightedNotional.storageId, weightedNotional);
@@ -72,47 +66,52 @@ library CalculateWeightedNotionalLibs {
         uint256 maturity
     ) internal {
         if (weightedNotional.weightedNotionalPayFixed == 0) {
-            weightedNotional.weightedNotionalPayFixed = calculateWeightedNotional(
-                newSwapNotional,
-                0,
-                maturity
-            );
+            weightedNotional.weightedNotionalPayFixed = calculateWeightedNotional(newSwapNotional, 0, maturity);
         } else {
             uint256 oldWeightedNotionalPayFixed = calculateWeightedNotional(
                 weightedNotional.weightedNotionalPayFixed,
                 block.timestamp - weightedNotional.lastUpdateTimePayFixed,
                 maturity
             );
-            weightedNotional.weightedNotionalPayFixed =
-                newSwapNotional +
-                oldWeightedNotionalPayFixed;
+            weightedNotional.weightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
         weightedNotional.lastUpdateTimePayFixed = block.timestamp;
         SpreadStorageLibs.saveWeightedNotional(weightedNotional.storageId, weightedNotional);
     }
 
-
-    function getWeightedNotional(SpreadStorageLibs.StorageId[] storageIds)
+    function getWeightedNotional(SpreadStorageLibs.StorageId[] memory storageIds, uint256[] memory maturities)
         internal
         returns (uint256 weightedNotionalPayFixed, uint256 weightedNotionalReceiveFixed)
     {
         uint256 length = storageIds.length;
         for (uint256 i; i != length; ) {
-            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
-                .getWeightedNotional(storageIds[i]);
-            weightedNotionalPayFixed += calculateWeightedNotional(
+            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+                storageIds[i]
+            );
+            uint256 weightedNotionalPayFixedTemp = calculateWeightedNotional(
                 weightedNotional.weightedNotionalPayFixed,
                 block.timestamp - weightedNotional.lastUpdateTimePayFixed,
-                weightedNotional.maturity
+                maturities[i]
             );
-            weightedNotionalReceiveFixed += calculateWeightedNotional(
+            weightedNotionalPayFixed = weightedNotionalPayFixed + weightedNotionalPayFixedTemp;
+
+            uint256 weightedNotionalReceiveFixedTemp = calculateWeightedNotional(
                 weightedNotional.weightedNotionalReceiveFixed,
                 block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
-                weightedNotional.maturity
+                maturities[i]
             );
+            weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp +  weightedNotionalReceiveFixed;
             unchecked {
                 ++i;
             }
         }
     }
 }
+//1928571428571428571
+//6928571428571428571
+//14928571428571428571
+
+//-----
+//1928571428571428571
+//5000000000000000000
+//8000000000000000000

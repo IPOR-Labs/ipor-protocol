@@ -4,7 +4,6 @@ pragma solidity 0.8.16;
 import "./ISpread28Days.sol";
 import "./ImbalanceSpreadLibs.sol";
 import "./SpreadStorageLibs.sol";
-import "./ISpreadLens.sol";
 import "./ISpread28DaysLens.sol";
 
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
@@ -25,114 +24,60 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         _USDT = usdt;
     }
 
+    function calculateQuotePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+        external
+        override
+        returns (uint256 quoteValue)
+    {
+        uint256 imbalanceSpread = _calculateImbalancePayFixed28Day(spreadInputs, true);
 
-
-    function calculateQuotePayFixed28Days(
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        address asset,
-        uint256 swapNotional
-    ) external override returns (uint256 quoteValue) {
-        uint256 maxLeverage = 1_000 * 1e18; // TODO get this data;
-        uint256 maxLpUtilizationPerLegRate = 5e17; // TODO get this data;
-        int256 baseSpread = 0; // TODO get this data;
-        uint256 imbalanceSpread = _calculateImbalancePayFixed28Day(
-            asset,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate,
-            true
-        );
-
-        int256 intQuoteValue = accruedIpor.indexValue.toInt256() +
-            baseSpread +
+        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
+            spreadInputs.baseSpread +
             imbalanceSpread.toInt256();
 
-        if (intQuoteValue > 0) {
-            return intQuoteValue.toUint256();
-        }
+        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
     }
 
-    function calculatePayFixed28Days(
-        address asset,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional
-    ) external override returns (uint256 quoteValue) {
-        uint256 maxLeverage = 1_000 * 1e18; // TODO get this data;
-        uint256 maxLpUtilizationPerLegRate = 5e17; // TODO get this data;
-        int256 baseSpread = 0; // TODO get this data;
-        uint256 imbalanceSpread = _calculateImbalancePayFixed28Day(
-            asset,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate,
-            false
-        );
+    function calculatePayFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+        external
+        override
+        returns (uint256 quoteValue)
+    {
+        uint256 imbalanceSpread = _calculateImbalancePayFixed28Day(spreadInputs, false);
 
-        int256 intQuoteValue = accruedIpor.indexValue.toInt256() +
-            baseSpread +
+        int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
+            spreadInputs.baseSpread +
             imbalanceSpread.toInt256();
 
-        if (intQuoteValue > 0) {
-            return intQuoteValue.toUint256();
-        }
+        quoteValue = intQuoteValue > 0 ? intQuoteValue.toUint256() : 0;
     }
 
-    function calculateQuoteReceiveFixed28Days(
-        address asset,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional
-    ) external override returns (uint256 quoteValue) {
-        uint256 maxLeverage = 1_000 * 1e18; // TODO get this data;
-        uint256 maxLpUtilizationPerLegRate = 5e17; // TODO get this data;
-        int256 baseSpread = 0; // TODO get this data;
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed28Day(
-            asset,
-            accruedIpor,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate,
-            true
-        );
+    function calculateQuoteReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+        external
+        override
+        returns (uint256 quoteValue)
+    {
+        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed28Day(spreadInputs, true);
 
-        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() +
-            baseSpread -
+        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
+            spreadInputs.baseSpread -
             imbalanceSpread.toInt256();
 
-        quoteValue = _calculateReferenceLegReceiveFixed(
-            intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
-            accruedIpor.exponentialMovingAverage
-        );
+        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
     }
 
-    function calculateReceiveFixed28Days(
-        address asset,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional
-    ) external override returns (uint256 quoteValue) {
-        uint256 maxLeverage = 1_000 * 1e18; // TODO get this data;
-        uint256 maxLpUtilizationPerLegRate = 5e17; // TODO get this data;
-        int256 baseSpread = 0; // TODO get this data;
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed28Day(
-            asset,
-            accruedIpor,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate,
-            false
-        );
+    function calculateReceiveFixed28Days(IporTypes.SpreadInputs calldata spreadInputs)
+        external
+        override
+        returns (uint256 quoteValue)
+    {
+        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed28Day(spreadInputs, false);
 
-        int256 intQuoteValueWithIpor = accruedIpor.indexValue.toInt256() +
-            baseSpread -
+        int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
+            spreadInputs.baseSpread -
             imbalanceSpread.toInt256();
 
-        quoteValue = _calculateReferenceLegReceiveFixed(
-            intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0,
-            accruedIpor.exponentialMovingAverage
-    );
+        quoteValue = intQuoteValueWithIpor > 0 ? intQuoteValueWithIpor.toUint256() : 0;
     }
 
     function getSupportedAssets() external view returns (address[] memory) {
@@ -143,10 +88,15 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         return assets;
     }
 
-    function _calculateReferenceLegReceiveFixed(
-        uint256 iporIndexValue,
-        uint256 exponentialMovingAverage
-    ) internal pure returns (uint256) {
+    function spreadFunction28DaysConfig() external pure returns (uint256[]  memory) {
+        return ImbalanceSpreadLibs.spreadFunctionConfig();
+    }
+
+    function _calculateReferenceLegReceiveFixed(uint256 iporIndexValue, uint256 exponentialMovingAverage)
+        internal
+        pure
+        returns (uint256)
+    {
         if (iporIndexValue < exponentialMovingAverage) {
             return iporIndexValue;
         } else {
@@ -154,27 +104,18 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         }
     }
 
-    function _calculateImbalancePayFixed28Day(
-        address asset,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional,
-        uint256 maxLeverage,
-        uint256 maxLpUtilizationPerLegRate,
-        bool updateWeightedNotional
-    ) internal returns (uint256 spreadValue) {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(
-            asset,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate
-        );
+    function _calculateImbalancePayFixed28Day(IporTypes.SpreadInputs memory spreadInputs, bool updateWeightedNotional)
+        internal
+        returns (uint256 spreadValue)
+    {
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
 
         if (updateWeightedNotional) {
-            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
-                .getWeightedNotional(inputData.storageId28Days);
+            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+                inputData.storageId
+            );
 
             CalculateWeightedNotionalLibs.updateWeightedNotionalPayFixed(
                 weightedNotional,
@@ -185,28 +126,17 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     }
 
     function _calculateImbalanceReceiveFixed28Day(
-        address asset,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional,
-        uint256 maxLeverage,
-        uint256 maxLpUtilizationPerLegRate,
+        IporTypes.SpreadInputs calldata spreadInputs,
         bool updateWeightedNotional
     ) internal returns (uint256 spreadValue) {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(
-            asset,
-            accruedIpor,
-            accruedBalance,
-            swapNotional,
-            maxLeverage,
-            maxLpUtilizationPerLegRate
-        );
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
 
         if (updateWeightedNotional) {
-            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs
-                .getWeightedNotional(inputData.storageId28Days);
+            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+                inputData.storageId
+            );
 
             CalculateWeightedNotionalLibs.updateWeightedNotionalReceiveFixed(
                 weightedNotional,
@@ -216,33 +146,45 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         }
     }
 
-    function _getImbalanceSpreadConfig(
-        address asset,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional,
-        uint256 maxLeverage,
-        uint256 maxLpUtilizationPerLegRate
-    ) internal returns (ImbalanceSpreadLibs.SpreadInputData memory inputData) {
-        //DAI
+    function _getImbalanceSpreadConfig(IporTypes.SpreadInputs memory spreadInputs)
+        internal
+        returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)
+    {
         inputData = ImbalanceSpreadLibs.SpreadInputData({
-            accruedBalance: accruedBalance,
-            swapNotional: swapNotional,
-            maxLeverage: maxLeverage,
-            maxLpUtilizationPerLegRate: maxLpUtilizationPerLegRate,
-            storageIds: new SpreadStorageLibs.StorageId[](2)
+            totalCollateralPayFixed: inputData.totalCollateralPayFixed,
+            totalCollateralReceiveFixed: inputData.totalCollateralReceiveFixed,
+            liquidityPool: inputData.liquidityPool,
+            totalNotionalPayFixed: inputData.totalNotionalPayFixed,
+            totalNotionalReceiveFixed: inputData.totalNotionalReceiveFixed,
+            swapNotional: inputData.swapNotional,
+            maxLeverage: inputData.maxLeverage,
+            maxLpUtilizationPerLegRate: inputData.maxLpUtilizationPerLegRate,
+            storageIds: new SpreadStorageLibs.StorageId[](2),
+            maturities: new uint256[](2),
+            storageId: SpreadStorageLibs.StorageId.WeightedNotional28DaysDai
         });
 
-        if (asset == _USDC) {
+        inputData.maturities[0] = 28 days;
+        inputData.maturities[1] = 60 days;
+        inputData.maturities[2] = 90 days;
+
+        if (spreadInputs.asset == _USDC) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdc;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdc;
+            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdc;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysUsdc;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdc;
             return inputData;
-        } else if (asset == _USDT) {
+        } else if (spreadInputs.asset == _USDT) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdt;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdt;
+            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdt;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysUsdt;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdt;
             return inputData;
-        } else if (asset == _DAI) {
+        } else if (spreadInputs.asset == _DAI) {
             inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysDai;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional90DaysDai;
+            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional28DaysDai;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysDai;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysDai;
             return inputData;
         }
         revert("Spread: asset not supported");

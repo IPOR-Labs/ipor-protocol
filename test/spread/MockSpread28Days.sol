@@ -5,23 +5,13 @@ import "../../contracts/amm/spread/ISpread28Days.sol";
 
 contract MockSpread28Days is ISpread28Days {
     function calculateQuotePayFixed28Days(
-        address asset,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional,
-        uint256 maxLeverage,
-        uint256 maxLpUtilizationPerLegRate
+        IporTypes.SpreadInputs calldata spreadInputs
     ) external override returns (uint256 quoteValue) {
         return 1;
     }
 
     function calculateQuoteReceiveFixed28Days(
-        address asset,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.SwapsBalanceMemory memory accruedBalance,
-        uint256 swapNotional,
-        uint256 maxLeverage,
-        uint256 maxLpUtilizationPerLegRate
+        IporTypes.SpreadInputs calldata spreadInputs
     ) external override returns (uint256 quoteValue) {
         return 2;
     }

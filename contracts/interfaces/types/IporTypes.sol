@@ -65,11 +65,21 @@ library IporTypes {
         /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
         /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
         uint256 liquidityPool;
-        /// @notice Vault's balance, describes how much asset has been transfered to Asset Management Vault (Stanley)
+        /// @notice Vault's balance, describes how much asset has been transferred to Asset Management Vault (Stanley)
         uint256 vault;
     }
 
-    struct SwapsBalanceMemory {
+    struct SpreadInputs {
+        //// @notice Swap's assets DAI/USDC/USDT
+        address asset;
+        /// @notice Swap's notional value
+        uint256 swapNotional;
+        /// @notice Maximum leverage
+        uint256 maxLeverage;
+        /// @notice Maximum LP utilization per leg rate
+        uint256 maxLpUtilizationPerLegRate;
+        /// @notice Base spread
+        int256 baseSpread;
         /// @notice Swap's balance for Pay Fixed leg
         uint256 totalCollateralPayFixed;
         /// @notice Swap's balance for Receive Fixed leg
@@ -80,5 +90,7 @@ library IporTypes {
         uint256 totalNotionalPayFixed;
         /// @notice Swap's notional balance for Receive Fixed leg
         uint256 totalNotionalReceiveFixed;
+        /// @notice Ipor index value at the time of swap creation
+        uint256 indexValue;
     }
 }

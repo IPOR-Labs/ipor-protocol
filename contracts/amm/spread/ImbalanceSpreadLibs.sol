@@ -7,21 +7,29 @@ import "./CalculateWeightedNotionalLibs.sol";
 library ImbalanceSpreadLibs {
     /// @notice Dto for the Weighted Notional
     struct SpreadInputData {
-        IporTypes.SwapsBalanceMemory accruedBalance;
+        /// @notice Swap's balance for Pay Fixed leg
+        uint256 totalCollateralPayFixed;
+        /// @notice Swap's balance for Receive Fixed leg
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Liquidity Pool's Balance
+        uint256 liquidityPool;
+        /// @notice Swap's notional balance for Pay Fixed leg
+        uint256 totalNotionalPayFixed;
+        /// @notice Swap's notional balance for Receive Fixed leg
+        uint256 totalNotionalReceiveFixed;
         uint256 swapNotional;
         uint256 maxLeverage;
         uint256 maxLpUtilizationPerLegRate;
+        uint256[] maturities;
         SpreadStorageLibs.StorageId[] storageIds;
+        SpreadStorageLibs.StorageId storageId;
     }
 
-    function calculatePayFixedSpread(SpreadInputData memory inputData)
-        internal
-        returns (uint256 spreadValue)
-    {
+    function calculatePayFixedSpread(SpreadInputData memory inputData) internal returns (uint256 spreadValue) {
         uint256 lpDepth = CalculateWeightedNotionalLibs.calculateLpDepth(
-            inputData.accruedBalance.liquidityPool,
-            inputData.accruedBalance.totalCollateralPayFixed,
-            inputData.accruedBalance.totalCollateralReceiveFixed
+            inputData.liquidityPool,
+            inputData.totalCollateralPayFixed,
+            inputData.totalCollateralReceiveFixed
         );
 
         uint256 notionalDepth = IporMath.division(
@@ -29,10 +37,8 @@ library ImbalanceSpreadLibs {
             1e36
         );
 
-        (
-            uint256 oldWeightedNotionalPayFixed,
-            uint256 weightedNotionalReceiveFixed
-        ) = CalculateWeightedNotionalLibs.getWeightedNotional(inputData.storageIds);
+        (uint256 oldWeightedNotionalPayFixed, uint256 weightedNotionalReceiveFixed) = CalculateWeightedNotionalLibs
+            .getWeightedNotional(inputData.storageIds, inputData.maturities);
         uint256 newWeightedNotionalPayFixed = oldWeightedNotionalPayFixed + inputData.swapNotional;
         if (newWeightedNotionalPayFixed > weightedNotionalReceiveFixed) {
             uint256 oldSpread;
@@ -52,14 +58,11 @@ library ImbalanceSpreadLibs {
         }
     }
 
-    function calculateReceiveFixedSpread(SpreadInputData memory inputData)
-        internal
-        returns (uint256 spreadValue)
-    {
+    function calculateReceiveFixedSpread(SpreadInputData memory inputData) internal returns (uint256 spreadValue) {
         uint256 lpDepth = CalculateWeightedNotionalLibs.calculateLpDepth(
-            inputData.accruedBalance.liquidityPool,
-            inputData.accruedBalance.totalCollateralPayFixed,
-            inputData.accruedBalance.totalCollateralReceiveFixed
+            inputData.liquidityPool,
+            inputData.totalCollateralPayFixed,
+            inputData.totalCollateralReceiveFixed
         );
 
         uint256 notionalDepth = IporMath.division(
@@ -67,12 +70,9 @@ library ImbalanceSpreadLibs {
             1e36
         );
 
-        (
-            uint256 weightedNotionalPayFixed,
-            uint256 oldWeightedNotionalReceiveFixed
-        ) = CalculateWeightedNotionalLibs.getWeightedNotional(inputData.storageIds);
-        uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed +
-            inputData.swapNotional;
+        (uint256 weightedNotionalPayFixed, uint256 oldWeightedNotionalReceiveFixed) = CalculateWeightedNotionalLibs
+            .getWeightedNotional(inputData.storageIds, inputData.maturities);
+        uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed + inputData.swapNotional;
         if (newWeightedNotionalReceiveFixed > weightedNotionalPayFixed) {
             uint256 oldSpread;
             if (oldWeightedNotionalReceiveFixed > weightedNotionalPayFixed) {
@@ -121,30 +121,30 @@ library ImbalanceSpreadLibs {
     uint256 internal constant SLOPE_SEVEN = 5e17;
     uint256 internal constant BASE_SEVEN = 2e17;
 
-    function SpreadFunctionConfig() public pure returns (uint256[20] memory) {
-        return [
-            INTERVAL_ONE,
-            INTERVAL_TWO,
-            INTERVAL_THREE,
-            INTERVAL_FOUR,
-            INTERVAL_FIVE,
-            INTERVAL_SIX,
-            INTERVAL_SEVEN,
-            SLOPE_ONE,
-            BASE_ONE,
-            SLOPE_TWO,
-            BASE_TWO,
-            SLOPE_THREE,
-            BASE_THREE,
-            SLOPE_FOUR,
-            BASE_FOUR,
-            SLOPE_FIVE,
-            BASE_FIVE,
-            SLOPE_SIX,
-            BASE_SIX,
-            SLOPE_SEVEN,
-            BASE_SEVEN
-        ];
+    function spreadFunctionConfig() public pure returns (uint256[] memory) {
+        uint256[] memory config = new uint256[](21);
+        config[0] = INTERVAL_ONE;
+        config[1] = INTERVAL_TWO;
+        config[2] = INTERVAL_THREE;
+        config[3] = INTERVAL_FOUR;
+        config[4] = INTERVAL_FIVE;
+        config[5] = INTERVAL_SIX;
+        config[6] = INTERVAL_SEVEN;
+        config[7] = SLOPE_ONE;
+        config[8] = BASE_ONE;
+        config[9] = SLOPE_TWO;
+        config[10] = BASE_TWO;
+        config[11] = SLOPE_THREE;
+        config[12] = BASE_THREE;
+        config[13] = SLOPE_FOUR;
+        config[14] = BASE_FOUR;
+        config[15] = SLOPE_FIVE;
+        config[16] = BASE_FIVE;
+        config[17] = SLOPE_SIX;
+        config[18] = BASE_SIX;
+        config[19] = SLOPE_SEVEN;
+        config[20] = BASE_SEVEN;
+        return config;
     }
 
     function calculateSpreadFunction(

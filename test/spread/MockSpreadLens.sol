@@ -1,48 +1,28 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "../../contracts/amm/spread/ISpreadLens.sol";
+import "contracts/amm/spread/ISpread28DaysLens.sol";
 
-contract MockSpreadLens is ISpreadLens {
+contract MockSpreadLens is ISpread28DaysLens {
     function getSupportedAssets() external view returns (address[] memory) {
         return new address[](0);
     }
 
-    function getBaseSpreadConfig(address asset)
-        external
-        view
-        returns (Spread28DaysConfigLibs.BaseSpreadConfig memory)
-    {
-        return
-            Spread28DaysConfigLibs.BaseSpreadConfig({
-                payFixedRegionOneBase: 1,
-                payFixedRegionOneSlopeForVolatility: 1,
-                payFixedRegionOneSlopeForMeanReversion: 1,
-                payFixedRegionTwoBase: 2,
-                payFixedRegionTwoSlopeForVolatility: 2,
-                payFixedRegionTwoSlopeForMeanReversion: 2,
-                receiveFixedRegionOneBase: 3,
-                receiveFixedRegionOneSlopeForVolatility: 3,
-                receiveFixedRegionOneSlopeForMeanReversion: 3,
-                receiveFixedRegionTwoBase: 4,
-                receiveFixedRegionTwoSlopeForVolatility: 4,
-                receiveFixedRegionTwoSlopeForMeanReversion: 4
-            });
+    function spreadFunction28DaysConfig() public pure returns (uint256[] memory) {
+        uint256[] memory mock = new uint256[](20);
+        return mock;
     }
 
-    function calculateBaseSpreadPayFixed28Days(
-        address asset,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.SwapsBalanceMemory memory accruedBalance
-    ) external view returns (int256 spreadValue) {
-        spreadValue = -1;
+
+    function calculatePayFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view returns (uint256 spreadValue) {
+        spreadValue = 1;
     }
 
-    function calculateSpreadPayFixed28Days(
-        address asset,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.SwapsBalanceMemory memory accruedBalance
-    ) external view returns (int256 spreadValue) {
-        spreadValue = -2;
+    function calculateReceiveFixed28Days(
+        IporTypes.SpreadInputs calldata spreadInputs
+    ) external view returns (uint256 spreadValue) {
+        spreadValue = 2;
     }
 }

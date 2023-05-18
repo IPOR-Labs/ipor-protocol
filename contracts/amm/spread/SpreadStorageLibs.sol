@@ -16,6 +16,9 @@ library SpreadStorageLibs {
         WeightedNotional28DaysDai,
         WeightedNotional28DaysUsdc,
         WeightedNotional28DaysUsdt,
+        WeightedNotional60DaysDai,
+        WeightedNotional60DaysUsdc,
+        WeightedNotional60DaysUsdt,
         WeightedNotional90DaysDai,
         WeightedNotional90DaysUsdc,
         WeightedNotional90DaysUsdt
@@ -23,25 +26,26 @@ library SpreadStorageLibs {
 
     function saveWeightedNotional(
         StorageId storageId,
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days
+        SpreadTypes.WeightedNotionalMemory memory weightedNotional
     ) internal {
+        uint256 weightedNotionalPayFixedTemp;
+        uint256 weightedNotionalReceiveFixedTemp;
         unchecked {
-            weightedNotional28Days.weightedNotionalPayFixed =
-                weightedNotional28Days.weightedNotionalPayFixed /
+            weightedNotionalPayFixedTemp =
+                weightedNotional.weightedNotionalPayFixed /
                 1e18;
 
-            weightedNotional28Days.weightedNotionalReceiveFixed =
-                weightedNotional28Days.weightedNotionalReceiveFixed /
+            weightedNotionalReceiveFixedTemp =
+                weightedNotional.weightedNotionalReceiveFixed /
                 1e18;
         }
-        uint96 weightedNotionalPayFixed = weightedNotional28Days
-            .weightedNotionalPayFixed
+
+        uint96 weightedNotionalPayFixed = weightedNotionalPayFixedTemp
             .toUint96();
-        uint32 lastUpdateTimePayFixed = weightedNotional28Days.lastUpdateTimePayFixed.toUint32();
-        uint96 weightedNotionalReceiveFixed = weightedNotional28Days
-            .weightedNotionalReceiveFixed
+        uint32 lastUpdateTimePayFixed = weightedNotional.lastUpdateTimePayFixed.toUint32();
+        uint96 weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp
             .toUint96();
-        uint32 lastUpdateTimeReceiveFixed = weightedNotional28Days
+        uint32 lastUpdateTimeReceiveFixed = weightedNotional
             .lastUpdateTimeReceiveFixed
             .toUint32();
         uint256 slotAddress = _getStorageSlot(storageId);
@@ -84,12 +88,13 @@ library SpreadStorageLibs {
         }
 
         return
-            SpreadTypes.WeightedNotionalMemory(
-                weightedNotionalPayFixed,
-                lastUpdateTimePayFixed,
-                weightedNotionalReceiveFixed,
-                lastUpdateTimeReceiveFixed,
-                storageId
+            SpreadTypes.WeightedNotionalMemory({
+            weightedNotionalPayFixed: weightedNotionalPayFixed,
+            lastUpdateTimePayFixed: lastUpdateTimePayFixed,
+            weightedNotionalReceiveFixed: weightedNotionalReceiveFixed,
+            lastUpdateTimeReceiveFixed: lastUpdateTimeReceiveFixed,
+            storageId: storageId
+            }
             );
     }
 
