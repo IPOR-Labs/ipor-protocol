@@ -79,7 +79,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
         liquidator0 = _liquidator0;
     }
 
-    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId)
+    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId, address account)
         external
         view
         override
@@ -92,14 +92,14 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
         closableStatus = _getClosableStatusForSwap(
             assetConfiguration,
-            msg.sender,
+            account,
             iporSwap,
             iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice),
             block.timestamp
         );
     }
 
-    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId)
+    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId, address account)
         external
         view
         override
@@ -112,7 +112,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
         closableStatus = _getClosableStatusForSwap(
             assetConfiguration,
-            msg.sender,
+            account,
             iporSwap,
             iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice),
             block.timestamp
@@ -120,7 +120,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
     }
 
     /// @notice Check closable status for Swap given as a parameter.
-    /// @param msgSender The address of the caller
+    /// @param account Account address for which closable status is scoped
     /// @param iporSwap The swap to be checked
     /// @param payoff The payoff of the swap
     /// @param closeTimestamp The timestamp of closing
@@ -128,12 +128,12 @@ contract AmmSwapsLens is IAmmSwapsLens {
     /// @dev Closable status is a one of the following values:
     /// 0 - Swap is closable
     /// 1 - Swap is already closed
-    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
+    /// 2 - Swap state required Buyer or Liquidator to close. Account is not Buyer nor Liquidator.
     /// 3 - Cannot close swap, closing is too early for Buyer
     /// 4 - Cannot close swap, closing is too early for Community
     function _getClosableStatusForSwap(
         AssetConfiguration memory assetConfiguration,
-        address msgSender,
+        address account,
         IporTypes.IporSwapMemory memory iporSwap,
         int256 payoff,
         uint256 closeTimestamp
@@ -142,7 +142,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
             return 1;
         }
 
-        if (msgSender != owner()) {
+        if (account != owner()) {
             uint256 absPayoff = IporMath.absoluteValue(payoff);
 
             uint256 minPayoffToCloseBeforeMaturityByCommunity = IporMath.percentOf(
@@ -152,7 +152,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
 
             if (closeTimestamp >= iporSwap.endTimestamp) {
                 if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
-                    if (!_isLiquidator(msgSender) && msgSender != iporSwap.buyer) {
+                    if (!_isLiquidator(account) && account != iporSwap.buyer) {
                         return 2;
                     }
                 }
@@ -166,13 +166,13 @@ contract AmmSwapsLens is IAmmSwapsLens {
                     (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer &&
                         absPayoff < minPayoffToCloseBeforeMaturityByCommunity) || absPayoff == iporSwap.collateral
                 ) {
-                    if (!_isLiquidator(msgSender) && msgSender != iporSwap.buyer) {
+                    if (!_isLiquidator(account) && account != iporSwap.buyer) {
                         return 2;
                     }
                 }
 
                 if (absPayoff < minPayoffToCloseBeforeMaturityByBuyer) {
-                    if (msgSender == iporSwap.buyer) {
+                    if (account == iporSwap.buyer) {
                         if (
                             iporSwap.endTimestamp - assetConfiguration.timeBeforeMaturityAllowedToCloseSwapByBuyer >
                             closeTimestamp
@@ -222,37 +222,16 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return (count, _mapSwapsReceiveFixed(assetConfiguration, swapIds));
     }
 
-    function getMySwapsPayFixed(
+    function getSwaps(
         address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        AssetConfiguration memory assetConfiguration = _getAssetConfiguration(asset);
-        IMiltonStorage miltonStorage = IMiltonStorage(assetConfiguration.miltonStorage);
-        (uint256 count, uint256[] memory swapIds) = miltonStorage.getSwapPayFixedIds(msg.sender, offset, chunkSize);
-        return (count, _mapSwapsPayFixed(assetConfiguration, swapIds));
-    }
-
-    function getMySwapsReceiveFixed(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
-        AssetConfiguration memory assetConfiguration = _getAssetConfiguration(asset);
-        IMiltonStorage miltonStorage = IMiltonStorage(assetConfiguration.miltonStorage);
-        (uint256 count, uint256[] memory swapIds) = miltonStorage.getSwapReceiveFixedIds(msg.sender, offset, chunkSize);
-        return (count, _mapSwapsReceiveFixed(assetConfiguration, swapIds));
-    }
-
-    function getMySwaps(
-        address asset,
+        address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IAmmSwapsLens.IporSwap[] memory swaps) {
         AssetConfiguration memory assetConfiguration = _getAssetConfiguration(asset);
         IMiltonStorage miltonStorage = IMiltonStorage(assetConfiguration.miltonStorage);
         (uint256 count, MiltonStorageTypes.IporSwapId[] memory swapIds) = miltonStorage.getSwapIds(
-            msg.sender,
+            account,
             offset,
             chunkSize
         );

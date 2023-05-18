@@ -21,15 +21,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         _disableInitializers();
     }
 
-    function getRouterImplementation(bytes4 sig) public returns (address) {
+    function getRouterImplementation(bytes4 sig) public view returns (address) {
         if (
             sig == IAmmSwapsLens.getClosableStatusForPayFixedSwap.selector ||
             sig == IAmmSwapsLens.getClosableStatusForReceiveFixedSwap.selector ||
             sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
             sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
-            sig == IAmmSwapsLens.getMySwapsPayFixed.selector ||
-            sig == IAmmSwapsLens.getMySwapsReceiveFixed.selector ||
-            sig == IAmmSwapsLens.getMySwaps.selector
+            sig == IAmmSwapsLens.getSwaps.selector
         ) {
             return AMM_SWAPS_LENS;
         }

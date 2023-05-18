@@ -8,6 +8,7 @@ interface IAmmSwapsLens {
     /// @notice Get closable status for Pay-Fixed swap.
     /// @param asset Address of the asset.
     /// @param swapId Pay-Fixed swap ID.
+    /// @param account Account address for which closable status is scoped
     /// @return closableStatus Closable status for Pay-Fixed swap.
     /// @dev Closable status is a one of the following values:
     /// 0 - Swap is closable
@@ -15,7 +16,7 @@ interface IAmmSwapsLens {
     /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
     /// 3 - Cannot close swap, closing is too early for Buyer
     /// 4 - Cannot close swap, closing is too early for Community
-    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId)
+    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId, address account)
         external
         view
         returns (uint256 closableStatus);
@@ -23,6 +24,7 @@ interface IAmmSwapsLens {
     /// @notice Get closable status for Receive-Fixed swap.
     /// @param asset Address of the asset.
     /// @param swapId Receive-Fixed swap ID.
+    /// @param account Account address for which closable status is scoped
     /// @return closableStatus Closable status for Receive-Fixed swap.
     /// @dev Closable status is a one of the following values:
     /// 0 - Swap is closable
@@ -30,7 +32,7 @@ interface IAmmSwapsLens {
     /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
     /// 3 - Cannot close swap, closing is too early for Buyer
     /// 4 - Cannot close swap, closing is too early for Community
-    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId)
+    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId, address account)
         external
         view
         returns (uint256 closableStatus);
@@ -63,38 +65,15 @@ interface IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
-    /// @notice Gets list of active Pay Fixed Receive Floating Swaps in Milton of sender for a given asset
-    /// @param asset asset / stablecoin address
-    /// @param offset offset for paging
-    /// @param chunkSize page size for paging
-    /// @return totalCount total number of Pay Fixed swaps in Milton for a current user
-    /// @return swaps list of active swaps for a given asset
-    function getMySwapsPayFixed(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
-
-    /// @notice Gets list of active Receive Fixed Pay Floating Swaps in Milton of sender for a given asset
-    /// @param asset asset / stablecoin address
-    /// @param offset offset for paging functionality purposes
-    /// @param chunkSize page size for paging functionality purposes
-    /// @return totalCount total amount of Receive Fixed swaps in Milton for a current user
-    /// @return swaps list of active swaps for a given asset
-    function getMySwapsReceiveFixed(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
-
     /// @notice Gets active swaps for a given asset sender address (aka buyer).
     /// @param asset asset address
     /// @param offset offset for paging
     /// @param chunkSize page size for paging
     /// @return totalCount total number of sender's active swaps in Milton
     /// @return swaps list of active sender's swaps
-    function getMySwaps(
+    function getSwaps(
         address asset,
+        address account,
         uint256 offset,
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
