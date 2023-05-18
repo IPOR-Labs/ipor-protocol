@@ -4,39 +4,6 @@ pragma solidity 0.8.16;
 import "./types/IporTypes.sol";
 
 interface IAmmSwapsLens {
-
-    /// @notice Get closable status for Pay-Fixed swap.
-    /// @param asset Address of the asset.
-    /// @param swapId Pay-Fixed swap ID.
-    /// @param account Account address for which closable status is scoped
-    /// @return closableStatus Closable status for Pay-Fixed swap.
-    /// @dev Closable status is a one of the following values:
-    /// 0 - Swap is closable
-    /// 1 - Swap is already closed
-    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
-    /// 3 - Cannot close swap, closing is too early for Buyer
-    /// 4 - Cannot close swap, closing is too early for Community
-    function getClosableStatusForPayFixedSwap(address asset, uint256 swapId, address account)
-        external
-        view
-        returns (uint256 closableStatus);
-
-    /// @notice Get closable status for Receive-Fixed swap.
-    /// @param asset Address of the asset.
-    /// @param swapId Receive-Fixed swap ID.
-    /// @param account Account address for which closable status is scoped
-    /// @return closableStatus Closable status for Receive-Fixed swap.
-    /// @dev Closable status is a one of the following values:
-    /// 0 - Swap is closable
-    /// 1 - Swap is already closed
-    /// 2 - Swap state required Buyer or Liquidator to close. Sender is not Buyer nor Liquidator.
-    /// 3 - Cannot close swap, closing is too early for Buyer
-    /// 4 - Cannot close swap, closing is too early for Community
-    function getClosableStatusForReceiveFixedSwap(address asset, uint256 swapId, address account)
-        external
-        view
-        returns (uint256 closableStatus);
-
     /// @notice Gets the list of active Pay Fixed Receive Floating swaps in Milton for a given asset and address
     /// @param asset asset / stablecoin address
     /// @param account account address for which list of swaps is scoped
