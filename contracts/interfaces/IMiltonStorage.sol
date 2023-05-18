@@ -29,6 +29,16 @@ interface IMiltonStorage {
     /// @return balance structure {IporTypes.MiltonBalancesMemory}
     function getBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
 
+    /// @notice Gets balance for open swap
+    /// @dev Balance contains:
+    /// # Pay Fixed Total Collateral
+    /// # Receive Fixed Total Collateral
+    /// # Liquidity Pool balance
+    /// # Total Notional Pay Fixed
+    /// # Total Notional Receive Fixed
+    /// @return balance structure {IporTypes.AmmBalancesForOpenSwapMemory}
+    function getBalancesForOpenSwap() external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
+
     /// @notice Gets balance with extended information: IPOR publication fee balance and Treasury balance.
     /// @return balance structure {MiltonStorageTypes.ExtendedBalancesMemory}
     function getExtendedBalance()

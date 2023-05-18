@@ -30,29 +30,29 @@ abstract contract ItfMilton is Milton {
         return 7;
     }
 
-    function itfOpenSwapPayFixed(
-        uint256 openTimestamp,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage
-    ) external returns (uint256) {
-        return _openSwapPayFixed(openTimestamp, totalAmount, acceptableFixedInterestRate, leverage);
-    }
-
-    function itfOpenSwapReceiveFixed(
-        uint256 openTimestamp,
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage
-    ) external returns (uint256) {
-        return
-            _openSwapReceiveFixed(
-                openTimestamp,
-                totalAmount,
-                acceptableFixedInterestRate,
-                leverage
-            );
-    }
+//    function itfOpenSwapPayFixed(
+//        uint256 openTimestamp,
+//        uint256 totalAmount,
+//        uint256 acceptableFixedInterestRate,
+//        uint256 leverage
+//    ) external returns (uint256) {
+//        return _openSwapPayFixed(openTimestamp, totalAmount, acceptableFixedInterestRate, leverage);
+//    }
+//
+//    function itfOpenSwapReceiveFixed(
+//        uint256 openTimestamp,
+//        uint256 totalAmount,
+//        uint256 acceptableFixedInterestRate,
+//        uint256 leverage
+//    ) external returns (uint256) {
+//        return
+//            _openSwapReceiveFixed(
+//                openTimestamp,
+//                totalAmount,
+//                acceptableFixedInterestRate,
+//                leverage
+//            );
+//    }
 
     function itfCloseSwaps(
         uint256[] memory payFixedSwapIds,

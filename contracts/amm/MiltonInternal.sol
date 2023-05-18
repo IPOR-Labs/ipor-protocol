@@ -119,23 +119,6 @@ abstract contract MiltonInternal is
         return _getMaxSwapCollateralAmount();
     }
 
-    function getMaxLpUtilizationRate() external view override returns (uint256) {
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
-        return riskIndicators.maxUtilizationRate;
-    }
-
-    function getMaxLpUtilizationPerLegRate()
-        external
-        view
-        override
-        returns (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed)
-    {
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
-        return (riskIndicators.maxUtilizationRatePayFixed, riskIndicators.maxUtilizationRateReceiveFixed);
-    }
-
     function getOpeningFeeRate() external view override returns (uint256) {
         return _getOpeningFeeRate();
     }
@@ -156,21 +139,6 @@ abstract contract MiltonInternal is
 
     function getWadLiquidationDepositAmount() external view override returns (uint256) {
         return _getLiquidationDepositAmount() * Constants.D18;
-    }
-
-    function getMaxLeverage()
-        external
-        view
-        override
-        returns (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed)
-    {
-        IporTypes.MiltonBalancesMemory memory balance = _getMiltonStorage().getBalance();
-        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(balance.liquidityPool);
-        return (riskIndicators.maxLeveragePayFixed, riskIndicators.maxLeverageReceiveFixed);
-    }
-
-    function getMinLeverage() external view override returns (uint256) {
-        return _getMinLeverage();
     }
 
     function getAccruedBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
@@ -312,60 +280,6 @@ abstract contract MiltonInternal is
 
     function _getMinLeverage() internal view virtual returns (uint256) {
         return _MIN_LEVERAGE;
-    }
-
-    function _getRiskIndicators(uint256 liquidityPool)
-        internal
-        view
-        virtual
-        returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators)
-    {
-        (
-            uint256 maxNotionalPayFixed,
-            uint256 maxNotionalReceiveFixed,
-            uint256 maxUtilizationRatePayFixed,
-            uint256 maxUtilizationRateReceiveFixed,
-            uint256 maxUtilizationRate,
-
-        ) = _iporRiskManagementOracle.getRiskIndicators(_asset);
-        uint256 maxCollateralPayFixed = IporMath.division(liquidityPool * maxUtilizationRatePayFixed, Constants.D18);
-        uint256 maxCollateralReceiveFixed = IporMath.division(
-            liquidityPool * maxUtilizationRateReceiveFixed,
-            Constants.D18
-        );
-        uint256 maxLeveragePayFixed;
-        if (maxCollateralPayFixed > 0) {
-            maxLeveragePayFixed = IporMath.division(maxNotionalPayFixed * Constants.D18, maxCollateralPayFixed);
-        } else {
-            maxLeveragePayFixed = _MIN_LEVERAGE;
-        }
-        uint256 maxLeverageReceiveFixed;
-        if (maxCollateralReceiveFixed > 0) {
-            maxLeverageReceiveFixed = IporMath.division(
-                maxNotionalReceiveFixed * Constants.D18,
-                maxCollateralReceiveFixed
-            );
-        } else {
-            maxLeverageReceiveFixed = _MIN_LEVERAGE;
-        }
-        return
-            AmmMiltonTypes.OpenSwapRiskIndicators(
-                maxUtilizationRate,
-                maxUtilizationRatePayFixed,
-                maxUtilizationRateReceiveFixed,
-                leverageInRange(maxLeveragePayFixed),
-                leverageInRange(maxLeverageReceiveFixed)
-            );
-    }
-
-    function leverageInRange(uint256 leverage) internal pure returns (uint256) {
-        if (leverage > Constants.LEVERAGE_1000) {
-            return Constants.LEVERAGE_1000;
-        } else if (leverage < _MIN_LEVERAGE) {
-            return _MIN_LEVERAGE;
-        } else {
-            return leverage;
-        }
     }
 
     function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer() internal view virtual returns (uint256) {

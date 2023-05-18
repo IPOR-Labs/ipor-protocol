@@ -44,16 +44,16 @@ interface IMiltonInternal {
     /// @notice Gets max allowed liquidity pool utilization rate.
     /// @dev Param used in swap validation.
     /// @return max liquidity pool utilization rate represented in 18 decimals
-    function getMaxLpUtilizationRate() external view returns (uint256);
+//    function getMaxLpUtilizationRate() external view returns (uint256);
 
     /// @notice Gets max liquidity pool utilization per leg.
     /// @dev Param used in swap validation.
     /// @return maxUtilizationRatePayFixed max Liquidity Pool Utilization Per Pay Fixed Leg rate represented in 18 decimals
     /// @return maxUtilizationRateReceiveFixed max Liquidity Pool Utilization Per Receive Fixed Leg rate represented in 18 decimals
-    function getMaxLpUtilizationPerLegRate() external view returns (
-        uint256 maxUtilizationRatePayFixed,
-        uint256 maxUtilizationRateReceiveFixed
-    );
+//    function getMaxLpUtilizationPerLegRate() external view returns (
+//        uint256 maxUtilizationRatePayFixed,
+//        uint256 maxUtilizationRateReceiveFixed
+//    );
 
     /// @notice Gets opening fee rate. When the trader opens swap position then fee is charged from the amount used to open the swap.
     /// Opening fee amount is split and transfered in part to Liquidity Pool and to Milton Treasury
@@ -88,15 +88,15 @@ interface IMiltonInternal {
     /// @dev Param used in swap validation.
     /// @return maxLeveragePayFixed max leverage per Pay Fixed leg rate represented in 18 decimals
     /// @return maxLeverageReceiveFixed max leverage per Receive Fixed leg rate represented in 18 decimals
-    function getMaxLeverage() external view returns (
-        uint256 maxLeveragePayFixed,
-        uint256 maxLeverageReceiveFixed
-    );
+//    function getMaxLeverage() external view returns (
+//        uint256 maxLeveragePayFixed,
+//        uint256 maxLeverageReceiveFixed
+//    );
 
     /// @notice Gets min leverage value.
     /// @dev Param used in swap validation.
     /// @return min leverage value represented in 18 decimals
-    function getMinLeverage() external view returns (uint256);
+//    function getMinLeverage() external view returns (uint256);
 
     /// @notice Gets Milton's balances including balance held by Stanley in external protocols.
     /// @dev Balances including sum of all collateral for Pay-Fixed and  Receive-Fixed legs,

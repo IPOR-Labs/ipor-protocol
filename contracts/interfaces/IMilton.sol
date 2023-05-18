@@ -64,11 +64,11 @@ interface IMilton {
     /// @param acceptableFixedInterestRate Max quote value which trader accepts in case of rate slippage. Value represented in 18 decimals.
     /// @param leverage Leverage used in this posistion. Value represented in 18 decimals.
     /// @return Swap ID in Pay-Fixed swaps list
-    function openSwapPayFixed(
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage
-    ) external returns (uint256);
+//    function openSwapPayFixed(
+//        uint256 totalAmount,
+//        uint256 acceptableFixedInterestRate,
+//        uint256 leverage
+//    ) external returns (uint256);
 
     /// @notice Opens Receive-Fixed (and Pay Floating) swap with given parameters.
     /// @dev Emits `OpenSwap` event from Milton, {Transfer} event from ERC20 asset.
@@ -76,11 +76,11 @@ interface IMilton {
     /// @param acceptableFixedInterestRate Max quote value which trader accept in case of rate slippage. Value represented in 18 decimals.
     /// @param leverage Leverage used in this posisiton. Value represented in 18 decimals.
     /// @return Swap ID in Pay-Fixed swaps list
-    function openSwapReceiveFixed(
-        uint256 totalAmount,
-        uint256 acceptableFixedInterestRate,
-        uint256 leverage
-    ) external returns (uint256);
+//    function openSwapReceiveFixed(
+//        uint256 totalAmount,
+//        uint256 acceptableFixedInterestRate,
+//        uint256 leverage
+//    ) external returns (uint256);
 
     /// @notice Closes Pay-Fixed swap for given ID.
     /// @dev Emits {CloseSwap} event from Milton, {Transfer} event from ERC20 asset.

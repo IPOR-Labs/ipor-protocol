@@ -69,13 +69,17 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             timestamp
         );
 
-        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = milton.getMaxLeverage();
-        (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed) =
-            milton.getMaxLpUtilizationPerLegRate();
+        //TODO: fixit
+        uint256 maxLeveragePayFixed; uint256 maxLeverageReceiveFixed;
+        // = milton.getMaxLeverage();
+        uint256 maxUtilizationRatePayFixed; uint256 maxUtilizationRateReceiveFixed;
+        //TODO: fixit
+//            milton.getMaxLpUtilizationPerLegRate();
 
         miltonData = ItfDataProviderTypes.ItfMiltonData(
             milton.getMaxSwapCollateralAmount(),
-            milton.getMaxLpUtilizationRate(),
+        0,
+            //milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
             milton.getOpeningFeeRate(),
@@ -85,7 +89,8 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             milton.getWadLiquidationDepositAmount(),
             maxLeveragePayFixed,
             maxLeverageReceiveFixed,
-            milton.getMinLeverage(),
+        0,
+            //milton.getMinLeverage(),
             spreadPayFixed,
             spreadReceiveFixed,
             soapPayFixed,

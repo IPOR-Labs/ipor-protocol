@@ -68,4 +68,17 @@ library IporTypes {
         /// @notice Vault's balance, describes how much asset has been transfered to Asset Management Vault (Stanley)
         uint256 vault;
     }
+
+    struct AmmBalancesForOpenSwapMemory {
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
+        uint256 totalCollateralPayFixed;
+        /// @notice Total notional amount of all swaps on  Pay Fixed leg (denominated in 18 decimals).
+        uint256 totalNotionalPayFixed;
+        /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
+        uint256 totalCollateralReceiveFixed;
+        /// @notice Total notional amount of all swaps on  Receive Fixed leg (denominated in 18 decimals).
+        uint256 totalNotionalReceiveFixed;
+        /// @notice Liquidity Pool Balance.
+        uint256 liquidityPool;
+    }
 }

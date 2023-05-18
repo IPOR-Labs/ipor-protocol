@@ -105,4 +105,6 @@ library MiltonErrors {
     string public constant CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY_FOR_BUYER = "IPOR_332";
 
     string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_333";
+
+    string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
 }
