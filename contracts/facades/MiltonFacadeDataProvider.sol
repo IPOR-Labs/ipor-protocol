@@ -112,78 +112,8 @@ contract MiltonFacadeDataProvider is
         return result;
     }
 
-    function getMySwaps(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    )
-        external
-        view
-        override
-        returns (uint256 totalCount, MiltonFacadeTypes.IporSwap[] memory swaps)
-    {
-        require(chunkSize > 0, IporErrors.CHUNK_SIZE_EQUAL_ZERO);
-        require(chunkSize <= Constants.MAX_CHUNK_SIZE, IporErrors.CHUNK_SIZE_TOO_BIG);
-
-        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
-        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
-
-        MiltonStorageTypes.IporSwapId[] memory swapIds;
-
-        (totalCount, swapIds) = miltonStorage.getSwapIds(_msgSender(), offset, chunkSize);
-
-        IMiltonInternal milton = IMiltonInternal(config.milton);
-
-        swaps = new MiltonFacadeTypes.IporSwap[](swapIds.length);
-
-        for (uint256 i = 0; i != swapIds.length; i++) {
-            MiltonStorageTypes.IporSwapId memory swapId = swapIds[i];
-            if (swapId.direction == 0) {
-                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId.id);
-                swaps[i] = _mapToIporSwap(
-                    asset,
-                    iporSwap,
-                    0,
-                    milton.calculatePayoffPayFixed(iporSwap)
-                );
-            } else {
-                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapReceiveFixed(
-                    swapId.id
-                );
-                swaps[i] = _mapToIporSwap(
-                    asset,
-                    iporSwap,
-                    1,
-                    milton.calculatePayoffReceiveFixed(iporSwap)
-                );
-            }
-        }
-    }
-
     function _getIporOracle() internal view virtual returns (address) {
         return _iporOracle;
-    }
-
-    function _mapToIporSwap(
-        address asset,
-        IporTypes.IporSwapMemory memory iporSwap,
-        uint8 direction,
-        int256 value
-    ) internal pure returns (MiltonFacadeTypes.IporSwap memory) {
-        return
-            MiltonFacadeTypes.IporSwap(
-                iporSwap.id,
-                asset,
-                iporSwap.collateral,
-                iporSwap.notional,
-                IporMath.division(iporSwap.notional * Constants.D18, iporSwap.collateral),
-                direction,
-                iporSwap.fixedInterestRate,
-                value,
-                iporSwap.openTimestamp,
-                iporSwap.endTimestamp,
-                iporSwap.liquidationDepositAmount
-            );
     }
 
     function _createIporAssetConfig(address asset, uint256 timestamp)

@@ -13,6 +13,8 @@ library SpreadStorageLibs {
 
     /// Only allowed to append new value to the end of the enum
     enum StorageId {
+        Owner,
+        AppointedOwner,
         WeightedNotional28DaysDai,
         WeightedNotional28DaysUsdc,
         WeightedNotional28DaysUsdt,
@@ -23,6 +25,15 @@ library SpreadStorageLibs {
         WeightedNotional90DaysUsdc,
         WeightedNotional90DaysUsdt
     }
+
+    struct OwnerStorage {
+        address owner;
+    }
+    struct AppointedOwnerStorage {
+        address appointedOwner;
+    }
+
+
 
     function saveWeightedNotional(
         StorageId storageId,
@@ -119,6 +130,20 @@ library SpreadStorageLibs {
         keys[7] = "WeightedNotional90DaysUsdc";
         storageIds[8] = StorageId.WeightedNotional90DaysUsdt;
         keys[8] = "WeightedNotional90DaysUsdt";
+    }
+
+    function getOwner() internal view returns (OwnerStorage storage owner) {
+        uint256 slotAddress = _getStorageSlot(StorageId.Owner);
+        assembly {
+            owner.slot := sload(slotAddress)
+        }
+    }
+
+    function getAppointedOwner() internal view returns (AppointedOwnerStorage storage appointedOwner) {
+        uint256 slotAddress = _getStorageSlot(StorageId.AppointedOwner);
+        assembly {
+            appointedOwner.slot := sload(slotAddress)
+        }
     }
 
     function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {

@@ -32,29 +32,6 @@ contract TestCommons is Test {
     }
 
     function _createSpread(address dai, address usdc, address usdt) internal returns (address) {
-        SpreadLens spreadLens = new SpreadLens(dai, usdc, usdt);
-
-
-        SpreadRouter implementation = new SpreadRouter(
-            SpreadRouter.DeployedContracts({
-                dai: dai,
-                usdc: usdc,
-                usdt: usdt,
-                governance: address(0x0), // TODO: add governance
-                lens: address(spreadLens),
-                spread28Days: address(0x0) // TODO: add spread28Days
-            })
-        );
-
-        ERC1967Proxy proxy = new ERC1967Proxy(
-            address(implementation),
-            abi.encodeWithSignature(
-                "initialize(bool)",
-                false
-            )
-        );
-
-
-        return address(proxy);
+        return address(0x0);
     }
 }

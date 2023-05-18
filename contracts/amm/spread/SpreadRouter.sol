@@ -3,20 +3,24 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "forge-std/console2.sol";
+import "./SpreadStorageLibs.sol";
+import "./SpreadAccessControl.sol";
 import "./ISpread28Days.sol";
 import "./ISpread60Days.sol";
 import "./ISpread90Days.sol";
 import "./ISpread28DaysLens.sol";
-import "./OpenzeppelinStorage.sol";
+import "./ISpread60DaysLens.sol";
+import "./ISpread90DaysLens.sol";
 
-contract SpreadRouter is UUPSUpgradeable {
+
+
+contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
     bytes32 internal immutable DAI;
     bytes32 internal immutable USDC;
     bytes32 internal immutable USDT;
     address internal immutable SPREAD_28_DAYS;
     address internal immutable SPREAD_60_DAYS;
     address internal immutable SPREAD_90_DAYS;
-    address internal immutable AMM_ADDRESS;
     address internal immutable STORAGE_LENS;
 
     struct DeployedContracts {
@@ -24,32 +28,33 @@ contract SpreadRouter is UUPSUpgradeable {
         address dai;
         address usdc;
         address usdt;
-        address lens;
         address spread28Days;
         address spread60Days;
         address spread90Days;
         address storageLens;
     }
 
-    constructor(DeployedContracts memory deployedContracts) {
-        GOVERNANCE = deployedContracts.governance;
-        LENS = deployedContracts.lens;
-        SPREAD_28_DAYS = deployedContracts.spread28Days;
+    constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.ammAddress) {
+
         DAI = bytes32(uint256(uint160(deployedContracts.dai)));
         USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
         USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
+        SPREAD_28_DAYS = deployedContracts.spread28Days;
+        SPREAD_60_DAYS = deployedContracts.spread60Days;
+        SPREAD_90_DAYS = deployedContracts.spread90Days;
+        STORAGE_LENS = deployedContracts.storageLens;
 
         _disableInitializers();
     }
 
     function initialize(bool paused) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        __UUPSUpgradeable_init_unchained();
+        SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
+        ownerStorage.owner = msg.sender;
 
-        if (paused) {
-            _pause();
-        }
+//        if (paused) {
+//            _pause();
+//        }
     }
 
     function getRouterImplementation(bytes4 sig) public view returns (address) {
