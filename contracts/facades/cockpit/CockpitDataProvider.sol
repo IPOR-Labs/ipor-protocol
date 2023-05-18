@@ -9,7 +9,6 @@ import "../../interfaces/types/CockpitTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../interfaces/IIporOracle.sol";
 import "../../interfaces/IMilton.sol";
-import "../../interfaces/IMiltonStorage.sol";
 import "../../interfaces/ICockpitDataProvider.sol";
 import "../../security/IporOwnableUpgradeable.sol";
 
@@ -32,7 +31,6 @@ contract CockpitDataProvider is
         address iporOracle,
         address[] memory assets,
         address[] memory miltons,
-        address[] memory miltonStorages,
         address[] memory josephs,
         address[] memory ipTokens,
         address[] memory ivTokens
@@ -41,7 +39,7 @@ contract CockpitDataProvider is
         __UUPSUpgradeable_init();
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
         require(
-            assets.length == miltons.length && assets.length == miltonStorages.length,
+            assets.length == miltons.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
 
@@ -52,14 +50,12 @@ contract CockpitDataProvider is
         for (uint256 i = 0; i != assetsLength; i++) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ipTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(ivTokens[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _assetConfig[assets[i]] = CockpitTypes.AssetConfig(
                 miltons[i],
-                miltonStorages[i],
                 josephs[i],
                 ipTokens[i],
                 ivTokens[i]
@@ -106,51 +102,6 @@ contract CockpitDataProvider is
         CockpitTypes.AssetConfig memory config = _assetConfig[asset];
         IERC20 token = IERC20(asset);
         return token.allowance(_msgSender(), config.joseph);
-    }
-
-    function getSwapsPayFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        return IMiltonStorage(config.miltonStorage).getSwapsPayFixed(account, offset, chunkSize);
-    }
-
-    function getSwapsReceiveFixed(
-        address asset,
-        address account,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        return
-            IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(account, offset, chunkSize);
-    }
-
-    function getMySwapsPayFixed(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        return
-            IMiltonStorage(config.miltonStorage).getSwapsPayFixed(_msgSender(), offset, chunkSize);
-    }
-
-    function getMySwapsReceiveFixed(
-        address asset,
-        uint256 offset,
-        uint256 chunkSize
-    ) external view override returns (uint256 totalCount, IporTypes.IporSwapMemory[] memory swaps) {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        return
-            IMiltonStorage(config.miltonStorage).getSwapsReceiveFixed(
-                _msgSender(),
-                offset,
-                chunkSize
-            );
     }
 
     function calculateSpread(address asset)
