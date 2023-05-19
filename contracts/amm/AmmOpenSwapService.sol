@@ -95,6 +95,25 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         address iporRiskManagementOracle,
         address spreadRouter
     ) {
+        require(usdtPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
+        require(usdtPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
+        require(usdtPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury"));
+
+        require(usdcPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
+        require(usdcPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
+        require(usdcPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury"));
+
+        require(daiPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
+        require(daiPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
+        require(daiPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
+
+        require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
+        require(
+            iporRiskManagementOracle != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " iporRiskManagementOracle")
+        );
+        require(spreadRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter"));
+
         _iporPublicationFee = configuration.iporPublicationFee;
         _maxSwapCollateralAmount = configuration.maxSwapCollateralAmount;
 
@@ -199,6 +218,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external override returns (uint256) {
+        require(onBehalfOf != address(0), "AmmOpenSwapService: onBehalfOf is zero address");
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
             asset: _usdt,
@@ -439,6 +459,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            context.onBehalfOf,
             context.asset,
             block.timestamp,
             totalAmount,
@@ -538,6 +559,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+            context.onBehalfOf,
             context.asset,
             block.timestamp,
             totalAmount,
@@ -628,12 +650,15 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _beforeOpenSwap(
+        address onBehalfOf,
         address asset,
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 leverage,
         uint256 maturity
     ) internal returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
+        require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
+
         require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
         require(IERC20Upgradeable(asset).balanceOf(msg.sender) >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
