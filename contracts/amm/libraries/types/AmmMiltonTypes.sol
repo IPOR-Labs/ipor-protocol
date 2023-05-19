@@ -32,9 +32,8 @@ library AmmMiltonTypes {
 
     struct OpenSwapRiskIndicators {
         uint256 maxUtilizationRate;
-        uint256 maxUtilizationRatePayFixed;
-        uint256 maxUtilizationRateReceiveFixed;
-        uint256 maxLeveragePayFixed;
-        uint256 maxLeverageReceiveFixed;
+        uint256 maxUtilizationRatePerLeg;
+        uint256 maxLeveragePerLeg;
+        int256 spread;
     }
 }

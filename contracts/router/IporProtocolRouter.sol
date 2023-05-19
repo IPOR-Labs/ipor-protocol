@@ -6,28 +6,56 @@ import "@openzeppelin/contracts/utils/Address.sol";
 import "./AccessControl.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IAmmSwapsLens.sol";
+import "../interfaces/IAmmOpenSwapService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     address public immutable AMM_SWAPS_LENS;
+    address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
 
     using Address for address;
 
     struct DeployedContracts {
         address ammSwapsLens;
+        address ammOpenSwapServiceAddress;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
+        AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
         _disableInitializers();
     }
 
-    function getRouterImplementation(bytes4 sig) public view returns (address) {
+    function getRouterImplementation(bytes4 sig) public returns (address) {
         if (
             sig == IAmmSwapsLens.getSwapsPayFixed.selector ||
             sig == IAmmSwapsLens.getSwapsReceiveFixed.selector ||
             sig == IAmmSwapsLens.getSwaps.selector
         ) {
             return AMM_SWAPS_LENS;
+        } else if (
+            sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed90daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed28daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed60daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed90daysUsdt.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed28daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed60daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed90daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed28daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed60daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed90daysUsdc.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed28daysDai.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed60daysDai.selector ||
+            sig == IAmmOpenSwapService.openSwapPayFixed90daysDai.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed28daysDai.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed60daysDai.selector ||
+            sig == IAmmOpenSwapService.openSwapReceiveFixed90daysDai.selector
+        ) {
+            whenNotPaused();
+            nonReentrant();
+            _reentrancyStatus = _ENTERED;
+            return AMM_OPEN_SWAP_SERVICE_ADDRESS;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);

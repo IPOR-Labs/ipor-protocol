@@ -6,7 +6,7 @@ import "../amm/libraries/IporSwapLogic.sol";
 
 contract MockIporSwapLogic {
     function calculateSwapAmount(
-        uint256 timeToMaturityInDays,
+        AmmTypes.SwapDuration duration,
         uint256 totalAmount,
         uint256 leverage,
         uint256 liquidationDepositAmount,
@@ -23,7 +23,7 @@ contract MockIporSwapLogic {
     {
         return
             IporSwapLogic.calculateSwapAmount(
-                timeToMaturityInDays,
+                duration,
                 totalAmount,
                 leverage,
                 liquidationDepositAmount,

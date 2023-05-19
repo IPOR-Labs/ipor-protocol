@@ -110,16 +110,18 @@ contract CockpitDataProvider is
         override
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {
-        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
-        IMilton milton = IMilton(config.milton);
+//        CockpitTypes.AssetConfig memory config = _assetConfig[asset];
+//        IMilton milton = IMilton(config.milton);
 
-        try milton.calculateSpread() returns (int256 _spreadPayFixed, int256 _spreadReceiveFixed) {
-            spreadPayFixed = _spreadPayFixed;
-            spreadReceiveFixed = _spreadReceiveFixed;
-        } catch {
+        //TODO: fix or remove from cockpit.
+//        try milton.calculateSpread() returns (int256 _spreadPayFixed, int256 _spreadReceiveFixed) {
+//            spreadPayFixed = _spreadPayFixed;
+//            spreadReceiveFixed = _spreadReceiveFixed;
+//        } catch {
+
             spreadPayFixed = 999999999999999999999;
             spreadReceiveFixed = 999999999999999999999;
-        }
+//        }
     }
 
     function _createIporFront(address asset)
