@@ -39,6 +39,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
         require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
         require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
+        // todo removed
         DAI = bytes32(uint256(uint160(deployedContracts.dai)));
         USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
         USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
@@ -54,10 +55,9 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         __UUPSUpgradeable_init_unchained();
         SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
         ownerStorage.owner = msg.sender;
-
-                if (paused) {
-                    _pause();
-                }
+        if (paused) {
+            _pause();
+        }
     }
 
     function getRouterImplementation(bytes4 sig) public view returns (address) {
@@ -98,6 +98,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         ) {
             return SPREAD_90_DAYS;
         }
+        // todo unsupported function
         return address(0);
     }
 

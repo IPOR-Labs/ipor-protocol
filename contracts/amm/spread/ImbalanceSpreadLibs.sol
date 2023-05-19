@@ -69,7 +69,7 @@ library ImbalanceSpreadLibs {
             lpDepth * inputData.maxLeverage * inputData.maxLpUtilizationPerLegRate,
             1e36
         );
-
+// todo timeWeighted..
         (uint256 weightedNotionalPayFixed, uint256 oldWeightedNotionalReceiveFixed) = CalculateWeightedNotionalLibs
             .getWeightedNotional(inputData.storageIds, inputData.maturities);
         uint256 newWeightedNotionalReceiveFixed = oldWeightedNotionalReceiveFixed + inputData.swapNotional;

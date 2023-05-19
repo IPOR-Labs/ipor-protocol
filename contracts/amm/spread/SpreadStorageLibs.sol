@@ -3,8 +3,7 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
-import "../../libraries/math/IporMath.sol";
-import "forge-std/Test.sol";
+import "contracts/libraries/math/IporMath.sol";
 import "./SpreadTypes.sol";
 
 library SpreadStorageLibs {
@@ -42,6 +41,8 @@ library SpreadStorageLibs {
     function saveWeightedNotional(StorageId storageId, SpreadTypes.WeightedNotionalMemory memory weightedNotional)
         internal
     {
+        // todo: validate
+//        if(storageId == StorageId.WeightedNotional28DaysDai ||)
         uint256 weightedNotionalPayFixedTemp;
         uint256 weightedNotionalReceiveFixedTemp;
         unchecked {
@@ -97,6 +98,7 @@ library SpreadStorageLibs {
             });
     }
 
+    // todo timeWeightedNotional
     function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
         storageIds = new StorageId[](9);
         keys = new string[](9);

@@ -16,6 +16,7 @@ contract  SpreadStorageLens is ISpreadStorageLens {
         (SpreadStorageLibs.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibs.getAllStorageId();
 
         for (uint256 i; i < storageIds.length; i++) {
+            // todo change to struts
             weightedNotional[i] = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
             weightedNotionalKeys[i] = keys[i];
         }

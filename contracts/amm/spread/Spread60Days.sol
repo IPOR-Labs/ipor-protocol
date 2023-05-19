@@ -29,7 +29,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         override
         returns (uint256 quoteValue)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixed60Day(spreadInputs, true);
+        uint256 imbalanceSpread = _calculateImbalancePayFixedAndUpdateTimeWeightedNotional60Day(spreadInputs);
 
         int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
             spreadInputs.baseSpread +
@@ -43,7 +43,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         override
         returns (uint256 quoteValue)
     {
-        uint256 imbalanceSpread = _calculateImbalancePayFixed60Day(spreadInputs, false);
+        uint256 imbalanceSpread = _calculateImbalancePayFixed60Day(spreadInputs);
 
         int256 intQuoteValue = spreadInputs.indexValue.toInt256() +
             spreadInputs.baseSpread +
@@ -57,7 +57,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         override
         returns (uint256 quoteValue)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed60Day(spreadInputs, true);
+        uint256 imbalanceSpread = _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional60Day(spreadInputs);
 
         int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
             spreadInputs.baseSpread -
@@ -71,7 +71,7 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         override
         returns (uint256 quoteValue)
     {
-        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed60Day(spreadInputs, false);
+        uint256 imbalanceSpread = _calculateImbalanceReceiveFixed60Day(spreadInputs);
 
         int256 intQuoteValueWithIpor = spreadInputs.indexValue.toInt256() +
             spreadInputs.baseSpread -
@@ -92,7 +92,15 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
         return ImbalanceSpreadLibs.spreadFunctionConfig();
     }
 
-    function _calculateImbalancePayFixed60Day(IporTypes.SpreadInputs memory spreadInputs, bool updateWeightedNotional)
+    function _calculateImbalancePayFixed60Day(IporTypes.SpreadInputs memory spreadInputs)
+        internal
+        returns (uint256 spreadValue)
+    {
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+        spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
+    }
+
+    function _calculateImbalancePayFixedAndUpdateTimeWeightedNotional60Day(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
@@ -100,7 +108,6 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
 
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
 
-        if (updateWeightedNotional) {
             SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
                 inputData.storageId
             );
@@ -110,18 +117,21 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
                 inputData.swapNotional,
                 60 days
             );
-        }
+
     }
 
     function _calculateImbalanceReceiveFixed60Day(
-        IporTypes.SpreadInputs calldata spreadInputs,
-        bool updateWeightedNotional
-    ) internal returns (uint256 spreadValue) {
+        IporTypes.SpreadInputs calldata spreadInputs) internal returns (uint256 spreadValue) {
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+
+        spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
+    }
+    function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional60Day(
+        IporTypes.SpreadInputs calldata spreadInputs) internal returns (uint256 spreadValue) {
         ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
 
-        if (updateWeightedNotional) {
             SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
                 inputData.storageId
             );
@@ -131,7 +141,6 @@ contract Spread60Days is ISpread60Days, ISpread60DaysLens {
                 inputData.swapNotional,
                 60 days
             );
-        }
     }
 
     function _getImbalanceSpreadConfig(IporTypes.SpreadInputs memory spreadInputs)
