@@ -74,7 +74,6 @@ contract SpreadAccessControl {
     /// @notice Pauses the contract.
     /// @dev Only the pause guardian can call this function.
     function pause() external onlyPauseGuardian {
-        console2.log(msg.sender, " called pause");
         _pause();
     }
 
