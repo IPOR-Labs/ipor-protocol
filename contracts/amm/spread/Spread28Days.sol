@@ -7,6 +7,7 @@ import "./ImbalanceSpreadLibs.sol";
 import "./SpreadStorageLibs.sol";
 import "./ISpread28DaysLens.sol";
 import "contracts/libraries/errors/IporOracleErrors.sol";
+import "contracts/libraries/errors/IporErrors.sol";
 
 contract Spread28Days is ISpread28Days, ISpread28DaysLens {
     using SafeCast for uint256;

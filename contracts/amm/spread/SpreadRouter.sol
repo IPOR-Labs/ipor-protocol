@@ -11,6 +11,8 @@ import "./ISpread28DaysLens.sol";
 import "./ISpread60DaysLens.sol";
 import "./ISpread90DaysLens.sol";
 
+import "forge-std/Test.sol";
+
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
 
     address internal immutable SPREAD_28_DAYS;
@@ -43,6 +45,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         __UUPSUpgradeable_init_unchained();
         SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
         ownerStorage.owner = msg.sender;
+
         if (paused) {
             _pause();
         }

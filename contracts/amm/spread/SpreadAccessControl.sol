@@ -6,6 +6,8 @@ import "contracts/libraries/errors/IporErrors.sol";
 import "contracts/security/PauseManager.sol";
 import "./SpreadStorageLibs.sol";
 
+import "forge-std/Test.sol";
+
 contract SpreadAccessControl {
     event AppointedToTransferOwnership(address indexed appointedOwner);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -34,14 +36,14 @@ contract SpreadAccessControl {
 
     /// @dev Throws if called by any account other than the pause guardian.
     modifier onlyPauseGuardian() {
-        PauseManager.isPauseGuardian(msg.sender);
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
         _;
     }
 
     /// @notice Returns the address of the contract owner.
     /// @return The address of the contract owner.
     function owner() external view returns (address) {
-        return address(SpreadStorageLibs.getOwner().owner);
+        return SpreadStorageLibs.getOwner().owner;
     }
 
     /// @notice Transfers the ownership of the contract to a new appointed owner.
@@ -73,6 +75,7 @@ contract SpreadAccessControl {
     /// @notice Pauses the contract.
     /// @dev Only the pause guardian can call this function.
     function pause() external onlyPauseGuardian {
+        console2.log(msg.sender, " called pause");
         _pause();
     }
 

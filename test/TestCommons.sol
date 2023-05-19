@@ -5,8 +5,7 @@ import "forge-std/Test.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/amm/spread/SpreadRouter.sol";
-import "../contracts/amm/spread/Spread28Days.sol";
+
 
 contract TestCommons is Test {
 
@@ -25,32 +24,5 @@ contract TestCommons is Test {
         dai = new MockTestnetToken("Mocked DAI", "DAI", 100_000_000 * 1e18, uint8(18));
         usdc = new MockTestnetToken("Mocked USDC", "USDC", 100_000_000 * 1e6, uint8(6));
         usdt = new MockTestnetToken("Mocked USDT", "USDT", 100_000_000 * 1e6, uint8(6));
-    }
-
-    function _createSpread(address dai, address usdc, address usdt) internal returns (address) {
-//        ISpread28DaysLens spreadLens = new Spread28Days(dai, usdc, usdt);
-//
-//
-//        SpreadRouter implementation = new SpreadRouter(
-//            SpreadRouter.DeployedContracts({
-//                dai: dai,
-//                usdc: usdc,
-//                usdt: usdt,
-//                governance: address(0x0), // TODO: add governance
-//                lens: address(spreadLens),
-//                spread28Days: address(0x0) // TODO: add spread28Days
-//            })
-//        );
-//
-//        ERC1967Proxy proxy = new ERC1967Proxy(
-//            address(implementation),
-//            abi.encodeWithSignature(
-//                "initialize(bool)",
-//                false
-//            )
-//        );
-
-
-        return address(0);
     }
 }

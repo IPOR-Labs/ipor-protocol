@@ -7,6 +7,8 @@ import "contracts/libraries/math/IporMath.sol";
 import "contracts/libraries/errors/MiltonErrors.sol";
 import "./SpreadTypes.sol";
 
+import "forge-std/Test.sol";
+
 library SpreadStorageLibs {
     using SafeCast for uint256;
     uint256 private constant STORAGE_SLOT_BASE = 10_000;
@@ -124,25 +126,25 @@ library SpreadStorageLibs {
     function getOwner() internal view returns (OwnerStorage storage owner) {
         uint256 slotAddress = _getStorageSlot(StorageId.Owner);
         assembly {
-            owner.slot := sload(slotAddress)
+            owner.slot := slotAddress
         }
     }
 
     function getAppointedOwner() internal view returns (AppointedOwnerStorage storage appointedOwner) {
         uint256 slotAddress = _getStorageSlot(StorageId.AppointedOwner);
         assembly {
-            appointedOwner.slot := sload(slotAddress)
+            appointedOwner.slot := slotAddress
         }
     }
 
     function getPaused() internal view returns (PausedStorage storage paused) {
         uint256 slotAddress = _getStorageSlot(StorageId.Paused);
         assembly {
-            paused.slot := sload(slotAddress)
+            paused.slot := slotAddress
         }
     }
 
-    function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
+    function _getStorageSlot(StorageId storageId) internal view returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
     }
 
