@@ -15,9 +15,13 @@ library SpreadStorageLibs {
 
     /// Only allowed to append new value to the end of the enum
     enum StorageId {
+        // address
         Owner,
+        // address
         AppointedOwner,
+        // uint256
         Paused,
+        // WeightedNotionalStorage
         TimeWeightedNotional28DaysDai,
         TimeWeightedNotional28DaysUsdc,
         TimeWeightedNotional28DaysUsdt,
@@ -74,6 +78,7 @@ library SpreadStorageLibs {
         internal
         returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {
+        _checkTimeWeightedNotional(storageId);
         uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
         uint256 timeWeightedNotionalReceiveFixed;
@@ -104,23 +109,23 @@ library SpreadStorageLibs {
         storageIds = new StorageId[](9);
         keys = new string[](9);
         storageIds[0] = StorageId.TimeWeightedNotional28DaysDai;
-        keys[0] = "WeightedNotional28DaysDai";
+        keys[0] = "TimeWeightedNotional28DaysDai";
         storageIds[1] = StorageId.TimeWeightedNotional28DaysUsdc;
-        keys[1] = "WeightedNotional28DaysUsdc";
+        keys[1] = "TimeWeightedNotional28DaysUsdc";
         storageIds[2] = StorageId.TimeWeightedNotional28DaysUsdt;
-        keys[2] = "WeightedNotional28DaysUsdt";
+        keys[2] = "TimeWeightedNotional28DaysUsdt";
         storageIds[3] = StorageId.TimeWeightedNotional60DaysDai;
-        keys[3] = "WeightedNotional60DaysDai";
+        keys[3] = "TimeWeightedNotional60DaysDai";
         storageIds[4] = StorageId.TimeWeightedNotional60DaysUsdc;
-        keys[4] = "WeightedNotional60DaysUsdc";
+        keys[4] = "TimeWeightedNotional60DaysUsdc";
         storageIds[5] = StorageId.TimeWeightedNotional60DaysUsdt;
-        keys[5] = "WeightedNotional60DaysUsdt";
+        keys[5] = "TimeWeightedNotional60DaysUsdt";
         storageIds[6] = StorageId.TimeWeightedNotional90DaysDai;
-        keys[6] = "WeightedNotional90DaysDai";
+        keys[6] = "TimeWeightedNotional90DaysDai";
         storageIds[7] = StorageId.TimeWeightedNotional90DaysUsdc;
-        keys[7] = "WeightedNotional90DaysUsdc";
+        keys[7] = "TimeWeightedNotional90DaysUsdc";
         storageIds[8] = StorageId.TimeWeightedNotional90DaysUsdt;
-        keys[8] = "WeightedNotional90DaysUsdt";
+        keys[8] = "TimeWeightedNotional90DaysUsdt";
     }
 
     function getOwner() internal view returns (OwnerStorage storage owner) {
