@@ -41,7 +41,11 @@ library CalculateTimeWeightedNotionalLibs {
         return newTimeWeightedNotional;
     }
 
-
+    /// @notice Updates the time-weighted notional value for the receive fixed leg.
+    /// @param timeWeightedNotional The memory struct containing the time-weighted notional information.
+    /// @param newSwapNotional The new swap notional value.
+    /// @param maturity The maturity timestamp.
+    /// @dev This function is internal and used to update the time-weighted notional value for the receive fixed leg.
     function updateTimeWeightedNotionalReceiveFixed(
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
@@ -61,6 +65,11 @@ library CalculateTimeWeightedNotionalLibs {
         SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
+    /// @notice Updates the time-weighted notional value for the pay fixed leg.
+    /// @param timeWeightedNotional The memory struct containing the time-weighted notional information.
+    /// @param newSwapNotional The new swap notional value.
+    /// @param maturity The maturity timestamp.
+    /// @dev This function is internal and used to update the time-weighted notional value for the pay fixed leg.
     function updateTimeWeightedNotionalPayFixed(
         SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
@@ -80,6 +89,12 @@ library CalculateTimeWeightedNotionalLibs {
         SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
+    /// @notice Calculates the time-weighted notional values for the pay fixed and receive fixed legs.
+    /// @param storageIds The array of storage IDs representing the time-weighted notional storage locations.
+    /// @param maturities The array of maturities corresponding to each storage ID.
+    /// @return timeWeightedNotionalPayFixed The aggregated time-weighted notional value for the pay fixed leg.
+    /// @return timeWeightedNotionalReceiveFixed The aggregated time-weighted notional value for the receive fixed leg.
+    /// @dev This function is internal and used to calculate the aggregated time-weighted notional values for multiple storage IDs and maturities.
     function getTimeWeightedNotional(SpreadStorageLibs.StorageId[] memory storageIds, uint256[] memory maturities)
         internal
         returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed)

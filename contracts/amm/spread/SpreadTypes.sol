@@ -26,4 +26,9 @@ library SpreadTypes {
         /// @notice storageId from SpreadStorageLibs
         SpreadStorageLibs.StorageId storageId;
     }
+
+    struct TimeWeightedNotionalResponse {
+        TimeWeightedNotionalMemory timeWeightedNotional;
+        string key;
+    }
 }

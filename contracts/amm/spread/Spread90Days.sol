@@ -21,6 +21,9 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         address usdc,
         address usdt
     ) {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
         _DAI = dai;
         _USDC = usdc;
         _USDT = usdt;

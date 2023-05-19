@@ -21,6 +21,9 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         address usdc,
         address usdt
     ) {
+        require(dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI"));
+        require(usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC"));
+        require(usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT"));
         _DAI = dai;
         _USDC = usdc;
         _USDT = usdt;
@@ -146,7 +149,6 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         );
     }
 
-    //todo get spreadConfigForInbalans
     function _getSpreadConfigForImbalance(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)

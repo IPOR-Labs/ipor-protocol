@@ -8,17 +8,17 @@ import "./CalculateWeightedNotionalLibs.sol";
 import "./SpreadStorageLibs.sol";
 
 contract  SpreadStorageLens is ISpreadStorageLens {
-    function getWeightedNotional()
+    function getTimeWeightedNotional()
         external
         override
-        returns (SpreadTypes.TimeWeightedNotionalMemory[] memory timeWeightedNotional, string[] memory timeWeightedNotionalKeys)
+        returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse)
     {
         (SpreadStorageLibs.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibs.getAllStorageId();
 
+        timeWeightedNotionalResponse = new SpreadTypes.TimeWeightedNotionalResponse[](storageIds.length);
         for (uint256 i; i < storageIds.length; i++) {
-            // todo change to struts
-            timeWeightedNotional[i] = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
-            timeWeightedNotionalKeys[i] = keys[i];
+            timeWeightedNotionalResponse[i].timeWeightedNotional = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
+            timeWeightedNotionalResponse[i].key = keys[i];
         }
     }
 }

@@ -5,6 +5,6 @@ import "contracts/interfaces/types/IporTypes.sol";
 import "./SpreadTypes.sol";
 
 interface ISpreadStorageLens {
-    function getWeightedNotional(
-    ) external returns (SpreadTypes.TimeWeightedNotionalMemory[] memory timeWeightedNotional, string[] memory keys);
+    function getTimeWeightedNotional(
+    ) external returns (SpreadTypes.TimeWeightedNotionalResponse[] memory timeWeightedNotionalResponse);
 }
