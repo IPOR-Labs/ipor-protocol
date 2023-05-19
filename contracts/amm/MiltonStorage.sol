@@ -621,6 +621,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
         swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
         swap.state = AmmTypes.SwapState.ACTIVE;
+        swap.duration = newSwap.duration;
 
         _swapsPayFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;
@@ -644,6 +645,7 @@ contract MiltonStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, I
         swap.fixedInterestRate = newSwap.fixedInterestRate.toUint64();
         swap.liquidationDepositAmount = newSwap.liquidationDepositAmount.toUint32();
         swap.state = AmmTypes.SwapState.ACTIVE;
+        swap.duration = newSwap.duration;
 
         _swapsReceiveFixed.ids[newSwap.buyer].push(id);
         _lastSwapId = id;

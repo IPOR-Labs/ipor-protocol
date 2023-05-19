@@ -107,4 +107,6 @@ library MiltonErrors {
     string public constant CANNOT_UNWIND_CLOSING_TOO_LATE = "IPOR_333";
 
     string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
+
+    string public constant UNSUPPORTED_SWAP_DURATION = "IPOR_335";
 }

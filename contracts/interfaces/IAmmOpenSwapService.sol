@@ -5,6 +5,7 @@ import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/types/MiltonTypes.sol";
 
 interface IAmmOpenSwapService {
+
     function openSwapPayFixed28daysUsdt(
         address behalfOf,
         uint256 totalAmount,
@@ -46,7 +47,6 @@ interface IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
-
 
     function openSwapPayFixed28daysUsdc(
         address behalfOf,

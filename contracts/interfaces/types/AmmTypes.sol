@@ -4,6 +4,12 @@ pragma solidity 0.8.16;
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
 /// @dev Used by IMilton and IMiltonStorage interfaces.
 library AmmTypes {
+    /// @notice enum describing Swap's duration, 28 days, 60 days or 90 days
+    enum SwapDuration {
+        DAYS_28,
+        DAYS_60,
+        DAYS_90
+    }
     /// @notice enum describing Swap's state, ACTIVE - when the swap is opened, INACTIVE when it's closed
     enum SwapState {
         INACTIVE,
@@ -39,6 +45,8 @@ library AmmTypes {
         /// @notice Opening fee amount part which is allocated in Treasury Balance. This fee is calculated as a rate of the swap's collateral.
         /// @dev value represented in 18 decimals
         uint256 openingFeeTreasuryAmount;
+        /// @notice Swap's duration, 0 - 28 days, 1 - 60 days or 2 - 90 days
+        AmmTypes.SwapDuration duration;
     }
 
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.

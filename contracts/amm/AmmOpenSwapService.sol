@@ -22,61 +22,59 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     using Address for address;
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    /// @dev represented in 18 decimals
-    uint256 internal immutable _iporPublicationFee;
-
-    /// @dev max collateral used to open a swap, represented in 18 decimals
-    uint256 internal immutable _maxSwapCollateralAmount;
-
-    /// @dev represented without 18 decimals
-    uint256 internal immutable _liquidationDepositAmount;
-
-    /// @dev represented in 18 decimals
-    uint256 internal immutable _liquidationDepositAmountWad;
-
-    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
-    uint256 internal immutable _openingFeeRate;
-
-    /// @notice Opening Fee is divided between Treasury Balance and Liquidity Pool Balance,
-    /// below value define how big pie going to Treasury Balance
-    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
-    uint256 internal immutable _openingFeeTreasuryPortionRate;
-
-    uint256 internal immutable _minLeverage;
-    uint256 internal immutable _maxLeverage;
-
     address internal immutable _usdt;
+    uint256 internal immutable _usdtDecimals;
     address internal immutable _usdtAmmStorage;
     address internal immutable _usdtAmmTreasury;
+    uint256 internal immutable _usdtIporPublicationFee;
+    uint256 internal immutable _usdtMaxSwapCollateralAmount;
+    uint256 internal immutable _usdtLiquidationDepositAmount;
+    uint256 internal immutable _usdtMinLeverage;
+    uint256 internal immutable _usdtMaxLeverage;
+    uint256 internal immutable _usdtOpeningFeeRate;
+    uint256 internal immutable _usdtOpeningFeeTreasuryPortionRate;
 
     address internal immutable _usdc;
+    uint256 internal immutable _usdcDecimals;
     address internal immutable _usdcAmmStorage;
     address internal immutable _usdcAmmTreasury;
+    uint256 internal immutable _usdcIporPublicationFee;
+    uint256 internal immutable _usdcMaxSwapCollateralAmount;
+    uint256 internal immutable _usdcLiquidationDepositAmount;
+    uint256 internal immutable _usdcMinLeverage;
+    uint256 internal immutable _usdcMaxLeverage;
+    uint256 internal immutable _usdcOpeningFeeRate;
+    uint256 internal immutable _usdcOpeningFeeTreasuryPortionRate;
 
     address internal immutable _dai;
+    uint256 internal immutable _daiDecimals;
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
+    uint256 internal immutable _daiIporPublicationFee;
+    uint256 internal immutable _daiMaxSwapCollateralAmount;
+    uint256 internal immutable _daiLiquidationDepositAmount;
+    uint256 internal immutable _daiMinLeverage;
+    uint256 internal immutable _daiMaxLeverage;
+    uint256 internal immutable _daiOpeningFeeRate;
+    uint256 internal immutable _daiOpeningFeeTreasuryPortionRate;
 
     address internal immutable _iporOracle;
     address internal immutable _iporRiskManagementOracle;
     address internal immutable _spreadRouter;
 
-    struct Pool {
-        address asset;
-        address ammStorage;
-        address ammTreasury;
-    }
-
     struct Context {
         address onBehalfOf;
-        address asset;
-        address ammStorage;
-        address ammTreasury;
-        uint256 maturity;
+        /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
+        AmmTypes.SwapDuration duration;
         string spreadMethodSig;
+        PoolConfiguration poolCfg;
     }
 
-    struct Configuration {
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ammStorage;
+        address ammTreasury;
         uint256 iporPublicationFee;
         uint256 maxSwapCollateralAmount;
         uint256 liquidationDepositAmount;
@@ -87,25 +85,30 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     constructor(
-        Configuration memory configuration,
-        Pool memory usdtPool,
-        Pool memory usdcPool,
-        Pool memory daiPool,
+        PoolConfiguration memory usdtPoolCfg,
+        PoolConfiguration memory usdcPoolCfg,
+        PoolConfiguration memory daiPoolCfg,
         address iporOracle,
         address iporRiskManagementOracle,
         address spreadRouter
     ) {
-        require(usdtPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
-        require(usdtPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(usdtPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury"));
+        require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
+        require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
+        require(
+            usdtPoolCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
+        );
 
-        require(usdcPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
-        require(usdcPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(usdcPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury"));
+        require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
+        require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
+        require(
+            usdcPoolCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
+        );
 
-        require(daiPool.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
-        require(daiPool.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
-        require(daiPool.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
+        require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
+        require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
+        require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
 
         require(iporOracle != address(0), string.concat(IporErrors.WRONG_ADDRESS, " iporOracle"));
         require(
@@ -114,29 +117,41 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
         require(spreadRouter != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spreadRouter"));
 
-        _iporPublicationFee = configuration.iporPublicationFee;
-        _maxSwapCollateralAmount = configuration.maxSwapCollateralAmount;
+        _usdt = usdtPoolCfg.asset;
+        _usdtDecimals = usdtPoolCfg.decimals;
+        _usdtAmmStorage = usdtPoolCfg.ammStorage;
+        _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
+        _usdtIporPublicationFee = usdtPoolCfg.iporPublicationFee;
+        _usdtMaxSwapCollateralAmount = usdtPoolCfg.maxSwapCollateralAmount;
+        _usdtLiquidationDepositAmount = usdtPoolCfg.liquidationDepositAmount;
+        _usdtMinLeverage = usdtPoolCfg.minLeverage;
+        _usdtMaxLeverage = usdtPoolCfg.maxLeverage;
+        _usdtOpeningFeeRate = usdtPoolCfg.openingFeeRate;
+        _usdtOpeningFeeTreasuryPortionRate = usdtPoolCfg.openingFeeTreasuryPortionRate;
 
-        _liquidationDepositAmount = configuration.liquidationDepositAmount;
-        _liquidationDepositAmountWad = configuration.liquidationDepositAmount * Constants.D18;
+        _usdc = usdcPoolCfg.asset;
+        _usdcDecimals = usdcPoolCfg.decimals;
+        _usdcAmmStorage = usdcPoolCfg.ammStorage;
+        _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
+        _usdcIporPublicationFee = usdcPoolCfg.iporPublicationFee;
+        _usdcMaxSwapCollateralAmount = usdcPoolCfg.maxSwapCollateralAmount;
+        _usdcLiquidationDepositAmount = usdcPoolCfg.liquidationDepositAmount;
+        _usdcMinLeverage = usdcPoolCfg.minLeverage;
+        _usdcMaxLeverage = usdcPoolCfg.maxLeverage;
+        _usdcOpeningFeeRate = usdcPoolCfg.openingFeeRate;
+        _usdcOpeningFeeTreasuryPortionRate = usdcPoolCfg.openingFeeTreasuryPortionRate;
 
-        _minLeverage = configuration.minLeverage;
-        _maxLeverage = configuration.maxLeverage;
-
-        _openingFeeRate = configuration.openingFeeRate;
-        _openingFeeTreasuryPortionRate = configuration.openingFeeTreasuryPortionRate;
-
-        _usdt = usdtPool.asset;
-        _usdtAmmStorage = usdtPool.ammStorage;
-        _usdtAmmTreasury = usdtPool.ammTreasury;
-
-        _usdc = usdcPool.asset;
-        _usdcAmmStorage = usdcPool.ammStorage;
-        _usdcAmmTreasury = usdcPool.ammTreasury;
-
-        _dai = daiPool.asset;
-        _daiAmmStorage = daiPool.ammStorage;
-        _daiAmmTreasury = daiPool.ammTreasury;
+        _dai = daiPoolCfg.asset;
+        _daiDecimals = daiPoolCfg.decimals;
+        _daiAmmStorage = daiPoolCfg.ammStorage;
+        _daiAmmTreasury = daiPoolCfg.ammTreasury;
+        _daiIporPublicationFee = daiPoolCfg.iporPublicationFee;
+        _daiMaxSwapCollateralAmount = daiPoolCfg.maxSwapCollateralAmount;
+        _daiLiquidationDepositAmount = daiPoolCfg.liquidationDepositAmount;
+        _daiMinLeverage = daiPoolCfg.minLeverage;
+        _daiMaxLeverage = daiPoolCfg.maxLeverage;
+        _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
+        _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
         _iporOracle = iporOracle;
         _iporRiskManagementOracle = iporRiskManagementOracle;
@@ -151,11 +166,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -168,11 +181,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -185,11 +196,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -202,11 +211,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
 
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -221,11 +228,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         require(onBehalfOf != address(0), "AmmOpenSwapService: onBehalfOf is zero address");
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -238,11 +243,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdt,
-            ammStorage: _usdtAmmStorage,
-            ammTreasury: _usdtAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdt()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -255,11 +258,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
 
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -273,11 +274,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -290,11 +289,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -307,11 +304,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -324,11 +319,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -341,11 +334,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _usdc,
-            ammStorage: _usdcAmmStorage,
-            ammTreasury: _usdcAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationUsdc()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -358,11 +349,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -375,11 +364,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -392,11 +379,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -409,11 +394,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 28,
-            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_28,
+            spreadMethodSig: "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -426,11 +409,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 60,
-            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_60,
+            spreadMethodSig: "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -443,40 +424,87 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     ) external override returns (uint256) {
         Context memory context = Context({
             onBehalfOf: onBehalfOf,
-            asset: _dai,
-            ammStorage: _daiAmmStorage,
-            ammTreasury: _daiAmmTreasury,
-            maturity: 90,
-            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))"
+            duration: AmmTypes.SwapDuration.DAYS_90,
+            spreadMethodSig: "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256))",
+            poolCfg: getOpenSwapPoolConfigurationDai()
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
 
+    function getOpenSwapPoolConfigurationUsdt() public view returns (PoolConfiguration memory poolCfg) {
+        poolCfg = PoolConfiguration({
+            asset: _usdt,
+            decimals: _usdtDecimals,
+            ammStorage: _usdtAmmStorage,
+            ammTreasury: _usdtAmmTreasury,
+            iporPublicationFee: _usdtIporPublicationFee,
+            maxSwapCollateralAmount: _usdtMaxSwapCollateralAmount,
+            liquidationDepositAmount: _usdtLiquidationDepositAmount,
+            minLeverage: _usdtMinLeverage,
+            maxLeverage: _usdtMaxLeverage,
+            openingFeeRate: _usdtOpeningFeeRate,
+            openingFeeTreasuryPortionRate: _usdtOpeningFeeTreasuryPortionRate
+        });
+    }
+
+    function getOpenSwapPoolConfigurationUsdc() public view returns (PoolConfiguration memory poolCfg) {
+        poolCfg = PoolConfiguration({
+            asset: _usdc,
+            decimals: _usdcDecimals,
+            ammStorage: _usdcAmmStorage,
+            ammTreasury: _usdcAmmTreasury,
+            iporPublicationFee: _usdcIporPublicationFee,
+            maxSwapCollateralAmount: _usdcMaxSwapCollateralAmount,
+            liquidationDepositAmount: _usdcLiquidationDepositAmount,
+            minLeverage: _usdcMinLeverage,
+            maxLeverage: _usdcMaxLeverage,
+            openingFeeRate: _usdcOpeningFeeRate,
+            openingFeeTreasuryPortionRate: _usdcOpeningFeeTreasuryPortionRate
+        });
+    }
+
+    function getOpenSwapPoolConfigurationDai() public view returns (PoolConfiguration memory poolCfg) {
+        poolCfg = PoolConfiguration({
+            asset: _dai,
+            decimals: _daiDecimals,
+            ammStorage: _daiAmmStorage,
+            ammTreasury: _daiAmmTreasury,
+            iporPublicationFee: _daiIporPublicationFee,
+            maxSwapCollateralAmount: _daiMaxSwapCollateralAmount,
+            liquidationDepositAmount: _daiLiquidationDepositAmount,
+            minLeverage: _daiMinLeverage,
+            maxLeverage: _daiMaxLeverage,
+            openingFeeRate: _daiOpeningFeeRate,
+            openingFeeTreasuryPortionRate: _daiOpeningFeeTreasuryPortionRate
+        });
+    }
+
     function _openSwapPayFixed(
-        Context memory context,
+        Context memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            context.onBehalfOf,
-            context.asset,
+            ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
             leverage,
-            context.maturity
+            ctx.duration,
+            ctx.poolCfg
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(context.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
         AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            context.asset,
+            ctx.poolCfg.asset,
             0,
-            context.maturity,
-            balance.liquidityPool
+            ctx.duration,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage
         );
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
@@ -486,14 +514,15 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             leverage,
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg
+            riskIndicators.maxUtilizationRatePerLeg,
+            ctx.poolCfg.maxLeverage
         );
 
         uint256 quoteValue = abi.decode(
             _spreadRouter.functionCall(
                 abi.encodeWithSignature(
-                    context.spreadMethodSig,
-                    context.asset,
+                    ctx.spreadMethodSig,
+                    ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxUtilizationRatePerLeg,
@@ -521,7 +550,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            context.onBehalfOf,
+            ctx.onBehalfOf,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -529,18 +558,19 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             indicator.fixedInterestRate,
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
-            bosStruct.openingFeeTreasuryAmount
+            bosStruct.openingFeeTreasuryAmount,
+            ctx.duration
         );
 
-        uint256 newSwapId = IMiltonStorage(context.ammStorage).updateStorageWhenOpenSwapPayFixed(
+        uint256 newSwapId = IMiltonStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapPayFixed(
             newSwap,
-            _iporPublicationFee
+            ctx.poolCfg.iporPublicationFee
         );
 
-        IERC20Upgradeable(context.asset).safeTransferFrom(msg.sender, context.ammTreasury, totalAmount);
+        IERC20Upgradeable(ctx.poolCfg.asset).safeTransferFrom(msg.sender, ctx.poolCfg.ammTreasury, totalAmount);
 
         _emitOpenSwapEvent(
-            context.asset,
+            ctx.poolCfg.asset,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -553,30 +583,31 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     }
 
     function _openSwapReceiveFixed(
-        Context memory context,
+        Context memory ctx,
         uint256 totalAmount,
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
         AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
-            context.onBehalfOf,
-            context.asset,
+            ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
             leverage,
-            context.maturity
+            ctx.duration,
+            ctx.poolCfg
         );
 
-        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(context.ammStorage)
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(ctx.poolCfg.ammStorage)
             .getBalancesForOpenSwap();
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
         AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
-            context.asset,
+            ctx.poolCfg.asset,
             1,
-            context.maturity,
-            balance.liquidityPool
+            ctx.duration,
+            balance.liquidityPool,
+            ctx.poolCfg.minLeverage
         );
 
         _validateLiquidityPoolUtilizationAndSwapLeverage(
@@ -586,14 +617,15 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             leverage,
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxUtilizationRate,
-            riskIndicators.maxUtilizationRatePerLeg
+            riskIndicators.maxUtilizationRatePerLeg,
+            ctx.poolCfg.minLeverage
         );
 
         uint256 quoteValue = abi.decode(
             _spreadRouter.functionCall(
                 abi.encodeWithSignature(
-                    context.spreadMethodSig,
-                    context.asset,
+                    ctx.spreadMethodSig,
+                    ctx.poolCfg.asset,
                     bosStruct.notional,
                     riskIndicators.maxLeveragePerLeg,
                     riskIndicators.maxUtilizationRatePerLeg,
@@ -618,7 +650,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         );
 
         AmmTypes.NewSwap memory newSwap = AmmTypes.NewSwap(
-            context.onBehalfOf,
+            ctx.onBehalfOf,
             block.timestamp,
             bosStruct.collateral,
             bosStruct.notional,
@@ -626,18 +658,19 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             indicator.fixedInterestRate,
             bosStruct.liquidationDepositAmount,
             bosStruct.openingFeeLPAmount,
-            bosStruct.openingFeeTreasuryAmount
+            bosStruct.openingFeeTreasuryAmount,
+            ctx.duration
         );
 
-        uint256 newSwapId = IMiltonStorage(context.ammStorage).updateStorageWhenOpenSwapReceiveFixed(
+        uint256 newSwapId = IMiltonStorage(ctx.poolCfg.ammStorage).updateStorageWhenOpenSwapReceiveFixed(
             newSwap,
-            _iporPublicationFee
+            ctx.poolCfg.iporPublicationFee
         );
 
-        IERC20Upgradeable(context.asset).safeTransferFrom(msg.sender, context.ammTreasury, totalAmount);
+        IERC20Upgradeable(ctx.poolCfg.asset).safeTransferFrom(msg.sender, ctx.poolCfg.ammTreasury, totalAmount);
 
         _emitOpenSwapEvent(
-            context.asset,
+            ctx.poolCfg.asset,
             newSwapId,
             bosStruct.wadTotalAmount,
             newSwap,
@@ -651,48 +684,52 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
     function _beforeOpenSwap(
         address onBehalfOf,
-        address asset,
         uint256 openTimestamp,
         uint256 totalAmount,
         uint256 leverage,
-        uint256 maturity
-    ) internal returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
+        AmmTypes.SwapDuration duration,
+        PoolConfiguration memory poolCfg
+    ) internal view returns (AmmMiltonTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
 
         require(totalAmount > 0, MiltonErrors.TOTAL_AMOUNT_TOO_LOW);
 
-        require(IERC20Upgradeable(asset).balanceOf(msg.sender) >= totalAmount, IporErrors.SENDER_ASSET_BALANCE_TOO_LOW);
+        require(
+            IERC20Upgradeable(poolCfg.asset).balanceOf(msg.sender) >= totalAmount,
+            IporErrors.SENDER_ASSET_BALANCE_TOO_LOW
+        );
 
-        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, IERC20MetadataUpgradeable(asset).decimals());
+        uint256 wadTotalAmount = IporMath.convertToWad(totalAmount, poolCfg.decimals);
+        uint256 liquidationDepositAmountWad = IporMath.convertToWad(poolCfg.liquidationDepositAmount, poolCfg.decimals);
 
         require(
-            wadTotalAmount > _liquidationDepositAmountWad + _iporPublicationFee,
+            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
 
         (uint256 collateral, uint256 notional, uint256 openingFeeAmount) = IporSwapLogic.calculateSwapAmount(
-            maturity,
+            duration,
             wadTotalAmount,
             leverage,
-            _liquidationDepositAmountWad,
-            _iporPublicationFee,
-            _openingFeeRate
+            liquidationDepositAmountWad,
+            poolCfg.iporPublicationFee,
+            poolCfg.openingFeeRate
         );
 
         (uint256 openingFeeLPAmount, uint256 openingFeeTreasuryAmount) = _splitOpeningFeeAmount(
             openingFeeAmount,
-            _openingFeeTreasuryPortionRate
+            poolCfg.openingFeeTreasuryPortionRate
         );
 
-        require(collateral <= _maxSwapCollateralAmount, MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH);
+        require(collateral <= poolCfg.maxSwapCollateralAmount, MiltonErrors.COLLATERAL_AMOUNT_TOO_HIGH);
 
         require(
-            wadTotalAmount > _liquidationDepositAmountWad + _iporPublicationFee + openingFeeAmount,
+            wadTotalAmount > liquidationDepositAmountWad + poolCfg.iporPublicationFee + openingFeeAmount,
             MiltonErrors.TOTAL_AMOUNT_LOWER_THAN_FEE
         );
         IporTypes.AccruedIpor memory accruedIndex;
 
-        accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(openTimestamp, asset);
+        accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(openTimestamp, poolCfg.asset);
 
         return
             AmmMiltonTypes.BeforeOpenSwapStruct(
@@ -701,8 +738,8 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                 notional,
                 openingFeeLPAmount,
                 openingFeeTreasuryAmount,
-                _iporPublicationFee,
-                _liquidationDepositAmount,
+                poolCfg.iporPublicationFee,
+                poolCfg.liquidationDepositAmount,
                 accruedIndex
             );
     }
@@ -710,8 +747,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     function _getRiskIndicators(
         address asset,
         uint256 direction,
-        uint256 duration,
-        uint256 liquidityPool
+        AmmTypes.SwapDuration duration,
+        uint256 liquidityPool,
+        uint256 cfgMinLeverage
     ) internal view virtual returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
         uint256 maxUtilizationRate;
@@ -721,7 +759,11 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             riskIndicators.maxUtilizationRatePerLeg,
             maxUtilizationRate,
             riskIndicators.spread
-        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(asset, direction, duration);
+        ) = IIporRiskManagementOracle(_iporRiskManagementOracle).getOpenSwapParameters(
+            asset,
+            direction,
+            uint256(duration)
+        );
 
         uint256 maxCollateralPerLeg = IporMath.division(
             liquidityPool * riskIndicators.maxUtilizationRatePerLeg,
@@ -730,18 +772,19 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         if (maxCollateralPerLeg > 0) {
             riskIndicators.maxLeveragePerLeg = _leverageInRange(
-                IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg)
+                IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg),
+                cfgMinLeverage
             );
         } else {
-            riskIndicators.maxLeveragePerLeg = _minLeverage;
+            riskIndicators.maxLeveragePerLeg = cfgMinLeverage;
         }
     }
 
-    function _leverageInRange(uint256 leverage) internal view returns (uint256) {
+    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) internal pure returns (uint256) {
         if (leverage > Constants.LEVERAGE_1000) {
             return Constants.LEVERAGE_1000;
-        } else if (leverage < _minLeverage) {
-            return _minLeverage;
+        } else if (leverage < cfgMinLeverage) {
+            return cfgMinLeverage;
         } else {
             return leverage;
         }
@@ -792,8 +835,9 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage,
         uint256 maxLeverage,
         uint256 maxUtilizationRate,
-        uint256 maxUtilizationRatePerLeg
-    ) internal view {
+        uint256 maxUtilizationRatePerLeg,
+        uint256 cfgMinLeverage
+    ) internal pure {
         uint256 utilizationRate;
         uint256 utilizationRatePerLeg;
 
@@ -813,7 +857,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
 
         require(utilizationRatePerLeg <= maxUtilizationRatePerLeg, MiltonErrors.LP_UTILIZATION_PER_LEG_EXCEEDED);
 
-        require(leverage >= _minLeverage, MiltonErrors.LEVERAGE_TOO_LOW);
-        require(leverage <= _maxLeverage, MiltonErrors.LEVERAGE_TOO_HIGH);
+        require(leverage >= cfgMinLeverage, MiltonErrors.LEVERAGE_TOO_LOW);
+        require(leverage <= maxLeverage, MiltonErrors.LEVERAGE_TOO_HIGH);
     }
 }
