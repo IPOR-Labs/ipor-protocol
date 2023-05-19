@@ -118,7 +118,7 @@ contract SpreadAccessControl {
     }
 
     function _whenNotPaused() internal view {
-        require(uint256(SpreadStorageLibs.getPaused().value) != 0, "Pausable: paused");
+        require(uint256(SpreadStorageLibs.getPaused().value) == 0, "Pausable: paused");
     }
 
     /// @dev Internal function to check if the sender is the contract owner.

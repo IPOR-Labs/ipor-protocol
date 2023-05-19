@@ -114,7 +114,6 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         returns (uint256 spreadValue)
     {
         ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
-
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
 
         SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
@@ -155,16 +154,16 @@ contract Spread28Days is ISpread28Days, ISpread28DaysLens {
         returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)
     {
         inputData = ImbalanceSpreadLibs.SpreadInputData({
-            totalCollateralPayFixed: inputData.totalCollateralPayFixed,
-            totalCollateralReceiveFixed: inputData.totalCollateralReceiveFixed,
-            liquidityPool: inputData.liquidityPool,
-            totalNotionalPayFixed: inputData.totalNotionalPayFixed,
-            totalNotionalReceiveFixed: inputData.totalNotionalReceiveFixed,
-            swapNotional: inputData.swapNotional,
-            maxLeverage: inputData.maxLeverage,
-            maxLpUtilizationPerLegRate: inputData.maxLpUtilizationPerLegRate,
-            storageIds: new SpreadStorageLibs.StorageId[](2),
-            maturities: new uint256[](2),
+            totalCollateralPayFixed: spreadInputs.totalCollateralPayFixed,
+            totalCollateralReceiveFixed: spreadInputs.totalCollateralReceiveFixed,
+            liquidityPool: spreadInputs.liquidityPool,
+            totalNotionalPayFixed: spreadInputs.totalNotionalPayFixed,
+            totalNotionalReceiveFixed: spreadInputs.totalNotionalReceiveFixed,
+            swapNotional: spreadInputs.swapNotional,
+            maxLeverage: spreadInputs.maxLeverage,
+            maxLpUtilizationPerLegRate: spreadInputs.maxLpUtilizationPerLegRate,
+            storageIds: new SpreadStorageLibs.StorageId[](3),
+            maturities: new uint256[](3),
             storageId: SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai
         });
 
