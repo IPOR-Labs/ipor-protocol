@@ -14,12 +14,12 @@ contract SpreadRouterTest is TestCommons {
     SpreadStorageLibs.StorageId internal _storageIdIterationItem;
 
     SpreadStorageLibs.StorageId[] internal _storageIdEnums = [
-        SpreadStorageLibs.StorageId.WeightedNotional28DaysDai,
-        SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdc,
-        SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdt,
-        SpreadStorageLibs.StorageId.WeightedNotional90DaysDai,
-        SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdc,
-        SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdt
+        SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai,
+        SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc,
+        SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt,
+        SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai,
+        SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc,
+        SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt
     ];
 
     modifier _parameterizedStorageId() {
@@ -37,14 +37,14 @@ contract SpreadRouterTest is TestCommons {
     function testShouldSaveWeightedNotional(uint256 seed) public _parameterizedStorageId {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
 
         // when
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -57,15 +57,15 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
-        weightedNotional28Days.weightedNotionalPayFixed = uint256(type(uint96).max) * 1e18;
+        weightedNotional28Days.timeWeightedNotionalPayFixed = uint256(type(uint96).max) * 1e18;
 
         // when
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -78,9 +78,9 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
-        weightedNotional28Days.weightedNotionalPayFixed = uint256(type(uint96).max) * 1e18 + 1e18;
+        weightedNotional28Days.timeWeightedNotionalPayFixed = uint256(type(uint96).max) * 1e18 + 1e18;
 
         // when
         vm.expectRevert("SafeCast: value doesn't fit in 96 bits");
@@ -94,15 +94,15 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
-        weightedNotional28Days.weightedNotionalReceiveFixed = uint256(type(uint96).max) * 1e18;
+        weightedNotional28Days.timeWeightedNotionalReceiveFixed = uint256(type(uint96).max) * 1e18;
 
         // when
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
         _assertWeightedNotional(weightedNotional28Days, result, _storageIdIterationItem);
@@ -114,9 +114,9 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
-        weightedNotional28Days.weightedNotionalReceiveFixed = uint256(type(uint96).max) * 1e18 + 1e18;
+        weightedNotional28Days.timeWeightedNotionalReceiveFixed = uint256(type(uint96).max) * 1e18 + 1e18;
 
         // when
         vm.expectRevert("SafeCast: value doesn't fit in 96 bits");
@@ -130,7 +130,7 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
         weightedNotional28Days.lastUpdateTimePayFixed = uint256(type(uint32).max);
 
@@ -138,7 +138,7 @@ contract SpreadRouterTest is TestCommons {
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -151,7 +151,7 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
         weightedNotional28Days.lastUpdateTimePayFixed = uint256(type(uint32).max) + 1;
 
@@ -167,7 +167,7 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
         weightedNotional28Days.lastUpdateTimeReceiveFixed = uint256(type(uint32).max);
 
@@ -175,7 +175,7 @@ contract SpreadRouterTest is TestCommons {
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -188,7 +188,7 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days = _getWeightedNotionalMemory(seed);
         weightedNotional28Days.lastUpdateTimeReceiveFixed = uint256(type(uint32).max) +1;
 
@@ -204,11 +204,11 @@ contract SpreadRouterTest is TestCommons {
     {
         vm.assume(seed < 1000);
         // given
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days = SpreadTypes
-            .WeightedNotionalMemory({
-                weightedNotionalPayFixed: uint256(type(uint96).max) * 1e18,
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days = SpreadTypes
+            .TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: uint256(type(uint96).max) * 1e18,
                 lastUpdateTimePayFixed: uint256(type(uint32).max),
-                weightedNotionalReceiveFixed: uint256(type(uint96).max) * 1e18,
+                timeWeightedNotionalReceiveFixed: uint256(type(uint96).max) * 1e18,
                 lastUpdateTimeReceiveFixed: uint256(type(uint32).max),
                 storageId: _storageIdIterationItem
             });
@@ -217,7 +217,7 @@ contract SpreadRouterTest is TestCommons {
         _storage.saveWeightedNotional(_storageIdIterationItem, weightedNotional28Days);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result = _storage.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory result = _storage.getWeightedNotional(
             _storageIdIterationItem
         );
 
@@ -227,17 +227,17 @@ contract SpreadRouterTest is TestCommons {
     // Save for 6 different object and read them from storage
     function testSaveAndReadAllSlots() public {
         // given
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days1 = _getWeightedNotionalMemory(1);
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days2 = _getWeightedNotionalMemory(2);
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days3 = _getWeightedNotionalMemory(3);
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days4 = _getWeightedNotionalMemory(4);
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days5 = _getWeightedNotionalMemory(5);
-        SpreadTypes.WeightedNotionalMemory
+        SpreadTypes.TimeWeightedNotionalMemory
             memory weightedNotional28Days6 = _getWeightedNotionalMemory(6);
 
         // when
@@ -249,17 +249,17 @@ contract SpreadRouterTest is TestCommons {
         _storage.saveWeightedNotional(_storageIdEnums[5], weightedNotional28Days6);
 
         // then
-        SpreadTypes.WeightedNotionalMemory memory result1 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result1 = _storage
             .getWeightedNotional(_storageIdEnums[0]);
-        SpreadTypes.WeightedNotionalMemory memory result2 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result2 = _storage
             .getWeightedNotional(_storageIdEnums[1]);
-        SpreadTypes.WeightedNotionalMemory memory result3 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result3 = _storage
             .getWeightedNotional(_storageIdEnums[2]);
-        SpreadTypes.WeightedNotionalMemory memory result4 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result4 = _storage
             .getWeightedNotional(_storageIdEnums[3]);
-        SpreadTypes.WeightedNotionalMemory memory result5 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result5 = _storage
             .getWeightedNotional(_storageIdEnums[4]);
-        SpreadTypes.WeightedNotionalMemory memory result6 = _storage
+        SpreadTypes.TimeWeightedNotionalMemory memory result6 = _storage
             .getWeightedNotional(_storageIdEnums[5]);
 
         _assertWeightedNotional(weightedNotional28Days1, result1, _storageIdEnums[0]);
@@ -272,31 +272,31 @@ contract SpreadRouterTest is TestCommons {
 
     function _getWeightedNotionalMemory(uint256 seed)
         private
-        returns (SpreadTypes.WeightedNotionalMemory memory)
+        returns (SpreadTypes.TimeWeightedNotionalMemory memory)
     {
         return
-            SpreadTypes.WeightedNotionalMemory({
-                weightedNotionalPayFixed: seed * 1e18,
+            SpreadTypes.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: seed * 1e18,
                 lastUpdateTimePayFixed: seed * 2000,
-                weightedNotionalReceiveFixed: seed * 3e18,
+                timeWeightedNotionalReceiveFixed: seed * 3e18,
                 lastUpdateTimeReceiveFixed: seed * 4000,
                 storageId: _storageIdIterationItem
             });
     }
 
     function _assertWeightedNotional(
-        SpreadTypes.WeightedNotionalMemory memory expected,
-        SpreadTypes.WeightedNotionalMemory memory actual,
+        SpreadTypes.TimeWeightedNotionalMemory memory expected,
+        SpreadTypes.TimeWeightedNotionalMemory memory actual,
         SpreadStorageLibs.StorageId storageId
     ) private {
         assertEq(
-            expected.weightedNotionalPayFixed,
-            actual.weightedNotionalPayFixed,
+            expected.timeWeightedNotionalPayFixed,
+            actual.timeWeightedNotionalPayFixed,
             string.concat(
-                "weightedNotionalPayFixed: expected ",
-                Strings.toString(expected.weightedNotionalPayFixed),
+                "timeWeightedNotionalPayFixed: expected ",
+                Strings.toString(expected.timeWeightedNotionalPayFixed),
                 " but got ",
-                Strings.toString(actual.weightedNotionalPayFixed),
+                Strings.toString(actual.timeWeightedNotionalPayFixed),
                 " for storageId ",
                 Strings.toString(uint256(storageId))
             )
@@ -314,13 +314,13 @@ contract SpreadRouterTest is TestCommons {
             )
         );
         assertEq(
-            expected.weightedNotionalReceiveFixed,
-            actual.weightedNotionalReceiveFixed,
+            expected.timeWeightedNotionalReceiveFixed,
+            actual.timeWeightedNotionalReceiveFixed,
             string.concat(
-                "weightedNotionalReceiveFixed: expected ",
-                Strings.toString(expected.weightedNotionalReceiveFixed),
+                "timeWeightedNotionalReceiveFixed: expected ",
+                Strings.toString(expected.timeWeightedNotionalReceiveFixed),
                 " but got ",
-                Strings.toString(actual.weightedNotionalReceiveFixed),
+                Strings.toString(actual.timeWeightedNotionalReceiveFixed),
                 " for storageId ",
                 Strings.toString(uint256(storageId))
             )

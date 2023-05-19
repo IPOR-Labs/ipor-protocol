@@ -11,14 +11,14 @@ contract  SpreadStorageLens is ISpreadStorageLens {
     function getWeightedNotional()
         external
         override
-        returns (SpreadTypes.WeightedNotionalMemory[] memory weightedNotional, string[] memory weightedNotionalKeys)
+        returns (SpreadTypes.TimeWeightedNotionalMemory[] memory timeWeightedNotional, string[] memory timeWeightedNotionalKeys)
     {
         (SpreadStorageLibs.StorageId[] memory storageIds, string[] memory keys) = SpreadStorageLibs.getAllStorageId();
 
         for (uint256 i; i < storageIds.length; i++) {
             // todo change to struts
-            weightedNotional[i] = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
-            weightedNotionalKeys[i] = keys[i];
+            timeWeightedNotional[i] = SpreadStorageLibs.getWeightedNotional(storageIds[i]);
+            timeWeightedNotionalKeys[i] = keys[i];
         }
     }
 }

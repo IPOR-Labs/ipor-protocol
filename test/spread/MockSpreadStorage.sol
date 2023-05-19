@@ -7,14 +7,14 @@ import "../../contracts/amm/spread/SpreadTypes.sol";
 contract MockSpreadStorage {
     function saveWeightedNotional(
         SpreadStorageLibs.StorageId storageId,
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days
     ) external {
-        SpreadStorageLibs.saveWeightedNotional(storageId, weightedNotional28Days);
+        SpreadStorageLibs.saveTimeWeightedNotional(storageId, weightedNotional28Days);
     }
 
     function getWeightedNotional(SpreadStorageLibs.StorageId storageId)
     external
-    returns (SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days)
+    returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {
         return SpreadStorageLibs.getWeightedNotional(storageId);
     }

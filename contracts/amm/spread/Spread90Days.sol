@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "contracts/libraries/errors/IporOracleErrors.sol";
 import "./ISpread90Days.sol";
 import "./ISpread90DaysLens.sol";
 import "./ImbalanceSpreadLibs.sol";
@@ -96,7 +98,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
     }
@@ -105,22 +107,22 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculatePayFixedSpread(inputData);
 
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
             inputData.storageId
         );
 
-        CalculateWeightedNotionalLibs.updateWeightedNotionalPayFixed(weightedNotional, inputData.swapNotional, 90 days);
+        CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalPayFixed(weightedNotional, inputData.swapNotional, 90 days);
     }
 
     function _calculateImbalanceReceiveFixed90Day(IporTypes.SpreadInputs calldata spreadInputs)
         internal
         returns (uint256 spreadValue)
     {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
     }
@@ -128,22 +130,22 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
     function _calculateImbalanceReceiveFixedAndUpdateTimeWeightedNotional90Day(
         IporTypes.SpreadInputs calldata spreadInputs
     ) internal returns (uint256 spreadValue) {
-        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getImbalanceSpreadConfig(spreadInputs);
+        ImbalanceSpreadLibs.SpreadInputData memory inputData = _getSpreadConfigForImbalance(spreadInputs);
 
         spreadValue = ImbalanceSpreadLibs.calculateReceiveFixedSpread(inputData);
 
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+        SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
             inputData.storageId
         );
 
-        CalculateWeightedNotionalLibs.updateWeightedNotionalReceiveFixed(
+        CalculateTimeWeightedNotionalLibs.updateTimeWeightedNotionalReceiveFixed(
             weightedNotional,
             inputData.swapNotional,
             90 days
         );
     }
 
-    function _getImbalanceSpreadConfig(IporTypes.SpreadInputs memory spreadInputs)
+    function _getSpreadConfigForImbalance(IporTypes.SpreadInputs memory spreadInputs)
         internal
         returns (ImbalanceSpreadLibs.SpreadInputData memory inputData)
     {
@@ -158,7 +160,7 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
             maxLpUtilizationPerLegRate: inputData.maxLpUtilizationPerLegRate,
             storageIds: new SpreadStorageLibs.StorageId[](2),
             maturities: new uint256[](2),
-            storageId: SpreadStorageLibs.StorageId.WeightedNotional90DaysDai
+            storageId: SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai
         });
 
         inputData.maturities[0] = 28 days;
@@ -166,24 +168,24 @@ contract Spread90Days is ISpread90Days, ISpread90DaysLens {
         inputData.maturities[2] = 90 days;
 
         if (spreadInputs.asset == _USDC) {
-            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdc;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdc;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysUsdc;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdc;
+            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
+            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdc;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdc;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdc;
             return inputData;
         } else if (spreadInputs.asset == _USDT) {
-            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdt;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysUsdt;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysUsdt;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysUsdt;
+            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
+            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysUsdt;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysUsdt;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysUsdt;
             return inputData;
         } else if (spreadInputs.asset == _DAI) {
-            inputData.storageId = SpreadStorageLibs.StorageId.WeightedNotional90DaysDai;
-            inputData.storageIds[0] = SpreadStorageLibs.StorageId.WeightedNotional28DaysDai;
-            inputData.storageIds[1] = SpreadStorageLibs.StorageId.WeightedNotional60DaysDai;
-            inputData.storageIds[2] = SpreadStorageLibs.StorageId.WeightedNotional90DaysDai;
+            inputData.storageId = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
+            inputData.storageIds[0] = SpreadStorageLibs.StorageId.TimeWeightedNotional28DaysDai;
+            inputData.storageIds[1] = SpreadStorageLibs.StorageId.TimeWeightedNotional60DaysDai;
+            inputData.storageIds[2] = SpreadStorageLibs.StorageId.TimeWeightedNotional90DaysDai;
             return inputData;
         }
-        revert("Spread: asset not supported");
+        revert(string.concat(IporOracleErrors.ASSET_NOT_SUPPORTED , " ", Strings.toHexString(spreadInputs.asset)));
     }
 }

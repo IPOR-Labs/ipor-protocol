@@ -12,9 +12,7 @@ import "./ISpread60DaysLens.sol";
 import "./ISpread90DaysLens.sol";
 
 contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
-    bytes32 internal immutable DAI;
-    bytes32 internal immutable USDC;
-    bytes32 internal immutable USDT;
+
     address internal immutable SPREAD_28_DAYS;
     address internal immutable SPREAD_60_DAYS;
     address internal immutable SPREAD_90_DAYS;
@@ -22,9 +20,6 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
 
     struct DeployedContracts {
         address ammAddress;
-        address dai;
-        address usdc;
-        address usdt;
         address spread28Days;
         address spread60Days;
         address spread90Days;
@@ -32,17 +27,10 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.ammAddress) {
-        require(deployedContracts.dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " dai"));
-        require(deployedContracts.usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " usdc"));
-        require(deployedContracts.usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " usdt"));
         require(deployedContracts.spread28Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread28Days"));
         require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
         require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
         require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
-        // todo removed
-        DAI = bytes32(uint256(uint160(deployedContracts.dai)));
-        USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
-        USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
         SPREAD_28_DAYS = deployedContracts.spread28Days;
         SPREAD_60_DAYS = deployedContracts.spread60Days;
         SPREAD_90_DAYS = deployedContracts.spread90Days;
@@ -98,8 +86,7 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
         ) {
             return SPREAD_90_DAYS;
         }
-        // todo unsupported function
-        return address(0);
+        revert(MiltonErrors.FUNCTION_NOT_SUPPORTED);
     }
 
     /// @dev Delegates the current call to `implementation`.

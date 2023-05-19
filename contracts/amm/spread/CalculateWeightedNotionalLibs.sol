@@ -3,9 +3,9 @@ pragma solidity 0.8.16;
 
 import "./SpreadTypes.sol";
 import "./SpreadStorageLibs.sol";
-import "../../libraries/math/IporMath.sol";
+import "contracts/libraries/math/IporMath.sol";
 
-library CalculateWeightedNotionalLibs {
+library CalculateTimeWeightedNotionalLibs {
     /// @notice calculate amm lp depth
     /// @param lpBalance lp balance
     /// @param totalCollateralPayFixed total collateral pay fixed
@@ -23,84 +23,85 @@ library CalculateWeightedNotionalLibs {
     }
 
     /// @notice calculate weighted notional
-    /// @param weightedNotional weighted notional value
+    /// @param timeWeightedNotional weighted notional value
     /// @param timeFromLastUpdate time from last update in seconds
     /// @param maturity maturity in seconds
-    function calculateWeightedNotional(
-        uint256 weightedNotional,
+    function calculateTimeWeightedNotional(
+        uint256 timeWeightedNotional,
         uint256 timeFromLastUpdate,
         uint256 maturity
     ) internal view returns (uint256) {
         if (timeFromLastUpdate >= maturity) {
             return 0;
         }
-        uint256 newWeightedNotional = IporMath.divisionWithoutRound(
-            weightedNotional * (maturity - timeFromLastUpdate),
+        uint256 newTimeWeightedNotional = IporMath.divisionWithoutRound(
+            timeWeightedNotional * (maturity - timeFromLastUpdate),
             maturity
         );
-        return newWeightedNotional;
+        return newTimeWeightedNotional;
     }
 
-    function updateWeightedNotionalReceiveFixed(
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional,
+
+    function updateTimeWeightedNotionalReceiveFixed(
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
         uint256 maturity
     ) internal {
-        if (weightedNotional.weightedNotionalReceiveFixed == 0) {
-            weightedNotional.weightedNotionalReceiveFixed = calculateWeightedNotional(newSwapNotional, 0, maturity);
+        if (timeWeightedNotional.timeWeightedNotionalReceiveFixed == 0) {
+            timeWeightedNotional.timeWeightedNotionalReceiveFixed = calculateTimeWeightedNotional(newSwapNotional, 0, maturity);
         } else {
-            uint256 oldWeightedNotionalReceiveFixed = calculateWeightedNotional(
-                weightedNotional.weightedNotionalReceiveFixed,
-                block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
+            uint256 oldWeightedNotionalReceiveFixed = calculateTimeWeightedNotional(
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+                block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
                 maturity
             );
-            weightedNotional.weightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
+            timeWeightedNotional.timeWeightedNotionalReceiveFixed = newSwapNotional + oldWeightedNotionalReceiveFixed;
         }
-        weightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
-        SpreadStorageLibs.saveWeightedNotional(weightedNotional.storageId, weightedNotional);
+        timeWeightedNotional.lastUpdateTimeReceiveFixed = block.timestamp;
+        SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
-    function updateWeightedNotionalPayFixed(
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional,
+    function updateTimeWeightedNotionalPayFixed(
+        SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional,
         uint256 newSwapNotional,
         uint256 maturity
     ) internal {
-        if (weightedNotional.weightedNotionalPayFixed == 0) {
-            weightedNotional.weightedNotionalPayFixed = calculateWeightedNotional(newSwapNotional, 0, maturity);
+        if (timeWeightedNotional.timeWeightedNotionalPayFixed == 0) {
+            timeWeightedNotional.timeWeightedNotionalPayFixed = calculateTimeWeightedNotional(newSwapNotional, 0, maturity);
         } else {
-            uint256 oldWeightedNotionalPayFixed = calculateWeightedNotional(
-                weightedNotional.weightedNotionalPayFixed,
-                block.timestamp - weightedNotional.lastUpdateTimePayFixed,
+            uint256 oldWeightedNotionalPayFixed = calculateTimeWeightedNotional(
+                timeWeightedNotional.timeWeightedNotionalPayFixed,
+                block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
                 maturity
             );
-            weightedNotional.weightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
+            timeWeightedNotional.timeWeightedNotionalPayFixed = newSwapNotional + oldWeightedNotionalPayFixed;
         }
-        weightedNotional.lastUpdateTimePayFixed = block.timestamp;
-        SpreadStorageLibs.saveWeightedNotional(weightedNotional.storageId, weightedNotional);
+        timeWeightedNotional.lastUpdateTimePayFixed = block.timestamp;
+        SpreadStorageLibs.saveTimeWeightedNotional(timeWeightedNotional.storageId, timeWeightedNotional);
     }
 
-    function getWeightedNotional(SpreadStorageLibs.StorageId[] memory storageIds, uint256[] memory maturities)
+    function getTimeWeightedNotional(SpreadStorageLibs.StorageId[] memory storageIds, uint256[] memory maturities)
         internal
-        returns (uint256 weightedNotionalPayFixed, uint256 weightedNotionalReceiveFixed)
+        returns (uint256 timeWeightedNotionalPayFixed, uint256 timeWeightedNotionalReceiveFixed)
     {
         uint256 length = storageIds.length;
         for (uint256 i; i != length; ) {
-            SpreadTypes.WeightedNotionalMemory memory weightedNotional = SpreadStorageLibs.getWeightedNotional(
+            SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional = SpreadStorageLibs.getWeightedNotional(
                 storageIds[i]
             );
-            uint256 weightedNotionalPayFixedTemp = calculateWeightedNotional(
-                weightedNotional.weightedNotionalPayFixed,
-                block.timestamp - weightedNotional.lastUpdateTimePayFixed,
+            uint256 timeWeightedNotionalPayFixedTemp = calculateTimeWeightedNotional(
+                timeWeightedNotional.timeWeightedNotionalPayFixed,
+                block.timestamp - timeWeightedNotional.lastUpdateTimePayFixed,
                 maturities[i]
             );
-            weightedNotionalPayFixed = weightedNotionalPayFixed + weightedNotionalPayFixedTemp;
+            timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixed + timeWeightedNotionalPayFixedTemp;
 
-            uint256 weightedNotionalReceiveFixedTemp = calculateWeightedNotional(
-                weightedNotional.weightedNotionalReceiveFixed,
-                block.timestamp - weightedNotional.lastUpdateTimeReceiveFixed,
+            uint256 timeWeightedNotionalReceiveFixedTemp = calculateTimeWeightedNotional(
+                timeWeightedNotional.timeWeightedNotionalReceiveFixed,
+                block.timestamp - timeWeightedNotional.lastUpdateTimeReceiveFixed,
                 maturities[i]
             );
-            weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp + weightedNotionalReceiveFixed;
+            timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp + timeWeightedNotionalReceiveFixed;
             unchecked {
                 ++i;
             }

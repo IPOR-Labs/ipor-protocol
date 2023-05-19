@@ -4,6 +4,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import "contracts/libraries/math/IporMath.sol";
+import "contracts/libraries/errors/MiltonErrors.sol";
 import "./SpreadTypes.sol";
 
 library SpreadStorageLibs {
@@ -15,15 +16,15 @@ library SpreadStorageLibs {
         Owner,
         AppointedOwner,
         Paused,
-        WeightedNotional28DaysDai,
-        WeightedNotional28DaysUsdc,
-        WeightedNotional28DaysUsdt,
-        WeightedNotional60DaysDai,
-        WeightedNotional60DaysUsdc,
-        WeightedNotional60DaysUsdt,
-        WeightedNotional90DaysDai,
-        WeightedNotional90DaysUsdc,
-        WeightedNotional90DaysUsdt
+        TimeWeightedNotional28DaysDai,
+        TimeWeightedNotional28DaysUsdc,
+        TimeWeightedNotional28DaysUsdt,
+        TimeWeightedNotional60DaysDai,
+        TimeWeightedNotional60DaysUsdc,
+        TimeWeightedNotional60DaysUsdt,
+        TimeWeightedNotional90DaysDai,
+        TimeWeightedNotional90DaysUsdc,
+        TimeWeightedNotional90DaysUsdt
     }
 
     struct OwnerStorage {
@@ -38,30 +39,29 @@ library SpreadStorageLibs {
         address appointedOwner;
     }
 
-    function saveWeightedNotional(StorageId storageId, SpreadTypes.WeightedNotionalMemory memory weightedNotional)
+    function saveTimeWeightedNotional(StorageId storageId, SpreadTypes.TimeWeightedNotionalMemory memory timeWeightedNotional)
         internal
     {
-        // todo: validate
-//        if(storageId == StorageId.WeightedNotional28DaysDai ||)
-        uint256 weightedNotionalPayFixedTemp;
-        uint256 weightedNotionalReceiveFixedTemp;
+        _checkTimeWeightedNotional(storageId);
+        uint256 timeWeightedNotionalPayFixedTemp;
+        uint256 timeWeightedNotionalReceiveFixedTemp;
         unchecked {
-            weightedNotionalPayFixedTemp = weightedNotional.weightedNotionalPayFixed / 1e18;
+            timeWeightedNotionalPayFixedTemp = timeWeightedNotional.timeWeightedNotionalPayFixed / 1e18;
 
-            weightedNotionalReceiveFixedTemp = weightedNotional.weightedNotionalReceiveFixed / 1e18;
+            timeWeightedNotionalReceiveFixedTemp = timeWeightedNotional.timeWeightedNotionalReceiveFixed / 1e18;
         }
 
-        uint96 weightedNotionalPayFixed = weightedNotionalPayFixedTemp.toUint96();
-        uint32 lastUpdateTimePayFixed = weightedNotional.lastUpdateTimePayFixed.toUint32();
-        uint96 weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp.toUint96();
-        uint32 lastUpdateTimeReceiveFixed = weightedNotional.lastUpdateTimeReceiveFixed.toUint32();
+        uint96 timeWeightedNotionalPayFixed = timeWeightedNotionalPayFixedTemp.toUint96();
+        uint32 lastUpdateTimePayFixed = timeWeightedNotional.lastUpdateTimePayFixed.toUint32();
+        uint96 timeWeightedNotionalReceiveFixed = timeWeightedNotionalReceiveFixedTemp.toUint96();
+        uint32 lastUpdateTimeReceiveFixed = timeWeightedNotional.lastUpdateTimeReceiveFixed.toUint32();
         uint256 slotAddress = _getStorageSlot(storageId);
         assembly {
             let value := add(
-                weightedNotionalPayFixed,
+                timeWeightedNotionalPayFixed,
                 add(
                     shl(96, lastUpdateTimePayFixed),
-                    add(shl(128, weightedNotionalReceiveFixed), shl(224, lastUpdateTimeReceiveFixed))
+                    add(shl(128, timeWeightedNotionalReceiveFixed), shl(224, lastUpdateTimeReceiveFixed))
                 )
             )
             sstore(slotAddress, value)
@@ -70,18 +70,18 @@ library SpreadStorageLibs {
 
     function getWeightedNotional(StorageId storageId)
         internal
-        returns (SpreadTypes.WeightedNotionalMemory memory weightedNotional28Days)
+        returns (SpreadTypes.TimeWeightedNotionalMemory memory weightedNotional28Days)
     {
-        uint256 weightedNotionalPayFixed;
+        uint256 timeWeightedNotionalPayFixed;
         uint256 lastUpdateTimePayFixed;
-        uint256 weightedNotionalReceiveFixed;
+        uint256 timeWeightedNotionalReceiveFixed;
         uint256 lastUpdateTimeReceiveFixed;
         uint256 slotAddress = _getStorageSlot(storageId);
         assembly {
             let slotValue := sload(slotAddress)
-            weightedNotionalPayFixed := mul(and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF), 1000000000000000000)
+            timeWeightedNotionalPayFixed := mul(and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF), 1000000000000000000)
             lastUpdateTimePayFixed := and(shr(96, slotValue), 0xFFFFFFFF)
-            weightedNotionalReceiveFixed := mul(
+            timeWeightedNotionalReceiveFixed := mul(
                 and(shr(128, slotValue), 0xFFFFFFFFFFFFFFFFFFFFFFFF),
                 1000000000000000000
             )
@@ -89,36 +89,35 @@ library SpreadStorageLibs {
         }
 
         return
-            SpreadTypes.WeightedNotionalMemory({
-                weightedNotionalPayFixed: weightedNotionalPayFixed,
+            SpreadTypes.TimeWeightedNotionalMemory({
+                timeWeightedNotionalPayFixed: timeWeightedNotionalPayFixed,
                 lastUpdateTimePayFixed: lastUpdateTimePayFixed,
-                weightedNotionalReceiveFixed: weightedNotionalReceiveFixed,
+                timeWeightedNotionalReceiveFixed: timeWeightedNotionalReceiveFixed,
                 lastUpdateTimeReceiveFixed: lastUpdateTimeReceiveFixed,
                 storageId: storageId
             });
     }
 
-    // todo timeWeightedNotional
     function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
         storageIds = new StorageId[](9);
         keys = new string[](9);
-        storageIds[0] = StorageId.WeightedNotional28DaysDai;
+        storageIds[0] = StorageId.TimeWeightedNotional28DaysDai;
         keys[0] = "WeightedNotional28DaysDai";
-        storageIds[1] = StorageId.WeightedNotional28DaysUsdc;
+        storageIds[1] = StorageId.TimeWeightedNotional28DaysUsdc;
         keys[1] = "WeightedNotional28DaysUsdc";
-        storageIds[2] = StorageId.WeightedNotional28DaysUsdt;
+        storageIds[2] = StorageId.TimeWeightedNotional28DaysUsdt;
         keys[2] = "WeightedNotional28DaysUsdt";
-        storageIds[3] = StorageId.WeightedNotional60DaysDai;
+        storageIds[3] = StorageId.TimeWeightedNotional60DaysDai;
         keys[3] = "WeightedNotional60DaysDai";
-        storageIds[4] = StorageId.WeightedNotional60DaysUsdc;
+        storageIds[4] = StorageId.TimeWeightedNotional60DaysUsdc;
         keys[4] = "WeightedNotional60DaysUsdc";
-        storageIds[5] = StorageId.WeightedNotional60DaysUsdt;
+        storageIds[5] = StorageId.TimeWeightedNotional60DaysUsdt;
         keys[5] = "WeightedNotional60DaysUsdt";
-        storageIds[6] = StorageId.WeightedNotional90DaysDai;
+        storageIds[6] = StorageId.TimeWeightedNotional90DaysDai;
         keys[6] = "WeightedNotional90DaysDai";
-        storageIds[7] = StorageId.WeightedNotional90DaysUsdc;
+        storageIds[7] = StorageId.TimeWeightedNotional90DaysUsdc;
         keys[7] = "WeightedNotional90DaysUsdc";
-        storageIds[8] = StorageId.WeightedNotional90DaysUsdt;
+        storageIds[8] = StorageId.TimeWeightedNotional90DaysUsdt;
         keys[8] = "WeightedNotional90DaysUsdt";
     }
 
@@ -145,5 +144,20 @@ library SpreadStorageLibs {
 
     function _getStorageSlot(StorageId storageId) internal pure returns (uint256 slot) {
         slot = uint256(storageId) + STORAGE_SLOT_BASE;
+    }
+
+    function _checkTimeWeightedNotional(StorageId storageId) internal pure {
+        require(
+            storageId == StorageId.TimeWeightedNotional28DaysDai ||
+            storageId == StorageId.TimeWeightedNotional28DaysUsdc ||
+            storageId == StorageId.TimeWeightedNotional28DaysUsdt ||
+            storageId == StorageId.TimeWeightedNotional60DaysDai ||
+            storageId == StorageId.TimeWeightedNotional60DaysUsdc ||
+            storageId == StorageId.TimeWeightedNotional60DaysUsdt ||
+            storageId == StorageId.TimeWeightedNotional90DaysDai ||
+            storageId == StorageId.TimeWeightedNotional90DaysUsdc ||
+            storageId == StorageId.TimeWeightedNotional90DaysUsdt,
+            MiltonErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
+        );
     }
 }
