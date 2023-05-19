@@ -2,7 +2,6 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "forge-std/console2.sol";
 import "./SpreadStorageLibs.sol";
 import "./SpreadAccessControl.sol";
 import "./ISpread28Days.sol";
@@ -12,9 +11,7 @@ import "./ISpread28DaysLens.sol";
 import "./ISpread60DaysLens.sol";
 import "./ISpread90DaysLens.sol";
 
-
-
-contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
+contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl {
     bytes32 internal immutable DAI;
     bytes32 internal immutable USDC;
     bytes32 internal immutable USDT;
@@ -35,7 +32,13 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
     }
 
     constructor(DeployedContracts memory deployedContracts) SpreadAccessControl(deployedContracts.ammAddress) {
-
+        require(deployedContracts.dai != address(0), string.concat(IporErrors.WRONG_ADDRESS, " dai"));
+        require(deployedContracts.usdc != address(0), string.concat(IporErrors.WRONG_ADDRESS, " usdc"));
+        require(deployedContracts.usdt != address(0), string.concat(IporErrors.WRONG_ADDRESS, " usdt"));
+        require(deployedContracts.spread28Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread28Days"));
+        require(deployedContracts.spread60Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread60Days"));
+        require(deployedContracts.spread90Days != address(0), string.concat(IporErrors.WRONG_ADDRESS, " spread90Days"));
+        require(deployedContracts.storageLens != address(0), string.concat(IporErrors.WRONG_ADDRESS, " storageLens"));
         DAI = bytes32(uint256(uint160(deployedContracts.dai)));
         USDC = bytes32(uint256(uint160(deployedContracts.usdc)));
         USDT = bytes32(uint256(uint160(deployedContracts.usdt)));
@@ -52,9 +55,9 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
         SpreadStorageLibs.OwnerStorage storage ownerStorage = SpreadStorageLibs.getOwner();
         ownerStorage.owner = msg.sender;
 
-//        if (paused) {
-//            _pause();
-//        }
+                if (paused) {
+                    _pause();
+                }
     }
 
     function getRouterImplementation(bytes4 sig) public view returns (address) {
@@ -62,22 +65,22 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
             sig == ISpread28Days.calculateQuotePayFixed28Days.selector ||
             sig == ISpread28Days.calculateQuoteReceiveFixed28Days.selector
         ) {
-            //            onlyAmm();
-            //            onlyNotPause();
+            _onlyAmm();
+            _whenNotPaused();
             return SPREAD_28_DAYS;
         } else if (
             sig == ISpread60Days.calculateQuotePayFixed60Days.selector ||
             sig == ISpread60Days.calculateQuoteReceiveFixed60Days.selector
         ) {
-            //            onlyAmm();
-            //            onlyNotPause();
+            _onlyAmm();
+            _whenNotPaused();
             return SPREAD_60_DAYS;
         } else if (
             sig == ISpread90Days.calculateQuotePayFixed90Days.selector ||
             sig == ISpread90Days.calculateQuoteReceiveFixed90Days.selector
         ) {
-            //            onlyAmm();
-            //            onlyNotPause();
+            _onlyAmm();
+            _whenNotPaused();
             return SPREAD_90_DAYS;
         } else if (
             sig == ISpread28DaysLens.calculatePayFixed28Days.selector ||
@@ -124,9 +127,6 @@ contract SpreadRouter is UUPSUpgradeable, SpreadAccessControl{
                 return(0, returndatasize())
             }
         }
-        //        if(_status = _ENTERED){
-        //            _status = _NOT_ENTERED;
-        //        }
     }
 
     fallback() external {

@@ -13,6 +13,7 @@ contract SpreadAccessControl {
     address internal immutable AMM_ADDRESS;
 
     constructor(address ammAddress) {
+        require(ammAddress != address(0), string.concat(IporErrors.WRONG_ADDRESS, " ammAddress"));
         AMM_ADDRESS = ammAddress;
     }
 
@@ -26,6 +27,11 @@ contract SpreadAccessControl {
             address(SpreadStorageLibs.getAppointedOwner().appointedOwner) == msg.sender,
             IporErrors.SENDER_NOT_APPOINTED_OWNER
         );
+        _;
+    }
+
+    modifier onlyPauseGuardian() {
+        PauseManager.isPauseGuardian(msg.sender);
         _;
     }
 
@@ -58,6 +64,25 @@ contract SpreadAccessControl {
 
     function _onlyOwner() internal view {
         require(address(SpreadStorageLibs.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+    }
+
+    function pause() external onlyPauseGuardian {
+        _pause();
+    }
+    function _pause() internal {
+        SpreadStorageLibs.getPaused().value = 1;
+    }
+
+    function unpause() external onlyOwner {
+        SpreadStorageLibs.getPaused().value = 0;
+    }
+
+    function paused() external view returns (uint256) {
+        return uint256(SpreadStorageLibs.getPaused().value);
+    }
+
+    function _whenNotPaused() internal view {
+        require(uint256(SpreadStorageLibs.getPaused().value) != 0, "Pausable: paused");
     }
 
     function addPauseGuardian(address _guardian) external onlyOwner {

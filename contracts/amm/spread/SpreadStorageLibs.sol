@@ -15,6 +15,7 @@ library SpreadStorageLibs {
     enum StorageId {
         Owner,
         AppointedOwner,
+        Paused,
         WeightedNotional28DaysDai,
         WeightedNotional28DaysUsdc,
         WeightedNotional28DaysUsdt,
@@ -29,46 +30,37 @@ library SpreadStorageLibs {
     struct OwnerStorage {
         address owner;
     }
+
+    struct PausedStorage {
+        uint256 value;
+    }
+
     struct AppointedOwnerStorage {
         address appointedOwner;
     }
 
-
-
-    function saveWeightedNotional(
-        StorageId storageId,
-        SpreadTypes.WeightedNotionalMemory memory weightedNotional
-    ) internal {
+    function saveWeightedNotional(StorageId storageId, SpreadTypes.WeightedNotionalMemory memory weightedNotional)
+        internal
+    {
         uint256 weightedNotionalPayFixedTemp;
         uint256 weightedNotionalReceiveFixedTemp;
         unchecked {
-            weightedNotionalPayFixedTemp =
-                weightedNotional.weightedNotionalPayFixed /
-                1e18;
+            weightedNotionalPayFixedTemp = weightedNotional.weightedNotionalPayFixed / 1e18;
 
-            weightedNotionalReceiveFixedTemp =
-                weightedNotional.weightedNotionalReceiveFixed /
-                1e18;
+            weightedNotionalReceiveFixedTemp = weightedNotional.weightedNotionalReceiveFixed / 1e18;
         }
 
-        uint96 weightedNotionalPayFixed = weightedNotionalPayFixedTemp
-            .toUint96();
+        uint96 weightedNotionalPayFixed = weightedNotionalPayFixedTemp.toUint96();
         uint32 lastUpdateTimePayFixed = weightedNotional.lastUpdateTimePayFixed.toUint32();
-        uint96 weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp
-            .toUint96();
-        uint32 lastUpdateTimeReceiveFixed = weightedNotional
-            .lastUpdateTimeReceiveFixed
-            .toUint32();
+        uint96 weightedNotionalReceiveFixed = weightedNotionalReceiveFixedTemp.toUint96();
+        uint32 lastUpdateTimeReceiveFixed = weightedNotional.lastUpdateTimeReceiveFixed.toUint32();
         uint256 slotAddress = _getStorageSlot(storageId);
         assembly {
             let value := add(
                 weightedNotionalPayFixed,
                 add(
                     shl(96, lastUpdateTimePayFixed),
-                    add(
-                        shl(128, weightedNotionalReceiveFixed),
-                        shl(224, lastUpdateTimeReceiveFixed)
-                    )
+                    add(shl(128, weightedNotionalReceiveFixed), shl(224, lastUpdateTimeReceiveFixed))
                 )
             )
             sstore(slotAddress, value)
@@ -86,10 +78,7 @@ library SpreadStorageLibs {
         uint256 slotAddress = _getStorageSlot(storageId);
         assembly {
             let slotValue := sload(slotAddress)
-            weightedNotionalPayFixed := mul(
-                and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF),
-                1000000000000000000
-            )
+            weightedNotionalPayFixed := mul(and(slotValue, 0xFFFFFFFFFFFFFFFFFFFFFFFF), 1000000000000000000)
             lastUpdateTimePayFixed := and(shr(96, slotValue), 0xFFFFFFFF)
             weightedNotionalReceiveFixed := mul(
                 and(shr(128, slotValue), 0xFFFFFFFFFFFFFFFFFFFFFFFF),
@@ -100,13 +89,12 @@ library SpreadStorageLibs {
 
         return
             SpreadTypes.WeightedNotionalMemory({
-            weightedNotionalPayFixed: weightedNotionalPayFixed,
-            lastUpdateTimePayFixed: lastUpdateTimePayFixed,
-            weightedNotionalReceiveFixed: weightedNotionalReceiveFixed,
-            lastUpdateTimeReceiveFixed: lastUpdateTimeReceiveFixed,
-            storageId: storageId
-            }
-            );
+                weightedNotionalPayFixed: weightedNotionalPayFixed,
+                lastUpdateTimePayFixed: lastUpdateTimePayFixed,
+                weightedNotionalReceiveFixed: weightedNotionalReceiveFixed,
+                lastUpdateTimeReceiveFixed: lastUpdateTimeReceiveFixed,
+                storageId: storageId
+            });
     }
 
     function getAllStorageId() internal pure returns (StorageId[] memory storageIds, string[] memory keys) {
@@ -143,6 +131,13 @@ library SpreadStorageLibs {
         uint256 slotAddress = _getStorageSlot(StorageId.AppointedOwner);
         assembly {
             appointedOwner.slot := sload(slotAddress)
+        }
+    }
+
+    function getPaused() internal view returns (PausedStorage storage paused) {
+        uint256 slotAddress = _getStorageSlot(StorageId.Paused);
+        assembly {
+            paused.slot := sload(slotAddress)
         }
     }
 
