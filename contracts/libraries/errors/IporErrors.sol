@@ -12,8 +12,8 @@ library IporErrors {
 
     string public constant ADDRESSES_MISMATCH = "IPOR_002";
 
-    //@notice Trader doesnt have enought tokens to execute transaction
-    string public constant ASSET_BALANCE_TOO_LOW = "IPOR_003";
+    /// @notice Sender's asset balance is too low to transfer and to open a swap
+    string public constant SENDER_ASSET_BALANCE_TOO_LOW = "IPOR_003";
 
     string public constant VALUE_NOT_GREATER_THAN_ZERO = "IPOR_004";
 
@@ -26,12 +26,14 @@ library IporErrors {
     string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_007";
 
     //only milton can have access to function
-    string public constant CALLER_NOT_MILTON = "IPOR_008";
+    string public constant CALLER_NOT_IPOR_PROTOCOL_ROUTER = "IPOR_008";
 
     string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_009";
 
     string public constant CHUNK_SIZE_TOO_BIG = "IPOR_010";
 
     string public constant CALLER_NOT_GUARDIAN = "IPOR_011";
+
+    /// @notice Request contains invalid method signature, which is not supported by the Ipor Protocol Router
     string public constant ROUTER_INVALID_SIGNATURE = "IPOR_012";
 }

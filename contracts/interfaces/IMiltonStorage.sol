@@ -12,7 +12,7 @@ interface IMiltonStorage {
     /// @return current Milton Storage version, integer
     function getVersion() external pure returns (uint256);
 
-    function getMilton() external view returns (address);
+    function getIporProtocolRouter() external view returns (address);
 
     function getJoseph() external view returns (address);
 
@@ -28,6 +28,16 @@ interface IMiltonStorage {
     /// # Liquidity Pool and Vault balances.
     /// @return balance structure {IporTypes.MiltonBalancesMemory}
     function getBalance() external view returns (IporTypes.MiltonBalancesMemory memory);
+
+    /// @notice Gets balance for open swap
+    /// @dev Balance contains:
+    /// # Pay Fixed Total Collateral
+    /// # Receive Fixed Total Collateral
+    /// # Liquidity Pool balance
+    /// # Total Notional Pay Fixed
+    /// # Total Notional Receive Fixed
+    /// @return balance structure {IporTypes.AmmBalancesForOpenSwapMemory}
+    function getBalancesForOpenSwap() external view returns (IporTypes.AmmBalancesForOpenSwapMemory memory);
 
     /// @notice Gets balance with extended information: IPOR publication fee balance and Treasury balance.
     /// @return balance structure {MiltonStorageTypes.ExtendedBalancesMemory}

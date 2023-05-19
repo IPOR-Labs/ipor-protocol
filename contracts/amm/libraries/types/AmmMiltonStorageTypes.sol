@@ -34,6 +34,9 @@ library AmmMiltonStorageTypes {
         /// @notice State of the swap
         /// @dev 0 - INACTIVE, 1 - ACTIVE
         AmmTypes.SwapState state;
+        /// @notice Swap's duration, it is used to calculate the swap's maturity date.
+        /// @dev 0 - 28 days, 1 - 60 days, 2 - 90 days
+        AmmTypes.SwapDuration duration;
     }
 
     /// @notice All active swaps available in Milton with information on swaps belong to the account.

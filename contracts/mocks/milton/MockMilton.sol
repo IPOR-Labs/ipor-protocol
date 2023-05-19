@@ -47,31 +47,31 @@ contract MockMilton is ItfMilton {
         }
         return _miltonStorage;
     }
-
-    function _getMaxSwapCollateralAmount() internal view virtual override returns (uint256) {
-        return maxSwapCollateralAmount;
-    }
-
-    function _getOpeningFeeRate() internal view virtual override returns (uint256) {
-        return openingFeeRate;
-    }
-
-    function _getOpeningFeeTreasuryPortionRate() internal view virtual override returns (uint256) {
-        return openingFeeTreasuryPortionRate;
-    }
-
-    function _getIporPublicationFee() internal view virtual override returns (uint256) {
-        return iporPublicationFee;
-    }
-
-    function _getLiquidationDepositAmount() internal view virtual override returns (uint256) {
-        return liquidationDepositAmount;
-    }
-
-    function _getMinLeverage() internal view virtual override returns (uint256) {
-        return minLeverage;
-    }
-
+//
+//    function _getMaxSwapCollateralAmount() internal view virtual override returns (uint256) {
+//        return maxSwapCollateralAmount;
+//    }
+//
+//    function _getOpeningFeeRate() internal view virtual override returns (uint256) {
+//        return openingFeeRate;
+//    }
+//
+//    function _getOpeningFeeTreasuryPortionRate() internal view virtual override returns (uint256) {
+//        return openingFeeTreasuryPortionRate;
+//    }
+//
+//    function _getIporPublicationFee() internal view virtual override returns (uint256) {
+//        return iporPublicationFee;
+//    }
+//
+//    function _getLiquidationDepositAmount() internal view virtual override returns (uint256) {
+//        return liquidationDepositAmount;
+//    }
+//
+//    function _getMinLeverage() internal view virtual override returns (uint256) {
+//        return minLeverage;
+//    }
+//
     function _getDecimals() internal view virtual override returns (uint256) {
         return decimals;
     }

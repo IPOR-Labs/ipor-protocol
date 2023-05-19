@@ -134,22 +134,28 @@ contract MiltonFacadeDataProvider is
 
         IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
 
-        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = milton.getMaxLeverage();
+        //TODO: fix it
+        uint256 maxLeveragePayFixed;
+        uint256 maxLeverageReceiveFixed;// = milton.getMaxLeverage();
 
-        (uint256 maxUtilizationRatePayFixed, uint256 maxUtilizationRateReceiveFixed) =
-            milton.getMaxLpUtilizationPerLegRate();
+        uint256 maxUtilizationRatePayFixed;
+        uint256 maxUtilizationRateReceiveFixed;
+//        =
+//            milton.getMaxLpUtilizationPerLegRate();
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
-            milton.getMinLeverage(),
+            0,//TODO:fixit
+//            milton.getMinLeverage(),
             maxLeveragePayFixed,
             maxLeverageReceiveFixed,
-            milton.getOpeningFeeRate(),
-            milton.getIporPublicationFee(),
-            milton.getWadLiquidationDepositAmount(),
+            0,//milton.getOpeningFeeRate(), TODO: fixit
+           0,// milton.getIporPublicationFee(), TODO: fixit
+           0,// milton.getWadLiquidationDepositAmount(), TODO: fixit
             spreadModel.calculateSpreadPayFixed(accruedIpor, balance),
             spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),
-            milton.getMaxLpUtilizationRate(),
+        0,//TODO:fixit
+//            milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
             joseph.getMaxLiquidityPoolBalance() * Constants.D18,
