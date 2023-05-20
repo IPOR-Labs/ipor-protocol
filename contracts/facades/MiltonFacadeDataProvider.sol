@@ -15,13 +15,9 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMiltonFacadeDataProvider.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../amm/MiltonStorage.sol";
+import "../libraries/AmmLib.sol";
 
-contract MiltonFacadeDataProvider is
-    Initializable,
-    UUPSUpgradeable,
-    IporOwnableUpgradeable,
-    IMiltonFacadeDataProvider
-{
+contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, IMiltonFacadeDataProvider {
     address internal _iporOracle;
     address[] internal _assets;
     mapping(address => MiltonFacadeTypes.AssetConfig) internal _assetConfig;
@@ -55,11 +51,7 @@ contract MiltonFacadeDataProvider is
             require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
             require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _assetConfig[assets[i]] = MiltonFacadeTypes.AssetConfig(
-                miltons[i],
-                miltonStorages[i],
-                josephs[i]
-            );
+            _assetConfig[assets[i]] = MiltonFacadeTypes.AssetConfig(miltons[i], miltonStorages[i], josephs[i]);
         }
         _assets = assets;
     }
@@ -68,16 +60,10 @@ contract MiltonFacadeDataProvider is
         return 2;
     }
 
-    function getConfiguration()
-        external
-        view
-        override
-        returns (MiltonFacadeTypes.AssetConfiguration[] memory)
-    {
+    function getConfiguration() external view override returns (MiltonFacadeTypes.AssetConfiguration[] memory) {
         uint256 timestamp = block.timestamp;
         uint256 assetsLength = _assets.length;
-        MiltonFacadeTypes.AssetConfiguration[]
-            memory config = new MiltonFacadeTypes.AssetConfiguration[](assetsLength);
+        MiltonFacadeTypes.AssetConfiguration[] memory config = new MiltonFacadeTypes.AssetConfiguration[](assetsLength);
 
         for (uint256 i = 0; i != assetsLength; i++) {
             config[i] = _createIporAssetConfig(_assets[i], timestamp);
@@ -85,12 +71,7 @@ contract MiltonFacadeDataProvider is
         return config;
     }
 
-    function getBalance(address asset)
-        external
-        view
-        override
-        returns (MiltonFacadeTypes.Balance memory balance)
-    {
+    function getBalance(address asset) external view override returns (MiltonFacadeTypes.Balance memory balance) {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
@@ -98,7 +79,10 @@ contract MiltonFacadeDataProvider is
             .getTotalOutstandingNotional();
 
         IMiltonInternal milton = IMiltonInternal(config.milton);
-        IporTypes.MiltonBalancesMemory memory accruedBalance = milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory accruedBalance = AmmLib.getAccruedBalance(
+            address(config.miltonStorage),
+            address(IJosephInternal(config.joseph).getStanley())
+        );
 
         balance.totalCollateralPayFixed = accruedBalance.totalCollateralPayFixed;
         balance.totalCollateralReceiveFixed = accruedBalance.totalCollateralReceiveFixed;
@@ -127,35 +111,35 @@ contract MiltonFacadeDataProvider is
         IJosephInternal joseph = IJosephInternal(config.joseph);
 
         IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(
-            timestamp,
-            asset
-        );
+        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
 
-        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
+            address(config.miltonStorage),
+            address(joseph.getStanley())
+        );
 
         //TODO: fix it
         uint256 maxLeveragePayFixed;
-        uint256 maxLeverageReceiveFixed;// = milton.getMaxLeverage();
+        uint256 maxLeverageReceiveFixed; // = milton.getMaxLeverage();
 
         uint256 maxUtilizationRatePayFixed;
         uint256 maxUtilizationRateReceiveFixed;
-//        =
-//            milton.getMaxLpUtilizationPerLegRate();
+        //        =
+        //            milton.getMaxLpUtilizationPerLegRate();
 
         assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
             asset,
-            0,//TODO:fixit
-//            milton.getMinLeverage(),
+            0, //TODO:fixit
+            //            milton.getMinLeverage(),
             maxLeveragePayFixed,
             maxLeverageReceiveFixed,
-            0,//milton.getOpeningFeeRate(), TODO: fixit
-           0,// milton.getIporPublicationFee(), TODO: fixit
-           0,// milton.getWadLiquidationDepositAmount(), TODO: fixit
+            0, //milton.getOpeningFeeRate(), TODO: fixit
+            0, // milton.getIporPublicationFee(), TODO: fixit
+            0, // milton.getWadLiquidationDepositAmount(), TODO: fixit
             spreadModel.calculateSpreadPayFixed(accruedIpor, balance),
             spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),
-        0,//TODO:fixit
-//            milton.getMaxLpUtilizationRate(),
+            0, //TODO:fixit
+            //            milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
             joseph.getMaxLiquidityPoolBalance() * Constants.D18,

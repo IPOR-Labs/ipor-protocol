@@ -7,21 +7,29 @@ import "./AccessControl.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
+import "../interfaces/IAmmCloseSwapService.sol";
+import "../interfaces/IAmmGovernanceService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
     address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
+    address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
+    address public immutable AMM_GOVERNANCE_SERVICE_ADDRESS;
 
     using Address for address;
 
     struct DeployedContracts {
         address ammSwapsLens;
         address ammOpenSwapServiceAddress;
+        address ammCloseSwapServiceAddress;
+        address ammGovernanceServiceAddress;
     }
 
     constructor(DeployedContracts memory deployedContracts) {
         AMM_SWAPS_LENS = deployedContracts.ammSwapsLens;
         AMM_OPEN_SWAP_SERVICE_ADDRESS = deployedContracts.ammOpenSwapServiceAddress;
+        AMM_CLOSE_SWAP_SERVICE_ADDRESS = deployedContracts.ammCloseSwapServiceAddress;
+        AMM_GOVERNANCE_SERVICE_ADDRESS = deployedContracts.ammGovernanceServiceAddress;
         _disableInitializers();
     }
 
@@ -52,10 +60,29 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             sig == IAmmOpenSwapService.openSwapReceiveFixed60daysDai.selector ||
             sig == IAmmOpenSwapService.openSwapReceiveFixed90daysDai.selector
         ) {
-            whenNotPaused();
-            nonReentrant();
+            _whenNotPaused();
+            _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return AMM_OPEN_SWAP_SERVICE_ADDRESS;
+        } else if (sig == IAmmCloseSwapService.closeSwaps.selector) {
+            _whenNotPaused();
+            _nonReentrant();
+            _reentrancyStatus = _ENTERED;
+            return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
+        } else if (
+            sig == IAmmGovernanceService.setAmmAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.addSwapLiquidator.selector ||
+            sig == IAmmGovernanceService.removeSwapLiquidator.selector
+        ) {
+            _onlyOwner();
+            _nonReentrant();
+            _reentrancyStatus = _ENTERED;
+            return AMM_GOVERNANCE_SERVICE_ADDRESS;
+        } else if (
+            sig == IAmmGovernanceService.getAmmAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.isSwapLiquidator.selector
+        ) {
+            return AMM_GOVERNANCE_SERVICE_ADDRESS;
         }
 
         revert(IporErrors.ROUTER_INVALID_SIGNATURE);
@@ -114,10 +141,13 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         }
     }
 
-    function initialize(uint256 paused) external initializer {
+    function initialize(bool paused) external initializer {
         __UUPSUpgradeable_init();
-        _owner = msg.sender;
-        _paused = paused;
+        //        _owner = msg.sender;
+
+        if (paused) {
+            _pause();
+        }
     }
 
     //solhint-disable no-empty-blocks

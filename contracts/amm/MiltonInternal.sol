@@ -43,11 +43,7 @@ abstract contract MiltonInternal is
     /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
     uint256 internal constant _OPENING_FEE_RATE = 5e14;
 
-    uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
-
     uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
-
-    uint256 internal constant _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE = 5 * 1e18;
 
     address internal _asset;
     address internal _joseph;
@@ -94,10 +90,6 @@ abstract contract MiltonInternal is
 
     function getRiskManagementOracle() external view returns (address) {
         return address(_iporRiskManagementOracle);
-    }
-
-    function getAccruedBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
-        return _getAccruedBalance();
     }
 
     function calculateSoapAtTimestamp(uint256 calculateTimestamp)
@@ -181,47 +173,8 @@ abstract contract MiltonInternal is
         return address(_miltonSpreadModel);
     }
 
-    function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
-        return _getAutoUpdateIporIndexThreshold();
-    }
-
-    function addSwapLiquidator(address newSwapLiquidator) external override onlyOwner {
-        require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
-        _swapLiquidators[newSwapLiquidator] = true;
-        emit SwapLiquidatorAdded(newSwapLiquidator);
-    }
-
-    function removeSwapLiquidator(address liquidator) external override onlyOwner {
-        require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
-        _swapLiquidators[liquidator] = false;
-        emit SwapLiquidatorRemoved(liquidator);
-    }
-
-    function isSwapLiquidator(address account) external view override returns (bool) {
-        return _swapLiquidators[account];
-    }
-
-    function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
-        return _autoUpdateIporIndexThreshold * Constants.D21;
-    }
-
     function _getDecimals() internal view virtual returns (uint256);
 
-    function _getOpeningFeeRate() internal view virtual returns (uint256) {
-        return _OPENING_FEE_RATE;
-    }
-
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer() internal view virtual returns (uint256) {
-        return 99 * 1e16;
-    }
-
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity() internal view virtual returns (uint256) {
-        return 995 * 1e15;
-    }
-
-    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal view virtual returns (uint256) {
-        return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
-    }
 
     function _getLiquidationLegLimit() internal view virtual returns (uint256) {
         return _LIQUIDATION_LEG_LIMIT;
@@ -243,21 +196,6 @@ abstract contract MiltonInternal is
         return _stanley;
     }
 
-    function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
-
-        uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
-
-        int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
-            actualVaultBalance.toInt256() -
-            accruedBalance.vault.toInt256();
-
-        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
-        accruedBalance.liquidityPool = liquidityPool.toUint256();
-
-        accruedBalance.vault = actualVaultBalance;
-        return accruedBalance;
-    }
 
     function _calculateSoap(uint256 calculateTimestamp)
         internal
@@ -274,17 +212,5 @@ abstract contract MiltonInternal is
             calculateTimestamp
         );
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() internal pure virtual returns (uint256) {
-        return 1 hours;
-    }
-
-    function _getOpeningFeeRateForSwapUnwind() internal view virtual returns (uint256) {
-        return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
-    }
-
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() internal pure virtual returns (uint256) {
-        return 1 days;
     }
 }

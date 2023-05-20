@@ -29,8 +29,8 @@ library IporTypes {
         address buyer;
         /// @notice Swap opening epoch timestamp
         uint256 openTimestamp;
-        /// @notice Epoch when the swap will reach its maturity
-        uint256 endTimestamp;
+        /// @notice Swap's duration
+        uint256 duration;
         /// @notice Index position of this Swap in an array of swaps' identification associated to swap buyer
         /// @dev Field used for gas optimization purposes, it allows for quick removal by id in the array.
         /// During removal the last item in the array is switched with the one that just has been removed.

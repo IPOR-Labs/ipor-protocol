@@ -28,71 +28,6 @@ abstract contract ItfMilton is Milton {
         return 7;
     }
 
-    //    function itfOpenSwapPayFixed(
-    //        uint256 openTimestamp,
-    //        uint256 totalAmount,
-    //        uint256 acceptableFixedInterestRate,
-    //        uint256 leverage
-    //    ) external returns (uint256) {
-    //        return _openSwapPayFixed(openTimestamp, totalAmount, acceptableFixedInterestRate, leverage);
-    //    }
-    //
-    //    function itfOpenSwapReceiveFixed(
-    //        uint256 openTimestamp,
-    //        uint256 totalAmount,
-    //        uint256 acceptableFixedInterestRate,
-    //        uint256 leverage
-    //    ) external returns (uint256) {
-    //        return
-    //            _openSwapReceiveFixed(
-    //                openTimestamp,
-    //                totalAmount,
-    //                acceptableFixedInterestRate,
-    //                leverage
-    //            );
-    //    }
-
-    function itfCloseSwaps(
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds,
-        uint256 closeTimestamp
-    )
-        external
-        nonReentrant
-        whenNotPaused
-        returns (
-            MiltonTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
-            MiltonTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        )
-    {
-        (closedPayFixedSwaps, closedReceiveFixedSwaps) = _closeSwaps(
-            payFixedSwapIds,
-            receiveFixedSwapIds,
-            closeTimestamp
-        );
-    }
-
-    function itfCloseSwapPayFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapPayFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
-    }
-
-    function itfCloseSwapReceiveFixed(uint256 swapId, uint256 closeTimestamp) external {
-        _closeSwapReceiveFixedWithTransferLiquidationDeposit(swapId, closeTimestamp);
-    }
-
-    function itfCloseSwapsPayFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-        external
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(swapIds, closeTimestamp);
-    }
-
-    function itfCloseSwapsReceiveFixed(uint256[] memory swapIds, uint256 closeTimestamp)
-        external
-        returns (MiltonTypes.IporSwapClosingResult[] memory closedSwaps)
-    {
-        closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(swapIds, closeTimestamp);
-    }
 
     function itfCalculateSoap(uint256 calculateTimestamp)
         external
@@ -131,17 +66,6 @@ abstract contract ItfMilton is Milton {
             int256 payoff = _itfCalculateSwapReceiveFixedValue(calculateTimestamp, swapIdsReceiveFixed[j]);
             payoffGross += payoff;
         }
-    }
-
-    function itfCalculatePayoff(
-        IporTypes.IporSwapMemory memory iporSwap,
-        MiltonTypes.SwapDirection direction,
-        uint256 closeTimestamp,
-        int256 basePayoff,
-        IporTypes.AccruedIpor memory accruedIpor,
-        IporTypes.MiltonBalancesMemory memory balance
-    ) external returns (int256 payoff) {
-        payoff = _calculatePayoff(iporSwap, direction, closeTimestamp, basePayoff, accruedIpor, balance);
     }
 
     function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId) internal view returns (int256) {
@@ -184,30 +108,4 @@ abstract contract ItfMilton is Milton {
         _liquidationLegLimit = liquidationLegLimit;
     }
 
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer()
-        internal
-        view
-        virtual
-        override
-        returns (uint256)
-    {
-        if (_minLiquidationThresholdToCloseBeforeMaturity != 0) {
-            return _minLiquidationThresholdToCloseBeforeMaturity;
-        }
-        return 99 * 1e16;
-    }
-
-    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal view virtual override returns (uint256) {
-        if (_secondsBeforeMaturityWhenPositionCanBeClosed != 0) {
-            return _secondsBeforeMaturityWhenPositionCanBeClosed;
-        }
-        return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
-    }
-
-    function _getLiquidationLegLimit() internal view virtual override returns (uint256) {
-        if (_liquidationLegLimit != 0) {
-            return _liquidationLegLimit;
-        }
-        return _LIQUIDATION_LEG_LIMIT;
-    }
 }

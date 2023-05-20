@@ -89,14 +89,15 @@ library IporSwapLogic {
         uint256 oppositeLegFixedRate,
         uint256 openingFeeRateForSwapUnwind
     ) internal pure returns (int256 swapUnwindValue) {
-        require(closingTimestamp <= swap.endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+        uint256 endTimestamp = calculateSwapMaturity(swap);
+        require(closingTimestamp <= endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         swapUnwindValue =
             swapPayoffToDate +
             IporMath.divisionInt(
                 swap.notional.toInt256() *
                     (oppositeLegFixedRate.toInt256() - swap.fixedInterestRate.toInt256()) *
-                    ((swap.endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256(),
+                    ((endTimestamp - swap.openTimestamp) - (closingTimestamp - swap.openTimestamp)).toInt256(),
                 Constants.WAD_YEAR_IN_SECONDS_INT
             ) -
             openingFeeRateForSwapUnwind.toInt256();
@@ -153,6 +154,18 @@ library IporSwapLogic {
             } else {
                 return swapValue;
             }
+        }
+    }
+
+    function calculateSwapMaturity(IporTypes.IporSwapMemory memory swap) internal pure returns (uint256) {
+        if (swap.duration == 0) {
+            return swap.openTimestamp + 28 days;
+        } else if (swap.duration == 1) {
+            return swap.openTimestamp + 60 days;
+        } else if (swap.duration == 2) {
+            return swap.openTimestamp + 90 days;
+        } else {
+            revert(MiltonErrors.UNSUPPORTED_SWAP_DURATION);
         }
     }
 }

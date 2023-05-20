@@ -147,7 +147,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 fixedInterestRate: swap.fixedInterestRate,
                 payoff: swapValue,
                 openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.endTimestamp,
+                endTimestamp: swap.calculateSwapMaturity(),
                 liquidationDepositAmount: swap.liquidationDepositAmount,
                 state: swap.state
             });

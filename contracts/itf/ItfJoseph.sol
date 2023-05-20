@@ -27,11 +27,11 @@ contract ItfJoseph is Joseph {
         return _overrideRedeemFeeRate ? 0 : _REDEEM_FEE_RATE;
     }
 
-    function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
-        IMiltonInternal milton = _getMilton();
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
-        return _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
-    }
+//    function itfCalculateExchangeRate(uint256 timestamp) external view returns (uint256) {
+//        IMiltonInternal milton = _getMilton();
+//        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+//        return _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
+//    }
 
     //@notice timestamp is required because SOAP changes over time, SOAP is a part of exchange rate calculation used for minting ipToken
     function itfProvideLiquidity(uint256 assetAmount, uint256 timestamp) external {

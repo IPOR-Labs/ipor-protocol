@@ -68,4 +68,12 @@ library AmmTypes {
         /// @notice Liquidation deposit is retained when the swap is opened. Value represented in 18 decimals.
         uint256 liquidationDepositAmount;
     }
+
+    /// @notice Structure describes one swap processed by closeSwaps method, information about swap ID and flag if this swap was closed during execution closeSwaps method.
+    struct IporSwapClosingResult {
+        /// @notice Swap ID
+        uint256 swapId;
+        /// @notice Flag describe if swap was closed during this execution
+        bool closed;
+    }
 }

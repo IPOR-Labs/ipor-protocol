@@ -1,0 +1,141 @@
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity 0.8.16;
+
+import "@openzeppelin/contracts/utils/Address.sol";
+
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
+import "../interfaces/IMiltonStorage.sol";
+import "../interfaces/IIporRiskManagementOracle.sol";
+import "../interfaces/IStanley.sol";
+import "../governance/AmmConfigurationManager.sol";
+import "../amm/libraries/types/AmmMiltonTypes.sol";
+
+library RiskManagementLogic {
+    using Address for address;
+
+    struct SpreadQuoteContext {
+        address asset;
+        address ammStorage;
+        address iporRiskManagementOracle;
+        address spreadRouter;
+        uint256 minLeverage;
+        uint256 indexValue;
+    }
+
+    function calculateQuote(
+        uint256 swapNotional,
+        uint256 direction,
+        uint256 duration,
+        SpreadQuoteContext memory spreadQuoteCtx
+    ) internal returns (uint256) {
+        IporTypes.AmmBalancesForOpenSwapMemory memory balance = IMiltonStorage(spreadQuoteCtx.ammStorage)
+            .getBalancesForOpenSwap();
+
+        AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
+            spreadQuoteCtx.asset,
+            direction,
+            duration,
+            balance.liquidityPool,
+            spreadQuoteCtx.minLeverage,
+            spreadQuoteCtx.iporRiskManagementOracle
+        );
+
+        return
+            abi.decode(
+                spreadQuoteCtx.spreadRouter.functionCall(
+                    abi.encodeWithSignature(
+                        determineSpreadMethodSig(direction, duration),
+                        spreadQuoteCtx.asset,
+                        swapNotional,
+                        riskIndicators.maxLeveragePerLeg,
+                        riskIndicators.maxUtilizationRatePerLeg,
+                        riskIndicators.spread,
+                        balance.totalCollateralPayFixed,
+                        balance.totalCollateralReceiveFixed,
+                        balance.liquidityPool,
+                        balance.totalNotionalPayFixed,
+                        balance.totalNotionalReceiveFixed,
+                        spreadQuoteCtx.indexValue
+                    )
+                ),
+                (uint256)
+            );
+    }
+
+    function getRiskIndicators(
+        address asset,
+        uint256 direction,
+        uint256 duration,
+        uint256 liquidityPool,
+        uint256 cfgMinLeverage,
+        address cfgIporRiskManagementOracle
+    ) internal view returns (AmmMiltonTypes.OpenSwapRiskIndicators memory riskIndicators) {
+        uint256 maxNotionalPerLeg;
+        uint256 maxUtilizationRate;
+
+        (
+            maxNotionalPerLeg,
+            riskIndicators.maxUtilizationRatePerLeg,
+            maxUtilizationRate,
+            riskIndicators.spread
+        ) = IIporRiskManagementOracle(cfgIporRiskManagementOracle).getOpenSwapParameters(asset, direction, duration);
+
+        uint256 maxCollateralPerLeg = IporMath.division(
+            liquidityPool * riskIndicators.maxUtilizationRatePerLeg,
+            Constants.D18
+        );
+
+        if (maxCollateralPerLeg > 0) {
+            riskIndicators.maxLeveragePerLeg = _leverageInRange(
+                IporMath.division(maxNotionalPerLeg * Constants.D18, maxCollateralPerLeg),
+                cfgMinLeverage
+            );
+        } else {
+            riskIndicators.maxLeveragePerLeg = cfgMinLeverage;
+        }
+    }
+
+    function determineSpreadMethodSig(uint256 direction, uint256 inputDuration) internal pure returns (string memory) {
+        AmmTypes.SwapDuration duration = AmmTypes.SwapDuration(inputDuration);
+        if (direction == 0) {
+            if (duration == AmmTypes.SwapDuration.DAYS_28) {
+                return
+                    "calculatePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+                return
+                    "calculatePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+                return
+                    "calculatePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else {
+                revert("Invalid duration");
+            }
+        } else if (direction == 1) {
+            if (duration == AmmTypes.SwapDuration.DAYS_28) {
+                return
+                    "calculateReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else if (duration == AmmTypes.SwapDuration.DAYS_60) {
+                return
+                    "calculateReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
+                return
+                    "calculateReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))";
+            } else {
+                revert("Invalid duration");
+            }
+        } else {
+            revert("Invalid direction");
+        }
+    }
+
+    function _leverageInRange(uint256 leverage, uint256 cfgMinLeverage) private pure returns (uint256) {
+        if (leverage > Constants.LEVERAGE_1000) {
+            return Constants.LEVERAGE_1000;
+        } else if (leverage < cfgMinLeverage) {
+            return cfgMinLeverage;
+        } else {
+            return leverage;
+        }
+    }
+}

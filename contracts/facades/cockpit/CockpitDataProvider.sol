@@ -106,7 +106,7 @@ contract CockpitDataProvider is
 
     function calculateSpread(address asset)
         external
-        view
+        pure
         override
         returns (int256 spreadPayFixed, int256 spreadReceiveFixed)
     {

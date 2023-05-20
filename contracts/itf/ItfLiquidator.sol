@@ -14,65 +14,65 @@ contract ItfLiquidator {
         _milton = ItfMilton(miltonAddress);
         _miltonStorage = IMiltonStorage(miltonStorage);
     }
-
-    function itfLiquidate(
-        uint256[] calldata payFixedSwapIds,
-        uint256[] calldata receiveFixedSwapIds,
-        uint256 closeTimestamp
-    )
-        external
-        returns (
-            MiltonTypes.IporSwapClosingResult[] memory payFixedClosedSwaps,
-            MiltonTypes.IporSwapClosingResult[] memory receiveFixedClosedSwaps
-        )
-    {
-        ItfMilton milton = _milton;
-        IMiltonStorage miltonStorage = _miltonStorage;
-        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
-        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
-        uint256 swapId; 
-        if (payFixedSwapIdsLength > 0) {
-            payFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
-            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
-                swapId = payFixedSwapIds[i];
-                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
-                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                    try milton.itfCloseSwapPayFixed(swapId, closeTimestamp) {
-                        payFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, true);
-                    } catch {
-                        payFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
-                    }
-                } else {
-                    payFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
-                }
-            }
-        }
-        if (receiveFixedSwapIdsLength > 0) {
-            receiveFixedClosedSwaps = new MiltonTypes.IporSwapClosingResult[](
-                receiveFixedSwapIdsLength
-            );
-            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
-                swapId = receiveFixedSwapIds[i];
-                IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(
-                    swapId
-                );
-                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                    try milton.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
-                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
-                            swapId,
-                            true
-                        );
-                    } catch {
-                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
-                            swapId,
-                            false
-                        );
-                    }
-                } else {
-                    receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
-                }
-            }
-        }
-    }
+//
+//    function itfLiquidate(
+//        uint256[] calldata payFixedSwapIds,
+//        uint256[] calldata receiveFixedSwapIds,
+//        uint256 closeTimestamp
+//    )
+//        external
+//        returns (
+//            AmmTypes.IporSwapClosingResult[] memory payFixedClosedSwaps,
+//            AmmTypes.IporSwapClosingResult[] memory receiveFixedClosedSwaps
+//        )
+//    {
+//        ItfMilton milton = _milton;
+//        IMiltonStorage miltonStorage = _miltonStorage;
+//        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
+//        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
+//        uint256 swapId;
+//        if (payFixedSwapIdsLength > 0) {
+//            payFixedClosedSwaps = new AmmTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
+//            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
+//                swapId = payFixedSwapIds[i];
+//                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
+//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                    try milton.itfCloseSwapPayFixed(swapId, closeTimestamp) {
+//                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
+//                    } catch {
+//                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
+//                    }
+//                } else {
+//                    payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
+//                }
+//            }
+//        }
+//        if (receiveFixedSwapIdsLength > 0) {
+//            receiveFixedClosedSwaps = new AmmTypes.IporSwapClosingResult[](
+//                receiveFixedSwapIdsLength
+//            );
+//            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
+//                swapId = receiveFixedSwapIds[i];
+//                IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(
+//                    swapId
+//                );
+//                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
+//                    try milton.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
+//                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
+//                            swapId,
+//                            true
+//                        );
+//                    } catch {
+//                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
+//                            swapId,
+//                            false
+//                        );
+//                    }
+//                } else {
+//                    receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
+//                }
+//            }
+//        }
+//    }
 
 }

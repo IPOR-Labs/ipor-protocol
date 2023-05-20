@@ -6,6 +6,7 @@ import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/errors/JosephErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
+import "../../libraries/AmmLib.sol";
 import "../libraries/types/JosephTypes.sol";
 import "../../interfaces/IJoseph.sol";
 import "./JosephInternal.sol";
@@ -18,7 +19,12 @@ abstract contract Joseph is JosephInternal, IJoseph {
     function calculateExchangeRate() external view override returns (uint256) {
         IMiltonInternal milton = _getMilton();
         (, , int256 soap) = milton.calculateSoapAtTimestamp(block.timestamp);
-        return _calculateExchangeRate(soap, _getIpToken(), milton.getAccruedBalance().liquidityPool);
+        return
+            _calculateExchangeRate(
+                soap,
+                _getIpToken(),
+                AmmLib.getAccruedBalance(address(_miltonStorage), address(_stanley)).liquidityPool
+            );
     }
 
     function provideLiquidity(uint256 assetAmount) external override whenNotPaused {
@@ -53,7 +59,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
         IIpToken ipToken = _getIpToken();
         IMiltonInternal milton = _getMilton();
 
-        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
+            address(_miltonStorage),
+            address(_stanley)
+        );
 
         (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
 
@@ -92,7 +101,10 @@ abstract contract Joseph is JosephInternal, IJoseph {
         );
         IMiltonInternal milton = _getMilton();
 
-        IporTypes.MiltonBalancesMemory memory balance = milton.getAccruedBalance();
+        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
+            address(_miltonStorage),
+            address(_stanley)
+        );
 
         (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
 
