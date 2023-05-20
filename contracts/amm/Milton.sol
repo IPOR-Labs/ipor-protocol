@@ -25,13 +25,8 @@ import "./MiltonStorage.sol";
  */
 abstract contract Milton is MiltonInternal, IMilton {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SafeCast for uint256;
-    using SafeCast for uint128;
-    using SafeCast for int256;
-    using IporSwapLogic for IporTypes.IporSwapMemory;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) MiltonInternal(iporRiskManagementOracle) {
+    constructor() {
         _disableInitializers();
     }
 

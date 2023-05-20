@@ -34,16 +34,7 @@ abstract contract MiltonInternal is
     IMiltonInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SafeCast for uint256;
-    using SafeCast for uint128;
-    using SafeCast for int256;
     using IporSwapLogic for IporTypes.IporSwapMemory;
-
-
-    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
-    uint256 internal constant _OPENING_FEE_RATE = 5e14;
-
-    uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
 
     address internal _asset;
     address internal _joseph;
@@ -52,20 +43,12 @@ abstract contract MiltonInternal is
     IMiltonStorage internal _miltonStorage;
     IMiltonSpreadModel internal _miltonSpreadModel;
 
+    /// DEPRECATED
     uint32 internal _autoUpdateIporIndexThreshold;
 
+    /// DEPRECATED
     mapping(address => bool) internal _swapLiquidators;
 
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
-
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) {
-        require(iporRiskManagementOracle != address(0), IporErrors.WRONG_ADDRESS);
-
-        /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
-        _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
-    }
 
     modifier onlyJoseph() {
         require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
@@ -86,10 +69,6 @@ abstract contract MiltonInternal is
 
     function getStanley() external view returns (address) {
         return address(_stanley);
-    }
-
-    function getRiskManagementOracle() external view returns (address) {
-        return address(_iporRiskManagementOracle);
     }
 
     function calculateSoapAtTimestamp(uint256 calculateTimestamp)
@@ -175,10 +154,6 @@ abstract contract MiltonInternal is
 
     function _getDecimals() internal view virtual returns (uint256);
 
-
-    function _getLiquidationLegLimit() internal view virtual returns (uint256) {
-        return _LIQUIDATION_LEG_LIMIT;
-    }
 
     function _getJoseph() internal view virtual returns (address) {
         return _joseph;

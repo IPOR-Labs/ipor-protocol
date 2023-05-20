@@ -21,13 +21,11 @@ abstract contract ItfMilton is Milton {
     uint256 internal _secondsBeforeMaturityWhenPositionCanBeClosed;
     uint256 internal _liquidationLegLimit;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) Milton(iporRiskManagementOracle) {}
+    constructor() {}
 
     function getVersion() external pure virtual override returns (uint256) {
         return 7;
     }
-
 
     function itfCalculateSoap(uint256 calculateTimestamp)
         external
@@ -107,5 +105,4 @@ abstract contract ItfMilton is Milton {
         _secondsBeforeMaturityWhenPositionCanBeClosed = secondsBeforeMaturityWhenPositionCanBeClosed;
         _liquidationLegLimit = liquidationLegLimit;
     }
-
 }

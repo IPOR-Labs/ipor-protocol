@@ -10,15 +10,6 @@ import "../governance/AmmConfigurationManager.sol";
 library AssetManagementLogic {
     using SafeCast for uint256;
 
-    function withdrawFromAssetManagement(
-        address assetManagement,
-        address ammStorage,
-        uint256 assetAmount
-    ) internal {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = IStanley(assetManagement).withdraw(assetAmount);
-        IMiltonStorage(ammStorage).updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
-    }
-
     function calculateRebalanceAmountBeforeWithdraw(
         address asset,
         uint256 wadAmmErc20BalanceBeforeWithdraw,

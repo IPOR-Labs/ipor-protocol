@@ -17,6 +17,7 @@ import "../governance/AmmConfigurationManager.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/MiltonTypes.sol";
 import "../interfaces/IIporOracle.sol";
+import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IAmmCloseSwapService.sol";
 
 contract AmmCloseSwapService is IAmmCloseSwapService {
@@ -74,14 +75,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
     address internal immutable _iporOracle;
     address internal immutable _iporRiskManagementOracle;
     address internal immutable _spreadRouter;
-
-    struct Context {
-        address onBehalfOf;
-        /// @notice swap duration, 0 = 28 days, 1 = 60 days, 2 = 90 days
-        AmmTypes.SwapDuration duration;
-        string spreadMethodSig;
-        PoolConfiguration poolCfg;
-    }
 
     constructor(
         PoolConfiguration memory usdtPoolCfg,
@@ -205,7 +198,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             onBehalfOf,
             payFixedSwapIds,
             receiveFixedSwapIds,
-            block.timestamp,
             _getPoolConfiguration(asset)
         );
     }
@@ -223,7 +215,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         override
         returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps)
     {
-        _validateAsset(asset);
         closedSwaps = _closeSwapsPayFixedWithTransferLiquidationDeposit(asset, msg.sender, swapIds);
     }
 
@@ -232,7 +223,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         override
         returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps)
     {
-        _validateAsset(asset);
         closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(asset, msg.sender, swapIds);
     }
 
@@ -301,7 +291,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         address onBehalfOf,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds,
-        uint256 closeTimestamp,
         PoolConfiguration memory poolCfg
     )
         internal
@@ -338,9 +327,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
     function _closeSwapPayFixed(
         address onBehalfOf,
         IporTypes.IporSwapMemory memory iporSwap,
-        uint256 closeTimestamp,
         PoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator) {
+        uint256 closeTimestamp = block.timestamp;
+
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
             closeTimestamp,
             poolCfg.asset
@@ -352,7 +342,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             0,
             closeTimestamp,
             iporSwap.calculatePayoffPayFixed(closeTimestamp, accruedIpor.ibtPrice),
-            accruedIpor.ibtPrice
+            accruedIpor.indexValue
         );
 
         IMiltonStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapPayFixed(iporSwap, payoff, closeTimestamp);
@@ -367,9 +357,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
     function _closeSwapReceiveFixed(
         address onBehalfOf,
         IporTypes.IporSwapMemory memory iporSwap,
-        uint256 closeTimestamp,
         PoolConfiguration memory poolCfg
     ) internal returns (uint256 payoutForLiquidator) {
+        uint256 closeTimestamp = block.timestamp;
+
         IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_iporOracle).getAccruedIndex(
             closeTimestamp,
             poolCfg.asset
@@ -381,7 +372,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             1,
             closeTimestamp,
             iporSwap.calculatePayoffReceiveFixed(closeTimestamp, accruedIpor.ibtPrice),
-            accruedIpor.ibtPrice
+            accruedIpor.indexValue
         );
 
         IMiltonStorage(poolCfg.ammStorage).updateStorageWhenCloseSwapReceiveFixed(iporSwap, payoff, closeTimestamp);
@@ -409,7 +400,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             IporTypes.IporSwapMemory memory iporSwap = IMiltonStorage(poolCfg.ammStorage).getSwapPayFixed(swapId);
 
             if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                payoutForLiquidator += _closeSwapPayFixed(onBehalfOf, iporSwap, block.timestamp, poolCfg);
+                payoutForLiquidator += _closeSwapPayFixed(onBehalfOf, iporSwap, poolCfg);
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
             } else {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
@@ -433,7 +424,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             IporTypes.IporSwapMemory memory iporSwap = IMiltonStorage(poolCfg.ammStorage).getSwapReceiveFixed(swapId);
 
             if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-                payoutForLiquidator += _closeSwapReceiveFixed(onBehalfOf, iporSwap, block.timestamp, poolCfg);
+                payoutForLiquidator += _closeSwapReceiveFixed(onBehalfOf, iporSwap, poolCfg);
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
             } else {
                 closedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
@@ -446,11 +437,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         address onBehalfOf,
         uint256[] memory swapIds
     ) internal returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+
         uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(onBehalfOf, swapIds, poolCfg);
 
-        (payoutForLiquidator, closedSwaps) = _closeSwapsPayFixed(onBehalfOf, swapIds, _getPoolConfiguration(asset));
-
-        _transferLiquidationDepositAmount(asset, _getDecimals(asset), onBehalfOf, payoutForLiquidator);
+        _transferLiquidationDepositAmount(asset, poolCfg.decimals, onBehalfOf, payoutForLiquidator);
     }
 
     function _closeSwapsReceiveFixedWithTransferLiquidationDeposit(
@@ -458,11 +450,12 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         address onBehalfOf,
         uint256[] memory swapIds
     ) internal returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps) {
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
+
         uint256 payoutForLiquidator;
+        (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(onBehalfOf, swapIds, poolCfg);
 
-        (payoutForLiquidator, closedSwaps) = _closeSwapsReceiveFixed(onBehalfOf, swapIds, _getPoolConfiguration(asset));
-
-        _transferLiquidationDepositAmount(asset, _getDecimals(asset), onBehalfOf, payoutForLiquidator);
+        _transferLiquidationDepositAmount(asset, poolCfg.decimals, onBehalfOf, payoutForLiquidator);
     }
 
     /// @notice Transfer sum of all liquidation deposits to liquidator
@@ -503,7 +496,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         ) {
             uint256 oppositeLegFixedRate = RiskManagementLogic.calculateQuote(
                 iporSwap.notional,
-                direction,
+                direction == 0 ? 1 : 0,
                 iporSwap.duration,
                 RiskManagementLogic.SpreadQuoteContext({
                     asset: poolCfg.asset,
@@ -604,12 +597,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             poolCfg.asset,
             poolCfg.decimals,
             onBehalfOf,
-            _closeSwapPayFixed(
-                onBehalfOf,
-                IMiltonStorage(poolCfg.ammStorage).getSwapPayFixed(swapId),
-                block.timestamp,
-                poolCfg
-            )
+            _closeSwapPayFixed(onBehalfOf, IMiltonStorage(poolCfg.ammStorage).getSwapPayFixed(swapId), poolCfg)
         );
     }
 
@@ -624,12 +612,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             poolCfg.asset,
             poolCfg.decimals,
             onBehalfOf,
-            _closeSwapReceiveFixed(
-                onBehalfOf,
-                IMiltonStorage(poolCfg.ammStorage).getSwapReceiveFixed(swapId),
-                block.timestamp,
-                poolCfg
-            )
+            _closeSwapReceiveFixed(onBehalfOf, IMiltonStorage(poolCfg.ammStorage).getSwapReceiveFixed(swapId), poolCfg)
         );
     }
 
@@ -739,11 +722,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                 );
 
                 if (rebalanceAmount < 0) {
-                    AssetManagementLogic.withdrawFromAssetManagement(
-                        poolCfg.assetManagement,
-                        poolCfg.ammStorage,
-                        (-rebalanceAmount).toUint256()
-                    );
+                    IMiltonInternal(poolCfg.ammTreasury).withdrawFromStanley((-rebalanceAmount).toUint256());
                 }
             }
 

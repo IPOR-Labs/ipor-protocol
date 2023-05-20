@@ -31,11 +31,6 @@ interface IMiltonInternal {
     /// @return Stanley address used by Milton
     function getStanley() external view returns (address);
 
-    /// @notice Gets address of IporRiskManagementOracle used by Milton
-    /// @dev IporRiskManagementOracle is Milton's
-    /// @return Stanley address used by Milton
-    function getRiskManagementOracle() external view returns (address);
-
     /// @notice Calculates SOAP at given timestamp.
     /// @dev returned values represented in 18 decimals
     /// @param calculateTimestamp epoch timestamp at which SOAP is computed.
