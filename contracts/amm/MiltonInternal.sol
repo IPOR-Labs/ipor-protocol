@@ -36,11 +36,11 @@ abstract contract MiltonInternal is
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporSwapLogic for IporTypes.IporSwapMemory;
 
-    address internal immutable _router;
     address internal immutable _asset;
     uint256 internal immutable _decimals;
     address internal immutable _ammStorage;
     address internal immutable _assetManagement;
+    address internal immutable _iporProtocolRouter;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
     address public asset;
@@ -67,22 +67,31 @@ abstract contract MiltonInternal is
     mapping(address => bool) public swapLiquidators;
 
     constructor(
-        address routerAddress,
         address assetAddress,
         uint256 decimals,
         address ammStorage,
-        address assetManagement
+        address assetManagement,
+        address iporProtocolRouter
     ) {
         _disableInitializers();
-        _router = routerAddress;
+
         _asset = assetAddress;
         _decimals = decimals;
         _ammStorage = ammStorage;
         _assetManagement = assetManagement;
+        _iporProtocolRouter = iporProtocolRouter;
+
+        delete asset;
+        delete joseph;
+        delete stanley;
+        delete iporOracle;
+        delete miltonStorage;
+        delete miltonSpreadModel;
+        delete autoUpdateIporIndexThreshold;
     }
 
     modifier onlyIporProtocolRouter() {
-        require(_msgSender() == _router, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 

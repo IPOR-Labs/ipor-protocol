@@ -22,12 +22,12 @@ abstract contract ItfMilton is Milton {
     uint256 internal _liquidationLegLimit;
 
     constructor(
-        address router,
         address asset,
         uint256 decimals,
         address ammStorage,
-        address assetManagement
-    ) Milton(router, asset, decimals, ammStorage, assetManagement) {}
+        address assetManagement,
+        address router
+    ) Milton(asset, decimals, ammStorage, assetManagement, router) {}
 
     function itfCalculateSoap(uint256 calculateTimestamp)
         external

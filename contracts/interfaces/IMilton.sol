@@ -7,6 +7,16 @@ import "./types/MiltonTypes.sol";
 
 /// @title Interface for interaction with Milton.
 interface IMilton {
+    function getConfiguration()
+        external
+        view
+        returns (
+            address asset,
+            uint256 decimals,
+            address ammStorage,
+            address assetManagement,
+            address iporProtocolRouter
+        );
 
     /// @notice Calculates the SOAP for the current block
     /// @dev All values represented in 18 decimals.
@@ -21,5 +31,4 @@ interface IMilton {
             int256 soapReceiveFixed,
             int256 soap
         );
-
 }

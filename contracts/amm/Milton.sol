@@ -27,12 +27,12 @@ contract Milton is MiltonInternal, IMilton {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     constructor(
-        address router,
         address asset,
         uint256 decimals,
         address ammStorage,
-        address assetManagement
-    ) MiltonInternal(router, asset, decimals, ammStorage, assetManagement) {}
+        address assetManagement,
+        address iporProtocolRouter
+    ) MiltonInternal(asset, decimals, ammStorage, assetManagement, iporProtocolRouter) {}
 
     function getVersion() external pure returns (uint256) {
         return 11;
@@ -50,6 +50,21 @@ contract Milton is MiltonInternal, IMilton {
     {
         (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(block.timestamp);
         return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
+    }
+
+    function getConfiguration()
+        external
+        view
+        override
+        returns (
+            address asset,
+            uint256 decimals,
+            address ammStorage,
+            address assetManagement,
+            address iporProtocolRouter
+        )
+    {
+        return (_asset, _decimals, _ammStorage, _assetManagement, _iporProtocolRouter);
     }
 
     /**
