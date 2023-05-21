@@ -38,20 +38,6 @@ contract Milton is MiltonInternal, IMilton {
         return 11;
     }
 
-    function calculateSoap()
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(block.timestamp);
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
     function getConfiguration()
         external
         view

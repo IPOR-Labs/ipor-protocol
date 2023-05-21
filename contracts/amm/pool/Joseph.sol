@@ -16,9 +16,13 @@ abstract contract Joseph is JosephInternal, IJoseph {
     using SafeCast for uint256;
     using SafeCast for int256;
 
+    address private _iporOracle; //TODO: fix it
+
     function calculateExchangeRate() external view override returns (uint256) {
-        IMiltonInternal milton = _getMilton();
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(block.timestamp);
+//        IMiltonInternal milton = _getMilton();
+        (, , int256 soap) = AmmLib.getSOAP(_asset, address(_miltonStorage), address(_iporOracle));
+
+//        (, , int256 soap) = milton.calculateSoapAtTimestamp(block.timestamp);
         return
             _calculateExchangeRate(
                 soap,
@@ -64,7 +68,8 @@ abstract contract Joseph is JosephInternal, IJoseph {
             address(_stanley)
         );
 
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+//        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+        (, , int256 soap) = AmmLib.getSOAP(asset, address(_miltonStorage), address(_iporOracle));
 
         uint256 exchangeRate = _calculateExchangeRate(soap, ipToken, balance.liquidityPool);
 
@@ -106,9 +111,11 @@ abstract contract Joseph is JosephInternal, IJoseph {
             address(_stanley)
         );
 
-        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+//        (, , int256 soap) = milton.calculateSoapAtTimestamp(timestamp);
+        (, , int256 soap) = AmmLib.getSOAP(asset, address(_miltonStorage), address(_iporOracle));
 
-        uint256 exchangeRate = _calculateExchangeRate(soap, ipToken, balance.liquidityPool);
+
+    uint256 exchangeRate = _calculateExchangeRate(soap, ipToken, balance.liquidityPool);
 
         require(exchangeRate > 0, MiltonErrors.LIQUIDITY_POOL_IS_EMPTY);
 

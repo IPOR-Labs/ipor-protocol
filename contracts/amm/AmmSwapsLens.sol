@@ -6,6 +6,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
+import "../libraries/AmmLib.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
@@ -93,13 +94,19 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
-    function getSOAP() external view override returns (uint256) {
-        uint256 accruedIbtPrice = IIporOracle(_iporOracle).calculateAccruedIbtPrice(_asset, block.timestamp);
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = IMiltonStorage(_ammStorage).calculateSoap(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
+    function getSOAP(address asset)
+        external
+        view
+        override
+        returns (
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
+            int256 soap
+        )
+    {
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+
+        (soapPayFixed, soapReceiveFixed, soap) = AmmLib.getSOAP(asset, address(ammStorage), address(_iporOracle));
     }
 
     function _mapSwapsPayFixed(

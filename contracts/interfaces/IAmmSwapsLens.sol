@@ -49,7 +49,7 @@ interface IAmmSwapsLens {
 
     function getPayoffReceiveFixed(address asset, uint256 swapId) external view returns (int256 payoff);
 
-    function getSOAP()
+    function getSOAP(address asset)
         external
         view
         returns (
