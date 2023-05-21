@@ -23,51 +23,19 @@ import "./MiltonStorage.sol";
  *  # calculate spread
  * @author IPOR Labs
  */
-abstract contract Milton is MiltonInternal, IMilton {
+contract Milton is MiltonInternal, IMilton {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
-    constructor() {
-        _disableInitializers();
-    }
-
-    /**
-     * @param paused - Initial flag to determine if smart contract is paused or not
-     * @param asset - Instance of Milton is initialised in the context of the given ERC20 asset. Every trasaction is by the default scoped to that ERC20.
-     * @param iporOracle - Address of Oracle treated as the source of true IPOR rate.
-     * @param miltonStorage - Address of contract responsible for managing the state of Milton.
-     * @param miltonSpreadModel - Address of smart contract responsible for calculating spreads on the interst rate swaps.
-     * @param stanley - Address of smart contract responsible for asset management.
-     * For more details refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
-     **/
-
-    function initialize(
-        bool paused,
+    constructor(
+        address router,
         address asset,
-        address iporOracle,
-        address miltonStorage,
-        address miltonSpreadModel,
-        address stanley
-    ) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
+        uint256 decimals,
+        address ammStorage,
+        address assetManagement
+    ) MiltonInternal(router, asset, decimals, ammStorage, assetManagement) {}
 
-        require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
-        require(miltonStorage != address(0), IporErrors.WRONG_ADDRESS);
-        require(miltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
-        require(stanley != address(0), IporErrors.WRONG_ADDRESS);
-        require(_getDecimals() == ERC20Upgradeable(asset).decimals(), IporErrors.WRONG_DECIMALS);
-
-        if (paused) {
-            _pause();
-        }
-
-        _miltonStorage = IMiltonStorage(miltonStorage);
-        _miltonSpreadModel = IMiltonSpreadModel(miltonSpreadModel);
-        _iporOracle = IIporOracle(iporOracle);
-        _asset = asset;
-        _stanley = IStanley(stanley);
+    function getVersion() external pure returns (uint256) {
+        return 11;
     }
 
     function calculateSoap()

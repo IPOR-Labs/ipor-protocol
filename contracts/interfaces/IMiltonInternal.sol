@@ -12,24 +12,6 @@ interface IMiltonInternal {
     /// @return Current Milton's version
     function getVersion() external pure returns (uint256);
 
-    /// @notice Gets asset assocciated with this Milton instance. (each Milton instance is scoped per asset)
-    /// @return asset's address
-    function getAsset() external view returns (address);
-
-    /// @notice Gets address of IporOracle contract.
-    /// @dev IporOracle is used to calculate the AccruedIbtPrice that is used to come up with the payoffs of the pay/receive fixed leg.
-    /// @return IporOracle address
-    function getIporOracle() external view returns (address);
-
-    /// @notice Gets address of MiltonStorage
-    /// @dev MiltonSttrage is used to account for Milton's balances on Stanley deposits/withdrawals and to calculate the SOAP.
-    /// @return MiltonStorage address
-    function getMiltonStorage() external view returns (address);
-
-    /// @notice Gets address of Stanley used by Milton
-    /// @dev Stanley is Milton's asset manager (deposits/withdrawals into/from external money markets)
-    /// @return Stanley address used by Milton
-    function getStanley() external view returns (address);
 
     /// @notice Calculates SOAP at given timestamp.
     /// @dev returned values represented in 18 decimals
@@ -87,53 +69,4 @@ interface IMiltonInternal {
     /// @param spender account which will have rights to transfer ERC20 underlying assets on behalf of Milton
     function setupMaxAllowanceForAsset(address spender) external;
 
-    /// @notice Gets Joseph's address.
-    /// @return Joseph address
-    function getJoseph() external view returns (address);
-
-    /// @notice Sets Joseph address. Function available only to the Owner.
-    /// @param newJoseph new Joseph address
-    function setJoseph(address newJoseph) external;
-
-    /// @notice Gets Milton Spread Model smart contract address (contract responsible for spread calculation).
-    /// @return Milton Spread model smart contract address
-    function getMiltonSpreadModel() external view returns (address);
-
-    /// @notice Sets Milton Spread Model smart contract address (contract responsible for spread calculation).
-    /// @param newMiltonSpreadModel new Milton Spread Model address
-    function setMiltonSpreadModel(address newMiltonSpreadModel) external;
-
-    /// @notice Emmited when Joseph's address is changed by its owner.
-    /// @param changedBy account address that has changed Joseph's address
-    /// @param oldJoseph Joseph's old address
-    /// @param newJoseph Joseph's new address
-    event JosephChanged(address indexed changedBy, address indexed oldJoseph, address indexed newJoseph);
-
-    /// @notice Emmited when MiltonSpreadModel's address is changed by its owner.
-    /// @param changedBy account address that has changed Joseph's address
-    /// @param oldMiltonSpreadModel MiltonSpreadModel's old address
-    /// @param newMiltonSpreadModel MiltonSpreadModel's new address
-    event MiltonSpreadModelChanged(
-        address indexed changedBy,
-        address indexed oldMiltonSpreadModel,
-        address indexed newMiltonSpreadModel
-    );
-
-    /// @notice Emmited when AutoUpdateIporIndexThreshold is changed by its owner.
-    /// @param changedBy account address that has changed AutoUpdateIporIndexThreshold
-    /// @param oldAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's old value
-    /// @param newAutoUpdateIporIndexThreshold AutoUpdateIporIndexThreshold's new value
-    event AutoUpdateIporIndexThresholdChanged(
-        address indexed changedBy,
-        uint256 indexed oldAutoUpdateIporIndexThreshold,
-        uint256 indexed newAutoUpdateIporIndexThreshold
-    );
-
-    /// @notice Emmited when new liquidator is added to the list of SwapLiquidators.
-    /// @param liquidator address of the new liquidator
-    event SwapLiquidatorAdded(address indexed liquidator);
-
-    /// @notice Emmited when liquidator is removed from the list of SwapLiquidators.
-    /// @param liquidator address of the liquidator
-    event SwapLiquidatorRemoved(address indexed liquidator);
 }

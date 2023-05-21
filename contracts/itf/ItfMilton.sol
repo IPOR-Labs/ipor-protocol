@@ -21,11 +21,13 @@ abstract contract ItfMilton is Milton {
     uint256 internal _secondsBeforeMaturityWhenPositionCanBeClosed;
     uint256 internal _liquidationLegLimit;
 
-    constructor() {}
-
-    function getVersion() external pure virtual override returns (uint256) {
-        return 7;
-    }
+    constructor(
+        address router,
+        address asset,
+        uint256 decimals,
+        address ammStorage,
+        address assetManagement
+    ) Milton(router, asset, decimals, ammStorage, assetManagement) {}
 
     function itfCalculateSoap(uint256 calculateTimestamp)
         external
@@ -67,8 +69,8 @@ abstract contract ItfMilton is Milton {
     }
 
     function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId) internal view returns (int256) {
-        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapPayFixed(swapId);
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        IporTypes.IporSwapMemory memory swap = IMiltonStorage(_ammStorage).getSwapPayFixed(swapId);
+        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, calculateTimestamp);
         return swap.calculatePayoffPayFixed(calculateTimestamp, accruedIbtPrice);
     }
 
@@ -77,8 +79,8 @@ abstract contract ItfMilton is Milton {
         view
         returns (int256)
     {
-        IporTypes.IporSwapMemory memory swap = _miltonStorage.getSwapReceiveFixed(swapId);
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        IporTypes.IporSwapMemory memory swap = IMiltonStorage(_ammStorage).getSwapReceiveFixed(swapId);
+        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, calculateTimestamp);
         return swap.calculatePayoffReceiveFixed(calculateTimestamp, accruedIbtPrice);
     }
 

@@ -78,7 +78,7 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
         (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = miltonStorage
             .getTotalOutstandingNotional();
 
-        IMiltonInternal milton = IMiltonInternal(config.milton);
+//        IMiltonInternal milton = IMiltonInternal(config.milton);
         IporTypes.MiltonBalancesMemory memory accruedBalance = AmmLib.getAccruedBalance(
             address(config.miltonStorage),
             address(IJosephInternal(config.joseph).getStanley())
@@ -107,16 +107,16 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        IMiltonInternal milton = IMiltonInternal(config.milton);
+//        IMiltonInternal milton = IMiltonInternal(config.milton);
         IJosephInternal joseph = IJosephInternal(config.joseph);
 
-        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
+//        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
+//        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
 
-        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
-            address(config.miltonStorage),
-            address(joseph.getStanley())
-        );
+//        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
+//            address(config.miltonStorage),
+//            address(joseph.getStanley())
+//        );
 
         //TODO: fix it
         uint256 maxLeveragePayFixed;
@@ -136,8 +136,8 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
             0, //milton.getOpeningFeeRate(), TODO: fixit
             0, // milton.getIporPublicationFee(), TODO: fixit
             0, // milton.getWadLiquidationDepositAmount(), TODO: fixit
-            spreadModel.calculateSpreadPayFixed(accruedIpor, balance),
-            spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),
+            0,//spreadModel.calculateSpreadPayFixed(accruedIpor, balance),//TODO:fixit
+            0,//spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),//TODO fixit
             0, //TODO:fixit
             //            milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
