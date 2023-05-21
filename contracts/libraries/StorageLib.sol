@@ -119,7 +119,7 @@ library StorageLib {
         }
     }
 
-    function getAmmSwapsLiquidatorsStorage() internal pure returns (mapping(address => bool) storage store) {
+    function getAmmSwapsLiquidatorsStorage() internal pure returns (AmmSwapsLiquidatorsStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmSwapsLiquidators);
         assembly {
             store.slot := slot
@@ -170,7 +170,7 @@ library StorageLib {
         }
     }
 
-    function getPoolsAmmTreasuryStorage() internal pure returns (AmmPoolsTreasuryStorage storage store) {
+    function getAmmPoolsTreasuryStorage() internal pure returns (AmmPoolsTreasuryStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasury);
         assembly {
             store.slot := slot
@@ -178,7 +178,7 @@ library StorageLib {
     }
 
     function getAmmPoolsTreasuryManagerStorage() internal pure returns (AmmPoolsTreasuryManagerStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmTreasuryManager);
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasuryManager);
         assembly {
             store.slot := slot
         }

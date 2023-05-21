@@ -32,31 +32,53 @@ contract AmmPoolsLens is IAmmPoolsLens {
 
     address internal immutable _iporOracle;
 
-    constructor(
-        PoolConfiguration usdtPoolCfg,
-        PoolConfiguration usdcPoolCfg,
-        PoolConfiguration daiPoolCfg,
-        address iporOracle
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ipToken;
+        address ammStorage;
+        address ammTreasury;
+        address assetManagement;
+    }
 
+    constructor(
+        PoolConfiguration memory usdtPoolCfg,
+        PoolConfiguration memory usdcPoolCfg,
+        PoolConfiguration memory daiPoolCfg,
+        address iporOracle
     ) {
         require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
         require(usdtPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ipToken"));
         require(usdtPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammStorage"));
-        require(usdtPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury"));
-        require(usdtPoolCfg.assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement"));
+        require(
+            usdtPoolCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool ammTreasury")
+        );
+        require(
+            usdtPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDT pool assetManagement")
+        );
 
         require(usdcPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool asset"));
         require(usdcPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ipToken"));
         require(usdcPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammStorage"));
-        require(usdcPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury"));
-        require(usdcPoolCfg.assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement"));
+        require(
+            usdcPoolCfg.ammTreasury != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool ammTreasury")
+        );
+        require(
+            usdcPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " USDC pool assetManagement")
+        );
 
         require(daiPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool asset"));
         require(daiPoolCfg.ipToken != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ipToken"));
         require(daiPoolCfg.ammStorage != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammStorage"));
         require(daiPoolCfg.ammTreasury != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool ammTreasury"));
-        require(daiPoolCfg.assetManagement != address(0), string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement"));
-
+        require(
+            daiPoolCfg.assetManagement != address(0),
+            string.concat(IporErrors.WRONG_ADDRESS, " DAI pool assetManagement")
+        );
 
         _usdt = usdtPoolCfg.asset;
         _usdtDecimals = usdtPoolCfg.decimals;
@@ -91,7 +113,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
-        model.decimals = poolCfg.decimals;
+        model.assetDecimals = poolCfg.decimals;
         model.ipToken = poolCfg.ipToken;
         model.ammStorage = poolCfg.ammStorage;
         model.iporOracle = _iporOracle;
@@ -99,7 +121,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return model.getExchangeRate();
     }
 
-    function getPoolConfiguration(address asset) public view override returns (PoolConfiguration memory) {
+    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({

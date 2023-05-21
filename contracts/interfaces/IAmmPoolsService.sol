@@ -25,7 +25,13 @@ interface IAmmPoolsService {
         uint256 ipTokenAmount
     ) external;
 
-    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory);
+    /// @notice Rebalances ERC20 balance between Milton and Stanley, based on configuration
+    /// `_MILTON_STANLEY_BALANCE_RATIO` part of Milton balance is transferred to Stanley or vice versa.
+    /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
+    /// @dev Emits {Deposit} or {Withdraw} event from Stanley depends on current asset balance on Milton and Stanley.
+    /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on Milton and Stanley.
+    /// @dev Emits {Transfer} from ERC20 asset.
+    function rebalance(address asset) external;
 
     /// @notice Emitted when `from` account provides liquidity (ERC20 token supported by IPOR Protocol) to Milton Liquidity Pool
     event ProvideLiquidity(
@@ -70,14 +76,4 @@ interface IAmmPoolsService {
         /// @dev value represented in 18 decimals
         uint256 redeemAmount
     );
-
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ipToken;
-        address ammStorage;
-        address ammTreasury;
-        address assetManagement;
-        uint256 redeemFeeRate;
-    }
 }

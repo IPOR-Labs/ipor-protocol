@@ -8,8 +8,6 @@ import "../interfaces/types/MiltonFacadeTypes.sol";
 import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
 import "../interfaces/IMiltonInternal.sol";
-import "../interfaces/IJosephInternal.sol";
-import "../interfaces/IJoseph.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMiltonFacadeDataProvider.sol";
@@ -78,11 +76,12 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
         (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = miltonStorage
             .getTotalOutstandingNotional();
 
-//        IMiltonInternal milton = IMiltonInternal(config.milton);
-        IporTypes.MiltonBalancesMemory memory accruedBalance = AmmLib.getAccruedBalance(
-            address(config.miltonStorage),
-            address(IJosephInternal(config.joseph).getStanley())
-        );
+        //        IMiltonInternal milton = IMiltonInternal(config.milton);
+        IporTypes.MiltonBalancesMemory memory accruedBalance;
+        //        = AmmLib.getAccruedBalance(
+        //            address(config.miltonStorage),
+        //            address(IJosephInternal(config.joseph).getStanley())
+        //        );
 
         balance.totalCollateralPayFixed = accruedBalance.totalCollateralPayFixed;
         balance.totalCollateralReceiveFixed = accruedBalance.totalCollateralReceiveFixed;
@@ -91,8 +90,8 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
-        IJoseph joseph = IJoseph(config.joseph);
-        uint256 result = joseph.calculateExchangeRate();
+        //        IJoseph joseph = IJoseph(config.joseph);
+        uint256 result; // = joseph.calculateExchangeRate();
         return result;
     }
 
@@ -107,16 +106,16 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
     {
         MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-//        IMiltonInternal milton = IMiltonInternal(config.milton);
-        IJosephInternal joseph = IJosephInternal(config.joseph);
+        //        IMiltonInternal milton = IMiltonInternal(config.milton);
+        //        IJosephInternal joseph = IJosephInternal(config.joseph);
 
-//        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
-//        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
+        //        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
+        //        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
 
-//        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
-//            address(config.miltonStorage),
-//            address(joseph.getStanley())
-//        );
+        //        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
+        //            address(config.miltonStorage),
+        //            address(joseph.getStanley())
+        //        );
 
         //TODO: fix it
         uint256 maxLeveragePayFixed;
@@ -136,14 +135,14 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
             0, //milton.getOpeningFeeRate(), TODO: fixit
             0, // milton.getIporPublicationFee(), TODO: fixit
             0, // milton.getWadLiquidationDepositAmount(), TODO: fixit
-            0,//spreadModel.calculateSpreadPayFixed(accruedIpor, balance),//TODO:fixit
-            0,//spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),//TODO fixit
+            0, //spreadModel.calculateSpreadPayFixed(accruedIpor, balance),//TODO:fixit
+            0, //spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),//TODO fixit
             0, //TODO:fixit
             //            milton.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
-            joseph.getMaxLiquidityPoolBalance() * Constants.D18,
-            joseph.getMaxLpAccountContribution() * Constants.D18
+            0, //joseph.getMaxLiquidityPoolBalance() * Constants.D18, //TODO:fixit
+            0 //joseph.getMaxLpAccountContribution() * Constants.D18 //TODO:fixit
         );
     }
 

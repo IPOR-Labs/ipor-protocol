@@ -258,8 +258,6 @@ interface IAmmOpenSwapService {
         uint256 leverage
     ) external returns (uint256);
 
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
-
     /// @notice Emitted when trader opens new swap.
     event OpenSwap(
         /// @notice swap ID.
@@ -279,18 +277,4 @@ interface IAmmOpenSwapService {
         /// @notice attributes taken from IPOR Index indicators.
         MiltonTypes.IporSwapIndicator indicator
     );
-
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ammStorage;
-        address ammTreasury;
-        uint256 iporPublicationFee;
-        uint256 maxSwapCollateralAmount;
-        uint256 liquidationDepositAmount;
-        uint256 minLeverage;
-        uint256 maxLeverage;
-        uint256 openingFeeRate;
-        uint256 openingFeeTreasuryPortionRate;
-    }
 }

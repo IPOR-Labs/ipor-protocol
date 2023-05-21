@@ -654,7 +654,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
             if (closeTimestamp >= swapEndTimestamp) {
                 if (absPayoff < minPayoffToCloseBeforeMaturityByCommunity || absPayoff == iporSwap.collateral) {
-                    if (AmmConfigurationManager.isSwapLiquidator(msgSender) != true && msgSender != iporSwap.buyer) {
+                    if (
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
+                        msgSender != iporSwap.buyer
+                    ) {
                         return 2;
                     }
                 }
@@ -668,7 +671,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
                     (absPayoff >= minPayoffToCloseBeforeMaturityByBuyer &&
                         absPayoff < minPayoffToCloseBeforeMaturityByCommunity) || absPayoff == iporSwap.collateral
                 ) {
-                    if (AmmConfigurationManager.isSwapLiquidator(msgSender) != true && msgSender != iporSwap.buyer) {
+                    if (
+                        AmmConfigurationManager.isSwapLiquidator(poolCfg.asset, msgSender) != true &&
+                        msgSender != iporSwap.buyer
+                    ) {
                         return 2;
                     }
                 }

@@ -77,7 +77,7 @@ contract AccessControl {
     }
 
     function _onlyOwner() internal view {
-        require(address(StorageLib.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
+        require(OwnerManager.getOwner() == msg.sender, "Ownable: caller is not the owner");
     }
 
     function _whenNotPaused() internal view {

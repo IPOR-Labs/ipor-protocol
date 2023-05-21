@@ -5,7 +5,6 @@ import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/JosephErrors.sol";
 import "../libraries/StorageLib.sol";
-import "../../../external/contracts-v2/contracts/external/adapters/aTokenAggregator.sol";
 
 library AmmConfigurationManager {
     /// @notice Emitted when new liquidator is added to the list of SwapLiquidators.
@@ -101,7 +100,8 @@ library AmmConfigurationManager {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
-            .getAmmSwapsLiquidatorsStorage();
+            .getAmmSwapsLiquidatorsStorage()
+            .value;
         swapLiquidators[asset][account] = true;
 
         emit AmmSwapsLiquidatorChanged(msg.sender, asset, account, true);
@@ -112,14 +112,17 @@ library AmmConfigurationManager {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
-            .getAmmSwapsLiquidatorsStorage();
+            .getAmmSwapsLiquidatorsStorage()
+            .value;
         swapLiquidators[asset][account] = false;
 
         emit AmmSwapsLiquidatorChanged(msg.sender, asset, account, false);
     }
 
     function isSwapLiquidator(address asset, address account) internal view returns (bool) {
-        mapping(address => mapping(address => bool)) swapLiquidators = StorageLib.getAmmSwapsLiquidatorsStorage();
+        mapping(address => mapping(address => bool)) storage swapLiquidators = StorageLib
+            .getAmmSwapsLiquidatorsStorage()
+            .value;
         return swapLiquidators[asset][account];
     }
 
@@ -129,7 +132,7 @@ library AmmConfigurationManager {
         require(newRatio > 0, JosephErrors.MILTON_STANLEY_RATIO);
         require(newRatio < 1e18, JosephErrors.MILTON_STANLEY_RATIO);
 
-        mapping(address => uint256) storage ratio = StorageLib.getAmmAndAssetManagementRatioStorage().value;
+        mapping(address => uint256) storage ratio = StorageLib.getAmmPoolsAndAssetManagementRatioStorage().value;
         uint256 oldRatio = ratio[asset];
         ratio[asset] = newRatio;
 
@@ -202,7 +205,8 @@ library AmmConfigurationManager {
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
-            .getAmmPoolsAppointedToRebalanceStorage();
+            .getAmmPoolsAppointedToRebalanceStorage()
+            .value;
         appointedToRebalance[asset][account] = true;
 
         emit AmmPoolsAppointedToRebalanceChanged(msg.sender, asset, account, true);
@@ -213,7 +217,8 @@ library AmmConfigurationManager {
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
-            .getAmmPoolsAppointedToRebalanceStorage();
+            .getAmmPoolsAppointedToRebalanceStorage()
+            .value;
         appointedToRebalance[asset][account] = false;
 
         emit AmmPoolsAppointedToRebalanceChanged(msg.sender, asset, account, false);
@@ -221,7 +226,8 @@ library AmmConfigurationManager {
 
     function isAmmPoolsAppointedToRebalance(address asset, address account) internal view returns (bool) {
         mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
-            .getAmmPoolsAppointedToRebalanceStorage();
+            .getAmmPoolsAppointedToRebalanceStorage()
+            .value;
         return appointedToRebalance[asset][account];
     }
 

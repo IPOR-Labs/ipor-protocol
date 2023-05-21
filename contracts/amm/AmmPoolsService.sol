@@ -1,20 +1,29 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
 import "../libraries/errors/MiltonErrors.sol";
 import "../libraries/errors/JosephErrors.sol";
 import "../libraries/math/IporMath.sol";
+import "../libraries/AssetManagementLogic.sol";
+import "../libraries/AmmLib.sol";
 import "../interfaces/types/IporTypes.sol";
 import "../interfaces/types/AmmTypes.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IMilton.sol";
+import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IAmmPoolsService.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
 
 contract AmmPoolsService is IAmmPoolsService {
+    using SafeCast for int256;
+    using SafeCast for uint256;
+    using SafeERC20Upgradeable for IERC20Upgradeable;
+    using AmmLib for AmmTypes.AmmPoolCoreModel;
+
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
     address internal immutable _usdtIpToken;
@@ -22,6 +31,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdtAmmTreasury;
     address internal immutable _usdtAssetManagement;
     uint256 internal immutable _usdtRedeemFeeRate;
+    uint256 internal immutable _usdtRedeemLpMaxUtilizationRate;
 
     address internal immutable _usdc;
     uint256 internal immutable _usdcDecimals;
@@ -30,6 +40,7 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _usdcAmmTreasury;
     address internal immutable _usdcAssetManagement;
     uint256 internal immutable _usdcRedeemFeeRate;
+    uint256 internal immutable _usdcRedeemLpMaxUtilizationRate;
 
     address internal immutable _dai;
     uint256 internal immutable _daiDecimals;
@@ -38,13 +49,25 @@ contract AmmPoolsService is IAmmPoolsService {
     address internal immutable _daiAmmTreasury;
     address internal immutable _daiAssetManagement;
     uint256 internal immutable _daiRedeemFeeRate;
+    uint256 internal immutable _daiRedeemLpMaxUtilizationRate;
 
     address internal immutable _iporOracle;
 
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ipToken;
+        address ammStorage;
+        address ammTreasury;
+        address assetManagement;
+        uint256 redeemFeeRate;
+        uint256 redeemLpMaxUtilizationRate;
+    }
+
     constructor(
-        PoolConfiguration usdtPoolCfg,
-        PoolConfiguration usdcPoolCfg,
-        PoolConfiguration daiPoolCfg,
+        PoolConfiguration memory usdtPoolCfg,
+        PoolConfiguration memory usdcPoolCfg,
+        PoolConfiguration memory daiPoolCfg,
         address iporOracle
     ) {
         require(usdtPoolCfg.asset != address(0), string.concat(IporErrors.WRONG_ADDRESS, " USDT pool asset"));
@@ -87,6 +110,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdtAmmTreasury = usdtPoolCfg.ammTreasury;
         _usdtAssetManagement = usdtPoolCfg.assetManagement;
         _usdtRedeemFeeRate = usdtPoolCfg.redeemFeeRate;
+        _usdtRedeemLpMaxUtilizationRate = usdtPoolCfg.redeemLpMaxUtilizationRate;
 
         _usdc = usdcPoolCfg.asset;
         _usdcDecimals = usdcPoolCfg.decimals;
@@ -95,6 +119,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _usdcAmmTreasury = usdcPoolCfg.ammTreasury;
         _usdcAssetManagement = usdcPoolCfg.assetManagement;
         _usdcRedeemFeeRate = usdcPoolCfg.redeemFeeRate;
+        _usdcRedeemLpMaxUtilizationRate = usdcPoolCfg.redeemLpMaxUtilizationRate;
 
         _dai = daiPoolCfg.asset;
         _daiDecimals = daiPoolCfg.decimals;
@@ -103,6 +128,7 @@ contract AmmPoolsService is IAmmPoolsService {
         _daiAmmTreasury = daiPoolCfg.ammTreasury;
         _daiAssetManagement = daiPoolCfg.assetManagement;
         _daiRedeemFeeRate = daiPoolCfg.redeemFeeRate;
+        _daiRedeemLpMaxUtilizationRate = daiPoolCfg.redeemLpMaxUtilizationRate;
 
         _iporOracle = iporOracle;
     }
@@ -113,7 +139,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 assetAmount
     ) external override {
         PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
-        AmmTypes.AmmPoolCoreModel model;
+        AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
         model.ipToken = poolCfg.ipToken;
@@ -143,7 +169,7 @@ contract AmmPoolsService is IAmmPoolsService {
         IIpToken(poolCfg.ipToken).mint(onBehalfOf, ipTokenAmount);
 
         /// @dev Order of the following two functions is important, first safeTransferFrom, then rebalanceIfNeededAfterProvideLiquidity.
-        _rebalanceIfNeededAfterProvideLiquidity(poolCfg.ammTreasury, poolCfg.asset, balance.vault, wadAssetAmount);
+        _rebalanceIfNeededAfterProvideLiquidity(poolCfg, balance.vault, wadAssetAmount);
 
         emit ProvideLiquidity(
             block.timestamp,
@@ -167,7 +193,7 @@ contract AmmPoolsService is IAmmPoolsService {
             JosephErrors.CANNOT_REDEEM_IP_TOKEN_TOO_LOW
         );
 
-        AmmTypes.AmmPoolCoreModel model;
+        AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
         model.ipToken = poolCfg.ipToken;
@@ -198,19 +224,14 @@ contract AmmPoolsService is IAmmPoolsService {
             JosephErrors.INSUFFICIENT_ERC20_BALANCE
         );
 
-        _rebalanceIfNeededBeforeRedeem(
-            poolCfg.ammTreasury,
-            wadAmmTreasuryErc20Balance,
-            balance.vault,
-            redeemMoney.wadRedeemAmount
-        );
+        _rebalanceIfNeededBeforeRedeem(poolCfg, wadAmmTreasuryErc20Balance, balance.vault, redeemMoney.wadRedeemAmount);
 
         require(
             _calculateRedeemedUtilizationRate(
                 balance.liquidityPool,
                 balance.totalCollateralPayFixed + balance.totalCollateralReceiveFixed,
                 redeemMoney.wadRedeemAmount
-            ) <= _getRedeemLpMaxUtilizationRate(),
+            ) <= poolCfg.redeemLpMaxUtilizationRate,
             JosephErrors.REDEEM_LP_UTILIZATION_EXCEEDED
         );
 
@@ -232,7 +253,44 @@ contract AmmPoolsService is IAmmPoolsService {
         );
     }
 
-    function getPoolConfiguration(address asset) public view override returns (PoolConfiguration memory) {
+    function rebalance(address asset) external override {
+        require(
+            AmmConfigurationManager.isAmmPoolsAppointedToRebalance(asset, msg.sender),
+            JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
+        );
+
+        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+
+        uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
+            IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
+            poolCfg.decimals
+        );
+
+        uint256 totalBalance = wadAmmTreasuryAssetBalance +
+            IStanley(poolCfg.assetManagement).totalBalance(poolCfg.ammTreasury);
+
+        require(totalBalance > 0, JosephErrors.STANLEY_BALANCE_IS_EMPTY);
+
+        uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
+
+        uint256 miltonStanleyBalanceRatio = AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(poolCfg.asset);
+
+        if (ratio > miltonStanleyBalanceRatio) {
+            uint256 assetAmount = wadAmmTreasuryAssetBalance -
+                IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18);
+            if (assetAmount > 0) {
+                IMiltonInternal(poolCfg.ammTreasury).depositToStanley(assetAmount);
+            }
+        } else {
+            uint256 assetAmount = IporMath.division(miltonStanleyBalanceRatio * totalBalance, Constants.D18) -
+                wadAmmTreasuryAssetBalance;
+            if (assetAmount > 0) {
+                IMiltonInternal(poolCfg.ammTreasury).withdrawFromStanley(assetAmount);
+            }
+        }
+    }
+
+    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({
@@ -241,7 +299,9 @@ contract AmmPoolsService is IAmmPoolsService {
                     ipToken: _usdtIpToken,
                     ammStorage: _usdtAmmStorage,
                     ammTreasury: _usdtAmmTreasury,
-                    assetManagement: _usdtAssetManagement
+                    assetManagement: _usdtAssetManagement,
+                    redeemFeeRate: _usdtRedeemFeeRate,
+                    redeemLpMaxUtilizationRate: _usdtRedeemLpMaxUtilizationRate
                 });
         } else if (asset == _usdc) {
             return
@@ -251,7 +311,9 @@ contract AmmPoolsService is IAmmPoolsService {
                     ipToken: _usdcIpToken,
                     ammStorage: _usdcAmmStorage,
                     ammTreasury: _usdcAmmTreasury,
-                    assetManagement: _usdcAssetManagement
+                    assetManagement: _usdcAssetManagement,
+                    redeemFeeRate: _usdcRedeemFeeRate,
+                    redeemLpMaxUtilizationRate: _usdcRedeemLpMaxUtilizationRate
                 });
         } else if (asset == _dai) {
             return
@@ -261,7 +323,9 @@ contract AmmPoolsService is IAmmPoolsService {
                     ipToken: _daiIpToken,
                     ammStorage: _daiAmmStorage,
                     ammTreasury: _daiAmmTreasury,
-                    assetManagement: _daiAssetManagement
+                    assetManagement: _daiAssetManagement,
+                    redeemFeeRate: _daiRedeemFeeRate,
+                    redeemLpMaxUtilizationRate: _daiRedeemLpMaxUtilizationRate
                 });
         } else {
             revert("AmmPoolsLens: asset not supported");
@@ -296,7 +360,8 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = _getAutoRebalanceThreshold();
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+            Constants.D21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
             int256 rebalanceAmount = _calculateRebalanceAmountAfterProvideLiquidity(
@@ -309,7 +374,7 @@ contract AmmPoolsService is IAmmPoolsService {
             );
 
             if (rebalanceAmount > 0) {
-                IMilton(poolCfg.ammTreasury).depositToStanley(rebalanceAmount.toUint256());
+                IMiltonInternal(poolCfg.ammTreasury).depositToStanley(rebalanceAmount.toUint256());
             }
         }
     }
@@ -330,5 +395,45 @@ contract AmmPoolsService is IAmmPoolsService {
                     (Constants.D18_INT - ratio.toInt256()),
                 Constants.D18_INT
             ) - vaultBalance.toInt256();
+    }
+
+    function _rebalanceIfNeededBeforeRedeem(
+        PoolConfiguration memory poolCfg,
+        uint256 wadAmmTreasuryErc20Balance,
+        uint256 vaultBalance,
+        uint256 wadOperationAmount
+    ) internal {
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+            Constants.D21;
+
+        if (
+            wadOperationAmount > wadAmmTreasuryErc20Balance ||
+            (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold)
+        ) {
+            int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
+                poolCfg.asset,
+                wadAmmTreasuryErc20Balance,
+                vaultBalance,
+                wadOperationAmount
+            );
+
+            if (rebalanceAmount < 0) {
+                IMiltonInternal(poolCfg.ammTreasury).withdrawFromStanley((-rebalanceAmount).toUint256());
+            }
+        }
+    }
+
+    function _calculateRedeemedUtilizationRate(
+        uint256 totalLiquidityPoolBalance,
+        uint256 totalCollateralBalance,
+        uint256 redeemedAmount
+    ) internal pure returns (uint256) {
+        uint256 denominator = totalLiquidityPoolBalance - redeemedAmount;
+        if (denominator > 0) {
+            return
+                IporMath.division(totalCollateralBalance * Constants.D18, totalLiquidityPoolBalance - redeemedAmount);
+        } else {
+            return Constants.MAX_VALUE;
+        }
     }
 }

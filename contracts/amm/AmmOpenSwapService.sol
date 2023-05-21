@@ -70,6 +70,20 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         PoolConfiguration poolCfg;
     }
 
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ammStorage;
+        address ammTreasury;
+        uint256 iporPublicationFee;
+        uint256 maxSwapCollateralAmount;
+        uint256 liquidationDepositAmount;
+        uint256 minLeverage;
+        uint256 maxLeverage;
+        uint256 openingFeeRate;
+        uint256 openingFeeTreasuryPortionRate;
+    }
+
     constructor(
         PoolConfiguration memory usdtPoolCfg,
         PoolConfiguration memory usdcPoolCfg,
@@ -417,7 +431,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
 
-    function getPoolConfiguration(address asset) public view override returns (PoolConfiguration memory) {
+    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({

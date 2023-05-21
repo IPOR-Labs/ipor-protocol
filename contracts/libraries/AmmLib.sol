@@ -14,11 +14,9 @@ library AmmLib {
     using SafeCast for int256;
 
     function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
-        (, , int256 soap) = AmmLib.getSOAP(model.asset, model.ammStorage, model.iporOracle);
+        (, , int256 soap) = getSOAP(model);
 
-        uint256 liquidityPoolBalance = AmmLib
-            .getAccruedBalance(model.ammStorage, address(model.assetManagement))
-            .liquidityPool;
+        uint256 liquidityPoolBalance = getAccruedBalance(model).liquidityPool;
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
 
@@ -39,7 +37,7 @@ library AmmLib {
         view
         returns (uint256)
     {
-        (, , int256 soap) = AmmLib.getSOAP(model.asset, model.ammStorage, model.iporOracle);
+        (, , int256 soap) = getSOAP(model);
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
 

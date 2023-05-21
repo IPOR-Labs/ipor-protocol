@@ -72,8 +72,7 @@ export default {
         only: [
             "contracts/amm/Milton.sol",
             "contracts/amm/MiltonStorage.sol",
-            "contracts/amm/MiltonSpreadModel.sol",
-            "contracts/amm/pool/Joseph.sol",
+            "contracts/amm/MiltonSpreadModel.sol", ,
             "contracts/facades/cockpit/CockpitDataProvider.sol",
             "contracts/facades/MiltonFacadeDataProvider.sol",
             "contracts/facades/IporOracleFacadeDataProvider.sol",
