@@ -109,4 +109,8 @@ library MiltonErrors {
     string public constant SPREAD_ROUTER_CALL_FAILED = "IPOR_334";
 
     string public constant UNSUPPORTED_SWAP_DURATION = "IPOR_335";
+
+    string public constant SENDER_NOT_AMM = "IPOR_336";
+    string public constant STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL = "IPOR_337";
+    string public constant FUNCTION_NOT_SUPPORTED= "IPOR_338";
 }

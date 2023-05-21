@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 library StorageLib {
-    uint256  constant STORAGE_SLOT_BASE = 1000000;
+    uint256  constant STORAGE_SLOT_BASE = 1_000_000;
 
     // append only
     enum StorageId {
