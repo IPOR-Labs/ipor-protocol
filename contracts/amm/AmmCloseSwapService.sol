@@ -26,6 +26,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
     using SafeCast for int256;
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using IporSwapLogic for IporTypes.IporSwapMemory;
+    using AmmLib for AmmTypes.AmmPoolCoreModel;
 
     address internal immutable _usdt;
     uint256 internal immutable _usdtDecimals;
@@ -710,10 +711,13 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
             uint256 wadMiltonErc20BalanceBeforeRedeem = IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury);
 
             if (wadMiltonErc20BalanceBeforeRedeem <= transferAmountAssetDecimals) {
-                IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
-                    poolCfg.ammStorage,
-                    poolCfg.assetManagement
-                );
+                AmmTypes.AmmPoolCoreModel memory model;
+
+                model.ammStorage = poolCfg.ammStorage;
+                model.assetManagement = poolCfg.assetManagement;
+
+                IporTypes.MiltonBalancesMemory memory balance = model.getAccruedBalance();
+
                 int256 rebalanceAmount = AssetManagementLogic.calculateRebalanceAmountBeforeWithdraw(
                     poolCfg.asset,
                     wadMiltonErc20BalanceBeforeRedeem,

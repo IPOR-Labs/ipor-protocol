@@ -16,6 +16,17 @@ library AmmTypes {
         ACTIVE
     }
 
+    struct AmmPoolCoreModel {
+        address asset;
+        uint256 assetDecimals;
+        address ipToken;
+        address ammStorage;
+        address ammTreasury;
+        address assetManagement;
+        address iporOracle;
+        address iporRiskManagementOracle;
+    }
+
     /// @notice Structure which represents Swap's data that will be saved in the storage.
     /// Refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps for more information.
     struct NewSwap {
@@ -75,5 +86,12 @@ library AmmTypes {
         uint256 swapId;
         /// @notice Flag describe if swap was closed during this execution
         bool closed;
+    }
+
+    struct RedeemMoney {
+        uint256 wadAssetAmount;
+        uint256 redeemAmount;
+        uint256 wadRedeemFee;
+        uint256 wadRedeemAmount;
     }
 }

@@ -7,9 +7,11 @@ import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
 import "../libraries/AmmLib.sol";
+import "../interfaces/types/AmmTypes.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
+    using AmmLib for AmmTypes.AmmPoolCoreModel;
 
     address internal immutable _usdcAsset;
     IMiltonStorage internal immutable _usdcAmmStorage;
@@ -105,8 +107,11 @@ contract AmmSwapsLens is IAmmSwapsLens {
         )
     {
         IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
-
-        (soapPayFixed, soapReceiveFixed, soap) = AmmLib.getSOAP(asset, address(ammStorage), address(_iporOracle));
+        AmmTypes.AmmPoolCoreModel ammCoreModel;
+        ammCoreModel.asset = asset;
+        ammCoreModel.asset = ammStorage;
+        ammCoreModel.iporOracle = _iporOracle;
+        (soapPayFixed, soapReceiveFixed, soap) = ammCoreModel.getSOAP();
     }
 
     function _mapSwapsPayFixed(

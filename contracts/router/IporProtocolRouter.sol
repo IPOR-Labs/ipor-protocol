@@ -11,12 +11,12 @@ import "../interfaces/IAmmCloseSwapService.sol";
 import "../interfaces/IAmmGovernanceService.sol";
 
 contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
+    using Address for address;
+
     address public immutable AMM_SWAPS_LENS;
     address public immutable AMM_OPEN_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_CLOSE_SWAP_SERVICE_ADDRESS;
     address public immutable AMM_GOVERNANCE_SERVICE_ADDRESS;
-
-    using Address for address;
 
     struct DeployedContracts {
         address ammSwapsLens;
@@ -70,17 +70,34 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmGovernanceService.setAmmAndAssetManagementRatio.selector ||
             sig == IAmmGovernanceService.addSwapLiquidator.selector ||
-            sig == IAmmGovernanceService.removeSwapLiquidator.selector
+            sig == IAmmGovernanceService.removeSwapLiquidator.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsMaxLiquidityPoolBalance.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsMaxLpAccountContribution.selector ||
+            sig == IAmmGovernanceService.addAmmPoolsAppointedToRebalance.selector ||
+            sig == IAmmGovernanceService.removeAmmPoolsAppointedToRebalance.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsTreasury.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsTreasuryManager.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsCharlieTreasury.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsCharlieTreasuryManager.selector ||
+            sig == IAmmGovernanceService.setAmmPoolsAutoRebalanceThreshold.selector
         ) {
             _onlyOwner();
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmGovernanceService.getAmmAndAssetManagementRatio.selector ||
-            sig == IAmmGovernanceService.isSwapLiquidator.selector
+            sig == IAmmGovernanceService.isSwapLiquidator.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsAndAssetManagementRatio.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsMaxLiquidityPoolBalance.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsMaxLpAccountContribution.selector ||
+            sig == IAmmGovernanceService.isAmmPoolsAppointedToRebalance.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsTreasury.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsTreasuryManager.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsCharlieTreasury.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsCharlieTreasuryManager.selector ||
+            sig == IAmmGovernanceService.getAmmPoolsAutoRebalanceThreshold.selector
         ) {
             return AMM_GOVERNANCE_SERVICE_ADDRESS;
         }

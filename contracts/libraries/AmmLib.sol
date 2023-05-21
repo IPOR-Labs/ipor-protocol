@@ -1,16 +1,60 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+import "../libraries/Constants.sol";
+import "../libraries/math/IporMath.sol";
 import "../libraries/errors/MiltonErrors.sol";
+import "../interfaces/IIpToken.sol";
+import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IStanley.sol";
-import "../interfaces/IIporOracle.sol";
 
 library AmmLib {
     using SafeCast for uint256;
     using SafeCast for int256;
 
-    function getSOAP(address asset, address ammStorage, address iporOracle)
+    function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model) internal view returns (uint256) {
+        (, , int256 soap) = AmmLib.getSOAP(model.asset, model.ammStorage, model.iporOracle);
+
+        uint256 liquidityPoolBalance = AmmLib
+            .getAccruedBalance(model.ammStorage, address(model.assetManagement))
+            .liquidityPool;
+
+        int256 balance = liquidityPoolBalance.toInt256() - soap;
+
+        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+
+        uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
+
+        if (ipTokenTotalSupply > 0) {
+            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+        } else {
+            return Constants.D18;
+        }
+    }
+
+    /// @dev For gas optimization with additional param liquidityPoolBalance with already calculated value
+    function getExchangeRate(AmmTypes.AmmPoolCoreModel memory model, uint256 liquidityPoolBalance)
+        internal
+        view
+        returns (uint256)
+    {
+        (, , int256 soap) = AmmLib.getSOAP(model.asset, model.ammStorage, model.iporOracle);
+
+        int256 balance = liquidityPoolBalance.toInt256() - soap;
+
+        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+
+        uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
+
+        if (ipTokenTotalSupply > 0) {
+            return IporMath.division(balance.toUint256() * Constants.D18, ipTokenTotalSupply);
+        } else {
+            return Constants.D18;
+        }
+    }
+
+    function getSOAP(AmmTypes.AmmPoolCoreModel memory model)
         internal
         view
         returns (
@@ -19,20 +63,20 @@ library AmmLib {
             int256 soap
         )
     {
-        (soapPayFixed, soapReceiveFixed, soap) = IMiltonStorage(ammStorage).calculateSoap(
-            IIporOracle(iporOracle).calculateAccruedIbtPrice(asset, block.timestamp),
+        (soapPayFixed, soapReceiveFixed, soap) = IMiltonStorage(model.ammStorage).calculateSoap(
+            IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, block.timestamp),
             block.timestamp
         );
     }
 
-    function getAccruedBalance(address ammStorage, address assetManagement)
+    function getAccruedBalance(AmmTypes.AmmPoolCoreModel memory model)
         internal
         view
         returns (IporTypes.MiltonBalancesMemory memory)
     {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = IMiltonStorage(ammStorage).getBalance();
+        IporTypes.MiltonBalancesMemory memory accruedBalance = IMiltonStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IStanley(assetManagement).totalBalance(address(this));
+        uint256 actualVaultBalance = IStanley(model.assetManagement).totalBalance(address(this));
 
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
