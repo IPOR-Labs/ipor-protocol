@@ -70,7 +70,7 @@ abstract contract ItfMilton is Milton {
 
     function _itfCalculateSwapPayFixedValue(uint256 calculateTimestamp, uint256 swapId) internal view returns (int256) {
         IporTypes.IporSwapMemory memory swap = IMiltonStorage(_ammStorage).getSwapPayFixed(swapId);
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        uint256 accruedIbtPrice = IIporOracle(iporOracleDeprecated).calculateAccruedIbtPrice(_asset, calculateTimestamp);
         return swap.calculatePayoffPayFixed(calculateTimestamp, accruedIbtPrice);
     }
 
@@ -80,7 +80,7 @@ abstract contract ItfMilton is Milton {
         returns (int256)
     {
         IporTypes.IporSwapMemory memory swap = IMiltonStorage(_ammStorage).getSwapReceiveFixed(swapId);
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, calculateTimestamp);
+        uint256 accruedIbtPrice = IIporOracle(iporOracleDeprecated).calculateAccruedIbtPrice(_asset, calculateTimestamp);
         return swap.calculatePayoffReceiveFixed(calculateTimestamp, accruedIbtPrice);
     }
 

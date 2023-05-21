@@ -11,19 +11,11 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
 import "../libraries/Constants.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
-import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/types/AmmMiltonTypes.sol";
 
 abstract contract MiltonInternal is
     Initializable,
@@ -34,7 +26,6 @@ abstract contract MiltonInternal is
     IMiltonInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using IporSwapLogic for IporTypes.IporSwapMemory;
 
     address internal immutable _asset;
     uint256 internal immutable _decimals;
@@ -43,28 +34,28 @@ abstract contract MiltonInternal is
     address internal immutable _iporProtocolRouter;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public asset;
+    address public assetDeprecated;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public joseph;
+    address public josephDeprecated;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public stanley;
+    address public stanleyDeprecated;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public iporOracle;
+    address public iporOracleDeprecated;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public miltonStorage;
+    address public miltonStorageDeprecated;
 
     /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public miltonSpreadModel;
+    address public miltonSpreadModelDeprecated;
 
     /// DEPRECATED, can be renamed and reused in future for other purposes
-    uint32 public autoUpdateIporIndexThreshold;
+    uint32 public autoUpdateIporIndexThresholdDeprecated;
 
     /// DEPRECATED, can be renamed and reused in future for other purposes
-    mapping(address => bool) public swapLiquidators;
+    mapping(address => bool) public swapLiquidatorsDeprecated;
 
     constructor(
         address assetAddress,
@@ -81,42 +72,18 @@ abstract contract MiltonInternal is
         _assetManagement = assetManagement;
         _iporProtocolRouter = iporProtocolRouter;
 
-        delete asset;
-        delete joseph;
-        delete stanley;
-        delete iporOracle;
-        delete miltonStorage;
-        delete miltonSpreadModel;
-        delete autoUpdateIporIndexThreshold;
+        delete assetDeprecated;
+        delete josephDeprecated;
+        delete stanleyDeprecated;
+        delete iporOracleDeprecated;
+        delete miltonStorageDeprecated;
+        delete miltonSpreadModelDeprecated;
+        delete autoUpdateIporIndexThresholdDeprecated;
     }
 
     modifier onlyIporProtocolRouter() {
         require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
-    }
-
-    function calculateSoapAtTimestamp(uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(calculateTimestamp);
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, block.timestamp);
-        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
-    }
-
-    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, block.timestamp);
-        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     /// @notice Joseph deposits to Stanley asset amount from Milton.
@@ -152,26 +119,5 @@ abstract contract MiltonInternal is
 
     function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
-    }
-
-    function _getDecimals() internal view returns (uint256) {
-        return _decimals;
-    }
-
-    function _calculateSoap(uint256 calculateTimestamp)
-        internal
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        uint256 accruedIbtPrice = IIporOracle(iporOracle).calculateAccruedIbtPrice(_asset, calculateTimestamp);
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = IMiltonStorage(_ammStorage).calculateSoap(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
     }
 }

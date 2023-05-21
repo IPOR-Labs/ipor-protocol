@@ -5,22 +5,6 @@ import "../interfaces/types/AmmTypes.sol";
 
 /// @title Interface of the service that allows to close swaps.
 interface IAmmCloseSwapService {
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ammStorage;
-        address ammTreasury;
-        address assetManagement;
-        uint256 openingFeeRate;
-        uint256 openingFeeRateForSwapUnwind;
-        uint256 liquidationLegLimit;
-        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
-        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
-        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
-        uint256 minLeverage;
-    }
-
     function closeSwapPayFixed(
         address asset,
         address onBehalfOf,
@@ -86,4 +70,20 @@ interface IAmmCloseSwapService {
         // @notice swap unwind value, represented in 18 decimals
         uint256 swapUnwindOpeningFee
     );
+
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ammStorage;
+        address ammTreasury;
+        address assetManagement;
+        uint256 openingFeeRate;
+        uint256 openingFeeRateForSwapUnwind;
+        uint256 liquidationLegLimit;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByCommunity;
+        uint256 timeBeforeMaturityAllowedToCloseSwapByBuyer;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByCommunity;
+        uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
+        uint256 minLeverage;
+    }
 }
