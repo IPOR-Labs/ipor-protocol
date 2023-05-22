@@ -350,7 +350,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(iporSwap, payoff, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(onBehalfOf, iporSwap, payoff, poolCfg);
 
         emit CloseSwap(iporSwap.id, poolCfg.asset, closeTimestamp, onBehalfOf, transferredToBuyer, payoutForLiquidator);
     }
@@ -380,7 +380,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
 
         uint256 transferredToBuyer;
 
-        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(iporSwap, payoff, poolCfg);
+        (transferredToBuyer, payoutForLiquidator) = _transferTokensBasedOnPayoff(onBehalfOf, iporSwap, payoff, poolCfg);
 
         emit CloseSwap(iporSwap.id, poolCfg.asset, closeTimestamp, onBehalfOf, transferredToBuyer, payoutForLiquidator);
     }
@@ -540,6 +540,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
      * @param poolCfg - Pool configuration
      **/
     function _transferTokensBasedOnPayoff(
+        address onBehalfOf,
         IporTypes.IporSwapMemory memory derivativeItem,
         int256 payoff,
         PoolConfiguration memory poolCfg
@@ -549,6 +550,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         if (payoff > 0) {
             //Buyer earns, Milton looses
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
+                onBehalfOf,
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral + absPayoff,
@@ -557,6 +559,7 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         } else {
             //Milton earns, Buyer looses
             (transferredToBuyer, payoutForLiquidator) = _transferDerivativeAmount(
+                onBehalfOf,
                 derivativeItem.buyer,
                 derivativeItem.liquidationDepositAmount,
                 derivativeItem.collateral - absPayoff,
@@ -699,15 +702,16 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
     }
 
     function _transferDerivativeAmount(
+        address onBehalfOf,
         address buyer,
         uint256 liquidationDepositAmount,
         uint256 transferAmount,
         PoolConfiguration memory poolCfg
     ) internal returns (uint256 transferredToBuyer, uint256 payoutForLiquidator) {
-        if (msg.sender == buyer) {
+        if (onBehalfOf == buyer) {
             transferAmount = transferAmount + liquidationDepositAmount;
         } else {
-            //transfer liquidation deposit amount from Milton to Liquidator,
+            //transfer liquidation deposit amount from AmmTreasury to Liquidator address (onBehalfOf),
             // transfer to be made outside this function, to avoid multiple transfers
             payoutForLiquidator = liquidationDepositAmount;
         }
