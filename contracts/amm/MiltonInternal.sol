@@ -72,9 +72,15 @@ abstract contract MiltonInternal is
         _assetManagement = assetManagement;
         _iporProtocolRouter = iporProtocolRouter;
 
+        delete assetDeprecated;
+        delete josephDeprecated;
+        delete stanleyDeprecated;
+        delete iporOracleDeprecated;
+        delete miltonStorageDeprecated;
+        delete miltonSpreadModelDeprecated;
+        delete autoUpdateIporIndexThresholdDeprecated;
     }
 
-    //TODO: onlyRouter()
     modifier onlyIporProtocolRouter() {
         require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;

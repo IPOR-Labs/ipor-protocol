@@ -32,15 +32,6 @@ contract AmmPoolsLens is IAmmPoolsLens {
 
     address internal immutable _iporOracle;
 
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ipToken;
-        address ammStorage;
-        address ammTreasury;
-        address assetManagement;
-    }
-
     constructor(
         PoolConfiguration memory usdtPoolCfg,
         PoolConfiguration memory usdcPoolCfg,
@@ -104,11 +95,15 @@ contract AmmPoolsLens is IAmmPoolsLens {
         _iporOracle = iporOracle;
     }
 
+    function getPoolConfiguration(address asset) external override view returns (PoolConfiguration memory) {
+        return _getPoolConfiguration(asset);
+    }
+
     /// @notice Calculates ipToken exchange rate
     /// @dev exchange rate is a ratio between Liquidity Pool Balance and ipToken total supply
     /// @return ipToken exchange rate for a specific asset, represented in 18 decimals.
     function getExchangeRate(address asset) external view override returns (uint256) {
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         AmmTypes.AmmPoolCoreModel memory model;
 
@@ -121,7 +116,7 @@ contract AmmPoolsLens is IAmmPoolsLens {
         return model.getExchangeRate();
     }
 
-    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({

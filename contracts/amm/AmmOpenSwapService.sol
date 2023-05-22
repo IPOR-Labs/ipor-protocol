@@ -70,20 +70,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         PoolConfiguration poolCfg;
     }
 
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ammStorage;
-        address ammTreasury;
-        uint256 iporPublicationFee;
-        uint256 maxSwapCollateralAmount;
-        uint256 liquidationDepositAmount;
-        uint256 minLeverage;
-        uint256 maxLeverage;
-        uint256 openingFeeRate;
-        uint256 openingFeeTreasuryPortionRate;
-    }
-
     constructor(
         PoolConfiguration memory usdtPoolCfg,
         PoolConfiguration memory usdcPoolCfg,
@@ -158,6 +144,10 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _spreadRouter = spreadRouter;
     }
 
+    function getPoolConfiguration(address asset) external override view returns (PoolConfiguration memory) {
+        return _getPoolConfiguration(asset);
+    }
+
     function openSwapPayFixed28daysUsdt(
         address onBehalfOf,
         uint256 totalAmount,
@@ -168,7 +158,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuotePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -183,7 +173,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuotePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -198,7 +188,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuotePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -213,7 +203,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuoteReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
 
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -230,7 +220,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuoteReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -245,7 +235,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuoteReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdt)
+            poolCfg: _getPoolConfiguration(_usdt)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -260,7 +250,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuotePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
 
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
@@ -276,7 +266,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuotePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -291,7 +281,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuotePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -306,7 +296,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuoteReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -321,7 +311,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuoteReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -336,7 +326,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuoteReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_usdc)
+            poolCfg: _getPoolConfiguration(_usdc)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -351,7 +341,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuotePayFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -366,7 +356,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuotePayFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -381,7 +371,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuotePayFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapPayFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -396,7 +386,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_28,
             spreadMethodSig: "calculateQuoteReceiveFixed28Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -411,7 +401,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_60,
             spreadMethodSig: "calculateQuoteReceiveFixed60Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
@@ -426,12 +416,12 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             onBehalfOf: onBehalfOf,
             duration: AmmTypes.SwapDuration.DAYS_90,
             spreadMethodSig: "calculateQuoteReceiveFixed90Days((address,uint256,uint256,uint256,int256,uint256,uint256,uint256,uint256,uint256,uint256))",
-            poolCfg: getPoolConfiguration(_dai)
+            poolCfg: _getPoolConfiguration(_dai)
         });
         return _openSwapReceiveFixed(context, totalAmount, acceptableFixedInterestRate, leverage);
     }
 
-    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({

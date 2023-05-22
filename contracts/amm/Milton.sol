@@ -23,18 +23,8 @@ contract Milton is MiltonInternal, IMilton {
         address iporProtocolRouter
     ) MiltonInternal(asset, decimals, ammStorage, assetManagement, iporProtocolRouter) {}
 
-    function initialize(bool paused) public initializer {
-        __Pausable_init();
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-
-        if (paused) {
-            _pause();
-        }
-    }
-
     function getVersion() external pure returns (uint256) {
-        return 2_000;
+        return 11;
     }
 
     function getConfiguration()

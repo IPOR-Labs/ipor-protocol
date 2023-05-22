@@ -13,15 +13,15 @@ library StorageLib {
         Paused,
         PauseGuardian,
         AmmSwapsLiquidators,
-        AmmPoolsAndAssetManagementRatio, //TODO?
-        AmmPoolsMaxLiquidityPoolBalance, //TODO?
-        AmmPoolsMaxLpAccountContribution, //TODO?
-        AmmPoolsAutoRebalanceThreshold, //TODO?
+        AmmPoolsAndAssetManagementRatio,
+        AmmPoolsMaxLiquidityPoolBalance,
+        AmmPoolsMaxLpAccountContribution,
         AmmPoolsAppointedToRebalance,
-        AmmPoolsTreasury, //immutable
-        AmmPoolsTreasuryManager, //immutable
-        AmmPoolsCharlieTreasury, //immutable
-        AmmPoolsCharlieTreasuryManager //immutable
+        AmmPoolsTreasury,
+        AmmPoolsTreasuryManager,
+        AmmPoolsCharlieTreasury,
+        AmmPoolsCharlieTreasuryManager,
+        AmmPoolsAutoRebalanceThreshold
     }
 
     struct OwnerStorage {

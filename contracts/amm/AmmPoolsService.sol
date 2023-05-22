@@ -53,17 +53,6 @@ contract AmmPoolsService is IAmmPoolsService {
 
     address internal immutable _iporOracle;
 
-    struct PoolConfiguration {
-        address asset;
-        uint256 decimals;
-        address ipToken;
-        address ammStorage;
-        address ammTreasury;
-        address assetManagement;
-        uint256 redeemFeeRate;
-        uint256 redeemLpMaxUtilizationRate;
-    }
-
     constructor(
         PoolConfiguration memory usdtPoolCfg,
         PoolConfiguration memory usdcPoolCfg,
@@ -133,12 +122,16 @@ contract AmmPoolsService is IAmmPoolsService {
         _iporOracle = iporOracle;
     }
 
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+        return _getPoolConfiguration(asset);
+    }
+
     function provideLiquidity(
         address asset,
         address onBehalfOf,
         uint256 assetAmount
     ) external override {
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
         AmmTypes.AmmPoolCoreModel memory model;
 
         model.asset = asset;
@@ -186,7 +179,7 @@ contract AmmPoolsService is IAmmPoolsService {
         address onBehalfOf,
         uint256 ipTokenAmount
     ) external override {
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         require(
             ipTokenAmount > 0 && ipTokenAmount <= IIpToken(poolCfg.ipToken).balanceOf(msg.sender),
@@ -259,7 +252,7 @@ contract AmmPoolsService is IAmmPoolsService {
             JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         uint256 wadAmmTreasuryAssetBalance = IporMath.convertToWad(
             IERC20Upgradeable(poolCfg.asset).balanceOf(poolCfg.ammTreasury),
@@ -290,7 +283,7 @@ contract AmmPoolsService is IAmmPoolsService {
         }
     }
 
-    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({
