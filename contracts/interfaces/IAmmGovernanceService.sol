@@ -2,6 +2,15 @@
 pragma solidity 0.8.16;
 
 interface IAmmGovernanceService {
+    struct PoolConfiguration {
+        address asset;
+        uint256 assetDecimals;
+        address ammStorage;
+        address ammTreasury;
+    }
+
+    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+
     function depositToAssetManagement(address asset, uint256 assetAmount) external;
 
     function withdrawFromAssetManagement(address asset, uint256 assetAmount) external;

@@ -32,13 +32,6 @@ contract AmmGovernanceService is IAmmGovernanceService {
     address internal immutable _daiAmmStorage;
     address internal immutable _daiAmmTreasury;
 
-    struct PoolConfiguration {
-        address asset;
-        uint256 assetDecimals;
-        address ammStorage;
-        address ammTreasury;
-    }
-
     constructor(
         PoolConfiguration memory usdtPoolCfg,
         PoolConfiguration memory usdcPoolCfg,
@@ -58,6 +51,10 @@ contract AmmGovernanceService is IAmmGovernanceService {
         _daiDecimals = daiPoolCfg.assetDecimals;
         _daiAmmStorage = daiPoolCfg.ammStorage;
         _daiAmmTreasury = daiPoolCfg.ammTreasury;
+    }
+
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+        return _getPoolConfiguration(asset);
     }
 
     function depositToAssetManagement(address asset, uint256 assetAmount) external override {
@@ -82,7 +79,7 @@ contract AmmGovernanceService is IAmmGovernanceService {
 
         require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
 
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
@@ -102,7 +99,7 @@ contract AmmGovernanceService is IAmmGovernanceService {
 
         require(address(0) != charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
 
-        PoolConfiguration memory poolCfg = getPoolConfiguration(asset);
+        PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
 
@@ -201,7 +198,7 @@ contract AmmGovernanceService is IAmmGovernanceService {
         return AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(asset);
     }
 
-    function getPoolConfiguration(address asset) public view returns (PoolConfiguration memory) {
+    function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
         if (asset == _usdt) {
             return
                 PoolConfiguration({

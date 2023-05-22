@@ -166,6 +166,10 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         _spreadRouter = spreadRouter;
     }
 
+    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
+        return _getPoolConfiguration(asset);
+    }
+
     function closeSwapPayFixed(
         address asset,
         address onBehalfOf,
@@ -225,10 +229,6 @@ contract AmmCloseSwapService is IAmmCloseSwapService {
         returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps)
     {
         closedSwaps = _closeSwapsReceiveFixedWithTransferLiquidationDeposit(asset, msg.sender, swapIds);
-    }
-
-    function getPoolConfiguration(address asset) external view override returns (PoolConfiguration memory) {
-        return _getPoolConfiguration(asset);
     }
 
     function _getPoolConfiguration(address asset) internal view returns (PoolConfiguration memory) {
