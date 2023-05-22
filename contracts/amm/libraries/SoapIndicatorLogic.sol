@@ -4,10 +4,12 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/MiltonErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
+import "../../libraries/math/InterestRates.sol";
 import "./types/AmmMiltonStorageTypes.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
+    using InterestRates for uint256;
 
     function calculateQuasiSoapPayFixed(
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
@@ -153,10 +155,9 @@ library SoapIndicatorLogic {
             MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP
         );
         return
-            totalNotional *
-            averageInterestRate *
-            (calculateTimestamp - lastRebalanceTimestamp) *
-            Constants.D18;
+            totalNotional.addContinuousCompoundInterestUsingRatePeriodMultiplication(
+                averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp)
+            ) * Constants.D18 * Constants.WAD_P2_YEAR_IN_SECONDS;
     }
 
     function calculateAverageInterestRateWhenOpenSwap(
