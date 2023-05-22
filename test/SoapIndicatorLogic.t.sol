@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "./TestCommons.sol";
+import "forge-std/Test.sol";
 import "./utils/TestConstants.sol";
 import {DataUtils} from "./utils/DataUtils.sol";
 import "contracts/amm/libraries/types/AmmMiltonStorageTypes.sol";
 import "contracts/amm/libraries/SoapIndicatorLogic.sol";
 
-contract SoapIndicatorLogicTest is TestCommons, DataUtils {
+contract SoapIndicatorLogicTest is Test, DataUtils {
     struct ExpectedBalances {
         uint256 expectedRebalanceTimestamp;
         uint256 expectedTotalNotional;
@@ -544,5 +544,10 @@ contract SoapIndicatorLogicTest is TestCommons, DataUtils {
             soapIndicatorsAfterCloseFirst.quasiHypotheticalInterestCumulative,
             expectedBalances.expectedQuasiHypotheticalInterestCumulative
         );
+    }
+
+    // TODO remove after test refactor
+    function _getUserAddress(uint256 number) internal returns (address) {
+        return vm.rememberKey(number);
     }
 }

@@ -155,9 +155,9 @@ library SoapIndicatorLogic {
             MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SOAP_REBALANCE_TIMESTAMP
         );
         return
-            totalNotional.addContinuousCompoundInterestUsingRatePeriodMultiplication(
+            totalNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
                 averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp)
-            ) * Constants.D18 * Constants.WAD_P2_YEAR_IN_SECONDS;
+            ) * Constants.WAD_P2_YEAR_IN_SECONDS;
     }
 
     function calculateAverageInterestRateWhenOpenSwap(

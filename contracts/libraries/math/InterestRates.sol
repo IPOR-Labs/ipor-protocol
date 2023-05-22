@@ -16,6 +16,16 @@ library InterestRates {
         return _toUint256(valueWithInterest);
     }
 
+    function calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
+        uint256 value,
+        uint256 interestRatePeriodMultiplication
+    ) internal pure returns (uint256) {
+        bytes16 floatValue = _toQuadruplePrecision(value, Constants.D18);
+        bytes16 floatIpm = _toQuadruplePrecision(interestRatePeriodMultiplication, Constants.D18);
+        bytes16 interest = ABDKMathQuad.sub(ABDKMathQuad.mul(floatValue, ABDKMathQuad.exp(floatIpm)), floatValue);
+        return _toUint256(interest);
+    }
+
     /// @dev Quadruple precision, 128 bits
     function _toQuadruplePrecision(uint256 number, uint256 decimals) private pure returns (bytes16) {
         if (number % decimals > 0) {
