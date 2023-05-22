@@ -7,33 +7,13 @@ import "../Constants.sol";
 import "./IporMath.sol";
 
 library InterestRates {
-    uint256 internal constant YEAR_IN_SECONDS = 365 days;
-
-    function addContinuousCompoundInterest(
-        uint256 value,
-        uint256 interestRate,
-        uint256 period
-    ) internal pure returns (uint256) {
-        bytes16 floatValue = _toQuadruplePrecision(value, Constants.D18);
-        bytes16 floatRate = _toQuadruplePrecision(interestRate, Constants.D18);
-        bytes16 floatYearPart = _toQuadruplePrecision(period, YEAR_IN_SECONDS);
-        bytes16 valueWithInterest = ABDKMathQuad.mul(
-            floatValue,
-            ABDKMathQuad.exp(ABDKMathQuad.mul(floatRate, floatYearPart))
-        );
-        return _toUint256(valueWithInterest);
-    }
-
     function addContinuousCompoundInterestUsingRatePeriodMultiplication(
         uint256 value,
-        uint256 ipm
+        uint256 interestRatePeriodMultiplication
     ) internal pure returns (uint256) {
         bytes16 floatValue = _toQuadruplePrecision(value, Constants.D18);
-        bytes16 floatIpm = _toQuadruplePrecision(ipm, Constants.D18);
-        bytes16 valueWithInterest = ABDKMathQuad.mul(
-            floatValue,
-            ABDKMathQuad.exp(floatIpm)
-        );
+        bytes16 floatIpm = _toQuadruplePrecision(interestRatePeriodMultiplication, Constants.D18);
+        bytes16 valueWithInterest = ABDKMathQuad.mul(floatValue, ABDKMathQuad.exp(floatIpm));
         return _toUint256(valueWithInterest);
     }
 

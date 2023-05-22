@@ -73,7 +73,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
             _indexes[assets[i]] = IporOracleTypes.IPOR(
-                Constants.WAD_YEAR_IN_SECONDS.toUint128(),
+                0,
                 0,
                 updateTimestamps[i]
             );
@@ -86,12 +86,12 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
             IporOracleTypes.IPOR memory oldIpor = _indexes[assets[i]];
-            _indexes[assets[i]] = IporOracleTypes.IPOR(0, oldIpor.indexValue, oldIpor.lastUpdateTimestamp);
+            _indexes[assets[i]] = IporOracleTypes.IPOR(0, oldIpor.indexValue, block.timestamp.toUint32());
         }
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 3;
+        return 4;
     }
 
     function getIndex(address asset)
@@ -105,7 +105,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         )
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         return (
             indexValue = ipor.indexValue,
             ibtPrice = _calculateAccruedIbtPrice(asset, ipor, ipor.lastUpdateTimestamp),
@@ -121,7 +121,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         returns (IporTypes.AccruedIpor memory accruedIpor)
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         accruedIpor = IporTypes.AccruedIpor(
             ipor.indexValue,
@@ -164,7 +164,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         address iporAlgorithmFacade = _iporAlgorithmFacade;
 
@@ -202,7 +202,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(_indexes[asset].quasiIbtPrice == 0, IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS);
         _indexes[asset] = IporOracleTypes.IPOR(
-            Constants.WAD_YEAR_IN_SECONDS.toUint128(),
+            0,
             0,
             updateTimestamp.toUint32()
         );
@@ -211,13 +211,13 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function removeAsset(address asset) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(_indexes[asset].quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(_indexes[asset].lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
         delete _indexes[asset];
         emit IporIndexRemoveAsset(asset);
     }
 
     function isAssetSupported(address asset) external view override returns (bool) {
-        return _indexes[asset].quasiIbtPrice > 0;
+        return _indexes[asset].lastUpdateTimestamp > 0;
     }
 
     function pause() external override onlyOwner {
@@ -254,7 +254,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     {
         IporOracleTypes.IPOR memory ipor = _indexes[asset];
 
-        require(ipor.quasiIbtPrice > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
+        require(ipor.lastUpdateTimestamp > 0, IporOracleErrors.ASSET_NOT_SUPPORTED);
 
         require(
             ipor.lastUpdateTimestamp <= updateTimestamp,
@@ -283,7 +283,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     ) internal view returns (uint256) {
         uint256 initialIbtPrice = _getInitialIbtPrice(asset);
         uint256 interestRateMultipliedByTime = IporMath.division(
-            ipor.accrueQuasiIbtPrice(calculateTimestamp) - Constants.WAD_YEAR_IN_SECONDS,
+            ipor.accrueQuasiIbtPrice(calculateTimestamp),
             Constants.YEAR_IN_SECONDS
         );
         return
