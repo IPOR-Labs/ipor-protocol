@@ -2,17 +2,70 @@
 pragma solidity 0.8.16;
 
 interface IAmmGovernanceService {
+    struct PoolConfiguration {
+        address asset;
+        uint256 assetDecimals;
+        address ammStorage;
+        address ammTreasury;
+    }
+
+    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+
+    function depositToAssetManagement(address asset, uint256 assetAmount) external;
+
+    function withdrawFromAssetManagement(address asset, uint256 assetAmount) external;
+
+    function withdrawAllFromAssetManagement(address asset) external;
+
+    function transferToTreasury(address asset, uint256 assetAmount) external;
+
+    function transferToCharlieTreasury(address asset, uint256 assetAmount) external;
+
+    function addSwapLiquidator(address asset, address account) external;
+
+    function removeSwapLiquidator(address asset, address account) external;
+
+    function isSwapLiquidator(address asset, address account) external view returns (bool);
+
     /// @notice Set the ratio of AMM and asset management.
     /// Value which describe what percentage of asset amount stay in AMM Module in comparison to Asset Management Module
     /// @param asset Asset address. Asset corresponds to the AMM Pool
     /// @param newRatio New ratio value.
-    function setAmmAndAssetManagementRatio(address asset, uint256 newRatio) external;
+    function setAmmPoolsAndAssetManagementRatio(address asset, uint256 newRatio) external;
 
-    function getAmmAndAssetManagementRatio(address asset) external view returns (uint256);
+    function getAmmPoolsAndAssetManagementRatio(address asset) external view returns (uint256);
 
-    function addSwapLiquidator(address account) external;
+    function setAmmPoolsMaxLiquidityPoolBalance(address asset, uint256 newMaxLiquidityPoolBalance) external;
 
-    function removeSwapLiquidator(address account) external;
+    function getAmmPoolsMaxLiquidityPoolBalance(address asset) external view returns (uint256);
 
-    function isSwapLiquidator(address account) external view returns (bool);
+    function setAmmPoolsMaxLpAccountContribution(address asset, uint256 newMaxLpAccountContribution) external;
+
+    function getAmmPoolsMaxLpAccountContribution(address asset) external view returns (uint256);
+
+    function addAmmPoolsAppointedToRebalance(address asset, address account) external;
+
+    function removeAmmPoolsAppointedToRebalance(address asset, address account) external;
+
+    function isAmmPoolsAppointedToRebalance(address asset, address account) external view returns (bool);
+
+    function setAmmPoolsTreasury(address asset, address newTreasuryWallet) external;
+
+    function getAmmPoolsTreasury(address asset) external view returns (address);
+
+    function setAmmPoolsTreasuryManager(address asset, address newTreasuryManager) external;
+
+    function getAmmPoolsTreasuryManager(address asset) external view returns (address);
+
+    function setAmmPoolsCharlieTreasury(address asset, address newCharlieTreasuryWallet) external;
+
+    function getAmmPoolsCharlieTreasury(address asset) external view returns (address);
+
+    function setAmmPoolsCharlieTreasuryManager(address asset, address newCharlieTreasuryManager) external;
+
+    function getAmmPoolsCharlieTreasuryManager(address asset) external view returns (address);
+
+    function setAmmPoolsAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) external;
+
+    function getAmmPoolsAutoRebalanceThreshold(address asset) external view returns (uint256);
 }

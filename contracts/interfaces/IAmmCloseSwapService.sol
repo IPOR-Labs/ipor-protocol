@@ -5,44 +5,6 @@ import "../interfaces/types/AmmTypes.sol";
 
 /// @title Interface of the service that allows to close swaps.
 interface IAmmCloseSwapService {
-    function closeSwapPayFixed(
-        address asset,
-        address onBehalfOf,
-        uint256 swapId
-    ) external;
-
-    function closeSwapReceiveFixed(
-        address asset,
-        address onBehalfOf,
-        uint256 swapId
-    ) external;
-
-    function closeSwaps(
-        address asset,
-        address onBehalfOf,
-        uint256[] memory payFixedSwapIds,
-        uint256[] memory receiveFixedSwapIds
-    )
-        external
-        returns (
-            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
-            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
-        );
-
-    function emergencyCloseSwapPayFixed(address asset, uint256 swapId) external;
-
-    function emergencyCloseSwapReceiveFixed(address asset, uint256 swapId) external;
-
-    function emergencyCloseSwapsPayFixed(address asset, uint256[] memory swapIds)
-        external
-        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function emergencyCloseSwapsReceiveFixed(address asset, uint256[] memory swapIds)
-        external
-        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
-
-    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
-
     /// @notice Emmited when trader closes Swap.
     event CloseSwap(
         /// @notice swap ID.
@@ -86,4 +48,42 @@ interface IAmmCloseSwapService {
         uint256 minLiquidationThresholdToCloseBeforeMaturityByBuyer;
         uint256 minLeverage;
     }
+
+    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+
+    function closeSwapPayFixed(
+        address asset,
+        address onBehalfOf,
+        uint256 swapId
+    ) external;
+
+    function closeSwapReceiveFixed(
+        address asset,
+        address onBehalfOf,
+        uint256 swapId
+    ) external;
+
+    function closeSwaps(
+        address asset,
+        address onBehalfOf,
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
+
+    function emergencyCloseSwapPayFixed(address asset, uint256 swapId) external;
+
+    function emergencyCloseSwapReceiveFixed(address asset, uint256 swapId) external;
+
+    function emergencyCloseSwapsPayFixed(address asset, uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+
+    function emergencyCloseSwapsReceiveFixed(address asset, uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 }

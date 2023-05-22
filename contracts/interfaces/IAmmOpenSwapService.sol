@@ -6,6 +6,42 @@ import "../interfaces/types/MiltonTypes.sol";
 
 /// @title Interface of the service that allows to open new swaps.
 interface IAmmOpenSwapService {
+    /// @notice Emitted when trader opens new swap.
+    event OpenSwap(
+        /// @notice swap ID.
+        uint256 indexed swapId,
+        /// @notice trader that opened the swap
+        address indexed buyer,
+        /// @notice underlying asset
+        address asset,
+        /// @notice swap direction
+        MiltonTypes.SwapDirection direction,
+        /// @notice money structure related with this swap
+        AmmTypes.OpenSwapMoney money,
+        /// @notice the moment when swap was opened
+        uint256 openTimestamp,
+        /// @notice the moment when swap will achieve maturity
+        uint256 endTimestamp,
+        /// @notice attributes taken from IPOR Index indicators.
+        MiltonTypes.IporSwapIndicator indicator
+    );
+
+    struct PoolConfiguration {
+        address asset;
+        uint256 decimals;
+        address ammStorage;
+        address ammTreasury;
+        uint256 iporPublicationFee;
+        uint256 maxSwapCollateralAmount;
+        uint256 liquidationDepositAmount;
+        uint256 minLeverage;
+        uint256 maxLeverage;
+        uint256 openingFeeRate;
+        uint256 openingFeeTreasuryPortionRate;
+    }
+
+    function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
+
     /// @notice Open new swap pay fixed receive floating with maturity in 28 days for asset USDT.
     /// @param onBehalfOf address of the account on behalf of which this swap is opened.
     /// @param totalAmount total amount of the swap, represented in decimals specific to the asset.
@@ -257,24 +293,4 @@ interface IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) external returns (uint256);
-
-    /// @notice Emitted when trader opens new swap.
-    event OpenSwap(
-        /// @notice swap ID.
-        uint256 indexed swapId,
-        /// @notice trader that opened the swap
-        address indexed buyer,
-        /// @notice underlying asset
-        address asset,
-        /// @notice swap direction
-        MiltonTypes.SwapDirection direction,
-        /// @notice money structure related with this swap
-        AmmTypes.OpenSwapMoney money,
-        /// @notice the moment when swap was opened
-        uint256 openTimestamp,
-        /// @notice the moment when swap will achieve maturity
-        uint256 endTimestamp,
-        /// @notice attributes taken from IPOR Index indicators.
-        MiltonTypes.IporSwapIndicator indicator
-    );
 }

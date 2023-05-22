@@ -13,7 +13,7 @@ library JosephErrors {
     //@notice User cannot redeem underlying tokens because ipToken on his balance is too low
     string public constant CANNOT_REDEEM_IP_TOKEN_TOO_LOW = "IPOR_403";
 
-    string public constant CALLER_NOT_TREASURE_TRANSFERER = "IPOR_404";
+    string public constant CALLER_NOT_TREASURY_MANAGER = "IPOR_404";
 
     //@notice Incorrect Treasury Treasurer Address
     string public constant INCORRECT_TREASURE_TREASURER = "IPOR_405";

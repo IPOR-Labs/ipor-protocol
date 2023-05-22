@@ -12,17 +12,16 @@ library StorageLib {
         AppointedOwner,
         Paused,
         PauseGuardian,
-        /// @dev Mapping of asset address to its ratio.
-        AmmAndAssetManagementRatio,
-        AmmMaxLiquidityPoolBalance,
-        AmmMaxLpAccountContribution,
-        AmmAppointedToRebalance,
-        AmmTreasury,
-        AmmTreasuryManager,
-        AmmCharlieTreasury,
-        AmmCharlieTreasuryManager,
-        /// @dev Mapping of liquidator address and its flag to indicate whether it is enabled.
-        AmmSwapLiquidators
+        AmmSwapsLiquidators,
+        AmmPoolsAndAssetManagementRatio,
+        AmmPoolsMaxLiquidityPoolBalance,
+        AmmPoolsMaxLpAccountContribution,
+        AmmPoolsAppointedToRebalance,
+        AmmPoolsTreasury,
+        AmmPoolsTreasuryManager,
+        AmmPoolsCharlieTreasury,
+        AmmPoolsCharlieTreasuryManager,
+        AmmPoolsAutoRebalanceThreshold
     }
 
     struct OwnerStorage {
@@ -37,40 +36,59 @@ library StorageLib {
         uint256 value;
     }
 
-    struct AmmAndAssetManagementRatioStorage {
+    /// @dev First key is an asset (pool), second key is an liquidator address in the asset pool,
+    /// value is a flag to indicate whether account is a liquidator.
+    /// True - account is a liquidator, False - account is not a liquidator.
+    struct AmmSwapsLiquidatorsStorage {
+        mapping(address => mapping(address => bool)) value;
+    }
+
+    /// @dev key - asset address, value - ratio in the asset pool
+    struct AmmPoolsAndAssetManagementRatioStorage {
         mapping(address => uint256) value;
     }
 
-    struct AmmMaxLiquidityPoolBalanceStorage {
-        uint256 value;
+    /// @dev key - asset address, value - max liquidity pool balance in the asset pool
+    struct AmmPoolsMaxLiquidityPoolBalanceStorage {
+        mapping(address => uint256) value;
     }
 
-    struct AmmMaxLpAccountContributionStorage {
-        uint256 value;
+    /// @dev key - asset address, value - max lp account contribution in the asset pool
+    struct AmmPoolsMaxLpAccountContributionStorage {
+        mapping(address => uint256) value;
     }
 
-    struct AmmAppointedToRebalanceStorage {
-        address value;
+    /// @dev first key - asset address, second key - account address which is allowed to rebalance in the asset pool,
+    /// value - flag to indicate whether account is allowed to rebalance. True - allowed, False - not allowed.
+    struct AmmPoolsAppointedToRebalanceStorage {
+        mapping(address => mapping(address => bool)) value;
     }
 
-    struct AmmTreasuryStorage {
-        address value;
+    /// @dev key - asset address, value - treasury wallet address in the asset pool
+    struct AmmPoolsTreasuryStorage {
+        mapping(address => address) value;
     }
 
-    struct AmmTreasuryManagerStorage {
-        address value;
+    /// @dev key - asset address, value - treasury manager address in the asset pool
+    struct AmmPoolsTreasuryManagerStorage {
+        mapping(address => address) value;
     }
 
-    struct AmmCharlieTreasuryStorage {
-        address value;
+    /// @dev key - asset address, value - charlie treasury wallet address in the asset pool
+    struct AmmPoolsCharlieTreasuryStorage {
+        mapping(address => address) value;
     }
 
-    struct AmmCharlieTreasuryManagerStorage {
-        address value;
+    /// @dev key - asset address, value - charlie treasury manager address in the asset pool
+    struct AmmPoolsCharlieTreasuryManagerStorage {
+        mapping(address => address) value;
     }
 
-    struct AmmSwapLiquidatorsStorage {
-        mapping(address => bool) value;
+    /// @dev key - asset address, value - auto rebalance threshold in the asset pool
+    /// @dev The threshold for auto-rebalancing the pool. Value represented without decimals.
+    /// Value represents multiplication of 1000.
+    struct AmmPoolsAutoRebalanceThresholdStorage {
+        mapping(address => uint256) value;
     }
 
     function getOwner() internal pure returns (OwnerStorage storage owner) {
@@ -101,80 +119,95 @@ library StorageLib {
         }
     }
 
-    function getAmmAndAssetManagementRatioStorage()
+    function getAmmSwapsLiquidatorsStorage() internal pure returns (AmmSwapsLiquidatorsStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AmmSwapsLiquidators);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAmmPoolsAndAssetManagementRatioStorage()
         internal
         pure
-        returns (AmmAndAssetManagementRatioStorage storage store)
+        returns (AmmPoolsAndAssetManagementRatioStorage storage store)
     {
-        uint256 slot = _getStorageSlot(StorageId.AmmAndAssetManagementRatio);
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsAndAssetManagementRatio);
         assembly {
             store.slot := slot
         }
     }
 
-    function getAmmMaxLiquidityPoolBalanceStorage()
+    function getAmmPoolsMaxLiquidityPoolBalanceStorage()
         internal
         pure
-        returns (AmmMaxLiquidityPoolBalanceStorage storage store)
+        returns (AmmPoolsMaxLiquidityPoolBalanceStorage storage store)
     {
-        uint256 slot = _getStorageSlot(StorageId.AmmMaxLiquidityPoolBalance);
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsMaxLiquidityPoolBalance);
         assembly {
             store.slot := slot
         }
     }
 
-    function getAmmMaxLpAccountContributionStorage()
+    function getAmmPoolsMaxLpAccountContributionStorage()
         internal
         pure
-        returns (AmmMaxLpAccountContributionStorage storage store)
+        returns (AmmPoolsMaxLpAccountContributionStorage storage store)
     {
-        uint256 slot = _getStorageSlot(StorageId.AmmMaxLpAccountContribution);
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsMaxLpAccountContribution);
         assembly {
             store.slot := slot
         }
     }
 
-    function getAmmAppointedToRebalanceStorage() internal pure returns (AmmAppointedToRebalanceStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmAppointedToRebalance);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmTreasuryStorage() internal pure returns (AmmTreasuryStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmTreasury);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmTreasuryManagerStorage() internal pure returns (AmmTreasuryManagerStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmTreasuryManager);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmCharlieTreasuryStorage() internal pure returns (AmmCharlieTreasuryStorage storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmCharlieTreasury);
-        assembly {
-            store.slot := slot
-        }
-    }
-
-    function getAmmCharlieTreasuryManagerStorage()
+    function getAmmPoolsAppointedToRebalanceStorage()
         internal
         pure
-        returns (AmmCharlieTreasuryManagerStorage storage store)
+        returns (AmmPoolsAppointedToRebalanceStorage storage store)
     {
-        uint256 slot = _getStorageSlot(StorageId.AmmCharlieTreasuryManager);
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsAppointedToRebalance);
         assembly {
             store.slot := slot
         }
     }
 
-    function getAmmSwapLiquidatorsStorage() internal pure returns (mapping(address => bool) storage store) {
-        uint256 slot = _getStorageSlot(StorageId.AmmSwapLiquidators);
+    function getAmmPoolsTreasuryStorage() internal pure returns (AmmPoolsTreasuryStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasury);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAmmPoolsTreasuryManagerStorage() internal pure returns (AmmPoolsTreasuryManagerStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsTreasuryManager);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAmmPoolsCharlieTreasuryStorage() internal pure returns (AmmPoolsCharlieTreasuryStorage storage store) {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsCharlieTreasury);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAmmPoolsCharlieTreasuryManagerStorage()
+        internal
+        pure
+        returns (AmmPoolsCharlieTreasuryManagerStorage storage store)
+    {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsCharlieTreasuryManager);
+        assembly {
+            store.slot := slot
+        }
+    }
+
+    function getAmmPoolsAutoRebalanceThresholdStorage()
+        internal
+        pure
+        returns (AmmPoolsAutoRebalanceThresholdStorage storage store)
+    {
+        uint256 slot = _getStorageSlot(StorageId.AmmPoolsAutoRebalanceThreshold);
         assembly {
             store.slot := slot
         }

@@ -1,17 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "../interfaces/types/AmmTypes.sol";
-import "../libraries/math/IporMath.sol";
-import "../interfaces/IIporOracle.sol";
 import "../interfaces/IMilton.sol";
-import "../interfaces/IJoseph.sol";
-import "../interfaces/IStanley.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
 import "./MiltonInternal.sol";
-import "./libraries/types/AmmMiltonTypes.sol";
-import "./MiltonStorage.sol";
 
 /**
  * @title Milton - Automated Market Maker for trading Interest Rate Swaps derivatives based on IPOR Index.
@@ -24,8 +15,6 @@ import "./MiltonStorage.sol";
  * @author IPOR Labs
  */
 contract Milton is MiltonInternal, IMilton {
-    using SafeERC20Upgradeable for IERC20Upgradeable;
-
     constructor(
         address asset,
         uint256 decimals,
