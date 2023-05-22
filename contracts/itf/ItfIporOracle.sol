@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "../oracles/IporOracle.sol";
 
 contract ItfIporOracle is IporOracle {
-    constructor() IporOracle(address(0), 0, address(0), 0, address(0), 0) {}
+    constructor() IporOracle(address(0), address(0), 0, address(0), 0, address(0), 0) {}
 
     function itfUpdateIndex(
         address asset,

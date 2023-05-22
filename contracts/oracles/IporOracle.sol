@@ -27,6 +27,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     using SafeCast for uint256;
     using IporLogic for IporOracleTypes.IPOR;
 
+    address internal immutable _iporAlgorithmFacade;
     address internal immutable _usdc;
     uint256 internal immutable _usdcInitialIbtPrice;
     address internal immutable _usdt;
@@ -36,7 +37,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     mapping(address => uint256) internal _updaters;
     mapping(address => IporOracleTypes.IPOR) internal _indexes;
-    address internal _iporAlgorithmFacade;
 
     modifier onlyUpdater() {
         require(_updaters[_msgSender()] == 1, IporOracleErrors.CALLER_NOT_UPDATER);
@@ -45,6 +45,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
+        address iporAlgorithmFacade,
         address usdc,
         uint256 usdcInitialIbtPrice,
         address usdt,
@@ -54,6 +55,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     ) {
         _disableInitializers();
 
+        _iporAlgorithmFacade = iporAlgorithmFacade;
         _usdc = usdc;
         _usdcInitialIbtPrice = usdcInitialIbtPrice;
         _usdt = usdt;
@@ -133,13 +135,6 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function getIporAlgorithmFacade() external view override returns (address) {
         return _iporAlgorithmFacade;
-    }
-
-    function setIporAlgorithmFacade(address newIporAlgorithmFacade) external onlyOwner {
-        require(newIporAlgorithmFacade != address(0), IporErrors.WRONG_ADDRESS);
-        address oldIporAlgorithmFacade = _iporAlgorithmFacade;
-        _iporAlgorithmFacade = newIporAlgorithmFacade;
-        emit IporAlgorithmFacadeChanged(_msgSender(), oldIporAlgorithmFacade, newIporAlgorithmFacade);
     }
 
     function calculateAccruedIbtPrice(address asset, uint256 calculateTimestamp)
