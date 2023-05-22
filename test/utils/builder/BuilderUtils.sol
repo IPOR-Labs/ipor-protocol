@@ -7,10 +7,10 @@ import "../../../contracts/itf/ItfIporOracle.sol";
 import "../../../contracts/oracles/IporRiskManagementOracle.sol";
 import "../../../contracts/mocks/MockIporWeighted.sol";
 import "../../../contracts/amm/MiltonStorage.sol";
-import "../../../contracts/mocks/spread/MockSpreadModel.sol";
 import "../../../contracts/itf/ItfStanley.sol";
 import "../../../contracts/itf/ItfMilton.sol";
-import "../../../contracts/itf/ItfJoseph.sol";
+import "../../amm/mocks/MockSpreadRouter.sol";
+
 contract BuilderUtils {
     struct IporProtocol {
         MockTestnetToken asset;
@@ -20,10 +20,9 @@ contract BuilderUtils {
         IporRiskManagementOracle iporRiskManagementOracle;
         MockIporWeighted iporWeighted;
         MiltonStorage miltonStorage;
-        MockSpreadModel spreadModel;
+        MockSpreadRouter spreadRouter;
         ItfStanley stanley;
         ItfMilton milton;
-        ItfJoseph joseph;
     }
 
     enum IporOracleInitialParamsTestCase {
@@ -98,7 +97,6 @@ contract BuilderUtils {
         /// @dev Max utilization rate 80%
         /// @dev Max notional 1 000 000
         CASE6
-
     }
 
     enum MiltonTestCase {
@@ -114,10 +112,21 @@ contract BuilderUtils {
         CASE8
     }
 
-    enum SpreadModelTestCase {
+    enum Spread28DaysTestCase {
         DEFAULT,
         CASE1
     }
+
+    enum Spread60DaysTestCase {
+        DEFAULT,
+        CASE1
+    }
+
+    enum Spread90DaysTestCase {
+        DEFAULT,
+        CASE1
+    }
+
     enum AssetType {
         USDT,
         USDC,

@@ -7,13 +7,13 @@ import "../interfaces/types/AmmTypes.sol";
 interface IAmmCloseSwapService {
     function closeSwapPayFixed(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 swapId
     ) external;
 
     function closeSwapReceiveFixed(
         address asset,
-        address onBehalfOf,
+        address beneficiary,
         uint256 swapId
     ) external;
 

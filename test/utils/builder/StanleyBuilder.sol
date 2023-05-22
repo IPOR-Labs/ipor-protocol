@@ -4,7 +4,6 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/mocks/MockIporWeighted.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/itf/ItfMilton18D.sol";
 import "contracts/itf/ItfStanley6D.sol";
 
 import "./BuilderUtils.sol";
