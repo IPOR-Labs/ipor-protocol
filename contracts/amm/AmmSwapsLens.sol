@@ -6,6 +6,7 @@ import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IMiltonStorage.sol";
 import "../interfaces/IAmmSwapsLens.sol";
 import "./libraries/IporSwapLogic.sol";
+import "../libraries/AmmLib.sol";
 
 contract AmmSwapsLens is IAmmSwapsLens {
     using IporSwapLogic for IporTypes.IporSwapMemory;
@@ -79,6 +80,35 @@ contract AmmSwapsLens is IAmmSwapsLens {
         return (count, _mapSwaps(asset, ammStorage, swapIds));
     }
 
+    function getPayoffPayFixed(address asset, uint256 swapId) external view override returns (int256) {
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+        IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId);
+        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
+        return iporSwap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
+    }
+
+    function getPayoffReceiveFixed(address asset, uint256 swapId) external view override returns (int256) {
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+        IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapReceiveFixed(swapId);
+        uint256 accruedIbtPrice = _iporOracle.calculateAccruedIbtPrice(asset, block.timestamp);
+        return iporSwap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
+    }
+
+    function getSOAP(address asset)
+        external
+        view
+        override
+        returns (
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
+            int256 soap
+        )
+    {
+        IMiltonStorage ammStorage = _getAmmStorageImplementation(asset);
+
+        (soapPayFixed, soapReceiveFixed, soap) = AmmLib.getSOAP(asset, address(ammStorage), address(_iporOracle));
+    }
+
     function _mapSwapsPayFixed(
         address asset,
         IMiltonStorage ammStorage,
@@ -147,7 +177,7 @@ contract AmmSwapsLens is IAmmSwapsLens {
                 fixedInterestRate: swap.fixedInterestRate,
                 payoff: swapValue,
                 openTimestamp: swap.openTimestamp,
-                endTimestamp: swap.endTimestamp,
+                endTimestamp: swap.calculateSwapMaturity(),
                 liquidationDepositAmount: swap.liquidationDepositAmount,
                 state: swap.state
             });

@@ -45,6 +45,19 @@ interface IAmmSwapsLens {
         uint256 chunkSize
     ) external view returns (uint256 totalCount, IporSwap[] memory swaps);
 
+    function getPayoffPayFixed(address asset, uint256 swapId) external view returns (int256 payoff);
+
+    function getPayoffReceiveFixed(address asset, uint256 swapId) external view returns (int256 payoff);
+
+    function getSOAP(address asset)
+        external
+        view
+        returns (
+            int256 soapPayFixed,
+            int256 soapReceiveFixed,
+            int256 soap
+        );
+
     /// @notice IPOR Swap structure.
     struct IporSwap {
         /// @notice Swap ID.

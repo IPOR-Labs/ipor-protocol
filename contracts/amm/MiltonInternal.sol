@@ -11,19 +11,11 @@ import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
 import "../libraries/Constants.sol";
-import "../interfaces/types/IporTypes.sol";
-import "../interfaces/IIpToken.sol";
-import "../interfaces/IIporOracle.sol";
-import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IMiltonInternal.sol";
 import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
 import "../interfaces/IStanley.sol";
-import "./libraries/IporSwapLogic.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/types/AmmMiltonTypes.sol";
 
 abstract contract MiltonInternal is
     Initializable,
@@ -34,117 +26,82 @@ abstract contract MiltonInternal is
     IMiltonInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
-    using SafeCast for uint256;
-    using SafeCast for uint128;
-    using SafeCast for int256;
-    using IporSwapLogic for IporTypes.IporSwapMemory;
 
+    address internal immutable _asset;
+    uint256 internal immutable _decimals;
+    address internal immutable _ammStorage;
+    address internal immutable _assetManagement;
+    address internal immutable _iporProtocolRouter;
 
-    /// @dev 0 means 0%, 1e18 means 100%, represented in 18 decimals
-    uint256 internal constant _OPENING_FEE_RATE = 5e14;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public assetDeprecated;
 
-    uint256 internal constant _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED = 6 hours;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public josephDeprecated;
 
-    uint256 internal constant _LIQUIDATION_LEG_LIMIT = 10;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public stanleyDeprecated;
 
-    uint256 internal constant _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE = 5 * 1e18;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public iporOracleDeprecated;
 
-    address internal _asset;
-    address internal _joseph;
-    IStanley internal _stanley;
-    IIporOracle internal _iporOracle;
-    IMiltonStorage internal _miltonStorage;
-    IMiltonSpreadModel internal _miltonSpreadModel;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public miltonStorageDeprecated;
 
-    uint32 internal _autoUpdateIporIndexThreshold;
+    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
+    address public miltonSpreadModelDeprecated;
 
-    mapping(address => bool) internal _swapLiquidators;
+    /// DEPRECATED, can be renamed and reused in future for other purposes
+    uint32 public autoUpdateIporIndexThresholdDeprecated;
 
-    /// @custom:oz-upgrades-unsafe-allow state-variable-immutable
-    IIporRiskManagementOracle private immutable _iporRiskManagementOracle;
+    /// DEPRECATED, can be renamed and reused in future for other purposes
+    mapping(address => bool) public swapLiquidatorsDeprecated;
 
-    /// @custom:oz-upgrades-unsafe-allow constructor
-    constructor(address iporRiskManagementOracle) {
-        require(iporRiskManagementOracle != address(0), IporErrors.WRONG_ADDRESS);
+    constructor(
+        address assetAddress,
+        uint256 decimals,
+        address ammStorage,
+        address assetManagement,
+        address iporProtocolRouter
+    ) {
+        _disableInitializers();
 
-        /// @custom:oz-upgrades-unsafe-allow state-variable-assignment
-        _iporRiskManagementOracle = IIporRiskManagementOracle(iporRiskManagementOracle);
+        _asset = assetAddress;
+        _decimals = decimals;
+        _ammStorage = ammStorage;
+        _assetManagement = assetManagement;
+        _iporProtocolRouter = iporProtocolRouter;
+
+        delete assetDeprecated;
+        delete josephDeprecated;
+        delete stanleyDeprecated;
+        delete iporOracleDeprecated;
+        delete miltonStorageDeprecated;
+        delete miltonSpreadModelDeprecated;
+        delete autoUpdateIporIndexThresholdDeprecated;
     }
 
-    modifier onlyJoseph() {
-        require(_msgSender() == _getJoseph(), MiltonErrors.CALLER_NOT_JOSEPH);
+    modifier onlyIporProtocolRouter() {
+        require(_msgSender() == _iporProtocolRouter, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
-    }
-
-    function getAsset() external view override returns (address) {
-        return _asset;
-    }
-
-    function getIporOracle() external view returns (address) {
-        return address(_iporOracle);
-    }
-
-    function getMiltonStorage() external view returns (address) {
-        return address(_miltonStorage);
-    }
-
-    function getStanley() external view returns (address) {
-        return address(_stanley);
-    }
-
-    function getRiskManagementOracle() external view returns (address) {
-        return address(_iporRiskManagementOracle);
-    }
-
-    function getAccruedBalance() external view override returns (IporTypes.MiltonBalancesMemory memory) {
-        return _getAccruedBalance();
-    }
-
-    function calculateSoapAtTimestamp(uint256 calculateTimestamp)
-        external
-        view
-        override
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _calculateSoap(calculateTimestamp);
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function calculatePayoffPayFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, block.timestamp);
-        return swap.calculatePayoffPayFixed(block.timestamp, accruedIbtPrice);
-    }
-
-    function calculatePayoffReceiveFixed(IporTypes.IporSwapMemory memory swap) external view override returns (int256) {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, block.timestamp);
-        return swap.calculatePayoffReceiveFixed(block.timestamp, accruedIbtPrice);
     }
 
     /// @notice Joseph deposits to Stanley asset amount from Milton.
     /// @param assetAmount underlying token amount represented in 18 decimals
-    function depositToStanley(uint256 assetAmount) external onlyJoseph nonReentrant whenNotPaused {
-        (uint256 vaultBalance, uint256 depositedAmount) = _getStanley().deposit(assetAmount);
-        _getMiltonStorage().updateStorageWhenDepositToStanley(depositedAmount, vaultBalance);
+    function depositToStanley(uint256 assetAmount) external onlyIporProtocolRouter nonReentrant whenNotPaused {
+        (uint256 vaultBalance, uint256 depositedAmount) = IStanley(_assetManagement).deposit(assetAmount);
+        IMiltonStorage(_ammStorage).updateStorageWhenDepositToStanley(depositedAmount, vaultBalance);
     }
 
     //@param assetAmount underlying token amount represented in 18 decimals
-    function withdrawFromStanley(uint256 assetAmount) external nonReentrant onlyJoseph whenNotPaused {
-        _withdrawFromStanley(assetAmount);
+    function withdrawFromStanley(uint256 assetAmount) external nonReentrant onlyIporProtocolRouter whenNotPaused {
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IStanley(_assetManagement).withdraw(assetAmount);
+        IMiltonStorage(_ammStorage).updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 
-    //@param assetAmount underlying token amount represented in 18 decimals
-    function _withdrawFromStanley(uint256 assetAmount) internal {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdraw(assetAmount);
-        _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
-    }
-
-    function withdrawAllFromStanley() external nonReentrant onlyJoseph whenNotPaused {
-        (uint256 withdrawnAmount, uint256 vaultBalance) = _getStanley().withdrawAll();
-        _getMiltonStorage().updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
+    function withdrawAllFromStanley() external nonReentrant onlyIporProtocolRouter whenNotPaused {
+        (uint256 withdrawnAmount, uint256 vaultBalance) = IStanley(_assetManagement).withdrawAll();
+        IMiltonStorage(_ammStorage).updateStorageWhenWithdrawFromStanley(withdrawnAmount, vaultBalance);
     }
 
     function pause() external override onlyOwner {
@@ -157,134 +114,5 @@ abstract contract MiltonInternal is
 
     function setupMaxAllowanceForAsset(address spender) external override onlyOwner whenNotPaused {
         IERC20Upgradeable(_asset).safeIncreaseAllowance(spender, Constants.MAX_VALUE);
-    }
-
-    function setJoseph(address newJoseph) external override onlyOwner whenNotPaused {
-        require(newJoseph != address(0), IporErrors.WRONG_ADDRESS);
-        address oldJoseph = _getJoseph();
-        _joseph = newJoseph;
-        emit JosephChanged(_msgSender(), oldJoseph, newJoseph);
-    }
-
-    function getJoseph() external view override returns (address) {
-        return _getJoseph();
-    }
-
-    function setMiltonSpreadModel(address newMiltonSpreadModel) external override onlyOwner whenNotPaused {
-        require(newMiltonSpreadModel != address(0), IporErrors.WRONG_ADDRESS);
-        address oldMiltonSpreadModel = address(_miltonSpreadModel);
-        _miltonSpreadModel = IMiltonSpreadModel(newMiltonSpreadModel);
-        emit MiltonSpreadModelChanged(_msgSender(), oldMiltonSpreadModel, newMiltonSpreadModel);
-    }
-
-    function getMiltonSpreadModel() external view override returns (address) {
-        return address(_miltonSpreadModel);
-    }
-
-    function getAutoUpdateIporIndexThreshold() external view override returns (uint256) {
-        return _getAutoUpdateIporIndexThreshold();
-    }
-
-    function addSwapLiquidator(address newSwapLiquidator) external override onlyOwner {
-        require(newSwapLiquidator != address(0), IporErrors.WRONG_ADDRESS);
-        _swapLiquidators[newSwapLiquidator] = true;
-        emit SwapLiquidatorAdded(newSwapLiquidator);
-    }
-
-    function removeSwapLiquidator(address liquidator) external override onlyOwner {
-        require(liquidator != address(0), IporErrors.WRONG_ADDRESS);
-        _swapLiquidators[liquidator] = false;
-        emit SwapLiquidatorRemoved(liquidator);
-    }
-
-    function isSwapLiquidator(address account) external view override returns (bool) {
-        return _swapLiquidators[account];
-    }
-
-    function _getAutoUpdateIporIndexThreshold() internal view returns (uint256) {
-        return _autoUpdateIporIndexThreshold * Constants.D21;
-    }
-
-    function _getDecimals() internal view virtual returns (uint256);
-
-    function _getOpeningFeeRate() internal view virtual returns (uint256) {
-        return _OPENING_FEE_RATE;
-    }
-
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByBuyer() internal view virtual returns (uint256) {
-        return 99 * 1e16;
-    }
-
-    function _getMinLiquidationThresholdToCloseBeforeMaturityByCommunity() internal view virtual returns (uint256) {
-        return 995 * 1e15;
-    }
-
-    function _getSecondsBeforeMaturityWhenPositionCanBeClosed() internal view virtual returns (uint256) {
-        return _SECONDS_BEFORE_MATURITY_WHEN_POSITION_CAN_BE_CLOSED;
-    }
-
-    function _getLiquidationLegLimit() internal view virtual returns (uint256) {
-        return _LIQUIDATION_LEG_LIMIT;
-    }
-
-    function _getJoseph() internal view virtual returns (address) {
-        return _joseph;
-    }
-
-    function _getIporOracle() internal view virtual returns (IIporOracle) {
-        return _iporOracle;
-    }
-
-    function _getMiltonStorage() internal view virtual returns (IMiltonStorage) {
-        return _miltonStorage;
-    }
-
-    function _getStanley() internal view virtual returns (IStanley) {
-        return _stanley;
-    }
-
-    function _getAccruedBalance() internal view returns (IporTypes.MiltonBalancesMemory memory) {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = _getMiltonStorage().getBalance();
-
-        uint256 actualVaultBalance = _getStanley().totalBalance(address(this));
-
-        int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
-            actualVaultBalance.toInt256() -
-            accruedBalance.vault.toInt256();
-
-        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
-        accruedBalance.liquidityPool = liquidityPool.toUint256();
-
-        accruedBalance.vault = actualVaultBalance;
-        return accruedBalance;
-    }
-
-    function _calculateSoap(uint256 calculateTimestamp)
-        internal
-        view
-        returns (
-            int256 soapPayFixed,
-            int256 soapReceiveFixed,
-            int256 soap
-        )
-    {
-        uint256 accruedIbtPrice = _getIporOracle().calculateAccruedIbtPrice(_asset, calculateTimestamp);
-        (int256 _soapPayFixed, int256 _soapReceiveFixed, int256 _soap) = _getMiltonStorage().calculateSoap(
-            accruedIbtPrice,
-            calculateTimestamp
-        );
-        return (soapPayFixed = _soapPayFixed, soapReceiveFixed = _soapReceiveFixed, soap = _soap);
-    }
-
-    function _getTimeBeforeMaturityAllowedToCloseSwapByCommunity() internal pure virtual returns (uint256) {
-        return 1 hours;
-    }
-
-    function _getOpeningFeeRateForSwapUnwind() internal view virtual returns (uint256) {
-        return _VIRTUAL_HEDGING_SWAP_OPENING_FEE_RATE;
-    }
-
-    function _getTimeBeforeMaturityAllowedToCloseSwapByBuyer() internal pure virtual returns (uint256) {
-        return 1 days;
     }
 }

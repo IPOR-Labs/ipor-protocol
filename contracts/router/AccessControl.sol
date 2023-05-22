@@ -2,22 +2,14 @@
 pragma solidity 0.8.16;
 
 import "../libraries/errors/IporErrors.sol";
+import "../libraries/StorageLib.sol";
+import "../security/PauseManager.sol";
+import "../security/OwnerManager.sol";
 
 contract AccessControl {
-    event AppointedToTransferOwnership(address indexed appointedOwner);
-    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-
-    address internal _owner;
-    address private _appointedOwner;
-    //    _paused = 1 means paused
-    //    _paused = 0 means not paused
-    uint256 internal _paused;
-    //    _paused = 1 means is Guardians
-    //    _paused = 0 means is not Guardian
-    mapping(address => uint256) internal pauseGuardians;
-
     uint256 internal constant _NOT_ENTERED = 1;
     uint256 internal constant _ENTERED = 2;
+
     uint256 internal _reentrancyStatus;
 
     /**
@@ -27,79 +19,76 @@ contract AccessControl {
      */
     uint256[49] private __gap;
 
-    modifier onlyAppointedOwner() {
-        require(_appointedOwner == msg.sender, IporErrors.SENDER_NOT_APPOINTED_OWNER);
-        _;
-    }
-    modifier onlyPauseGuardian() {
-        require(pauseGuardians[msg.sender] == 1, IporErrors.CALLER_NOT_GUARDIAN);
-        _;
-    }
-
     modifier onlyOwner() {
         _onlyOwner();
         _;
     }
 
-    function transferOwnership(address appointedOwner) public onlyOwner {
-        require(appointedOwner != address(0), IporErrors.WRONG_ADDRESS);
-        _appointedOwner = appointedOwner;
-        emit AppointedToTransferOwnership(appointedOwner);
+    modifier onlyAppointedOwner() {
+        require(
+            address(StorageLib.getAppointedOwner().appointedOwner) == msg.sender,
+            IporErrors.SENDER_NOT_APPOINTED_OWNER
+        );
+        _;
     }
-
-    function confirmTransferOwnership() public onlyAppointedOwner {
-        _appointedOwner = address(0);
-        _transferOwnership(msg.sender);
-    }
-
-    function renounceOwnership() public virtual onlyOwner {
-        _transferOwnership(address(0));
-        _appointedOwner = address(0);
+    modifier onlyPauseGuardian() {
+        require(PauseManager.isPauseGuardian(msg.sender), IporErrors.CALLER_NOT_GUARDIAN);
+        _;
     }
 
     function owner() external view returns (address) {
-        return _owner;
+        return OwnerManager.getOwner();
+    }
+
+    function appointToOwnership(address appointedOwner) public onlyOwner {
+        OwnerManager.appointToOwnership(appointedOwner);
+    }
+
+    function confirmAppointmentToOwnership() public onlyAppointedOwner {
+        OwnerManager.confirmAppointmentToOwnership();
+    }
+
+    function renounceOwnership() public virtual onlyOwner {
+        OwnerManager.renounceOwnership();
     }
 
     function pause() external onlyPauseGuardian {
-        _paused = 1;
+        _pause();
     }
 
     function unpause() external onlyOwner {
-        _paused = 0;
+        StorageLib.getPaused().value = 0;
     }
 
     function paused() external view returns (uint256) {
-        return _paused;
+        return uint256(StorageLib.getPaused().value);
     }
 
-    function addPauseGuardian(address _guardian) external onlyOwner {
-        pauseGuardians[_guardian] = 1;
+    function addPauseGuardian(address guardian) external onlyOwner {
+        PauseManager.addPauseGuardian(guardian);
     }
 
-    function removePauseGuardian(address _guardian) external onlyOwner {
-        pauseGuardians[_guardian] = 0;
+    function removePauseGuardian(address guardian) external onlyOwner {
+        PauseManager.removePauseGuardian(guardian);
+    }
+
+    function isPauseGuardian(address guardian) external view returns (bool) {
+        return PauseManager.isPauseGuardian(guardian);
     }
 
     function _onlyOwner() internal view {
-        require(_owner == msg.sender, "Ownable: caller is not the owner");
+        require(address(StorageLib.getOwner().owner) == msg.sender, "Ownable: caller is not the owner");
     }
 
-    function whenNotPaused() internal view {
-        require(_paused == 0, "Pausable: paused");
+    function _whenNotPaused() internal view {
+        require(uint256(StorageLib.getPaused().value) == 0, "Pausable: paused");
     }
 
-    function nonReentrant() internal view {
+    function _pause() internal {
+        StorageLib.getPaused().value = 1;
+    }
+
+    function _nonReentrant() internal view {
         require(_reentrancyStatus != _ENTERED, "ReentrancyGuard: reentrant call");
-    }
-
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Internal function without access restriction.
-     */
-    function _transferOwnership(address newOwner) internal virtual {
-        address oldOwner = _owner;
-        _owner = newOwner;
-        emit OwnershipTransferred(oldOwner, newOwner);
     }
 }
