@@ -14,7 +14,7 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmTreasuryTypes.sol";
+import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "./libraries/IporSwapLogic.sol";
 
@@ -478,7 +478,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
-        AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
@@ -492,7 +492,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             0,
             ctx.duration,
@@ -582,7 +582,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
-        AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
@@ -596,7 +596,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             1,
             ctx.duration,
@@ -684,7 +684,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage,
         AmmTypes.SwapDuration duration,
         PoolConfiguration memory poolCfg
-    ) internal view returns (AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct) {
+    ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
 
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
@@ -727,7 +727,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(openTimestamp, poolCfg.asset);
 
         return
-            AmmTreasuryTypes.BeforeOpenSwapStruct(
+            AmmInternalTypes.BeforeOpenSwapStruct(
                 wadTotalAmount,
                 collateral,
                 notional,
@@ -745,7 +745,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmTypes.SwapDuration duration,
         uint256 liquidityPool,
         uint256 cfgMinLeverage
-    ) internal view virtual returns (AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
         uint256 maxUtilizationRate;
 

@@ -9,7 +9,7 @@ import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
-import "../amm/libraries/types/AmmTreasuryTypes.sol";
+import "../amm/libraries/types/AmmInternalTypes.sol";
 
 library RiskManagementLogic {
     using Address for address;
@@ -32,7 +32,7 @@ library RiskManagementLogic {
         IporTypes.AmmBalancesForOpenSwapMemory memory balance = IAmmStorage(spreadQuoteCtx.ammStorage)
             .getBalancesForOpenSwap();
 
-        AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = getRiskIndicators(
             spreadQuoteCtx.asset,
             direction,
             duration,
@@ -70,7 +70,7 @@ library RiskManagementLogic {
         uint256 liquidityPool,
         uint256 cfgMinLeverage,
         address cfgIporRiskManagementOracle
-    ) internal view returns (AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
         uint256 maxUtilizationRate;
 

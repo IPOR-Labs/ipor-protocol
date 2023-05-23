@@ -14,7 +14,12 @@ import "../security/IporOwnableUpgradeable.sol";
 import "../amm/AmmStorage.sol";
 import "../libraries/AmmLib.sol";
 
-contract AmmTreasuryFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmTreasuryFacadeDataProvider {
+contract AmmTreasuryFacadeDataProvider is
+    Initializable,
+    UUPSUpgradeable,
+    IporOwnableUpgradeable,
+    IAmmTreasuryFacadeDataProvider
+{
     address internal _iporOracle;
     address[] internal _assets;
     mapping(address => AmmFacadeTypes.AssetConfig) internal _assetConfig;
@@ -70,8 +75,7 @@ contract AmmTreasuryFacadeDataProvider is Initializable, UUPSUpgradeable, IporOw
         AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         IAmmStorage ammStorage = IAmmStorage(config.ammStorage);
-        (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = ammStorage
-            .getTotalOutstandingNotional();
+        (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = ammStorage.getTotalOutstandingNotional();
 
         //        IAmmTreasury ammTreasury = IAmmTreasury(config.ammTreasury);
         IporTypes.AmmBalancesMemory memory accruedBalance;
@@ -86,7 +90,7 @@ contract AmmTreasuryFacadeDataProvider is Initializable, UUPSUpgradeable, IporOw
     }
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
-        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+        //        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
         //        IJoseph joseph = IJoseph(config.joseph);
         uint256 result; // = joseph.calculateExchangeRate();
         return result;
@@ -101,7 +105,7 @@ contract AmmTreasuryFacadeDataProvider is Initializable, UUPSUpgradeable, IporOw
         view
         returns (AmmFacadeTypes.AssetConfiguration memory assetConfiguration)
     {
-        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+        //        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
         //        IAmmTreasury ammTreasury = IAmmTreasury(config.ammTreasury);
         //        IJosephInternal joseph = IJosephInternal(config.joseph);

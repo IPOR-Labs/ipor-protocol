@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "../../../interfaces/types/AmmTypes.sol";
 
 /// @notice Structs used in the AmmStorage interface
-library AmmStorageInternalTypes {
+library StorageInternalTypes {
     struct IporSwap {
         /// @notice Swap's ID
         uint32 id;
