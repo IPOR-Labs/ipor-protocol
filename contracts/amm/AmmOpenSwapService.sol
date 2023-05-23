@@ -14,7 +14,7 @@ import "../interfaces/IIporOracle.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../interfaces/IIporRiskManagementOracle.sol";
 import "../interfaces/IAmmOpenSwapService.sol";
-import "./libraries/types/AmmTreasuryTypes.sol";
+import "./libraries/types/AmmInternalTypes.sol";
 import "../libraries/errors/AmmErrors.sol";
 import "./libraries/IporSwapLogic.sol";
 
@@ -30,7 +30,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _usdtMaxSwapCollateralAmount;
     uint256 internal immutable _usdtLiquidationDepositAmount;
     uint256 internal immutable _usdtMinLeverage;
-    uint256 internal immutable _usdtMaxLeverage;
     uint256 internal immutable _usdtOpeningFeeRate;
     uint256 internal immutable _usdtOpeningFeeTreasuryPortionRate;
 
@@ -42,7 +41,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _usdcMaxSwapCollateralAmount;
     uint256 internal immutable _usdcLiquidationDepositAmount;
     uint256 internal immutable _usdcMinLeverage;
-    uint256 internal immutable _usdcMaxLeverage;
     uint256 internal immutable _usdcOpeningFeeRate;
     uint256 internal immutable _usdcOpeningFeeTreasuryPortionRate;
 
@@ -54,7 +52,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _daiMaxSwapCollateralAmount;
     uint256 internal immutable _daiLiquidationDepositAmount;
     uint256 internal immutable _daiMinLeverage;
-    uint256 internal immutable _daiMaxLeverage;
     uint256 internal immutable _daiOpeningFeeRate;
     uint256 internal immutable _daiOpeningFeeTreasuryPortionRate;
 
@@ -111,7 +108,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdtMaxSwapCollateralAmount = usdtPoolCfg.maxSwapCollateralAmount;
         _usdtLiquidationDepositAmount = usdtPoolCfg.liquidationDepositAmount;
         _usdtMinLeverage = usdtPoolCfg.minLeverage;
-        _usdtMaxLeverage = usdtPoolCfg.maxLeverage;
         _usdtOpeningFeeRate = usdtPoolCfg.openingFeeRate;
         _usdtOpeningFeeTreasuryPortionRate = usdtPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -123,7 +119,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdcMaxSwapCollateralAmount = usdcPoolCfg.maxSwapCollateralAmount;
         _usdcLiquidationDepositAmount = usdcPoolCfg.liquidationDepositAmount;
         _usdcMinLeverage = usdcPoolCfg.minLeverage;
-        _usdcMaxLeverage = usdcPoolCfg.maxLeverage;
         _usdcOpeningFeeRate = usdcPoolCfg.openingFeeRate;
         _usdcOpeningFeeTreasuryPortionRate = usdcPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -135,7 +130,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _daiMaxSwapCollateralAmount = daiPoolCfg.maxSwapCollateralAmount;
         _daiLiquidationDepositAmount = daiPoolCfg.liquidationDepositAmount;
         _daiMinLeverage = daiPoolCfg.minLeverage;
-        _daiMaxLeverage = daiPoolCfg.maxLeverage;
         _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -433,7 +427,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _usdtMaxSwapCollateralAmount,
                     liquidationDepositAmount: _usdtLiquidationDepositAmount,
                     minLeverage: _usdtMinLeverage,
-                    maxLeverage: _usdtMaxLeverage,
                     openingFeeRate: _usdtOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _usdtOpeningFeeTreasuryPortionRate
                 });
@@ -448,7 +441,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _usdcMaxSwapCollateralAmount,
                     liquidationDepositAmount: _usdcLiquidationDepositAmount,
                     minLeverage: _usdcMinLeverage,
-                    maxLeverage: _usdcMaxLeverage,
                     openingFeeRate: _usdcOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _usdcOpeningFeeTreasuryPortionRate
                 });
@@ -463,7 +455,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _daiMaxSwapCollateralAmount,
                     liquidationDepositAmount: _daiLiquidationDepositAmount,
                     minLeverage: _daiMinLeverage,
-                    maxLeverage: _daiMaxLeverage,
                     openingFeeRate: _daiOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _daiOpeningFeeTreasuryPortionRate
                 });
@@ -478,7 +469,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
-        AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
@@ -492,7 +483,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralPayFixed = balance.totalCollateralPayFixed + bosStruct.collateral;
 
-        AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             0,
             ctx.duration,
@@ -508,7 +499,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxUtilizationRate,
             riskIndicators.maxUtilizationRatePerLeg,
-            ctx.poolCfg.maxLeverage
+            ctx.poolCfg.minLeverage
         );
 
         uint256 quoteValue = abi.decode(
@@ -582,7 +573,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 acceptableFixedInterestRate,
         uint256 leverage
     ) internal returns (uint256) {
-        AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
+        AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct = _beforeOpenSwap(
             ctx.onBehalfOf,
             block.timestamp,
             totalAmount,
@@ -596,7 +587,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         balance.liquidityPool = balance.liquidityPool + bosStruct.openingFeeLPAmount;
         balance.totalCollateralReceiveFixed = balance.totalCollateralReceiveFixed + bosStruct.collateral;
 
-        AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
+        AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators = _getRiskIndicators(
             ctx.poolCfg.asset,
             1,
             ctx.duration,
@@ -684,7 +675,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         uint256 leverage,
         AmmTypes.SwapDuration duration,
         PoolConfiguration memory poolCfg
-    ) internal view returns (AmmTreasuryTypes.BeforeOpenSwapStruct memory bosStruct) {
+    ) internal view returns (AmmInternalTypes.BeforeOpenSwapStruct memory bosStruct) {
         require(onBehalfOf != address(0), IporErrors.WRONG_ADDRESS);
 
         require(totalAmount > 0, AmmErrors.TOTAL_AMOUNT_TOO_LOW);
@@ -727,7 +718,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         accruedIndex = IIporOracle(_iporOracle).getAccruedIndex(openTimestamp, poolCfg.asset);
 
         return
-            AmmTreasuryTypes.BeforeOpenSwapStruct(
+            AmmInternalTypes.BeforeOpenSwapStruct(
                 wadTotalAmount,
                 collateral,
                 notional,
@@ -745,7 +736,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         AmmTypes.SwapDuration duration,
         uint256 liquidityPool,
         uint256 cfgMinLeverage
-    ) internal view virtual returns (AmmTreasuryTypes.OpenSwapRiskIndicators memory riskIndicators) {
+    ) internal view virtual returns (AmmInternalTypes.OpenSwapRiskIndicators memory riskIndicators) {
         uint256 maxNotionalPerLeg;
         uint256 maxUtilizationRate;
 

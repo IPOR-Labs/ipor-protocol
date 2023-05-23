@@ -4,13 +4,13 @@ import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../../libraries/errors/AmmErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "./types/AmmStorageInternalTypes.sol";
+import "./types/StorageInternalTypes.sol";
 
 library SoapIndicatorLogic {
     using SafeCast for uint256;
 
     function calculateQuasiSoapPayFixed(
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -23,7 +23,7 @@ library SoapIndicatorLogic {
 
     /// @notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
     function calculateQuasiSoapReceiveFixed(
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
@@ -35,12 +35,12 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenOpenSwap(
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmStorageInternalTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (StorageInternalTypes.SoapIndicatorsMemory memory) {
         uint256 averageInterestRate = calculateAverageInterestRateWhenOpenSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -60,13 +60,13 @@ library SoapIndicatorLogic {
     }
 
     function rebalanceWhenCloseSwap(
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 rebalanceTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate,
         uint256 derivativeIbtQuantity
-    ) internal pure returns (AmmStorageInternalTypes.SoapIndicatorsMemory memory) {
+    ) internal pure returns (StorageInternalTypes.SoapIndicatorsMemory memory) {
         uint256 newAverageInterestRate = calculateAverageInterestRateWhenCloseSwap(
             si.totalNotional,
             si.averageInterestRate,
@@ -118,7 +118,7 @@ library SoapIndicatorLogic {
     }
 
     function calculateQuasiHyphoteticalInterestTotal(
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory si,
+        StorageInternalTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return

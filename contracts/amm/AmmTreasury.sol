@@ -32,23 +32,6 @@ contract AmmTreasury is
     address internal immutable _ammStorage;
     address internal immutable _assetManagement;
     address internal immutable _router;
-    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public assetManagementDeprecated;
-
-    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public iporOracleDeprecated;
-
-    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public ammStorageDeprecated;
-
-    /// @dev DEPRECATED, can be renamed and reused in future for other purposes
-    address public ammTreasurySpreadModelDeprecated;
-
-    /// DEPRECATED, can be renamed and reused in future for other purposes
-    uint32 public autoUpdateIporIndexThresholdDeprecated;
-
-    /// DEPRECATED, can be renamed and reused in future for other purposes
-    mapping(address => bool) public swapLiquidatorsDeprecated;
 
     constructor(
         address asset,

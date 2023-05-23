@@ -11,13 +11,13 @@ import "../libraries/PaginationUtils.sol";
 import "../interfaces/types/AmmStorageTypes.sol";
 import "../interfaces/IAmmStorage.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "./libraries/types/AmmStorageInternalTypes.sol";
+import "./libraries/types/StorageInternalTypes.sol";
 import "./libraries/SoapIndicatorLogic.sol";
 
 //@dev all stored valuse related with money are in 18 decimals.
 contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmStorage {
     using SafeCast for uint256;
-    using SoapIndicatorLogic for AmmStorageInternalTypes.SoapIndicatorsMemory;
+    using SoapIndicatorLogic for StorageInternalTypes.SoapIndicatorsMemory;
 
     uint32 private _lastSwapId;
     address private _iporProtocolRouter;
@@ -25,11 +25,11 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     /// @dev DEPRECATED
     address public josephDeprecated;
 
-    AmmStorageInternalTypes.Balances internal _balances;
-    AmmStorageInternalTypes.SoapIndicators internal _soapIndicatorsPayFixed;
-    AmmStorageInternalTypes.SoapIndicators internal _soapIndicatorsReceiveFixed;
-    AmmStorageInternalTypes.IporSwapContainer internal _swapsPayFixed;
-    AmmStorageInternalTypes.IporSwapContainer internal _swapsReceiveFixed;
+    StorageInternalTypes.Balances internal _balances;
+    StorageInternalTypes.SoapIndicators internal _soapIndicatorsPayFixed;
+    StorageInternalTypes.SoapIndicators internal _soapIndicatorsReceiveFixed;
+    StorageInternalTypes.IporSwapContainer internal _swapsPayFixed;
+    StorageInternalTypes.IporSwapContainer internal _swapsReceiveFixed;
 
     mapping(address => uint128) private _liquidityPoolAccountContribution;
 
@@ -50,7 +50,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     }
 
     function getVersion() external pure virtual override returns (uint256) {
-        return 2;
+        return 2_000;
     }
 
     function getLastSwapId() external view override returns (uint256) {
@@ -106,7 +106,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function getSwapPayFixed(uint256 swapId) external view override returns (IporTypes.IporSwapMemory memory) {
         uint32 id = swapId.toUint32();
-        AmmStorageInternalTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
+        StorageInternalTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
         return
             IporTypes.IporSwapMemory(
                 swap.id,
@@ -125,7 +125,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function getSwapReceiveFixed(uint256 swapId) external view override returns (IporTypes.IporSwapMemory memory) {
         uint32 id = swapId.toUint32();
-        AmmStorageInternalTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
+        StorageInternalTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
         return
             IporTypes.IporSwapMemory(
                 swap.id,
@@ -441,7 +441,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     }
 
     function _getPositions(
-        mapping(uint32 => AmmStorageInternalTypes.IporSwap) storage swaps,
+        mapping(uint32 => StorageInternalTypes.IporSwap) storage swaps,
         uint32[] storage ids,
         uint256 offset,
         uint256 chunkSize
@@ -454,7 +454,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
         for (uint256 i = 0; i != swapsIdsLength; i++) {
             uint32 id = ids[i + offset];
-            AmmStorageInternalTypes.IporSwap storage swap = swaps[id];
+            StorageInternalTypes.IporSwap storage swap = swaps[id];
             derivatives[i] = IporTypes.IporSwapMemory(
                 swap.id,
                 swap.buyer,
@@ -481,7 +481,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             int256 soap
         )
     {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory spf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -490,7 +490,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         );
         int256 _soapPayFixed = spf.calculateQuasiSoapPayFixed(calculateTimestamp, ibtPrice);
 
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory srf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -511,7 +511,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         view
         returns (int256 soapPayFixed)
     {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory spf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory spf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -526,7 +526,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         view
         returns (int256 soapReceiveFixed)
     {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory srf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory srf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -595,7 +595,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
-        AmmStorageInternalTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
+        StorageInternalTypes.IporSwap storage swap = _swapsPayFixed.swaps[id];
 
         swap.id = id;
         swap.buyer = newSwap.buyer;
@@ -619,7 +619,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         _lastSwapId++;
         uint32 id = _lastSwapId;
 
-        AmmStorageInternalTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
+        StorageInternalTypes.IporSwap storage swap = _swapsReceiveFixed.swaps[id];
 
         swap.id = id;
         swap.buyer = newSwap.buyer;
@@ -684,7 +684,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory pf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory pf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -707,7 +707,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 fixedInterestRate,
         uint256 ibtQuantity
     ) internal {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory rf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory rf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -726,7 +726,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function _updateSoapIndicatorsWhenCloseSwapPayFixed(IporTypes.IporSwapMemory memory swap, uint256 closingTimestamp)
         internal
     {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory pf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory pf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsPayFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsPayFixed.totalNotional,
             _soapIndicatorsPayFixed.totalIbtQuantity,
@@ -742,7 +742,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             swap.ibtQuantity
         );
 
-        _soapIndicatorsPayFixed = AmmStorageInternalTypes.SoapIndicators(
+        _soapIndicatorsPayFixed = StorageInternalTypes.SoapIndicators(
             pf.quasiHypotheticalInterestCumulative,
             pf.totalNotional.toUint128(),
             pf.totalIbtQuantity.toUint128(),
@@ -755,7 +755,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         IporTypes.IporSwapMemory memory swap,
         uint256 closingTimestamp
     ) internal {
-        AmmStorageInternalTypes.SoapIndicatorsMemory memory rf = AmmStorageInternalTypes.SoapIndicatorsMemory(
+        StorageInternalTypes.SoapIndicatorsMemory memory rf = StorageInternalTypes.SoapIndicatorsMemory(
             _soapIndicatorsReceiveFixed.quasiHypotheticalInterestCumulative,
             _soapIndicatorsReceiveFixed.totalNotional,
             _soapIndicatorsReceiveFixed.totalIbtQuantity,
@@ -771,7 +771,7 @@ contract AmmStorage is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
             swap.ibtQuantity
         );
 
-        _soapIndicatorsReceiveFixed = AmmStorageInternalTypes.SoapIndicators(
+        _soapIndicatorsReceiveFixed = StorageInternalTypes.SoapIndicators(
             rf.quasiHypotheticalInterestCumulative,
             rf.totalNotional.toUint128(),
             rf.totalIbtQuantity.toUint128(),

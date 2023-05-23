@@ -35,7 +35,6 @@ interface IAmmOpenSwapService {
         uint256 maxSwapCollateralAmount;
         uint256 liquidationDepositAmount;
         uint256 minLeverage;
-        uint256 maxLeverage;
         uint256 openingFeeRate;
         uint256 openingFeeTreasuryPortionRate;
     }

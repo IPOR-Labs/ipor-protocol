@@ -151,7 +151,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
     function rebalance(address asset) external override {
         require(
-            AmmConfigurationManager.isAmmPoolsAppointedToRebalance(asset, msg.sender),
+            AmmConfigurationManager.isAppointedToRebalanceInAmm(asset, msg.sender),
             AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE
         );
 
@@ -169,7 +169,7 @@ contract AmmPoolsService is IAmmPoolsService {
 
         uint256 ratio = IporMath.division(wadAmmTreasuryAssetBalance * Constants.D18, totalBalance);
 
-        uint256 ammTreasuryAssetManagementBalanceRatio = AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(poolCfg.asset);
+        uint256 ammTreasuryAssetManagementBalanceRatio = AmmConfigurationManager.getAmmAndAssetManagementRatio(poolCfg.asset);
 
         if (ratio > ammTreasuryAssetManagementBalanceRatio) {
             uint256 assetAmount = wadAmmTreasuryAssetBalance -
@@ -211,8 +211,8 @@ contract AmmPoolsService is IAmmPoolsService {
         IAmmStorage(poolCfg.ammStorage).addLiquidity(
             onBehalfOf,
             wadAssetAmount,
-            AmmConfigurationManager.getAmmPoolsMaxLiquidityPoolBalance(poolCfg.asset) * Constants.D18,
-            AmmConfigurationManager.getAmmPoolsMaxLpAccountContribution(poolCfg.asset) * Constants.D18
+            AmmConfigurationManager.getAmmMaxLiquidityPoolBalance(poolCfg.asset) * Constants.D18,
+            AmmConfigurationManager.getAmmMaxLpAccountContribution(poolCfg.asset) * Constants.D18
         );
 
         IERC20Upgradeable(poolCfg.asset).safeTransferFrom(msg.sender, poolCfg.ammTreasury, assetAmount);
@@ -376,7 +376,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmAutoRebalanceThreshold(poolCfg.asset) *
             Constants.D21;
 
         if (autoRebalanceThreshold > 0 && wadOperationAmount >= autoRebalanceThreshold) {
@@ -404,7 +404,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 wadAmmTreasuryErc20BalanceAfterDeposit,
         uint256 vaultBalance
     ) internal view returns (int256) {
-        uint256 ratio = AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(asset);
+        uint256 ratio = AmmConfigurationManager.getAmmAndAssetManagementRatio(asset);
         return
             IporMath.divisionInt(
                 (wadAmmTreasuryErc20BalanceAfterDeposit + vaultBalance).toInt256() *
@@ -419,7 +419,7 @@ contract AmmPoolsService is IAmmPoolsService {
         uint256 vaultBalance,
         uint256 wadOperationAmount
     ) internal {
-        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmPoolsAutoRebalanceThreshold(poolCfg.asset) *
+        uint256 autoRebalanceThreshold = AmmConfigurationManager.getAmmAutoRebalanceThreshold(poolCfg.asset) *
             Constants.D21;
 
         if (
