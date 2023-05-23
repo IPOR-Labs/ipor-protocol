@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IStanley.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAssetManagement.sol";
 import "../governance/AmmConfigurationManager.sol";
 
 library AssetManagementLogic {

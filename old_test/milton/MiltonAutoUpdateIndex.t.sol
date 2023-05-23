@@ -9,7 +9,7 @@ import "contracts/libraries/Constants.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 
-contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
+contract AmmTreasuryAutoUpdateIndex is Test, TestCommons, DataUtils {
     event IporIndexUpdate(
         address asset,
         uint256 indexValue,
@@ -34,13 +34,13 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
-        iporOracle.addUpdater(address(milton));
+        iporOracle.addUpdater(address(ammTreasury));
 
-        milton.setAutoUpdateIporIndexThreshold(1);
+        ammTreasury.setAutoUpdateIporIndexThreshold(1);
 
         uint256 liquidityAmount = 1000000 * 10**6;
         uint256 totalAmount = 10000 * 10**6;
@@ -48,7 +48,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         joseph.provideLiquidity(liquidityAmount);
 
@@ -59,8 +59,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
@@ -73,13 +73,13 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
-        iporOracle.addUpdater(address(milton));
+        iporOracle.addUpdater(address(ammTreasury));
 
-        milton.setAutoUpdateIporIndexThreshold(1);
+        ammTreasury.setAutoUpdateIporIndexThreshold(1);
 
         uint256 liquidityAmount = 1000000 * 10**6;
         uint256 totalAmount = 10000 * 10**6;
@@ -87,7 +87,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         joseph.provideLiquidity(liquidityAmount);
 
@@ -98,8 +98,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
@@ -112,13 +112,13 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
-        iporOracle.addUpdater(address(milton));
+        iporOracle.addUpdater(address(ammTreasury));
 
-        milton.setAutoUpdateIporIndexThreshold(1);
+        ammTreasury.setAutoUpdateIporIndexThreshold(1);
 
         uint256 liquidityAmount = 1000000 * 10**18;
         uint256 totalAmount = 10000 * 10**18;
@@ -126,7 +126,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         joseph.provideLiquidity(liquidityAmount);
 
@@ -137,8 +137,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));
@@ -152,13 +152,13 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
-        iporOracle.addUpdater(address(milton));
+        iporOracle.addUpdater(address(ammTreasury));
 
-        milton.setAutoUpdateIporIndexThreshold(1);
+        ammTreasury.setAutoUpdateIporIndexThreshold(1);
 
         uint256 liquidityAmount = 1000000 * 10**18;
         uint256 totalAmount = 10000 * 10**18;
@@ -166,7 +166,7 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         uint256 leverage = 100 * 10**18;
 
         asset.approve(address(joseph), liquidityAmount);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         joseph.provideLiquidity(liquidityAmount);
 
@@ -177,8 +177,8 @@ contract MiltonAutoUpdateIndex is Test, TestCommons, DataUtils {
         emit IporIndexUpdate(address(asset), 1, 31536000000000000000000000, 100);
 
         //when
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 myBalanceAfter = _iporProtocol.asset.balanceOf(address(this));

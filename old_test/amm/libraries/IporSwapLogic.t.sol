@@ -1140,7 +1140,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
@@ -1170,7 +1170,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
@@ -1200,7 +1200,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
@@ -1230,7 +1230,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
@@ -1260,7 +1260,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,
@@ -1290,7 +1290,7 @@ contract IporSwapLogicTest is TestCommons, DataUtils {
         uint256 hedgingFee = 5 * 1e18;
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE));
         int256 virtualHedgingSwap = _iporSwapLogic.calculateSwapUnwindValue(
             swap,
             closingTimestamp,

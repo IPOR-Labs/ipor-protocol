@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 /// @title Types used in interfaces strictly related to AMM (Automated Market Maker).
-/// @dev Used by IMilton and IMiltonStorage interfaces.
+/// @dev Used by IAmmTreasury and IAmmStorage interfaces.
 library AmmTypes {
     /// @notice enum describing Swap's duration, 28 days, 60 days or 90 days
     enum SwapDuration {
@@ -63,7 +63,7 @@ library AmmTypes {
     /// @notice Struct representing assets (ie. stablecoin) related to Swap that is presently being opened.
     /// @dev all values represented in 18 decimals
     struct OpenSwapMoney {
-        /// @notice Total Amount of asset that is sent from buyer to Milton when opening swap.
+        /// @notice Total Amount of asset that is sent from buyer to AmmTreasury when opening swap.
         uint256 totalAmount;
         /// @notice Swap's collateral
         uint256 collateral;
@@ -93,5 +93,28 @@ library AmmTypes {
         uint256 redeemAmount;
         uint256 wadRedeemFee;
         uint256 wadRedeemAmount;
+    }
+
+    /// @notice Swap direction (long = Pay Fixed and Receive a Floating or short = receive fixed and pay a floating)
+    enum SwapDirection {
+        /// @notice When taking the "long" position the trader will pay a fixed rate and receive a floating rate.
+        /// for more information refer to the documentation https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/ipor-swaps
+        PAY_FIXED_RECEIVE_FLOATING,
+        /// @notice When taking the "short" position the trader will pay a floating rate and receive a fixed rate.
+        PAY_FLOATING_RECEIVE_FIXED
+    }
+
+    /// @notice Collection of swap attributes connected with IPOR Index
+    /// @dev all values are in 18 decimals
+    struct IporSwapIndicator {
+        /// @notice IPOR Index value at the time of swap opening
+        uint256 iporIndexValue;
+        /// @notice IPOR Interest Bearing Token (IBT) price at the time of swap opening
+        uint256 ibtPrice;
+        /// @notice Swap's notional denominated in IBT
+        uint256 ibtQuantity;
+        /// @notice Fixed interest rate at which the position has been opened,
+        /// it is quote from spread documentation
+        uint256 fixedInterestRate;
     }
 }

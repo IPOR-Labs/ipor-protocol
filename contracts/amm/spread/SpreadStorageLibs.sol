@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 
 import "contracts/libraries/math/IporMath.sol";
-import "contracts/libraries/errors/MiltonErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 import "./SpreadTypes.sol";
 
 library SpreadStorageLibs {
@@ -162,7 +162,7 @@ library SpreadStorageLibs {
             storageId == StorageId.TimeWeightedNotional90DaysDai ||
             storageId == StorageId.TimeWeightedNotional90DaysUsdc ||
             storageId == StorageId.TimeWeightedNotional90DaysUsdt,
-            MiltonErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
+            AmmErrors.STORAGE_ID_IS_NOT_TIME_WEIGHTED_NOTIONAL
         );
     }
 }

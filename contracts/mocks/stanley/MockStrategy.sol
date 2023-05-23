@@ -5,7 +5,7 @@ import "../../interfaces/IStrategy.sol";
 
 // simple mock for total _balance tests
 contract MockStrategy is IStrategy {
-    address private _stanley;
+    address private _assetManagement;
     uint256 private _balance;
     address private _shareTokens;
     uint256 private _apr;
@@ -92,11 +92,11 @@ contract MockStrategy is IStrategy {
 
     function beforeClaim() external {}
 
-    function getStanley() external view override returns (address) {
-        return _stanley;
+    function getAssetManagement() external view override returns (address) {
+        return _assetManagement;
     }
 
-    function setStanley(address stanley) external {
-        _stanley = stanley;
+    function setAssetManagement(address assetManagement) external {
+        _assetManagement = assetManagement;
     }
 }

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-library JosephErrors {
-    // 400-499-joseph
+library AmmPoolsErrors {
+    // 400-499-Amm Pools
     //@notice IP Token Value which should be minted is too low
     string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_400";
 
@@ -18,15 +18,15 @@ library JosephErrors {
     //@notice Incorrect Treasury Treasurer Address
     string public constant INCORRECT_TREASURE_TREASURER = "IPOR_405";
 
-    //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key MILTON_PUBLICATION_FEE_TRANSFERER
+    //@notice Sender is not a publication fee transferer, not match address defined in IporConfiguration in key AMM_TREASURY_PUBLICATION_FEE_TRANSFERER
     string public constant CALLER_NOT_PUBLICATION_FEE_TRANSFERER = "IPOR_406";
 
     //@notice Charlie Treasurer address is incorrect
     string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
 
-    string public constant STANLEY_BALANCE_IS_EMPTY = "IPOR_408";
+    string public constant ASSET_MANAGEMENT_BALANCE_IS_EMPTY = "IPOR_408";
 
-    string public constant MILTON_STANLEY_RATIO = "IPOR_409";
+    string public constant AMM_TREASURY_ASSET_MANAGEMENT_RATIO = "IPOR_409";
 
     string public constant INSUFFICIENT_ERC20_BALANCE = "IPOR_410";
 

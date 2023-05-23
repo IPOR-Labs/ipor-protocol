@@ -5,31 +5,31 @@ import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
-import "contracts/amm/MiltonDai.sol";
-import "contracts/amm/MiltonUsdc.sol";
-import "contracts/amm/MiltonUsdt.sol";
-import "contracts/mocks/stanley/aave/TestERC20.sol";
-import "contracts/interfaces/IMiltonInternal.sol";
+import "contracts/amm/AmmTreasuryDai.sol";
+import "contracts/amm/AmmTreasuryUsdc.sol";
+import "contracts/amm/AmmTreasuryUsdt.sol";
+import "contracts/mocks/assetManagement/aave/TestERC20.sol";
+import "contracts/interfaces/IAmmTreasury.sol";
 
-contract MiltonConfiguration is Test, TestCommons {
-    MiltonUsdt internal _miltonUsdt;
-    MiltonUsdc internal _miltonUsdc;
-    MiltonDai internal _miltonDai;
+contract AmmTreasuryConfiguration is Test, TestCommons {
+    AmmTreasuryUsdt internal _ammTreasuryUsdt;
+    AmmTreasuryUsdc internal _ammTreasuryUsdc;
+    AmmTreasuryDai internal _ammTreasuryDai;
 
     function setUp() public {
         address fakeRiskOracle = address(this);
-        _miltonUsdt = new MiltonUsdt(fakeRiskOracle);
-        _miltonUsdc = new MiltonUsdc(fakeRiskOracle);
-        _miltonDai = new MiltonDai(fakeRiskOracle);
+        _ammTreasuryUsdt = new AmmTreasuryUsdt(fakeRiskOracle);
+        _ammTreasuryUsdc = new AmmTreasuryUsdc(fakeRiskOracle);
+        _ammTreasuryDai = new AmmTreasuryDai(fakeRiskOracle);
     }
 
-    function testShouldCreateMiltonUsdt() public {
+    function testShouldCreateAmmTreasuryUsdt() public {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(6);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
-        ERC1967Proxy miltonUsdtProxy = new ERC1967Proxy(
-            address(miltonUsdtImplementation),
+        AmmTreasuryUsdt ammTreasuryUsdtImplementation = new AmmTreasuryUsdt(address(usdt));
+        ERC1967Proxy ammTreasuryUsdtProxy = new ERC1967Proxy(
+            address(ammTreasuryUsdtImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -40,17 +40,17 @@ contract MiltonConfiguration is Test, TestCommons {
                 address(usdt)
             )
         );
-        IMiltonInternal miltonUsdt = IMiltonInternal(address(miltonUsdtProxy));
-        assertEq(miltonUsdt.getAsset(), address(usdt));
+        IAmmTreasury ammTreasuryUsdt = IAmmTreasury(address(ammTreasuryUsdtProxy));
+        assertEq(ammTreasuryUsdt.getAsset(), address(usdt));
     }
 
-    function testShouldCreateMiltonUsdc() public {
+    function testShouldCreateAmmTreasuryUsdc() public {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(6);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
-        ERC1967Proxy miltonUsdcProxy = new ERC1967Proxy(
-            address(miltonUsdcImplementation),
+        AmmTreasuryUsdc ammTreasuryUsdcImplementation = new AmmTreasuryUsdc(address(usdc));
+        ERC1967Proxy ammTreasuryUsdcProxy = new ERC1967Proxy(
+            address(ammTreasuryUsdcImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -61,17 +61,17 @@ contract MiltonConfiguration is Test, TestCommons {
                 address(usdc)
             )
         );
-        IMiltonInternal miltonUsdc = IMiltonInternal(address(miltonUsdcProxy));
-        assertEq(miltonUsdc.getAsset(), address(usdc));
+        IAmmTreasury ammTreasuryUsdc = IAmmTreasury(address(ammTreasuryUsdcProxy));
+        assertEq(ammTreasuryUsdc.getAsset(), address(usdc));
     }
 
-    function testShouldCreateMiltonDai() public {
+    function testShouldCreateAmmTreasuryDai() public {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(18);
-        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
-        ERC1967Proxy miltonDaiProxy = new ERC1967Proxy(
-            address(miltonDaiImplementation),
+        AmmTreasuryDai ammTreasuryDaiImplementation = new AmmTreasuryDai(address(dai));
+        ERC1967Proxy ammTreasuryDaiProxy = new ERC1967Proxy(
+            address(ammTreasuryDaiImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -82,18 +82,18 @@ contract MiltonConfiguration is Test, TestCommons {
                 address(dai)
             )
         );
-        IMiltonInternal miltonDai = IMiltonInternal(address(miltonDaiProxy));
-        assertEq(miltonDai.getAsset(), address(dai));
+        IAmmTreasury ammTreasuryDai = IAmmTreasury(address(ammTreasuryDaiProxy));
+        assertEq(ammTreasuryDai.getAsset(), address(dai));
     }
 
-    function testShouldRevertInitializerUsdtWhenMismatchAssetAndMiltonDecimals() public {
+    function testShouldRevertInitializerUsdtWhenMismatchAssetAndAmmTreasuryDecimals() public {
         // when
         TestERC20 usdt = new TestERC20(2**255);
         usdt.setDecimals(8);
-        MiltonUsdt miltonUsdtImplementation = new MiltonUsdt(address(usdt));
+        AmmTreasuryUsdt ammTreasuryUsdtImplementation = new AmmTreasuryUsdt(address(usdt));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         new ERC1967Proxy(
-            address(miltonUsdtImplementation),
+            address(ammTreasuryUsdtImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -106,14 +106,14 @@ contract MiltonConfiguration is Test, TestCommons {
         );
     }
 
-    function testShouldRevertInitializeUsdcWhenMismatchAssetAndMiltonDecimals() public {
+    function testShouldRevertInitializeUsdcWhenMismatchAssetAndAmmTreasuryDecimals() public {
         // when
         TestERC20 usdc = new TestERC20(2**255);
         usdc.setDecimals(8);
-        MiltonUsdc miltonUsdcImplementation = new MiltonUsdc(address(usdc));
+        AmmTreasuryUsdc ammTreasuryUsdcImplementation = new AmmTreasuryUsdc(address(usdc));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         new ERC1967Proxy(
-            address(miltonUsdcImplementation),
+            address(ammTreasuryUsdcImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -126,14 +126,14 @@ contract MiltonConfiguration is Test, TestCommons {
         );
     }
 
-    function testShouldRevertInitializerDaiWhenMismatchAssetAndMiltonDecimals() public {
+    function testShouldRevertInitializerDaiWhenMismatchAssetAndAmmTreasuryDecimals() public {
         // when
         TestERC20 dai = new TestERC20(2**255);
         dai.setDecimals(8);
-        MiltonDai miltonDaiImplementation = new MiltonDai(address(dai));
+        AmmTreasuryDai ammTreasuryDaiImplementation = new AmmTreasuryDai(address(dai));
         vm.expectRevert(abi.encodePacked("IPOR_001"));
         new ERC1967Proxy(
-            address(miltonDaiImplementation),
+            address(ammTreasuryDaiImplementation),
             abi.encodeWithSignature(
                 "initialize(bool,address,address,address,address,address)",
                 false,
@@ -148,56 +148,56 @@ contract MiltonConfiguration is Test, TestCommons {
 
     function testShouldSetupInitValueForMaxSwapTotalAmount() public {
         // when
-        uint256 actualValue = _miltonDai.getMaxSwapCollateralAmount();
+        uint256 actualValue = _ammTreasuryDai.getMaxSwapCollateralAmount();
         // then
         assertEq(actualValue, TestConstants.USD_100_000_18DEC);
     }
 
     function testShouldSetupInitValueForOpeningFeePercentage() public {
         // when
-        uint256 actualValue = _miltonDai.getOpeningFeeRate();
+        uint256 actualValue = _ammTreasuryDai.getOpeningFeeRate();
         // then
         assertEq(actualValue, 5 * TestConstants.D14);
     }
 
     function testShouldSetupInitValueForOpeningFeeTreasuryPercentage() public {
         // when
-        uint256 actualValue = _miltonDai.getOpeningFeeTreasuryPortionRate();
+        uint256 actualValue = _ammTreasuryDai.getOpeningFeeTreasuryPortionRate();
         // then
         assertEq(actualValue, 5 * TestConstants.D17);
     }
 
     function testShouldSetupInitValueForIporPublicationFeeAmount() public {
         // when
-        uint256 actualValue = _miltonDai.getIporPublicationFee();
+        uint256 actualValue = _ammTreasuryDai.getIporPublicationFee();
         // then
         assertEq(actualValue, 10 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForLiquidationDepositAmountMethodOne() public {
         // when
-        uint256 actualValue = _miltonDai.getLiquidationDepositAmount();
+        uint256 actualValue = _ammTreasuryDai.getLiquidationDepositAmount();
         // then
         assertEq(actualValue, 25);
     }
 
     function testShouldSetupInitValueForLiquidationDepositAmountMethodTwo() public {
         // when
-        uint256 actualValue = _miltonDai.getWadLiquidationDepositAmount();
+        uint256 actualValue = _ammTreasuryDai.getWadLiquidationDepositAmount();
         // then
         assertEq(actualValue, 25 * TestConstants.D18);
     }
 
     function testShouldSetupInitValueForMinLeverageValue() public {
         // when
-        uint256 actualValue = _miltonDai.getMinLeverage();
+        uint256 actualValue = _ammTreasuryDai.getMinLeverage();
         // then
         assertEq(actualValue, 10 * TestConstants.D18);
     }
 
     function testShouldInitValueForOpeningFeeTreasuryPercentageLowerThanOneHundredPercent() public {
         // when
-        uint256 actualValue = _miltonDai.getOpeningFeeTreasuryPortionRate();
+        uint256 actualValue = _ammTreasuryDai.getOpeningFeeTreasuryPortionRate();
         // then
         assertLe(actualValue, TestConstants.PERCENTAGE_100_18DEC);
     }

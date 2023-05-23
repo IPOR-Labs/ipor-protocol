@@ -3,11 +3,11 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
 import "../libraries/Constants.sol";
 import "../libraries/math/IporMath.sol";
-import "../libraries/errors/MiltonErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
 import "../interfaces/IIpToken.sol";
 import "../interfaces/IIporOracle.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IStanley.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAssetManagement.sol";
 
 library AmmLib {
     using SafeCast for uint256;
@@ -20,7 +20,7 @@ library AmmLib {
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
 
-        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+        require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
 
@@ -41,7 +41,7 @@ library AmmLib {
 
         int256 balance = liquidityPoolBalance.toInt256() - soap;
 
-        require(balance >= 0, MiltonErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
+        require(balance >= 0, AmmErrors.SOAP_AND_LP_BALANCE_SUM_IS_TOO_LOW);
 
         uint256 ipTokenTotalSupply = IIpToken(model.ipToken).totalSupply();
 
@@ -61,7 +61,7 @@ library AmmLib {
             int256 soap
         )
     {
-        (soapPayFixed, soapReceiveFixed, soap) = IMiltonStorage(model.ammStorage).calculateSoap(
+        (soapPayFixed, soapReceiveFixed, soap) = IAmmStorage(model.ammStorage).calculateSoap(
             IIporOracle(model.iporOracle).calculateAccruedIbtPrice(model.asset, block.timestamp),
             block.timestamp
         );
@@ -70,17 +70,17 @@ library AmmLib {
     function getAccruedBalance(AmmTypes.AmmPoolCoreModel memory model)
         internal
         view
-        returns (IporTypes.MiltonBalancesMemory memory)
+        returns (IporTypes.AmmBalancesMemory memory)
     {
-        IporTypes.MiltonBalancesMemory memory accruedBalance = IMiltonStorage(model.ammStorage).getBalance();
+        IporTypes.AmmBalancesMemory memory accruedBalance = IAmmStorage(model.ammStorage).getBalance();
 
-        uint256 actualVaultBalance = IStanley(model.assetManagement).totalBalance(address(this));
+        uint256 actualVaultBalance = IAssetManagement(model.assetManagement).totalBalance(address(this));
 
         int256 liquidityPool = accruedBalance.liquidityPool.toInt256() +
             actualVaultBalance.toInt256() -
             accruedBalance.vault.toInt256();
 
-        require(liquidityPool >= 0, MiltonErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
+        require(liquidityPool >= 0, AmmErrors.LIQUIDITY_POOL_AMOUNT_TOO_LOW);
         accruedBalance.liquidityPool = liquidityPool.toUint256();
 
         accruedBalance.vault = actualVaultBalance;

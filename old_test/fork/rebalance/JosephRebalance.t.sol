@@ -20,25 +20,25 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
         daiAmm.overrideCompoundStrategyWithZeroApr(address(this));
-        uint256 balanceMiltonDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
-        uint256 balanceMiltonIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = daiAmm.strategyAave().balanceOf();
 
         // when
         joseph.rebalance();
 
         //then
-        uint256 balanceMiltonDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
-        uint256 balanceMiltonIvDaiAfter = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvDaiAfter = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = daiAmm.strategyAave().balanceOf();
 
-        assertTrue(balanceMiltonDaiBefore > balanceMiltonDaiAfter);
-        assertTrue(balanceMiltonIvDaiBefore < balanceMiltonIvDaiAfter);
+        assertTrue(balanceAmmTreasuryDaiBefore > balanceAmmTreasuryDaiAfter);
+        assertTrue(balanceAmmTreasuryIvDaiBefore < balanceAmmTreasuryIvDaiAfter);
         assertTrue(balanceAaveStrategyBefore < balanceAaveStrategyAfter);
     }
 
@@ -48,11 +48,11 @@ contract JosephRebalance is Test, TestCommons {
         uint256 depositAmount = 10_000e18;
         DaiAmm daiAmm = new DaiAmm(address(this));
         Joseph joseph = daiAmm.joseph();
-        Stanley stanley = daiAmm.stanley();
+        AssetManagement assetManagement = daiAmm.assetManagement();
 
         joseph.setAutoRebalanceThreshold(0);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
@@ -62,10 +62,10 @@ contract JosephRebalance is Test, TestCommons {
 
         uint256 balanceOldAaveStrategyBefore = daiAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyBefore = newStrategyAave.balanceOf();
-        uint256 balanceMiltonIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
 
         // when
-        stanley.setStrategyAave(address(newStrategyAave));
+        assetManagement.setStrategyAave(address(newStrategyAave));
         uint256 balanceOldAaveStrategyAfterSwitch = daiAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyAfterSwitch = newStrategyAave.balanceOf();
 
@@ -76,7 +76,7 @@ contract JosephRebalance is Test, TestCommons {
 
         // then
 
-        uint256 balanceMiltonIvDaiAfterRebalance = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryIvDaiAfterRebalance = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceOldAaveStrategyAfterRebalance = daiAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyAfterRebalance = newStrategyAave.balanceOf();
 
@@ -86,10 +86,10 @@ contract JosephRebalance is Test, TestCommons {
         assertEq(balanceOldAaveStrategyBefore, balanceNewAaveStrategyAfterSwitch);
         assertEq(balanceOldAaveStrategyAfterRebalance, 0);
         assertTrue(balanceNewAaveStrategyAfterRebalance > 0);
-        assertTrue(balanceMiltonIvDaiBefore < balanceMiltonIvDaiAfterRebalance);
+        assertTrue(balanceAmmTreasuryIvDaiBefore < balanceAmmTreasuryIvDaiAfterRebalance);
     }
 
-    function testShouldRebalanceAndWithdrawDaiFromStanleyAndAave() public {
+    function testShouldRebalanceAndWithdrawDaiFromAssetManagementAndAave() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e18;
@@ -98,7 +98,7 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
@@ -106,8 +106,8 @@ contract JosephRebalance is Test, TestCommons {
         joseph.rebalance();
         vm.prank(user);
         joseph.redeem(15_000e18);
-        uint256 balanceMiltonDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
-        uint256 balanceMiltonIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvDaiBefore = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = daiAmm.strategyAave().balanceOf();
 
         // when
@@ -116,14 +116,14 @@ contract JosephRebalance is Test, TestCommons {
         joseph.rebalance();
 
         // then
-        uint256 balanceMiltonDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
-        uint256 balanceMiltonIvDaiAfter = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAmmTreasuryDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvDaiAfter = ERC20(daiAmm.ivDai()).balanceOf(address(daiAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = daiAmm.strategyAave().balanceOf();
 
-        assertTrue(balanceMiltonDaiBefore < balanceMiltonDaiAfter, "balanceMiltonDaiBefore < balanceMiltonDaiAfter");
+        assertTrue(balanceAmmTreasuryDaiBefore < balanceAmmTreasuryDaiAfter, "balanceAmmTreasuryDaiBefore < balanceAmmTreasuryDaiAfter");
         assertTrue(
-            balanceMiltonIvDaiBefore > balanceMiltonIvDaiAfter,
-            "balanceMiltonIvDaiBefore > balanceMiltonIvDaiAfter"
+            balanceAmmTreasuryIvDaiBefore > balanceAmmTreasuryIvDaiAfter,
+            "balanceAmmTreasuryIvDaiBefore > balanceAmmTreasuryIvDaiAfter"
         );
         assertTrue(
             balanceAaveStrategyBefore > balanceAaveStrategyAfter,
@@ -140,30 +140,30 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdcAmm.usdc(), user, 500_000e6);
-        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
         usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
-        uint256 balanceMiltonBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
 
         // when
         joseph.rebalance();
 
         //then
-        uint256 balanceMiltonAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = usdcAmm.strategyAave().balanceOf();
 
-        assertTrue(balanceMiltonBefore > balanceMiltonAfter);
-        assertTrue(balanceMiltonIvBefore < balanceMiltonIvAfter);
+        assertTrue(balanceAmmTreasuryBefore > balanceAmmTreasuryAfter);
+        assertTrue(balanceAmmTreasuryIvBefore < balanceAmmTreasuryIvAfter);
         assertTrue(balanceAaveStrategyBefore < balanceAaveStrategyAfter);
     }
 
     //TODO: temporary skipped
-    function skipTestShouldNotChangeJosephExchangeRateWhenWithdrawAllFromStanley() public {
+    function skipTestShouldNotChangeJosephExchangeRateWhenWithdrawAllFromAssetManagement() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
@@ -172,35 +172,35 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdcAmm.usdc(), user, 500_000e6);
-        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
         usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
         joseph.rebalance();
 
-        uint256 balanceMiltonBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
         uint256 exchangeRateJosephBefore = joseph.calculateExchangeRate();
 
         // when
-        joseph.withdrawAllFromStanley();
+        joseph.withdrawAllFromAssetManagement();
 
         //then
         uint256 exchangeRateJosephAfter = joseph.calculateExchangeRate();
-        uint256 balanceMiltonAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = usdcAmm.strategyAave().balanceOf();
 
         assertEq(exchangeRateJosephBefore, exchangeRateJosephAfter);
-        assertTrue(balanceMiltonBefore < balanceMiltonAfter);
-        assertTrue(balanceMiltonIvBefore > balanceMiltonIvAfter);
+        assertTrue(balanceAmmTreasuryBefore < balanceAmmTreasuryAfter);
+        assertTrue(balanceAmmTreasuryIvBefore > balanceAmmTreasuryIvAfter);
         assertTrue(balanceAaveStrategyBefore > balanceAaveStrategyAfter);
     }
 
     //TODO: temporary skipped
-    function skipTestShouldNotChangeJosephExchangeRateWhenWithdrawFromStanley() public {
+    function skipTestShouldNotChangeJosephExchangeRateWhenWithdrawFromAssetManagement() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
@@ -209,30 +209,30 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdcAmm.usdc(), user, 500_000e6);
-        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
         usdcAmm.overrideCompoundStrategyWithZeroApr(address(this));
         joseph.rebalance();
 
-        uint256 balanceMiltonBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
         uint256 exchangeRateJosephBefore = joseph.calculateExchangeRate();
 
         // when
-        joseph.withdrawFromStanley(74e20);
+        joseph.withdrawFromAssetManagement(74e20);
 
         //then
         uint256 exchangeRateJosephAfter = joseph.calculateExchangeRate();
-        uint256 balanceMiltonAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = usdcAmm.strategyAave().balanceOf();
 
         assertEq(exchangeRateJosephBefore, exchangeRateJosephAfter);
-        assertTrue(balanceMiltonBefore < balanceMiltonAfter);
-        assertTrue(balanceMiltonIvBefore > balanceMiltonIvAfter);
+        assertTrue(balanceAmmTreasuryBefore < balanceAmmTreasuryAfter);
+        assertTrue(balanceAmmTreasuryIvBefore > balanceAmmTreasuryIvAfter);
         assertTrue(balanceAaveStrategyBefore > balanceAaveStrategyAfter);
     }
 
@@ -242,11 +242,11 @@ contract JosephRebalance is Test, TestCommons {
         uint256 depositAmount = 10_000e6;
         UsdcAmm usdcAmm = new UsdcAmm(address(this));
         Joseph joseph = usdcAmm.joseph();
-        Stanley stanley = usdcAmm.stanley();
+        AssetManagement assetManagement = usdcAmm.assetManagement();
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdcAmm.usdc(), user, 500_000e6);
-        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
@@ -256,10 +256,10 @@ contract JosephRebalance is Test, TestCommons {
 
         uint256 balanceOldAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyBefore = newStrategyAave.balanceOf();
-        uint256 balanceMiltonIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
 
         // when
-        stanley.setStrategyAave(address(newStrategyAave));
+        assetManagement.setStrategyAave(address(newStrategyAave));
         uint256 balanceOldAaveStrategyAfterSwitch = usdcAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyAfterSwitch = newStrategyAave.balanceOf();
 
@@ -270,7 +270,7 @@ contract JosephRebalance is Test, TestCommons {
 
         // then
 
-        uint256 balanceMiltonIvAfterRebalance = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryIvAfterRebalance = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceOldAaveStrategyAfterRebalance = usdcAmm.strategyAave().balanceOf();
         uint256 balanceNewAaveStrategyAfterRebalance = newStrategyAave.balanceOf();
 
@@ -280,10 +280,10 @@ contract JosephRebalance is Test, TestCommons {
         assertEq(balanceOldAaveStrategyBefore, balanceNewAaveStrategyAfterSwitch);
         assertEq(balanceOldAaveStrategyAfterRebalance, 0);
         assertTrue(balanceNewAaveStrategyAfterRebalance > 0);
-        assertTrue(balanceMiltonIvBefore < balanceMiltonIvAfterRebalance);
+        assertTrue(balanceAmmTreasuryIvBefore < balanceAmmTreasuryIvAfterRebalance);
     }
 
-    function testShouldRebalanceAndWithdrawUsdcFromStanleyAndAave() public {
+    function testShouldRebalanceAndWithdrawUsdcFromAssetManagementAndAave() public {
         // given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e6;
@@ -292,7 +292,7 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdcAmm.usdc(), user, 500_000e6);
-        usdcAmm.approveMiltonJoseph(user);
+        usdcAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
@@ -300,8 +300,8 @@ contract JosephRebalance is Test, TestCommons {
         joseph.rebalance();
         vm.prank(user);
         joseph.redeem(17_000e18);
-        uint256 balanceMiltonBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryBefore = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyBefore = usdcAmm.strategyAave().balanceOf();
 
         // when
@@ -310,12 +310,12 @@ contract JosephRebalance is Test, TestCommons {
         joseph.rebalance();
 
         // then
-        uint256 balanceMiltonAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.milton()));
-        uint256 balanceMiltonIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.milton()));
+        uint256 balanceAmmTreasuryAfter = IIpToken(usdcAmm.usdc()).balanceOf(address(usdcAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdcAmm.ivUsdc()).balanceOf(address(usdcAmm.ammTreasury()));
         uint256 balanceAaveStrategyAfter = usdcAmm.strategyAave().balanceOf();
 
-        assertTrue(balanceMiltonBefore < balanceMiltonAfter, "balanceMiltonBefore < balanceMiltonAfter");
-        assertTrue(balanceMiltonIvBefore > balanceMiltonIvAfter, "balanceMiltonIvBefore > balanceMiltonIvAfter");
+        assertTrue(balanceAmmTreasuryBefore < balanceAmmTreasuryAfter, "balanceAmmTreasuryBefore < balanceAmmTreasuryAfter");
+        assertTrue(balanceAmmTreasuryIvBefore > balanceAmmTreasuryIvAfter, "balanceAmmTreasuryIvBefore > balanceAmmTreasuryIvAfter");
         assertTrue(
             balanceAaveStrategyBefore > balanceAaveStrategyAfter,
             "balanceAaveStrategyBefore > balanceAaveStrategyAfter"
@@ -331,25 +331,25 @@ contract JosephRebalance is Test, TestCommons {
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdtAmm.usdt(), user, 500_000e6);
-        usdtAmm.approveMiltonJoseph(user);
+        usdtAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
         usdtAmm.overrideAaveStrategyWithZeroApr(address(this));
-        uint256 balanceMiltonBefore = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.milton()));
-        uint256 balanceMiltonIvBefore = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceAmmTreasuryBefore = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.ammTreasury()));
         uint256 balanceCompoundStrategyBefore = usdtAmm.strategyCompound().balanceOf();
 
         // when
         joseph.rebalance();
 
         //then
-        uint256 balanceMiltonAfter = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.milton()));
-        uint256 balanceMiltonIvAfter = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceAmmTreasuryAfter = IIpToken(usdtAmm.usdt()).balanceOf(address(usdtAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.ammTreasury()));
         uint256 balanceCompoundStrategyAfter = usdtAmm.strategyCompound().balanceOf();
 
-        assertTrue(balanceMiltonBefore > balanceMiltonAfter);
-        assertTrue(balanceMiltonIvBefore < balanceMiltonIvAfter);
+        assertTrue(balanceAmmTreasuryBefore > balanceAmmTreasuryAfter);
+        assertTrue(balanceAmmTreasuryIvBefore < balanceAmmTreasuryIvAfter);
         assertTrue(balanceCompoundStrategyBefore < balanceCompoundStrategyAfter);
     }
 
@@ -359,11 +359,11 @@ contract JosephRebalance is Test, TestCommons {
         uint256 depositAmount = 10_000e6;
         UsdtAmm usdtAmm = new UsdtAmm(address(this));
         Joseph joseph = usdtAmm.joseph();
-        Stanley stanley = usdtAmm.stanley();
+        AssetManagement assetManagement = usdtAmm.assetManagement();
 
         joseph.setAutoRebalanceThreshold(0);
         deal(usdtAmm.usdt(), user, 500_000e6);
-        usdtAmm.approveMiltonJoseph(user);
+        usdtAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
@@ -374,23 +374,23 @@ contract JosephRebalance is Test, TestCommons {
 
         uint256 balanceOldCompoundStrategyBefore = usdtAmm.strategyCompound().balanceOf();
         uint256 balanceNewCompoundStrategyBefore = newStrategyCompound.balanceOf();
-        uint256 balanceMiltonIvBefore = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceAmmTreasuryIvBefore = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.ammTreasury()));
 
         // when
-        stanley.setStrategyCompound(address(newStrategyCompound));
+        assetManagement.setStrategyCompound(address(newStrategyCompound));
 
         uint256 balanceOldCompoundStrategyAfterSwitch = usdtAmm.strategyCompound().balanceOf();
 
         // then
-        uint256 balanceMiltonIvAfter = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.milton()));
+        uint256 balanceAmmTreasuryIvAfter = ERC20(usdtAmm.ivUsdt()).balanceOf(address(usdtAmm.ammTreasury()));
 
         assertTrue(balanceOldCompoundStrategyBefore > 0);
         assertEq(balanceNewCompoundStrategyBefore, 0);
         assertTrue(balanceOldCompoundStrategyAfterSwitch < balanceOldCompoundStrategyBefore);
-        assertEq(balanceMiltonIvBefore, balanceMiltonIvAfter);
+        assertEq(balanceAmmTreasuryIvBefore, balanceAmmTreasuryIvAfter);
     }
 
-    function testShouldClosePositionWhenMiltonDoesntHaveCashButStanleyHas() public {
+    function testShouldClosePositionWhenAmmTreasuryDoesntHaveCashButAssetManagementHas() public {
         //given
         address user = _getUserAddress(1);
         uint256 depositAmount = 50_000e18;
@@ -398,22 +398,22 @@ contract JosephRebalance is Test, TestCommons {
 
         DaiAmm daiAmm = new DaiAmm(address(this));
         Joseph joseph = daiAmm.joseph();
-        Milton milton = daiAmm.milton();
+        AmmTreasury ammTreasury = daiAmm.ammTreasury();
 
         joseph.setAutoRebalanceThreshold(0);
-        joseph.setMiltonStanleyBalanceRatio(1e16);
+        joseph.setAmmTreasuryAssetManagementBalanceRatio(1e16);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         vm.prank(user);
         joseph.provideLiquidity(depositAmount);
 
         vm.prank(user);
-        milton.openSwapPayFixed(totalAmount, 9e16, 100e18);
+        ammTreasury.openSwapPayFixed(totalAmount, 9e16, 100e18);
 
         joseph.rebalance();
 
-        uint256 balanceMiltonAfterRebalance = IIpToken(daiAmm.dai()).balanceOf(address(milton));
+        uint256 balanceAmmTreasuryAfterRebalance = IIpToken(daiAmm.dai()).balanceOf(address(ammTreasury));
 
         vm.roll(block.number + 10);
 
@@ -421,15 +421,15 @@ contract JosephRebalance is Test, TestCommons {
 
         //then
         vm.expectEmit(true, true, false, false);
-        emit Burn(address(milton), 1234);
+        emit Burn(address(ammTreasury), 1234);
 
         //when
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         uint256 userBalanceAfterClose = IIpToken(daiAmm.dai()).balanceOf(user);
 
         //then
-        assertTrue(balanceMiltonAfterRebalance < totalAmount, "balanceMiltonAfterRebalance < totalAmount not achieved");
+        assertTrue(balanceAmmTreasuryAfterRebalance < totalAmount, "balanceAmmTreasuryAfterRebalance < totalAmount not achieved");
         assertTrue(
             userBalanceAfterClose > userBalanceBeforeClose,
             "userBalanceAfterClose > userBalanceBeforeClose not achieved"

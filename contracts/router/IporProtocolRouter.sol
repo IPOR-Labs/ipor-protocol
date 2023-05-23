@@ -69,9 +69,15 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
             _reentrancyStatus = _ENTERED;
             return AMM_OPEN_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmCloseSwapService.closeSwapPayFixed.selector ||
-            sig == IAmmCloseSwapService.closeSwapReceiveFixed.selector ||
-            sig == IAmmCloseSwapService.closeSwaps.selector
+            sig == IAmmCloseSwapService.closeSwapPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapReceiveFixedDai.selector ||
+            sig == IAmmCloseSwapService.closeSwapsUsdt.selector ||
+            sig == IAmmCloseSwapService.closeSwapsUsdc.selector ||
+            sig == IAmmCloseSwapService.closeSwapsDai.selector
         ) {
             _whenNotPaused();
             _nonReentrant();
@@ -80,18 +86,30 @@ contract IporProtocolRouter is UUPSUpgradeable, AccessControl {
         } else if (sig == IAmmCloseSwapService.getPoolConfiguration.selector) {
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixed.selector ||
-            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixed.selector
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapReceiveFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsPayFixedDai.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdt.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedUsdc.selector ||
+            sig == IAmmCloseSwapService.emergencyCloseSwapsReceiveFixedDai.selector
         ) {
             _onlyOwner();
             _nonReentrant();
             _reentrancyStatus = _ENTERED;
             return AMM_CLOSE_SWAP_SERVICE_ADDRESS;
         } else if (
-            sig == IAmmPoolsService.provideLiquidity.selector ||
-            sig == IAmmPoolsService.redeem.selector ||
+            sig == IAmmPoolsService.provideLiquidityUsdt.selector ||
+            sig == IAmmPoolsService.provideLiquidityUsdc.selector ||
+            sig == IAmmPoolsService.provideLiquidityDai.selector ||
+            sig == IAmmPoolsService.redeemUsdt.selector ||
+            sig == IAmmPoolsService.redeemUsdc.selector ||
+            sig == IAmmPoolsService.redeemDai.selector ||
             sig == IAmmPoolsService.rebalance.selector
         ) {
             _whenNotPaused();

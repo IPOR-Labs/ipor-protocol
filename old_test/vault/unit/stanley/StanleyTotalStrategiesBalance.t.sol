@@ -4,13 +4,13 @@ pragma solidity 0.8.16;
 import {TestCommons} from "../../../TestCommons.sol";
 import {DataUtils} from "../../../utils/DataUtils.sol";
 import {TestConstants} from "../../../utils/TestConstants.sol";
-import {MockStrategy} from "contracts/mocks/stanley/MockStrategy.sol";
-import {StanleyDai} from "contracts/vault/StanleyDai.sol";
-import {StanleyUsdc} from "contracts/vault/StanleyUsdc.sol";
+import {MockStrategy} from "contracts/mocks/assetManagement/MockStrategy.sol";
+import {AssetManagementDai} from "contracts/vault/AssetManagementDai.sol";
+import {AssetManagementUsdc} from "contracts/vault/AssetManagementUsdc.sol";
 import {MockTestnetToken} from "contracts/mocks/tokens/MockTestnetToken.sol";
 import {IvToken} from "contracts/tokens/IvToken.sol";
 
-contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
+contract AssetManagementTotalStrategiesBalanceTest is TestCommons, DataUtils {
     MockStrategy internal _strategyAaveDai;
     MockStrategy internal _strategyCompoundDai;
     MockStrategy internal _strategyAaveUsdc;
@@ -21,8 +21,8 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
     MockTestnetToken internal _aUsdc;
     MockTestnetToken internal _cDai;
     MockTestnetToken internal _cUsdc;
-    StanleyDai internal _stanleyDai;
-    StanleyUsdc internal _stanleyUsdc;
+    AssetManagementDai internal _assetManagementDai;
+    AssetManagementUsdc internal _assetManagementUsdc;
     IvToken internal _ivTokenDai;
     IvToken internal _ivTokenUsdc;
 
@@ -33,14 +33,14 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         _strategyCompoundDai = new MockStrategy();
         _strategyCompoundDai.setAsset(address(_daiMockedToken));
         _strategyCompoundDai.setShareToken(address(_cDai));
-        _stanleyDai = getStanleyDai(
+        _assetManagementDai = getAssetManagementDai(
             address(_daiMockedToken),
             address(_ivTokenDai),
             address(_strategyAaveDai),
             address(_strategyCompoundDai)
         );
-        _stanleyDai.setMilton(_admin);
-        _ivTokenDai.setStanley(address(_stanleyDai));
+        _assetManagementDai.setAmmTreasury(_admin);
+        _ivTokenDai.setAssetManagement(address(_assetManagementDai));
     }
 
     function setUpStrategyUsdc() public {
@@ -50,14 +50,14 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         _strategyCompoundUsdc = new MockStrategy();
         _strategyCompoundUsdc.setAsset(address(_usdcMockedToken));
         _strategyCompoundUsdc.setShareToken(address(_cUsdc));
-        _stanleyUsdc = getStanleyUsdc(
+        _assetManagementUsdc = getAssetManagementUsdc(
             address(_usdcMockedToken),
             address(_ivTokenUsdc),
             address(_strategyAaveUsdc),
             address(_strategyCompoundUsdc)
         );
-        _stanleyUsdc.setMilton(_admin);
-        _ivTokenUsdc.setStanley(address(_stanleyUsdc));
+        _assetManagementUsdc.setAmmTreasury(_admin);
+        _ivTokenUsdc.setAssetManagement(address(_assetManagementUsdc));
     }
 
     function setUp() public {
@@ -82,64 +82,64 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
     function testShouldReturnBalanceFromAaveWhen18Decimals() public {
         // given
         uint256 expectedBalance = TestConstants.USD_10_000_18DEC;
-        _daiMockedToken.approve(address(_stanleyDai), expectedBalance);
+        _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
         _strategyAaveDai.setApr(555);
         _strategyCompoundDai.setApr(444);
-        _stanleyDai.deposit(expectedBalance);
+        _assetManagementDai.deposit(expectedBalance);
         // when
-        uint256 actualBalance = _stanleyDai.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenDai.balanceOf(_admin);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance);
         assertEq(actualBalance, expectedBalance);
     }
 
     function testShouldReturnBalanceFromCompound18Decimals() public {
         // given
         uint256 expectedBalance = TestConstants.USD_10_000_18DEC;
-        _daiMockedToken.approve(address(_stanleyDai), expectedBalance);
+        _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
         _strategyAaveDai.setApr(33333333);
         _strategyCompoundDai.setApr(55555555);
-        _stanleyDai.deposit(expectedBalance);
+        _assetManagementDai.deposit(expectedBalance);
         // when
-        uint256 actualBalance = _stanleyDai.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenDai.balanceOf(_admin);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenDai.balanceOf(_admin);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance);
         assertEq(actualBalance, expectedBalance);
     }
 
     function testShouldReturnSumOfBalancesFromAaveAndCompoundWhen18Decimals() public {
         // given
         uint256 expectedBalance = TestConstants.USD_20_000_18DEC;
-        _daiMockedToken.approve(address(_stanleyDai), expectedBalance);
+        _daiMockedToken.approve(address(_assetManagementDai), expectedBalance);
         _strategyAaveDai.setApr(33333333);
         _strategyCompoundDai.setApr(55555555);
-        _stanleyDai.deposit(TestConstants.USD_10_000_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_000_18DEC);
         _strategyAaveDai.setApr(55555555);
         _strategyCompoundDai.setApr(33333333);
-        _stanleyDai.deposit(TestConstants.USD_10_000_18DEC);
+        _assetManagementDai.deposit(TestConstants.USD_10_000_18DEC);
         // when
-        uint256 actualBalance = _stanleyDai.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementDai.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenDai.balanceOf(_admin);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenDai.balanceOf(_admin);
         assertEq(actualBalance, expectedBalance);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance);
     }
 
     function testShouldReturnBalanceFromAaveWhen6Decimals() public {
         // given
         uint256 expectedBalance18Decimals = TestConstants.USD_10_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_10_000_6DEC;
-        _usdcMockedToken.approve(address(_stanleyUsdc), expectedBalance6Decimals);
+        _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
         _strategyAaveUsdc.setApr(555);
         _strategyCompoundUsdc.setApr(444);
-        _stanleyUsdc.deposit(expectedBalance18Decimals);
+        _assetManagementUsdc.deposit(expectedBalance18Decimals);
         // when
-        uint256 actualBalance = _stanleyUsdc.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance18Decimals);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance18Decimals);
         assertEq(actualBalance, expectedBalance18Decimals);
     }
 
@@ -147,15 +147,15 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         // given
         uint256 expectedBalance18Decimals = TestConstants.USD_10_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_10_000_6DEC;
-        _usdcMockedToken.approve(address(_stanleyUsdc), expectedBalance6Decimals);
+        _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
         _strategyAaveUsdc.setApr(33333333);
         _strategyCompoundUsdc.setApr(55555555);
-        _stanleyUsdc.deposit(expectedBalance18Decimals);
+        _assetManagementUsdc.deposit(expectedBalance18Decimals);
         // when
-        uint256 actualBalance = _stanleyUsdc.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance18Decimals);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance18Decimals);
         assertEq(actualBalance, expectedBalance18Decimals);
     }
 
@@ -163,18 +163,18 @@ contract StanleyTotalStrategiesBalanceTest is TestCommons, DataUtils {
         // given
         uint256 expectedBalance18Decimals = TestConstants.USD_20_000_18DEC;
         uint256 expectedBalance6Decimals = TestConstants.USD_20_000_6DEC;
-        _usdcMockedToken.approve(address(_stanleyUsdc), expectedBalance6Decimals);
+        _usdcMockedToken.approve(address(_assetManagementUsdc), expectedBalance6Decimals);
         _strategyAaveUsdc.setApr(33333333);
         _strategyCompoundUsdc.setApr(55555555);
-        _stanleyUsdc.deposit(TestConstants.USD_10_000_18DEC);
+        _assetManagementUsdc.deposit(TestConstants.USD_10_000_18DEC);
         _strategyAaveUsdc.setApr(55555555);
         _strategyCompoundUsdc.setApr(33333333);
-        _stanleyUsdc.deposit(TestConstants.USD_10_000_18DEC);
+        _assetManagementUsdc.deposit(TestConstants.USD_10_000_18DEC);
         // when
-        uint256 actualBalance = _stanleyUsdc.totalBalance(_admin);
+        uint256 actualBalance = _assetManagementUsdc.totalBalance(_admin);
         // then
-        uint256 actualMiltonIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
+        uint256 actualAmmTreasuryIvTokenBalance = _ivTokenUsdc.balanceOf(_admin);
         assertEq(actualBalance, expectedBalance18Decimals);
-        assertEq(actualMiltonIvTokenBalance, expectedBalance18Decimals);
+        assertEq(actualAmmTreasuryIvTokenBalance, expectedBalance18Decimals);
     }
 }

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-import "./Stanley.sol";
+import "./AssetManagement.sol";
 
-contract StanleyUsdc is Stanley {
+contract AssetManagementDai is AssetManagement {
     function _getDecimals() internal pure virtual override returns (uint256) {
-        return 6;
+        return 18;
     }
 }

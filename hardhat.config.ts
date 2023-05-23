@@ -71,7 +71,7 @@ export default {
         runOnCompile: false,
         only: [
             "contracts/amm/Milton.sol",
-            "contracts/amm/MiltonStorage.sol",
+            "contracts/amm/AmmStorage.sol",
             "contracts/amm/MiltonSpreadModel.sol", ,
             "contracts/facades/cockpit/CockpitDataProvider.sol",
             "contracts/facades/MiltonFacadeDataProvider.sol",
@@ -79,7 +79,7 @@ export default {
             "contracts/oracles/IporOracle.sol",
             "contracts/tokens/IpToken.sol",
             "contracts/tokens/IvToken.sol",
-            "contracts/vault/Stanley.sol",
+            "contracts/vault/AssetManagement.sol",
             "contracts/vault/strategies/StrategyCompound.sol",
             "contracts/vault/strategies/StrategyAave.sol",
         ],

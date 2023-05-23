@@ -2,34 +2,34 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "contracts/itf/ItfStanley.sol";
-import "contracts/itf/ItfStanley6D.sol";
-import "contracts/itf/ItfStanley18D.sol";
+import "contracts/itf/ItfAssetManagement.sol";
+import "contracts/itf/ItfAssetManagement6D.sol";
+import "contracts/itf/ItfAssetManagement18D.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/vault/strategies/StrategyAave.sol";
-import "contracts/vault/StanleyDai.sol";
-import "contracts/vault/StanleyUsdc.sol";
+import "contracts/vault/AssetManagementDai.sol";
+import "contracts/vault/AssetManagementUsdc.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/tokens/AAVEMockedToken.sol";
-import "contracts/mocks/stanley/MockCase2Stanley.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdt.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockAUsdc.sol";
-import "contracts/mocks/stanley/aave/aTokens/MockADai.sol";
-import "contracts/mocks/stanley/aave/MockADAI.sol";
-import "contracts/mocks/stanley/aave/MockADAI.sol";
-import "contracts/mocks/stanley/aave/MockLendingPoolAave.sol";
-import "contracts/mocks/stanley/aave/MockProviderAave.sol";
-import "contracts/mocks/stanley/aave/MockStakedAave.sol";
-import "contracts/mocks/stanley/aave/MockAaveIncentivesController.sol";
-import "contracts/mocks/stanley/compound/MockWhitePaper.sol";
-import "contracts/mocks/stanley/compound/MockCToken.sol";
-import "contracts/mocks/stanley/compound/MockComptroller.sol";
-import "contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "contracts/mocks/assetManagement/MockCase2AssetManagement.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdt.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockAUsdc.sol";
+import "contracts/mocks/assetManagement/aave/aTokens/MockADai.sol";
+import "contracts/mocks/assetManagement/aave/MockADAI.sol";
+import "contracts/mocks/assetManagement/aave/MockADAI.sol";
+import "contracts/mocks/assetManagement/aave/MockLendingPoolAave.sol";
+import "contracts/mocks/assetManagement/aave/MockProviderAave.sol";
+import "contracts/mocks/assetManagement/aave/MockStakedAave.sol";
+import "contracts/mocks/assetManagement/aave/MockAaveIncentivesController.sol";
+import "contracts/mocks/assetManagement/compound/MockWhitePaper.sol";
+import "contracts/mocks/assetManagement/compound/MockCToken.sol";
+import "contracts/mocks/assetManagement/compound/MockComptroller.sol";
+import "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
 
 import "contracts/mocks/tokens/MockedCOMPToken.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
 
-contract StanleyUtils {
+contract AssetManagementUtils {
     function getTokenAUsdt() public returns (MockAUsdt) {
         return new MockAUsdt();
     }
@@ -64,17 +64,17 @@ contract StanleyUtils {
         return new MockedCOMPToken(1000000000000000000000000000000, 18);
     }
 
-    function getItfStanleyUsdt(address asset) public returns (ItfStanley itfStanley) {
+    function getItfAssetManagementUsdt(address asset) public returns (ItfAssetManagement itfAssetManagement) {
         IvToken ivToken = new IvToken("IV USDT", "ivUSDT", asset);
 
         MockTestnetStrategy strategyAave = getMockTestnetStrategyAaveUsdt(asset);
         MockTestnetStrategy strategyCompound = getMockTestnetStrategyCompoundUsdt(asset);
 
-        ItfStanley6D itfStanleyImpl = new ItfStanley6D();
+        ItfAssetManagement6D itfAssetManagementImpl = new ItfAssetManagement6D();
 
-        address itfStanleyProxyAddress = address(
+        address itfAssetManagementProxyAddress = address(
             new ERC1967Proxy(
-                address(itfStanleyImpl),
+                address(itfAssetManagementImpl),
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
                     asset,
@@ -85,24 +85,24 @@ contract StanleyUtils {
             )
         );
 
-        ivToken.setStanley(itfStanleyProxyAddress);
-        strategyAave.setStanley(itfStanleyProxyAddress);
-        strategyCompound.setStanley(itfStanleyProxyAddress);
+        ivToken.setAssetManagement(itfAssetManagementProxyAddress);
+        strategyAave.setAssetManagement(itfAssetManagementProxyAddress);
+        strategyCompound.setAssetManagement(itfAssetManagementProxyAddress);
 
-        return ItfStanley(itfStanleyProxyAddress);
+        return ItfAssetManagement(itfAssetManagementProxyAddress);
     }
 
-    function getItfStanleyDai(address asset) public returns (ItfStanley itfStanley) {
+    function getItfAssetManagementDai(address asset) public returns (ItfAssetManagement itfAssetManagement) {
         IvToken ivToken = new IvToken("IV DAI", "ivDAI", asset);
 
         MockTestnetStrategy strategyAave = getMockTestnetStrategyAaveDai(asset);
         MockTestnetStrategy strategyCompound = getMockTestnetStrategyCompoundDai(asset);
 
-        ItfStanley18D itfStanleyImpl = new ItfStanley18D();
+        ItfAssetManagement18D itfAssetManagementImpl = new ItfAssetManagement18D();
 
-        address itfStanleyProxyAddress = address(
+        address itfAssetManagementProxyAddress = address(
             new ERC1967Proxy(
-                address(itfStanleyImpl),
+                address(itfAssetManagementImpl),
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
                     asset,
@@ -113,23 +113,23 @@ contract StanleyUtils {
             )
         );
 
-        ivToken.setStanley(itfStanleyProxyAddress);
-        strategyAave.setStanley(itfStanleyProxyAddress);
-        strategyCompound.setStanley(itfStanleyProxyAddress);
+        ivToken.setAssetManagement(itfAssetManagementProxyAddress);
+        strategyAave.setAssetManagement(itfAssetManagementProxyAddress);
+        strategyCompound.setAssetManagement(itfAssetManagementProxyAddress);
 
-        return ItfStanley(itfStanleyProxyAddress);
+        return ItfAssetManagement(itfAssetManagementProxyAddress);
     }
 
-    function getItfStanleyDai(
+    function getItfAssetManagementDai(
         address asset,
         address ivToken,
         address strategyAave,
         address strategyCompound
-    ) public returns (ItfStanley18D) {
-        ItfStanley18D itfStanleyImpl = new ItfStanley18D();
-        address itfStanleyProxyAddress = address(
+    ) public returns (ItfAssetManagement18D) {
+        ItfAssetManagement18D itfAssetManagementImpl = new ItfAssetManagement18D();
+        address itfAssetManagementProxyAddress = address(
             new ERC1967Proxy(
-                address(itfStanleyImpl),
+                address(itfAssetManagementImpl),
                 abi.encodeWithSignature(
                     "initialize(address,address,address,address)",
                     asset,
@@ -139,7 +139,7 @@ contract StanleyUtils {
                 )
             )
         );
-        return ItfStanley18D(itfStanleyProxyAddress);
+        return ItfAssetManagement18D(itfAssetManagementProxyAddress);
     }
 
     function getMockTestnetStrategyAaveUsdt(address asset) public returns (MockTestnetStrategy) {
@@ -206,70 +206,70 @@ contract StanleyUtils {
         return MockTestnetStrategy(address(strategyProxy));
     }
 
-    function getMockCase0Stanley(address asset) public returns (MockCaseBaseStanley) {
-        MockCaseBaseStanley stanley = new MockCaseBaseStanley();
-        stanley.setAsset(asset);
-        return stanley;
+    function getMockCase0AssetManagement(address asset) public returns (MockCaseBaseAssetManagement) {
+        MockCaseBaseAssetManagement assetManagement = new MockCaseBaseAssetManagement();
+        assetManagement.setAsset(asset);
+        return assetManagement;
     }
 
-    function getMockCaseBaseStanley(address asset) public returns (MockCaseBaseStanley) {
-        MockCaseBaseStanley stanley = new MockCaseBaseStanley();
-        stanley.setAsset(asset);
-        return stanley;
+    function getMockCaseBaseAssetManagement(address asset) public returns (MockCaseBaseAssetManagement) {
+        MockCaseBaseAssetManagement assetManagement = new MockCaseBaseAssetManagement();
+        assetManagement.setAsset(asset);
+        return assetManagement;
     }
 
-    function _getMockCase0Stanleys(
+    function _getMockCase0AssetManagements(
         address tokenUsdt,
         address tokenUsdc,
         address tokenDai
     )
         internal
         returns (
-            MockCaseBaseStanley,
-            MockCaseBaseStanley,
-            MockCaseBaseStanley
+            MockCaseBaseAssetManagement,
+            MockCaseBaseAssetManagement,
+            MockCaseBaseAssetManagement
         )
     {
-        MockCaseBaseStanley mockStanleyUsdt = new MockCaseBaseStanley();
-        mockStanleyUsdt.setAsset(tokenUsdt);
-        MockCaseBaseStanley mockStanleyUsdc = new MockCaseBaseStanley();
-        mockStanleyUsdc.setAsset(tokenUsdc);
-        MockCaseBaseStanley mockStanleyDai = new MockCaseBaseStanley();
-        mockStanleyDai.setAsset(tokenDai);
-        return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
+        MockCaseBaseAssetManagement mockAssetManagementUsdt = new MockCaseBaseAssetManagement();
+        mockAssetManagementUsdt.setAsset(tokenUsdt);
+        MockCaseBaseAssetManagement mockAssetManagementUsdc = new MockCaseBaseAssetManagement();
+        mockAssetManagementUsdc.setAsset(tokenUsdc);
+        MockCaseBaseAssetManagement mockAssetManagementDai = new MockCaseBaseAssetManagement();
+        mockAssetManagementDai.setAsset(tokenDai);
+        return (mockAssetManagementUsdt, mockAssetManagementUsdc, mockAssetManagementDai);
     }
 
-    function getMockCase1Stanley(address asset) public returns (MockCaseBaseStanley) {
-        MockCaseBaseStanley stanley = new MockCaseBaseStanley();
-        stanley.setAsset(asset);
-        return stanley;
+    function getMockCase1AssetManagement(address asset) public returns (MockCaseBaseAssetManagement) {
+        MockCaseBaseAssetManagement assetManagement = new MockCaseBaseAssetManagement();
+        assetManagement.setAsset(asset);
+        return assetManagement;
     }
 
-    function _getMockCase1Stanleys(
+    function _getMockCase1AssetManagements(
         address tokenUsdt,
         address tokenUsdc,
         address tokenDai
     )
         internal
         returns (
-            MockCaseBaseStanley,
-            MockCaseBaseStanley,
-            MockCaseBaseStanley
+            MockCaseBaseAssetManagement,
+            MockCaseBaseAssetManagement,
+            MockCaseBaseAssetManagement
         )
     {
-        MockCaseBaseStanley mockStanleyUsdt = new MockCaseBaseStanley();
-        mockStanleyUsdt.setAsset(tokenUsdt);
-        MockCaseBaseStanley mockStanleyUsdc = new MockCaseBaseStanley();
-        mockStanleyUsdc.setAsset(tokenUsdc);
-        MockCaseBaseStanley mockStanleyDai = new MockCaseBaseStanley();
-        mockStanleyDai.setAsset(tokenDai);
-        return (mockStanleyUsdt, mockStanleyUsdc, mockStanleyDai);
+        MockCaseBaseAssetManagement mockAssetManagementUsdt = new MockCaseBaseAssetManagement();
+        mockAssetManagementUsdt.setAsset(tokenUsdt);
+        MockCaseBaseAssetManagement mockAssetManagementUsdc = new MockCaseBaseAssetManagement();
+        mockAssetManagementUsdc.setAsset(tokenUsdc);
+        MockCaseBaseAssetManagement mockAssetManagementDai = new MockCaseBaseAssetManagement();
+        mockAssetManagementDai.setAsset(tokenDai);
+        return (mockAssetManagementUsdt, mockAssetManagementUsdc, mockAssetManagementDai);
     }
 
-    function getMockCase2Stanley(address asset) public returns (MockCase2Stanley) {
-        MockCase2Stanley stanley = new MockCase2Stanley();
-        stanley.setAsset(asset);
-        return stanley;
+    function getMockCase2AssetManagement(address asset) public returns (MockCase2AssetManagement) {
+        MockCase2AssetManagement assetManagement = new MockCase2AssetManagement();
+        assetManagement.setAsset(asset);
+        return assetManagement;
     }
 
     function getMockLendingPoolAave(
@@ -366,15 +366,15 @@ contract StanleyUtils {
         return StrategyCompound(address(strategyProxy));
     }
 
-    function getStanleyDai(
+    function getAssetManagementDai(
         address asset,
         address ivToken,
         address strategyAave,
         address strategyCompound
-    ) public returns (StanleyDai) {
-        StanleyDai stanleyDaiImpl = new StanleyDai();
-        ERC1967Proxy stanleyDaiProxy = new ERC1967Proxy(
-            address(stanleyDaiImpl),
+    ) public returns (AssetManagementDai) {
+        AssetManagementDai assetManagementDaiImpl = new AssetManagementDai();
+        ERC1967Proxy assetManagementDaiProxy = new ERC1967Proxy(
+            address(assetManagementDaiImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
                 address(asset),
@@ -383,18 +383,18 @@ contract StanleyUtils {
                 address(strategyCompound)
             )
         );
-        return StanleyDai(address(stanleyDaiProxy));
+        return AssetManagementDai(address(assetManagementDaiProxy));
     }
 
-    function getStanleyUsdc(
+    function getAssetManagementUsdc(
         address asset,
         address ivToken,
         address strategyAave,
         address strategyCompound
-    ) public returns (StanleyUsdc) {
-        StanleyUsdc stanleyUsdcImpl = new StanleyUsdc();
-        ERC1967Proxy stanleyUsdcProxy = new ERC1967Proxy(
-            address(stanleyUsdcImpl),
+    ) public returns (AssetManagementUsdc) {
+        AssetManagementUsdc assetManagementUsdcImpl = new AssetManagementUsdc();
+        ERC1967Proxy assetManagementUsdcProxy = new ERC1967Proxy(
+            address(assetManagementUsdcImpl),
             abi.encodeWithSignature(
                 "initialize(address,address,address,address)",
                 address(asset),
@@ -403,7 +403,7 @@ contract StanleyUtils {
                 address(strategyCompound)
             )
         );
-        return StanleyUsdc(address(stanleyUsdcProxy));
+        return AssetManagementUsdc(address(assetManagementUsdcProxy));
     }
 
     function getMockTestnetStrategy(address asset, address shareToken) public returns (MockTestnetStrategy) {

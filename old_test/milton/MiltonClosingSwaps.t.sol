@@ -9,7 +9,7 @@ import "contracts/libraries/Constants.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 
-contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
+contract AmmTreasuryClosingSwaps is Test, TestCommons, DataUtils {
     address internal _buyer;
     address internal _community;
     address internal _liquidator;
@@ -34,62 +34,62 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
     function testShouldAddSwapLiquidatorAsIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
         //when
         vm.prank(_admin);
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //then
-        bool isLiquidator = milton.isSwapLiquidator(_liquidator);
+        bool isLiquidator = ammTreasury.isSwapLiquidator(_liquidator);
         assertEq(isLiquidator, true);
     }
 
     function testShouldRemoveSwapLiquidatorAsIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_admin);
-        milton.removeSwapLiquidator(_liquidator);
+        ammTreasury.removeSwapLiquidator(_liquidator);
 
         //then
-        bool isLiquidator = milton.isSwapLiquidator(_liquidator);
+        bool isLiquidator = ammTreasury.isSwapLiquidator(_liquidator);
         assertEq(isLiquidator, false);
     }
 
     function testShouldNotAddLiquidatorAsNotIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
         //when
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         vm.prank(_buyer);
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
     }
 
     function testShouldNotRemoveLiquidatorAsNotIporOwner() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
         vm.prank(_buyer);
-        milton.removeSwapLiquidator(_liquidator);
+        ammTreasury.removeSwapLiquidator(_liquidator);
     }
 
     function testShouldClosePayFixedSwapAsIporOwnerBeforeMaturity() public {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -103,19 +103,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(200);
 
         //when
         vm.prank(_admin);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -129,7 +129,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -143,19 +143,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -169,7 +169,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -183,19 +183,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 20 hours);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -209,7 +209,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -223,20 +223,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours);
 
         //when
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -252,7 +252,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -266,20 +266,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 30 minutes);
 
         //when
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -295,7 +295,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -309,22 +309,22 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -340,7 +340,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -354,22 +354,22 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -383,7 +383,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -397,19 +397,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -423,7 +423,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -437,20 +437,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -464,7 +464,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -478,20 +478,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -505,7 +505,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -519,20 +519,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -546,7 +546,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -560,19 +560,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(200);
 
         //when
         vm.prank(_admin);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -586,7 +586,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -600,19 +600,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -626,7 +626,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -640,19 +640,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 20 hours);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -666,7 +666,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -680,20 +680,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -709,7 +709,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -723,20 +723,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 anyoneBalanceBefore = _iporProtocol.asset.balanceOf(_community);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 30 minutes);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -752,7 +752,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -766,22 +766,22 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -797,7 +797,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -811,22 +811,22 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 4 hours - 1 seconds);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -840,7 +840,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -854,19 +854,19 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -880,7 +880,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -894,20 +894,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -921,7 +921,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -935,20 +935,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days + 1 seconds);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -962,7 +962,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -976,20 +976,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours - 1);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_CLOSING_IS_TOO_EARLY));
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1003,7 +1003,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1017,20 +1017,20 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -1048,7 +1048,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1068,29 +1068,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1119,7 +1119,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1139,29 +1139,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1188,7 +1188,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1208,27 +1208,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1344e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1255,7 +1255,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1275,27 +1275,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1340e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1322,7 +1322,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1342,29 +1342,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1391,7 +1391,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1411,27 +1411,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1460,7 +1460,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1480,28 +1480,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1305e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1532,7 +1532,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1552,28 +1552,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1300e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1602,7 +1602,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1622,30 +1622,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1674,7 +1674,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1694,30 +1694,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1746,7 +1746,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1766,28 +1766,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1816,7 +1816,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1836,28 +1836,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1886,7 +1886,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1906,30 +1906,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -1958,7 +1958,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -1978,28 +1978,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -2028,7 +2028,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2048,29 +2048,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -2099,7 +2099,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2119,29 +2119,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -2170,7 +2170,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2190,29 +2190,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -2241,7 +2241,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2261,28 +2261,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1300e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapPayFixed(1);
 
-        int256 payoff = milton.calculatePayoffPayFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffPayFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapPayFixed(1);
+        ammTreasury.closeSwapPayFixed(1);
 
         //then
         assertEq(
@@ -2313,7 +2313,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2333,29 +2333,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2387,7 +2387,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2407,29 +2407,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1295e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2455,7 +2455,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2475,27 +2475,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1344e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2522,7 +2522,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2542,27 +2542,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1340e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2589,7 +2589,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2609,29 +2609,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2658,7 +2658,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2678,27 +2678,27 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1290e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2725,7 +2725,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2745,28 +2745,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1300e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2797,7 +2797,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2817,28 +2817,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1305e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2871,7 +2871,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2891,28 +2891,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1300e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -2941,7 +2941,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -2961,30 +2961,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3013,7 +3013,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3033,30 +3033,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3085,7 +3085,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3105,28 +3105,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3155,7 +3155,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3175,28 +3175,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 24 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3225,7 +3225,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3245,30 +3245,30 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
-        milton.addSwapLiquidator(_liquidator);
+        ammTreasury.addSwapLiquidator(_liquidator);
 
         //when
         vm.prank(_liquidator);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3297,7 +3297,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3317,28 +3317,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_buyer);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3367,7 +3367,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3387,29 +3387,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3438,7 +3438,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3458,29 +3458,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours + 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3509,7 +3509,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3529,29 +3529,29 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1400e14);
 
         vm.warp(100 + 28 days - 1 hours - 1 seconds);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
-        vm.expectRevert(bytes(MiltonErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
+        vm.expectRevert(bytes(AmmErrors.CANNOT_CLOSE_SWAP_SENDER_IS_NOT_BUYER_NOR_LIQUIDATOR));
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(
@@ -3580,7 +3580,7 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         //given
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         MockTestnetToken asset = _iporProtocol.asset;
-        ItfMilton milton = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasury = _iporProtocol.ammTreasury;
         ItfIporOracle iporOracle = _iporProtocol.iporOracle;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -3600,28 +3600,28 @@ contract MiltonClosingSwaps is Test, TestCommons, DataUtils {
         asset.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        asset.approve(address(milton), totalAmount);
+        asset.approve(address(ammTreasury), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 communityBalanceBefore = _iporProtocol.asset.balanceOf(_community);
         uint256 liquidatorBalanceBefore = _iporProtocol.asset.balanceOf(_liquidator);
 
         vm.prank(_buyer);
-        milton.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasury.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.prank(_userOne);
         iporOracle.updateIndex(address(asset), 1300e14);
 
         vm.warp(100 + 28 days + 1 hours);
 
-        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory iporSwap = _iporProtocol.ammStorage.getSwapReceiveFixed(1);
 
-        int256 payoff = milton.calculatePayoffReceiveFixed(iporSwap);
+        int256 payoff = ammTreasury.calculatePayoffReceiveFixed(iporSwap);
         uint256 absPayoff = IporMath.absoluteValue(payoff);
 
         //when
         vm.prank(_community);
-        milton.closeSwapReceiveFixed(1);
+        ammTreasury.closeSwapReceiveFixed(1);
 
         //then
         assertEq(

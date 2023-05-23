@@ -3,22 +3,21 @@ pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "../interfaces/types/MiltonStorageTypes.sol";
-import "../interfaces/types/MiltonFacadeTypes.sol";
+import "../interfaces/types/AmmStorageTypes.sol";
+import "../interfaces/types/AmmFacadeTypes.sol";
 import "../interfaces/IIporOracle.sol";
-import "../interfaces/IMilton.sol";
-import "../interfaces/IMiltonInternal.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMiltonSpreadModel.sol";
-import "../interfaces/IMiltonFacadeDataProvider.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmStorage.sol";
+import "../interfaces/IAmmTreasurySpreadModel.sol";
+import "../interfaces/IAmmTreasuryFacadeDataProvider.sol";
 import "../security/IporOwnableUpgradeable.sol";
-import "../amm/MiltonStorage.sol";
+import "../amm/AmmStorage.sol";
 import "../libraries/AmmLib.sol";
 
-contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, IMiltonFacadeDataProvider {
+contract AmmTreasuryFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable, IAmmTreasuryFacadeDataProvider {
     address internal _iporOracle;
     address[] internal _assets;
-    mapping(address => MiltonFacadeTypes.AssetConfig) internal _assetConfig;
+    mapping(address => AmmFacadeTypes.AssetConfig) internal _assetConfig;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -28,12 +27,11 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
     function initialize(
         address iporOracle,
         address[] memory assets,
-        address[] memory miltons,
-        address[] memory miltonStorages,
-        address[] memory josephs
+        address[] memory ammTreasurys,
+        address[] memory ammStorages
     ) public initializer {
         require(
-            assets.length == miltons.length && assets.length == miltonStorages.length,
+            assets.length == ammTreasurys.length && assets.length == ammStorages.length,
             IporErrors.INPUT_ARRAYS_LENGTH_MISMATCH
         );
         require(iporOracle != address(0), IporErrors.WRONG_ADDRESS);
@@ -45,11 +43,10 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
         uint256 assetsLength = assets.length;
         for (uint256 i = 0; i != assetsLength; i++) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(miltons[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(miltonStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
-            require(josephs[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(ammTreasurys[i] != address(0), IporErrors.WRONG_ADDRESS);
+            require(ammStorages[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _assetConfig[assets[i]] = MiltonFacadeTypes.AssetConfig(miltons[i], miltonStorages[i], josephs[i]);
+            _assetConfig[assets[i]] = AmmFacadeTypes.AssetConfig(ammTreasurys[i], ammStorages[i]);
         }
         _assets = assets;
     }
@@ -58,10 +55,10 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
         return 2;
     }
 
-    function getConfiguration() external view override returns (MiltonFacadeTypes.AssetConfiguration[] memory) {
+    function getConfiguration() external view override returns (AmmFacadeTypes.AssetConfiguration[] memory) {
         uint256 timestamp = block.timestamp;
         uint256 assetsLength = _assets.length;
-        MiltonFacadeTypes.AssetConfiguration[] memory config = new MiltonFacadeTypes.AssetConfiguration[](assetsLength);
+        AmmFacadeTypes.AssetConfiguration[] memory config = new AmmFacadeTypes.AssetConfiguration[](assetsLength);
 
         for (uint256 i = 0; i != assetsLength; i++) {
             config[i] = _createIporAssetConfig(_assets[i], timestamp);
@@ -69,18 +66,18 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
         return config;
     }
 
-    function getBalance(address asset) external view override returns (MiltonFacadeTypes.Balance memory balance) {
-        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+    function getBalance(address asset) external view override returns (AmmFacadeTypes.Balance memory balance) {
+        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        IMiltonStorage miltonStorage = IMiltonStorage(config.miltonStorage);
-        (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = miltonStorage
+        IAmmStorage ammStorage = IAmmStorage(config.ammStorage);
+        (balance.totalNotionalPayFixed, balance.totalNotionalReceiveFixed) = ammStorage
             .getTotalOutstandingNotional();
 
-        //        IMiltonInternal milton = IMiltonInternal(config.milton);
-        IporTypes.MiltonBalancesMemory memory accruedBalance;
+        //        IAmmTreasury ammTreasury = IAmmTreasury(config.ammTreasury);
+        IporTypes.AmmBalancesMemory memory accruedBalance;
         //        = AmmLib.getAccruedBalance(
-        //            address(config.miltonStorage),
-        //            address(IJosephInternal(config.joseph).getStanley())
+        //            address(config.ammStorage),
+        //            address(IJosephInternal(config.joseph).getAssetManagement())
         //        );
 
         balance.totalCollateralPayFixed = accruedBalance.totalCollateralPayFixed;
@@ -89,7 +86,7 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
     }
 
     function getIpTokenExchangeRate(address asset) external view override returns (uint256) {
-        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
         //        IJoseph joseph = IJoseph(config.joseph);
         uint256 result; // = joseph.calculateExchangeRate();
         return result;
@@ -102,43 +99,43 @@ contract MiltonFacadeDataProvider is Initializable, UUPSUpgradeable, IporOwnable
     function _createIporAssetConfig(address asset, uint256 timestamp)
         internal
         view
-        returns (MiltonFacadeTypes.AssetConfiguration memory assetConfiguration)
+        returns (AmmFacadeTypes.AssetConfiguration memory assetConfiguration)
     {
-        MiltonFacadeTypes.AssetConfig memory config = _assetConfig[asset];
+        AmmFacadeTypes.AssetConfig memory config = _assetConfig[asset];
 
-        //        IMiltonInternal milton = IMiltonInternal(config.milton);
+        //        IAmmTreasury ammTreasury = IAmmTreasury(config.ammTreasury);
         //        IJosephInternal joseph = IJosephInternal(config.joseph);
 
-        //        IMiltonSpreadModel spreadModel = IMiltonSpreadModel(milton.getMiltonSpreadModel());
+        //        IAmmTreasurySpreadModel spreadModel = IAmmTreasurySpreadModel(ammTreasury.getAmmTreasurySpreadModel());
         //        IporTypes.AccruedIpor memory accruedIpor = IIporOracle(_getIporOracle()).getAccruedIndex(timestamp, asset);
 
-        //        IporTypes.MiltonBalancesMemory memory balance = AmmLib.getAccruedBalance(
-        //            address(config.miltonStorage),
-        //            address(joseph.getStanley())
+        //        IporTypes.AmmBalancesMemory memory balance = AmmLib.getAccruedBalance(
+        //            address(config.ammStorage),
+        //            address(joseph.getAssetManagement())
         //        );
 
         //TODO: fix it
         uint256 maxLeveragePayFixed;
-        uint256 maxLeverageReceiveFixed; // = milton.getMaxLeverage();
+        uint256 maxLeverageReceiveFixed; // = ammTreasury.getMaxLeverage();
 
         uint256 maxUtilizationRatePayFixed;
         uint256 maxUtilizationRateReceiveFixed;
         //        =
-        //            milton.getMaxLpUtilizationPerLegRate();
+        //            ammTreasury.getMaxLpUtilizationPerLegRate();
 
-        assetConfiguration = MiltonFacadeTypes.AssetConfiguration(
+        assetConfiguration = AmmFacadeTypes.AssetConfiguration(
             asset,
             0, //TODO:fixit
-            //            milton.getMinLeverage(),
+            //            ammTreasury.getMinLeverage(),
             maxLeveragePayFixed,
             maxLeverageReceiveFixed,
-            0, //milton.getOpeningFeeRate(), TODO: fixit
-            0, // milton.getIporPublicationFee(), TODO: fixit
-            0, // milton.getWadLiquidationDepositAmount(), TODO: fixit
+            0, //ammTreasury.getOpeningFeeRate(), TODO: fixit
+            0, // ammTreasury.getIporPublicationFee(), TODO: fixit
+            0, // ammTreasury.getWadLiquidationDepositAmount(), TODO: fixit
             0, //spreadModel.calculateSpreadPayFixed(accruedIpor, balance),//TODO:fixit
             0, //spreadModel.calculateSpreadReceiveFixed(accruedIpor, balance),//TODO fixit
             0, //TODO:fixit
-            //            milton.getMaxLpUtilizationRate(),
+            //            ammTreasury.getMaxLpUtilizationRate(),
             maxUtilizationRatePayFixed,
             maxUtilizationRateReceiveFixed,
             0, //joseph.getMaxLiquidityPoolBalance() * Constants.D18, //TODO:fixit

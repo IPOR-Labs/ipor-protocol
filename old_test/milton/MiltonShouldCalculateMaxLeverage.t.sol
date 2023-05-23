@@ -6,7 +6,7 @@ import "../utils/DataUtils.sol";
 import "../utils/TestConstants.sol";
 import "../TestCommons.sol";
 
-contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
+contract AmmTreasuryShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
 
     BuilderUtils.IporProtocol internal _iporProtocolDai;
@@ -208,7 +208,7 @@ contract MiltonShouldCalculateMaxLeverageTest is Test, TestCommons, DataUtils {
         );
 
         //when
-        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = iporProtocol.milton.getMaxLeverage();
+        (uint256 maxLeveragePayFixed, uint256 maxLeverageReceiveFixed) = iporProtocol.ammTreasury.getMaxLeverage();
 
         //then
         assertEq(maxLeveragePayFixed, expectedMaxLeveragePayFixed);

@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
-import "../interfaces/types/MiltonFacadeTypes.sol";
+import "../interfaces/types/AmmFacadeTypes.sol";
 
-/// @title Interface for reading on-chain data related to Milton Automated Market Maker.
-interface IMiltonFacadeDataProvider {
-    /// @notice Returns current version of Milton Facade Data Provider
+/// @title Interface for reading on-chain data related to AmmTreasury Automated Market Maker.
+interface IAmmTreasuryFacadeDataProvider {
+    /// @notice Returns current version of AmmTreasury Facade Data Provider
     /// @dev Increase number when implementation inside source code is different that implementation deployed on Mainnet
-    /// @return current Milton Facade Data Provider version
+    /// @return current AmmTreasury Facade Data Provider version
     function getVersion() external pure returns (uint256);
 
     /// @notice Gets required configuration for frontend (webapp etc.), to open, close position, provide and redeem liquidity.
@@ -15,12 +15,12 @@ interface IMiltonFacadeDataProvider {
     function getConfiguration()
         external
         view
-        returns (MiltonFacadeTypes.AssetConfiguration[] memory);
+        returns (AmmFacadeTypes.AssetConfiguration[] memory);
 
-    /// @notice Gets Milton balances for given asset.
+    /// @notice Gets AmmTreasury balances for given asset.
     /// @param asset asset address
     /// @return balance structure
-    function getBalance(address asset) external view returns (MiltonFacadeTypes.Balance memory);
+    function getBalance(address asset) external view returns (AmmFacadeTypes.Balance memory);
 
     /// @notice Gets ipToken exchange rate for a given asset.
     /// @param asset asset address

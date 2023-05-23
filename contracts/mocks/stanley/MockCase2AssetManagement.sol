@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.16;
-import "./MockCaseBaseStanley.sol";
+import "./MockCaseBaseAssetManagement.sol";
 
-contract MockCase2Stanley is MockCaseBaseStanley {
+contract MockCase2AssetManagement is MockCaseBaseAssetManagement {
 
     //@dev withdraw 80%
     function _withdrawRate() internal pure override returns (uint256) {

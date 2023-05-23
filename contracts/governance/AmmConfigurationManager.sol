@@ -3,7 +3,7 @@ pragma solidity 0.8.16;
 
 import "../libraries/Constants.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/JosephErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/StorageLib.sol";
 
 library AmmConfigurationManager {
@@ -129,8 +129,8 @@ library AmmConfigurationManager {
     /// @dev key - asset address, value - ratio
     function setAmmPoolsAndAssetManagementRatio(address asset, uint256 newRatio) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
-        require(newRatio > 0, JosephErrors.MILTON_STANLEY_RATIO);
-        require(newRatio < 1e18, JosephErrors.MILTON_STANLEY_RATIO);
+        require(newRatio > 0, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
+        require(newRatio < 1e18, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
 
         mapping(address => uint256) storage ratio = StorageLib.getAmmPoolsAndAssetManagementRatioStorage().value;
         uint256 oldRatio = ratio[asset];

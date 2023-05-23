@@ -7,7 +7,7 @@ import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 
-contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasurySoapTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     IporProtocolFactory.AmmConfig private _ammCfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
@@ -31,26 +31,26 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _ammCfg.iporOracleUpdater = _userOne;
         _ammCfg.iporRiskManagementOracleUpdater = _userOne;
 
-        _ammCfg.miltonDaiTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _ammCfg.miltonUsdcTestCase = BuilderUtils.MiltonTestCase.CASE0;
-        _ammCfg.miltonUsdtTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _ammCfg.ammTreasuryDaiTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
+        _ammCfg.ammTreasuryUsdcTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
+        _ammCfg.ammTreasuryUsdtTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
     }
 
     function testShouldCalculateSoapWhenNoDerivativesSoapEqualZero() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
-        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.ammTreasury);
         // then
         assertEq(soap, TestConstants.ZERO_INT);
     }
 
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculate() public {
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE5;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_6_18DEC);
 
@@ -65,14 +65,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.ammTreasury);
 
         // then
         assertEq(soap, TestConstants.ZERO_INT);
@@ -81,7 +81,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIPayFixedWhenAddPositionThenCalculateAfter25Days() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
 
@@ -96,7 +96,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -108,7 +108,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -118,7 +118,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIReceiveFixedWhenAddPositionThenCalculate() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
@@ -134,7 +134,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -143,7 +143,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         int256 expectedSoapBalance = TestConstants.ZERO_INT;
 
         // when
-        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.ammTreasury);
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -152,7 +152,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIReceiveFixedWhenAddPositionThenCalculateAfter25Days() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
@@ -169,7 +169,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -179,7 +179,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -189,7 +189,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIPayFixedWhenAddAndRemovePosition() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
@@ -207,18 +207,18 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -228,7 +228,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapDAIReceiveFixedWhenAddAndRemovePosition() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.PERCENTAGE_2_18DEC);
@@ -246,7 +246,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -256,11 +256,11 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
 
         // when
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS);
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -270,7 +270,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixed18Decimals() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -289,14 +289,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -305,7 +305,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -315,7 +315,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapWhenUSDTPayFixedAndUSDTReceiveFixed6Decimals() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -333,14 +333,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
@@ -349,7 +349,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -388,21 +388,21 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
 
         // when
         vm.prank(_userTwo);
-        ammUsdt.milton.openSwapPayFixed(
+        ammUsdt.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             10 * Constants.D18
         );
 
         vm.prank(_userTwo);
-        ammDai.milton.openSwapPayFixed(
+        ammDai.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             10 * Constants.D18
         );
 
-        (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.milton);
-        (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.milton);
+        (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.ammTreasury);
+        (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.ammTreasury);
 
         // then
         assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
@@ -412,7 +412,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixedAndClosePayFixed() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -433,22 +433,22 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
-        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
+        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -457,7 +457,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapWhenDAIPayFixedAndDAIReceiveFixedAndCloseReceiveFixed() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -478,24 +478,24 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         // when
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(2, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(2, endTimestamp);
 
         // then
-        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
         assertEq(soap, expectedSoapBalance);
     }
 
@@ -531,14 +531,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         vm.prank(_userTwo);
-        ammUsdt.milton.openSwapReceiveFixed(
+        ammUsdt.ammTreasury.openSwapReceiveFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        ammDai.milton.openSwapPayFixed(
+        ammDai.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -548,11 +548,11 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         ammUsdt.joseph.provideLiquidity(TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC);
 
         // when
-        ammUsdt.milton.itfCloseSwapReceiveFixed(1, endTimestamp);
+        ammUsdt.ammTreasury.itfCloseSwapReceiveFixed(1, endTimestamp);
 
         // then
-        (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.milton);
-        (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.milton);
+        (, , int256 soapUsdt) = calculateSoap(_userTwo, endTimestamp, ammUsdt.ammTreasury);
+        (, , int256 soapDai) = calculateSoap(_userTwo, endTimestamp, ammDai.ammTreasury);
         assertEq(soapUsdt, expectedSoapUsdt, "incorrect soapUsdt");
         assertEq(soapDai, expectedSoapDai, "incorrect soapDai");
     }
@@ -562,7 +562,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -582,7 +582,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -602,7 +602,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         // when
-        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -613,7 +613,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -633,7 +633,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_28_000_6DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_6DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -653,7 +653,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         vm.stopPrank();
 
         // when
-        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.milton);
+        (, , int256 soap) = calculateSoap(_userTwo, endTimestamp, _iporProtocol.ammTreasury);
 
         // then
         assertEq(soap, expectedSoapBalance);
@@ -664,7 +664,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -684,7 +684,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -709,14 +709,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap28Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap28Days, expectedSoapBalanceAfter28Days);
         (, , int256 soap50Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
@@ -726,7 +726,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -745,14 +745,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
@@ -763,7 +763,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap50Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
@@ -773,7 +773,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -792,7 +792,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -806,7 +806,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
@@ -824,7 +824,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap50Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap50Days, expectedSoapBalanceAfter50Days);
     }
@@ -834,7 +834,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -852,7 +852,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -861,7 +861,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soapBeforeUpdateIndex) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         vm.prank(_userOne);
@@ -874,7 +874,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soapAfterUpdateIndex25Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         vm.prank(_userOne);
@@ -887,7 +887,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soapAfterUpdateIndex50Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -902,7 +902,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateNegativeSoapWhenDAIPayFixedAndWait25DaysAndUpdateIbtPriceAfterSwapOpened() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -919,7 +919,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
@@ -938,7 +938,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soapRightAfterOpenedPayFixedSwap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_1_DAY_IN_SECONDS + 100,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -948,7 +948,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     function testShouldCalculateSoapWhenDAIPayFixedAnd2xAndWait50Days() public {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -968,7 +968,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -982,7 +982,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
@@ -999,7 +999,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap50Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_50_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         // then
@@ -1011,7 +1011,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
@@ -1032,7 +1032,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1000348983489384893923,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1046,7 +1046,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             1500000000000000000,
@@ -1061,14 +1061,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1078,7 +1078,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
@@ -1100,7 +1100,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1040000000000000000000,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1114,7 +1114,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1040000000000000000000,
             1500000000000000000,
@@ -1129,14 +1129,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap75Days, expectedSoap75Days);
@@ -1147,7 +1147,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
@@ -1168,7 +1168,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1000348983489384893923,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1182,7 +1182,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             9 * TestConstants.D17,
@@ -1197,14 +1197,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1214,7 +1214,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
@@ -1235,7 +1235,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             1000348983489384893923,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1249,7 +1249,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -1264,14 +1264,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap75Days, expectedSoap75Days);
@@ -1282,7 +1282,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE6;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
@@ -1303,7 +1303,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             1000348983489384893923,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1317,7 +1317,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383748202058744,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -1332,14 +1332,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         assertEq(soap75Days, expectedSoap75Days);
     }
@@ -1349,7 +1349,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
@@ -1371,7 +1371,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1040000000,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1385,7 +1385,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1040000000,
             1500000000000000000,
@@ -1400,14 +1400,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap75Days, expectedSoap75Days);
@@ -1418,7 +1418,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuoteReceiveFixed(TestConstants.ZERO);
@@ -1439,7 +1439,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1000348983,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1453,7 +1453,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapPayFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapPayFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1492747383,
             1500000000000000000,
@@ -1468,14 +1468,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap75Days, expectedSoap75Days);
@@ -1486,7 +1486,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
     {
         // given
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.DEFAULT;
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.ZERO);
@@ -1508,7 +1508,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             1000348983,
             TestConstants.PERCENTAGE_1_18DEC,
             TestConstants.LEVERAGE_1000_18DEC
@@ -1522,7 +1522,7 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfOpenSwapReceiveFixed(
+        _iporProtocol.ammTreasury.itfOpenSwapReceiveFixed(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
             1000348983,
             TestConstants.PERCENTAGE_1_18DEC,
@@ -1537,14 +1537,14 @@ contract MiltonSoapTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(1, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapReceiveFixed(2, TestConstants.PERIOD_75_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soap75Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_75_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         assertEq(soap75Days, expectedSoap75Days);

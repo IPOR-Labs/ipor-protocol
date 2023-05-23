@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "../../libraries/errors/MiltonErrors.sol";
+import "../../libraries/errors/AmmErrors.sol";
 import "../../interfaces/types/IporTypes.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
@@ -52,7 +52,7 @@ library IporSwapLogic {
         } else if (duration == AmmTypes.SwapDuration.DAYS_90) {
             return 90;
         } else {
-            revert(MiltonErrors.UNSUPPORTED_SWAP_DURATION);
+            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
         }
     }
 
@@ -90,7 +90,7 @@ library IporSwapLogic {
         uint256 openingFeeRateForSwapUnwind
     ) internal pure returns (int256 swapUnwindValue) {
         uint256 endTimestamp = calculateSwapMaturity(swap);
-        require(closingTimestamp <= endTimestamp, MiltonErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
+        require(closingTimestamp <= endTimestamp, AmmErrors.CANNOT_UNWIND_CLOSING_TOO_LATE);
 
         swapUnwindValue =
             swapPayoffToDate +
@@ -109,7 +109,7 @@ library IporSwapLogic {
         uint256 closingTimestamp,
         uint256 mdIbtPrice
     ) internal pure returns (uint256 quasiIFixed, uint256 quasiIFloating) {
-        require(closingTimestamp >= swap.openTimestamp, MiltonErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
+        require(closingTimestamp >= swap.openTimestamp, AmmErrors.CLOSING_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP);
 
         quasiIFixed = calculateQuasiInterestFixed(
             swap.notional,
@@ -165,7 +165,7 @@ library IporSwapLogic {
         } else if (swap.duration == 2) {
             return swap.openTimestamp + 90 days;
         } else {
-            revert(MiltonErrors.UNSUPPORTED_SWAP_DURATION);
+            revert(AmmErrors.UNSUPPORTED_SWAP_DURATION);
         }
     }
 }

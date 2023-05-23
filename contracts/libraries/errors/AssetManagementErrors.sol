@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-library StanleyErrors {
-    // 500-599-stanley
+library AssetManagementErrors {
+    // 500-599-assetManagement
     string public constant ASSET_MISMATCH = "IPOR_500";
 
-    // only stanley can have access to function
-    string public constant CALLER_NOT_STANLEY = "IPOR_501";
+    // only assetManagement can have access to function
+    string public constant CALLER_NOT_ASSET_MANAGEMENT = "IPOR_501";
 
     string public constant INCORRECT_TREASURY_ADDRESS = "IPOR_502";
 

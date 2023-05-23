@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-/// @title Errors which occur inside Milton's method execution.
-library MiltonErrors {
-    // 300-399-milton
+/// @title Errors which occur inside AmmTreasury's method execution.
+library AmmErrors {
+    // 300-399-AMM
     /// @notice Liquidity Pool balance is equal 0.
     string public constant LIQUIDITY_POOL_IS_EMPTY = "IPOR_300";
 
     /// @notice Liquidity Pool balance is too low, should be equal or higher than 0.
     string public constant LIQUIDITY_POOL_AMOUNT_TOO_LOW = "IPOR_301";
 
-    /// @notice Liquidity Pool Utilization exceeded. Liquidity Pool utilization is higher than configured in Milton maximum liquidity pool utilization.
+    /// @notice Liquidity Pool Utilization exceeded. Liquidity Pool utilization is higher than configured in AmmTreasury maximum liquidity pool utilization.
     string public constant LP_UTILIZATION_EXCEEDED = "IPOR_302";
 
-    /// @notice Liquidity Pool Utilization Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in Milton maximu liquidity pool utilization per leg.
+    /// @notice Liquidity Pool Utilization Per Leg exceeded. Liquidity Pool utilization per leg is higher than configured in AmmTreasury maximu liquidity pool utilization per leg.
     string public constant LP_UTILIZATION_PER_LEG_EXCEEDED = "IPOR_303";
 
     /// @notice Liquidity Pool Balance is too high
@@ -28,10 +28,10 @@ library MiltonErrors {
     /// @notice Swap has incorrect status.
     string public constant INCORRECT_SWAP_STATUS = "IPOR_307";
 
-    /// @notice Leverage given as a parameter when opening swap is lower than configured in Milton minimum leverage.
+    /// @notice Leverage given as a parameter when opening swap is lower than configured in AmmTreasury minimum leverage.
     string public constant LEVERAGE_TOO_LOW = "IPOR_308";
 
-    /// @notice Leverage given as a parameter when opening swap is higher than configured in Milton maxumum leverage.
+    /// @notice Leverage given as a parameter when opening swap is higher than configured in AmmTreasury maxumum leverage.
     string public constant LEVERAGE_TOO_HIGH = "IPOR_309";
 
     /// @notice Total amount given as a parameter when opening swap is too low. Cannot be equal zero.
@@ -40,7 +40,7 @@ library MiltonErrors {
     /// @notice Total amount given as a parameter when opening swap is lower than sum of liquidation deposit amount and ipor publication fee.
     string public constant TOTAL_AMOUNT_LOWER_THAN_FEE = "IPOR_311";
 
-    /// @notice Amount of collateral used to open swap is higher than configured in Milton max swap collateral amount
+    /// @notice Amount of collateral used to open swap is higher than configured in AmmTreasury max swap collateral amount
     string public constant COLLATERAL_AMOUNT_TOO_HIGH = "IPOR_312";
 
     /// @notice Acceptable fixed interest rate defined by traded exceeded.
@@ -49,7 +49,7 @@ library MiltonErrors {
     /// @notice Swap Notional Amount is higher than Total Notional for specific leg.
     string public constant SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL = "IPOR_314";
 
-    /// @notice Number of swaps per leg which are going to be liquidated is too high, is higher than configured in Milton liquidation leg limit.
+    /// @notice Number of swaps per leg which are going to be liquidated is too high, is higher than configured in AmmTreasury liquidation leg limit.
     string public constant LIQUIDATION_LEG_LIMIT_EXCEEDED = "IPOR_315";
 
     /// @notice Sum of SOAP and Liquidity Pool Balance is lower than zero.
@@ -86,8 +86,8 @@ library MiltonErrors {
     /// @notice IPOR publication fee balance is too low.
     string public constant PUBLICATION_FEE_BALANCE_IS_TOO_LOW = "IPOR_326";
 
-    /// @notice The caller must be the Joseph (Smart Contract responsible for managing Milton's tokens and balances).
-    string public constant CALLER_NOT_JOSEPH = "IPOR_327";
+    /// @notice The caller must be the Router (Smart Contract responsible for managing AmmTreasury's tokens and balances).
+    string public constant CALLER_NOT_ROUTER = "IPOR_327";
 
     /// @notice Deposit amount is too low.
     string public constant DEPOSIT_AMOUNT_IS_TOO_LOW = "IPOR_328";

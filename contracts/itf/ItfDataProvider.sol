@@ -6,13 +6,13 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "../security/IporOwnableUpgradeable.sol";
 import "../interfaces/types/IporTypes.sol";
 import "./types/ItfDataProviderTypes.sol";
-import "./ItfMilton.sol";
-import "../amm/MiltonStorage.sol";
+import "./ItfAmmTreasury.sol";
+import "../amm/AmmStorage.sol";
 import "./ItfIporOracle.sol";
-import "../interfaces/IMiltonSpreadInternal.sol";
+import "../interfaces/IAmmTreasurySpreadInternal.sol";
 
 contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeable {
-    mapping(address => MiltonStorage) private _miltonStorages;
+    mapping(address => AmmStorage) private _ammStorages;
     ItfIporOracle private _iporOracle;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -23,14 +23,14 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
     // all arrary contains adresses for 1) usdt, 2) usdc, 3) dai
     function initialize(
         address[] memory assets,
-        address[] memory miltonStorages,
+        address[] memory ammStorages,
         address iporOracle
     ) public initializer {
         __Ownable_init();
         __UUPSUpgradeable_init();
         uint256 i = 0;
         for (i; i < assets.length; i++) {
-            _miltonStorages[assets[i]] = MiltonStorage(miltonStorages[i]);
+            _ammStorages[assets[i]] = AmmStorage(ammStorages[i]);
         }
         _iporOracle = ItfIporOracle(iporOracle);
     }
@@ -45,7 +45,7 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
             timestamp,
             asset,
             getIporOracleData(timestamp, asset),
-            getMiltonStorageData(asset)
+            getAmmStorageData(asset)
         );
     }
 
@@ -68,16 +68,16 @@ contract ItfDataProvider is Initializable, UUPSUpgradeable, IporOwnableUpgradeab
         );
     }
 
-    function getMiltonStorageData(address asset)
+    function getAmmStorageData(address asset)
         public
         view
-        returns (ItfDataProviderTypes.ItfMiltonStorageData memory miltonStorageData)
+        returns (ItfDataProviderTypes.ItfAmmStorageData memory ammStorageData)
     {
-        MiltonStorage miltonStorage = _miltonStorages[asset];
-        MiltonStorageTypes.ExtendedBalancesMemory memory balance = miltonStorage.getExtendedBalance();
-        (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed) = miltonStorage
+        AmmStorage ammStorage = _ammStorages[asset];
+        AmmStorageTypes.ExtendedBalancesMemory memory balance = ammStorage.getExtendedBalance();
+        (uint256 totalNotionalPayFixed, uint256 totalNotionalReceiveFixed) = ammStorage
             .getTotalOutstandingNotional();
-        miltonStorageData = ItfDataProviderTypes.ItfMiltonStorageData(
+        ammStorageData = ItfDataProviderTypes.ItfAmmStorageData(
             balance.totalCollateralPayFixed,
             balance.totalCollateralReceiveFixed,
             balance.liquidityPool,
