@@ -82,5 +82,19 @@ contract InterestRatesTest is Test {
             oneHundred.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(8e16 * 25 days),
             549449170934577930
         );
+
+        assertEq(
+            oneHundred.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(8e16 * 365 days),
+            8328706767495855551
+        );
+
+        uint256 amount = D18;
+        uint256 interest = 0;
+        for (uint256 i; i < 365; ++i) {
+            interest += (amount + interest).calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
+                8e16 * 1 days
+            );
+        }
+        assertEq(amount + interest, 1083287067674959202);
     }
 }

@@ -11,29 +11,24 @@ library SoapIndicatorLogic {
     using SafeCast for uint256;
     using InterestRates for uint256;
 
-    function calculateQuasiSoapPayFixed(
+    function calculateSoapPayFixed(
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
         return
-            (si.totalIbtQuantity * ibtPrice * Constants.WAD_YEAR_IN_SECONDS).toInt256() -
-            (si.totalNotional *
-                Constants.WAD_P2_YEAR_IN_SECONDS +
-                calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256();
+            (si.totalIbtQuantity * ibtPrice).toInt256() -
+            (si.totalNotional + calculateHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256();
     }
 
-    /// @notice For highest precision there is no division by D18 * D18 * Constants.YEAR_IN_SECONDS
-    function calculateQuasiSoapReceiveFixed(
+    function calculateSoapReceiveFixed(
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp,
         uint256 ibtPrice
     ) internal pure returns (int256) {
         return
-            (si.totalNotional *
-                Constants.WAD_P2_YEAR_IN_SECONDS +
-                calculateQuasiHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256() -
-            (si.totalIbtQuantity * ibtPrice * Constants.WAD_YEAR_IN_SECONDS).toInt256();
+            (si.totalNotional + calculateHyphoteticalInterestTotal(si, calculateTimestamp)).toInt256() -
+            (si.totalIbtQuantity * ibtPrice).toInt256();
     }
 
     function rebalanceWhenOpenSwap(
@@ -50,16 +45,13 @@ library SoapIndicatorLogic {
             swapFixedInterestRate
         );
 
-        uint256 quasiHypotheticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
-            si,
-            rebalanceTimestamp
-        );
+        uint256 hypotheticalInterestTotal = calculateHyphoteticalInterestTotal(si, rebalanceTimestamp);
 
         si.rebalanceTimestamp = rebalanceTimestamp;
         si.totalNotional = si.totalNotional + derivativeNotional;
         si.totalIbtQuantity = si.totalIbtQuantity + derivativeIbtQuantity;
         si.averageInterestRate = averageInterestRate;
-        si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
+        si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
 
         return si;
     }
@@ -80,30 +72,29 @@ library SoapIndicatorLogic {
         );
 
         if (si.totalNotional != derivativeNotional) {
-            uint256 currentQuasiHypoteticalInterestTotal = calculateQuasiHyphoteticalInterestTotal(
+            uint256 currentHypoteticalInterestTotal = calculateHyphoteticalInterestTotal(
                 si,
                 rebalanceTimestamp
             );
 
-            uint256 quasiInterestPaidOut = calculateQuasiInterestPaidOut(
+            uint256 interestPaidOut = calculateInterestPaidOut(
                 rebalanceTimestamp,
                 derivativeOpenTimestamp,
                 derivativeNotional,
                 swapFixedInterestRate
             );
 
-            uint256 quasiHypotheticalInterestTotal = currentQuasiHypoteticalInterestTotal -
-                quasiInterestPaidOut;
+            uint256 hypotheticalInterestTotal = currentHypoteticalInterestTotal - interestPaidOut;
 
             si.rebalanceTimestamp = rebalanceTimestamp;
-            si.quasiHypotheticalInterestCumulative = quasiHypotheticalInterestTotal;
+            si.hypotheticalInterestCumulative = hypotheticalInterestTotal;
             si.totalNotional = si.totalNotional - derivativeNotional;
             si.totalIbtQuantity = si.totalIbtQuantity - derivativeIbtQuantity;
             si.averageInterestRate = newAverageInterestRate;
         } else {
             /// @dev when newAverageInterestRate = 0 it means in IPOR Protocol is closing the LAST derivative on this leg.
             si.rebalanceTimestamp = rebalanceTimestamp;
-            si.quasiHypotheticalInterestCumulative = 0;
+            si.hypotheticalInterestCumulative = 0;
             si.totalNotional = 0;
             si.totalIbtQuantity = 0;
             si.averageInterestRate = 0;
@@ -112,7 +103,7 @@ library SoapIndicatorLogic {
         return si;
     }
 
-    function calculateQuasiInterestPaidOut(
+    function calculateInterestPaidOut(
         uint256 calculateTimestamp,
         uint256 derivativeOpenTimestamp,
         uint256 derivativeNotional,
@@ -123,28 +114,26 @@ library SoapIndicatorLogic {
             MiltonErrors.CALC_TIMESTAMP_LOWER_THAN_SWAP_OPEN_TIMESTAMP
         );
         return
-            derivativeNotional *
-            swapFixedInterestRate *
-            (calculateTimestamp - derivativeOpenTimestamp) *
-            Constants.D18;
+            derivativeNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
+                swapFixedInterestRate * (calculateTimestamp - derivativeOpenTimestamp)
+            );
     }
 
-    function calculateQuasiHyphoteticalInterestTotal(
+    function calculateHyphoteticalInterestTotal(
         AmmMiltonStorageTypes.SoapIndicatorsMemory memory si,
         uint256 calculateTimestamp
     ) internal pure returns (uint256) {
         return
-            si.quasiHypotheticalInterestCumulative +
-            calculateQuasiHypotheticalInterestDelta(
+            si.hypotheticalInterestCumulative +
+            calculateHypotheticalInterestDelta(
                 calculateTimestamp,
                 si.rebalanceTimestamp,
-                si.totalNotional,
+                si.totalNotional + si.hypotheticalInterestCumulative,
                 si.averageInterestRate
             );
     }
 
-    /// @dev division by Constants.YEAR_IN_SECONDS * 1e36 postponed at the end of calculation
-    function calculateQuasiHypotheticalInterestDelta(
+    function calculateHypotheticalInterestDelta(
         uint256 calculateTimestamp,
         uint256 lastRebalanceTimestamp,
         uint256 totalNotional,
@@ -157,7 +146,7 @@ library SoapIndicatorLogic {
         return
             totalNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
                 averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp)
-            ) * Constants.WAD_P2_YEAR_IN_SECONDS;
+            );
     }
 
     function calculateAverageInterestRateWhenOpenSwap(
@@ -179,19 +168,13 @@ library SoapIndicatorLogic {
         uint256 derivativeNotional,
         uint256 swapFixedInterestRate
     ) internal pure returns (uint256) {
-        require(
-            derivativeNotional <= totalNotional,
-            MiltonErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL
-        );
+        require(derivativeNotional <= totalNotional, MiltonErrors.SWAP_NOTIONAL_HIGHER_THAN_TOTAL_NOTIONAL);
         if (derivativeNotional == totalNotional) {
             return 0;
         } else {
             return
                 IporMath.division(
-                    (totalNotional *
-                        averageInterestRate -
-                        derivativeNotional *
-                        swapFixedInterestRate),
+                    (totalNotional * averageInterestRate - derivativeNotional * swapFixedInterestRate),
                     (totalNotional - derivativeNotional)
                 );
         }
