@@ -76,10 +76,6 @@ interface IIporOracle {
     /// @return 0 if account is not updater, 1 if account is updater.
     function isUpdater(address account) external view returns (uint256);
 
-    /// @notice setup ipor algorithm address
-    /// @param newAlgorithmAddress ipor algorithm address
-    function setIporAlgorithmFacade(address newAlgorithmAddress) external;
-
     /// @notice Adds new asset which IPOR Protocol will support. Function available only for Owner.
     /// @param newAsset new asset address
     /// @param updateTimestamp Time for which exponential moving average and exponential weighted moving variance was calculated

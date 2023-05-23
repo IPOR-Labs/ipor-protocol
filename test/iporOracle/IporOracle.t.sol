@@ -11,6 +11,7 @@ contract IporOracleTest is Test {
     using stdStorage for StdStorage;
 
     uint32 private _blockTimestamp = 1641701;
+    address private iporAlgorithmFacade;
     MockTestnetToken private _daiTestnetToken;
     MockTestnetToken private _usdcTestnetToken;
     MockTestnetToken private _usdtTestnetToken;
@@ -18,9 +19,11 @@ contract IporOracleTest is Test {
 
     function setUp() public {
         vm.warp(_blockTimestamp);
+        iporAlgorithmFacade = address(0);
         (_daiTestnetToken, _usdcTestnetToken, _usdtTestnetToken) = _getStables();
 
         IporOracle iporOracleImplementation = new IporOracle(
+            iporAlgorithmFacade,
             address(_usdcTestnetToken),
             Constants.D18,
             address(_usdtTestnetToken),
@@ -124,6 +127,7 @@ contract IporOracleTest is Test {
 
         // when
         IporOracle newImplementation = new IporOracle(
+            iporAlgorithmFacade,
             address(_usdcTestnetToken),
             1014904501167913392,
             address(_usdtTestnetToken),
