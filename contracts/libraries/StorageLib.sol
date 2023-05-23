@@ -126,7 +126,7 @@ library StorageLib {
         }
     }
 
-    function getAmmPoolsAndAssetManagementRatioStorage()
+    function getAmmAndAssetManagementRatioStorage()
         internal
         pure
         returns (AmmPoolsAndAssetManagementRatioStorage storage store)
@@ -137,7 +137,7 @@ library StorageLib {
         }
     }
 
-    function getAmmPoolsMaxLiquidityPoolBalanceStorage()
+    function getAmmMaxLiquidityPoolBalanceStorage()
         internal
         pure
         returns (AmmPoolsMaxLiquidityPoolBalanceStorage storage store)
@@ -148,7 +148,7 @@ library StorageLib {
         }
     }
 
-    function getAmmPoolsMaxLpAccountContributionStorage()
+    function getAmmMaxLpAccountContributionStorage()
         internal
         pure
         returns (AmmPoolsMaxLpAccountContributionStorage storage store)
@@ -184,14 +184,14 @@ library StorageLib {
         }
     }
 
-    function getAmmPoolsCharlieTreasuryStorage() internal pure returns (AmmPoolsCharlieTreasuryStorage storage store) {
+    function getAmmCharlieTreasuryStorage() internal pure returns (AmmPoolsCharlieTreasuryStorage storage store) {
         uint256 slot = _getStorageSlot(StorageId.AmmPoolsCharlieTreasury);
         assembly {
             store.slot := slot
         }
     }
 
-    function getAmmPoolsCharlieTreasuryManagerStorage()
+    function getAmmCharlieTreasuryManagerStorage()
         internal
         pure
         returns (AmmPoolsCharlieTreasuryManagerStorage storage store)
@@ -202,7 +202,7 @@ library StorageLib {
         }
     }
 
-    function getAmmPoolsAutoRebalanceThresholdStorage()
+    function getAmmAutoRebalanceThresholdStorage()
         internal
         pure
         returns (AmmPoolsAutoRebalanceThresholdStorage storage store)

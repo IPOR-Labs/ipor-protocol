@@ -21,7 +21,7 @@ library AssetManagementLogic {
                 (wadAmmErc20BalanceBeforeWithdraw.toInt256() +
                     vaultBalance.toInt256() -
                     wadOperationAmount.toInt256()) *
-                    (Constants.D18_INT - AmmConfigurationManager.getAmmPoolsAndAssetManagementRatio(asset).toInt256()),
+                    (Constants.D18_INT - AmmConfigurationManager.getAmmAndAssetManagementRatio(asset).toInt256()),
                 Constants.D18_INT
             ) - vaultBalance.toInt256();
     }

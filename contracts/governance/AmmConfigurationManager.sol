@@ -22,7 +22,7 @@ library AmmConfigurationManager {
     /// @param asset address of the asset
     /// @param oldRatio old ratio, describe what percentage of asset should be managed by AMM against Asset Management.
     /// @param newRatio new ratio, describe what percentage of asset should be managed by AMM against Asset Management.
-    event AmmPoolsAndAssetManagementRatioChanged(
+    event AmmAndAssetManagementRatioChanged(
         address indexed changedBy,
         address indexed asset,
         uint256 oldRatio,
@@ -34,7 +34,7 @@ library AmmConfigurationManager {
     /// @param asset address of the asset
     /// @param oldMaxLiquidityPoolBalance Old max liquidity pool balance, represented in 18 decimals
     /// @param newMaxLiquidityPoolBalance New max liquidity pool balance, represented in 18 decimals
-    event AmmPoolsMaxLiquidityPoolBalanceChanged(
+    event AmmMaxLiquidityPoolBalanceChanged(
         address indexed changedBy,
         address indexed asset,
         uint256 oldMaxLiquidityPoolBalance,
@@ -46,14 +46,14 @@ library AmmConfigurationManager {
     /// @param asset address of the asset
     /// @param oldMaxLpAccountContribution Old max lp account contribution, represented in 18 decimals
     /// @param newMaxLpAccountContribution New max lp account contribution, represented in 18 decimals
-    event AmmPoolsMaxLpAccountContributionChanged(
+    event AmmMaxLpAccountContributionChanged(
         address indexed changedBy,
         address indexed asset,
         uint256 oldMaxLpAccountContribution,
         uint256 newMaxLpAccountContribution
     );
 
-    event AmmPoolsAppointedToRebalanceChanged(
+    event AmmAppointedToRebalanceChanged(
         address indexed changedBy,
         address indexed asset,
         address indexed account,
@@ -74,21 +74,21 @@ library AmmConfigurationManager {
         address newTreasuryManager
     );
 
-    event AmmPoolsCharlieTreasuryChanged(
+    event AmmCharlieTreasuryChanged(
         address indexed changedBy,
         address indexed asset,
         address indexed oldCharlieTreasury,
         address newCharlieTreasury
     );
 
-    event AmmPoolsCharlieTreasuryManagerChanged(
+    event AmmCharlieTreasuryManagerChanged(
         address indexed changedBy,
         address indexed asset,
         address indexed oldCharlieTreasuryManager,
         address newCharlieTreasuryManager
     );
 
-    event AmmPoolsAutoRebalanceThresholdChanged(
+    event AmmAutoRebalanceThresholdChanged(
         address indexed changedBy,
         address indexed asset,
         uint256 oldAutoRebalanceThreshold,
@@ -127,35 +127,35 @@ library AmmConfigurationManager {
     }
 
     /// @dev key - asset address, value - ratio
-    function setAmmPoolsAndAssetManagementRatio(address asset, uint256 newRatio) internal {
+    function setAmmAndAssetManagementRatio(address asset, uint256 newRatio) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(newRatio > 0, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
         require(newRatio < 1e18, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
 
-        mapping(address => uint256) storage ratio = StorageLib.getAmmPoolsAndAssetManagementRatioStorage().value;
+        mapping(address => uint256) storage ratio = StorageLib.getAmmAndAssetManagementRatioStorage().value;
         uint256 oldRatio = ratio[asset];
         ratio[asset] = newRatio;
 
-        emit AmmPoolsAndAssetManagementRatioChanged(msg.sender, asset, oldRatio, newRatio);
+        emit AmmAndAssetManagementRatioChanged(msg.sender, asset, oldRatio, newRatio);
     }
 
-    function getAmmPoolsAndAssetManagementRatio(address asset) internal view returns (uint256) {
-        mapping(address => uint256) storage ratio = StorageLib.getAmmPoolsAndAssetManagementRatioStorage().value;
+    function getAmmAndAssetManagementRatio(address asset) internal view returns (uint256) {
+        mapping(address => uint256) storage ratio = StorageLib.getAmmAndAssetManagementRatioStorage().value;
         return ratio[asset];
     }
 
     /// @param asset address of the asset
     /// @param newMaxLiquidityPoolBalance new max liquidity pool balance, represented WITHOUT 18 decimals
-    function setAmmPoolsMaxLiquidityPoolBalance(address asset, uint256 newMaxLiquidityPoolBalance) internal {
+    function setAmmMaxLiquidityPoolBalance(address asset, uint256 newMaxLiquidityPoolBalance) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => uint256) storage maxLiquidityPoolBalance = StorageLib
-            .getAmmPoolsMaxLiquidityPoolBalanceStorage()
+            .getAmmMaxLiquidityPoolBalanceStorage()
             .value;
         uint256 oldMaxLiquidityPoolBalance = maxLiquidityPoolBalance[asset];
         maxLiquidityPoolBalance[asset] = newMaxLiquidityPoolBalance;
 
-        emit AmmPoolsMaxLiquidityPoolBalanceChanged(
+        emit AmmMaxLiquidityPoolBalanceChanged(
             msg.sender,
             asset,
             oldMaxLiquidityPoolBalance * Constants.D18,
@@ -165,25 +165,25 @@ library AmmConfigurationManager {
 
     /// @param asset address of the asset
     /// @return max liquidity pool balance, represented WITHOUT 18 decimals
-    function getAmmPoolsMaxLiquidityPoolBalance(address asset) internal view returns (uint256) {
+    function getAmmMaxLiquidityPoolBalance(address asset) internal view returns (uint256) {
         mapping(address => uint256) storage maxLiquidityPoolBalance = StorageLib
-            .getAmmPoolsMaxLiquidityPoolBalanceStorage()
+            .getAmmMaxLiquidityPoolBalanceStorage()
             .value;
         return maxLiquidityPoolBalance[asset];
     }
 
     /// @param asset address of the asset
     /// @param newMaxLpAccountContribution new max lp account contribution, represented WITHOUT 18 decimals
-    function setAmmPoolsMaxLpAccountContribution(address asset, uint256 newMaxLpAccountContribution) internal {
+    function setAmmMaxLpAccountContribution(address asset, uint256 newMaxLpAccountContribution) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => uint256) storage maxLpAccountContribution = StorageLib
-            .getAmmPoolsMaxLpAccountContributionStorage()
+            .getAmmMaxLpAccountContributionStorage()
             .value;
         uint256 oldMaxLpAccountContribution = maxLpAccountContribution[asset];
         maxLpAccountContribution[asset] = newMaxLpAccountContribution;
 
-        emit AmmPoolsMaxLpAccountContributionChanged(
+        emit AmmMaxLpAccountContributionChanged(
             msg.sender,
             asset,
             oldMaxLpAccountContribution * Constants.D18,
@@ -193,14 +193,14 @@ library AmmConfigurationManager {
 
     /// @param asset address of the asset
     /// @return max lp account contribution, represented WITHOUT 18 decimals
-    function getAmmPoolsMaxLpAccountContribution(address asset) internal view returns (uint256) {
+    function getAmmMaxLpAccountContribution(address asset) internal view returns (uint256) {
         mapping(address => uint256) storage maxLpAccountContribution = StorageLib
-            .getAmmPoolsMaxLpAccountContributionStorage()
+            .getAmmMaxLpAccountContributionStorage()
             .value;
         return maxLpAccountContribution[asset];
     }
 
-    function addAmmPoolsAppointedToRebalance(address asset, address account) internal {
+    function addAppointedToRebalanceInAmm(address asset, address account) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -209,10 +209,10 @@ library AmmConfigurationManager {
             .value;
         appointedToRebalance[asset][account] = true;
 
-        emit AmmPoolsAppointedToRebalanceChanged(msg.sender, asset, account, true);
+        emit AmmAppointedToRebalanceChanged(msg.sender, asset, account, true);
     }
 
-    function removeAmmPoolsAppointedToRebalance(address asset, address account) internal {
+    function removeAppointedToRebalanceInAmm(address asset, address account) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(account != address(0), IporErrors.WRONG_ADDRESS);
 
@@ -221,10 +221,10 @@ library AmmConfigurationManager {
             .value;
         appointedToRebalance[asset][account] = false;
 
-        emit AmmPoolsAppointedToRebalanceChanged(msg.sender, asset, account, false);
+        emit AmmAppointedToRebalanceChanged(msg.sender, asset, account, false);
     }
 
-    function isAmmPoolsAppointedToRebalance(address asset, address account) internal view returns (bool) {
+    function isAppointedToRebalanceInAmm(address asset, address account) internal view returns (bool) {
         mapping(address => mapping(address => bool)) storage appointedToRebalance = StorageLib
             .getAmmPoolsAppointedToRebalanceStorage()
             .value;
@@ -263,33 +263,33 @@ library AmmConfigurationManager {
         return treasuryManager[asset];
     }
 
-    function setAmmPoolsCharlieTreasury(address asset, address charlieTreasuryAddress) internal {
+    function setAmmCharlieTreasury(address asset, address charlieTreasuryAddress) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(charlieTreasuryAddress != address(0), IporErrors.WRONG_ADDRESS);
 
-        mapping(address => address) storage charlieTreasury = StorageLib.getAmmPoolsCharlieTreasuryStorage().value;
+        mapping(address => address) storage charlieTreasury = StorageLib.getAmmCharlieTreasuryStorage().value;
         address oldCharlieTreasury = charlieTreasury[asset];
         charlieTreasury[asset] = charlieTreasuryAddress;
 
-        emit AmmPoolsCharlieTreasuryChanged(msg.sender, asset, oldCharlieTreasury, charlieTreasuryAddress);
+        emit AmmCharlieTreasuryChanged(msg.sender, asset, oldCharlieTreasury, charlieTreasuryAddress);
     }
 
-    function getAmmPoolsCharlieTreasury(address asset) internal view returns (address) {
-        mapping(address => address) storage charlieTreasury = StorageLib.getAmmPoolsCharlieTreasuryStorage().value;
+    function getAmmCharlieTreasury(address asset) internal view returns (address) {
+        mapping(address => address) storage charlieTreasury = StorageLib.getAmmCharlieTreasuryStorage().value;
         return charlieTreasury[asset];
     }
 
-    function setAmmPoolsCharlieTreasuryManager(address asset, address charlieTreasuryManagerAddress) internal {
+    function setAmmCharlieTreasuryManager(address asset, address charlieTreasuryManagerAddress) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(charlieTreasuryManagerAddress != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => address) storage charlieTreasuryManager = StorageLib
-            .getAmmPoolsCharlieTreasuryManagerStorage()
+            .getAmmCharlieTreasuryManagerStorage()
             .value;
         address oldCharlieTreasuryManager = charlieTreasuryManager[asset];
         charlieTreasuryManager[asset] = charlieTreasuryManagerAddress;
 
-        emit AmmPoolsCharlieTreasuryManagerChanged(
+        emit AmmCharlieTreasuryManagerChanged(
             msg.sender,
             asset,
             oldCharlieTreasuryManager,
@@ -297,23 +297,23 @@ library AmmConfigurationManager {
         );
     }
 
-    function getAmmPoolsCharlieTreasuryManager(address asset) internal view returns (address) {
+    function getAmmCharlieTreasuryManager(address asset) internal view returns (address) {
         mapping(address => address) storage charlieTreasuryManager = StorageLib
-            .getAmmPoolsCharlieTreasuryManagerStorage()
+            .getAmmCharlieTreasuryManagerStorage()
             .value;
         return charlieTreasuryManager[asset];
     }
 
-    function setAmmPoolsAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) internal {
+    function setAmmAutoRebalanceThreshold(address asset, uint256 newAutoRebalanceThreshold) internal {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
 
         mapping(address => uint256) storage autoRebalanceThreshold = StorageLib
-            .getAmmPoolsAutoRebalanceThresholdStorage()
+            .getAmmAutoRebalanceThresholdStorage()
             .value;
         uint256 oldAutoRebalanceThreshold = autoRebalanceThreshold[asset];
         autoRebalanceThreshold[asset] = newAutoRebalanceThreshold;
 
-        emit AmmPoolsAutoRebalanceThresholdChanged(
+        emit AmmAutoRebalanceThresholdChanged(
             msg.sender,
             asset,
             oldAutoRebalanceThreshold * Constants.D18,
@@ -321,9 +321,9 @@ library AmmConfigurationManager {
         );
     }
 
-    function getAmmPoolsAutoRebalanceThreshold(address asset) internal view returns (uint256) {
+    function getAmmAutoRebalanceThreshold(address asset) internal view returns (uint256) {
         mapping(address => uint256) storage autoRebalanceThreshold = StorageLib
-            .getAmmPoolsAutoRebalanceThresholdStorage()
+            .getAmmAutoRebalanceThresholdStorage()
             .value;
         return autoRebalanceThreshold[asset];
     }
