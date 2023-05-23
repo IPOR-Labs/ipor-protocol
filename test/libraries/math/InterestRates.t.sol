@@ -13,20 +13,16 @@ contract InterestRatesTest is Test {
         uint256 oneHundred = 100 * D18;
 
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(3e16 * 365 days, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(3e16 * 365 days),
+            103045453395351685664
+        );
+        assertEq(
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(3e16 * 120 days + 3e16 * 245 days),
             103045453395351685664
         );
         assertEq(
             oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(3e16 * 120 days + 3e16 * 245 days, 365 days)
-            ),
-            103045453395351685664
-        );
-        assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(3e16 * 120 days + 3e16 * 120 days + 3e16 * 125 days, 365 days)
+                3e16 * 120 days + 3e16 * 120 days + 3e16 * 125 days
             ),
             103045453395351685664
         );
@@ -36,9 +32,7 @@ contract InterestRatesTest is Test {
             ipmDaily += 3e16 * 1 days;
         }
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(ipmDaily, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(ipmDaily),
             103045453395351685664
         );
 
@@ -47,9 +41,7 @@ contract InterestRatesTest is Test {
             ipmHourly += 3e16 * 1 hours;
         }
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(ipmHourly, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(ipmHourly),
             103045453395351685664
         );
 
@@ -59,29 +51,23 @@ contract InterestRatesTest is Test {
         }
         ipmWeekly += 3e16 * 1 days;
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(ipmWeekly, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(ipmWeekly),
             103045453395351685664
         );
 
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(3e16 * 730 days, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(3e16 * 730 days),
             106183654654535962328
         );
 
         assertEq(
-            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(3e16 * 3650 days, 365 days)
-            ),
+            oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(3e16 * 3650 days),
             134985880757600310533
         );
 
         assertEq(
             oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(
-                IporMath.division(1e16 * 120 days + 3e16 * 120 days + 2e16 * 120 days, 365 days)
+                1e16 * 120 days + 3e16 * 120 days + 2e16 * 120 days
             ),
             101992187109547346999
         );

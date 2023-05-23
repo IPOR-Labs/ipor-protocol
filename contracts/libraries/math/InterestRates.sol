@@ -10,8 +10,12 @@ library InterestRates {
         uint256 value,
         uint256 interestRatePeriodMultiplication
     ) internal pure returns (uint256) {
+        uint256 interestRateYearsMultiplication = IporMath.division(
+            interestRatePeriodMultiplication,
+            Constants.YEAR_IN_SECONDS
+        );
         bytes16 floatValue = _toQuadruplePrecision(value, Constants.D18);
-        bytes16 floatIpm = _toQuadruplePrecision(interestRatePeriodMultiplication, Constants.D18);
+        bytes16 floatIpm = _toQuadruplePrecision(interestRateYearsMultiplication, Constants.D18);
         bytes16 valueWithInterest = ABDKMathQuad.mul(floatValue, ABDKMathQuad.exp(floatIpm));
         return _toUint256(valueWithInterest);
     }

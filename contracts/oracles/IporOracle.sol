@@ -74,11 +74,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         for (uint256 i; i != assetsLength; ++i) {
             require(assets[i] != address(0), IporErrors.WRONG_ADDRESS);
 
-            _indexes[assets[i]] = IporOracleTypes.IPOR(
-                0,
-                0,
-                updateTimestamps[i]
-            );
+            _indexes[assets[i]] = IporOracleTypes.IPOR(0, 0, updateTimestamps[i]);
         }
     }
 
@@ -94,6 +90,30 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
 
     function getVersion() external pure virtual override returns (uint256) {
         return 4;
+    }
+
+    function getConfiguration()
+        external
+        view
+        returns (
+            address iporAlgorithmFacade,
+            address usdc,
+            uint256 usdcInitialIbtPrice,
+            address usdt,
+            uint256 usdtInitialIbtPrice,
+            address dai,
+            uint256 daiInitialIbtPrice
+        )
+    {
+        return (
+            _iporAlgorithmFacade,
+            _usdc,
+            _usdcInitialIbtPrice,
+            _usdt,
+            _usdtInitialIbtPrice,
+            _dai,
+            _daiInitialIbtPrice
+        );
     }
 
     function getIndex(address asset)
@@ -196,11 +216,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
     function addAsset(address asset, uint256 updateTimestamp) external override onlyOwner whenNotPaused {
         require(asset != address(0), IporErrors.WRONG_ADDRESS);
         require(_indexes[asset].quasiIbtPrice == 0, IporOracleErrors.CANNOT_ADD_ASSET_ASSET_ALREADY_EXISTS);
-        _indexes[asset] = IporOracleTypes.IPOR(
-            0,
-            0,
-            updateTimestamp.toUint32()
-        );
+        _indexes[asset] = IporOracleTypes.IPOR(0, 0, updateTimestamp.toUint32());
         emit IporIndexAddAsset(asset, updateTimestamp);
     }
 
@@ -277,10 +293,7 @@ contract IporOracle is Initializable, PausableUpgradeable, UUPSUpgradeable, Ipor
         uint256 calculateTimestamp
     ) internal view returns (uint256) {
         uint256 initialIbtPrice = _getInitialIbtPrice(asset);
-        uint256 interestRateMultipliedByTime = IporMath.division(
-            ipor.accrueQuasiIbtPrice(calculateTimestamp),
-            Constants.YEAR_IN_SECONDS
-        );
+        uint256 interestRateMultipliedByTime = ipor.accrueQuasiIbtPrice(calculateTimestamp);
         return
             InterestRates.addContinuousCompoundInterestUsingRatePeriodMultiplication(
                 initialIbtPrice,
