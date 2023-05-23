@@ -88,4 +88,15 @@ contract InterestRatesTest is Test {
 
         assertEq(oneHundred.addContinuousCompoundInterestUsingRatePeriodMultiplication(0), oneHundred);
     }
+
+    function testShouldCalculateInterest() public {
+        uint256 oneHundred = 100 * D18;
+
+        assertEq(
+            oneHundred.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
+                IporMath.division(8e16 * 25 days, 365 days)
+            ),
+            549449170934577930
+        );
+    }
 }

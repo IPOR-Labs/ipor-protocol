@@ -156,7 +156,7 @@ library SoapIndicatorLogic {
         );
         return
             totalNotional.calculateContinuousCompoundInterestUsingRatePeriodMultiplication(
-                averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp)
+                IporMath.division(averageInterestRate * (calculateTimestamp - lastRebalanceTimestamp), Constants.YEAR_IN_SECONDS)
             ) * Constants.WAD_P2_YEAR_IN_SECONDS;
     }
 
