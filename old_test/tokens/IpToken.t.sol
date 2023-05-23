@@ -112,7 +112,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
         ipToken.mint(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -142,7 +142,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_ROUTER));
         ipToken.burn(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 

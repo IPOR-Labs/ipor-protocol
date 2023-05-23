@@ -83,7 +83,7 @@ interface IAmmPoolsService {
     function redeemDai(address onBehalfOf, uint256 ipTokenAmount) external;
 
     /// @notice Rebalances ERC20 balance between AmmTreasury and AssetManagement, based on configuration
-    /// `_MILTON_ASSET_MANAGEMENT_BALANCE_RATIO` part of AmmTreasury balance is transferred to AssetManagement or vice versa.
+    /// `_AMM_TREASURY_ASSET_MANAGEMENT_BALANCE_RATIO` part of AmmTreasury balance is transferred to AssetManagement or vice versa.
     /// for more information refer to the documentation: https://ipor-labs.gitbook.io/ipor-labs/automated-market-maker/asset-management
     /// @dev Emits {Deposit} or {Withdraw} event from AssetManagement depends on current asset balance on AmmTreasury and AssetManagement.
     /// @dev Emits {Mint} or {Burn} event from ivToken depends on current asset balance on AmmTreasury and AssetManagement.

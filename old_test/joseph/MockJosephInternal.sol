@@ -128,8 +128,8 @@ abstract contract MockJosephInternal is
     }
 
     function setAmmTreasuryAssetManagementBalanceRatio(uint256 newRatio) external onlyOwner {
-        require(newRatio > 0, AmmPoolsErrors.MILTON_ASSET_MANAGEMENT_RATIO);
-        require(newRatio < 1e18, AmmPoolsErrors.MILTON_ASSET_MANAGEMENT_RATIO);
+        require(newRatio > 0, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
+        require(newRatio < 1e18, AmmPoolsErrors.AMM_TREASURY_ASSET_MANAGEMENT_RATIO);
         _ammTreasuryAssetManagementBalanceRatio = newRatio;
     }
 

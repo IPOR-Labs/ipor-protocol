@@ -86,8 +86,8 @@ library AmmErrors {
     /// @notice IPOR publication fee balance is too low.
     string public constant PUBLICATION_FEE_BALANCE_IS_TOO_LOW = "IPOR_326";
 
-    /// @notice The caller must be the Joseph (Smart Contract responsible for managing AmmTreasury's tokens and balances).
-    string public constant CALLER_NOT_JOSEPH = "IPOR_327";
+    /// @notice The caller must be the Router (Smart Contract responsible for managing AmmTreasury's tokens and balances).
+    string public constant CALLER_NOT_ROUTER = "IPOR_327";
 
     /// @notice Deposit amount is too low.
     string public constant DEPOSIT_AMOUNT_IS_TOO_LOW = "IPOR_328";
