@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "./Stanley.sol";
+import "./ItfAssetManagement.sol";
 
-contract StanleyDai is Stanley {
+contract ItfAssetManagement18D is ItfAssetManagement {
     function _getDecimals() internal pure virtual override returns (uint256) {
         return 18;
     }

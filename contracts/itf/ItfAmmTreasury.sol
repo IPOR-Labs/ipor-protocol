@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "../amm/Milton.sol";
-import "./types/ItfMiltonTypes.sol";
+import "../amm/AmmTreasury.sol";
+import "./types/ItfAmmTreasuryTypes.sol";
 
-abstract contract ItfMilton is Milton {
+abstract contract ItfAmmTreasury is AmmTreasury {
     using SafeCast for uint256;
 
     uint256 internal _maxSwapCollateralAmount;
@@ -26,17 +26,17 @@ abstract contract ItfMilton is Milton {
         address ammStorage,
         address assetManagement,
         address router
-    ) Milton(asset, decimals, ammStorage, assetManagement, router) {}
+    ) AmmTreasury(asset, decimals, ammStorage, assetManagement, router) {}
 
-    function setMiltonConstants(
+    function setConstants(
         uint256 maxSwapCollateralAmount,
         uint256 liquidationDepositAmount,
         uint256 minLiquidationThresholdToCloseBeforeMaturity,
         uint256 secondsBeforeMaturityWhenPositionCanBeClosed,
         uint256 liquidationLegLimit,
-        ItfMiltonTypes.ItfUtilization memory utilization,
-        ItfMiltonTypes.ItfFees memory fees,
-        ItfMiltonTypes.ItfLeverage memory leverage
+        ItfAmmTreasuryTypes.ItfUtilization memory utilization,
+        ItfAmmTreasuryTypes.ItfFees memory fees,
+        ItfAmmTreasuryTypes.ItfLeverage memory leverage
     ) external {
         _maxSwapCollateralAmount = maxSwapCollateralAmount;
         _maxLpUtilizationRate = utilization.maxLpUtilizationRate;

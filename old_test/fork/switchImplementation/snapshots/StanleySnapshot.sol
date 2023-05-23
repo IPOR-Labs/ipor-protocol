@@ -5,28 +5,28 @@ import "forge-std/console2.sol";
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "contracts/vault/Stanley.sol";
+import "contracts/vault/AssetManagement.sol";
 import "contracts/vault/strategies/StrategyCore.sol";
 import "forge-std/Test.sol";
 
-contract StanleySnapshot is Script, Test {
-    address private _stanley;
-    uint256 public stanleyVersion;
-    uint256 public stanleyExchangeRate;
-    address public stanleyAsset;
-    address public stanleyMilton;
+contract AssetManagementSnapshot is Script, Test {
+    address private _assetManagement;
+    uint256 public assetManagementVersion;
+    uint256 public assetManagementExchangeRate;
+    address public assetManagementAsset;
+    address public assetManagementAmmTreasury;
     address public strategyAave;
     address public strategyCompound;
-    bool public stanleyIsPaused;
-    uint256 public stanleyTotalBalance;
-    address public stanleyOwner;
+    bool public assetManagementIsPaused;
+    uint256 public assetManagementTotalBalance;
+    address public assetManagementOwner;
     uint256 public strategyAaveVersion;
     address public strategyAaveAsset;
     address public strategyAaveOwner;
     address public strategyAaveShareToken;
     uint256 public strategyAaveApr;
     uint256 public strategyAaveBalance;
-    address public strategyAaveStanley;
+    address public strategyAaveAssetManagement;
     address public strategyAaveTreasury;
     address public strategyAaveTreasuryManager;
     bool public strategyAaveIsPaused;
@@ -37,29 +37,29 @@ contract StanleySnapshot is Script, Test {
     address public strategyCompoundShareToken;
     uint256 public strategyCompoundApr;
     uint256 public strategyCompoundBalance;
-    address public strategyCompoundStanley;
+    address public strategyCompoundAssetManagement;
     address public strategyCompoundTreasury;
     address public strategyCompoundTreasuryManager;
     bool public strategyCompoundIsPaused;
 
     uint256 public blockNumber;
 
-    constructor(address stanley) {
-        _stanley = stanley;
+    constructor(address assetManagement) {
+        _assetManagement = assetManagement;
     }
 
     function snapshot() public {
-        Stanley stanley = Stanley(_stanley);
+        AssetManagement assetManagement = AssetManagement(_assetManagement);
 
-        stanleyVersion = stanley.getVersion();
-        stanleyAsset = stanley.getAsset();
-        stanleyMilton = stanley.getMilton();
-        strategyAave = stanley.getStrategyAave();
-        strategyCompound = stanley.getStrategyCompound();
-        stanleyIsPaused = stanley.paused();
-        stanleyOwner = stanley.owner();
-        stanleyTotalBalance = stanley.totalBalance(stanleyMilton);
-        stanleyExchangeRate = stanley.calculateExchangeRate();
+        assetManagementVersion = assetManagement.getVersion();
+        assetManagementAsset = assetManagement.getAsset();
+        assetManagementAmmTreasury = assetManagement.getAmmTreasury();
+        strategyAave = assetManagement.getStrategyAave();
+        strategyCompound = assetManagement.getStrategyCompound();
+        assetManagementIsPaused = assetManagement.paused();
+        assetManagementOwner = assetManagement.owner();
+        assetManagementTotalBalance = assetManagement.totalBalance(assetManagementAmmTreasury);
+        assetManagementExchangeRate = assetManagement.calculateExchangeRate();
         StrategyCore aaveStrategy = StrategyCore(strategyAave);
         strategyAaveVersion = aaveStrategy.getVersion();
         strategyAaveAsset = aaveStrategy.getAsset();
@@ -67,7 +67,7 @@ contract StanleySnapshot is Script, Test {
         strategyAaveShareToken = aaveStrategy.getShareToken();
         strategyAaveApr = aaveStrategy.getApr();
         strategyAaveBalance = aaveStrategy.balanceOf();
-        strategyAaveStanley = aaveStrategy.getStanley();
+        strategyAaveAssetManagement = aaveStrategy.getAssetManagement();
         strategyAaveTreasury = aaveStrategy.getTreasury();
         strategyAaveTreasuryManager = aaveStrategy.getTreasuryManager();
         strategyAaveIsPaused = aaveStrategy.paused();
@@ -79,7 +79,7 @@ contract StanleySnapshot is Script, Test {
         strategyCompoundShareToken = compoundStrategy.getShareToken();
         strategyCompoundApr = compoundStrategy.getApr();
         strategyCompoundBalance = compoundStrategy.balanceOf();
-        strategyCompoundStanley = compoundStrategy.getStanley();
+        strategyCompoundAssetManagement = compoundStrategy.getAssetManagement();
         strategyCompoundTreasury = compoundStrategy.getTreasury();
         strategyCompoundTreasuryManager = compoundStrategy.getTreasuryManager();
         strategyCompoundIsPaused = compoundStrategy.paused();
@@ -88,76 +88,76 @@ contract StanleySnapshot is Script, Test {
     }
 
     function toJson(string memory fileName) external {
-        console2.log("START: Save Stanley data to json");
+        console2.log("START: Save AssetManagement data to json");
         string memory path = vm.projectRoot();
-        string memory stanleyJson = "";
-        vm.serializeUint(stanleyJson, "stanleyVersion", stanleyVersion);
-        vm.serializeUint(stanleyJson, "stanleyExchangeRate", stanleyExchangeRate);
-        vm.serializeAddress(stanleyJson, "stanleyAsset", stanleyAsset);
-        vm.serializeAddress(stanleyJson, "stanleyMilton", stanleyMilton);
-        vm.serializeAddress(stanleyJson, "strategyAave", strategyAave);
-        vm.serializeAddress(stanleyJson, "strategyCompound", strategyCompound);
-        vm.serializeBool(stanleyJson, "stanleyIsPaused", stanleyIsPaused);
-        vm.serializeUint(stanleyJson, "stanleyTotalBalance", stanleyTotalBalance);
-        vm.serializeAddress(stanleyJson, "stanleyOwner", stanleyOwner);
-        vm.serializeUint(stanleyJson, "strategyAaveVersion", strategyAaveVersion);
-        vm.serializeAddress(stanleyJson, "strategyAaveAsset", strategyAaveAsset);
-        vm.serializeAddress(stanleyJson, "strategyAaveOwner", strategyAaveOwner);
-        vm.serializeAddress(stanleyJson, "strategyAaveShareToken", strategyAaveShareToken);
-        vm.serializeUint(stanleyJson, "strategyAaveApr", strategyAaveApr);
-        vm.serializeUint(stanleyJson, "strategyAaveBalance", strategyAaveBalance);
-        vm.serializeAddress(stanleyJson, "strategyAaveStanley", strategyAaveStanley);
-        vm.serializeAddress(stanleyJson, "strategyAaveTreasury", strategyAaveTreasury);
-        vm.serializeAddress(stanleyJson, "strategyAaveTreasuryManager", strategyAaveTreasuryManager);
-        vm.serializeBool(stanleyJson, "strategyAaveIsPaused", strategyAaveIsPaused);
+        string memory assetManagementJson = "";
+        vm.serializeUint(assetManagementJson, "assetManagementVersion", assetManagementVersion);
+        vm.serializeUint(assetManagementJson, "assetManagementExchangeRate", assetManagementExchangeRate);
+        vm.serializeAddress(assetManagementJson, "assetManagementAsset", assetManagementAsset);
+        vm.serializeAddress(assetManagementJson, "assetManagementAmmTreasury", assetManagementAmmTreasury);
+        vm.serializeAddress(assetManagementJson, "strategyAave", strategyAave);
+        vm.serializeAddress(assetManagementJson, "strategyCompound", strategyCompound);
+        vm.serializeBool(assetManagementJson, "assetManagementIsPaused", assetManagementIsPaused);
+        vm.serializeUint(assetManagementJson, "assetManagementTotalBalance", assetManagementTotalBalance);
+        vm.serializeAddress(assetManagementJson, "assetManagementOwner", assetManagementOwner);
+        vm.serializeUint(assetManagementJson, "strategyAaveVersion", strategyAaveVersion);
+        vm.serializeAddress(assetManagementJson, "strategyAaveAsset", strategyAaveAsset);
+        vm.serializeAddress(assetManagementJson, "strategyAaveOwner", strategyAaveOwner);
+        vm.serializeAddress(assetManagementJson, "strategyAaveShareToken", strategyAaveShareToken);
+        vm.serializeUint(assetManagementJson, "strategyAaveApr", strategyAaveApr);
+        vm.serializeUint(assetManagementJson, "strategyAaveBalance", strategyAaveBalance);
+        vm.serializeAddress(assetManagementJson, "strategyAaveAssetManagement", strategyAaveAssetManagement);
+        vm.serializeAddress(assetManagementJson, "strategyAaveTreasury", strategyAaveTreasury);
+        vm.serializeAddress(assetManagementJson, "strategyAaveTreasuryManager", strategyAaveTreasuryManager);
+        vm.serializeBool(assetManagementJson, "strategyAaveIsPaused", strategyAaveIsPaused);
 
-        vm.serializeUint(stanleyJson, "strategyCompoundVersion", strategyCompoundVersion);
-        vm.serializeAddress(stanleyJson, "strategyCompoundAsset", strategyCompoundAsset);
-        vm.serializeAddress(stanleyJson, "strategyCompoundOwner", strategyCompoundOwner);
-        vm.serializeAddress(stanleyJson, "strategyCompoundShareToken", strategyCompoundShareToken);
-        vm.serializeUint(stanleyJson, "strategyCompoundApr", strategyCompoundApr);
-        vm.serializeUint(stanleyJson, "strategyCompoundBalance", strategyCompoundBalance);
-        vm.serializeAddress(stanleyJson, "strategyCompoundStanley", strategyCompoundStanley);
-        vm.serializeAddress(stanleyJson, "strategyCompoundTreasury", strategyCompoundTreasury);
-        vm.serializeAddress(stanleyJson, "strategyCompoundTreasuryManager", strategyCompoundTreasuryManager);
-        vm.serializeBool(stanleyJson, "strategyCompoundIsPaused", strategyCompoundIsPaused);
+        vm.serializeUint(assetManagementJson, "strategyCompoundVersion", strategyCompoundVersion);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundAsset", strategyCompoundAsset);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundOwner", strategyCompoundOwner);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundShareToken", strategyCompoundShareToken);
+        vm.serializeUint(assetManagementJson, "strategyCompoundApr", strategyCompoundApr);
+        vm.serializeUint(assetManagementJson, "strategyCompoundBalance", strategyCompoundBalance);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundAssetManagement", strategyCompoundAssetManagement);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundTreasury", strategyCompoundTreasury);
+        vm.serializeAddress(assetManagementJson, "strategyCompoundTreasuryManager", strategyCompoundTreasuryManager);
+        vm.serializeBool(assetManagementJson, "strategyCompoundIsPaused", strategyCompoundIsPaused);
 
-        string memory finalJson = vm.serializeUint(stanleyJson, "blockNumber", blockNumber);
+        string memory finalJson = vm.serializeUint(assetManagementJson, "blockNumber", blockNumber);
         string memory fileBlockNumber = string.concat(Strings.toString(blockNumber), ".json");
         string memory finalFileName = string.concat(fileName, fileBlockNumber);
         vm.writeJson(finalJson, string.concat(path, finalFileName));
-        console2.log("END: Save Stanley data to json");
+        console2.log("END: Save AssetManagement data to json");
     }
 
-    function assertStanley(StanleySnapshot stanleySnapshot1, StanleySnapshot stanleySnapshot2) external {
-        assertEq(stanleySnapshot1.stanleyExchangeRate(), stanleySnapshot1.stanleyExchangeRate());
-        assertEq(stanleySnapshot1.stanleyAsset(), stanleySnapshot1.stanleyAsset());
-        assertEq(stanleySnapshot1.stanleyMilton(), stanleySnapshot1.stanleyMilton());
-        assertEq(stanleySnapshot1.strategyAave(), stanleySnapshot1.strategyAave());
-        assertEq(stanleySnapshot1.strategyCompound(), stanleySnapshot1.strategyCompound());
-        assertEq(stanleySnapshot1.stanleyIsPaused(), stanleySnapshot1.stanleyIsPaused());
-        assertEq(stanleySnapshot1.stanleyTotalBalance(), stanleySnapshot1.stanleyTotalBalance());
-        assertEq(stanleySnapshot1.stanleyOwner(), stanleySnapshot1.stanleyOwner());
-        assertEq(stanleySnapshot1.strategyAaveOwner(), stanleySnapshot1.strategyAaveOwner());
-        assertEq(stanleySnapshot1.strategyAaveShareToken(), stanleySnapshot1.strategyAaveShareToken());
-        assertEq(stanleySnapshot1.strategyAaveApr(), stanleySnapshot1.strategyAaveApr());
-        assertEq(stanleySnapshot1.strategyAaveBalance(), stanleySnapshot1.strategyAaveBalance());
-        assertEq(stanleySnapshot1.strategyAaveStanley(), stanleySnapshot1.strategyAaveStanley());
-        assertEq(stanleySnapshot1.strategyAaveTreasury(), stanleySnapshot1.strategyAaveTreasury());
-        assertEq(stanleySnapshot1.strategyAaveTreasuryManager(), stanleySnapshot1.strategyAaveTreasuryManager());
-        assertEq(stanleySnapshot1.strategyAaveIsPaused(), stanleySnapshot1.strategyAaveIsPaused());
-        assertEq(stanleySnapshot1.strategyCompoundAsset(), stanleySnapshot1.strategyCompoundAsset());
-        assertEq(stanleySnapshot1.strategyCompoundOwner(), stanleySnapshot1.strategyCompoundOwner());
-        assertEq(stanleySnapshot1.strategyCompoundShareToken(), stanleySnapshot1.strategyCompoundShareToken());
-        assertEq(stanleySnapshot1.strategyCompoundApr(), stanleySnapshot1.strategyCompoundApr());
-        assertEq(stanleySnapshot1.strategyCompoundBalance(), stanleySnapshot1.strategyCompoundBalance());
-        assertEq(stanleySnapshot1.strategyCompoundStanley(), stanleySnapshot1.strategyCompoundStanley());
-        assertEq(stanleySnapshot1.strategyCompoundTreasury(), stanleySnapshot1.strategyCompoundTreasury());
+    function assertAssetManagement(AssetManagementSnapshot assetManagementSnapshot1, AssetManagementSnapshot assetManagementSnapshot2) external {
+        assertEq(assetManagementSnapshot1.assetManagementExchangeRate(), assetManagementSnapshot1.assetManagementExchangeRate());
+        assertEq(assetManagementSnapshot1.assetManagementAsset(), assetManagementSnapshot1.assetManagementAsset());
+        assertEq(assetManagementSnapshot1.assetManagementAmmTreasury(), assetManagementSnapshot1.assetManagementAmmTreasury());
+        assertEq(assetManagementSnapshot1.strategyAave(), assetManagementSnapshot1.strategyAave());
+        assertEq(assetManagementSnapshot1.strategyCompound(), assetManagementSnapshot1.strategyCompound());
+        assertEq(assetManagementSnapshot1.assetManagementIsPaused(), assetManagementSnapshot1.assetManagementIsPaused());
+        assertEq(assetManagementSnapshot1.assetManagementTotalBalance(), assetManagementSnapshot1.assetManagementTotalBalance());
+        assertEq(assetManagementSnapshot1.assetManagementOwner(), assetManagementSnapshot1.assetManagementOwner());
+        assertEq(assetManagementSnapshot1.strategyAaveOwner(), assetManagementSnapshot1.strategyAaveOwner());
+        assertEq(assetManagementSnapshot1.strategyAaveShareToken(), assetManagementSnapshot1.strategyAaveShareToken());
+        assertEq(assetManagementSnapshot1.strategyAaveApr(), assetManagementSnapshot1.strategyAaveApr());
+        assertEq(assetManagementSnapshot1.strategyAaveBalance(), assetManagementSnapshot1.strategyAaveBalance());
+        assertEq(assetManagementSnapshot1.strategyAaveAssetManagement(), assetManagementSnapshot1.strategyAaveAssetManagement());
+        assertEq(assetManagementSnapshot1.strategyAaveTreasury(), assetManagementSnapshot1.strategyAaveTreasury());
+        assertEq(assetManagementSnapshot1.strategyAaveTreasuryManager(), assetManagementSnapshot1.strategyAaveTreasuryManager());
+        assertEq(assetManagementSnapshot1.strategyAaveIsPaused(), assetManagementSnapshot1.strategyAaveIsPaused());
+        assertEq(assetManagementSnapshot1.strategyCompoundAsset(), assetManagementSnapshot1.strategyCompoundAsset());
+        assertEq(assetManagementSnapshot1.strategyCompoundOwner(), assetManagementSnapshot1.strategyCompoundOwner());
+        assertEq(assetManagementSnapshot1.strategyCompoundShareToken(), assetManagementSnapshot1.strategyCompoundShareToken());
+        assertEq(assetManagementSnapshot1.strategyCompoundApr(), assetManagementSnapshot1.strategyCompoundApr());
+        assertEq(assetManagementSnapshot1.strategyCompoundBalance(), assetManagementSnapshot1.strategyCompoundBalance());
+        assertEq(assetManagementSnapshot1.strategyCompoundAssetManagement(), assetManagementSnapshot1.strategyCompoundAssetManagement());
+        assertEq(assetManagementSnapshot1.strategyCompoundTreasury(), assetManagementSnapshot1.strategyCompoundTreasury());
         assertEq(
-            stanleySnapshot1.strategyCompoundTreasuryManager(),
-            stanleySnapshot1.strategyCompoundTreasuryManager()
+            assetManagementSnapshot1.strategyCompoundTreasuryManager(),
+            assetManagementSnapshot1.strategyCompoundTreasuryManager()
         );
-        assertEq(stanleySnapshot1.strategyCompoundIsPaused(), stanleySnapshot1.strategyCompoundIsPaused());
-        assertEq(stanleySnapshot1.blockNumber(), stanleySnapshot1.blockNumber());
+        assertEq(assetManagementSnapshot1.strategyCompoundIsPaused(), assetManagementSnapshot1.strategyCompoundIsPaused());
+        assertEq(assetManagementSnapshot1.blockNumber(), assetManagementSnapshot1.blockNumber());
     }
 }

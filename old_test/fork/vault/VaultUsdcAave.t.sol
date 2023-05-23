@@ -13,77 +13,77 @@ contract VaultUsdcAaveTest is Test {
         _user = vm.rememberKey(2);
     }
 
-    function testShouldDepositToStanleyUsdc() public {
+    function testShouldDepositToAssetManagementUsdc() public {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         amm.overrideCompoundStrategyWithZeroApr(_admin);
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount * 1e12);
+        amm.joseph().depositToAssetManagement(amount * 1e12);
         vm.stopPrank();
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertGt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter > miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter > ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
-    function testShouldBeAbleToWithdrawFromStanleyUsdc() public {
+    function testShouldBeAbleToWithdrawFromAssetManagementUsdc() public {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         amm.overrideCompoundStrategyWithZeroApr(_admin);
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount * 1e12);
+        amm.joseph().depositToAssetManagement(amount * 1e12);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         vm.roll(block.number + (30 * 24 * 60 * 60) / 12);
         vm.warp(block.timestamp + 30 days);
 
         // when
-        amm.joseph().withdrawFromStanley(amount * 1e12);
+        amm.joseph().withdrawFromAssetManagement(amount * 1e12);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter < miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter < ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
-    function testShouldBeAbleToWithdrawTwiceFromStanleyUsdc() public {
+    function testShouldBeAbleToWithdrawTwiceFromAssetManagementUsdc() public {
         // given
         uint256 amount = 20_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(10_000 * 1e18);
+        amm.joseph().depositToAssetManagement(10_000 * 1e18);
         vm.roll(block.number + (30 * 24 * 60 * 60) / 12);
         vm.warp(block.timestamp + 30 days);
-        amm.joseph().withdrawFromStanley(10_000 * 1e18);
+        amm.joseph().withdrawFromAssetManagement(10_000 * 1e18);
 
         vm.roll(block.number + (30 * 24 * 60 * 60) / 12);
         vm.warp(block.timestamp + 30 days);
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
-        joseph.withdrawFromStanley(miltonTotalBalanceOnStanleyBefore);
+        joseph.withdrawFromAssetManagement(ammTreasuryTotalBalanceOnAssetManagementBefore);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
-        assertLt(miltonTotalBalanceStanleyAfter, 1e16, "miltonTotalBalanceStanleyAfter < 1e16");
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
+        assertLt(ammTreasuryTotalBalanceAssetManagementAfter, 1e16, "ammTreasuryTotalBalanceAssetManagementAfter < 1e16");
     }
 
     function testShouldNotBeAbleDepositWhenStrategiesArePausedUsdc() public {
@@ -98,20 +98,20 @@ contract VaultUsdcAaveTest is Test {
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.depositToStanley(amount * 1e12);
+        joseph.depositToAssetManagement(amount * 1e12);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore + amount * 1e12,
-            "miltonTotalBalanceStanleyAfter, miltonTotalBalanceOnStanleyBefore + amount * 1e12"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore + amount * 1e12,
+            "ammTreasuryTotalBalanceAssetManagementAfter, ammTreasuryTotalBalanceOnAssetManagementBefore + amount * 1e12"
         );
     }
 
@@ -121,82 +121,82 @@ contract VaultUsdcAaveTest is Test {
         UsdcAmm amm = new UsdcAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount * 1e12);
+        amm.joseph().depositToAssetManagement(amount * 1e12);
         vm.roll(block.number + 1000);
         amm.strategyAave().addPauseGuardian(_admin);
         amm.strategyCompound().addPauseGuardian(_admin);
         amm.strategyAave().pause();
         amm.strategyCompound().pause();
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.withdrawFromStanley(amount * 1e12);
+        joseph.withdrawFromAssetManagement(amount * 1e12);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertEq(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter == miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter == ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 
-    function testShouldNotBeAbleDepositWhenStanleyIsPausedUsdc() public {
+    function testShouldNotBeAbleDepositWhenAssetManagementIsPausedUsdc() public {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
         vm.startPrank(_admin);
-        amm.stanley().addPauseGuardian(_admin);
-        amm.stanley().pause();
+        amm.assetManagement().addPauseGuardian(_admin);
+        amm.assetManagement().pause();
 
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.depositToStanley(amount * 1e12);
+        joseph.depositToAssetManagement(amount * 1e12);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertLt(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore + amount * 1e12,
-            "miltonTotalBalanceStanleyAfter, miltonTotalBalanceOnStanleyBefore + amount * 1e12"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore + amount * 1e12,
+            "ammTreasuryTotalBalanceAssetManagementAfter, ammTreasuryTotalBalanceOnAssetManagementBefore + amount * 1e12"
         );
     }
 
-    function testShouldNotBeAbleWithdrawWhenStanleyIsPausedUsdc() public {
+    function testShouldNotBeAbleWithdrawWhenAssetManagementIsPausedUsdc() public {
         // given
         uint256 amount = 1_000 * 1e6;
         UsdcAmm amm = new UsdcAmm(_admin);
         Joseph joseph = amm.joseph();
         amm.overrideCompoundStrategyWithZeroApr(_admin);
-        deal(amm.usdc(), address(amm.milton()), amount);
+        deal(amm.usdc(), address(amm.ammTreasury()), amount);
         vm.startPrank(_admin);
-        amm.joseph().depositToStanley(amount * 1e12);
+        amm.joseph().depositToAssetManagement(amount * 1e12);
         vm.roll(block.number + 1000);
-        amm.stanley().addPauseGuardian(_admin);
-        amm.stanley().pause();
+        amm.assetManagement().addPauseGuardian(_admin);
+        amm.assetManagement().pause();
 
-        uint256 miltonTotalBalanceOnStanleyBefore = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceOnAssetManagementBefore = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
 
         // when
         vm.expectRevert(abi.encodePacked("Pausable: paused"));
-        joseph.withdrawFromStanley(amount * 1e12);
+        joseph.withdrawFromAssetManagement(amount * 1e12);
 
         // then
-        uint256 miltonTotalBalanceStanleyAfter = amm.stanley().totalBalance(address(amm.milton()));
+        uint256 ammTreasuryTotalBalanceAssetManagementAfter = amm.assetManagement().totalBalance(address(amm.ammTreasury()));
         assertEq(
-            miltonTotalBalanceStanleyAfter,
-            miltonTotalBalanceOnStanleyBefore,
-            "miltonTotalBalanceStanleyAfter == miltonTotalBalanceOnStanleyBefore"
+            ammTreasuryTotalBalanceAssetManagementAfter,
+            ammTreasuryTotalBalanceOnAssetManagementBefore,
+            "ammTreasuryTotalBalanceAssetManagementAfter == ammTreasuryTotalBalanceOnAssetManagementBefore"
         );
     }
 }

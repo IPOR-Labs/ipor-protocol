@@ -13,9 +13,9 @@ contract JosephBuilder is Test {
         bool paused;
         address asset;
         address ipToken;
-        address milton;
-        address miltonStorage;
-        address stanley;
+        address ammTreasury;
+        address ammStorage;
+        address assetManagement;
         address josephImplementation;
     }
 
@@ -47,18 +47,18 @@ contract JosephBuilder is Test {
         return this;
     }
 
-    function withMilton(address milton) public returns (JosephBuilder) {
-        builderData.milton = milton;
+    function withAmmTreasury(address ammTreasury) public returns (JosephBuilder) {
+        builderData.ammTreasury = ammTreasury;
         return this;
     }
 
-    function withMiltonStorage(address miltonStorage) public returns (JosephBuilder) {
-        builderData.miltonStorage = miltonStorage;
+    function withAmmStorage(address ammStorage) public returns (JosephBuilder) {
+        builderData.ammStorage = ammStorage;
         return this;
     }
 
-    function withStanley(address stanley) public returns (JosephBuilder) {
-        builderData.stanley = stanley;
+    function withAssetManagement(address assetManagement) public returns (JosephBuilder) {
+        builderData.assetManagement = assetManagement;
         return this;
     }
 
@@ -100,9 +100,9 @@ contract JosephBuilder is Test {
                 builderData.paused,
                 builderData.asset,
                 builderData.ipToken,
-                builderData.milton,
-                builderData.miltonStorage,
-                builderData.stanley
+                builderData.ammTreasury,
+                builderData.ammStorage,
+                builderData.assetManagement
             )
         );
     }

@@ -4,12 +4,12 @@ pragma solidity 0.8.16;
 import "forge-std/Test.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import "contracts/security/PauseManager.sol";
-import "contracts/vault/StanleyUsdc.sol";
+import "contracts/vault/AssetManagementUsdc.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IvToken.sol";
-import "contracts/mocks/stanley/MockTestnetStrategy.sol";
+import "contracts/mocks/assetManagement/MockTestnetStrategy.sol";
 
-contract StanleyPauseManagerTest is Test {
+contract AssetManagementPauseManagerTest is Test {
     address private _owner;
     address private _user1;
     address private _user2;
@@ -25,175 +25,175 @@ contract StanleyPauseManagerTest is Test {
 
     function testShouldEmitPauseGuardianAddedEvent() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
 
         // when & then
         vm.startPrank(_owner);
         vm.expectEmit(true, true, true, true);
         emit PauseGuardianAdded(_user1);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
     }
 
     function testShouldEmitPauseGuardianRemovedEvent() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
         vm.startPrank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
 
         // when & then
         vm.expectEmit(true, true, true, true);
         emit PauseGuardianRemoved(_user1);
-        stanley.removePauseGuardian(_user1);
+        assetManagement.removePauseGuardian(_user1);
     }
 
     function testShouldNotPauseIfNoPauseGuardianIsSet() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
 
         // when & then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("IPOR_011"));
-        stanley.pause();
+        assetManagement.pause();
     }
 
     function testShouldNotPauseWhenCalledByNonPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
 
         // when & then
         vm.startPrank(_user2);
         vm.expectRevert(abi.encodePacked("IPOR_011"));
-        stanley.pause();
+        assetManagement.pause();
     }
 
     function testShouldPauseWhenCalledByPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
-        assertFalse(stanley.paused());
+        AssetManagement assetManagement = createAssetManagement();
+        assertFalse(assetManagement.paused());
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
 
         // when
         vm.startPrank(_user1);
-        stanley.pause();
+        assetManagement.pause();
 
         // then
-        assertTrue(stanley.paused());
+        assertTrue(assetManagement.paused());
     }
 
     function testShouldNotPauseWhenCalledByRemovedPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
-        assertFalse(stanley.paused());
+        AssetManagement assetManagement = createAssetManagement();
+        assertFalse(assetManagement.paused());
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
 
         // when
         vm.prank(_owner);
-        stanley.removePauseGuardian(_user1);
+        assetManagement.removePauseGuardian(_user1);
 
         // then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("IPOR_011"));
-        stanley.pause();
-        assertFalse(stanley.paused());
+        assetManagement.pause();
+        assertFalse(assetManagement.paused());
     }
 
     function testShouldNotRemovePauseGuardianWhenCalledByNonOwner() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
 
         // when & then
         vm.startPrank(_user2);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.removePauseGuardian(_user1);
+        assetManagement.removePauseGuardian(_user1);
     }
 
     function testShouldNotAddPauseGuardianWhenCalledByNonOwner() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
 
         // when & then
         vm.startPrank(_user2);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
     }
 
     function testShouldUnpauseWhenCalledByOwner() public {
         // given
-        Stanley stanley = createStanley();
-        assertFalse(stanley.paused());
+        AssetManagement assetManagement = createAssetManagement();
+        assertFalse(assetManagement.paused());
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
         vm.prank(_user1);
-        stanley.pause();
-        assertTrue(stanley.paused());
+        assetManagement.pause();
+        assertTrue(assetManagement.paused());
 
         // when
         vm.prank(_owner);
-        stanley.unpause();
+        assetManagement.unpause();
 
         // then
-        assertFalse(stanley.paused());
+        assertFalse(assetManagement.paused());
     }
 
     function testShouldNotUnpauseWhenCalledByPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
-        assertFalse(stanley.paused());
+        AssetManagement assetManagement = createAssetManagement();
+        assertFalse(assetManagement.paused());
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
         vm.prank(_user1);
-        stanley.pause();
-        assertTrue(stanley.paused());
+        assetManagement.pause();
+        assertTrue(assetManagement.paused());
 
         // when
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.unpause();
+        assetManagement.unpause();
 
         // then
-        assertTrue(stanley.paused());
+        assertTrue(assetManagement.paused());
     }
 
     function testShouldOwnerCannotPauseWhenNotPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
-        assertFalse(stanley.paused());
+        AssetManagement assetManagement = createAssetManagement();
+        assertFalse(assetManagement.paused());
 
         // when & then
         vm.startPrank(_owner);
         vm.expectRevert(abi.encodePacked("IPOR_011"));
-        stanley.pause();
-        assertFalse(stanley.paused());
+        assetManagement.pause();
+        assertFalse(assetManagement.paused());
     }
 
     function testShouldPauseGuardianCannotAddPauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
         vm.prank(_owner);
-        stanley.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user1);
 
         // when & then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.addPauseGuardian(_user2);
+        assetManagement.addPauseGuardian(_user2);
     }
 
     function testShouldPauseGuardianCannotRemovePauseGuardian() public {
         // given
-        Stanley stanley = createStanley();
+        AssetManagement assetManagement = createAssetManagement();
         vm.startPrank(_owner);
-        stanley.addPauseGuardian(_user1);
-        stanley.addPauseGuardian(_user2);
+        assetManagement.addPauseGuardian(_user1);
+        assetManagement.addPauseGuardian(_user2);
         vm.stopPrank();
 
         // when & then
         vm.startPrank(_user1);
         vm.expectRevert(abi.encodePacked("Ownable: caller is not the owner"));
-        stanley.removePauseGuardian(_user2);
+        assetManagement.removePauseGuardian(_user2);
     }
 
     function createStrategy() internal returns (MockTestnetStrategy) {
@@ -209,10 +209,10 @@ contract StanleyPauseManagerTest is Test {
             );
     }
 
-    function createStanley() internal returns (Stanley) {
+    function createAssetManagement() internal returns (AssetManagement) {
         vm.startPrank(_owner);
         MockTestnetStrategy strategy = createStrategy();
-        StanleyUsdc implementation = new StanleyUsdc();
+        AssetManagementUsdc implementation = new AssetManagementUsdc();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(
@@ -224,7 +224,7 @@ contract StanleyPauseManagerTest is Test {
             )
         );
         vm.stopPrank();
-        return Stanley(address(proxy));
+        return AssetManagement(address(proxy));
     }
 
     event PauseGuardianAdded(address indexed guardian);

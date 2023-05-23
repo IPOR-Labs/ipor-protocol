@@ -50,7 +50,7 @@ contract MockTestnetStrategy is StrategyCore {
     function deposit(uint256 wadAmount)
         external
         override
-        onlyStanley
+        onlyAssetManagement
         returns (uint256 depositedAmount)
     {
         address asset = _asset;
@@ -66,7 +66,7 @@ contract MockTestnetStrategy is StrategyCore {
         return IporMath.convertToWad(amount, assetDecimals);
     }
 
-    function withdraw(uint256 wadAmount) external override onlyStanley returns (uint256) {
+    function withdraw(uint256 wadAmount) external override onlyAssetManagement returns (uint256) {
         address asset = _asset;
         uint256 amount = IporMath.convertWadToAssetDecimals(
             wadAmount,

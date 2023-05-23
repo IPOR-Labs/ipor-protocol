@@ -3,34 +3,34 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "contracts/mocks/spread/MockBaseMiltonSpreadModelUsdt.sol";
-import "contracts/mocks/spread/MockBaseMiltonSpreadModelUsdc.sol";
-import "contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "contracts/mocks/spread/MockBaseAmmTreasurySpreadModelUsdt.sol";
+import "contracts/mocks/spread/MockBaseAmmTreasurySpreadModelUsdc.sol";
+import "contracts/mocks/spread/MockBaseAmmTreasurySpreadModelDai.sol";
 
-contract MiltonSpreadCoreTest is Test, TestCommons {
+contract AmmTreasurySpreadCoreTest is Test, TestCommons {
     function testShouldReturnProperConstantForUsdt() public {
         // given
-        MockBaseMiltonSpreadModelUsdt _miltonSpread = new MockBaseMiltonSpreadModelUsdt();
+        MockBaseAmmTreasurySpreadModelUsdt _ammTreasurySpread = new MockBaseAmmTreasurySpreadModelUsdt();
         // when
-        int256 payFixedRegionOneBase = _miltonSpread.getPayFixedRegionOneBase();
-        int256 payFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionOneBase = _ammTreasurySpread.getPayFixedRegionOneBase();
+        int256 payFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForVolatility();
-        int256 payFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForMeanReversion();
-        int256 payFixedRegionTwoBase = _miltonSpread.getPayFixedRegionTwoBase();
-        int256 payFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionTwoBase = _ammTreasurySpread.getPayFixedRegionTwoBase();
+        int256 payFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForVolatility();
-        int256 payFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        int256 receiveFixedRegionOneBase = _miltonSpread.getReceiveFixedRegionOneBase();
-        int256 receiveFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionOneBase = _ammTreasurySpread.getReceiveFixedRegionOneBase();
+        int256 receiveFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForVolatility();
-        int256 receiveFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        int256 receiveFixedRegionTwoBase = _miltonSpread.getReceiveFixedRegionTwoBase();
-        int256 receiveFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionTwoBase = _ammTreasurySpread.getReceiveFixedRegionTwoBase();
+        int256 receiveFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        int256 receiveFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         // then
         assertEq(payFixedRegionOneBase, 3663986060872150);
@@ -49,27 +49,27 @@ contract MiltonSpreadCoreTest is Test, TestCommons {
 
     function testShouldReturnProperConstantForUsdc() public {
         // given
-        MockBaseMiltonSpreadModelUsdc _miltonSpread = new MockBaseMiltonSpreadModelUsdc();
+        MockBaseAmmTreasurySpreadModelUsdc _ammTreasurySpread = new MockBaseAmmTreasurySpreadModelUsdc();
         // when
-        int256 payFixedRegionOneBase = _miltonSpread.getPayFixedRegionOneBase();
-        int256 payFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionOneBase = _ammTreasurySpread.getPayFixedRegionOneBase();
+        int256 payFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForVolatility();
-        int256 payFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForMeanReversion();
-        int256 payFixedRegionTwoBase = _miltonSpread.getPayFixedRegionTwoBase();
-        int256 payFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionTwoBase = _ammTreasurySpread.getPayFixedRegionTwoBase();
+        int256 payFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForVolatility();
-        int256 payFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        int256 receiveFixedRegionOneBase = _miltonSpread.getReceiveFixedRegionOneBase();
-        int256 receiveFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionOneBase = _ammTreasurySpread.getReceiveFixedRegionOneBase();
+        int256 receiveFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForVolatility();
-        int256 receiveFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        int256 receiveFixedRegionTwoBase = _miltonSpread.getReceiveFixedRegionTwoBase();
-        int256 receiveFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionTwoBase = _ammTreasurySpread.getReceiveFixedRegionTwoBase();
+        int256 receiveFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        int256 receiveFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         // then
         assertEq(payFixedRegionOneBase, 246221635508210);
@@ -88,27 +88,27 @@ contract MiltonSpreadCoreTest is Test, TestCommons {
 
     function testShouldReturnProperConstantForDai() public {
         // given
-        MockBaseMiltonSpreadModelDai _miltonSpread = new MockBaseMiltonSpreadModelDai();
+        MockBaseAmmTreasurySpreadModelDai _ammTreasurySpread = new MockBaseAmmTreasurySpreadModelDai();
         // when
-        int256 payFixedRegionOneBase = _miltonSpread.getPayFixedRegionOneBase();
-        int256 payFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionOneBase = _ammTreasurySpread.getPayFixedRegionOneBase();
+        int256 payFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForVolatility();
-        int256 payFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionOneSlopeForMeanReversion();
-        int256 payFixedRegionTwoBase = _miltonSpread.getPayFixedRegionTwoBase();
-        int256 payFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 payFixedRegionTwoBase = _ammTreasurySpread.getPayFixedRegionTwoBase();
+        int256 payFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForVolatility();
-        int256 payFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 payFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getPayFixedRegionTwoSlopeForMeanReversion();
-        int256 receiveFixedRegionOneBase = _miltonSpread.getReceiveFixedRegionOneBase();
-        int256 receiveFixedRegionOneSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionOneBase = _ammTreasurySpread.getReceiveFixedRegionOneBase();
+        int256 receiveFixedRegionOneSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForVolatility();
-        int256 receiveFixedRegionOneSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionOneSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionOneSlopeForMeanReversion();
-        int256 receiveFixedRegionTwoBase = _miltonSpread.getReceiveFixedRegionTwoBase();
-        int256 receiveFixedRegionTwoSlopeForVolatility = _miltonSpread
+        int256 receiveFixedRegionTwoBase = _ammTreasurySpread.getReceiveFixedRegionTwoBase();
+        int256 receiveFixedRegionTwoSlopeForVolatility = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForVolatility();
-        int256 receiveFixedRegionTwoSlopeForMeanReversion = _miltonSpread
+        int256 receiveFixedRegionTwoSlopeForMeanReversion = _ammTreasurySpread
             .getReceiveFixedRegionTwoSlopeForMeanReversion();
         // then
         assertEq(payFixedRegionOneBase, 310832623606789);

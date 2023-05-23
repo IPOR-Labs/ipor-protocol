@@ -7,10 +7,8 @@ library CockpitTypes {
     /// @notice Struct groupping important addresses used by CockpitDataProvider,
     /// struct represent data for a specific asset ie. USDT, USDC, DAI etc.
     struct AssetConfig {
-        /// @notice Milton (AMM) address
-        address milton;
-        /// @notice Joseph (part of AMM responsible for Liquidity Pool management) address
-        address joseph;
+        /// @notice AmmTreasury (AMM) address
+        address ammTreasury;
         /// @notice ipToken address (Liquidity Pool Token)
         address ipToken;
         /// @notice ivToken address (IPOR Vault Token)

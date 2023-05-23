@@ -3,8 +3,8 @@ pragma solidity 0.8.16;
 
 import "../../../interfaces/types/AmmTypes.sol";
 
-/// @notice Structs used in the MiltonStorage interface
-library AmmMiltonStorageTypes {
+/// @notice Structs used in the AmmStorage interface
+library AmmStorageInternalTypes {
     struct IporSwap {
         /// @notice Swap's ID
         uint32 id;
@@ -39,7 +39,7 @@ library AmmMiltonStorageTypes {
         AmmTypes.SwapDuration duration;
     }
 
-    /// @notice All active swaps available in Milton with information on swaps belong to the account.
+    /// @notice All active swaps available in AMM with information on swaps belong to the account.
     /// It describes swaps for a given leg.
     struct IporSwapContainer {
         /// @notice Swap details, key in the map is a swapId
@@ -48,7 +48,7 @@ library AmmMiltonStorageTypes {
         mapping(address => uint32[]) ids;
     }
 
-    /// @notice A struct containing balances that Milton keeps track of. It acts as a Milton's accounting book.
+    /// @notice A struct containing balances that AMM keeps track of. It acts as a AMM's accounting book.
     /// Those balances are used in various calculations across the protocol.
     /// @dev All balances are in 18 decimals
     struct Balances {
@@ -59,7 +59,7 @@ library AmmMiltonStorageTypes {
         /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
         /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
         uint128 liquidityPool;
-        /// @notice Stanley's current balance. It includes interest accrued until Stanley's most recent state change.
+        /// @notice AssetManagement's current balance. It includes interest accrued until AssetManagement's most recent state change.
         uint128 vault;
         /// @notice This balance is used to track the funds accounted for IporOracle subsidization.
         uint128 iporPublicationFee;

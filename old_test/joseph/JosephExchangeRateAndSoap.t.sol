@@ -29,7 +29,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -46,7 +46,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             26000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -55,10 +55,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
@@ -75,7 +75,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -92,7 +92,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -108,10 +108,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
@@ -128,7 +128,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -145,7 +145,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -161,10 +161,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
@@ -181,7 +181,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE2;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -199,7 +199,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -215,10 +215,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
@@ -235,7 +235,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -252,16 +252,16 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(55000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         // END HACK - subtract liquidity without  burn ipToken
 
         vm.prank(_userOne);
@@ -275,10 +275,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         vm.expectRevert("IPOR_316");
@@ -295,7 +295,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -313,16 +313,16 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
         );
 
         // BEGIN HACK - subtract liquidity without  burn ipToken
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(55000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         // END HACK - subtract liquidity without  burn ipToken
 
         vm.prank(_userOne);
@@ -336,10 +336,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         // when
         vm.expectRevert("IPOR_316");
@@ -356,7 +356,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _cfg.iporOracleInitialParamsTestCase = BuilderUtils.IporOracleInitialParamsTestCase.CASE3;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
@@ -374,16 +374,16 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             27000 * TestConstants.D18,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(55000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         vm.prank(_userOne);
@@ -397,10 +397,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
@@ -416,7 +416,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         public
     {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -433,16 +433,16 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_60_000_18DEC);
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             27000 * TestConstants.D18,
             1 * TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
         );
 
         //BEGIN HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
-        _iporProtocol.miltonStorage.setJoseph(_admin);
-        _iporProtocol.miltonStorage.subtractLiquidity(55000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.setJoseph(_admin);
+        _iporProtocol.ammStorage.subtractLiquidity(55000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
         //END HACK - subtract liquidity without  burn ipToken. Notice! This affect ipToken price!
 
         vm.prank(_userOne);
@@ -456,10 +456,10 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         (, , int256 soap) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
-        IporTypes.MiltonBalancesMemory memory balance = _iporProtocol.milton.getAccruedBalance();
+        IporTypes.AmmBalancesMemory memory balance = _iporProtocol.ammTreasury.getAccruedBalance();
 
         uint256 actualExchangeRate = _iporProtocol.joseph.itfCalculateExchangeRate(
             block.timestamp + TestConstants.PERIOD_25_DAYS_IN_SECONDS
@@ -473,7 +473,7 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
 
     function testShouldCalculateExchangeRatePositionValuesAndSoapWhenTwoPayFixedSwapsAreClosedAfter60Days() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
 
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
@@ -490,12 +490,12 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol.joseph.provideLiquidity(TestConstants.USD_1_000_000_18DEC);
 
         vm.startPrank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_100_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
         );
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_100_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1000_18DEC
@@ -509,16 +509,16 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
             block.timestamp
         );
 
-        (, , int256 initialSoap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.milton);
+        (, , int256 initialSoap) = calculateSoap(_userTwo, block.timestamp, _iporProtocol.ammTreasury);
         (, , int256 soapAfter28Days) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
         (, , int256 soapAfter56DaysBeforeClose) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
 
         ExchangeRateAndPayoff memory exchangeRateAndPayoff;
@@ -529,39 +529,39 @@ contract JosephExchangeRateAndSoap is TestCommons, DataUtils, SwapUtils {
         exchangeRateAndPayoff.exchangeRateAfter56DaysBeforeClose = _iporProtocol.joseph.itfCalculateExchangeRate(
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
         );
-        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+        exchangeRateAndPayoff.payoff1After28Days = _iporProtocol.ammTreasury.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
             1
         );
-        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+        exchangeRateAndPayoff.payoff2After28Days = _iporProtocol.ammTreasury.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_28_DAYS_IN_SECONDS,
             2
         );
-        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+        exchangeRateAndPayoff.payoff1After56Days = _iporProtocol.ammTreasury.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
             1
         );
-        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.milton.itfCalculateSwapPayFixedValue(
+        exchangeRateAndPayoff.payoff2After56Days = _iporProtocol.ammTreasury.itfCalculateSwapPayFixedValue(
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
             2
         );
-        IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceBeforeClose = _iporProtocol
-            .miltonStorage
+        IporTypes.AmmBalancesMemory memory liquidityPoolBalanceBeforeClose = _iporProtocol
+            .ammStorage
             .getBalance();
         int256 actualSOAPPlusLiquidityPoolBalanceBeforeClose = int256(liquidityPoolBalanceBeforeClose.liquidityPool) -
             soapAfter56DaysBeforeClose;
 
         // when
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
-        _iporProtocol.milton.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(2, block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS);
 
         // then
         (, , int256 soapAfter56DaysAfterClose) = calculateSoap(
             _userTwo,
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS,
-            _iporProtocol.milton
+            _iporProtocol.ammTreasury
         );
-        IporTypes.MiltonBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol.miltonStorage.getBalance();
+        IporTypes.AmmBalancesMemory memory liquidityPoolBalanceAfterClose = _iporProtocol.ammStorage.getBalance();
         uint256 exchangeRate56DaysAfterClose = _iporProtocol.joseph.itfCalculateExchangeRate(
             block.timestamp + TestConstants.PERIOD_56_DAYS_IN_SECONDS
         );

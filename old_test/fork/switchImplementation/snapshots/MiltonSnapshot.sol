@@ -6,87 +6,87 @@ import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/amm/Milton.sol";
-import "contracts/facades/MiltonFacadeDataProvider.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/facades/AmmTreasuryFacadeDataProvider.sol";
 import "forge-std/Test.sol";
 
-contract MiltonSnapshot is Script, Test {
+contract AmmTreasurySnapshot is Script, Test {
     using stdJson for string;
-    address private _milton;
-    address public miltonJoseph;
-    address public miltonSpreadModel;
-    address public miltonAsset;
-    address public miltonOwner;
-    address public miltonFacadeDataProviderOwner;
-    uint256 public miltonVersion;
-    uint256 public miltonFacadeDataProviderVersion;
-    uint256 public miltonMaxSwapCollateralAmount;
-    uint256 public miltonMaxLpUtilizationRate;
-    uint256 public miltonMaxLpUtilizationRatePayFixed;
-    uint256 public miltonMaxLpUtilizationRateReceiveFixed;
-    uint256 public miltonIncomeFeeRate;
-    uint256 public miltonOpeningFeeRate;
-    uint256 public miltonOpeningFeeTreasuryPortionRate;
-    uint256 public miltonIporPublicationFee;
-    uint256 public miltonLiquidationDepositAmount;
-    uint256 public miltonWadLiquidationDepositAmount;
-    uint256 public miltonMaxLeveragePayFixed;
-    uint256 public miltonMaxLeverageReceiveFixed;
-    uint256 public miltonMinLeverage;
-    int256 public miltonSpreadPayFixed;
-    int256 public miltonSpreadReceiveFixed;
-    int256 public miltonSoapPayFixed;
-    int256 public miltonSoapReceiveFixed;
-    int256 public miltonSoap;
+    address private _ammTreasury;
+    address public ammTreasuryJoseph;
+    address public ammTreasurySpreadModel;
+    address public ammTreasuryAsset;
+    address public ammTreasuryOwner;
+    address public ammTreasuryFacadeDataProviderOwner;
+    uint256 public ammTreasuryVersion;
+    uint256 public ammTreasuryFacadeDataProviderVersion;
+    uint256 public ammTreasuryMaxSwapCollateralAmount;
+    uint256 public ammTreasuryMaxLpUtilizationRate;
+    uint256 public ammTreasuryMaxLpUtilizationRatePayFixed;
+    uint256 public ammTreasuryMaxLpUtilizationRateReceiveFixed;
+    uint256 public ammTreasuryIncomeFeeRate;
+    uint256 public ammTreasuryOpeningFeeRate;
+    uint256 public ammTreasuryOpeningFeeTreasuryPortionRate;
+    uint256 public ammTreasuryIporPublicationFee;
+    uint256 public ammTreasuryLiquidationDepositAmount;
+    uint256 public ammTreasuryWadLiquidationDepositAmount;
+    uint256 public ammTreasuryMaxLeveragePayFixed;
+    uint256 public ammTreasuryMaxLeverageReceiveFixed;
+    uint256 public ammTreasuryMinLeverage;
+    int256 public ammTreasurySpreadPayFixed;
+    int256 public ammTreasurySpreadReceiveFixed;
+    int256 public ammTreasurySoapPayFixed;
+    int256 public ammTreasurySoapReceiveFixed;
+    int256 public ammTreasurySoap;
     uint256 public totalCollateralPayFixed;
     uint256 public totalCollateralReceiveFixed;
     uint256 public liquidityPool;
     uint256 public vault;
-    bool public miltonIsPaused;
+    bool public ammTreasuryIsPaused;
     uint256 public blockNumber;
     uint256 public blockTimestamp;
 
-    constructor(address milton) {
-        _milton = milton;
+    constructor(address ammTreasury) {
+        _ammTreasury = ammTreasury;
     }
 
     function snapshot() public {
-        Milton milton = Milton(_milton);
-        MiltonFacadeDataProvider miltonFacadeDataProvider = MiltonFacadeDataProvider(_milton);
+        AmmTreasury ammTreasury = AmmTreasury(_ammTreasury);
+        AmmTreasuryFacadeDataProvider ammTreasuryFacadeDataProvider = AmmTreasuryFacadeDataProvider(_ammTreasury);
 
-        miltonJoseph = milton.getJoseph();
-        miltonSpreadModel = milton.getMiltonSpreadModel();
-        miltonAsset = milton.getAsset();
-        miltonOwner = milton.owner();
-        miltonFacadeDataProviderOwner = miltonFacadeDataProvider.owner();
+        ammTreasuryJoseph = ammTreasury.getJoseph();
+        ammTreasurySpreadModel = ammTreasury.getAmmTreasurySpreadModel();
+        ammTreasuryAsset = ammTreasury.getAsset();
+        ammTreasuryOwner = ammTreasury.owner();
+        ammTreasuryFacadeDataProviderOwner = ammTreasuryFacadeDataProvider.owner();
 
-        miltonVersion = milton.getVersion();
-        miltonFacadeDataProviderVersion = miltonFacadeDataProvider.getVersion();
-        miltonMaxSwapCollateralAmount = milton.getMaxSwapCollateralAmount();
-        miltonMaxLpUtilizationRate = milton.getMaxLpUtilizationRate();
-        //        miltonMaxLpUtilizationRatePayFixed = milton
+        ammTreasuryVersion = ammTreasury.getVersion();
+        ammTreasuryFacadeDataProviderVersion = ammTreasuryFacadeDataProvider.getVersion();
+        ammTreasuryMaxSwapCollateralAmount = ammTreasury.getMaxSwapCollateralAmount();
+        ammTreasuryMaxLpUtilizationRate = ammTreasury.getMaxLpUtilizationRate();
+        //        ammTreasuryMaxLpUtilizationRatePayFixed = ammTreasury
         //        .getMaxLpUtilizationRatePayFixed(); TODO revert
-        //        miltonMaxLpUtilizationRateReceiveFixed = milton
+        //        ammTreasuryMaxLpUtilizationRateReceiveFixed = ammTreasury
         //        .getMaxLpUtilizationRateReceiveFixed(); TODO revert
 
-        //        miltonOpeningFeeRate = milton.getOpeningFeeRate();
-        //        miltonOpeningFeeTreasuryPortionRate = milton
+        //        ammTreasuryOpeningFeeRate = ammTreasury.getOpeningFeeRate();
+        //        ammTreasuryOpeningFeeTreasuryPortionRate = ammTreasury
         //        .getOpeningFeeTreasuryPortionRate();
-        miltonIporPublicationFee = milton.getIporPublicationFee();
-        miltonLiquidationDepositAmount = milton.getLiquidationDepositAmount();
-        miltonWadLiquidationDepositAmount = milton.getWadLiquidationDepositAmount();
-        //        miltonMaxLeveragePayFixed = milton.getMaxLeveragePayFixed(); TODO revert
-        //        miltonMaxLeverageReceiveFixed = milton.getMaxLeverageReceiveFixed(); TODO revert
-        miltonMinLeverage = milton.getMinLeverage();
+        ammTreasuryIporPublicationFee = ammTreasury.getIporPublicationFee();
+        ammTreasuryLiquidationDepositAmount = ammTreasury.getLiquidationDepositAmount();
+        ammTreasuryWadLiquidationDepositAmount = ammTreasury.getWadLiquidationDepositAmount();
+        //        ammTreasuryMaxLeveragePayFixed = ammTreasury.getMaxLeveragePayFixed(); TODO revert
+        //        ammTreasuryMaxLeverageReceiveFixed = ammTreasury.getMaxLeverageReceiveFixed(); TODO revert
+        ammTreasuryMinLeverage = ammTreasury.getMinLeverage();
 
-        (miltonSpreadPayFixed, miltonSpreadReceiveFixed) = milton.calculateSpread();
-        (miltonSoapPayFixed, miltonSoapReceiveFixed, miltonSoap) = milton.calculateSoap();
+        (ammTreasurySpreadPayFixed, ammTreasurySpreadReceiveFixed) = ammTreasury.calculateSpread();
+        (ammTreasurySoapPayFixed, ammTreasurySoapReceiveFixed, ammTreasurySoap) = ammTreasury.calculateSoap();
 
-        IporTypes.MiltonBalancesMemory memory miltonAccruedBalance = milton.getAccruedBalance();
-        totalCollateralPayFixed = miltonAccruedBalance.totalCollateralPayFixed;
-        totalCollateralReceiveFixed = miltonAccruedBalance.totalCollateralReceiveFixed;
-        liquidityPool = miltonAccruedBalance.liquidityPool;
-        vault = miltonAccruedBalance.vault;
+        IporTypes.AmmBalancesMemory memory ammTreasuryAccruedBalance = ammTreasury.getAccruedBalance();
+        totalCollateralPayFixed = ammTreasuryAccruedBalance.totalCollateralPayFixed;
+        totalCollateralReceiveFixed = ammTreasuryAccruedBalance.totalCollateralReceiveFixed;
+        liquidityPool = ammTreasuryAccruedBalance.liquidityPool;
+        vault = ammTreasuryAccruedBalance.vault;
 
         blockNumber = block.number;
         blockTimestamp = block.timestamp;
@@ -94,317 +94,317 @@ contract MiltonSnapshot is Script, Test {
 
     function toJson(string memory fileName) external {
         string memory path = vm.projectRoot();
-        string memory miltonJson = "";
+        string memory ammTreasuryJson = "";
 
-        vm.serializeAddress(miltonJson, "milton", _milton);
-        vm.serializeAddress(miltonJson, "miltonJoseph", miltonJoseph);
-        vm.serializeAddress(miltonJson, "miltonSpreadModel", miltonSpreadModel);
-        vm.serializeAddress(miltonJson, "miltonAsset", miltonAsset);
-        vm.serializeAddress(miltonJson, "miltonOwner", miltonOwner);
-        vm.serializeAddress(miltonJson, "miltonFacadeDataProviderOwner", miltonFacadeDataProviderOwner);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasury", _ammTreasury);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasuryJoseph", ammTreasuryJoseph);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasurySpreadModel", ammTreasurySpreadModel);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasuryAsset", ammTreasuryAsset);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasuryOwner", ammTreasuryOwner);
+        vm.serializeAddress(ammTreasuryJson, "ammTreasuryFacadeDataProviderOwner", ammTreasuryFacadeDataProviderOwner);
 
-        vm.serializeUint(miltonJson, "miltonVersion", miltonVersion);
-        vm.serializeUint(miltonJson, "miltonFacadeDataProviderVersion", miltonFacadeDataProviderVersion);
-        vm.serializeUint(miltonJson, "miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
-        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
-        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRatePayFixed", miltonMaxLpUtilizationRatePayFixed);
-        vm.serializeUint(miltonJson, "miltonMaxLpUtilizationRateReceiveFixed", miltonMaxLpUtilizationRateReceiveFixed);
-        vm.serializeUint(miltonJson, "miltonOpeningFeeRate", miltonOpeningFeeRate);
-        vm.serializeUint(miltonJson, "miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
-        vm.serializeUint(miltonJson, "miltonIporPublicationFee", miltonIporPublicationFee);
-        vm.serializeUint(miltonJson, "miltonLiquidationDepositAmount", miltonLiquidationDepositAmount);
-        vm.serializeUint(miltonJson, "miltonWadLiquidationDepositAmount", miltonWadLiquidationDepositAmount);
-        vm.serializeUint(miltonJson, "miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
-        vm.serializeUint(miltonJson, "miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
-        vm.serializeUint(miltonJson, "miltonMinLeverage", miltonMinLeverage);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryVersion", ammTreasuryVersion);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryFacadeDataProviderVersion", ammTreasuryFacadeDataProviderVersion);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxSwapCollateralAmount", ammTreasuryMaxSwapCollateralAmount);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRate", ammTreasuryMaxLpUtilizationRate);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRatePayFixed", ammTreasuryMaxLpUtilizationRatePayFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLpUtilizationRateReceiveFixed", ammTreasuryMaxLpUtilizationRateReceiveFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryOpeningFeeRate", ammTreasuryOpeningFeeRate);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryOpeningFeeTreasuryPortionRate", ammTreasuryOpeningFeeTreasuryPortionRate);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryIporPublicationFee", ammTreasuryIporPublicationFee);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryLiquidationDepositAmount", ammTreasuryLiquidationDepositAmount);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryWadLiquidationDepositAmount", ammTreasuryWadLiquidationDepositAmount);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLeveragePayFixed", ammTreasuryMaxLeveragePayFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMaxLeverageReceiveFixed", ammTreasuryMaxLeverageReceiveFixed);
+        vm.serializeUint(ammTreasuryJson, "ammTreasuryMinLeverage", ammTreasuryMinLeverage);
 
-        vm.serializeInt(miltonJson, "miltonSpreadPayFixed", miltonSpreadPayFixed);
-        vm.serializeInt(miltonJson, "miltonSpreadReceiveFixed", miltonSpreadReceiveFixed);
-        vm.serializeInt(miltonJson, "miltonSoapPayFixed", miltonSoapPayFixed);
-        vm.serializeInt(miltonJson, "miltonSoapReceiveFixed", miltonSoapReceiveFixed);
-        vm.serializeInt(miltonJson, "miltonSoap", miltonSoap);
+        vm.serializeInt(ammTreasuryJson, "ammTreasurySpreadPayFixed", ammTreasurySpreadPayFixed);
+        vm.serializeInt(ammTreasuryJson, "ammTreasurySpreadReceiveFixed", ammTreasurySpreadReceiveFixed);
+        vm.serializeInt(ammTreasuryJson, "ammTreasurySoapPayFixed", ammTreasurySoapPayFixed);
+        vm.serializeInt(ammTreasuryJson, "ammTreasurySoapReceiveFixed", ammTreasurySoapReceiveFixed);
+        vm.serializeInt(ammTreasuryJson, "ammTreasurySoap", ammTreasurySoap);
 
-        vm.serializeUint(miltonJson, "totalCollateralPayFixed", totalCollateralPayFixed);
-        vm.serializeUint(miltonJson, "totalCollateralReceiveFixed", totalCollateralReceiveFixed);
-        vm.serializeUint(miltonJson, "liquidityPool", liquidityPool);
-        vm.serializeUint(miltonJson, "vault", vault);
+        vm.serializeUint(ammTreasuryJson, "totalCollateralPayFixed", totalCollateralPayFixed);
+        vm.serializeUint(ammTreasuryJson, "totalCollateralReceiveFixed", totalCollateralReceiveFixed);
+        vm.serializeUint(ammTreasuryJson, "liquidityPool", liquidityPool);
+        vm.serializeUint(ammTreasuryJson, "vault", vault);
 
-        vm.serializeBool(miltonJson, "miltonIsPaused", miltonIsPaused);
-        vm.serializeUint(miltonJson, "blockNumber", blockNumber);
+        vm.serializeBool(ammTreasuryJson, "ammTreasuryIsPaused", ammTreasuryIsPaused);
+        vm.serializeUint(ammTreasuryJson, "blockNumber", blockNumber);
 
-        string memory finalJson = vm.serializeUint(miltonJson, "blockTimestamp", blockTimestamp);
+        string memory finalJson = vm.serializeUint(ammTreasuryJson, "blockTimestamp", blockTimestamp);
         vm.writeJson(finalJson, string.concat(path, fileName));
     }
 
-    function assertMilton(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
-        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph(), "Milton: Joseph should be the same");
+    function assertAmmTreasury(AmmTreasurySnapshot ammTreasurySnapshot1, AmmTreasurySnapshot ammTreasurySnapshot2) external {
+        assertEq(ammTreasurySnapshot1.ammTreasuryJoseph(), ammTreasurySnapshot2.ammTreasuryJoseph(), "AmmTreasury: Joseph should be the same");
         assertEq(
-            miltonSnapshot1.miltonSpreadModel(),
-            miltonSnapshot2.miltonSpreadModel(),
-            "Milton: Spread Model should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadModel(),
+            ammTreasurySnapshot2.ammTreasurySpreadModel(),
+            "AmmTreasury: Spread Model should be the same"
         );
-        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner(), "Milton: Owner should be the same");
+        assertEq(ammTreasurySnapshot1.ammTreasuryOwner(), ammTreasurySnapshot2.ammTreasuryOwner(), "AmmTreasury: Owner should be the same");
         assertEq(
-            miltonSnapshot1.miltonFacadeDataProviderOwner(),
-            miltonSnapshot2.miltonFacadeDataProviderOwner(),
-            "Milton: Facade Data Provider Owner should be the same"
-        );
-        assertEq(
-            miltonSnapshot1.miltonMaxSwapCollateralAmount(),
-            miltonSnapshot2.miltonMaxSwapCollateralAmount(),
-            "Milton: Max Swap Collateral Amount should be the same"
+            ammTreasurySnapshot1.ammTreasuryFacadeDataProviderOwner(),
+            ammTreasurySnapshot2.ammTreasuryFacadeDataProviderOwner(),
+            "AmmTreasury: Facade Data Provider Owner should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRate(),
-            miltonSnapshot2.miltonMaxLpUtilizationRate(),
-            "Milton: Max LP Utilization Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxSwapCollateralAmount(),
+            ammTreasurySnapshot2.ammTreasuryMaxSwapCollateralAmount(),
+            "AmmTreasury: Max Swap Collateral Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(),
-            miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed(),
-            "Milton: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
+            "AmmTreasury: Max LP Utilization Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(),
-            miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed(),
-            "Milton: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
+            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonIncomeFeeRate(),
-            miltonSnapshot2.miltonIncomeFeeRate(),
-            "Milton: Income Fee Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
+            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonOpeningFeeRate(),
-            miltonSnapshot2.miltonOpeningFeeRate(),
-            "Milton: Opening Fee Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),
+            ammTreasurySnapshot2.ammTreasuryIncomeFeeRate(),
+            "AmmTreasury: Income Fee Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(),
-            miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate(),
-            "Milton: Opening Fee Treasury Portion Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryOpeningFeeRate(),
+            ammTreasurySnapshot2.ammTreasuryOpeningFeeRate(),
+            "AmmTreasury: Opening Fee Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonIporPublicationFee(),
-            miltonSnapshot2.miltonIporPublicationFee(),
-            "Milton: IPOR Publication Fee should be the same"
+            ammTreasurySnapshot1.ammTreasuryOpeningFeeTreasuryPortionRate(),
+            ammTreasurySnapshot2.ammTreasuryOpeningFeeTreasuryPortionRate(),
+            "AmmTreasury: Opening Fee Treasury Portion Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonLiquidationDepositAmount(),
-            miltonSnapshot2.miltonLiquidationDepositAmount(),
-            "Milton: Liquidation Deposit Amount should be the same"
+            ammTreasurySnapshot1.ammTreasuryIporPublicationFee(),
+            ammTreasurySnapshot2.ammTreasuryIporPublicationFee(),
+            "AmmTreasury: IPOR Publication Fee should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonWadLiquidationDepositAmount(),
-            miltonSnapshot2.miltonWadLiquidationDepositAmount(),
-            "Milton: WAD Liquidation Deposit Amount should be the same"
-        );
-        // assertEq(miltonSnapshot1.miltonMaxLeverage(), miltonSnapshot2.miltonMaxLeverage(), "Milton: Max Leverage should be the same");
-        assertEq(
-            miltonSnapshot1.miltonMinLeverage(),
-            miltonSnapshot2.miltonMinLeverage(),
-            "Milton: Min Leverage should be the same"
+            ammTreasurySnapshot1.ammTreasuryLiquidationDepositAmount(),
+            ammTreasurySnapshot2.ammTreasuryLiquidationDepositAmount(),
+            "AmmTreasury: Liquidation Deposit Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSpreadPayFixed(),
-            miltonSnapshot2.miltonSpreadPayFixed(),
-            "Milton: Spread Pay Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasuryWadLiquidationDepositAmount(),
+            ammTreasurySnapshot2.ammTreasuryWadLiquidationDepositAmount(),
+            "AmmTreasury: WAD Liquidation Deposit Amount should be the same"
+        );
+        // assertEq(ammTreasurySnapshot1.ammTreasuryMaxLeverage(), ammTreasurySnapshot2.ammTreasuryMaxLeverage(), "AmmTreasury: Max Leverage should be the same");
+        assertEq(
+            ammTreasurySnapshot1.ammTreasuryMinLeverage(),
+            ammTreasurySnapshot2.ammTreasuryMinLeverage(),
+            "AmmTreasury: Min Leverage should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSpreadReceiveFixed(),
-            miltonSnapshot2.miltonSpreadReceiveFixed(),
-            "Milton: Spread Receive Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadPayFixed(),
+            ammTreasurySnapshot2.ammTreasurySpreadPayFixed(),
+            "AmmTreasury: Spread Pay Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSoapPayFixed(),
-            miltonSnapshot2.miltonSoapPayFixed(),
-            "Milton: SOAP Pay Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasurySpreadReceiveFixed(),
+            "AmmTreasury: Spread Receive Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSoapReceiveFixed(),
-            miltonSnapshot2.miltonSoapReceiveFixed(),
-            "Milton: SOAP Receive Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasurySoapPayFixed(),
+            ammTreasurySnapshot2.ammTreasurySoapPayFixed(),
+            "AmmTreasury: SOAP Pay Fixed should be the same"
         );
-        //        assertEq(miltonSnapshot1.miltonSoap(), miltonSnapshot2.miltonSoap(), "Milton: SOAP should be the same");
         assertEq(
-            miltonSnapshot1.totalCollateralPayFixed(),
-            miltonSnapshot2.totalCollateralPayFixed(),
+            ammTreasurySnapshot1.ammTreasurySoapReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasurySoapReceiveFixed(),
+            "AmmTreasury: SOAP Receive Fixed should be the same"
+        );
+        //        assertEq(ammTreasurySnapshot1.ammTreasurySoap(), ammTreasurySnapshot2.ammTreasurySoap(), "AmmTreasury: SOAP should be the same");
+        assertEq(
+            ammTreasurySnapshot1.totalCollateralPayFixed(),
+            ammTreasurySnapshot2.totalCollateralPayFixed(),
             "Total Collateral Pay Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.totalCollateralReceiveFixed(),
-            miltonSnapshot2.totalCollateralReceiveFixed(),
+            ammTreasurySnapshot1.totalCollateralReceiveFixed(),
+            ammTreasurySnapshot2.totalCollateralReceiveFixed(),
             "Total Collateral Receive Fixed should be the same"
         );
-        assertEq(miltonSnapshot1.liquidityPool(), miltonSnapshot2.liquidityPool(), "Liquidity Pool should be the same");
-        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault(), "Vault should be the same");
+        assertEq(ammTreasurySnapshot1.liquidityPool(), ammTreasurySnapshot2.liquidityPool(), "Liquidity Pool should be the same");
+        assertEq(ammTreasurySnapshot1.vault(), ammTreasurySnapshot2.vault(), "Vault should be the same");
         assertEq(
-            miltonSnapshot1.miltonIsPaused(),
-            miltonSnapshot2.miltonIsPaused(),
-            "Milton: Is Paused should be the same"
+            ammTreasurySnapshot1.ammTreasuryIsPaused(),
+            ammTreasurySnapshot2.ammTreasuryIsPaused(),
+            "AmmTreasury: Is Paused should be the same"
         );
-        assertEq(miltonSnapshot1.blockNumber(), miltonSnapshot2.blockNumber(), "Block Number should be the same");
+        assertEq(ammTreasurySnapshot1.blockNumber(), ammTreasurySnapshot2.blockNumber(), "Block Number should be the same");
         assertEq(
-            miltonSnapshot1.blockTimestamp(),
-            miltonSnapshot2.blockTimestamp(),
+            ammTreasurySnapshot1.blockTimestamp(),
+            ammTreasurySnapshot2.blockTimestamp(),
             "Block Timestamp should be the same"
         );
     }
 
     // This method should be removed after deployment. There is a problem with the assertion of the new IporMath.divideInt implementation.
-    function assertWithIgnore(MiltonSnapshot miltonSnapshot1, MiltonSnapshot miltonSnapshot2) external {
-        assertEq(miltonSnapshot1.miltonJoseph(), miltonSnapshot2.miltonJoseph(), "Milton: Joseph should be the same");
+    function assertWithIgnore(AmmTreasurySnapshot ammTreasurySnapshot1, AmmTreasurySnapshot ammTreasurySnapshot2) external {
+        assertEq(ammTreasurySnapshot1.ammTreasuryJoseph(), ammTreasurySnapshot2.ammTreasuryJoseph(), "AmmTreasury: Joseph should be the same");
         assertEq(
-            miltonSnapshot1.miltonSpreadModel(),
-            miltonSnapshot2.miltonSpreadModel(),
-            "Milton: Spread Model should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadModel(),
+            ammTreasurySnapshot2.ammTreasurySpreadModel(),
+            "AmmTreasury: Spread Model should be the same"
         );
-        assertEq(miltonSnapshot1.miltonOwner(), miltonSnapshot2.miltonOwner(), "Milton: Owner should be the same");
+        assertEq(ammTreasurySnapshot1.ammTreasuryOwner(), ammTreasurySnapshot2.ammTreasuryOwner(), "AmmTreasury: Owner should be the same");
         assertEq(
-            miltonSnapshot1.miltonFacadeDataProviderOwner(),
-            miltonSnapshot2.miltonFacadeDataProviderOwner(),
-            "Milton: Facade Data Provider Owner should be the same"
-        );
-        assertEq(
-            miltonSnapshot1.miltonMaxSwapCollateralAmount(),
-            miltonSnapshot2.miltonMaxSwapCollateralAmount(),
-            "Milton: Max Swap Collateral Amount should be the same"
+            ammTreasurySnapshot1.ammTreasuryFacadeDataProviderOwner(),
+            ammTreasurySnapshot2.ammTreasuryFacadeDataProviderOwner(),
+            "AmmTreasury: Facade Data Provider Owner should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRate(),
-            miltonSnapshot2.miltonMaxLpUtilizationRate(),
-            "Milton: Max LP Utilization Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxSwapCollateralAmount(),
+            ammTreasurySnapshot2.ammTreasuryMaxSwapCollateralAmount(),
+            "AmmTreasury: Max Swap Collateral Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRatePayFixed(),
-            miltonSnapshot2.miltonMaxLpUtilizationRatePayFixed(),
-            "Milton: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRate(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRate(),
+            "AmmTreasury: Max LP Utilization Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLpUtilizationRateReceiveFixed(),
-            miltonSnapshot2.miltonMaxLpUtilizationRateReceiveFixed(),
-            "Milton: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRatePayFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRatePayFixed(),
+            "AmmTreasury: Max LP Utilization Per Pay Fixed Leg Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonIncomeFeeRate(),
-            miltonSnapshot2.miltonIncomeFeeRate(),
-            "Milton: Income Fee Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLpUtilizationRateReceiveFixed(),
+            "AmmTreasury: Max LP Utilization Per Receive Fixed Leg Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonOpeningFeeRate(),
-            miltonSnapshot2.miltonOpeningFeeRate(),
-            "Milton: Opening Fee Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryIncomeFeeRate(),
+            ammTreasurySnapshot2.ammTreasuryIncomeFeeRate(),
+            "AmmTreasury: Income Fee Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonOpeningFeeTreasuryPortionRate(),
-            miltonSnapshot2.miltonOpeningFeeTreasuryPortionRate(),
-            "Milton: Opening Fee Treasury Portion Rate should be the same"
+            ammTreasurySnapshot1.ammTreasuryOpeningFeeRate(),
+            ammTreasurySnapshot2.ammTreasuryOpeningFeeRate(),
+            "AmmTreasury: Opening Fee Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonIporPublicationFee(),
-            miltonSnapshot2.miltonIporPublicationFee(),
-            "Milton: IPOR Publication Fee should be the same"
+            ammTreasurySnapshot1.ammTreasuryOpeningFeeTreasuryPortionRate(),
+            ammTreasurySnapshot2.ammTreasuryOpeningFeeTreasuryPortionRate(),
+            "AmmTreasury: Opening Fee Treasury Portion Rate should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonLiquidationDepositAmount(),
-            miltonSnapshot2.miltonLiquidationDepositAmount(),
-            "Milton: Liquidation Deposit Amount should be the same"
+            ammTreasurySnapshot1.ammTreasuryIporPublicationFee(),
+            ammTreasurySnapshot2.ammTreasuryIporPublicationFee(),
+            "AmmTreasury: IPOR Publication Fee should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonWadLiquidationDepositAmount(),
-            miltonSnapshot2.miltonWadLiquidationDepositAmount(),
-            "Milton: WAD Liquidation Deposit Amount should be the same"
+            ammTreasurySnapshot1.ammTreasuryLiquidationDepositAmount(),
+            ammTreasurySnapshot2.ammTreasuryLiquidationDepositAmount(),
+            "AmmTreasury: Liquidation Deposit Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLeveragePayFixed(),
-            miltonSnapshot2.miltonMaxLeveragePayFixed(),
-            "Milton: Max Leverage For Pay Fixed leg should be the same"
+            ammTreasurySnapshot1.ammTreasuryWadLiquidationDepositAmount(),
+            ammTreasurySnapshot2.ammTreasuryWadLiquidationDepositAmount(),
+            "AmmTreasury: WAD Liquidation Deposit Amount should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMaxLeverageReceiveFixed(),
-            miltonSnapshot2.miltonMaxLeverageReceiveFixed(),
-            "Milton: Max Leverage For Receive Fixed leg should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLeveragePayFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLeveragePayFixed(),
+            "AmmTreasury: Max Leverage For Pay Fixed leg should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonMinLeverage(),
-            miltonSnapshot2.miltonMinLeverage(),
-            "Milton: Min Leverage should be the same"
+            ammTreasurySnapshot1.ammTreasuryMaxLeverageReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasuryMaxLeverageReceiveFixed(),
+            "AmmTreasury: Max Leverage For Receive Fixed leg should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSpreadPayFixed(),
-            miltonSnapshot2.miltonSpreadPayFixed(),
-            "Milton: Spread Pay Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasuryMinLeverage(),
+            ammTreasurySnapshot2.ammTreasuryMinLeverage(),
+            "AmmTreasury: Min Leverage should be the same"
         );
         assertEq(
-            miltonSnapshot1.miltonSpreadReceiveFixed(),
-            miltonSnapshot2.miltonSpreadReceiveFixed(),
-            "Milton: Spread Receive Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadPayFixed(),
+            ammTreasurySnapshot2.ammTreasurySpreadPayFixed(),
+            "AmmTreasury: Spread Pay Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.totalCollateralPayFixed(),
-            miltonSnapshot2.totalCollateralPayFixed(),
-            "Milton: Total Collateral Pay Fixed should be the same"
+            ammTreasurySnapshot1.ammTreasurySpreadReceiveFixed(),
+            ammTreasurySnapshot2.ammTreasurySpreadReceiveFixed(),
+            "AmmTreasury: Spread Receive Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.totalCollateralReceiveFixed(),
-            miltonSnapshot2.totalCollateralReceiveFixed(),
-            "Milton: Total Collateral Receive Fixed should be the same"
+            ammTreasurySnapshot1.totalCollateralPayFixed(),
+            ammTreasurySnapshot2.totalCollateralPayFixed(),
+            "AmmTreasury: Total Collateral Pay Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.liquidityPool(),
-            miltonSnapshot2.liquidityPool(),
-            "Milton: Liquidity Pool should be the same"
-        );
-        assertEq(miltonSnapshot1.vault(), miltonSnapshot2.vault(), "Milton: Vault should be the same");
-        assertEq(
-            miltonSnapshot1.miltonIsPaused(),
-            miltonSnapshot2.miltonIsPaused(),
-            "Milton: Is Paused should be the same"
+            ammTreasurySnapshot1.totalCollateralReceiveFixed(),
+            ammTreasurySnapshot2.totalCollateralReceiveFixed(),
+            "AmmTreasury: Total Collateral Receive Fixed should be the same"
         );
         assertEq(
-            miltonSnapshot1.blockNumber(),
-            miltonSnapshot2.blockNumber(),
-            "Milton: Block Number should be the same"
+            ammTreasurySnapshot1.liquidityPool(),
+            ammTreasurySnapshot2.liquidityPool(),
+            "AmmTreasury: Liquidity Pool should be the same"
+        );
+        assertEq(ammTreasurySnapshot1.vault(), ammTreasurySnapshot2.vault(), "AmmTreasury: Vault should be the same");
+        assertEq(
+            ammTreasurySnapshot1.ammTreasuryIsPaused(),
+            ammTreasurySnapshot2.ammTreasuryIsPaused(),
+            "AmmTreasury: Is Paused should be the same"
         );
         assertEq(
-            miltonSnapshot1.blockTimestamp(),
-            miltonSnapshot2.blockTimestamp(),
-            "Milton: Block Timestamp should be the same"
+            ammTreasurySnapshot1.blockNumber(),
+            ammTreasurySnapshot2.blockNumber(),
+            "AmmTreasury: Block Number should be the same"
+        );
+        assertEq(
+            ammTreasurySnapshot1.blockTimestamp(),
+            ammTreasurySnapshot2.blockTimestamp(),
+            "AmmTreasury: Block Timestamp should be the same"
         );
     }
 
     function consoleLog() public view {
-        console2.log("milton", _milton);
-        console2.log("miltonJoseph", miltonJoseph);
-        console2.log("miltonSpreadModel", miltonSpreadModel);
-        console2.log("miltonAsset", miltonAsset);
-        console2.log("miltonOwner", miltonOwner);
-        console2.log("miltonVersion", miltonVersion);
-        console2.log("miltonFacadeDataProviderVersion", miltonFacadeDataProviderVersion);
-        console2.log("miltonMaxSwapCollateralAmount", miltonMaxSwapCollateralAmount);
-        console2.log("miltonMaxLpUtilizationRate", miltonMaxLpUtilizationRate);
-        console2.log("miltonMaxLpUtilizationRatePayFixed", miltonMaxLpUtilizationRatePayFixed);
-        console2.log("miltonMaxLpUtilizationRateReceiveFixed", miltonMaxLpUtilizationRateReceiveFixed);
-        console2.log("miltonIncomeFeeRate", miltonIncomeFeeRate);
-        console2.log("miltonOpeningFeeRate", miltonOpeningFeeRate);
-        console2.log("miltonOpeningFeeTreasuryPortionRate", miltonOpeningFeeTreasuryPortionRate);
-        console2.log("miltonIporPublicationFee", miltonIporPublicationFee);
-        console2.log("miltonLiquidationDepositAmount", miltonLiquidationDepositAmount);
-        console2.log("miltonWadLiquidationDepositAmount", miltonWadLiquidationDepositAmount);
-        console2.log("miltonMaxLeveragePayFixed", miltonMaxLeveragePayFixed);
-        console2.log("miltonMaxLeverageReceiveFixed", miltonMaxLeverageReceiveFixed);
-        console2.log("miltonMinLeverage", miltonMinLeverage);
-        console2.logInt(miltonSpreadPayFixed);
-        console2.logInt(miltonSpreadReceiveFixed);
-        console2.logInt(miltonSoapPayFixed);
-        console2.logInt(miltonSoapReceiveFixed);
-        console2.logInt(miltonSoap);
+        console2.log("ammTreasury", _ammTreasury);
+        console2.log("ammTreasuryJoseph", ammTreasuryJoseph);
+        console2.log("ammTreasurySpreadModel", ammTreasurySpreadModel);
+        console2.log("ammTreasuryAsset", ammTreasuryAsset);
+        console2.log("ammTreasuryOwner", ammTreasuryOwner);
+        console2.log("ammTreasuryVersion", ammTreasuryVersion);
+        console2.log("ammTreasuryFacadeDataProviderVersion", ammTreasuryFacadeDataProviderVersion);
+        console2.log("ammTreasuryMaxSwapCollateralAmount", ammTreasuryMaxSwapCollateralAmount);
+        console2.log("ammTreasuryMaxLpUtilizationRate", ammTreasuryMaxLpUtilizationRate);
+        console2.log("ammTreasuryMaxLpUtilizationRatePayFixed", ammTreasuryMaxLpUtilizationRatePayFixed);
+        console2.log("ammTreasuryMaxLpUtilizationRateReceiveFixed", ammTreasuryMaxLpUtilizationRateReceiveFixed);
+        console2.log("ammTreasuryIncomeFeeRate", ammTreasuryIncomeFeeRate);
+        console2.log("ammTreasuryOpeningFeeRate", ammTreasuryOpeningFeeRate);
+        console2.log("ammTreasuryOpeningFeeTreasuryPortionRate", ammTreasuryOpeningFeeTreasuryPortionRate);
+        console2.log("ammTreasuryIporPublicationFee", ammTreasuryIporPublicationFee);
+        console2.log("ammTreasuryLiquidationDepositAmount", ammTreasuryLiquidationDepositAmount);
+        console2.log("ammTreasuryWadLiquidationDepositAmount", ammTreasuryWadLiquidationDepositAmount);
+        console2.log("ammTreasuryMaxLeveragePayFixed", ammTreasuryMaxLeveragePayFixed);
+        console2.log("ammTreasuryMaxLeverageReceiveFixed", ammTreasuryMaxLeverageReceiveFixed);
+        console2.log("ammTreasuryMinLeverage", ammTreasuryMinLeverage);
+        console2.logInt(ammTreasurySpreadPayFixed);
+        console2.logInt(ammTreasurySpreadReceiveFixed);
+        console2.logInt(ammTreasurySoapPayFixed);
+        console2.logInt(ammTreasurySoapReceiveFixed);
+        console2.logInt(ammTreasurySoap);
         console2.log("totalCollateralPayFixed", totalCollateralPayFixed);
         console2.log("totalCollateralReceiveFixed", totalCollateralReceiveFixed);
         console2.log("liquidityPool", liquidityPool);
         console2.log("vault", vault);
         console2.log("blockNumber", blockNumber);
-        console2.log("miltonIsPaused", miltonIsPaused);
+        console2.log("ammTreasuryIsPaused", ammTreasuryIsPaused);
         console2.log("blockTimestamp", blockTimestamp);
     }
 }

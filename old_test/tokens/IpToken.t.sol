@@ -112,7 +112,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(MiltonErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_JOSEPH));
         ipToken.mint(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 
@@ -122,7 +122,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_joseph);
-        vm.expectRevert(abi.encodePacked(JosephErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
+        vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW));
         ipToken.mint(_user1, TestConstants.ZERO);
     }
 
@@ -132,7 +132,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_joseph);
-        vm.expectRevert(abi.encodePacked(JosephErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW));
+        vm.expectRevert(abi.encodePacked(AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW));
         ipToken.burn(_user1, TestConstants.ZERO);
     }
 
@@ -142,7 +142,7 @@ contract IpTokenTest is Test, TestCommons {
 
         // when & then
         vm.prank(_user1);
-        vm.expectRevert(abi.encodePacked(MiltonErrors.CALLER_NOT_JOSEPH));
+        vm.expectRevert(abi.encodePacked(AmmErrors.CALLER_NOT_JOSEPH));
         ipToken.burn(_user2, TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC);
     }
 

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-library JosephErrors {
+library AmmPoolsErrors {
     // 400-499-joseph
     //@notice IP Token Value which should be minted is too low
     string public constant IP_TOKEN_MINT_AMOUNT_TOO_LOW = "IPOR_400";
@@ -24,9 +24,9 @@ library JosephErrors {
     //@notice Charlie Treasurer address is incorrect
     string public constant INCORRECT_CHARLIE_TREASURER = "IPOR_407";
 
-    string public constant STANLEY_BALANCE_IS_EMPTY = "IPOR_408";
+    string public constant ASSET_MANAGEMENT_BALANCE_IS_EMPTY = "IPOR_408";
 
-    string public constant MILTON_STANLEY_RATIO = "IPOR_409";
+    string public constant MILTON_ASSET_MANAGEMENT_RATIO = "IPOR_409";
 
     string public constant INSUFFICIENT_ERC20_BALANCE = "IPOR_410";
 

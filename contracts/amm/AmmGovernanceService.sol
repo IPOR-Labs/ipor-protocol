@@ -6,12 +6,11 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
 
-import "../libraries/errors/JosephErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IAmmGovernanceService.sol";
-import "../interfaces/IMiltonStorage.sol";
-import "../interfaces/IMilton.sol";
-import "../interfaces/IMiltonInternal.sol";
+import "../interfaces/IAmmTreasury.sol";
+import "../interfaces/IAmmStorage.sol";
 import "../governance/AmmConfigurationManager.sol";
 
 contract AmmGovernanceService is IAmmGovernanceService {
@@ -58,33 +57,33 @@ contract AmmGovernanceService is IAmmGovernanceService {
     }
 
     function depositToAssetManagement(address asset, uint256 assetAmount) external override {
-        IMiltonInternal(_getAmmTreasury(asset)).depositToStanley(assetAmount);
+        IAmmTreasury(_getAmmTreasury(asset)).depositToAssetManagement(assetAmount);
     }
 
     function withdrawFromAssetManagement(address asset, uint256 assetAmount) external override {
-        IMiltonInternal(_getAmmTreasury(asset)).withdrawFromStanley(assetAmount);
+        IAmmTreasury(_getAmmTreasury(asset)).withdrawFromAssetManagement(assetAmount);
     }
 
     function withdrawAllFromAssetManagement(address asset) external override {
-        IMiltonInternal(_getAmmTreasury(asset)).withdrawAllFromStanley();
+        IAmmTreasury(_getAmmTreasury(asset)).withdrawAllFromAssetManagement();
     }
 
     function transferToTreasury(address asset, uint256 assetAmount) external override {
         require(
             msg.sender == AmmConfigurationManager.getAmmPoolsTreasuryManager(asset),
-            JosephErrors.CALLER_NOT_TREASURY_MANAGER
+            AmmPoolsErrors.CALLER_NOT_TREASURY_MANAGER
         );
 
         address treasury = AmmConfigurationManager.getAmmPoolsTreasury(asset);
 
-        require(address(0) != treasury, JosephErrors.INCORRECT_TREASURE_TREASURER);
+        require(address(0) != treasury, AmmPoolsErrors.INCORRECT_TREASURE_TREASURER);
 
         PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
         uint256 assetAmountAssetDecimals = IporMath.convertWadToAssetDecimals(assetAmount, poolCfg.assetDecimals);
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
 
-        IMiltonStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasury(wadAssetAmount);
+        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToTreasury(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, treasury, assetAmountAssetDecimals);
     }
@@ -92,12 +91,12 @@ contract AmmGovernanceService is IAmmGovernanceService {
     function transferToCharlieTreasury(address asset, uint256 assetAmount) external override {
         require(
             msg.sender == AmmConfigurationManager.getAmmPoolsCharlieTreasuryManager(asset),
-            JosephErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
+            AmmPoolsErrors.CALLER_NOT_PUBLICATION_FEE_TRANSFERER
         );
 
         address charlieTreasury = AmmConfigurationManager.getAmmPoolsCharlieTreasury(asset);
 
-        require(address(0) != charlieTreasury, JosephErrors.INCORRECT_CHARLIE_TREASURER);
+        require(address(0) != charlieTreasury, AmmPoolsErrors.INCORRECT_CHARLIE_TREASURER);
 
         PoolConfiguration memory poolCfg = _getPoolConfiguration(asset);
 
@@ -105,7 +104,7 @@ contract AmmGovernanceService is IAmmGovernanceService {
 
         uint256 wadAssetAmount = IporMath.convertToWad(assetAmountAssetDecimals, poolCfg.assetDecimals);
 
-        IMiltonStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasury(wadAssetAmount);
+        IAmmStorage(poolCfg.ammStorage).updateStorageWhenTransferToCharlieTreasury(wadAssetAmount);
 
         IERC20Upgradeable(asset).safeTransferFrom(poolCfg.ammTreasury, charlieTreasury, assetAmountAssetDecimals);
     }

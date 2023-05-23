@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
 pragma solidity 0.8.16;
 
-/// @title Types used in MiltonStorage smart contract
-library MiltonStorageTypes {
+/// @title Types used in AmmStorage smart contract
+library AmmStorageTypes {
     /// @notice struct representing swap's ID and direction
     /// @dev direction = 0 - Pay Fixed - Receive Floating, direction = 1 - Receive Fixed - Pay Floating
     struct IporSwapId {
@@ -22,7 +22,7 @@ library MiltonStorageTypes {
         uint256 totalCollateralReceiveFixed;
         /// @notice Liquidity Pool's Balance
         uint256 liquidityPool;
-        /// @notice Stanley's (Asset Management) balance
+        /// @notice AssetManagement's (Asset Management) balance
         uint256 vault;
         /// @notice IPOR publication fee balance. This balance is used to subsidise the oracle operations
         uint256 iporPublicationFee;

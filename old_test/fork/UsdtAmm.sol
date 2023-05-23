@@ -7,16 +7,16 @@ import "../TestCommons.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/tokens/IvToken.sol";
 import "contracts/oracles/IporOracle.sol";
-import "contracts/vault/StanleyUsdt.sol";
+import "contracts/vault/AssetManagementUsdt.sol";
 import "contracts/vault/strategies/StrategyCompound.sol";
 import "contracts/vault/strategies/StrategyAave.sol";
 import "contracts/amm/pool/Joseph.sol";
 import "contracts/amm/pool/JosephUsdt.sol";
-import "contracts/amm/Milton.sol";
-import "contracts/amm/MiltonUsdt.sol";
-import "contracts/amm/spread/MiltonSpreadModelUsdt.sol";
-import "contracts/amm/spread/MiltonSpreadModel.sol";
-import "contracts/mocks/stanley/MockStrategy.sol";
+import "contracts/amm/AmmTreasury.sol";
+import "contracts/amm/AmmTreasuryUsdt.sol";
+import "contracts/amm/spread/AmmTreasurySpreadModelUsdt.sol";
+import "contracts/amm/spread/AmmTreasurySpreadModel.sol";
+import "contracts/mocks/assetManagement/MockStrategy.sol";
 import "./IAsset.sol";
 import "contracts/vault/interfaces/aave/IAaveIncentivesController.sol";
 import "../utils/IporRiskManagementOracleUtils.sol";
@@ -42,16 +42,16 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
     IporOracle public iporOracle;
     IIporRiskManagementOracle public iporRiskManagementOracle;
 
-    Stanley public stanley;
+    AssetManagement public assetManagement;
     StrategyCompound public strategyCompound;
     StrategyCompound public strategyCompoundV2;
     StrategyAave public strategyAave;
     StrategyAave public strategyAaveV2;
 
     Joseph public joseph;
-    Milton public milton;
-    MiltonStorage public miltonStorage;
-    MiltonSpreadModel public miltonSpreadModel;
+    AmmTreasury public ammTreasury;
+    AmmStorage public ammStorage;
+    AmmTreasurySpreadModel public ammTreasurySpreadModel;
 
     IAaveIncentivesController public aaveIncentivesController;
 
@@ -63,20 +63,20 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         strategyCompoundV2 = _createCompoundStrategy();
         strategyAave = _createAaveStrategy();
         strategyAaveV2 = _createAaveStrategy();
-        _createStanley();
-        _createMiltonStorage();
-        _createMiltonSpreadModel();
+        _createAssetManagement();
+        _createAmmStorage();
+        _createAmmTreasurySpreadModel();
         _createIporOracle();
         _createRiskManagementOracle();
-        _createMilton();
+        _createAmmTreasury();
         _createJoseph();
         _createAaveIncentivesController();
         _setupJoseph(owner);
         _setupIpToken();
         _setupIvToken();
-        _setupMilton();
-        _setupMiltonStorage();
-        _setupStanley();
+        _setupAmmTreasury();
+        _setupAmmStorage();
+        _setupAssetManagement();
         _setupStrategyAave();
         _setupStrategyCompound();
         _setupIporOracle(owner);
@@ -85,49 +85,49 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
 
     function overrideAaveStrategyWithZeroApr(address owner) public {
         MockStrategy strategy = new MockStrategy();
-        strategy.setStanley(address(stanley));
+        strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(aUsdt);
         strategy.setApr(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
-        stanley.setStrategyAave(address(strategy));
+        assetManagement.setStrategyAave(address(strategy));
     }
 
     function restoreStrategies(address owner) public {
         vm.startPrank(owner);
-        stanley.setStrategyAave(address(strategyAave));
-        stanley.setStrategyCompound(address(strategyCompound));
+        assetManagement.setStrategyAave(address(strategyAave));
+        assetManagement.setStrategyCompound(address(strategyCompound));
         vm.stopPrank();
     }
 
     function overrideCompoundStrategyWithZeroApr(address owner) public {
         MockStrategy strategy = new MockStrategy();
-        strategy.setStanley(address(stanley));
+        strategy.setAssetManagement(address(assetManagement));
         strategy.setBalance(0);
         strategy.setShareToken(cUsdt);
         strategy.setApr(0);
         strategy.setAsset(usdt);
         vm.prank(owner);
-        stanley.setStrategyCompound(address(strategy));
+        assetManagement.setStrategyCompound(address(strategy));
     }
 
-    function approveMiltonJoseph(address user) public {
+    function approveAmmTreasuryJoseph(address user) public {
         vm.startPrank(user);
         IAsset(usdt).approve(address(joseph), type(uint256).max);
-        IAsset(usdt).approve(address(milton), type(uint256).max);
+        IAsset(usdt).approve(address(ammTreasury), type(uint256).max);
         vm.stopPrank();
     }
 
     function createAaveStrategy() external returns (StrategyAave) {
         StrategyAave strategy = _createAaveStrategy();
-        strategy.setStanley(address(stanley));
+        strategy.setAssetManagement(address(assetManagement));
         return strategy;
     }
 
     function createCompoundStrategy() external returns (StrategyCompound) {
         StrategyCompound strategy = _createCompoundStrategy();
-        strategy.setStanley(address(stanley));
+        strategy.setAssetManagement(address(assetManagement));
         return strategy;
     }
 
@@ -171,8 +171,8 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         return StrategyAave(address(proxy));
     }
 
-    function _createStanley() internal {
-        StanleyUsdt implementation = new StanleyUsdt();
+    function _createAssetManagement() internal {
+        AssetManagementUsdt implementation = new AssetManagementUsdt();
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(
@@ -184,17 +184,17 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
             )
         );
 
-        stanley = Stanley(address(proxy));
+        assetManagement = AssetManagement(address(proxy));
     }
 
-    function _createMiltonStorage() internal {
-        MiltonStorageUsdt implementation = new MiltonStorageUsdt();
+    function _createAmmStorage() internal {
+        AmmStorageUsdt implementation = new AmmStorageUsdt();
         ERC1967Proxy proxy = new ERC1967Proxy(address(implementation), abi.encodeWithSignature("initialize()"));
-        miltonStorage = MiltonStorage(address(proxy));
+        ammStorage = AmmStorage(address(proxy));
     }
 
-    function _createMiltonSpreadModel() internal {
-        miltonSpreadModel = new MiltonSpreadModelUsdt();
+    function _createAmmTreasurySpreadModel() internal {
+        ammTreasurySpreadModel = new AmmTreasurySpreadModelUsdt();
     }
 
     function _createIporOracle() internal {
@@ -239,8 +239,8 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         );
     }
 
-    function _createMilton() internal {
-        MiltonUsdt implementation = new MiltonUsdt(address(iporRiskManagementOracle));
+    function _createAmmTreasury() internal {
+        AmmTreasuryUsdt implementation = new AmmTreasuryUsdt(address(iporRiskManagementOracle));
         ERC1967Proxy proxy = new ERC1967Proxy(
             address(implementation),
             abi.encodeWithSignature(
@@ -248,12 +248,12 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
                 false,
                 usdt,
                 address(iporOracle),
-                address(miltonStorage),
-                address(miltonSpreadModel),
-                address(stanley)
+                address(ammStorage),
+                address(ammTreasurySpreadModel),
+                address(assetManagement)
             )
         );
-        milton = Milton(address(proxy));
+        ammTreasury = AmmTreasury(address(proxy));
     }
 
     function _createJoseph() internal {
@@ -265,9 +265,9 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
                 false,
                 usdt,
                 ipUsdt,
-                address(milton),
-                address(miltonStorage),
-                address(stanley)
+                address(ammTreasury),
+                address(ammStorage),
+                address(assetManagement)
             )
         );
         joseph = Joseph(address(proxy));
@@ -281,37 +281,37 @@ contract UsdtAmm is Test, TestCommons, IporRiskManagementOracleUtils {
         joseph.addAppointedToRebalance(owner);
     }
 
-    function _setupMilton() internal {
-        milton.setJoseph(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(joseph));
-        milton.setupMaxAllowanceForAsset(address(stanley));
+    function _setupAmmTreasury() internal {
+        ammTreasury.setJoseph(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(joseph));
+        ammTreasury.setupMaxAllowanceForAsset(address(assetManagement));
     }
 
     function _setupIpToken() internal {
         IpToken(ipUsdt).setJoseph(address(joseph));
     }
 
-    function _setupMiltonStorage() internal {
-        miltonStorage.setJoseph(address(joseph));
-        miltonStorage.setMilton(address(milton));
+    function _setupAmmStorage() internal {
+        ammStorage.setJoseph(address(joseph));
+        ammStorage.setAmmTreasury(address(ammTreasury));
     }
 
-    function _setupStanley() internal {
-        stanley.setMilton(address(milton));
+    function _setupAssetManagement() internal {
+        assetManagement.setAmmTreasury(address(ammTreasury));
     }
 
     function _setupIvToken() internal {
-        IvToken(ivUsdt).setStanley(address(stanley));
+        IvToken(ivUsdt).setAssetManagement(address(assetManagement));
     }
 
     function _setupStrategyAave() internal {
-        strategyAave.setStanley(address(stanley));
-        strategyAaveV2.setStanley(address(stanley));
+        strategyAave.setAssetManagement(address(assetManagement));
+        strategyAaveV2.setAssetManagement(address(assetManagement));
     }
 
     function _setupStrategyCompound() internal {
-        strategyCompound.setStanley(address(stanley));
-        strategyCompoundV2.setStanley(address(stanley));
+        strategyCompound.setAssetManagement(address(assetManagement));
+        strategyCompoundV2.setAssetManagement(address(assetManagement));
     }
 
     function _setupIporOracle(address owner) internal {

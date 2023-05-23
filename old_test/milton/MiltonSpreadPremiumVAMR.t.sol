@@ -3,14 +3,14 @@ pragma solidity 0.8.16;
 
 import "forge-std/Test.sol";
 import "../TestCommons.sol";
-import "contracts/mocks/spread/MockBaseMiltonSpreadModelDai.sol";
+import "contracts/mocks/spread/MockBaseAmmTreasurySpreadModelDai.sol";
 
-contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
-    MockBaseMiltonSpreadModelDai internal _miltonSpread;
+contract AmmTreasurySpreadPremiumVAMRTest is Test, TestCommons {
+    MockBaseAmmTreasurySpreadModelDai internal _ammTreasurySpread;
     address internal _userOne;
 
     function setUp() public {
-        _miltonSpread = new MockBaseMiltonSpreadModelDai();
+        _ammTreasurySpread = new MockBaseAmmTreasurySpreadModelDai();
         _userOne = _getUserAddress(1);
     }
 
@@ -21,7 +21,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = 319500267139772943892;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestCalculateVolatilityAndMeanReversionPayFixed(
+        int256 actualResult = _ammTreasurySpread.mockTestCalculateVolatilityAndMeanReversionPayFixed(
             emaVar,
             diffIporIndexEma
         );
@@ -36,7 +36,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = -319500250420413078569;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestCalculateVolatilityAndMeanReversionReceiveFixed(
+        int256 actualResult = _ammTreasurySpread.mockTestCalculateVolatilityAndMeanReversionReceiveFixed(
             emaVar,
             diffIporIndexEma
         );
@@ -51,7 +51,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = 13916588006818699771;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestVolatilityAndMeanReversionPayFixedRegionOne(
+        int256 actualResult = _ammTreasurySpread.mockTestVolatilityAndMeanReversionPayFixedRegionOne(
             emaVar,
             diffIporIndexEma
         );
@@ -66,7 +66,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = -7140253477072294644;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestVolatilityAndMeanReversionReceiveFixedRegionOne(
+        int256 actualResult = _ammTreasurySpread.mockTestVolatilityAndMeanReversionReceiveFixedRegionOne(
             emaVar,
             diffIporIndexEma
         );
@@ -81,7 +81,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = 319500267139772943892;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestVolatilityAndMeanReversionPayFixedRegionTwo(
+        int256 actualResult = _ammTreasurySpread.mockTestVolatilityAndMeanReversionPayFixedRegionTwo(
             emaVar,
             diffIporIndexEma
         );
@@ -96,7 +96,7 @@ contract MiltonSpreadPremiumVAMRTest is Test, TestCommons {
         int256 expectedResult = -319500250420413078569;
         // when
         vm.prank(_userOne);
-        int256 actualResult = _miltonSpread.mockTestVolatilityAndMeanReversionReceiveFixedRegionTwo(
+        int256 actualResult = _ammTreasurySpread.mockTestVolatilityAndMeanReversionReceiveFixedRegionTwo(
             emaVar,
             diffIporIndexEma
         );

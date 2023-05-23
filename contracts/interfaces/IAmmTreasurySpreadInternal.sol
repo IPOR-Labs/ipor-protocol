@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.16;
 
-/// @title Interface for interacting with Milton Spread - for internal use.
-interface IMiltonSpreadInternal {
+/// @title Interface for interacting with AmmTreasury Spread - for internal use.
+interface IAmmTreasurySpreadInternal {
     /// @notice Gets Base in Region 1 for Pay Fixed - Receive Floating leg
     /// @return base in region 1 for pay fixed - receive floating leg represented in 18 decimals
     function getPayFixedRegionOneBase() external view returns (int256);

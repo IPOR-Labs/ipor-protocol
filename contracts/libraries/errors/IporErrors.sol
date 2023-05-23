@@ -25,7 +25,7 @@ library IporErrors {
     //@notice msg.sender is not an appointed owner, so cannot confirm his appointment to be an owner of a specific smart contract
     string public constant SENDER_NOT_APPOINTED_OWNER = "IPOR_007";
 
-    //only milton can have access to function
+    //only Router can have access to function
     string public constant CALLER_NOT_IPOR_PROTOCOL_ROUTER = "IPOR_008";
 
     string public constant CHUNK_SIZE_EQUAL_ZERO = "IPOR_009";

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 pragma solidity 0.8.16;
 
-import "contracts/libraries/errors/MiltonErrors.sol";
+import "contracts/libraries/errors/AmmErrors.sol";
 import "contracts/libraries/errors/IporErrors.sol";
 import "contracts/security/PauseManager.sol";
 import "./SpreadStorageLibs.sol";
@@ -112,7 +112,7 @@ contract SpreadAccessControl {
 
     /// @dev Internal function to check if the sender is the AMM address.
     function _onlyAmm() internal view {
-        require(msg.sender == AMM_ADDRESS, MiltonErrors.SENDER_NOT_AMM);
+        require(msg.sender == AMM_ADDRESS, AmmErrors.SENDER_NOT_AMM);
     }
 
     function _whenNotPaused() internal view {

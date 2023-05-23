@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
 
-import "../../itf/ItfMilton.sol";
+import "../../itf/ItfAmmTreasury.sol";
 
-contract MockMilton is ItfMilton {
+contract MockAmmTreasury is ItfAmmTreasury {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor(
         address asset,
@@ -11,5 +11,5 @@ contract MockMilton is ItfMilton {
         address ammStorage,
         address assetManagement,
         address router
-    ) ItfMilton(asset, decimals, ammStorage, assetManagement, router) {}
+    ) ItfAmmTreasury(asset, decimals, ammStorage, assetManagement, router) {}
 }

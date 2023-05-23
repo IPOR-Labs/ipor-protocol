@@ -30,17 +30,12 @@ interface ICockpitDataProvider {
     /// @return sender ivToken balance represented in 18 decimals
     function getMyIvTokenBalance(address asset) external view returns (uint256);
 
-    /// @notice Gets sender's allowance in Milton
+    /// @notice Gets sender's allowance in AmmTreasury
     /// @param asset asset / stablecoin address
-    /// @return sender allowance in Milton represented in decimals specific for given asset
-    function getMyAllowanceInMilton(address asset) external view returns (uint256);
+    /// @return sender allowance in AmmTreasury represented in decimals specific for given asset
+    function getMyAllowanceInAmmTreasury(address asset) external view returns (uint256);
 
-    /// @notice Gets sender allowance in Joseph
-    /// @param asset asset / stablecoin address
-    /// @return sender allowance in Joseph represented in decimals specific for given asset
-    function getMyAllowanceInJoseph(address asset) external view returns (uint256);
-
-    /// @notice Calculates spread value for a given asset based on a current Milton balance,
+    /// @notice Calculates spread value for a given asset based on a current AmmTreasury balance,
     /// SOAP, utilization and IPOR Index indicators.
     /// @param asset asset / stablecoin address
     /// @return spreadPayFixed Spread value for Pay Fixed leg for a given asset

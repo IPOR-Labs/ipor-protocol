@@ -2,7 +2,7 @@
 pragma solidity 0.8.16;
 
 /// @title Structs used in comunication with data consumers such as off-chain applications or other smart contracts.
-/// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
+/// @dev structs used in IAmmTreasuryFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
 library IporOracleFacadeTypes {
     /// @notice IPOR Index data is used for conveniance of providing certain data to various consumers, such as off-chain applications or other smart contracts. Data is compiled for each specific asset.
     struct IporFront {

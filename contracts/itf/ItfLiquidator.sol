@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.16;
-import "../interfaces/IMiltonStorage.sol";
-import "./types/ItfMiltonTypes.sol";
-import "./ItfMilton.sol";
-import "../libraries/errors/MiltonErrors.sol";
+import "../interfaces/IAmmStorage.sol";
+import "./types/ItfAmmTreasuryTypes.sol";
+import "./ItfAmmTreasury.sol";
+import "../libraries/errors/AmmErrors.sol";
 
 contract ItfLiquidator {
 
-    ItfMilton private _milton;
-    IMiltonStorage private _miltonStorage;
+    ItfAmmTreasury private _ammTreasury;
+    IAmmStorage private _ammStorage;
 
-    constructor(address miltonAddress, address miltonStorage) {
-        _milton = ItfMilton(miltonAddress);
-        _miltonStorage = IMiltonStorage(miltonStorage);
+    constructor(address ammTreasuryAddress, address ammStorage) {
+        _ammTreasury = ItfAmmTreasury(ammTreasuryAddress);
+        _ammStorage = IAmmStorage(ammStorage);
     }
 //
 //    function itfLiquidate(
@@ -26,8 +26,8 @@ contract ItfLiquidator {
 //            AmmTypes.IporSwapClosingResult[] memory receiveFixedClosedSwaps
 //        )
 //    {
-//        ItfMilton milton = _milton;
-//        IMiltonStorage miltonStorage = _miltonStorage;
+//        ItfAmmTreasury ammTreasury = _ammTreasury;
+//        IAmmStorage ammStorage = _ammStorage;
 //        uint256 payFixedSwapIdsLength = payFixedSwapIds.length;
 //        uint256 receiveFixedSwapIdsLength = receiveFixedSwapIds.length;
 //        uint256 swapId;
@@ -35,9 +35,9 @@ contract ItfLiquidator {
 //            payFixedClosedSwaps = new AmmTypes.IporSwapClosingResult[](payFixedSwapIdsLength);
 //            for (uint256 i; i < payFixedSwapIdsLength; ++i) {
 //                swapId = payFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = miltonStorage.getSwapPayFixed(swapId);
+//                IporTypes.IporSwapMemory memory iporSwap = ammStorage.getSwapPayFixed(swapId);
 //                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-//                    try milton.itfCloseSwapPayFixed(swapId, closeTimestamp) {
+//                    try ammTreasury.itfCloseSwapPayFixed(swapId, closeTimestamp) {
 //                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, true);
 //                    } catch {
 //                        payFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
@@ -53,23 +53,23 @@ contract ItfLiquidator {
 //            );
 //            for (uint256 i; i < receiveFixedSwapIdsLength; ++i) {
 //                swapId = receiveFixedSwapIds[i];
-//                IporTypes.IporSwapMemory memory iporSwap = _miltonStorage.getSwapReceiveFixed(
+//                IporTypes.IporSwapMemory memory iporSwap = _ammStorage.getSwapReceiveFixed(
 //                    swapId
 //                );
 //                if (iporSwap.state == uint256(AmmTypes.SwapState.ACTIVE)) {
-//                    try milton.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
-//                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
+//                    try ammTreasury.itfCloseSwapReceiveFixed(swapId, closeTimestamp) {
+//                        receiveFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(
 //                            swapId,
 //                            true
 //                        );
 //                    } catch {
-//                        receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(
+//                        receiveFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(
 //                            swapId,
 //                            false
 //                        );
 //                    }
 //                } else {
-//                    receiveFixedClosedSwaps[i] = MiltonTypes.IporSwapClosingResult(swapId, false);
+//                    receiveFixedClosedSwaps[i] = AmmTypes.IporSwapClosingResult(swapId, false);
 //                }
 //            }
 //        }

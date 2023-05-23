@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/tokens/IpToken.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/amm/pool/JosephDai.sol";
 import "./MockJosephDai.sol";
 import "contracts/itf/ItfJoseph.sol";
@@ -28,7 +28,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
-        vm.expectRevert(bytes(JosephErrors.CALLER_NOT_APPOINTED_TO_REBALANCE));
+        vm.expectRevert(bytes(AmmPoolsErrors.CALLER_NOT_APPOINTED_TO_REBALANCE));
         _iporProtocol.joseph.rebalance();
     }
 
@@ -72,7 +72,7 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         _iporProtocol.joseph.addAppointedToRebalance(address(this));
 
         // when
-        vm.expectRevert(bytes(JosephErrors.STANLEY_BALANCE_IS_EMPTY));
+        vm.expectRevert(bytes(AmmPoolsErrors.ASSET_MANAGEMENT_BALANCE_IS_EMPTY));
         _iporProtocol.joseph.rebalance();
     }
 
@@ -108,9 +108,9 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
 
         uint256 josephVersionBefore = _iporProtocol.joseph.getVersion();
         address assetBefore = _iporProtocol.joseph.getAsset();
-        address stanleyBefore = _iporProtocol.joseph.getStanley();
-        address miltonStorageBefore = _iporProtocol.joseph.getMiltonStorage();
-        address miltonBefore = _iporProtocol.joseph.getMilton();
+        address assetManagementBefore = _iporProtocol.joseph.getAssetManagement();
+        address ammStorageBefore = _iporProtocol.joseph.getAmmStorage();
+        address ammTreasuryBefore = _iporProtocol.joseph.getAmmTreasury();
         address ipTokenBefore = _iporProtocol.joseph.getIpToken();
         address treasuryBefore = _iporProtocol.joseph.getTreasury();
         address treasuryManagerBefore = _iporProtocol.joseph.getTreasuryManager();
@@ -130,9 +130,9 @@ contract JosephOnlyRebalanceTest is Test, TestCommons {
         // then
 
         assertEq(assetBefore, _iporProtocol.joseph.getAsset());
-        assertEq(stanleyBefore, _iporProtocol.joseph.getStanley());
-        assertEq(miltonStorageBefore, _iporProtocol.joseph.getMiltonStorage());
-        assertEq(miltonBefore, _iporProtocol.joseph.getMilton());
+        assertEq(assetManagementBefore, _iporProtocol.joseph.getAssetManagement());
+        assertEq(ammStorageBefore, _iporProtocol.joseph.getAmmStorage());
+        assertEq(ammTreasuryBefore, _iporProtocol.joseph.getAmmTreasury());
         assertEq(ipTokenBefore, _iporProtocol.joseph.getIpToken());
         assertEq(treasuryBefore, userOne);
         assertEq(_iporProtocol.joseph.getTreasury(), userTwo);

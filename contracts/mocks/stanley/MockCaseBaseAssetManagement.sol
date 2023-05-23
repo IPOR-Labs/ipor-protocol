@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../../libraries/errors/IporErrors.sol";
 import "../../libraries/Constants.sol";
 import "../../libraries/math/IporMath.sol";
-import "../../interfaces/IStanley.sol";
+import "../../interfaces/IAssetManagement.sol";
 
-contract MockCaseBaseStanley is IStanley {
+contract MockCaseBaseAssetManagement is IAssetManagement {
     using SafeERC20 for IERC20;
     IERC20 private _asset;
 
@@ -33,7 +33,7 @@ contract MockCaseBaseStanley is IStanley {
         _asset = IERC20(asset);
     }
 
-    function setMilton(address newMilton) external {}
+    function setAmmTreasury(address newAmmTreasury) external {}
 
     function totalBalance(address who) external view override returns (uint256) {
         //@dev for simplicity we assume that reading total balance not include interest

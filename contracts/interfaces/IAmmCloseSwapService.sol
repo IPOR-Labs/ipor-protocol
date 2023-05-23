@@ -15,9 +15,9 @@ interface IAmmCloseSwapService {
         uint256 closeTimestamp,
         /// @notice account that liquidated the swap
         address liquidator,
-        /// @notice asset amount after closing swap that has been transferred from Milton to the Buyer. Value represented in 18 decimals.
+        /// @notice asset amount after closing swap that has been transferred from AmmTreasury to the Buyer. Value represented in 18 decimals.
         uint256 transferredToBuyer,
-        /// @notice asset amount after closing swap that has been transferred from Milton to the Liquidator. Value represented in 18 decimals.
+        /// @notice asset amount after closing swap that has been transferred from AmmTreasury to the Liquidator. Value represented in 18 decimals.
         uint256 transferredToLiquidator
     );
 
@@ -51,21 +51,20 @@ interface IAmmCloseSwapService {
 
     function getPoolConfiguration(address asset) external view returns (PoolConfiguration memory);
 
-    function closeSwapPayFixed(
-        address asset,
-        address onBehalfOf,
-        uint256 swapId
-    ) external;
+    function closeSwapPayFixedUsdt(address beneficiary, uint256 swapId) external;
 
-    function closeSwapReceiveFixed(
-        address asset,
-        address onBehalfOf,
-        uint256 swapId
-    ) external;
+    function closeSwapPayFixedUsdc(address beneficiary, uint256 swapId) external;
 
-    function closeSwaps(
-        address asset,
-        address onBehalfOf,
+    function closeSwapPayFixedDai(address beneficiary, uint256 swapId) external;
+
+    function closeSwapReceiveFixedUsdt(address beneficiary, uint256 swapId) external;
+
+    function closeSwapReceiveFixedUsdc(address beneficiary, uint256 swapId) external;
+
+    function closeSwapReceiveFixedDai(address beneficiary, uint256 swapId) external;
+
+    function closeSwapsUsdt(
+        address beneficiary,
         uint256[] memory payFixedSwapIds,
         uint256[] memory receiveFixedSwapIds
     )
@@ -75,15 +74,61 @@ interface IAmmCloseSwapService {
             AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
         );
 
-    function emergencyCloseSwapPayFixed(address asset, uint256 swapId) external;
+    function closeSwapsUsdc(
+        address beneficiary,
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 
-    function emergencyCloseSwapReceiveFixed(address asset, uint256 swapId) external;
+    function closeSwapsDai(
+        address beneficiary,
+        uint256[] memory payFixedSwapIds,
+        uint256[] memory receiveFixedSwapIds
+    )
+        external
+        returns (
+            AmmTypes.IporSwapClosingResult[] memory closedPayFixedSwaps,
+            AmmTypes.IporSwapClosingResult[] memory closedReceiveFixedSwaps
+        );
 
-    function emergencyCloseSwapsPayFixed(address asset, uint256[] memory swapIds)
+    function emergencyCloseSwapPayFixedUsdt(uint256 swapId) external;
+
+    function emergencyCloseSwapPayFixedUsdc(uint256 swapId) external;
+
+    function emergencyCloseSwapPayFixedDai(uint256 swapId) external;
+
+    function emergencyCloseSwapReceiveFixedUsdt(uint256 swapId) external;
+
+    function emergencyCloseSwapReceiveFixedUsdc(uint256 swapId) external;
+
+    function emergencyCloseSwapReceiveFixedDai(uint256 swapId) external;
+
+    function emergencyCloseSwapsPayFixedUsdt(uint256[] memory swapIds)
         external
         returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 
-    function emergencyCloseSwapsReceiveFixed(address asset, uint256[] memory swapIds)
+    function emergencyCloseSwapsPayFixedUsdc(uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+
+    function emergencyCloseSwapsPayFixedDai(uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+
+    function emergencyCloseSwapsReceiveFixedUsdt(uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+
+    function emergencyCloseSwapsReceiveFixedUsdc(uint256[] memory swapIds)
+        external
+        returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
+
+    function emergencyCloseSwapsReceiveFixedDai(uint256[] memory swapIds)
         external
         returns (AmmTypes.IporSwapClosingResult[] memory closedSwaps);
 }

@@ -9,37 +9,37 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20Metadat
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/StanleyErrors.sol";
+import "../libraries/errors/AssetManagementErrors.sol";
 import "../libraries/Constants.sol";
 import "../security/PauseManager.sol";
 import "../libraries/math/IporMath.sol";
 import "../interfaces/IIvToken.sol";
-import "../interfaces/IStanleyInternal.sol";
-import "../interfaces/IStanley.sol";
+import "../interfaces/IAssetManagementInternal.sol";
+import "../interfaces/IAssetManagement.sol";
 import "../interfaces/IStrategy.sol";
 import "../security/IporOwnableUpgradeable.sol";
 
-/// @title Stanley represents Asset Management module responsible for investing Milton's cash in external DeFi protocols.
-abstract contract Stanley is
+/// @title AssetManagement represents Asset Management module responsible for investing AmmTreasury's cash in external DeFi protocols.
+abstract contract AssetManagement is
     Initializable,
     PausableUpgradeable,
     ReentrancyGuardUpgradeable,
     UUPSUpgradeable,
     IporOwnableUpgradeable,
-    IStanley,
-    IStanleyInternal
+    IAssetManagement,
+    IAssetManagementInternal
 {
     using SafeERC20Upgradeable for IERC20Upgradeable;
 
     address internal _asset;
     IIvToken internal _ivToken;
 
-    address internal _milton;
+    address internal _ammTreasury;
     address internal _strategyAave;
     address internal _strategyCompound;
 
-    modifier onlyMilton() {
-        require(_msgSender() == _milton, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
+    modifier onlyAmmTreasury() {
+        require(_msgSender() == _ammTreasury, IporErrors.CALLER_NOT_IPOR_PROTOCOL_ROUTER);
         _;
     }
 
@@ -94,8 +94,8 @@ abstract contract Stanley is
         return address(_ivToken);
     }
 
-    function getMilton() external view override returns (address) {
-        return _milton;
+    function getAmmTreasury() external view override returns (address) {
+        return _ammTreasury;
     }
 
     function getStrategyAave() external view override returns (address) {
@@ -118,14 +118,14 @@ abstract contract Stanley is
 
     /**
      * @dev to deposit asset in higher apy strategy.
-     * @notice only Milton can deposit
+     * @notice only AmmTreasury can deposit
      * @param amount underlying token amount represented in 18 decimals
      */
     function deposit(uint256 amount)
         external
         override
         whenNotPaused
-        onlyMilton
+        onlyAmmTreasury
         returns (uint256 vaultBalance, uint256 depositedAmount)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
@@ -158,7 +158,7 @@ abstract contract Stanley is
         external
         override
         whenNotPaused
-        onlyMilton
+        onlyAmmTreasury
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         require(amount > 0, IporErrors.VALUE_NOT_GREATER_THAN_ZERO);
@@ -184,7 +184,7 @@ abstract contract Stanley is
         );
 
         if (selectedWithdrawAmount > 0) {
-            //Transfer from Strategy to Stanley
+            //Transfer from Strategy to AssetManagement
             uint256 ivTokenWithdrawnAmount;
             (ivTokenWithdrawnAmount, vaultBalance) = _withdrawFromStrategy(
                 selectedStrategy,
@@ -200,12 +200,12 @@ abstract contract Stanley is
                 ivToken.burn(_msgSender(), ivTokenWithdrawnAmount);
             }
 
-            uint256 assetBalanceStanley = asset.balanceOf(address(this));
+            uint256 assetBalanceAssetManagement = asset.balanceOf(address(this));
 
-            if (assetBalanceStanley > 0) {
-                //Always transfer all assets from Stanley to Milton
-                asset.safeTransfer(_msgSender(), assetBalanceStanley);
-                withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
+            if (assetBalanceAssetManagement > 0) {
+                //Always transfer all assets from AssetManagement to AmmTreasury
+                asset.safeTransfer(_msgSender(), assetBalanceAssetManagement);
+                withdrawnAmount = IporMath.convertToWad(assetBalanceAssetManagement, _getDecimals());
             }
         }
 
@@ -216,7 +216,7 @@ abstract contract Stanley is
         external
         override
         whenNotPaused
-        onlyMilton
+        onlyAmmTreasury
         returns (uint256 withdrawnAmount, uint256 vaultBalance)
     {
         address msgSender = _msgSender();
@@ -258,12 +258,12 @@ abstract contract Stanley is
 
         ivToken.burn(msgSender, ivToken.balanceOf(msgSender));
 
-        uint256 assetBalanceStanley = asset.balanceOf(address(this));
+        uint256 assetBalanceAssetManagement = asset.balanceOf(address(this));
 
-        //Always transfer all assets from Stanley to Milton
-        asset.safeTransfer(msgSender, assetBalanceStanley);
+        //Always transfer all assets from AssetManagement to AmmTreasury
+        asset.safeTransfer(msgSender, assetBalanceAssetManagement);
 
-        withdrawnAmount = IporMath.convertToWad(assetBalanceStanley, _getDecimals());
+        withdrawnAmount = IporMath.convertToWad(assetBalanceAssetManagement, _getDecimals());
     }
 
     function migrateAssetToStrategyWithMaxApr() external whenNotPaused onlyOwner {
@@ -283,12 +283,12 @@ abstract contract Stanley is
             IStrategy(strategyAave).withdraw(assetAmount);
         }
 
-        /// @dev Temporary on Stanley wallet.
-        uint256 stanleyAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-        uint256 wadStanleyAssetAmount = IporMath.convertToWad(stanleyAssetAmount, _getDecimals());
-        IStrategy(strategyMaxApy).deposit(wadStanleyAssetAmount);
+        /// @dev Temporary on AssetManagement wallet.
+        uint256 assetManagementAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
+        uint256 wadAssetManagementAssetAmount = IporMath.convertToWad(assetManagementAssetAmount, _getDecimals());
+        IStrategy(strategyMaxApy).deposit(wadAssetManagementAssetAmount);
 
-        emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadStanleyAssetAmount);
+        emit AssetMigrated(_msgSender(), from, address(strategyMaxApy), wadAssetManagementAssetAmount);
     }
 
     function setStrategyAave(address newStrategyAddr) external override whenNotPaused onlyOwner {
@@ -299,11 +299,11 @@ abstract contract Stanley is
         _strategyCompound = _setStrategy(_strategyCompound, newStrategyAddr);
     }
 
-    function setMilton(address newMilton) external override whenNotPaused onlyOwner {
-        require(newMilton != address(0), IporErrors.WRONG_ADDRESS);
-        address oldMilton = _milton;
-        _milton = newMilton;
-        emit MiltonChanged(_msgSender(), oldMilton, newMilton);
+    function setAmmTreasury(address newAmmTreasury) external override whenNotPaused onlyOwner {
+        require(newAmmTreasury != address(0), IporErrors.WRONG_ADDRESS);
+        address oldAmmTreasury = _ammTreasury;
+        _ammTreasury = newAmmTreasury;
+        emit AmmTreasuryChanged(_msgSender(), oldAmmTreasury, newAmmTreasury);
     }
 
     function pause() external override onlyPauseGuardian {
@@ -355,7 +355,7 @@ abstract contract Stanley is
 
         IStrategy newStrategy = IStrategy(newStrategyAddress);
 
-        require(newStrategy.getAsset() == address(asset), StanleyErrors.ASSET_MISMATCH);
+        require(newStrategy.getAsset() == address(asset), AssetManagementErrors.ASSET_MISMATCH);
 
         IERC20Upgradeable newShareToken = IERC20Upgradeable(newStrategy.getShareToken());
 
@@ -381,8 +381,8 @@ abstract contract Stanley is
 
         if (assetAmount > 0) {
             IStrategy(oldStrategyAddress).withdraw(assetAmount);
-            uint256 stanleyAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
-            IStrategy(newStrategyAddress).deposit(IporMath.convertToWad(stanleyAssetAmount, _getDecimals()));
+            uint256 assetManagementAssetAmount = IERC20Upgradeable(_asset).balanceOf(address(this));
+            IStrategy(newStrategyAddress).deposit(IporMath.convertToWad(assetManagementAssetAmount, _getDecimals()));
         }
     }
 
@@ -392,7 +392,7 @@ abstract contract Stanley is
     }
 
     /**
-     * @notice Withdraws asset amount from given strategyAddress to Stanley
+     * @notice Withdraws asset amount from given strategyAddress to AssetManagement
      * @param selectedStrategyAddress strategy address
      * @param amount asset amount which will be withdraw from Strategy, represented in 18 decimals
      * @param ivTokenTotalSupply current IV Token total supply, represented in 18 decimals
@@ -408,7 +408,7 @@ abstract contract Stanley is
         IStrategy strategyCompound
     ) internal nonReentrant returns (uint256 ivTokenWithdrawnAmount, uint256 totalBalanceAmount) {
         if (amount > 0) {
-            //Withdraw from Strategy to Stanley
+            //Withdraw from Strategy to AssetManagement
             uint256 withdrawnAmount = IStrategy(selectedStrategyAddress).withdraw(amount);
 
             /// @dev when in future more strategies then change this calculation

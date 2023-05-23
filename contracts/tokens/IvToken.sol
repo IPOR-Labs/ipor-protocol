@@ -4,7 +4,7 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "../libraries/errors/StanleyErrors.sol";
+import "../libraries/errors/AssetManagementErrors.sol";
 import "../interfaces/IIvToken.sol";
 import "../security/IporOwnable.sol";
 
@@ -15,10 +15,10 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
 
     address private immutable _asset;
 
-    address private _stanley;
+    address private _assetManagement;
 
-    modifier onlyStanley() {
-        require(_msgSender() == _stanley, StanleyErrors.CALLER_NOT_STANLEY);
+    modifier onlyAssetManagement() {
+        require(_msgSender() == _assetManagement, AssetManagementErrors.CALLER_NOT_ASSET_MANAGEMENT);
         _;
     }
 
@@ -36,21 +36,21 @@ contract IvToken is IporOwnable, IIvToken, ERC20 {
         return _asset;
     }
 
-    function setStanley(address newStanley) external override onlyOwner {
-        require(newStanley != address(0), IporErrors.WRONG_ADDRESS);
-        address oldStanley = _stanley;
-        _stanley = newStanley;
-        emit StanleyChanged(_msgSender(), oldStanley, newStanley);
+    function setAssetManagement(address newAssetManagement) external override onlyOwner {
+        require(newAssetManagement != address(0), IporErrors.WRONG_ADDRESS);
+        address oldAssetManagement = _assetManagement;
+        _assetManagement = newAssetManagement;
+        emit AssetManagementChanged(_msgSender(), oldAssetManagement, newAssetManagement);
     }
 
-    function mint(address account, uint256 amount) external override onlyStanley {
-        require(amount > 0, StanleyErrors.IV_TOKEN_MINT_AMOUNT_TOO_LOW);
+    function mint(address account, uint256 amount) external override onlyAssetManagement {
+        require(amount > 0, AssetManagementErrors.IV_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
-    function burn(address account, uint256 amount) external override onlyStanley {
-        require(amount > 0, StanleyErrors.IV_TOKEN_BURN_AMOUNT_TOO_LOW);
+    function burn(address account, uint256 amount) external override onlyAssetManagement {
+        require(amount > 0, AssetManagementErrors.IV_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }

@@ -2,20 +2,19 @@
 pragma solidity 0.8.16;
 
 /// @title Structs used in comunication Darcy web application with Ipor Protocol
-/// @dev structs used in IMiltonFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
-library MiltonFacadeTypes {
-    /// @notice Technical struct which groups important addresses used in smart contract MiltonFacadeDataProvider,
+/// @dev structs used in IAmmTreasuryFacadeDataProvider and IIporOracleFacadeDataProvider interfaces
+library AmmFacadeTypes {
+    /// @notice Technical struct which groups important addresses used in smart contract AmmTreasuryFacadeDataProvider,
     /// struct represent data for one specific asset which is USDT, USDC, DAI etc.
     struct AssetConfig {
-        /// @notice Milton address
-        address milton;
-        /// @notice MiltonStorage address
-        address miltonStorage;
-        /// @notice Joseph address
-        address joseph;
+        /// @notice AmmTreasury address
+        address ammTreasury;
+        /// @notice AmmStorage address
+        address ammStorage;
+
     }
 
-    /// @notice Struct which groups Milton balances required for frontedn
+    /// @notice Struct which groups AmmTreasury balances required for frontedn
     struct Balance {
         /// @notice Liquiditiy Pool Balance. Represented in 18 decimals.
         uint256 liquidityPool;

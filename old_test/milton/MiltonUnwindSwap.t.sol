@@ -5,24 +5,24 @@ import "../TestCommons.sol";
 import {DataUtils} from "../utils/DataUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/interfaces/types/MiltonTypes.sol";
+import "contracts/interfaces/types/AmmTypes.sol";
 import "contracts/interfaces/types/IporTypes.sol";
-import "contracts/interfaces/types/MiltonStorageTypes.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/interfaces/types/AmmStorageTypes.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
-import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 
-contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryUnwindSwap is TestCommons, DataUtils, SwapUtils {
     address internal _buyer;
 
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
     MockTestnetToken asset;
-    ItfMilton milton;
+    ItfAmmTreasury ammTreasury;
     MockSpreadModel spreadModel;
 
     int256 unwindFlatFee = 5 * 1e18;
@@ -47,7 +47,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         asset = _iporProtocol.asset;
-        milton = _iporProtocol.milton;
+        ammTreasury = _iporProtocol.ammTreasury;
         spreadModel = _iporProtocol.spreadModel;
 
         int256 swapPayoffToDate = 900 * 1e18;
@@ -72,7 +72,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
-        IporTypes.MiltonBalancesMemory memory fakedBalance;
+        IporTypes.AmmBalancesMemory memory fakedBalance;
 
         spreadModel.setCalculateQuoteReceiveFixed(1 * 1e16);
 
@@ -81,9 +81,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue, expectedUnwindOpeningFee);
 
         vm.prank(_buyer);
-        int256 actualPayoff = milton.itfCalculatePayoff(
+        int256 actualPayoff = ammTreasury.itfCalculatePayoff(
             swap,
-            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             swapPayoffToDate,
             fakedAccruedIpor,
@@ -99,7 +99,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         asset = _iporProtocol.asset;
-        milton = _iporProtocol.milton;
+        ammTreasury = _iporProtocol.ammTreasury;
         spreadModel = _iporProtocol.spreadModel;
 
         int256 swapPayoffToDate = -180821917808219000000;
@@ -123,7 +123,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
 
         /// @dev required for spread but in this test we are using mocked spread model
         IporTypes.AccruedIpor memory fakedAccruedIpor;
-        IporTypes.MiltonBalancesMemory memory fakedBalance;
+        IporTypes.AmmBalancesMemory memory fakedBalance;
 
         spreadModel.setCalculateQuoteReceiveFixed(299 * 1e14);
 
@@ -132,9 +132,9 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         emit SwapUnwind(swap.id, expectedSwapPayoffToDate, expectedSwapUnwindValue, expectedUnwindOpeningFee);
 
         vm.prank(_buyer);
-        int256 actualPayoff = milton.itfCalculatePayoff(
+        int256 actualPayoff = ammTreasury.itfCalculatePayoff(
             swap,
-            MiltonTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
+            AmmTypes.SwapDirection.PAY_FIXED_RECEIVE_FLOATING,
             closingTimestamp,
             swapPayoffToDate,
             fakedAccruedIpor,
@@ -150,7 +150,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         MockTestnetToken assetTemp = _iporProtocol.asset;
-        ItfMilton miltonTemp = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasuryTemp = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -164,18 +164,18 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         assetTemp.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        assetTemp.approve(address(miltonTemp), totalAmount);
+        assetTemp.approve(address(ammTreasuryTemp), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
 
         vm.prank(_buyer);
-        miltonTemp.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasuryTemp.openSwapPayFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
         vm.prank(_buyer);
-        miltonTemp.closeSwapPayFixed(1);
+        ammTreasuryTemp.closeSwapPayFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);
@@ -188,7 +188,7 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         MockTestnetToken assetTemp = _iporProtocol.asset;
-        ItfMilton miltonTemp = _iporProtocol.milton;
+        ItfAmmTreasury ammTreasuryTemp = _iporProtocol.ammTreasury;
         ItfJoseph joseph = _iporProtocol.joseph;
 
         uint256 liquidityAmount = 1_000_000 * 1e6;
@@ -202,19 +202,19 @@ contract MiltonUnwindSwap is TestCommons, DataUtils, SwapUtils {
         assetTemp.transfer(_buyer, totalAmount);
 
         vm.prank(_buyer);
-        assetTemp.approve(address(miltonTemp), totalAmount);
+        assetTemp.approve(address(ammTreasuryTemp), totalAmount);
 
         uint256 buyerBalanceBefore = _iporProtocol.asset.balanceOf(_buyer);
         uint256 adminBalanceBefore = _iporProtocol.asset.balanceOf(_admin);
 
         vm.prank(_buyer);
-        miltonTemp.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
+        ammTreasuryTemp.openSwapReceiveFixed(totalAmount, acceptableFixedInterestRate, leverage);
 
         vm.warp(100 + 28 days - 24 hours - 1 seconds);
 
         //when
         vm.prank(_buyer);
-        miltonTemp.closeSwapReceiveFixed(1);
+        ammTreasuryTemp.closeSwapReceiveFixed(1);
 
         //then
         uint256 buyerBalanceAfter = _iporProtocol.asset.balanceOf(_buyer);

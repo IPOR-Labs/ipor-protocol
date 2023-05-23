@@ -6,11 +6,11 @@ import {DataUtils} from "../utils/DataUtils.sol";
 import {BuilderUtils} from "../utils/builder/BuilderUtils.sol";
 import {SwapUtils} from "../utils/SwapUtils.sol";
 import "../utils/TestConstants.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/milton/MockMiltonStorage.sol";
+import "contracts/mocks/ammTreasury/MockAmmStorage.sol";
 
-contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
+contract AmmTreasuryShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
     IporProtocolFactory.IporProtocolConfig private _cfg;
     BuilderUtils.IporProtocol internal _iporProtocol;
 
@@ -44,24 +44,24 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooLow() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.expectRevert("IPOR_310");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(TestConstants.ZERO, 3, TestConstants.LEVERAGE_18DEC);
+        _iporProtocol.ammTreasury.openSwapPayFixed(TestConstants.ZERO, 3, TestConstants.LEVERAGE_18DEC);
     }
 
     function testShouldNotOpenPositionWhenTotalAmountIsGreaterThanAssetBalance() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.expectRevert("IPOR_003");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USER_SUPPLY_10MLN_18DEC + 3,
             3,
             TestConstants.LEVERAGE_18DEC
@@ -70,7 +70,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -86,7 +86,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_313");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             30000000000000000001,
             39999999999999999,
             TestConstants.LEVERAGE_18DEC
@@ -95,7 +95,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInReceiveFixed18Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -111,7 +111,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_313");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             30000000000000000001,
             TestConstants.D16 + 48374213950104766,
             TestConstants.LEVERAGE_18DEC
@@ -120,7 +120,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInPayFixed6Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -136,7 +136,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_313");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             30000001,
             39999999999999999,
             TestConstants.LEVERAGE_18DEC
@@ -145,7 +145,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenAcceptableFixedInterestRateIsExceededInReceiveFixed6Decimals() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getUsdtInstance(_cfg);
 
         vm.prank(_userOne);
@@ -161,7 +161,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_313");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapReceiveFixed(
+        _iporProtocol.ammTreasury.openSwapReceiveFixed(
             30000001,
             48374213950069062 + TestConstants.D16,
             TestConstants.LEVERAGE_18DEC
@@ -170,13 +170,13 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseOne() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.expectRevert("IPOR_312");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             1000000000000000000000001,
             3,
             TestConstants.LEVERAGE_18DEC
@@ -185,12 +185,12 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsTooHighCaseTwo() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         // when
         vm.expectRevert("IPOR_312");
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             100688870576704582165765,
             3,
             TestConstants.LEVERAGE_18DEC
@@ -199,7 +199,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenLiquidityPoolBalanceIsTooLow() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
 
@@ -216,7 +216,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         );
 
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.USD_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -231,22 +231,22 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         );
         vm.stopPrank();
 
-        _iporProtocol.miltonStorage.setJoseph(_userOne);
+        _iporProtocol.ammStorage.setJoseph(_userOne);
 
         vm.prank(_userOne);
-        _iporProtocol.miltonStorage.subtractLiquidity(20000 * TestConstants.D18);
-        _iporProtocol.miltonStorage.setJoseph(address(_iporProtocol.joseph));
+        _iporProtocol.ammStorage.subtractLiquidity(20000 * TestConstants.D18);
+        _iporProtocol.ammStorage.setJoseph(address(_iporProtocol.joseph));
 
         // when
         vm.expectRevert("IPOR_320");
         vm.prank(_userTwo);
-        _iporProtocol.milton.itfCloseSwapPayFixed(1, endTimestamp);
+        _iporProtocol.ammTreasury.itfCloseSwapPayFixed(1, endTimestamp);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_4_18DEC);
     }
 
     function testShouldNotOpenPayFixedPositionWhenLeverageIsTooLow() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
 
         vm.prank(_userOne);
@@ -262,7 +262,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_308");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             500
@@ -271,7 +271,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPayFixedPositionWhenLeverageIsTooHigh() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE0;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE0;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
 
@@ -286,7 +286,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_309");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             1000000000000000000001
@@ -295,14 +295,14 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenUtilizationIsExceeded() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE7;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
 
         // when
         vm.expectRevert("IPOR_302");
         vm.prank(_userThree);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_100_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -311,7 +311,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenRiskManagementOracleProvidesZeroUtilizationRate() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE7;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE1;
@@ -323,7 +323,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_302");
         vm.prank(_userThree);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_100_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
@@ -332,7 +332,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenRiskManagementOracleProvidesZeroNotionalAndLeverageIsHigherThan10() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE7;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE2;
@@ -343,7 +343,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_309");
         vm.prank(_userThree);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_100_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_11_18DEC
@@ -352,7 +352,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenRiskManagementOracleProvidesMaxNotional() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE7;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE7;
         _cfg.iporRiskManagementOracleInitialParamsTestCase = BuilderUtils
             .IporRiskManagementOracleInitialParamsTestCase
             .CASE3;
@@ -363,7 +363,7 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
         // when
         vm.expectRevert("IPOR_309");
         vm.prank(_userThree);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_100_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_1001_18DEC
@@ -372,32 +372,32 @@ contract MiltonShouldNotOpenPositionTest is TestCommons, DataUtils, SwapUtils {
 
     function testShouldNotOpenPositionWhenTotalAmountIsLowerThanFee() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE8;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE8;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
 
         // when
         vm.expectRevert("IPOR_311");
         vm.prank(_userTwo);
-        _iporProtocol.milton.openSwapPayFixed(
+        _iporProtocol.ammTreasury.openSwapPayFixed(
             TestConstants.TC_TOTAL_AMOUNT_10_000_18DEC,
             9 * TestConstants.D17,
             TestConstants.LEVERAGE_18DEC
         );
     }
 
-    function testShouldNotGetMiltonAccruedBalanceWhenLiquidityPoolAmountIsTooLow() public {
+    function testShouldNotGetAmmTreasuryAccruedBalanceWhenLiquidityPoolAmountIsTooLow() public {
         // given
-        _cfg.miltonTestCase = BuilderUtils.MiltonTestCase.CASE8;
+        _cfg.ammTreasuryTestCase = BuilderUtils.AmmTreasuryTestCase.CASE8;
         _iporProtocol = _iporProtocolFactory.getDaiInstance(_cfg);
         _iporProtocol.spreadModel.setCalculateQuotePayFixed(TestConstants.PERCENTAGE_2_18DEC);
 
-        MockMiltonStorage mockMiltonStorage = new MockMiltonStorage();
+        MockAmmStorage mockAmmStorage = new MockAmmStorage();
 
-        MockMilton(address(_iporProtocol.milton)).setMockMiltonStorage(address(mockMiltonStorage));
+        MockAmmTreasury(address(_iporProtocol.ammTreasury)).setMockAmmStorage(address(mockAmmStorage));
 
         // when
         vm.expectRevert("IPOR_301");
-        _iporProtocol.milton.getAccruedBalance();
+        _iporProtocol.ammTreasury.getAccruedBalance();
     }
 }

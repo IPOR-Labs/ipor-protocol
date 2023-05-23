@@ -57,7 +57,7 @@ library IporTypes {
 
     /// @notice Struct representing balances used internally for asset calculations
     /// @dev all balances in 18 decimals
-    struct MiltonBalancesMemory {
+    struct AmmBalancesMemory {
         /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Fixed & Receive Floating leg.
         uint256 totalCollateralPayFixed;
         /// @notice Sum of all collateral put forward by the derivative buyer's on  Pay Floating & Receive Fixed leg.
@@ -65,7 +65,7 @@ library IporTypes {
         /// @notice Liquidity Pool Balance. This balance is where the liquidity from liquidity providers and the opening fee are accounted for,
         /// @dev Amount of opening fee accounted in this balance is defined by _OPENING_FEE_FOR_TREASURY_PORTION_RATE param.
         uint256 liquidityPool;
-        /// @notice Vault's balance, describes how much asset has been transferred to Asset Management Vault (Stanley)
+        /// @notice Vault's balance, describes how much asset has been transferred to Asset Management Vault (AssetManagement)
         uint256 vault;
     }
 

@@ -14,7 +14,7 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         DaiAmm daiAmm = new DaiAmm(address(this));
         daiAmm.joseph().setAutoRebalanceThreshold(0);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         uint256 balanceIpDaiBefore = IIpToken(daiAmm.ipDai()).balanceOf(user);
         uint256 balanceDaiBefore = IIpToken(daiAmm.dai()).balanceOf(user);
@@ -39,11 +39,11 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         DaiAmm daiAmm = new DaiAmm(address(this));
         daiAmm.joseph().setAutoRebalanceThreshold(70);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         uint256 balanceIpDaiBefore = IIpToken(daiAmm.ipDai()).balanceOf(user);
         uint256 balanceDaiBefore = IIpToken(daiAmm.dai()).balanceOf(user);
-        uint256 balanceStanleyBefore = daiAmm.stanley().totalBalance(address(daiAmm.milton()));
+        uint256 balanceAssetManagementBefore = daiAmm.assetManagement().totalBalance(address(daiAmm.ammTreasury()));
 
         // when
         Joseph joseph = daiAmm.joseph();
@@ -53,10 +53,10 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         //then
         uint256 balanceIpDaiAfter = IIpToken(daiAmm.ipDai()).balanceOf(user);
         uint256 balanceDaiAfter = IIpToken(daiAmm.dai()).balanceOf(user);
-        uint256 balanceStanleyAfter = daiAmm.stanley().totalBalance(address(daiAmm.milton()));
+        uint256 balanceAssetManagementAfter = daiAmm.assetManagement().totalBalance(address(daiAmm.ammTreasury()));
 
-        assertEq(balanceStanleyBefore, 0);
-        assertEq(balanceStanleyAfter, 0);
+        assertEq(balanceAssetManagementBefore, 0);
+        assertEq(balanceAssetManagementAfter, 0);
         assertEq(balanceDaiAfter, balanceDaiBefore - depositAmount);
         assertEq(balanceIpDaiAfter, balanceIpDaiBefore + depositAmount);
     }
@@ -69,12 +69,12 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         Joseph joseph = daiAmm.joseph();
         joseph.setAutoRebalanceThreshold(40);
         deal(daiAmm.dai(), user, 500_000e18);
-        daiAmm.approveMiltonJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(user);
 
         uint256 balanceUserIpDaiBefore = IIpToken(daiAmm.ipDai()).balanceOf(user);
         uint256 balanceUserDaiBefore = IIpToken(daiAmm.dai()).balanceOf(user);
-        uint256 balanceStanleyBefore = daiAmm.stanley().totalBalance(address(daiAmm.milton()));
-        uint256 balanceMiltonDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAssetManagementBefore = daiAmm.assetManagement().totalBalance(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryDaiBefore = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
 
         // when
         vm.prank(user);
@@ -83,13 +83,13 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         //then
         uint256 balanceUserIpDaiAfter = IIpToken(daiAmm.ipDai()).balanceOf(user);
         uint256 balanceUserDaiAfter = IIpToken(daiAmm.dai()).balanceOf(user);
-        uint256 balanceStanleyAfter = daiAmm.stanley().totalBalance(address(daiAmm.milton()));
-        uint256 balanceMiltonDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.milton()));
+        uint256 balanceAssetManagementAfter = daiAmm.assetManagement().totalBalance(address(daiAmm.ammTreasury()));
+        uint256 balanceAmmTreasuryDaiAfter = IIpToken(daiAmm.dai()).balanceOf(address(daiAmm.ammTreasury()));
 
-        assertEq(balanceStanleyBefore, 0);
-        assertTrue(balanceStanleyAfter > 0);
-        assertEq(balanceMiltonDaiBefore, 0);
-        assertEq(balanceMiltonDaiAfter, depositAmount - 7500e18);
+        assertEq(balanceAssetManagementBefore, 0);
+        assertTrue(balanceAssetManagementAfter > 0);
+        assertEq(balanceAmmTreasuryDaiBefore, 0);
+        assertEq(balanceAmmTreasuryDaiAfter, depositAmount - 7500e18);
         assertEq(balanceUserDaiAfter, balanceUserDaiBefore - depositAmount);
         assertEq(balanceUserIpDaiAfter, balanceUserIpDaiBefore + depositAmount);
     }
@@ -104,22 +104,22 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         deal(daiAmm.dai(), user, 500_000e18);
         deal(daiAmm.dai(), userTwo, 500_000e18);
 
-        daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(userTwo);
+        daiAmm.approveAmmTreasuryJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(userTwo);
 
         Joseph joseph = daiAmm.joseph();
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
-        Milton milton = daiAmm.milton();
+        AmmTreasury ammTreasury = daiAmm.ammTreasury();
 
         // when
         vm.prank(user);
-        uint256 swapId = milton.openSwapPayFixed(100e18, 9e16, 10e18);
+        uint256 swapId = ammTreasury.openSwapPayFixed(100e18, 9e16, 10e18);
 
         // then
-        MiltonStorage miltonStorage = daiAmm.miltonStorage();
-        IporTypes.IporSwapMemory memory swap = miltonStorage.getSwapPayFixed(1);
+        AmmStorage ammStorage = daiAmm.ammStorage();
+        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapPayFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -139,22 +139,22 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         deal(daiAmm.dai(), user, 500_000e18);
         deal(daiAmm.dai(), userTwo, 500_000e18);
 
-        daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(userTwo);
+        daiAmm.approveAmmTreasuryJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(userTwo);
 
         Joseph joseph = daiAmm.joseph();
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
-        Milton milton = daiAmm.milton();
+        AmmTreasury ammTreasury = daiAmm.ammTreasury();
 
         // when
         vm.prank(user);
-        uint256 swapId = milton.openSwapReceiveFixed(100e18, 1e16, 10e18);
+        uint256 swapId = ammTreasury.openSwapReceiveFixed(100e18, 1e16, 10e18);
 
         // then
-        MiltonStorage miltonStorage = daiAmm.miltonStorage();
-        IporTypes.IporSwapMemory memory swap = miltonStorage.getSwapReceiveFixed(1);
+        AmmStorage ammStorage = daiAmm.ammStorage();
+        IporTypes.IporSwapMemory memory swap = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swap.id, 1);
         assertEq(swap.buyer, user);
@@ -169,28 +169,28 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e18;
         DaiAmm daiAmm = new DaiAmm(address(this));
-        MiltonStorage miltonStorage = daiAmm.miltonStorage();
+        AmmStorage ammStorage = daiAmm.ammStorage();
         Joseph joseph = daiAmm.joseph();
-        Milton milton = daiAmm.milton();
+        AmmTreasury ammTreasury = daiAmm.ammTreasury();
 
         deal(daiAmm.dai(), user, 500_000e18);
         deal(daiAmm.dai(), userTwo, 500_000e18);
 
-        daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(userTwo);
+        daiAmm.approveAmmTreasuryJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(userTwo);
 
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
         vm.prank(userTwo);
-        uint256 swapId = milton.openSwapPayFixed(100e18, 9e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = miltonStorage.getSwapPayFixed(1);
+        uint256 swapId = ammTreasury.openSwapPayFixed(100e18, 9e16, 10e18);
+        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapPayFixed(1);
 
         // when
-        milton.closeSwapPayFixed(swapId);
+        ammTreasury.closeSwapPayFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = miltonStorage.getSwapPayFixed(1);
+        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapPayFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);
@@ -213,28 +213,28 @@ contract AmmDaiForkOpenCloseSwaps is Test, TestCommons {
         address userTwo = _getUserAddress(2);
         uint256 depositAmount = 50_000e18;
         DaiAmm daiAmm = new DaiAmm(address(this));
-        MiltonStorage miltonStorage = daiAmm.miltonStorage();
+        AmmStorage ammStorage = daiAmm.ammStorage();
         Joseph joseph = daiAmm.joseph();
-        Milton milton = daiAmm.milton();
+        AmmTreasury ammTreasury = daiAmm.ammTreasury();
 
         deal(daiAmm.dai(), user, 500_000e18);
         deal(daiAmm.dai(), userTwo, 500_000e18);
 
-        daiAmm.approveMiltonJoseph(user);
-        daiAmm.approveMiltonJoseph(userTwo);
+        daiAmm.approveAmmTreasuryJoseph(user);
+        daiAmm.approveAmmTreasuryJoseph(userTwo);
 
         vm.prank(userTwo);
         joseph.provideLiquidity(depositAmount);
 
         vm.prank(userTwo);
-        uint256 swapId = milton.openSwapReceiveFixed(100e18, 1e16, 10e18);
-        IporTypes.IporSwapMemory memory swapBefore = miltonStorage.getSwapReceiveFixed(1);
+        uint256 swapId = ammTreasury.openSwapReceiveFixed(100e18, 1e16, 10e18);
+        IporTypes.IporSwapMemory memory swapBefore = ammStorage.getSwapReceiveFixed(1);
 
         // when
-        milton.closeSwapReceiveFixed(swapId);
+        ammTreasury.closeSwapReceiveFixed(swapId);
 
         // then
-        IporTypes.IporSwapMemory memory swapAfter = miltonStorage.getSwapReceiveFixed(1);
+        IporTypes.IporSwapMemory memory swapAfter = ammStorage.getSwapReceiveFixed(1);
 
         assertEq(swapBefore.id, swapAfter.id);
         assertEq(swapBefore.buyer, swapAfter.buyer);

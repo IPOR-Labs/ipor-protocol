@@ -5,20 +5,20 @@ import "forge-std/Test.sol";
 import "../TestCommons.sol";
 import "../utils/TestConstants.sol";
 import {IporOracleUtils} from "../utils/IporOracleUtils.sol";
-import {MiltonUtils} from "../utils/MiltonUtils.sol";
-import {MiltonStorageUtils} from "../utils/MiltonStorageUtils.sol";
+import {AmmTreasuryUtils} from "../utils/AmmTreasuryUtils.sol";
+import {AmmStorageUtils} from "../utils/AmmStorageUtils.sol";
 import {JosephUtils} from "../utils/JosephUtils.sol";
-import {StanleyUtils} from "../utils/StanleyUtils.sol";
+import {AssetManagementUtils} from "../utils/AssetManagementUtils.sol";
 import {IporRiskManagementOracleUtils} from "../utils/IporRiskManagementOracleUtils.sol";
-import "contracts/amm/MiltonStorage.sol";
+import "contracts/amm/AmmStorage.sol";
 import "contracts/libraries/Constants.sol";
 import "contracts/mocks/tokens/MockTestnetToken.sol";
 import "contracts/mocks/spread/MockSpreadModel.sol";
-import "contracts/mocks/stanley/MockCaseBaseStanley.sol";
+import "contracts/mocks/assetManagement/MockCaseBaseAssetManagement.sol";
 import "contracts/interfaces/IIporRiskManagementOracle.sol";
 import "contracts/itf/ItfIporOracle.sol";
-import "contracts/itf/ItfMilton.sol";
-import "contracts/itf/ItfStanley.sol";
+import "contracts/itf/ItfAmmTreasury.sol";
+import "contracts/itf/ItfAssetManagement.sol";
 import "contracts/itf/ItfJoseph.sol";
 import "contracts/itf/ItfIporOracle.sol";
 import "contracts/tokens/IpToken.sol";
@@ -29,10 +29,10 @@ contract DataUtils is
     TestCommons,
     IporOracleUtils,
     IporRiskManagementOracleUtils,
-    MiltonUtils,
-    MiltonStorageUtils,
+    AmmTreasuryUtils,
+    AmmStorageUtils,
     JosephUtils,
-    StanleyUtils
+    AssetManagementUtils
 {
     address internal _admin;
     address internal _userOne;
@@ -73,12 +73,12 @@ contract DataUtils is
         address[] memory users,
         MockTestnetToken tokenUsd,
         address josephUsd,
-        address miltonUsd
+        address ammTreasuryUsd
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
             vm.startPrank(users[i]);
             tokenUsd.approve(address(josephUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
-            tokenUsd.approve(address(miltonUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
+            tokenUsd.approve(address(ammTreasuryUsd), TestConstants.TOTAL_SUPPLY_6_DECIMALS);
             vm.stopPrank();
             deal(address(tokenUsd), users[i], TestConstants.USER_SUPPLY_6_DECIMALS);
         }
@@ -88,12 +88,12 @@ contract DataUtils is
         address[] memory users,
         MockTestnetToken tokenDai,
         address josephDai,
-        address miltonDai
+        address ammTreasuryDai
     ) public {
         for (uint256 i = 0; i < users.length; ++i) {
             vm.startPrank(users[i]);
             tokenDai.approve(address(josephDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
-            tokenDai.approve(address(miltonDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
+            tokenDai.approve(address(ammTreasuryDai), TestConstants.TOTAL_SUPPLY_18_DECIMALS);
             vm.stopPrank();
             deal(address(tokenDai), users[i], TestConstants.USER_SUPPLY_10MLN_18DEC);
         }

@@ -4,8 +4,8 @@ pragma solidity 0.8.16;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../libraries/errors/IporErrors.sol";
-import "../libraries/errors/MiltonErrors.sol";
-import "../libraries/errors/JosephErrors.sol";
+import "../libraries/errors/AmmErrors.sol";
+import "../libraries/errors/AmmPoolsErrors.sol";
 import "../interfaces/IIpToken.sol";
 import "../security/IporOwnable.sol";
 
@@ -19,7 +19,7 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     address private _joseph;
 
     modifier onlyJoseph() {
-        require(_msgSender() == _joseph, MiltonErrors.CALLER_NOT_JOSEPH);
+        require(_msgSender() == _joseph, AmmErrors.CALLER_NOT_JOSEPH);
         _;
     }
 
@@ -49,13 +49,13 @@ contract IpToken is IporOwnable, IIpToken, ERC20 {
     }
 
     function mint(address account, uint256 amount) external override onlyJoseph {
-        require(amount > 0, JosephErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
+        require(amount > 0, AmmPoolsErrors.IP_TOKEN_MINT_AMOUNT_TOO_LOW);
         _mint(account, amount);
         emit Mint(account, amount);
     }
 
     function burn(address account, uint256 amount) external override onlyJoseph {
-        require(amount > 0, JosephErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
+        require(amount > 0, AmmPoolsErrors.IP_TOKEN_BURN_AMOUNT_TOO_LOW);
         _burn(account, amount);
         emit Burn(account, amount);
     }
