@@ -30,7 +30,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _usdtMaxSwapCollateralAmount;
     uint256 internal immutable _usdtLiquidationDepositAmount;
     uint256 internal immutable _usdtMinLeverage;
-    uint256 internal immutable _usdtMaxLeverage;
     uint256 internal immutable _usdtOpeningFeeRate;
     uint256 internal immutable _usdtOpeningFeeTreasuryPortionRate;
 
@@ -42,7 +41,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _usdcMaxSwapCollateralAmount;
     uint256 internal immutable _usdcLiquidationDepositAmount;
     uint256 internal immutable _usdcMinLeverage;
-    uint256 internal immutable _usdcMaxLeverage;
     uint256 internal immutable _usdcOpeningFeeRate;
     uint256 internal immutable _usdcOpeningFeeTreasuryPortionRate;
 
@@ -54,7 +52,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
     uint256 internal immutable _daiMaxSwapCollateralAmount;
     uint256 internal immutable _daiLiquidationDepositAmount;
     uint256 internal immutable _daiMinLeverage;
-    uint256 internal immutable _daiMaxLeverage;
     uint256 internal immutable _daiOpeningFeeRate;
     uint256 internal immutable _daiOpeningFeeTreasuryPortionRate;
 
@@ -111,7 +108,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdtMaxSwapCollateralAmount = usdtPoolCfg.maxSwapCollateralAmount;
         _usdtLiquidationDepositAmount = usdtPoolCfg.liquidationDepositAmount;
         _usdtMinLeverage = usdtPoolCfg.minLeverage;
-        _usdtMaxLeverage = usdtPoolCfg.maxLeverage;
         _usdtOpeningFeeRate = usdtPoolCfg.openingFeeRate;
         _usdtOpeningFeeTreasuryPortionRate = usdtPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -123,7 +119,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _usdcMaxSwapCollateralAmount = usdcPoolCfg.maxSwapCollateralAmount;
         _usdcLiquidationDepositAmount = usdcPoolCfg.liquidationDepositAmount;
         _usdcMinLeverage = usdcPoolCfg.minLeverage;
-        _usdcMaxLeverage = usdcPoolCfg.maxLeverage;
         _usdcOpeningFeeRate = usdcPoolCfg.openingFeeRate;
         _usdcOpeningFeeTreasuryPortionRate = usdcPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -135,7 +130,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
         _daiMaxSwapCollateralAmount = daiPoolCfg.maxSwapCollateralAmount;
         _daiLiquidationDepositAmount = daiPoolCfg.liquidationDepositAmount;
         _daiMinLeverage = daiPoolCfg.minLeverage;
-        _daiMaxLeverage = daiPoolCfg.maxLeverage;
         _daiOpeningFeeRate = daiPoolCfg.openingFeeRate;
         _daiOpeningFeeTreasuryPortionRate = daiPoolCfg.openingFeeTreasuryPortionRate;
 
@@ -433,7 +427,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _usdtMaxSwapCollateralAmount,
                     liquidationDepositAmount: _usdtLiquidationDepositAmount,
                     minLeverage: _usdtMinLeverage,
-                    maxLeverage: _usdtMaxLeverage,
                     openingFeeRate: _usdtOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _usdtOpeningFeeTreasuryPortionRate
                 });
@@ -448,7 +441,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _usdcMaxSwapCollateralAmount,
                     liquidationDepositAmount: _usdcLiquidationDepositAmount,
                     minLeverage: _usdcMinLeverage,
-                    maxLeverage: _usdcMaxLeverage,
                     openingFeeRate: _usdcOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _usdcOpeningFeeTreasuryPortionRate
                 });
@@ -463,7 +455,6 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
                     maxSwapCollateralAmount: _daiMaxSwapCollateralAmount,
                     liquidationDepositAmount: _daiLiquidationDepositAmount,
                     minLeverage: _daiMinLeverage,
-                    maxLeverage: _daiMaxLeverage,
                     openingFeeRate: _daiOpeningFeeRate,
                     openingFeeTreasuryPortionRate: _daiOpeningFeeTreasuryPortionRate
                 });
@@ -508,7 +499,7 @@ contract AmmOpenSwapService is IAmmOpenSwapService {
             riskIndicators.maxLeveragePerLeg,
             riskIndicators.maxUtilizationRate,
             riskIndicators.maxUtilizationRatePerLeg,
-            ctx.poolCfg.maxLeverage
+            ctx.poolCfg.minLeverage
         );
 
         uint256 quoteValue = abi.decode(
